@@ -51,11 +51,11 @@ export function DFooter(props: DFooterProps) {
    *   constructor(private reactConvert: ReactConvertService) {}
    * }
    */
-  const handOkClick = useCallback(() => {
+  const handleOkClick = useCallback(() => {
     onOkClick?.();
   }, [onOkClick]);
 
-  const handCancelClick = useCallback(() => {
+  const handleCancelClick = useCallback(() => {
     onCancelClick?.();
   }, [onCancelClick]);
   //#endregion
@@ -64,11 +64,11 @@ export function DFooter(props: DFooterProps) {
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
       {dButtons.map((button, index) =>
         button === 'cancel' ? (
-          <DButton key="cancel" {...dCancelButtonProps} dType="secondary" onClick={handCancelClick}>
+          <DButton key="cancel" {...dCancelButtonProps} dType="secondary" onClick={handleCancelClick}>
             {t('Cancel')}
           </DButton>
         ) : button === 'ok' ? (
-          <DButton key="ok" {...dOkButtonProps} onClick={handOkClick}>
+          <DButton key="ok" {...dOkButtonProps} onClick={handleOkClick}>
             {t('OK')}
           </DButton>
         ) : (

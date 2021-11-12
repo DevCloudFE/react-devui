@@ -37,7 +37,7 @@ export function DHeader(props: DHeaderProps) {
    *   constructor(private reactConvert: ReactConvertService) {}
    * }
    */
-  const handCloseClick = useCallback(() => {
+  const handleCloseClick = useCallback(() => {
     onClose?.();
   }, [onClose]);
   //#endregion
@@ -59,7 +59,7 @@ export function DHeader(props: DHeaderProps) {
                 dCloseIcon
               )
             }
-            onClick={handCloseClick}
+            onClick={handleCloseClick}
           ></DButton>
         )}
       </div>

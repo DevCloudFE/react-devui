@@ -47,7 +47,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
    *   constructor(private reactConvert: ReactConvertService) {}
    * }
    */
-  const handelClick = useCallback(
+  const handleClick = useCallback(
     (e) => {
       onClick?.(e);
 
@@ -87,7 +87,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
       className={getClassName(className, `${dPrefix}anchor-link`, {
         'is-active': href && _activeHref === href,
       })}
-      onClick={handelClick}
+      onClick={handleClick}
     >
       <a style={{ paddingLeft: 12 + dLevel * 16 }} href={href}>
         {children}

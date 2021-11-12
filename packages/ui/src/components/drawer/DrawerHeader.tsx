@@ -35,7 +35,7 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
    *   constructor(private reactConvert: ReactConvertService) {}
    * }
    */
-  const handClose = useCallback(() => {
+  const handleClose = useCallback(() => {
     _onClose?.();
   }, [_onClose]);
   //#endregion
@@ -45,7 +45,7 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
       {...restProps}
       id={_id ? `${dPrefix}drawer-content__header-${_id}` : undefined}
       className={getClassName(className, `${dPrefix}drawer-content__header`)}
-      onClose={handClose}
+      onClose={handleClose}
     ></DHeader>
   );
 }

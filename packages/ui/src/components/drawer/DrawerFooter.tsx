@@ -80,7 +80,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
     }
   }, [dCancelButtonProps, cancelLoading]);
 
-  const handOkClick = useCallback(() => {
+  const handleOkClick = useCallback(() => {
     const shouldClose = onOkClick?.();
     if (shouldClose instanceof Promise) {
       setOkLoading(true);
@@ -94,7 +94,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       _onClose?.();
     }
   }, [_onClose, onOkClick, setOkLoading]);
-  const handCancelClick = useCallback(() => {
+  const handleCancelClick = useCallback(() => {
     const shouldClose = onCancelClick?.();
     if (shouldClose instanceof Promise) {
       setCancelLoading(true);
@@ -116,8 +116,8 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       className={getClassName(className, `${dPrefix}drawer-content__footer`)}
       dOkButtonProps={okButtonProps}
       dCancelButtonProps={cancelButtonProps}
-      onOkClick={handOkClick}
-      onCancelClick={handCancelClick}
+      onOkClick={handleOkClick}
+      onCancelClick={handleCancelClick}
     ></DFooter>
   );
 }
