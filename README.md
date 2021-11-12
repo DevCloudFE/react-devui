@@ -8,6 +8,18 @@ In development.
 
 Need unit test support (Jest) 🤝
 
+## Start
+
+We add `chmod ug+x .husky/` at `prepare` that make sure the files is executable in linux. So you use other OS, just ignore error.
+
+Execute the following command to preview the component:
+
+```
+yarn site:serve
+```
+
+For contributions, please refer to [Contribution Guide](CONTRIBUTING.md).
+
 ## Design Guidelines
 
 ### Code
