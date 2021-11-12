@@ -8,10 +8,10 @@ import { DFooter } from './Footer';
 
 describe('DFooter', () => {
   const okButton = (footer: ShallowWrapper) => {
-    return footer.find('DButton').at(1);
+    return footer.find(DButton).at(1);
   };
   const cancelButton = (footer: ShallowWrapper) => {
-    return footer.find('DButton').at(0);
+    return footer.find(DButton).at(0);
   };
 
   it('should `dAlign` work', () => {
@@ -22,9 +22,9 @@ describe('DFooter', () => {
   it('should `dButtons` work', () => {
     const footer = shallow(<DFooter dButtons={['cancel', <DButton>Button</DButton>, 'ok']} />);
 
-    expect(footer.find('DButton').length).toBe(3);
+    expect(footer.find(DButton).length).toBe(3);
 
-    footer.find('DButton').forEach((button, index) => {
+    footer.find(DButton).forEach((button, index) => {
       switch (index) {
         case 0:
           expect(button.text()).toBe('Cancel');
