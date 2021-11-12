@@ -7,7 +7,7 @@ import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
 export interface DFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  dAlign: 'left' | 'center' | 'right';
+  dAlign?: 'left' | 'center' | 'right';
   dButtons?: React.ReactNode[];
   dOkButtonProps?: DButtonProps;
   dCancelButtonProps?: DButtonProps;

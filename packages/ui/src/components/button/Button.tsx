@@ -115,3 +115,5 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
     </button>
   );
 });
+
+DButton.displayName = 'DButton';

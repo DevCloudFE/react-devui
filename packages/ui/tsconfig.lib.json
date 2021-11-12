@@ -6,6 +6,7 @@
   },
   "files": ["../../node_modules/@nrwl/react/typings/cssmodule.d.ts", "../../node_modules/@nrwl/react/typings/image.d.ts"],
   "exclude": [
+    "./src/tests/**",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
