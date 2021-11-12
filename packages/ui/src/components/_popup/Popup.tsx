@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useMemo, useImperativeHandle } from 'rea
 import ReactDOM from 'react-dom';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useCustomRef, useAsync, useElement, useAutoSet } from '../../hooks';
+import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoState } from '../../hooks';
 import { getClassName, globalMaxIndexManager, globalScrollCapture, getPopupPlacementStyle } from '../../utils';
 import { DTransition } from '../_transition';
 
@@ -59,7 +59,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   const dPrefix = useDPrefixConfig();
   const asyncCapture = useAsync();
 
-  const [visible, setVisible] = useAutoSet(false, dVisible, onTrigger);
+  const [visible, dispatchVisible] = useManualOrAutoState(false, dVisible, onTrigger);
 
   //#region Refs.
   /*
@@ -301,7 +301,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
             tid && asyncGroup.clearTimeout(tid);
             tid = asyncGroup.setTimeout(() => {
               tid = null;
-              setVisible(true);
+              dispatchVisible({ value: true });
             }, dMouseEnterDelay);
           },
         });
@@ -310,7 +310,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
             tid && asyncGroup.clearTimeout(tid);
             tid = asyncGroup.setTimeout(() => {
               tid = null;
-              setVisible(false);
+              dispatchVisible({ value: false });
             }, dMouseLeaveDelay);
           },
         });
@@ -322,13 +322,13 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
         asyncGroup.fromEvent([targetEl.current, popupEl], 'focus').subscribe({
           next: () => {
             tid && asyncGroup.cancelAnimationFrame(tid);
-            setVisible(true);
+            dispatchVisible({ value: true });
           },
         });
         asyncGroup.fromEvent([targetEl.current, popupEl], 'blur').subscribe({
           next: () => {
             tid = asyncGroup.requestAnimationFrame(() => {
-              setVisible(false);
+              dispatchVisible({ value: false });
             });
           },
         });
@@ -340,19 +340,19 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
         asyncGroup.fromEvent(popupEl, 'click').subscribe({
           next: () => {
             tid && asyncGroup.cancelAnimationFrame(tid);
-            setVisible(true);
+            dispatchVisible({ value: true });
           },
         });
         asyncGroup.fromEvent(targetEl.current, 'click').subscribe({
           next: () => {
             tid && asyncGroup.cancelAnimationFrame(tid);
-            setVisible(!visible);
+            dispatchVisible({ reverse: true });
           },
         });
         asyncGroup.fromEvent(document, 'click', { capture: true }).subscribe({
           next: () => {
             tid = asyncGroup.requestAnimationFrame(() => {
-              setVisible(false);
+              dispatchVisible({ value: false });
             });
           },
         });
@@ -362,7 +362,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [dVisible, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger, asyncCapture, popupRefContent, targetEl, visible, setVisible]);
+  }, [dVisible, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger, asyncCapture, popupRefContent, targetEl, dispatchVisible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

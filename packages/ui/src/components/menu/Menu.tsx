@@ -3,7 +3,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useAutoSet } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState } from '../../hooks';
 import { getClassName, getComponentName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -55,7 +55,7 @@ export function DMenu(props: DMenuProps) {
 
   const dPrefix = useDPrefixConfig();
 
-  const [activeId, setActiveId] = useAutoSet(dDefaultActive, dActive, onActiveChange);
+  const [activeId, dispatchActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive);
 
   const [currentData] = useState({
     ids: new Map<string, string[]>(),
@@ -111,9 +111,9 @@ export function DMenu(props: DMenuProps) {
   const _onActiveChange = useCallback(
     (id) => {
       onActiveChange?.(id);
-      setActiveId(id);
+      dispatchActiveId({ value: id });
     },
-    [onActiveChange, setActiveId]
+    [onActiveChange, dispatchActiveId]
   );
 
   const onExpandChange = useCallback(
