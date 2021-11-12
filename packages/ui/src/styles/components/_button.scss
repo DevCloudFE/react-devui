@@ -1,0 +1,263 @@
+@mixin button-hover-focus {
+  &:not([disabled]):hover,
+  &:not([disabled]):focus {
+    z-index: 2;
+    @content;
+  }
+}
+
+@mixin button-active {
+  &:not([disabled]):active {
+    z-index: 1;
+    @content;
+  }
+}
+
+@include b(button) {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 16px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 2px;
+
+  font-family: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+
+  text-align: unset;
+  text-transform: none;
+
+  cursor: pointer;
+
+  transition: all 0.2s linear;
+
+  appearance: button;
+
+  @include font-size(0.9rem);
+
+  & + & {
+    margin-left: 10px;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    @include utils-disabled(1px);
+  }
+
+  @each $color in $themes {
+    &.#{$variable-prefix}button--primary-#{$color} {
+      border-color: var(--#{$variable-prefix}color-#{$color});
+
+      color: #fff;
+
+      background-color: var(--#{$variable-prefix}color-#{$color});
+
+      @include button-hover-focus {
+        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        color: #fff;
+
+        background-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+      }
+
+      @include button-active {
+        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        color: #fff;
+
+        background-color: var(--#{$variable-prefix}color-#{$color}-darker);
+      }
+    }
+
+    &.#{$variable-prefix}button--secondary-#{$color} {
+      border-color: var(--#{$variable-prefix}color-step-150);
+
+      color: var(--#{$variable-prefix}text-color);
+
+      background-color: transparent;
+
+      @include button-hover-focus {
+        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        background-color: transparent;
+      }
+
+      @include button-active {
+        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        background-color: transparent;
+      }
+    }
+
+    &.#{$variable-prefix}button--outline-#{$color},
+    &.#{$variable-prefix}button--dashed-#{$color} {
+      border-color: var(--#{$variable-prefix}color-#{$color});
+
+      color: var(--#{$variable-prefix}color-#{$color});
+
+      background-color: transparent;
+
+      @include button-hover-focus {
+        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        background-color: transparent;
+      }
+
+      @include button-active {
+        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        background-color: transparent;
+      }
+    }
+
+    &.#{$variable-prefix}button--dashed-#{$color} {
+      border-style: dashed;
+    }
+
+    &.#{$variable-prefix}button--text-#{$color} {
+      border-color: transparent;
+
+      color: var(--#{$variable-prefix}color-#{$color});
+
+      background-color: transparent;
+
+      @include button-hover-focus {
+        border-color: transparent;
+
+        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        background-color: rgb(var(--#{$variable-prefix}color-#{$color}-rgb) / 4%);
+      }
+
+      @include button-active {
+        border-color: transparent;
+
+        color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        background-color: rgb(var(--#{$variable-prefix}color-#{$color}-rgb) / 10%);
+      }
+    }
+
+    &.#{$variable-prefix}button--link-#{$color} {
+      border-color: transparent;
+
+      color: var(--#{$variable-prefix}color-#{$color});
+
+      background-color: transparent;
+
+      @include button-hover-focus {
+        border-color: transparent;
+
+        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+
+        background-color: transparent;
+      }
+
+      @include button-active {
+        border-color: transparent;
+
+        color: var(--#{$variable-prefix}color-#{$color}-darker);
+
+        background-color: transparent;
+      }
+    }
+  }
+
+  @include m(circle) {
+    border-radius: 50%;
+  }
+
+  @include m(round) {
+    border-radius: 32px;
+  }
+
+  @include m(smaller) {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0 10px;
+
+    @include font-size(0.75rem);
+  }
+
+  @include m(larger) {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0 20px;
+
+    @include font-size(1.05rem);
+  }
+
+  @include when(block) {
+    width: 100%;
+
+    & + & {
+      margin-top: 10px;
+      margin-left: 0;
+    }
+  }
+
+  @include when(only-icon) {
+    &:not(.#{$variable-prefix}button--round) {
+      padding: 0;
+    }
+
+    .#{$variable-prefix}button__icon {
+      width: auto;
+
+      font-size: 1.2em;
+    }
+  }
+
+  @include e(icon) {
+    display: inline-block;
+    width: calc(1em + 8px);
+
+    @include when(right) {
+      text-align: right;
+    }
+  }
+}
+
+@include b(button-group) {
+  display: inline-block;
+
+  & + & {
+    margin-left: 10px;
+  }
+
+  .#{$variable-prefix}button:not(.#{$variable-prefix}button:nth-child(1)):not(.#{$variable-prefix}button:last-child) {
+    border-radius: 0;
+  }
+
+  .#{$variable-prefix}button:nth-child(1):not(.#{$variable-prefix}button:only-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .#{$variable-prefix}button:last-child:not(.#{$variable-prefix}button:only-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .#{$variable-prefix}button + .#{$variable-prefix}button {
+    margin-left: -1px;
+  }
+}

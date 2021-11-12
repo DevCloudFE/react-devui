@@ -1,0 +1,160 @@
+@import '~rfs/scss';
+
+.app-route-anchor {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  z-index: 910;
+
+  width: 168px;
+
+  .d-anchor-link > a {
+    padding: 4px 0 4px 0;
+  }
+}
+
+.app-route-article {
+  pre > code {
+    font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  pre code.hljs {
+    background-color: var(--app-code-background-color);
+  }
+
+  .app-route-article__demos {
+    pre code.hljs {
+      background-color: transparent;
+    }
+  }
+
+  code:not(pre > code) {
+    margin: 0 1px;
+    padding: 4px 6px;
+    border-radius: 3px;
+
+    font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+
+    background-color: var(--app-code-background-color);
+  }
+
+  a:not(.app-demo-box__renderer a) {
+    color: var(--d-color-primary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--d-color-primary-lighter);
+    }
+  }
+
+  h1 {
+    margin: 8px 0 20px 0;
+
+    font-weight: 500;
+    @include font-size(2rem);
+  }
+
+  h2 {
+    margin: 38px 0 20px 0;
+
+    font-weight: 500;
+    @include font-size(1.5rem);
+  }
+
+  h3 {
+    margin: 28px 0 12px 0;
+
+    font-weight: 500;
+    @include font-size(1.25rem);
+  }
+
+  table {
+    width: 100%;
+    margin: 8px 0 16px;
+    border: 1px solid var(--d-divider-color);
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    empty-cells: show;
+
+    th {
+      font-weight: 500;
+      white-space: nowrap;
+
+      background: var(--app-th-background-color);
+    }
+
+    th,
+    td {
+      padding: 16px 24px;
+      border: 1px solid var(--d-divider-color);
+
+      text-align: left;
+    }
+  }
+
+  .anchor {
+    display: inline-block;
+    margin-left: 8px;
+
+    color: var(--d-color-primary);
+    text-decoration: none;
+
+    opacity: 0;
+
+    transition: opacity 0.2s linear;
+
+    &:focus-visible {
+      outline: none;
+      opacity: 1;
+    }
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    &:hover .anchor {
+      opacity: 1;
+    }
+  }
+
+  .icon-button {
+    color: var(--d-color-step-400);
+
+    cursor: pointer;
+
+    transition: color 0.1s linear;
+
+    &:hover {
+      color: var(--d-color-primary);
+    }
+  }
+
+  .app-route-article__subtitle {
+    margin-left: 12px;
+  }
+
+  .app-route-article__api {
+    table {
+      table-layout: fixed;
+
+      th:nth-of-type(1) {
+        width: 260px;
+      }
+      th:nth-of-type(3) {
+        width: 300px;
+      }
+      th:nth-of-type(4) {
+        width: 160px;
+      }
+
+      td:nth-of-type(1),
+      td:nth-of-type(3),
+      td:nth-of-type(4) {
+        font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      }
+    }
+  }
+}

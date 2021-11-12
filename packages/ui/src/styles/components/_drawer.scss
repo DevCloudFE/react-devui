@@ -1,0 +1,59 @@
+@include b(drawer) {
+  overflow: hidden;
+}
+
+@include b(drawer-content) {
+  position: absolute;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  background-color: var(--#{$variable-prefix}background-color);
+  box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
+
+  &:focus {
+    outline: none;
+  }
+
+  @include m(top) {
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    border-radius: 0 0 2px 2px;
+  }
+  @include m(right) {
+    top: 0;
+    right: 0;
+
+    height: 100%;
+    border-radius: 2px 0 0 2px;
+  }
+  @include m(bottom) {
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    border-radius: 2px 2px 0 0;
+  }
+  @include m(left) {
+    top: 0;
+    left: 0;
+
+    height: 100%;
+    border-radius: 0 2px 2px 0;
+  }
+
+  @include e(body) {
+    position: relative;
+
+    flex-grow: 1;
+    padding: 20px;
+    overflow: auto;
+  }
+}

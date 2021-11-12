@@ -1,0 +1,15 @@
+/* eslint-disable */
+// @ts-nocheck
+
+import { AppRoute, AppDemoBox } from '../../../components';
+
+__import__
+
+export default function __Route__() {
+  const props = {
+    'en-US': __en-US__,
+    'zh-Hant': __zh-Hant__,
+  };
+
+  return <AppRoute {...props} />;
+}

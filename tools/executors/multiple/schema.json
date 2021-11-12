@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "cli": "nx",
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "description": "List of tasks.",
+      "items": {
+        "$ref": "#/definitions/task"
+      }
+    }
+  },
+  "definitions": {
+    "task": {
+      "type": "object",
+      "properties": {
+        "targetDescription": {
+          "type": "object",
+          "description": "The task."
+        },
+        "options": {
+          "type": "object",
+          "description": "The options of task."
+        }
+      },
+      "additionalProperties": false,
+      "required": ["targetDescription"]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "DFooter": {
+    "Cancel": {
+      "en-US": "Cancel",
+      "zh-Hant": "取 消"
+    },
+    "OK": {
+      "en-US": "OK",
+      "zh-Hant": "确 定"
+    }
+  }
+}

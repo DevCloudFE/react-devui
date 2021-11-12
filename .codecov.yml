@@ -1,0 +1,24 @@
+# Please see the documentation for all configuration options:
+# https://docs.codecov.com/docs/common-recipe-list
+
+codecov:
+  require_ci_to_pass: no
+  notify:
+    wait_for_ci: no
+
+coverage:
+  status:
+    patch:
+      default:
+        target: 90%
+    project:
+      default:
+        target: auto
+        threshold: 2%
+
+comment:
+  layout: 'diff, flags, files'
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes

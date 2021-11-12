@@ -1,0 +1,115 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx", "import"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ],
+        "import/order": [
+          "error",
+          {
+            "groups": ["type", "builtin", "external", "internal", ["parent", "sibling", "index"]],
+            "pathGroups": [
+              {
+                "pattern": "@react-devui/ui/**",
+                "group": "internal",
+                "position": "after"
+              }
+            ],
+            "pathGroupsExcludedImportTypes": ["type", "builtin"],
+            "newlines-between": "always",
+            "alphabetize": {
+              "order": "asc",
+              "caseInsensitive": false
+            },
+            "warnOnUnassignedImports": true
+          }
+        ],
+        "no-unused-vars": "error"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx", "plugin:prettier/recommended"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "rules": {
+        "@typescript-eslint/array-type": [
+          "error",
+          {
+            "default": "array-simple"
+          }
+        ],
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "types": {
+              "Object": {
+                "message": "Use {} instead."
+              },
+              "String": {
+                "message": "Use string instead."
+              },
+              "Number": {
+                "message": "Use number instead."
+              },
+              "Boolean": {
+                "message": "Use boolean instead."
+              },
+              "Function": {
+                "message": "Use specific callable interface instead."
+              }
+            }
+          }
+        ],
+        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/method-signature-style": "error",
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "default",
+            "format": ["camelCase", "PascalCase", "snake_case", "UPPER_CASE"],
+            "leadingUnderscore": "allowSingleOrDouble",
+            "trailingUnderscore": "forbid"
+          },
+          {
+            "selector": "classProperty",
+            "modifiers": ["static"],
+            "format": null
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          }
+        ],
+        "@typescript-eslint/no-confusing-non-null-assertion": "error",
+        "@typescript-eslint/no-implicit-any-catch": "error",
+        "@typescript-eslint/no-inferrable-types": [
+          "error",
+          {
+            "ignoreParameters": true,
+            "ignoreProperties": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+@mixin dark() {
+  body.dark {
+    @content;
+  }
+}

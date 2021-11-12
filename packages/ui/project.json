@@ -1,0 +1,48 @@
+{
+  "root": "packages/ui",
+  "sourceRoot": "packages/ui/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:package",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/ui",
+        "tsConfig": "packages/ui/tsconfig.lib.json",
+        "project": "packages/ui/package.json",
+        "entryFile": "packages/ui/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "assets": [
+          {
+            "glob": "packages/ui/README.md",
+            "input": ".",
+            "output": "."
+          },
+          {
+            "glob": "packages/ui/src/styles",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/ui/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ui"],
+      "options": {
+        "jestConfig": "packages/ui/jest.config.js",
+        "passWithNoTests": true,
+        "coverageReporters": ["clover", "json", "lcov", "text"]
+      }
+    }
+  }
+}

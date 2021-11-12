@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "multiple": {
+      "implementation": "./impl",
+      "schema": "./schema.json",
+      "description": "Run multiple task."
+    }
+  }
+}

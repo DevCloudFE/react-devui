@@ -1,0 +1,81 @@
+@include b(anchor) {
+  position: relative;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  @include font-size(0.85rem);
+
+  @include e(indicator) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 2px;
+
+    background-color: var(--#{$variable-prefix}background-color-indicator);
+
+    .#{$variable-prefix}anchor__dot-indicator {
+      position: absolute;
+      left: 50%;
+
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--#{$variable-prefix}color-primary);
+      border-radius: 50%;
+
+      background-color: var(--#{$variable-prefix}background-color);
+      transform: translate(-50%, -50%);
+      opacity: 0%;
+
+      transition: top 0.3s ease-in-out, opacity 160ms linear;
+    }
+
+    .#{$variable-prefix}anchor__line-indicator {
+      position: absolute;
+      left: 0;
+
+      width: 2px;
+      height: 20px;
+
+      background-color: var(--#{$variable-prefix}color-primary);
+      transform: translate(0, -50%);
+      opacity: 0%;
+
+      transition: top 0.3s ease-in-out, opacity 160ms linear;
+    }
+  }
+}
+
+@include b(anchor-link) {
+  padding-left: 4px;
+
+  & > a {
+    display: block;
+    padding: 8px 0;
+
+    color: var(--#{$variable-prefix}text-color);
+
+    text-decoration: none;
+    word-break: break-all;
+
+    outline: none;
+
+    transition: color 0.2s linear;
+
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+
+    &:focus-visible {
+      outline: 1px dashed var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  &.is-active > a {
+    color: var(--#{$variable-prefix}color-primary);
+    font-weight: 500;
+  }
+}

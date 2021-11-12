@@ -1,0 +1,13 @@
+# Please see the documentation for all configuration options:
+# https://github.com/zeke/semantic-pull-requests#configuration
+
+titleAndCommits: true
+types:
+  - feat
+  - fix
+  - chore
+  - docs
+  - style
+  - refactor
+  - perf
+  - test
