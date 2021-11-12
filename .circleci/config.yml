@@ -44,7 +44,7 @@ workflows:
     jobs:
       - template:
           name: test
-          run-command: 'test:affected --code-coverage'
+          run-command: 'test:affected --all --code-coverage'
           post-steps:
             - 'codecov/upload'
 
