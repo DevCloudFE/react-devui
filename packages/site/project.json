@@ -1,0 +1,100 @@
+{
+  "root": "packages/site",
+  "sourceRoot": "packages/site/src",
+  "projectType": "application",
+  "targets": {
+    "build-base": {
+      "executor": "./tools/executors/site/build-base:build-base",
+      "options": {},
+      "configurations": {
+        "production": {}
+      }
+    },
+    "build": {
+      "executor": "@nrwl/web:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "deployUrl": "/",
+        "outputPath": "dist/packages/site",
+        "index": "packages/site/src/index.html",
+        "main": "packages/site/src/main.tsx",
+        "polyfills": "packages/site/src/polyfills.ts",
+        "tsConfig": "packages/site/tsconfig.app.json",
+        "assets": ["packages/site/src/favicon.ico", "packages/site/src/assets"],
+        "styles": ["packages/site/src/styles.scss"],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "packages/site/src/environments/environment.ts",
+              "with": "packages/site/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      },
+      "dependsOn": [
+        {
+          "target": "build-base",
+          "projects": "self"
+        }
+      ]
+    },
+    "serve-base": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "site:build",
+        "port": 4300,
+        "open": true
+      }
+    },
+    "serve": {
+      "executor": "./tools/executors/multiple:multiple",
+      "options": {
+        "tasks": [
+          {
+            "targetDescription": {
+              "project": "site",
+              "target": "build-base"
+            },
+            "options": {
+              "watch": true
+            }
+          },
+          {
+            "targetDescription": {
+              "project": "site",
+              "target": "serve-base"
+            }
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/site/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/site"],
+      "options": {
+        "jestConfig": "packages/site/jest.config.js",
+        "passWithNoTests": true,
+        "coverageReporters": ["clover", "json", "lcov", "text"]
+      }
+    }
+  },
+  "tags": []
+}

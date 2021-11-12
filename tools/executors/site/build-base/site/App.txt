@@ -1,0 +1,75 @@
+/* eslint-disable */
+// @ts-nocheck
+
+import { DI18NContext } from '@react-devui/ui';
+import { useCallback, useEffect, Suspense, lazy } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Route, Routes } from 'react-router-dom';
+import { useImmer } from 'use-immer';
+
+import { useAsync } from '@react-devui/ui/hooks';
+
+import { environment } from '../environments/environment';
+import { AppHeader, AppSidebar } from './components';
+
+__import__
+
+let hash = window.location.hash;
+
+export function App() {
+  const { i18n } = useTranslation();
+  const asyncCapture = useAsync();
+
+  useEffect(() => {
+    localStorage.setItem('language', i18n.language);
+  }, [i18n.language]);
+
+  const [mainEl, setMainEl] = useImmer<HTMLElement | null>(null);
+  const mainRef = useCallback(
+    (node) => {
+      if (node !== null) {
+        setMainEl(node);
+      }
+    },
+    [setMainEl]
+  );
+
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (mainEl) {
+      asyncGroup.setTimeout(() => {
+        if (hash) {
+          window.location.hash = '';
+          window.location.hash = hash;
+          hash = '';
+        } else if (!environment.production) {
+          mainEl.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
+        }
+      }, 300);
+      if (!environment.production) {
+        asyncGroup.fromEvent(window, 'beforeunload').subscribe({
+          next: () => {
+            localStorage.setItem('scrollTop', mainEl.scrollTop.toString());
+          },
+        });
+      }
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, mainEl]);
+
+  return (
+    <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
+      <AppHeader />
+      <AppSidebar />
+      <main ref={mainRef} className="app-main">
+        <Routes>
+__Route__
+        </Routes>
+      </main>
+    </DI18NContext.Provider>
+  );
+}
+
+export default App;

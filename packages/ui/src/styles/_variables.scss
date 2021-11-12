@@ -1,0 +1,61 @@
+$variable-prefix: 'd-' !default;
+$themes: primary, success, warning, danger !default;
+
+:root {
+  --#{$variable-prefix}text-color: #212529;
+  --#{$variable-prefix}background-color: #fff;
+  --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}divider-color: #f0f0f0;
+  --#{$variable-prefix}disabled-cover-color: rgb(255 255 255 / 50%);
+
+  /** step **/
+  --#{$variable-prefix}color-step-50: #f2f2f2;
+  --#{$variable-prefix}color-step-100: #e6e6e6;
+  --#{$variable-prefix}color-step-150: #d9d9d9;
+  --#{$variable-prefix}color-step-200: #ccc;
+  --#{$variable-prefix}color-step-250: #bfbfbf;
+  --#{$variable-prefix}color-step-300: #b3b3b3;
+  --#{$variable-prefix}color-step-350: #a6a6a6;
+  --#{$variable-prefix}color-step-400: #999;
+  --#{$variable-prefix}color-step-450: #8c8c8c;
+  --#{$variable-prefix}color-step-500: #808080;
+  --#{$variable-prefix}color-step-550: #737373;
+  --#{$variable-prefix}color-step-600: #666;
+  --#{$variable-prefix}color-step-650: #595959;
+  --#{$variable-prefix}color-step-700: #4d4d4d;
+  --#{$variable-prefix}color-step-750: #404040;
+  --#{$variable-prefix}color-step-800: #333;
+  --#{$variable-prefix}color-step-850: #262626;
+  --#{$variable-prefix}color-step-900: #191919;
+  --#{$variable-prefix}color-step-950: #0d0d0d;
+
+  /** theme **/
+  --#{$variable-prefix}color-primary: #5e7ce0;
+  --#{$variable-prefix}color-success: #25cc68;
+  --#{$variable-prefix}color-warning: #ffc409;
+  --#{$variable-prefix}color-danger: #eb445a;
+
+  /** rgb **/
+  --#{$variable-prefix}color-primary-rgb: 94 124 224;
+  --#{$variable-prefix}color-success-rgb: 45 211 111;
+  --#{$variable-prefix}color-warning-rgb: 255 196 9;
+  --#{$variable-prefix}color-danger-rgb: 235 68 90;
+
+  /** lighter **/
+  --#{$variable-prefix}color-primary-lighter: #{color.scale(#5e7ce0, $lightness: 30%)};
+  --#{$variable-prefix}color-success-lighter: #{color.scale(#25cc68, $lightness: 30%)};
+  --#{$variable-prefix}color-warning-lighter: #{color.scale(#ffc409, $lightness: 30%)};
+  --#{$variable-prefix}color-danger-lighter: #{color.scale(#eb445a, $lightness: 30%)};
+
+  /** darker **/
+  --#{$variable-prefix}color-primary-darker: #{color.scale(#5e7ce0, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
+  --#{$variable-prefix}color-success-darker: #{color.scale(#25cc68, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
+  --#{$variable-prefix}color-warning-darker: #{color.scale(#ffc409, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
+  --#{$variable-prefix}color-danger-darker: #{color.scale(#eb445a, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
+
+  /** component **/
+  --#{$variable-prefix}text-color-popup: #dfe1e6;
+  --#{$variable-prefix}background-color-popup: #464d6e;
+  --#{$variable-prefix}background-color-indicator: #dfe1e6;
+  --#{$variable-prefix}background-color-mask: rgb(0 0 0 / 20%);
+}

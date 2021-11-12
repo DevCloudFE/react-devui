@@ -1,0 +1,55 @@
+# Please see the documentation for all configuration options:
+# https://circleci.com/docs/2.0/configuration-reference/?section=configuration
+
+version: 2.1
+
+orbs:
+  node: 'circleci/node@4.5.1'
+  codecov: 'codecov/codecov@1.2.5'
+
+jobs:
+  # -------------------------
+  #     JOBS: Template
+  # -------------------------
+  template:
+    description: |
+      Simple template job.
+    executor:
+      name: 'node/default'
+      tag: '14.18.0'
+    parameters:
+      run-command:
+        default: test
+        description: 'The name of the script within your package.json which will run your tests.'
+        type: string
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: 'yarn run <<parameters.run-command>>'
+          name: 'Run YARN <<parameters.run-command>>'
+
+# -------------------------
+#        WORK FLOWS
+# -------------------------
+workflows:
+  lint:
+    jobs:
+      - template:
+          name: lint
+          run-command: 'lint:affected'
+
+  test:
+    jobs:
+      - template:
+          name: test
+          run-command: 'test:affected --code-coverage'
+          post-steps:
+            - 'codecov/upload'
+
+  build:
+    jobs:
+      - template:
+          name: build
+          run-command: 'build:affected'

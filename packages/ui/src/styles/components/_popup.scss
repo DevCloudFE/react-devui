@@ -1,0 +1,141 @@
+@mixin arrow-placement() {
+  $popup-selector: #{'.' + $variable-prefix + 'popup'};
+  $arrow-selector: #{$popup-selector + $element-separator + 'arrow'};
+
+  @at-root {
+    & > #{$arrow-selector} {
+      @content;
+    }
+  }
+}
+
+@include b(popup) {
+  position: fixed;
+
+  font-weight: 400;
+
+  background-color: var(--#{$variable-prefix}background-color-popup);
+
+  $selector: &;
+  $arrow-selector: #{$selector + $element-separator + 'arrow'};
+
+  @include font-size(1rem);
+
+  @include e(arrow) {
+    position: absolute;
+    z-index: -1;
+
+    width: 6px;
+    height: 6px;
+
+    background-color: var(--#{$variable-prefix}background-color-popup);
+  }
+
+  @include m(top) {
+    @include arrow-placement {
+      bottom: 0;
+      left: 50%;
+
+      transform: translate(-50%, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-left) {
+    @include arrow-placement {
+      bottom: 0;
+      left: 20px;
+
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-right) {
+    @include arrow-placement {
+      right: 20px;
+      bottom: 0;
+
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(right) {
+    @include arrow-placement {
+      top: 50%;
+      left: 0;
+
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(right-top) {
+    @include arrow-placement {
+      top: 12px;
+      left: 0;
+
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(right-bottom) {
+    @include arrow-placement {
+      bottom: 12px;
+      left: 0;
+
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(bottom) {
+    @include arrow-placement {
+      top: 0;
+      left: 50%;
+
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-left) {
+    @include arrow-placement {
+      top: 0;
+      left: 20px;
+
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-right) {
+    @include arrow-placement {
+      top: 0;
+      right: 20px;
+
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left) {
+    @include arrow-placement {
+      top: 50%;
+      right: 0;
+
+      transform: translate(50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left-top) {
+    @include arrow-placement {
+      top: 12px;
+      right: 0;
+
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(left-bottom) {
+    @include arrow-placement {
+      right: 0;
+      bottom: 12px;
+
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+}

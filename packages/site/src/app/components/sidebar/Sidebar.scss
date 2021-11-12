@@ -1,0 +1,30 @@
+.app-sidebar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 260px;
+  height: calc(100% - 64px);
+  padding: 20px 0;
+
+  overflow: auto;
+
+  &::after {
+    position: absolute;
+    top: 20px;
+    right: 0;
+
+    width: 1px;
+    height: calc(100% - 40px);
+
+    background-color: var(--d-divider-color);
+
+    content: '';
+  }
+
+  .app-sidebar__subtitle {
+    margin-left: 4px;
+
+    font-size: 0.8em;
+  }
+}

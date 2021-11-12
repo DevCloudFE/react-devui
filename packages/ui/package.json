@@ -1,0 +1,28 @@
+{
+  "name": "@react-devui/ui",
+  "version": "0.0.1",
+  "author": "Xie Jay <xiejay97@gmail.com>",
+  "description": "DevUI components based on React",
+  "title": "DevUI",
+  "keywords": [
+    "devui",
+    "component",
+    "components",
+    "design",
+    "framework",
+    "frontend",
+    "react",
+    "react-component",
+    "ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiejay97/react-devui.git"
+  },
+  "homepage": "https://github.com/xiejay97/react-devui/tree/main/ui#readme",
+  "bugs": {
+    "url": "https://github.com/xiejay97/react-devui/issues"
+  },
+  "license": "MIT",
+  "sideEffects": false
+}

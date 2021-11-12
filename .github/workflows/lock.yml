@@ -1,0 +1,33 @@
+# Please see the documentation for all configuration options:
+# https://github.com/marketplace/actions/lock-threads
+
+name: 'Lock Threads'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  lock-threads:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'dessant/lock-threads@v2'
+        with:
+          github-token: ${{ github.token }}
+          issue-lock-inactive-days: '365'
+          issue-exclude-created-before: ''
+          issue-exclude-labels: 'pinned, security'
+          issue-lock-labels: ''
+          issue-lock-comment: ''
+          issue-lock-reason: 'resolved'
+          pr-lock-inactive-days: '90'
+          pr-exclude-created-before: ''
+          pr-exclude-labels: 'pinned, security'
+          pr-lock-labels: ''
+          pr-lock-comment: ''
+          pr-lock-reason: 'resolved'
+          process-only: ''

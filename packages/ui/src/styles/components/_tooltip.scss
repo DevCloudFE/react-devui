@@ -1,0 +1,7 @@
+@include b(tooltip) {
+  padding: 4px 12px;
+  border-radius: 4px;
+
+  color: var(--#{$variable-prefix}text-color-popup);
+  white-space: pre;
+}

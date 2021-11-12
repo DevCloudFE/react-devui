@@ -1,0 +1,19 @@
+@include b(header) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--#{$variable-prefix}divider-color);
+
+  @include e(title) {
+    font-weight: 500;
+    line-height: 22px;
+
+    @include font-size(1.15rem);
+  }
+
+  @include e(buttons) {
+    margin-left: auto;
+  }
+}

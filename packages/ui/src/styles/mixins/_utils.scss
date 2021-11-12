@@ -1,0 +1,53 @@
+@mixin utils-clearfix {
+  $selector: &;
+
+  @at-root {
+    #{$selector}::before,
+    #{$selector}::after {
+      display: table;
+
+      content: '';
+    }
+    #{$selector}::after {
+      clear: both;
+    }
+  }
+}
+
+@mixin utils-vertical-center {
+  $selector: &;
+
+  @at-root {
+    #{$selector}::after {
+      display: inline-block;
+      height: 100%;
+
+      vertical-align: middle;
+
+      content: '';
+    }
+  }
+}
+
+@mixin utils-ellipsis {
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin utils-disabled($border: 0) {
+  &::before {
+    position: absolute;
+    top: -$border;
+    right: -$border;
+    bottom: -$border;
+    left: -$border;
+    z-index: 10;
+
+    background-color: var(--#{$variable-prefix}disabled-cover-color);
+    cursor: not-allowed;
+
+    content: '';
+  }
+}

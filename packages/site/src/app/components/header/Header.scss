@@ -1,0 +1,29 @@
+@import '~rfs/scss';
+
+.app-header {
+  position: relative;
+  z-index: 910;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0;
+
+  background-color: var(--d-background-color);
+
+  &.is-shadow {
+    box-shadow: 0 2px 8px 0 var(--d-shadow-color);
+  }
+
+  .app-header__logo {
+    margin-left: 28px;
+  }
+
+  .app-header__title {
+    margin-left: 8px;
+
+    font-weight: bold;
+    @include font-size(1.5rem);
+  }
+}

@@ -1,0 +1,304 @@
+@mixin menu-base($selector) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin: 0;
+  padding: 0 16px;
+
+  list-style: none;
+  outline: none;
+  cursor: pointer;
+
+  transition: all 0.2s ease-out;
+
+  &:not(.is-disabled) {
+    &:focus,
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+
+      background-color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 8%);
+    }
+  }
+
+  @include when(disabled) {
+    @include utils-disabled();
+  }
+
+  @include when(active) {
+    color: var(--#{$variable-prefix}color-primary);
+    font-weight: 500;
+
+    .#{$variable-prefix}#{$selector}__indicator > div::before {
+      transform: scaleY(1);
+    }
+
+    .#{$variable-prefix}#{$selector}__arrow {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+  }
+
+  @include when(horizontal) {
+    display: inline-flex;
+    min-width: unset;
+
+    &:not(.is-disabled) {
+      &:focus,
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &::after {
+      position: absolute;
+      right: 16px;
+      bottom: -5px;
+      left: 16px;
+
+      height: 2px;
+
+      background-color: transparent;
+      transform: scaleX(0.8);
+
+      transition: background-color 0.2s linear, transform 166ms linear;
+
+      content: '';
+    }
+
+    &.is-active {
+      &::after {
+        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        transform: scaleX(1);
+      }
+
+      .#{$variable-prefix}#{$selector}__indicator > div::before {
+        transform: scaleY(0);
+      }
+    }
+
+    .#{$variable-prefix}#{$selector}__title {
+      flex: 0 0 auto;
+    }
+  }
+
+  @include when(icon) {
+    height: 52px;
+
+    .#{$variable-prefix}#{$selector}__icon {
+      width: 64px;
+      padding-right: 16px;
+
+      & > .#{$variable-prefix}icon {
+        transform: translateX(12px) scale(1.5);
+      }
+    }
+  }
+
+  @include e(icon) {
+    flex-shrink: 0;
+    width: calc(1.05rem + 12px);
+
+    transition: all 0.2s linear;
+
+    @include font-size(1.05rem);
+
+    & > .#{$variable-prefix}icon {
+      transition: all 0.2s linear;
+    }
+  }
+
+  @include e(title) {
+    flex: 1 0 0;
+    min-width: 1em;
+
+    @include utils-ellipsis;
+  }
+}
+
+@mixin indicator($selector) {
+  &.is-first {
+    .#{$variable-prefix}#{$selector}__indicator > div {
+      bottom: 0;
+
+      height: calc(100% - 8px);
+
+      &::before {
+        top: 0;
+
+        height: calc(100% - 8px);
+
+        transform-origin: top;
+      }
+    }
+  }
+
+  &.is-last {
+    .#{$variable-prefix}#{$selector}__indicator > div {
+      top: 0;
+
+      height: calc(100% - 8px);
+
+      &::before {
+        bottom: 0;
+
+        height: calc(100% - 8px);
+
+        transform-origin: bottom;
+      }
+    }
+  }
+
+  .#{$variable-prefix}#{$selector}__indicator {
+    position: relative;
+
+    width: 0;
+    height: 100%;
+
+    & > div {
+      position: absolute;
+      left: -8px;
+
+      width: 2px;
+      height: 100%;
+
+      background-color: var(--#{$variable-prefix}background-color-indicator);
+
+      &::before {
+        position: absolute;
+
+        top: 8px;
+        left: 0;
+
+        display: block;
+        width: 2px;
+        height: calc(100% - 16px);
+
+        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        transform: scaleY(0);
+
+        transition: transform 0.2s linear;
+
+        content: '';
+      }
+    }
+  }
+}
+
+@include b(menu) {
+  position: relative;
+
+  padding: 8px 0;
+  overflow-x: hidden;
+
+  color: var(--#{$variable-prefix}color-step-700);
+
+  @include font-size(0.95rem);
+
+  @include when(horizontal) {
+    &::after {
+      position: absolute;
+      right: 4px;
+      bottom: 10px;
+      left: 4px;
+      z-index: -1;
+
+      height: 1px;
+
+      background-color: var(--#{$variable-prefix}divider-color);
+
+      content: '';
+    }
+  }
+}
+
+@include b(menu-list) {
+  position: relative;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+@include b(menu-group) {
+  padding: 8px 16px;
+
+  color: var(--#{$variable-prefix}color-step-400);
+
+  outline: none;
+
+  @include font-size(0.85rem);
+
+  @include utils-ellipsis;
+}
+
+@include b(menu-sub) {
+  @include menu-base(menu-sub);
+
+  @include indicator(menu-sub);
+
+  &:not(.is-disabled) {
+    &:focus,
+    &:hover {
+      .#{$variable-prefix}menu-sub__arrow {
+        color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+    }
+  }
+
+  @include when(expand) {
+    color: var(--#{$variable-prefix}color-primary);
+
+    .#{$variable-prefix}menu-sub__arrow {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+  }
+
+  @include when(horizontal) {
+    &.is-expand {
+      &::after {
+        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  @include e(arrow) {
+    flex: 0 0 auto;
+    margin-left: auto;
+
+    color: var(--#{$variable-prefix}color-step-450);
+
+    transition: color 0.2s ease-out, transform 0.2s linear;
+  }
+
+  @include e(popup) {
+    &.#{$variable-prefix}popup {
+      background-color: var(--#{$variable-prefix}background-color);
+      box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+    }
+
+    .#{$variable-prefix}menu-list {
+      padding: 8px;
+    }
+  }
+}
+
+@include b(menu-item) {
+  @include when(horizontal) {
+    &:not(.is-disabled) {
+      &:focus,
+      &:hover {
+        &::after {
+          background-color: var(--#{$variable-prefix}color-primary-lighter);
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+
+  @include menu-base(menu-item);
+
+  @include indicator(menu-item);
+}
