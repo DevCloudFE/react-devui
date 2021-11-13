@@ -35,5 +35,7 @@ module.exports = {
   rules: {
     'type-enum': [2, 'always', types],
     'scope-enum': getScopesRule,
+    'body-max-length': [0],
+    'body-max-line-length': [0],
   },
 };

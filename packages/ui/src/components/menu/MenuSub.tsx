@@ -12,7 +12,7 @@ import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
 import { DMenuContext } from './Menu';
-import { generateChildren, getAllIds, isMenuComponent } from './utils';
+import { generateChildren, getAllIds } from './utils';
 
 enableMapSet();
 
@@ -22,11 +22,11 @@ export type DMenuSubContextData = {
 export const DMenuSubContext = React.createContext<DMenuSubContextData>(null);
 
 export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
+  dId: string;
   dIcon?: React.ReactNode;
   dTitle: React.ReactNode;
   dDefaultExpand?: boolean;
   dDisabled?: boolean;
-  __id?: string;
   __level?: number;
   __navMenu?: boolean;
   __onFocus?: (id: string) => void;
@@ -35,11 +35,11 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
 
 export function DMenuSub(props: DMenuSubProps) {
   const {
+    dId,
     dIcon,
     dTitle,
     dDefaultExpand,
     dDisabled = false,
-    __id = '',
     __level = 0,
     __navMenu = false,
     __onFocus,
@@ -93,7 +93,7 @@ export function DMenuSub(props: DMenuSubProps) {
    * }
    */
   const [expand, setExpand] = useImmer(
-    isUndefined(dDefaultExpand) ? Array.from(_currentData?.expands ?? []).includes(__id) : dDefaultExpand
+    isUndefined(dDefaultExpand) ? Array.from(_currentData?.expands ?? []).includes(dId) : dDefaultExpand
   );
   const [visible, setVisible] = useImmer(false);
   const [currentVisible, setCurrentVisible] = useImmer(false);
@@ -170,17 +170,17 @@ export function DMenuSub(props: DMenuSubProps) {
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
-      __onFocus?.(`menu-sub-${toId(__id)}`);
+      __onFocus?.(`menu-sub-${toId(dId)}`);
     },
-    [__id, __onFocus, onFocus]
+    [__onFocus, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
-      __onBlur?.(`menu-sub-${toId(__id)}`);
+      __onBlur?.(`menu-sub-${toId(dId)}`);
     },
-    [__id, __onBlur, onBlur]
+    [__onBlur, dId, onBlur]
   );
 
   const handlePopupTrigger = useCallback(
@@ -190,10 +190,10 @@ export function DMenuSub(props: DMenuSubProps) {
       }
       setVisible(visible);
       _setPopupIds?.((draft) => {
-        visible ? draft.add(__id) : draft.delete(__id);
+        visible ? draft.add(dId) : draft.delete(dId);
       });
     },
-    [__id, _setPopupIds, setVisible, setCurrentVisible]
+    [_setPopupIds, dId, setVisible, setCurrentVisible]
   );
   //#endregion
 
@@ -228,22 +228,22 @@ export function DMenuSub(props: DMenuSubProps) {
   }, [_dMode, asyncCapture, setPopup]);
 
   useEffect(() => {
-    expand ? _currentData?.expands.add(__id) : _currentData?.expands.delete(__id);
-    _onExpandChange?.(__id, expand);
+    expand ? _currentData?.expands.add(dId) : _currentData?.expands.delete(dId);
+    _onExpandChange?.(dId, expand);
     return () => {
-      _currentData?.expands.delete(__id);
+      _currentData?.expands.delete(dId);
     };
-  }, [__id, _currentData, _onExpandChange, expand]);
+  }, [_currentData, _onExpandChange, dId, expand]);
 
   useEffect(() => {
-    if (_dExpandOne && _currentExpandId && _currentExpandId !== __id) {
+    if (_dExpandOne && _currentExpandId && _currentExpandId !== dId) {
       for (const ids of _currentData?.ids.values() ?? []) {
-        if (ids.includes(_currentExpandId) && ids.includes(__id)) {
+        if (ids.includes(_currentExpandId) && ids.includes(dId)) {
           setExpand(false);
         }
       }
     }
-  }, [__id, _dExpandOne, _currentExpandId, _currentData, setExpand]);
+  }, [_dExpandOne, _currentExpandId, _currentData, dId, setExpand]);
 
   useEffect(() => {
     if (!visible && popupIds.size === 0) {
@@ -264,29 +264,25 @@ export function DMenuSub(props: DMenuSubProps) {
   const childs = useMemo(() => {
     const arr: string[] = [];
     const _childs = generateChildren(children, !popup).map((child) => {
-      if (isMenuComponent(child)) {
-        arr.push(child.props.__id);
-        return React.cloneElement(child, {
-          ...child.props,
-          __level: popup ? 0 : __level + 1,
-          __onFocus: (id: string) => {
-            setFocusId((draft) => {
-              draft.add(id);
-            });
-          },
-          __onBlur: (id: string) => {
-            setFocusId((draft) => {
-              draft.delete(id);
-            });
-          },
-        });
-      }
-
-      return child;
+      arr.push(child.props.dId);
+      return React.cloneElement(child, {
+        ...child.props,
+        __level: popup ? 0 : __level + 1,
+        __onFocus: (id: string) => {
+          setFocusId((draft) => {
+            draft.add(id);
+          });
+        },
+        __onBlur: (id: string) => {
+          setFocusId((draft) => {
+            draft.delete(id);
+          });
+        },
+      });
     });
-    _currentData?.ids.set(__id, arr);
+    _currentData?.ids.set(dId, arr);
     return _childs;
-  }, [__id, __level, _currentData, popup, children, setFocusId]);
+  }, [__level, _currentData, dId, popup, children, setFocusId]);
   //#endregion
 
   const contextValue = useMemo(() => ({ setPopupIds }), [setPopupIds]);
@@ -300,7 +296,7 @@ export function DMenuSub(props: DMenuSubProps) {
       }}
       role="menu"
       tabIndex={-1}
-      aria-labelledby={`menu-sub-${toId(__id)}`}
+      aria-labelledby={`menu-sub-${toId(dId)}`}
       aria-orientation="vertical"
       aria-activedescendant={Array.from(focusId)[0] ?? undefined}
     >
@@ -319,9 +315,9 @@ export function DMenuSub(props: DMenuSubProps) {
       >
         <li
           {...restProps}
-          id={`menu-sub-${toId(__id)}`}
+          id={`menu-sub-${toId(dId)}`}
           className={getClassName(className, `${dPrefix}menu-sub`, {
-            'is-active': (popup ? !currentVisible : !expand) && getAllIds(__id, _currentData?.ids).includes(_activeId as string),
+            'is-active': (popup ? !currentVisible : !expand) && getAllIds(dId, _currentData?.ids).includes(_activeId as string),
             'is-expand': popup ? currentVisible : expand,
             'is-horizontal': horizontal,
             'is-icon': _dMode === 'icon' && __navMenu,

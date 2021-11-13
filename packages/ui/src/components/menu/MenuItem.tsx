@@ -8,9 +8,9 @@ import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
 
 export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
+  dId: string;
   dIcon?: React.ReactNode;
   dDisabled?: boolean;
-  __id?: string;
   __level?: number;
   __navMenu?: boolean;
   __onFocus?: (id: string) => void;
@@ -19,9 +19,9 @@ export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
 
 export function DMenuItem(props: DMenuItemProps) {
   const {
+    dId,
     dIcon,
     dDisabled = false,
-    __id = '',
     __level = 0,
     __navMenu = false,
     __onFocus,
@@ -62,25 +62,25 @@ export function DMenuItem(props: DMenuItemProps) {
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
-      _onActiveChange?.(__id);
+      _onActiveChange?.(dId);
     },
-    [_onActiveChange, __id, onClick]
+    [_onActiveChange, dId, onClick]
   );
 
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
-      __onFocus?.(`menu-item-${toId(__id)}`);
+      __onFocus?.(`menu-item-${toId(dId)}`);
     },
-    [__id, __onFocus, onFocus]
+    [__onFocus, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
-      __onBlur?.(`menu-item-${toId(__id)}`);
+      __onBlur?.(`menu-item-${toId(dId)}`);
     },
-    [__id, __onBlur, onBlur]
+    [__onBlur, dId, onBlur]
   );
   //#endregion
 
@@ -89,9 +89,9 @@ export function DMenuItem(props: DMenuItemProps) {
       <DTooltip dTitle={_dMode === 'icon' && __navMenu && children} dPlacement="right">
         <li
           {...restProps}
-          id={`menu-item-${toId(__id)}`}
+          id={`menu-item-${toId(dId)}`}
           className={getClassName(className, `${dPrefix}menu-item`, {
-            'is-active': _activeId === __id,
+            'is-active': _activeId === dId,
             'is-horizontal': _dMode === 'horizontal' && __navMenu,
             'is-icon': _dMode === 'icon' && __navMenu,
           })}

@@ -4,10 +4,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState } from '../../hooks';
-import { getClassName, getComponentName } from '../../utils';
+import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
-import { generateChildren, isMenuComponent } from './utils';
+import { generateChildren } from './utils';
 
 enableMapSet();
 
@@ -34,6 +34,8 @@ export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
   dMode?: 'horizontal' | 'vertical' | 'popup' | 'icon';
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
+  dHeader?: React.ReactNode;
+  dFooter?: React.ReactNode;
   onActiveChange?: (id: string) => void;
   onExpandsChange?: (ids: string[]) => void;
 }
@@ -46,6 +48,8 @@ export function DMenu(props: DMenuProps) {
     dMode = 'vertical',
     dExpandOne = false,
     dExpandTrigger,
+    dHeader,
+    dFooter,
     onActiveChange,
     onExpandsChange,
     className,
@@ -137,38 +141,28 @@ export function DMenu(props: DMenuProps) {
   const childs = useMemo(() => {
     const arr: string[] = [];
     const _childs = generateChildren(children).map((child, index) => {
-      if (isMenuComponent(child)) {
-        arr.push(child.props.__id);
+      arr.push(child.props.id);
 
-        let tabIndex = child.props.tabIndex;
-        if (index === 0) {
-          tabIndex = 0;
-        }
-
-        let __navMenu = undefined;
-        const componentName = getComponentName(child);
-        if (componentName === 'DMenuSub' || componentName === 'DMenuItem') {
-          __navMenu = true;
-        }
-
-        return React.cloneElement(child, {
-          ...child.props,
-          tabIndex,
-          __navMenu,
-          __onFocus: (id: string) => {
-            setFocusId((draft) => {
-              draft.add(id);
-            });
-          },
-          __onBlur: (id: string) => {
-            setFocusId((draft) => {
-              draft.delete(id);
-            });
-          },
-        });
+      let tabIndex = child.props.tabIndex;
+      if (index === 0) {
+        tabIndex = 0;
       }
 
-      return child;
+      return React.cloneElement(child, {
+        ...child.props,
+        tabIndex,
+        __navMenu: true,
+        __onFocus: (id: string) => {
+          setFocusId((draft) => {
+            draft.add(id);
+          });
+        },
+        __onBlur: (id: string) => {
+          setFocusId((draft) => {
+            draft.delete(id);
+          });
+        },
+      });
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     currentData.ids.set(Symbol('menu') as any, arr);
@@ -205,7 +199,9 @@ export function DMenu(props: DMenuProps) {
             aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
             aria-activedescendant={Array.from(focusId)[0] ?? undefined}
           >
+            {dHeader}
             {childs}
+            {dFooter}
           </nav>
         </DTrigger>
       </DCollapseTransition>

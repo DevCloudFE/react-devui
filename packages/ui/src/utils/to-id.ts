@@ -1,4 +1,10 @@
-export function toId(id: string) {
+import { isNumber } from 'lodash';
+
+export function toId(id: string | number) {
+  if (isNumber(id)) {
+    return id;
+  }
+
   if (/\s/.test(id)) {
     let _id = id.replace(/\s/g, '-');
     _id = _id.toLowerCase();

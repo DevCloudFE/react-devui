@@ -24,6 +24,8 @@ Users need top navigation or side navigation.
 | dMode | Menu type | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | Keep the same level of the menu, expand at most one sub-menu | boolean | false |
 | dExpandTrigger | How to trigger the expansion, adjust the trigger behavior according to `dMode` by default | 'hover' \| 'click' | - |
+| dHeader | Menu header | React.ReactNode | - |
+| dFooter | Menu footer | React.ReactNode | - |
 | onActiveChange | Callback for active menu item change | `(id: string) => void` | - |
 | onExpandsChange | Callback for changes in expanded submenu | `(ids: string[]) => void` | - |
 <!-- prettier-ignore-end -->
@@ -35,6 +37,7 @@ Users need top navigation or side navigation.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
+| dId | Uniquely identifies | string | - |
 | dTitle | The title of the menu group | React.ReactNode | - |
 <!-- prettier-ignore-end -->
 
@@ -45,6 +48,7 @@ Users need top navigation or side navigation.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
+| dId | Uniquely identifies | string | - |
 | dIcon | Settings submenu icon | React.ReactNode | - |
 | dTitle | Set submenu title | React.ReactNode | - |
 | dDefaultExpand | Whether to expand by default | boolean | - |
@@ -58,6 +62,7 @@ Users need top navigation or side navigation.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
+| dId | Uniquely identifies | string | - |
 | dIcon | Set menu item icon | React.ReactNode | - |
 | dDisabled | Whether to disable | boolean | false |
 <!-- prettier-ignore-end -->
