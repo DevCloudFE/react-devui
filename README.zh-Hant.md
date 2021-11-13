@@ -1,4 +1,4 @@
-<h1 align="center">Devui Plus</h1>
+<h1 align="center">React DevUI</h1>
 
 <p align="center">DevUI components based on React</p>
 
