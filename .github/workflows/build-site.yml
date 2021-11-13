@@ -1,0 +1,25 @@
+name: 'Build Site'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: yarn nx build site --configuration=production
+      - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
+      - uses: dswistowski/surge-sh-action@v1
+        with:
+          domain: 'react-devui.surge.sh'
+          project: './dist/packages/site'
+          login: ${{ secrets.SURGE_LOGIN }}
+          token: ${{ secrets.SURGE_TOKEN }}

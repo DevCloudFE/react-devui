@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build-site:
+  pr-preview:
     runs-on: ubuntu-latest
     steps:
       - name: Find Comment
