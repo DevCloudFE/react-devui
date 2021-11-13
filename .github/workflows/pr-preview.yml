@@ -1,0 +1,62 @@
+name: 'PR Preview'
+
+on:
+  pull_request:
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find Comment
+        uses: peter-evans/find-comment@v1
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '.surge.sh) has been generated!'
+      - name: Create comment
+        if: steps.fc.outputs.comment-id == ''
+        uses: peter-evans/create-or-update-comment@v1
+        id: couc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
+      - name: Update comment
+        if: steps.fc.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body: |
+            After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
+          edit-mode: replace
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: yarn nx build site --configuration=production
+      - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
+      - uses: dswistowski/surge-sh-action@v1
+        with:
+          domain: 'react-devui-${{ github.sha }}.surge.sh'
+          project: './dist/packages/site'
+          login: ${{ secrets.SURGE_LOGIN }}
+          token: ${{ secrets.SURGE_TOKEN }}
+      - name: Update comment
+        if: steps.fc.outputs.comment-id == ''
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ steps.couc.outputs.comment-id }}
+          body: |
+            Website [preview](//react-devui-${{ github.sha }}.surge.sh) has been generated!  :tada: :tada: :tada:
+          edit-mode: replace
+      - name: Update comment
+        if: steps.fc.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body: |
+            Website [preview](//react-devui-${{ github.sha }}.surge.sh) has been generated!  :tada: :tada: :tada:
+          edit-mode: replace
