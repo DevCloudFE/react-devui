@@ -32,7 +32,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/ui/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["packages/ui/**/*.{ts,tsx,js,jsx,md}"]
       }
     },
     "test": {

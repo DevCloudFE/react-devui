@@ -20,6 +20,7 @@ export function DMenuGroup(props: DMenuGroupProps) {
     dId,
     dTitle,
     __level = 0,
+    // eslint-disable-next-line no-unused-vars
     __navMenu = false,
     __onFocus,
     __onBlur,

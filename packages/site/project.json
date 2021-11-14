@@ -83,7 +83,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/site/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["packages/site/**/*.{ts,tsx,js,jsx,md}"]
       }
     },
     "test": {

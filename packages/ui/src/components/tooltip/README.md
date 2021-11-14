@@ -47,7 +47,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 ### DTransitionStateList
 
 ```tsx
-interface DTransitionStateList {
+export interface DTransitionStateList {
   'enter-from'?: Partial<CSSStyleDeclaration>;
   'enter-active'?: Partial<CSSStyleDeclaration>;
   'enter-to'?: Partial<CSSStyleDeclaration>;

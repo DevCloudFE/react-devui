@@ -1,10 +1,15 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "import"],
+  "extends": ["plugin:prettier/recommended"],
+  "plugins": ["@nrwl/nx", "import", "markdown"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": ["**/*.md"],
+      "processor": "markdown/markdown"
+    },
+    {
+      "files": ["*.md", "*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -25,7 +30,7 @@
             "groups": ["type", "builtin", "external", "internal", ["parent", "sibling", "index"]],
             "pathGroups": [
               {
-                "pattern": "@react-devui/ui/**",
+                "pattern": "@react-devui/**",
                 "group": "internal",
                 "position": "after"
               }
@@ -38,13 +43,12 @@
             },
             "warnOnUnassignedImports": true
           }
-        ],
-        "no-unused-vars": "error"
+        ]
       }
     },
     {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript", "plugin:prettier/recommended"],
+      "files": ["*.md", "*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
         "@typescript-eslint/array-type": [
           "error",
@@ -103,11 +107,12 @@
             "ignoreParameters": true,
             "ignoreProperties": true
           }
-        ]
+        ],
+        "no-unused-vars": "error"
       }
     },
     {
-      "files": ["*.js", "*.jsx"],
+      "files": ["*.md", "*.js", "*.jsx"],
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }

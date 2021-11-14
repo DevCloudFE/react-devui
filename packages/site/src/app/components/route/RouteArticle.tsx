@@ -1,5 +1,6 @@
-import { DTooltip, DIcon, DAnchor, DAnchorLink } from '@react-devui/ui';
 import { useTranslation } from 'react-i18next';
+
+import { DTooltip, DIcon, DAnchor, DAnchorLink } from '@react-devui/ui';
 
 import './RouteArticle.scss';
 

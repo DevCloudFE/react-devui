@@ -1,8 +1,9 @@
-import { DMenu, DMenuGroup, DMenuItem } from '@react-devui/ui';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useImmer } from 'use-immer';
+
+import { DMenu, DMenuGroup, DMenuItem } from '@react-devui/ui';
 
 import menu from '../../configs/menu.json';
 import './Sidebar.scss';
