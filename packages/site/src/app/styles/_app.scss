@@ -15,8 +15,8 @@ body {
   text-align: null;
 
   background-color: white; // 2
-  -webkit-text-size-adjust: 100%; // 3
-  -webkit-tap-highlight-color: rgba(black, 0); // 4
+  text-size-adjust: 100%; // 3
+  -webkit-tap-highlight-color: rgb(0 0 0 / 0%); // 4
 
   @include font-size(1rem);
 

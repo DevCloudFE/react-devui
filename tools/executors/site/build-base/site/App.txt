@@ -2,7 +2,7 @@
 // @ts-nocheck
 
 import { DI18NContext } from '@react-devui/ui';
-import { useCallback, useEffect, Suspense, lazy } from 'react';
+import React, { useCallback, useEffect, Suspense, lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
 import { useImmer } from 'use-immer';
@@ -15,6 +15,9 @@ import { AppHeader, AppSidebar } from './components';
 __import__
 
 let hash = window.location.hash;
+
+export type AppContextData = { onMount: () => void } | null;
+export const AppContext = React.createContext<AppContextData>(null);
 
 export function App() {
   const { i18n } = useTranslation();
@@ -37,15 +40,6 @@ export function App() {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (mainEl) {
-      asyncGroup.setTimeout(() => {
-        if (hash) {
-          window.location.hash = '';
-          window.location.hash = hash;
-          hash = '';
-        } else if (!environment.production) {
-          mainEl.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
-        }
-      }, 300);
       if (!environment.production) {
         asyncGroup.fromEvent(window, 'beforeunload').subscribe({
           next: () => {
@@ -59,16 +53,35 @@ export function App() {
     }
   }, [asyncCapture, mainEl]);
 
+  const contextValue = useMemo(
+    () => ({
+      onMount: () => {
+        if (mainEl) {
+          if (hash) {
+            window.location.hash = '';
+            window.location.hash = hash;
+            hash = '';
+          } else if (!environment.production) {
+            mainEl.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
+          }
+        }
+      },
+    }),
+    [mainEl]
+  );
+
   return (
-    <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
-      <AppHeader />
-      <AppSidebar />
-      <main ref={mainRef} className="app-main">
-        <Routes>
+    <AppContext.Provider value={contextValue}>
+      <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
+        <AppHeader />
+        <AppSidebar />
+        <main ref={mainRef} className="app-main">
+          <Routes>
 __Route__
-        </Routes>
-      </main>
-    </DI18NContext.Provider>
+          </Routes>
+        </main>
+      </DI18NContext.Provider>
+    </AppContext.Provider>
   );
 }
 

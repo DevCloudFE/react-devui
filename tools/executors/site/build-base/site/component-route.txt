@@ -1,6 +1,11 @@
 /* eslint-disable */
 // @ts-nocheck
 
+import { useEffect } from 'react';
+
+import { useCustomContext } from '@react-devui/ui/hooks';
+
+import { AppContext } from '../../../App';
 import { AppRoute, AppDemoBox } from '../../../components';
 
 __import__
@@ -10,6 +15,12 @@ export default function __Route__() {
     'en-US': __en-US__,
     'zh-Hant': __zh-Hant__,
   };
+
+  const { onMount: _onMount } = useCustomContext(AppContext);
+
+  useEffect(() => {
+    _onMount?.();
+  }, [_onMount]);
 
   return <AppRoute {...props} />;
 }
