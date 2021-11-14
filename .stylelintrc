@@ -22,5 +22,11 @@
     "scss/at-rule-no-unknown": true,
     "custom-property-pattern": null,
     "selector-class-pattern": null
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.md", "**/*.md"],
+      "customSyntax": "postcss-markdown"
+    }
+  ]
 }

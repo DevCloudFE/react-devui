@@ -1,7 +1,7 @@
 {
   "typescript.tsdk": "./node_modules/typescript/lib",
   "eslint.format.enable": true,
-  "stylelint.validate": ["css", "html", "scss"],
+  "stylelint.validate": ["css", "html", "scss", "markdown"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
