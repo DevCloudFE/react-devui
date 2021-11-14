@@ -13,7 +13,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: '.surge.sh) has been generated!'
+          body-includes: '<!-- pr-preview-comment -->'
       - name: Create comment
         if: steps.fc.outputs.comment-id == ''
         uses: peter-evans/create-or-update-comment@v1
@@ -21,6 +21,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
+            <!-- pr-preview-comment -->
             After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
       - name: Update comment
         if: steps.fc.outputs.comment-id != ''
@@ -28,6 +29,7 @@ jobs:
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: |
+            <!-- pr-preview-comment -->
             After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
           edit-mode: replace
       - uses: actions/checkout@v2
@@ -50,6 +52,7 @@ jobs:
         with:
           comment-id: ${{ steps.couc.outputs.comment-id }}
           body: |
+            <!-- pr-preview-comment -->
             Website [preview](//react-devui-${{ github.sha }}.surge.sh) has been generated!  :tada: :tada: :tada:
           edit-mode: replace
       - name: Update comment
@@ -58,5 +61,6 @@ jobs:
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: |
+            <!-- pr-preview-comment -->
             Website [preview](//react-devui-${{ github.sha }}.surge.sh) has been generated!  :tada: :tada: :tada:
           edit-mode: replace
