@@ -141,7 +141,7 @@ export function DMenu(props: DMenuProps) {
   const childs = useMemo(() => {
     const arr: string[] = [];
     const _childs = generateChildren(children).map((child, index) => {
-      arr.push(child.props.id);
+      arr.push(child.props.dId);
 
       let tabIndex = child.props.tabIndex;
       if (index === 0) {
