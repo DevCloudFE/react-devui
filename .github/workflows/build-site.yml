@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 14
           registry-url: 'https://registry.npmjs.org'
+      - uses: c-hive/gha-yarn-cache@v2
       - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production
       - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
