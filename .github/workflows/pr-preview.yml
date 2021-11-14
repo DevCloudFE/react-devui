@@ -33,10 +33,10 @@ jobs:
             After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
           edit-mode: replace
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: 14
-          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production
       - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
