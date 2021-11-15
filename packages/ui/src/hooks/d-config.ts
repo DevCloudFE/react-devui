@@ -1,50 +1,10 @@
-import type {
-  DAffixProps,
-  DAnchorProps,
-  DAnchorLinkProps,
-  DButtonProps,
-  DButtonGroupProps,
-  DDrawerProps,
-  DDrawerHeaderProps,
-  DDrawerFooterProps,
-  DIconProps,
-  DMenuProps,
-  DMenuGroupProps,
-  DMenuItemProps,
-  DMenuSubProps,
-  DTooltipProps,
-} from '../components';
-
 import { isUndefined } from 'lodash';
 import React, { useContext } from 'react';
 
-export type DComponentConfig = Partial<{
-  affix: DAffixProps;
-
-  anchor: DAnchorProps;
-  'anchor-link': DAnchorLinkProps;
-
-  button: DButtonProps;
-  'button-group': DButtonGroupProps;
-
-  drawer: DDrawerProps;
-  'drawer-header': DDrawerHeaderProps;
-  'drawer-footer': DDrawerFooterProps;
-
-  icon: DIconProps;
-
-  menu: DMenuProps;
-  'menu-group': DMenuGroupProps;
-  'menu-item': DMenuItemProps;
-  'menu-sub': DMenuSubProps;
-
-  tooltip: DTooltipProps;
-}>;
-
-export const DComponentConfigContext = React.createContext<DComponentConfig>({});
+export const DComponentConfigContext = React.createContext({});
 export const DPrefixConfigContext = React.createContext('d-');
 
-export function useDComponentConfig<T>(component: keyof DComponentConfig, props: T): T {
+export function useDComponentConfig<T>(component: string, props: T): T {
   const dConfig = useContext(DComponentConfigContext);
   const customConfig = dConfig[component] ?? {};
   const noUndefinedProps: unknown = {};
