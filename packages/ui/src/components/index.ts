@@ -18,3 +18,6 @@ export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
+
+export type { DVirtualScrollProps } from './virtual-scroll';
+export { DVirtualScroll } from './virtual-scroll';
