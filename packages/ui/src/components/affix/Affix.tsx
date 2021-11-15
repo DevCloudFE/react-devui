@@ -95,57 +95,54 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   const bottom = useMemo(() => (isString(dBottom) ? toPx(dBottom, true) : dBottom ?? 0), [dBottom]);
 
   const updatePosition = useCallback(() => {
-    throttleByAnimationFrame(() => {
-      if ((isUndefined(dTarget) || targetEl.current) && affixEl && referenceEl) {
-        let targetRect = {
-          top: 0,
-          bottom: window.innerHeight,
-        };
-        if (targetEl.current) {
-          targetRect = targetEl.current.getBoundingClientRect();
-        }
-
-        const offsetEl = fixed === true ? referenceEl : affixEl;
-        const offsetRect = offsetEl.getBoundingClientRect();
-
-        let fixedCondition = offsetRect.top - targetRect.top <= top;
-        let fixedTop = targetRect.top + top;
-        if (!isUndefined(dBottom)) {
-          fixedCondition = targetRect.bottom - offsetRect.bottom <= bottom;
-          fixedTop = targetRect.bottom - bottom - offsetRect.height;
-        }
-
-        if (fixedCondition) {
-          setFixedStyle({
-            position: 'fixed',
-            zIndex: dZIndex,
-            width: offsetRect.width,
-            height: offsetRect.height,
-            left: offsetRect.left,
-            top: fixedTop,
-          });
-          const affixRect = affixEl.getBoundingClientRect();
-          setReferenceStyle({
-            width: affixRect.width,
-            height: affixRect.height,
-          });
-          if (!isUndefined(fixed) && fixed === false) {
-            onFixedChange?.(true);
-          }
-          setFixed(true);
-        } else {
-          if (!isUndefined(fixed) && fixed === true) {
-            onFixedChange?.(false);
-          }
-          setFixed(false);
-        }
+    if ((isUndefined(dTarget) || targetEl.current) && affixEl && referenceEl) {
+      let targetRect = {
+        top: 0,
+        bottom: window.innerHeight,
+      };
+      if (targetEl.current) {
+        targetRect = targetEl.current.getBoundingClientRect();
       }
-    });
+
+      const offsetEl = fixed === true ? referenceEl : affixEl;
+      const offsetRect = offsetEl.getBoundingClientRect();
+
+      let fixedCondition = offsetRect.top - targetRect.top <= top;
+      let fixedTop = targetRect.top + top;
+      if (!isUndefined(dBottom)) {
+        fixedCondition = targetRect.bottom - offsetRect.bottom <= bottom;
+        fixedTop = targetRect.bottom - bottom - offsetRect.height;
+      }
+
+      if (fixedCondition) {
+        setFixedStyle({
+          position: 'fixed',
+          zIndex: dZIndex,
+          width: offsetRect.width,
+          height: offsetRect.height,
+          left: offsetRect.left,
+          top: fixedTop,
+        });
+        const affixRect = affixEl.getBoundingClientRect();
+        setReferenceStyle({
+          width: affixRect.width,
+          height: affixRect.height,
+        });
+        if (!isUndefined(fixed) && fixed === false) {
+          onFixedChange?.(true);
+        }
+        setFixed(true);
+      } else {
+        if (!isUndefined(fixed) && fixed === true) {
+          onFixedChange?.(false);
+        }
+        setFixed(false);
+      }
+    }
   }, [
     dTarget,
     dBottom,
     dZIndex,
-    throttleByAnimationFrame,
     top,
     bottom,
     fixed,
@@ -172,23 +169,23 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (fixed && referenceEl) {
-      asyncGroup.onResize(referenceEl, updatePosition);
+      asyncGroup.onResize(referenceEl, () => throttleByAnimationFrame(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, fixed, referenceEl, updatePosition]);
+  }, [throttleByAnimationFrame, asyncCapture, fixed, referenceEl, updatePosition]);
 
   useEffect(() => {
-    const tid = globalScrollCapture.addTask(() => updatePosition());
+    const tid = globalScrollCapture.addTask(() => throttleByAnimationFrame(updatePosition));
     return () => {
       globalScrollCapture.deleteTask(tid);
     };
-  }, [updatePosition]);
+  }, [throttleByAnimationFrame, updatePosition]);
 
   useEffect(() => {
-    updatePosition();
-  }, [updatePosition]);
+    throttleByAnimationFrame(updatePosition);
+  }, [throttleByAnimationFrame, updatePosition]);
   //#endregion
 
   useImperativeHandle(
