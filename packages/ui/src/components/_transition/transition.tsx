@@ -15,6 +15,7 @@ export interface DTransitionStateList {
 }
 
 export interface DTransitionCallbackList {
+  init?: (el: HTMLElement) => void;
   beforeEnter?: (el: HTMLElement) => void;
   enter?: (el: HTMLElement) => void;
   afterEnter?: (el: HTMLElement, setCss: CssRecord['setCss']) => void;
@@ -108,6 +109,8 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
 
   if (el && isUndefined(currentData.visible) && !dVisible) {
     cssRecord.setCss(el, { display: 'none' });
+    const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(el) ?? {} : dCallbackList;
+    callbackList.init?.(el);
   }
 
   //#region Mounted & Unmount.

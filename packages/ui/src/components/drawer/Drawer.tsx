@@ -1,13 +1,13 @@
 import type { DElementSelector } from '../../hooks/element';
 import type { DTransitionRef } from '../_transition';
 
-import { isUndefined, isString } from 'lodash';
+import { isUndefined } from 'lodash';
 import React, { useEffect, useCallback, useMemo, useImperativeHandle } from 'react';
 import ReactDOM from 'react-dom';
 import { useImmer } from 'use-immer';
 
 import { useDPrefixConfig, useDComponentConfig, useLockScroll, useCustomRef, useId, useAsync, useElement } from '../../hooks';
-import { getClassName, globalMaxIndexManager, globalEscStack, globalScrollCapture, getFillingStyle, toPx } from '../../utils';
+import { getClassName, globalMaxIndexManager, globalEscStack, globalScrollCapture, getFillingStyle } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 
@@ -116,8 +116,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
     left: 0,
   });
 
-  const [display, setDisplay] = useImmer<'none' | undefined>('none');
-
   const [zIndex, setZIndex] = useImmer(1000);
   //#endregion
 
@@ -141,8 +139,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
    *   constructor(private reactConvert: ReactConvertService) {}
    * }
    */
-  const width = useMemo(() => (isString(dWidth) ? toPx(dWidth, true) : dWidth), [dWidth]);
-  const height = useMemo(() => (isString(dHeight) ? toPx(dHeight, true) : dHeight), [dHeight]);
 
   const handleMaskClose = useCallback(() => {
     if (dMaskClosable) {
@@ -206,12 +202,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
    */
   useEffect(() => {
     if (dVisible) {
-      setDisplay(undefined);
-    }
-  }, [dVisible, setDisplay]);
-
-  useEffect(() => {
-    if (dVisible) {
       if (isUndefined(dZIndex)) {
         if (isUndefined(dContainer)) {
           const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
@@ -227,23 +217,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
       }
     }
   }, [dVisible, dContainer, dZIndex, setZIndex]);
-
-  useEffect(() => {
-    if (dVisible) {
-      __onVisibleChange?.({
-        visible: true,
-        top: distance.top + (dPlacement === 'top' ? height : 0),
-        right: distance.right + (dPlacement === 'right' ? width : 0),
-        bottom: distance.bottom + (dPlacement === 'bottom' ? height : 0),
-        left: distance.left + (dPlacement === 'left' ? width : 0),
-      });
-    } else {
-      __onVisibleChange?.({
-        ...distance,
-        visible: false,
-      });
-    }
-  }, [dVisible, dPlacement, __onVisibleChange, distance, width, height]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -302,7 +275,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
         style={{
           ...style,
           zIndex,
-          display,
           transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
           transform:
             dPlacement === 'top'
@@ -341,6 +313,22 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
           dCallbackList={() => {
             let cb: () => void;
             return {
+              init: () => {
+                if (drawerEl) {
+                  drawerEl.style.display = dVisible ? '' : 'none';
+                }
+              },
+              beforeEnter: (el) => {
+                drawerEl && (drawerEl.style.display = '');
+                const rect = el.getBoundingClientRect();
+                __onVisibleChange?.({
+                  visible: true,
+                  top: distance.top + (dPlacement === 'top' ? rect.height : 0),
+                  right: distance.right + (dPlacement === 'right' ? rect.width : 0),
+                  bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
+                  left: distance.left + (dPlacement === 'left' ? rect.width : 0),
+                });
+              },
               afterEnter: (el) => {
                 afterVisibleChange?.(true);
                 const activeEl = document.activeElement as HTMLElement | null;
@@ -349,10 +337,14 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
               },
               beforeLeave: () => {
                 cb?.();
+                __onVisibleChange?.({
+                  ...distance,
+                  visible: false,
+                });
               },
               afterLeave: () => {
                 afterVisibleChange?.(false);
-                setDisplay('none');
+                drawerEl && (drawerEl.style.display = 'none');
               },
             };
           }}
