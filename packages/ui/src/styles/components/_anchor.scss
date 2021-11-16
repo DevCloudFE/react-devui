@@ -28,7 +28,7 @@
 
       background-color: var(--#{$variable-prefix}background-color);
       transform: translate(-50%, -50%);
-      opacity: 0%;
+      opacity: 0;
 
       transition: top 0.3s ease-in-out, opacity 160ms linear;
     }
@@ -42,7 +42,7 @@
 
       background-color: var(--#{$variable-prefix}color-primary);
       transform: translate(0, -50%);
-      opacity: 0%;
+      opacity: 0;
 
       transition: top 0.3s ease-in-out, opacity 160ms linear;
     }

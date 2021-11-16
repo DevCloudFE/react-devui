@@ -100,13 +100,13 @@
     color: var(--d-color-primary);
     text-decoration: none;
 
-    opacity: 0%;
+    opacity: 0;
 
     transition: opacity 0.2s linear;
 
     &:focus-visible {
       outline: none;
-      opacity: 100%;
+      opacity: 1;
     }
   }
 
@@ -117,7 +117,7 @@
   h5,
   h6 {
     &:hover .anchor {
-      opacity: 100%;
+      opacity: 1;
     }
   }
 

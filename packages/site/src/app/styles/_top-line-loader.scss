@@ -1,5 +1,12 @@
 @mixin generate-linear-gradient($color) {
-  background: linear-gradient(90deg, transparentize($color, 1) 0%, $color 30%, $color 50%, $color 70%, transparentize($color, 1) 100%);
+  background: linear-gradient(
+    90deg,
+    color.adjust($color, $alpha: -1) 0%,
+    $color 30%,
+    $color 50%,
+    $color 70%,
+    color.adjust($color, $alpha: -1) 100%
+  );
 }
 
 .app-top-line-loader {
