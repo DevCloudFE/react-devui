@@ -1,0 +1,3 @@
+@include b(drag-placeholder) {
+  border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
+}
