@@ -33,3 +33,22 @@ body {
     overflow: auto;
   }
 }
+
+// demo general style
+.app-demo-menu:not(.is-horizontal) {
+  border-right: 1px solid var(--d-divider-color);
+}
+
+.app-demo-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 40px;
+
+  color: #fff;
+
+  background-color: var(--d-color-primary);
+
+  @include font-size(0.8rem);
+}
