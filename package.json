@@ -13,6 +13,9 @@
   "scripts": {
     "site:serve": "nx serve site",
     "lint:affected": "nx affected:lint --parallel --max-parallel=4",
+    "lint:affected:fix": "yarn lint:affected --fix",
+    "lint:style": "stylelint **/*.{css,scss,html,md}",
+    "lint:style:fix": "yarn lint:style --fix",
     "test:affected": "nx affected:test --parallel --max-parallel=2",
     "build:affected": "nx affected:build --parallel --max-parallel=2",
     "build:ui": "nx build ui",
@@ -82,6 +85,7 @@
     "husky": "^7.0.0",
     "jest": "^27.3.1",
     "marked": "^3.0.4",
+    "postcss-html": "^1.2.0",
     "postcss-markdown": "^1.1.0",
     "prettier": "^2.4.1",
     "react-test-renderer": "17.0.2",

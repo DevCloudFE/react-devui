@@ -10,20 +10,28 @@
         "empty-line-between-groups": true
       }
     ],
-    "declaration-empty-line-before": null,
     "selector-type-no-unknown": [
       true,
       {
         "ignoreTypes": ["/^d-/"]
       }
     ],
-    "function-name-case": null,
-    "at-rule-no-unknown": null,
-    "scss/at-rule-no-unknown": true,
+    "declaration-empty-line-before": null,
     "custom-property-pattern": null,
     "selector-class-pattern": null
   },
   "overrides": [
+    {
+      "files": ["*.scss", "**/*.scss"],
+      "rules": {
+        "at-rule-no-unknown": null,
+        "scss/at-rule-no-unknown": true
+      }
+    },
+    {
+      "files": ["*.html", "**/*.html"],
+      "customSyntax": "postcss-html"
+    },
     {
       "files": ["*.md", "**/*.md"],
       "customSyntax": "postcss-markdown"
