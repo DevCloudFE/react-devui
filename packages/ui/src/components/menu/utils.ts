@@ -18,8 +18,6 @@ export function generateChildren(children: React.ReactNode, adjustIndicator = fa
       ..._child.props,
       className: adjustIndicator ? (_child.props.className ?? '' ? ` ${className}` : className) : _child.props.className,
     });
-
-    return child;
   });
 }
 

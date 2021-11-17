@@ -1,8 +1,8 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "extends": ["plugin:prettier/recommended"],
   "plugins": ["@nrwl/nx", "import", "markdown"],
+  "extends": ["plugin:prettier/recommended"],
   "overrides": [
     {
       "files": ["**/*.md"],
@@ -50,6 +50,7 @@
       "files": ["*.md", "*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
+        "no-unreachable": "error",
         "@typescript-eslint/array-type": [
           "error",
           {
@@ -108,7 +109,10 @@
             "ignoreProperties": true
           }
         ],
-        "no-unused-vars": "error"
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "no-unused-expressions": "off",
+        "@typescript-eslint/no-unused-expressions": ["error"]
       }
     },
     {

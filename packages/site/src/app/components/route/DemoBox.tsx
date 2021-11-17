@@ -20,7 +20,7 @@ export interface AppDemoBoxProps {
 }
 
 export function AppDemoBox(props: AppDemoBoxProps) {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id, renderer, title, description, tsx, scss, tsxSource, scssSource } = props;
 
   const asyncCapture = useAsync();
