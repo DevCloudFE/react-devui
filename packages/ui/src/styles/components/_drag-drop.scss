@@ -1,3 +1,9 @@
 @include b(drag-placeholder) {
   border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
 }
+
+@include b(drop) {
+  display: inline-block;
+  padding: 12px;
+  border: 1px dashed var(--#{$variable-prefix}divider-color);
+}

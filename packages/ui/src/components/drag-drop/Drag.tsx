@@ -14,10 +14,11 @@ export interface DDragProps {
   dContainer?: DElementSelector;
   dZIndex?: number;
   children: React.ReactNode;
+  __onDrag?: (rect: { width: number; height: number; top: number; left: number }) => void;
 }
 
 export function DDrag(props: DDragProps) {
-  const { dPlaceholder = false, dContainer, dZIndex = 1000, children } = useDComponentConfig('drag', props);
+  const { dPlaceholder = false, dContainer, dZIndex = 1000, children, __onDrag } = useDComponentConfig('drag', props);
 
   const dPrefix = useDPrefixConfig();
   const asyncCapture = useAsync();
@@ -112,6 +113,13 @@ export function DDrag(props: DDragProps) {
                   }
 
                   draft.cursor = 'grabbing';
+
+                  __onDrag?.({
+                    width: rect.width,
+                    height: rect.height,
+                    top: draft.top,
+                    left: draft.left,
+                  });
                 });
                 movementY = 0;
                 movementX = 0;
@@ -137,6 +145,7 @@ export function DDrag(props: DDragProps) {
       ...props,
     });
   }, [
+    __onDrag,
     asyncCapture,
     children,
     dPrefix,
