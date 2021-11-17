@@ -39,6 +39,9 @@ workflows:
       - template:
           name: lint
           run-command: 'lint:affected'
+      - template:
+          name: lint-style
+          run-command: 'lint:style'
 
   test:
     jobs:

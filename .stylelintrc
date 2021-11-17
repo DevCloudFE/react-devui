@@ -25,6 +25,10 @@
   },
   "overrides": [
     {
+      "files": ["*.html", "**/*.html"],
+      "customSyntax": "postcss-html"
+    },
+    {
       "files": ["*.md", "**/*.md"],
       "customSyntax": "postcss-markdown"
     }
