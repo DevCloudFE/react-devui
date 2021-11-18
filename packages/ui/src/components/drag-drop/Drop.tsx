@@ -12,16 +12,9 @@ import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPref
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 
-enableMapSet();
-
 export type DDropContextData = {
   currentData: {
-    els: Map<
-      number,
-      {
-        current: HTMLElement | null;
-      }
-    >;
+    els: Map<number, { current: HTMLElement | null }>;
   };
 } | null;
 export const DDropContext = React.createContext<DDropContextData>(null);

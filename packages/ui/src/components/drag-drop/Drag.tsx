@@ -1,22 +1,16 @@
 import type { DElementSelector } from '../../hooks/element';
 
 import { isNumber, isUndefined } from 'lodash';
-import React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
 import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig, useCustomContext } from '../../hooks';
-import { getClassName } from '../../utils';
-import { DCollapseTransition } from '../_transition';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
-  dPlaceholder?: boolean;
   dContainer?: DElementSelector;
+  dPlaceholder?: React.ReactNode;
   dZIndex?: number;
-  dPlaceholderClass?: string;
-  dPlaceholderStyle?: React.CSSProperties;
   children: React.ReactNode;
   __index?: number;
   __onDragStart?: (id: number, placeholder: React.ReactNode) => void;
@@ -24,17 +18,7 @@ export interface DDragProps {
 }
 
 export function DDrag(props: DDragProps) {
-  const {
-    dPlaceholder = false,
-    dContainer,
-    dZIndex = 1000,
-    dPlaceholderClass,
-    dPlaceholderStyle,
-    children,
-    __index = 0,
-    __onDragStart,
-    __onDrag,
-  } = useDComponentConfig('drag', props);
+  const { dContainer, dPlaceholder, dZIndex = 1000, children, __index = 0, __onDragStart, __onDrag } = useDComponentConfig('drag', props);
 
   const dPrefix = useDPrefixConfig();
   const asyncCapture = useAsync();
@@ -60,9 +44,8 @@ export function DDrag(props: DDragProps) {
   const dragEl = useElement(`[data-${dPrefix}drag-${id}]`);
   //#endregion
 
-  const [placeholder, setPlaceholder] = useImmer<React.ReactNode>(null);
-  const [placeholderVisible, setPlaceholderVisible] = useImmer(false);
-  const [position, setPosition] = useImmer<React.CSSProperties>({});
+  const [placeholder, setPlaceholder] = useImmer<React.ReactNode>(dPlaceholder);
+  const [dragStyle, setDragStyle] = useImmer<React.CSSProperties>({});
 
   useEffect(() => {
     _currentData?.els.set(__index, dragEl);
@@ -86,24 +69,30 @@ export function DDrag(props: DDragProps) {
     const props: React.HTMLAttributes<HTMLElement> = {
       style: {
         ..._child.props.style,
-        ...position,
+        ...dragStyle,
       },
       [`data-${dPrefix}drag-${id}`]: 'true',
 
       onMouseDown: (e) => {
         _child.props.onMouseDown?.(e);
+        __onDragStart?.(__index);
 
         onDrag = true;
         const rect = e.currentTarget.getBoundingClientRect();
-        const placeholderNode = (
-          <div
-            className={getClassName(dPlaceholderClass, `${dPrefix}drag-placeholder`)}
-            style={{ ...dPlaceholderStyle, width: rect.width, height: rect.height }}
-          ></div>
-        );
-        __onDragStart?.(__index, placeholderNode);
-
-        setPosition((draft) => {
+        if (dPlaceholder) {
+          const _placeholder = dPlaceholder as React.ReactElement;
+          setPlaceholder(
+            React.cloneElement(_placeholder, {
+              ..._placeholder.props,
+              style: {
+                ..._placeholder.props.style,
+                width: rect.width,
+                height: rect.height,
+              },
+            })
+          );
+        }
+        setDragStyle((draft) => {
           draft.position = 'fixed';
           draft.zIndex = dZIndex;
           draft.top = rect.top;
@@ -112,10 +101,6 @@ export function DDrag(props: DDragProps) {
           draft.height = rect.height;
           draft.cursor = 'grab';
         });
-        if (dPlaceholder) {
-          setPlaceholderVisible(true);
-          setPlaceholder(placeholderNode);
-        }
 
         let movementY = 0;
         let movementX = 0;
@@ -126,7 +111,7 @@ export function DDrag(props: DDragProps) {
               movementY += e.movementY;
               movementX += e.movementX;
               throttleByAnimationFrame(() => {
-                setPosition((draft) => {
+                setDragStyle((draft) => {
                   draft.top = (draft.top as number) + movementY;
                   if (draft.top < 0) {
                     draft.top = 0;
@@ -155,7 +140,7 @@ export function DDrag(props: DDragProps) {
         asyncCapture.fromEvent(window, 'mouseup').subscribe({
           next: () => {
             onDrag = false;
-            setPosition((draft) => {
+            setDragStyle((draft) => {
               draft.cursor = undefined;
             });
             ob.unsubscribe();
@@ -174,34 +159,27 @@ export function DDrag(props: DDragProps) {
     asyncCapture,
     children,
     dPlaceholder,
-    dPlaceholderClass,
-    dPlaceholderStyle,
     dPrefix,
     dZIndex,
+    dragStyle,
     id,
-    position,
+    setDragStyle,
     setPlaceholder,
-    setPlaceholderVisible,
-    setPosition,
     throttleByAnimationFrame,
   ]);
   //#endregion
 
   useEffect(() => {
-    if (isNumber(position.top) && isNumber(position.left) && isNumber(position.height) && isNumber(position.width))
+    if (isNumber(dragStyle.top) && isNumber(dragStyle.left) && isNumber(dragStyle.height) && isNumber(dragStyle.width))
       __onDrag?.(__index, {
-        top: position.top + position.height / 2,
-        left: position.left + position.width / 2,
+        top: dragStyle.top + dragStyle.height / 2,
+        left: dragStyle.left + dragStyle.width / 2,
       });
-  }, [__index, __onDrag, id, position.height, position.left, position.top, position.width]);
+  }, [__index, __onDrag, id, dragStyle.height, dragStyle.left, dragStyle.top, dragStyle.width]);
 
   return (
     <>
-      {dPlaceholder && placeholder && (
-        <DCollapseTransition dVisible={placeholderVisible} dDirection="height">
-          {placeholder}
-        </DCollapseTransition>
-      )}
+      {placeholder}
       {child}
     </>
   );
