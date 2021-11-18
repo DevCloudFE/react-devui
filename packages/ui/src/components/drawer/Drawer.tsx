@@ -225,7 +225,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (dVisible && containerEl.current && contentRefContent) {
-      asyncGroup.onResize(containerEl.current, () => contentRefContent.transitionThrottle(updatePosition));
+      asyncGroup.onResize(containerEl.current, () => contentRefContent.transitionThrottle.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
@@ -234,7 +234,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   useEffect(() => {
     if (dVisible && contentRefContent) {
-      const tid = globalScrollCapture.addTask(() => contentRefContent.transitionThrottle(updatePosition));
+      const tid = globalScrollCapture.addTask(() => contentRefContent.transitionThrottle.run(updatePosition));
       return () => {
         globalScrollCapture.deleteTask(tid);
       };
@@ -252,7 +252,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   useEffect(() => {
     if (contentRefContent) {
-      contentRefContent.transitionThrottle(updatePosition);
+      contentRefContent.transitionThrottle.run(updatePosition);
     }
   }, [contentRefContent, updatePosition]);
 

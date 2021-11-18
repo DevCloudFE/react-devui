@@ -157,7 +157,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       const [asyncGroup] = asyncCapture.createGroup('reference');
       asyncGroup.setTimeout(() => {
         if (referenceEl.current) {
-          asyncGroup.onResize(referenceEl.current, () => throttleByAnimationFrame(updateList));
+          asyncGroup.onResize(referenceEl.current, () => throttleByAnimationFrame.run(updateList));
         }
       }, 20);
       return React.cloneElement(_reference, {
@@ -170,7 +170,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const handleScroll = useCallback(
     (e) => {
       (onScroll as React.UIEventHandler<HTMLElement>)?.(e);
-      throttleByAnimationFrame(updateList);
+      throttleByAnimationFrame.run(updateList);
     },
     [onScroll, throttleByAnimationFrame, updateList]
   );
@@ -187,7 +187,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
    * @see https://angular.io/api/core/DoCheck
    */
   useEffect(() => {
-    throttleByAnimationFrame(updateList);
+    throttleByAnimationFrame.run(updateList);
   }, [throttleByAnimationFrame, updateList]);
   //#endregion
 

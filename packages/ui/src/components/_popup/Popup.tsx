@@ -367,7 +367,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (visible && popupRefContent && popupRefContent.el) {
-      asyncGroup.onResize(popupRefContent.el, () => popupRefContent.transitionThrottle(updatePosition));
+      asyncGroup.onResize(popupRefContent.el, () => popupRefContent.transitionThrottle.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
@@ -377,7 +377,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (visible && targetEl.current && popupRefContent) {
-      asyncGroup.onResize(targetEl.current, () => popupRefContent.transitionThrottle(updatePosition));
+      asyncGroup.onResize(targetEl.current, () => popupRefContent.transitionThrottle.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
@@ -386,7 +386,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   useEffect(() => {
     if (visible && popupRefContent) {
-      const tid = globalScrollCapture.addTask(() => popupRefContent.transitionThrottle(updatePosition));
+      const tid = globalScrollCapture.addTask(() => popupRefContent.transitionThrottle.run(updatePosition));
       return () => {
         globalScrollCapture.deleteTask(tid);
       };
@@ -395,7 +395,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   useEffect(() => {
     if (popupRefContent) {
-      popupRefContent.transitionThrottle(updatePosition);
+      popupRefContent.transitionThrottle.run(updatePosition);
     }
   }, [popupRefContent, updatePosition]);
   //#endregion

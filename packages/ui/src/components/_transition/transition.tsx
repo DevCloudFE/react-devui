@@ -1,3 +1,5 @@
+import type { ThrottleByAnimationFrame } from '../../hooks/throttle';
+
 import { isFunction, isNumber, isString, isUndefined } from 'lodash';
 import React, { useMemo, useEffect, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
@@ -35,14 +37,14 @@ export interface DTransitionProps {
 
 export interface DTransitionRef {
   el: HTMLElement | null;
-  transitionThrottle: (cb: () => void) => void;
+  transitionThrottle: ThrottleByAnimationFrame;
 }
 
 export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((props, ref) => {
   const { dVisible = false, dStateList, dCallbackList, dAutoHidden = true, dSkipFirst = true, children } = props;
 
   const asyncCapture = useAsync();
-  const { throttleByAnimationFrame, skipThrottle, continueThrottle } = useThrottle();
+  const { throttleByAnimationFrame } = useThrottle();
 
   const [currentData] = useState<{ visible?: boolean }>({
     visible: undefined,
@@ -111,7 +113,7 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
         asyncCapture.clearAll();
 
         if (!isUndefined(dStateList)) {
-          skipThrottle();
+          throttleByAnimationFrame.skipThrottle();
 
           const stateList = isFunction(dStateList) ? dStateList(el) ?? {} : dStateList;
           const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(el) ?? {} : dCallbackList;
@@ -139,25 +141,13 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
               cssRecord.backCss(el);
               dAutoHidden && cssRecord.setCss(el, { display: dVisible ? '' : 'none' });
               callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(el, cssRecord.setCss.bind(cssRecord));
-              continueThrottle();
+              throttleByAnimationFrame.continueThrottle();
             }, timeout);
           }, 20);
         }
       }
     }
-  }, [
-    dCallbackList,
-    dStateList,
-    el,
-    dVisible,
-    dAutoHidden,
-    dSkipFirst,
-    asyncCapture,
-    currentData,
-    cssRecord,
-    skipThrottle,
-    continueThrottle,
-  ]);
+  }, [dCallbackList, dStateList, el, dVisible, dAutoHidden, dSkipFirst, asyncCapture, currentData, cssRecord, throttleByAnimationFrame]);
   //#endregion
 
   useImperativeHandle(

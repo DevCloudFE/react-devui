@@ -39,10 +39,10 @@ export class CustomScroll {
     }
 
     if (!isFinish) {
-      this.tid = requestAnimationFrame(() => {
+      this.tid = window.setTimeout(() => {
         this.tid = null;
         this.step();
-      });
+      }, 12);
     } else {
       onEnd?.();
     }
@@ -74,7 +74,7 @@ export class CustomScroll {
     onEnd?: () => void
   ) {
     if (this.tid) {
-      cancelAnimationFrame(this.tid);
+      clearTimeout(this.tid);
     }
     if (options.behavior === 'instant') {
       if (!isUndefined(options.top)) {

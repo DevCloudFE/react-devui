@@ -1,35 +1,54 @@
 import { useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
-class ThrottleByAnimationFrame {
+export class ThrottleByAnimationFrame {
+  private skip = false;
+  private skipCallback?: () => void;
   private tid: number | null = null;
   private debounceTid: number | null = null;
 
   clearTids() {
     if (this.debounceTid) {
-      cancelAnimationFrame(this.debounceTid);
+      clearTimeout(this.debounceTid);
       this.debounceTid = null;
     }
     if (this.tid) {
-      cancelAnimationFrame(this.tid);
+      clearTimeout(this.tid);
       this.tid = null;
     }
   }
 
+  skipThrottle() {
+    this.skip = true;
+    this.clearTids();
+  }
+
+  continueThrottle() {
+    this.skip = false;
+    if (this.skipCallback) {
+      this.skipCallback();
+      this.skipCallback = undefined;
+    }
+  }
+
   run(cb: () => void) {
+    if (this.skip) {
+      this.skipCallback = cb;
+      return;
+    }
+
     if (this.debounceTid) {
-      cancelAnimationFrame(this.debounceTid);
-      this.debounceTid = null;
+      clearTimeout(this.debounceTid);
     }
 
     if (this.tid === null) {
-      this.tid = requestAnimationFrame(() => (this.tid = null));
+      this.tid = window.setTimeout(() => (this.tid = null), 12);
       cb();
     } else {
-      this.debounceTid = requestAnimationFrame(() => {
+      this.debounceTid = window.setTimeout(() => {
         this.debounceTid = null;
         cb();
-      });
+      }, 20);
     }
   }
 }
@@ -39,7 +58,7 @@ export function useThrottle() {
 
   const throttle = useMemo(
     () => ({
-      throttleByAnimationFrame: throttleByAnimationFrame.run.bind(throttleByAnimationFrame),
+      throttleByAnimationFrame,
     }),
     [throttleByAnimationFrame]
   );

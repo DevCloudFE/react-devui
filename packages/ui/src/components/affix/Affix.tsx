@@ -169,7 +169,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (fixed && referenceEl) {
-      asyncGroup.onResize(referenceEl, () => throttleByAnimationFrame(updatePosition));
+      asyncGroup.onResize(referenceEl, () => throttleByAnimationFrame.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
@@ -177,14 +177,14 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   }, [throttleByAnimationFrame, asyncCapture, fixed, referenceEl, updatePosition]);
 
   useEffect(() => {
-    const tid = globalScrollCapture.addTask(() => throttleByAnimationFrame(updatePosition));
+    const tid = globalScrollCapture.addTask(() => throttleByAnimationFrame.run(updatePosition));
     return () => {
       globalScrollCapture.deleteTask(tid);
     };
   }, [throttleByAnimationFrame, updatePosition]);
 
   useEffect(() => {
-    throttleByAnimationFrame(updatePosition);
+    throttleByAnimationFrame.run(updatePosition);
   }, [throttleByAnimationFrame, updatePosition]);
   //#endregion
 
