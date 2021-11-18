@@ -28,10 +28,8 @@ export function useManualOrAutoState(defaultState: any, manualState: any, onStat
   const currentState = useMemo(() => (isUndefined(manualState) ? state : manualState), [manualState, state]);
 
   useEffect(() => {
-    if (!isUndefined(manualState) && currentState !== state) {
-      onStateChange?.(state);
-    }
-  }, [manualState, state, currentState, onStateChange]);
+    onStateChange?.(state);
+  }, [onStateChange, state]);
 
   return [currentState, dispatch] as const;
 }

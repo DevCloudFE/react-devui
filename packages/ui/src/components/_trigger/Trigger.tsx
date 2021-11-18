@@ -82,15 +82,15 @@ export const DTrigger = React.forwardRef<HTMLElement, DTriggerProps>((props, ref
 
           asyncGroup.fromEvent(el, 'focus').subscribe({
             next: () => {
-              tid && asyncGroup.cancelAnimationFrame(tid);
+              tid && asyncGroup.clearTimeout(tid);
               setState(true);
             },
           });
           asyncGroup.fromEvent(el, 'blur').subscribe({
             next: () => {
-              tid = asyncGroup.requestAnimationFrame(() => {
+              tid = asyncGroup.setTimeout(() => {
                 setState(false);
-              });
+              }, 20);
             },
           });
         }

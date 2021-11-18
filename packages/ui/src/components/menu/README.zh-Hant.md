@@ -17,9 +17,9 @@ title: 导航菜单
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dActive | 手动控制活动的菜单项，值为 `key` | string | - |
-| dDefaultActive | 默认的活动菜单项，值为 `key` | string | - |
-| dDefaultExpands | 默认展开的子菜单，值为 `key` | string[]  | - |
+| dActive | 手动控制活动的菜单项，值为 `dId` | string | - |
+| dDefaultActive | 默认的活动菜单项，值为 `dId` | string | - |
+| dDefaultExpands | 默认展开的子菜单，值为 `dId` | string[]  | - |
 | dMode | 菜单类型 | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | 保持同一层级的菜单至多展开一个子菜单 | boolean | false |
 | dExpandTrigger | 如何触发展开，默认根据 `dMode` 调整触发行为 | 'hover' \| 'click' | - |

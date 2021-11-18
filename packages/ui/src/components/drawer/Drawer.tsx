@@ -2,7 +2,7 @@ import type { DElementSelector } from '../../hooks/element';
 import type { DTransitionRef } from '../_transition';
 
 import { isUndefined } from 'lodash';
-import React, { useEffect, useCallback, useMemo, useImperativeHandle } from 'react';
+import React, { useEffect, useCallback, useMemo, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useImmer } from 'use-immer';
 
@@ -60,6 +60,10 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   const dPrefix = useDPrefixConfig();
   const asyncCapture = useAsync();
+
+  const [currentData] = useState<{ preActiveEl: HTMLElement | null }>({
+    preActiveEl: null,
+  });
 
   //#region Refs.
   /*
@@ -175,11 +179,11 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
    * - Angular: NgTemplateOutlet.
    * @see https://angular.io/api/common/NgTemplateOutlet
    */
-  const child = useMemo(() => {
+  const childDrawer = useMemo(() => {
     if (!isUndefined(dChildDrawer)) {
-      const _child = React.Children.only(dChildDrawer) as React.ReactElement;
-      return React.cloneElement(_child, {
-        ..._child.props,
+      const _childDrawer = React.Children.only(dChildDrawer) as React.ReactElement;
+      return React.cloneElement(_childDrawer, {
+        ..._childDrawer.props,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         __onVisibleChange: (distance: any) => {
           setDistance(distance);
@@ -311,8 +315,10 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
             };
           }}
           dCallbackList={() => {
-            let cb: () => void;
             return {
+              data: {
+                cb: undefined,
+              },
               init: () => {
                 if (drawerEl) {
                   drawerEl.style.display = dVisible ? '' : 'none';
@@ -331,12 +337,11 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
               },
               afterEnter: (el) => {
                 afterVisibleChange?.(true);
-                const activeEl = document.activeElement as HTMLElement | null;
-                cb = () => activeEl?.focus({ preventScroll: true });
+                currentData.preActiveEl = document.activeElement as HTMLElement | null;
                 el.focus({ preventScroll: true });
               },
               beforeLeave: () => {
-                cb?.();
+                currentData.preActiveEl?.focus({ preventScroll: true });
                 __onVisibleChange?.({
                   ...distance,
                   visible: false,
@@ -364,7 +369,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
           </div>
         </DTransition>
       </div>
-      {child}
+      {childDrawer}
     </DDrawerContext.Provider>
   );
 

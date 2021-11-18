@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { getClassName } from '../../utils';
+
 export function generateChildren(children: React.ReactNode, adjustIndicator = false) {
   const _children = React.Children.toArray(children) as React.ReactElement[];
   return _children.map((child, index) => {
@@ -13,10 +15,9 @@ export function generateChildren(children: React.ReactNode, adjustIndicator = fa
         className = 'is-last';
       }
     }
-
     return React.cloneElement(_child, {
       ..._child.props,
-      className: adjustIndicator ? (_child.props.className ?? '' ? ` ${className}` : className) : _child.props.className,
+      className: getClassName(_child.props.className, { [className]: adjustIndicator }),
     });
   });
 }

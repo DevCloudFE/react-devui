@@ -2,8 +2,8 @@ import { isFunction, isNumber, isString, isUndefined } from 'lodash';
 import React, { useMemo, useEffect, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useAsync } from '../../hooks';
-import { getMaxTime, CssRecord, Throttle } from './utils';
+import { useAsync, useThrottle } from '../../hooks';
+import { getMaxTime, CssRecord } from './utils';
 
 export interface DTransitionStateList {
   'enter-from'?: Partial<CSSStyleDeclaration>;
@@ -42,6 +42,7 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
   const { dVisible = false, dStateList, dCallbackList, dAutoHidden = true, dSkipFirst = true, children } = props;
 
   const asyncCapture = useAsync();
+  const { throttleByAnimationFrame, skipThrottle, continueThrottle } = useThrottle();
 
   const [currentData] = useState<{ visible?: boolean }>({
     visible: undefined,
@@ -59,32 +60,8 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
    *   public data: 'example';
    * }
    */
-  const [throttle] = useImmer(new Throttle());
   const [cssRecord] = useImmer(new CssRecord());
   const [el, setEl] = useImmer<HTMLElement | null>(null);
-  //#endregion
-
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const transitionThrottle = useMemo(() => throttle.run.bind(throttle), [throttle]);
   //#endregion
 
   //#region React.cloneElement.
@@ -113,33 +90,6 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
     callbackList.init?.(el);
   }
 
-  //#region Mounted & Unmount.
-  /*
-   * @example
-   * // Mounted
-   * useEffect(() => {
-   *   // code
-   * }, []);
-   *
-   * // Unmount
-   * useEffect(() => {
-   *   return () => {
-   *     // code
-   *   }
-   * }, [deps]);
-   *
-   * - Vue: onMounted & onUnmounted.
-   * @see https://v3.vuejs.org/guide/composition-api-lifecycle-hooks.html
-   * - Angular: ngAfterViewInit & ngOnDestroy.
-   * @see https://angular.io/guide/lifecycle-hooks
-   */
-  useEffect(() => {
-    return () => {
-      throttle.clearTids();
-    };
-  }, [asyncCapture, throttle]);
-  //#endregion
-
   //#region DidUpdate.
   /*
    * We need a service(ReactConvertService) that implement useEffect.
@@ -159,10 +109,9 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
         currentData.visible = dVisible;
         cssRecord.backCss(el);
         asyncCapture.clearAll();
-        throttle.clearTids();
 
         if (!isUndefined(dStateList)) {
-          throttle.skipRun();
+          skipThrottle();
 
           const stateList = isFunction(dStateList) ? dStateList(el) ?? {} : dStateList;
           const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(el) ?? {} : dCallbackList;
@@ -190,22 +139,34 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
               cssRecord.backCss(el);
               dAutoHidden && cssRecord.setCss(el, { display: dVisible ? '' : 'none' });
               callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(el, cssRecord.setCss.bind(cssRecord));
-              throttle.continueRun();
+              continueThrottle();
             }, timeout);
           }, 20);
         }
       }
     }
-  }, [dCallbackList, dStateList, el, dVisible, dAutoHidden, dSkipFirst, asyncCapture, currentData, cssRecord, throttle]);
+  }, [
+    dCallbackList,
+    dStateList,
+    el,
+    dVisible,
+    dAutoHidden,
+    dSkipFirst,
+    asyncCapture,
+    currentData,
+    cssRecord,
+    skipThrottle,
+    continueThrottle,
+  ]);
   //#endregion
 
   useImperativeHandle(
     ref,
     () => ({
       el,
-      transitionThrottle,
+      transitionThrottle: throttleByAnimationFrame,
     }),
-    [el, transitionThrottle]
+    [el, throttleByAnimationFrame]
   );
 
   return child;

@@ -369,7 +369,7 @@ export function DMenuSub(props: DMenuSubProps) {
         ) : (
           <DCollapseTransition
             dVisible={_dMode !== 'vertical' && __level === 0 ? false : expand}
-            dSkipFirst={!expand}
+            dSkipFirst={!(expand && __level === 0)}
             dDirection="height"
             dDuring={200}
           >

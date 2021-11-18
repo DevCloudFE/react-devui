@@ -321,15 +321,15 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
         asyncGroup.fromEvent([targetEl.current, popupEl], 'focus').subscribe({
           next: () => {
-            tid && asyncGroup.cancelAnimationFrame(tid);
+            tid && asyncGroup.clearTimeout(tid);
             dispatchVisible({ value: true });
           },
         });
         asyncGroup.fromEvent([targetEl.current, popupEl], 'blur').subscribe({
           next: () => {
-            tid = asyncGroup.requestAnimationFrame(() => {
+            tid = asyncGroup.setTimeout(() => {
               dispatchVisible({ value: false });
-            });
+            }, 20);
           },
         });
       }
@@ -339,21 +339,21 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
         asyncGroup.fromEvent(popupEl, 'click').subscribe({
           next: () => {
-            tid && asyncGroup.cancelAnimationFrame(tid);
+            tid && asyncGroup.clearTimeout(tid);
             dispatchVisible({ value: true });
           },
         });
         asyncGroup.fromEvent(targetEl.current, 'click').subscribe({
           next: () => {
-            tid && asyncGroup.cancelAnimationFrame(tid);
+            tid && asyncGroup.clearTimeout(tid);
             dispatchVisible({ reverse: true });
           },
         });
         asyncGroup.fromEvent(document, 'click', { capture: true }).subscribe({
           next: () => {
-            tid = asyncGroup.requestAnimationFrame(() => {
+            tid = asyncGroup.setTimeout(() => {
               dispatchVisible({ value: false });
-            });
+            }, 20);
           },
         });
       }

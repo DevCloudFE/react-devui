@@ -1,14 +1,11 @@
 import type { DElementSelector } from '../../hooks/element';
 
-import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomRef, useElement } from '../../hooks';
 import { getClassName, globalScrollCapture, CustomScroll } from '../../utils';
-
-enableMapSet();
 
 export type DAnchorContextData = {
   activeHref: string | null;

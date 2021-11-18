@@ -13,14 +13,14 @@ Users need top navigation or side navigation.
 
 ### DMenuProps
 
-继承 `React.HTMLAttributes<HTMLElement>`。
+Extend `React.HTMLAttributes<HTMLElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dActive | Manually control the active menu item, the value is `key` | string | - |
-| dDefaultActive | The default active menu item, the value is `key` | string | - |
-| dDefaultExpands | The sub-menu expanded by default, the value is `key` | string[]  | - |
+| dActive | Manually control the active menu item, the value is `dId` | string | - |
+| dDefaultActive | The default active menu item, the value is `dId` | string | - |
+| dDefaultExpands | The sub-menu expanded by default, the value is `dId` | string[]  | - |
 | dMode | Menu type | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | Keep the same level of the menu, expand at most one sub-menu | boolean | false |
 | dExpandTrigger | How to trigger the expansion, adjust the trigger behavior according to `dMode` by default | 'hover' \| 'click' | - |
@@ -32,7 +32,7 @@ Users need top navigation or side navigation.
 
 ### DMenuGroupProps
 
-继承 `React.HTMLAttributes<HTMLDivElement>`。
+Extend `React.HTMLAttributes<HTMLDivElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -43,7 +43,7 @@ Users need top navigation or side navigation.
 
 ### DMenuSubProps
 
-继承 `React.LiHTMLAttributes<HTMLLIElement>`。
+Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -57,7 +57,7 @@ Users need top navigation or side navigation.
 
 ### DMenuItemProps
 
-继承 `React.LiHTMLAttributes<HTMLLIElement>`。
+Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
