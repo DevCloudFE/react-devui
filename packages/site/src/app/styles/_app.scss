@@ -38,26 +38,22 @@ body {
   border-right: 1px solid var(--d-divider-color);
 }
 
-.app-demo-block {
+.app-demo-drag {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 160px;
   height: 40px;
-
-  color: #fff;
-
   background-color: var(--d-color-primary);
+  color: #fff;
 
   @include font-size(0.8rem);
 
-  & + & {
+  & + &,
+  & + .app-demo-drag-placeholder {
     margin-top: 8px;
   }
-}
-
-.d-drag-placeholder + .app-demo-block {
-  margin-top: 8px;
 }
 
 .app-demo-drop {

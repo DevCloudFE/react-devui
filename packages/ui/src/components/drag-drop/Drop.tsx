@@ -158,6 +158,12 @@ export function DDrop(props: DDropProps) {
     })
   );
 
+  const childs = useMemo(() => {
+    React.Children.map(children, (child, index) => {
+      const _child = child as React.ReactElement;
+    });
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       currentData,

@@ -2,6 +2,7 @@ import type { DElementSelector } from '../../hooks/element';
 
 import { isNumber, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 import { useImmer } from 'use-immer';
 
 import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig, useCustomContext } from '../../hooks';
@@ -13,8 +14,8 @@ export interface DDragProps {
   dZIndex?: number;
   children: React.ReactNode;
   __index?: number;
-  __onDragStart?: (id: number, placeholder: React.ReactNode) => void;
-  __onDrag?: (id: number, center: { top: number; left: number }) => void;
+  __onDragStart?: (index: number) => void;
+  __onDrag?: (index: number, center: { top: number; left: number }) => void;
 }
 
 export function DDrag(props: DDragProps) {
@@ -44,8 +45,9 @@ export function DDrag(props: DDragProps) {
   const dragEl = useElement(`[data-${dPrefix}drag-${id}]`);
   //#endregion
 
-  const [placeholder, setPlaceholder] = useImmer<React.ReactNode>(dPlaceholder);
+  const [placeholderSize, setPlaceholderSize] = useImmer<React.CSSProperties>({});
   const [dragStyle, setDragStyle] = useImmer<React.CSSProperties>({});
+  const [isDrag, setIsDrag] = useImmer(false);
 
   useEffect(() => {
     _currentData?.els.set(__index, dragEl);
@@ -63,6 +65,19 @@ export function DDrag(props: DDragProps) {
    * - Angular: NgTemplateOutlet.
    * @see https://angular.io/api/common/NgTemplateOutlet
    */
+  const placeholder = useMemo(() => {
+    if (dPlaceholder) {
+      const _placeholder = dPlaceholder as React.ReactElement;
+      return React.cloneElement(_placeholder, {
+        ..._placeholder.props,
+        style: {
+          ..._placeholder.props.style,
+          ...placeholderSize,
+        },
+      });
+    }
+  }, [dPlaceholder, placeholderSize]);
+
   const child = useMemo(() => {
     const _child = React.Children.only(children) as React.ReactElement;
     let onDrag = false;
@@ -78,22 +93,12 @@ export function DDrag(props: DDragProps) {
         __onDragStart?.(__index);
 
         onDrag = true;
+        setIsDrag(true);
         const rect = e.currentTarget.getBoundingClientRect();
-        if (dPlaceholder) {
-          const _placeholder = dPlaceholder as React.ReactElement;
-          setPlaceholder(
-            React.cloneElement(_placeholder, {
-              ..._placeholder.props,
-              style: {
-                ..._placeholder.props.style,
-                width: rect.width,
-                height: rect.height,
-              },
-            })
-          );
-        }
+        setPlaceholderSize({ width: rect.width, height: rect.height });
         setDragStyle((draft) => {
           draft.position = 'fixed';
+          draft.margin = 0;
           draft.zIndex = dZIndex;
           draft.top = rect.top;
           draft.left = rect.left;
@@ -110,7 +115,7 @@ export function DDrag(props: DDragProps) {
               e.preventDefault();
               movementY += e.movementY;
               movementX += e.movementX;
-              throttleByAnimationFrame(() => {
+              throttleByAnimationFrame.run(() => {
                 setDragStyle((draft) => {
                   draft.top = (draft.top as number) + movementY;
                   if (draft.top < 0) {
@@ -158,13 +163,13 @@ export function DDrag(props: DDragProps) {
     __onDragStart,
     asyncCapture,
     children,
-    dPlaceholder,
     dPrefix,
     dZIndex,
     dragStyle,
     id,
     setDragStyle,
-    setPlaceholder,
+    setIsDrag,
+    setPlaceholderSize,
     throttleByAnimationFrame,
   ]);
   //#endregion
@@ -179,8 +184,8 @@ export function DDrag(props: DDragProps) {
 
   return (
     <>
-      {placeholder}
-      {child}
+      {isDrag ? placeholder : child}
+      {isDrag && containerEl.current && ReactDOM.createPortal(child, containerEl.current)}
     </>
   );
 }

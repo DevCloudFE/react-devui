@@ -7,8 +7,8 @@ export { DAnchor, DAnchorLink } from './anchor';
 export type { DButtonProps, DButtonGroupProps } from './button';
 export { DButton, DButtonGroup } from './button';
 
-export type { DDragProps, DDropProps } from './drag-drop';
-export { DDrag, DDrop } from './drag-drop';
+export type { DDragProps, DDropProps, DDragPlaceholderProps } from './drag-drop';
+export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
 
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
