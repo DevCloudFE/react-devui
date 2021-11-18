@@ -96,10 +96,10 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   const targetEl = useElement(dTarget);
   const handleContainer = useCallback(() => {
     if (isUndefined(dContainer)) {
-      let el = document.getElementById('d-popup-root');
+      let el = document.getElementById(`${dPrefix}popup-root`);
       if (!el) {
         el = document.createElement('div');
-        el.id = 'd-popup-root';
+        el.id = `${dPrefix}popup-root`;
         document.body.appendChild(el);
       }
       return el;
@@ -107,7 +107,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
       return targetEl.current?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, targetEl]);
+  }, [dContainer, dPrefix, targetEl]);
   const containerEl = useElement(dContainer, handleContainer);
   //#endregion
 

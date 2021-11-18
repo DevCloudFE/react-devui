@@ -77,10 +77,10 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   //#region Element
   const handleContainer = useCallback(() => {
     if (isUndefined(dContainer)) {
-      let el = document.getElementById('d-drawer-root');
+      let el = document.getElementById(`${dPrefix}drawer-root`);
       if (!el) {
         el = document.createElement('div');
-        el.id = 'd-drawer-root';
+        el.id = `${dPrefix}drawer-root`;
         document.body.appendChild(el);
       }
       return el;
@@ -88,7 +88,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
       return drawerEl?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, drawerEl]);
+  }, [dContainer, dPrefix, drawerEl?.parentElement]);
   const containerEl = useElement(dContainer, handleContainer);
   //#endregion
 

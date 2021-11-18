@@ -93,6 +93,9 @@ class AsyncCapture extends BaseAsyncCapture {
     for (const cb of this.tids.values()) {
       cb();
     }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+
     for (const group of this.groups.values()) {
       group.clearAll();
     }

@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useDComponentConfig, useElement, useId, useThrottle, useAsync } from '../../hooks';
+import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig } from '../../hooks';
 
 export interface DVirtualScrollProps<T> {
   dTag?: string;
@@ -33,6 +33,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     ...restProps
   } = useDComponentConfig('virtual-scroll', props);
 
+  const dPrefix = useDPrefixConfig();
   const { throttleByAnimationFrame } = useThrottle();
   const asyncCapture = useAsync();
 
@@ -55,8 +56,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   //#endregion
 
   //#region Element
-  const el = useElement(`[data-d-virtual-scroll-${id}]`);
-  const referenceEl = useElement(`[data-d-virtual-scroll-reference-${id}]`);
+  const el = useElement(`[data-${dPrefix}virtual-scroll-${id}]`);
+  const referenceEl = useElement(`[data-${dPrefix}virtual-scroll-reference-${id}]`);
   //#endregion
 
   //#region Getters.
@@ -161,10 +162,10 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       }, 20);
       return React.cloneElement(_reference, {
         ..._reference.props,
-        [`data-d-virtual-scroll-reference-${id}`]: 'true',
+        [`data-${dPrefix}virtual-scroll-reference-${id}`]: 'true',
       });
     }
-  }, [asyncCapture, dCustomSize, dList, dRenderItem, id, referenceEl, throttleByAnimationFrame, updateList]);
+  }, [asyncCapture, dCustomSize, dList, dPrefix, dRenderItem, id, referenceEl, throttleByAnimationFrame, updateList]);
 
   const handleScroll = useCallback(
     (e) => {
@@ -202,13 +203,13 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         overflowX: isUndefined(dWidth) ? undefined : 'auto',
         overflowY: isUndefined(dHeight) ? undefined : 'auto',
       },
-      [`data-d-virtual-scroll-${id}`]: 'true',
+      [`data-${dPrefix}virtual-scroll-${id}`]: 'true',
       onScroll: handleScroll,
     },
     [
       reference,
       <div
-        key={`d-virtual-scroll-pre-fill-${id}`}
+        key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
         style={{
           ...fillSize[0],
           display: isUndefined(dWidth) ? undefined : 'inline-block',
@@ -216,7 +217,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       ></div>,
       ...list,
       <div
-        key={`d-virtual-scroll-sub-fill-${id}`}
+        key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
         style={{
           ...fillSize[1],
           display: isUndefined(dWidth) ? undefined : 'inline-block',

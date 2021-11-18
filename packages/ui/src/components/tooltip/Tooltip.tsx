@@ -43,9 +43,9 @@ export const DTooltip = React.forwardRef<DPopupRef, DTooltipProps>((props, ref) 
     const _child = React.Children.only(children) as React.ReactElement;
     return React.cloneElement(_child, {
       ..._child.props,
-      'aria-describedby': `d-tooltip-${id}`,
+      'aria-describedby': `${dPrefix}tooltip-${id}`,
     });
-  }, [children, id]);
+  }, [children, dPrefix, id]);
   //#endregion
 
   return (
@@ -55,10 +55,10 @@ export const DTooltip = React.forwardRef<DPopupRef, DTooltipProps>((props, ref) 
         <DPopup
           {...restProps}
           ref={ref}
-          id={`d-tooltip-${id}`}
+          id={`${dPrefix}tooltip-${id}`}
           className={getClassName(className, `${dPrefix}tooltip`)}
           role="tooltip"
-          dTarget={`[aria-describedby="d-tooltip-${id}"]`}
+          dTarget={`[aria-describedby="${dPrefix}tooltip-${id}"]`}
         >
           {dTitle}
         </DPopup>
