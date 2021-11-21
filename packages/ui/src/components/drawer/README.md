@@ -28,6 +28,8 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dMaskClosable | Click on the mask to close the drawer | boolean | true |
 | dHeader | Drawer header | React.ReactNode | - |
 | dFooter | Drawer footer | React.ReactNode | - |
+| dDestroy | Destroy the node after shutdown | boolean | false |
+| dChildDrawer | Nested child drawer | React.ReactNode | - |
 | onClose | Callback when the drawer is closed | `() => void` | - |
 | afterVisibleChange | Callback for the end of the drawer opening/closing animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->

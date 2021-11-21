@@ -6,63 +6,31 @@ import { useDPrefixConfig, useDComponentConfig, useId } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 
-export interface DTooltipProps extends Omit<DPopupProps, 'dTarget'> {
+export interface DTooltipProps extends Omit<DPopupProps, 'dTriggerNode'> {
   dTitle: React.ReactNode;
 }
 
 export const DTooltip = React.forwardRef<DPopupRef, DTooltipProps>((props, ref) => {
-  const { dTitle, className, children, ...restProps } = useDComponentConfig('tooltip', props);
+  const { dTitle, id, className, children, ...restProps } = useDComponentConfig('tooltip', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
-  const id = useId();
   //#endregion
 
-  //#region React.cloneElement.
-  /*
-   * @see https://reactjs.org/docs/react-api.html#cloneelement
-   *
-   * - Vue: Scoped Slots.
-   * @see https://v3.vuejs.org/guide/component-slots.html#scoped-slots
-   * - Angular: NgTemplateOutlet.
-   * @see https://angular.io/api/common/NgTemplateOutlet
-   */
+  const _id = useId();
+  const __id = id ?? `${dPrefix}tooltip-${_id}`;
+
   const child = useMemo(() => {
-    const _child = React.Children.only(children) as React.ReactElement;
+    const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
     return React.cloneElement(_child, {
       ..._child.props,
-      'aria-describedby': `${dPrefix}tooltip-${id}`,
+      'aria-describedby': __id,
     });
-  }, [children, dPrefix, id]);
-  //#endregion
+  }, [__id, children]);
 
   return (
-    <>
-      {child}
-      {dTitle && (
-        <DPopup
-          {...restProps}
-          ref={ref}
-          id={`${dPrefix}tooltip-${id}`}
-          className={getClassName(className, `${dPrefix}tooltip`)}
-          role="tooltip"
-          dTarget={`[aria-describedby="${dPrefix}tooltip-${id}"]`}
-        >
-          {dTitle}
-        </DPopup>
-      )}
-    </>
+    <DPopup {...restProps} ref={ref} id={__id} className={getClassName(className, `${dPrefix}tooltip`)} role="tooltip" dTriggerNode={child}>
+      {dTitle}
+    </DPopup>
   );
 });

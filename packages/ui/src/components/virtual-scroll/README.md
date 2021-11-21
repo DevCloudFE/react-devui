@@ -24,7 +24,7 @@ You can pass all the `Props` supported by the corresponding element of `dTag`.
 | dItemWidth | Manually set the width of list entries | number | - |
 | dItemHeight | Manually set the height of list items | number | - |
 | dList | List data | T[] | - |
-| dRenderItem | List item rendering | `(item: T, index: number) => React.ReactNode` | - | 
+| dItemRender | List item rendering | `(item: T, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
 | dCustomSize | Enable multi-size mixing | `(item: T, index: number) => number` | - |
 | onScrollEnd | Callback function when scrolling to the bottom of the list | `() => void` | - |
 <!-- prettier-ignore-end -->

@@ -20,45 +20,14 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
     props
   );
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const { onClose: _onClose } = useCustomContext(DDrawerContext);
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
-  const [okLoading, setOkLoading] = useImmer(false);
-  const [cancelLoading, setCancelLoading] = useImmer(false);
+  const { closeDrawer } = useCustomContext(DDrawerContext);
   //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
+  const [okLoading, setOkLoading] = useImmer(false);
+  const [cancelLoading, setCancelLoading] = useImmer(false);
+
   const okButtonProps = useMemo(() => {
     if (isBoolean(dOkButtonProps?.dLoading)) {
       return dOkButtonProps;
@@ -87,13 +56,13 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       shouldClose.then((val) => {
         setOkLoading(false);
         if (val !== false) {
-          _onClose?.();
+          closeDrawer?.();
         }
       });
     } else if (shouldClose !== false) {
-      _onClose?.();
+      closeDrawer?.();
     }
-  }, [_onClose, onOkClick, setOkLoading]);
+  }, [closeDrawer, onOkClick, setOkLoading]);
   const handleCancelClick = useCallback(() => {
     const shouldClose = onCancelClick?.();
     if (shouldClose instanceof Promise) {
@@ -101,14 +70,13 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       shouldClose.then((val) => {
         setCancelLoading(false);
         if (val !== false) {
-          _onClose?.();
+          closeDrawer?.();
         }
       });
     } else if (shouldClose !== false) {
-      _onClose?.();
+      closeDrawer?.();
     }
-  }, [_onClose, onCancelClick, setCancelLoading]);
-  //#endregion
+  }, [closeDrawer, onCancelClick, setCancelLoading]);
 
   return (
     <DFooter

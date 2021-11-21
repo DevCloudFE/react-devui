@@ -16,6 +16,9 @@ renderer.heading = function (text, level) {
     var head = "\n<h" + level + " id=\"" + text + "\">\n  <span>" + text + "</span>\n  " + link + "\n</h" + level + ">\n";
     return head;
 };
+renderer.table = function (header, body) {
+    return "\n<div class=\"app-table-container\">\n <table>\n   <thead>" + header + "</thead>\n   <tbody>" + body + "</tbody>\n </table>\n</div>\n";
+};
 marked_1.default.setOptions({
     renderer: renderer,
     highlight: function (code, lang) {

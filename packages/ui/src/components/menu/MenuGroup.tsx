@@ -1,18 +1,16 @@
+import type { DMenuItemProps } from './MenuItem';
+
 import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DMenuContext } from './Menu';
-import { generateChildren } from './utils';
 
 export interface DMenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   dId: string;
   dTitle: React.ReactNode;
   __level?: number;
-  __navMenu?: boolean;
-  __onFocus?: (id: string) => void;
-  __onBlur?: (id: string) => void;
 }
 
 export function DMenuGroup(props: DMenuGroupProps) {
@@ -20,10 +18,7 @@ export function DMenuGroup(props: DMenuGroupProps) {
     dId,
     dTitle,
     __level = 0,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    __navMenu = false,
-    __onFocus,
-    __onBlur,
+    id,
     className,
     style,
     tabIndex,
@@ -33,80 +28,49 @@ export function DMenuGroup(props: DMenuGroupProps) {
     ...restProps
   } = useDComponentConfig('menu-group', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const { currentData: _currentData } = useCustomContext(DMenuContext);
+  const { onFocus: _onFocus, onBlur: _onBlur } = useCustomContext(DMenuContext);
+  //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
+  const _id = id ?? `${dPrefix}menu-group-${toId(dId)}`;
+
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
-      __onFocus?.(`menu-group-${toId(dId)}`);
+      _onFocus?.(dId, _id);
     },
-    [__onFocus, dId, onFocus]
+    [_id, _onFocus, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
-      __onBlur?.(`menu-group-${toId(dId)}`);
+      _onBlur?.();
     },
-    [__onBlur, onBlur, dId]
+    [_onBlur, onBlur]
   );
-  //#endregion
 
-  //#region React.cloneElement.
-  /*
-   * @see https://reactjs.org/docs/react-api.html#cloneelement
-   *
-   * - Vue: Scoped Slots.
-   * @see https://v3.vuejs.org/guide/component-slots.html#scoped-slots
-   * - Angular: NgTemplateOutlet.
-   * @see https://angular.io/api/common/NgTemplateOutlet
-   */
   const childs = useMemo(() => {
-    const arr: string[] = [];
-    const _childs = generateChildren(children, true).map((child) => {
-      arr.push(child.props.dId);
-      return React.cloneElement(child, {
+    const length = React.Children.count(children);
+
+    return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) =>
+      React.cloneElement(child, {
         ...child.props,
+        className: getClassName(child.props.className, {
+          'is-first': length > 1 && index === 0,
+          'is-last': length > 1 && index === length - 1,
+        }),
         __level: __level + 1,
-        __onFocus: (id: string) => {
-          __onFocus?.(id);
-        },
-        __onBlur: (id: string) => {
-          __onBlur?.(id);
-        },
-      });
-    });
-    _currentData?.ids.set(dId, arr);
-    return _childs;
-  }, [__level, __onFocus, __onBlur, _currentData, dId, children]);
-  //#endregion
+      })
+    );
+  }, [children, __level]);
 
   return (
     <>
       <div
         {...restProps}
-        id={`menu-group-${toId(dId)}`}
+        id={_id}
         className={getClassName(className, `${dPrefix}menu-group`)}
         style={{
           ...style,

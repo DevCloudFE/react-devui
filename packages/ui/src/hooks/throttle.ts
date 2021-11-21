@@ -54,7 +54,7 @@ export class ThrottleByAnimationFrame {
 }
 
 export function useThrottle() {
-  const [throttleByAnimationFrame] = useImmer(new ThrottleByAnimationFrame());
+  const [throttleByAnimationFrame] = useImmer(() => new ThrottleByAnimationFrame());
 
   const throttle = useMemo(
     () => ({

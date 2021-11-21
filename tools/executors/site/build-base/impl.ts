@@ -24,6 +24,16 @@ renderer.heading = function (text, level) {
 `;
   return head;
 };
+renderer.table = function (header: string, body: string) {
+  return `
+<div class="app-table-container">
+ <table>
+   <thead>${header}</thead>
+   <tbody>${body}</tbody>
+ </table>
+</div>
+`;
+};
 marked.setOptions({
   renderer,
   highlight: function (code, lang) {

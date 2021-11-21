@@ -23,8 +23,6 @@ title: 导航菜单
 | dMode | 菜单类型 | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | 保持同一层级的菜单至多展开一个子菜单 | boolean | false |
 | dExpandTrigger | 如何触发展开，默认根据 `dMode` 调整触发行为 | 'hover' \| 'click' | - |
-| dHeader | 菜单页头 | React.ReactNode | - |
-| dFooter | 菜单页脚 | React.ReactNode | - |
 | onActiveChange | 活动菜单项改变的回调 | `(id: string) => void` | - |
 | onExpandsChange | 展开子菜单改变的回调 | `(ids: string[]) => void` | - |
 <!-- prettier-ignore-end -->
@@ -50,7 +48,6 @@ title: 导航菜单
 | dId | 唯一标识 | string | - |
 | dIcon | 设置子菜单图标 | React.ReactNode | - |
 | dTitle | 设置子菜单标题 | React.ReactNode | - |
-| dDefaultExpand | 是否默认展开 | boolean | - |
 | dDisabled | 是否禁用 | boolean | false |
 <!-- prettier-ignore-end -->
 

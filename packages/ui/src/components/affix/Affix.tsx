@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useImperativeHandle, useMemo } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 import { useImmer } from 'use-immer';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomRef, useAsync, useThrottle, useElement } from '../../hooks';
@@ -24,7 +24,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   const {
     dTarget,
     dTop = 0,
-    dBottom,
+    dBottom = 0,
     dZIndex = 900,
     onFixedChange,
     className,
@@ -33,66 +33,25 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
     ...restProps
   } = useDComponentConfig('affix', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const { throttleByAnimationFrame } = useThrottle();
-  const asyncCapture = useAsync();
+  //#endregion
 
-  //#region Refs.
-  /*
-   * @see https://reactjs.org/docs/refs-and-the-dom.html
-   *
-   * - Vue: ref.
-   * @see https://v3.vuejs.org/guide/component-template-refs.html
-   * - Angular: ViewChild.
-   * @see https://angular.io/api/core/ViewChild
-   */
+  //#region Ref
   const [affixEl, affixRef] = useCustomRef<HTMLDivElement>();
   const [referenceEl, referenceRef] = useCustomRef<HTMLDivElement>();
   //#endregion
 
-  //#region Element
-  const targetEl = useElement(dTarget ?? null);
-  //#endregion
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
+  const { throttleByAnimationFrame } = useThrottle();
+  const asyncCapture = useAsync();
   const [fixed, setFixed] = useImmer<boolean | undefined>(undefined);
   const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
   const [referenceStyle, setReferenceStyle] = useImmer<React.CSSProperties>({});
-  //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const top = useMemo(() => (isString(dTop) ? toPx(dTop, true) : dTop), [dTop]);
-  const bottom = useMemo(() => (isString(dBottom) ? toPx(dBottom, true) : dBottom ?? 0), [dBottom]);
+  const targetEl = useElement(dTarget ?? null);
+
+  const top = isString(dTop) ? toPx(dTop, true) : dTop;
+  const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
 
   const updatePosition = useCallback(() => {
     if ((isUndefined(dTarget) || targetEl.current) && affixEl && referenceEl) {
@@ -109,7 +68,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
 
       let fixedCondition = offsetRect.top - targetRect.top <= top;
       let fixedTop = targetRect.top + top;
-      if (!isUndefined(dBottom)) {
+      if (!isUndefined(props.dBottom)) {
         fixedCondition = targetRect.bottom - offsetRect.bottom <= bottom;
         fixedTop = targetRect.bottom - bottom - offsetRect.height;
       }
@@ -141,31 +100,22 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
     }
   }, [
     dTarget,
-    dBottom,
-    dZIndex,
-    top,
-    bottom,
-    fixed,
+    targetEl,
     affixEl,
     referenceEl,
-    targetEl,
-    onFixedChange,
-    setFixed,
+    fixed,
+    top,
+    props.dBottom,
+    bottom,
     setFixedStyle,
+    dZIndex,
     setReferenceStyle,
+    setFixed,
+    onFixedChange,
   ]);
   //#endregion
 
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
+  //#region DidUpdate
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (fixed && referenceEl) {

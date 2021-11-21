@@ -18,8 +18,8 @@ Extend `React.ButtonHTMLAttributes<HTMLButtonElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dType | Set button type | 'primary' \| 'secondary' \| 'outline' \| 'dashed' \| 'text' \| 'link' | - |
-| dColor | Set button color | 'primary' \| 'success' \| 'warning' \| 'danger' | - |
+| dType | Set button type | 'primary' \| 'secondary' \| 'outline' \| 'dashed' \| 'text' \| 'link' | 'primary' |
+| dColor | Set button color | 'primary' \| 'success' \| 'warning' \| 'danger' | 'primary' |
 | dLoading | Set button loading state | boolean | false |
 | dBlock | Adjust the button width to its parent width | boolean | false |
 | dShape | Set the button shape | 'circle' \| 'round' | - |
@@ -30,7 +30,7 @@ Extend `React.ButtonHTMLAttributes<HTMLButtonElement>`.
 
 ### DButtonGroupProps
 
-Equal `React.HTMLAttributes<HTMLDivElement> & Pick<DButtonProps, 'dType' | 'dColor' | 'dSize'>`.
+Extend `React.HTMLAttributes<HTMLDivElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 

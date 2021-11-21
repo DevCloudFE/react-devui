@@ -103,7 +103,7 @@ class AsyncCapture extends BaseAsyncCapture {
 }
 
 export function useAsync(): Omit<AsyncCapture, 'fromEvent'> & CaptureMethod {
-  const [asyncCapture] = useImmer(new AsyncCapture());
+  const [asyncCapture] = useImmer(() => new AsyncCapture());
 
   useEffect(() => {
     return () => {

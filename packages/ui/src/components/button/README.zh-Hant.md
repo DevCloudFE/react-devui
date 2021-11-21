@@ -17,8 +17,8 @@ title: 按钮
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dType | 设置按钮形态 | 'primary' \| 'secondary' \| 'outline' \| 'dashed' \| 'text' \| 'link' | - |
-| dColor | 设置按钮颜色 | 'primary' \| 'success' \| 'warning' \| 'danger' | - |
+| dType | 设置按钮形态 | 'primary' \| 'secondary' \| 'outline' \| 'dashed' \| 'text' \| 'link' | 'primary' |
+| dColor | 设置按钮颜色 | 'primary' \| 'success' \| 'warning' \| 'danger' | 'primary' |
 | dLoading | 设置按钮载入状态 | boolean | false |
 | dBlock | 将按钮宽度调整为其父宽度 | boolean | false |
 | dShape | 设置按钮形状 | 'circle' \| 'round' | - |
@@ -29,7 +29,7 @@ title: 按钮
 
 ### DButtonGroupProps
 
-等于 `React.HTMLAttributes<HTMLDivElement> & Pick<DButtonProps, 'dType' | 'dColor' | 'dSize'>`。
+继承 `React.HTMLAttributes<HTMLDivElement>`。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 

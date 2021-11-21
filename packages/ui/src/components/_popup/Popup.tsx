@@ -3,11 +3,11 @@ import type { DPlacement } from '../../utils/position';
 import type { DTransitionStateList, DTransitionRef } from '../_transition';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useImperativeHandle } from 'react';
+import React, { useCallback, useEffect, useMemo, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoState } from '../../hooks';
+import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoState, useId } from '../../hooks';
 import { getClassName, globalMaxIndexManager, globalScrollCapture, getPopupPlacementStyle } from '../../utils';
 import { DTransition } from '../_transition';
 
@@ -16,21 +16,22 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dContainer?: DElementSelector | false;
   dPlacement?: DPlacement;
   dAutoPlace?: boolean;
-  dTarget: DElementSelector;
   dTrigger?: 'hover' | 'focus' | 'click' | null;
   dDistance?: number;
   dArrow?: boolean;
   dZIndex?: number;
+  dDestroy?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dCustomPopup?: (popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList };
+  dTriggerNode: React.ReactNode;
   onTrigger?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 export interface DPopupRef {
-  el: HTMLElement | null;
-  target: DElementSelector;
+  el: HTMLDivElement | null;
+  targetEl: { current: HTMLElement | null };
   updatePosition: () => void;
 }
 
@@ -40,60 +41,52 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     dContainer,
     dPlacement = 'top',
     dAutoPlace = true,
-    dTarget,
     dTrigger = 'hover',
     dDistance = 10,
     dArrow = true,
     dZIndex,
+    dDestroy = false,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     dCustomPopup,
+    dTriggerNode,
     onTrigger,
     afterVisibleChange,
     className,
     style,
     children,
+    onMouseEnter,
+    onMouseLeave,
+    onFocus,
+    onBlur,
+    onClick,
     ...restProps
   } = props;
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const asyncCapture = useAsync();
-
-  const [visible, dispatchVisible] = useManualOrAutoState(false, dVisible, onTrigger);
-
-  //#region Refs.
-  /*
-   * @see https://reactjs.org/docs/refs-and-the-dom.html
-   *
-   * - Vue: ref.
-   * @see https://v3.vuejs.org/guide/component-template-refs.html
-   * - Angular: ViewChild.
-   * @see https://angular.io/api/core/ViewChild
-   */
-  const [popupRefContent, popupRef] = useCustomRef<DTransitionRef>();
   //#endregion
 
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
+  //#region Ref
+  const [transitionRefContent, transitionRef] = useCustomRef<DTransitionRef>();
+  const [popupEl, popupRef] = useCustomRef<HTMLDivElement>();
+  //#endregion
+
+  const [currentData] = useState<{ tid: number | null }>({
+    tid: null,
+  });
+
+  const asyncCapture = useAsync();
   const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
+  const [zIndex, setZIndex] = useImmer(1000);
+  const id = useId();
+
+  const [visible, setVisible] = useManualOrAutoState(false, dVisible, onTrigger);
 
   const [autoPlacement, setAutoPlacement] = useImmer<DPlacement>(dPlacement);
 
-  const [zIndex, setZIndex] = useImmer(1000);
-  //#endregion
+  const targetEl = useElement(`[data-${dPrefix}popup-target="${id}"]`);
 
-  //#region Element
-  const targetEl = useElement(dTarget);
   const handleContainer = useCallback(() => {
     if (isUndefined(dContainer)) {
       let el = document.getElementById(`${dPrefix}popup-root`);
@@ -109,33 +102,11 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     return null;
   }, [dContainer, dPrefix, targetEl]);
   const containerEl = useElement(dContainer, handleContainer);
-  //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const placement = useMemo(() => (dAutoPlace ? autoPlacement : dPlacement), [dAutoPlace, autoPlacement, dPlacement]);
+  const placement = dAutoPlace ? autoPlacement : dPlacement;
 
   const updatePosition = useCallback(() => {
-    if (popupRefContent && popupRefContent.el && targetEl.current && containerEl.current) {
-      const popupEl = popupRefContent.el;
+    if (transitionRefContent && popupEl && targetEl.current && containerEl.current) {
       const fixed = isUndefined(dContainer);
 
       if (isUndefined(dCustomPopup)) {
@@ -237,7 +208,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
           'leave-to': { transform: 'scale(0)', opacity: '0', transition: 'transform 0.1s ease-in, opacity 0.1s ease-in', transformOrigin },
         };
       } else {
-        const { top, left, stateList } = dCustomPopup(popupRefContent.el, targetEl.current);
+        const { top, left, stateList } = dCustomPopup(popupEl, targetEl.current);
         setPopupPositionStyle({
           position: fixed ? 'fixed' : 'absolute',
           top,
@@ -247,30 +218,86 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
       }
     }
   }, [
-    dAutoPlace,
+    transitionRefContent,
+    popupEl,
+    targetEl,
+    containerEl,
     dContainer,
     dCustomPopup,
-    dDistance,
+    dAutoPlace,
     dPlacement,
-    popupRefContent,
     autoPlacement,
-    containerEl,
-    targetEl,
-    setPopupPositionStyle,
+    dDistance,
     setAutoPlacement,
+    setPopupPositionStyle,
   ]);
-  //#endregion
 
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
+  const handleMouseEnter = useCallback(
+    (e) => {
+      onMouseEnter?.(e);
+
+      if (dTrigger === 'hover') {
+        currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+        currentData.tid = asyncCapture.setTimeout(() => {
+          currentData.tid = null;
+          setVisible(true);
+        }, dMouseEnterDelay);
+      }
+    },
+    [asyncCapture, currentData, dMouseEnterDelay, dTrigger, onMouseEnter, setVisible]
+  );
+
+  const handleMouseLeave = useCallback(
+    (e) => {
+      onMouseLeave?.(e);
+
+      if (dTrigger === 'hover') {
+        currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+        currentData.tid = asyncCapture.setTimeout(() => {
+          currentData.tid = null;
+          setVisible(false);
+        }, dMouseLeaveDelay);
+      }
+    },
+    [asyncCapture, currentData, dMouseLeaveDelay, dTrigger, onMouseLeave, setVisible]
+  );
+
+  const handleFocus = useCallback(
+    (e) => {
+      onFocus?.(e);
+
+      if (dTrigger === 'focus') {
+        currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+        setVisible(true);
+      }
+    },
+    [asyncCapture, currentData, dTrigger, onFocus, setVisible]
+  );
+
+  const handleBlur = useCallback(
+    (e) => {
+      onBlur?.(e);
+
+      if (dTrigger === 'focus') {
+        currentData.tid = asyncCapture.setTimeout(() => setVisible(false), 20);
+      }
+    },
+    [asyncCapture, currentData, dTrigger, onBlur, setVisible]
+  );
+
+  const handleClick = useCallback(
+    (e) => {
+      onClick?.(e);
+
+      if (dTrigger === 'click') {
+        currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+        setVisible(true);
+      }
+    },
+    [asyncCapture, currentData, dTrigger, onClick, setVisible]
+  );
+
+  //#region DidUpdate
   useEffect(() => {
     if (dVisible) {
       if (isUndefined(dZIndex)) {
@@ -291,156 +318,164 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    const popupEl = popupRefContent?.el ?? null;
-    if (popupEl && targetEl.current) {
-      if (dTrigger === 'hover') {
-        let tid: number | null = null;
 
-        asyncGroup.fromEvent([targetEl.current, popupEl], 'mouseenter').subscribe({
-          next: () => {
-            tid && asyncGroup.clearTimeout(tid);
-            tid = asyncGroup.setTimeout(() => {
-              tid = null;
-              dispatchVisible({ value: true });
-            }, dMouseEnterDelay);
-          },
-        });
-        asyncGroup.fromEvent([targetEl.current, popupEl], 'mouseleave').subscribe({
-          next: () => {
-            tid && asyncGroup.clearTimeout(tid);
-            tid = asyncGroup.setTimeout(() => {
-              tid = null;
-              dispatchVisible({ value: false });
-            }, dMouseLeaveDelay);
-          },
-        });
-      }
-
-      if (dTrigger === 'focus') {
-        let tid: number | null = null;
-
-        asyncGroup.fromEvent([targetEl.current, popupEl], 'focus').subscribe({
-          next: () => {
-            tid && asyncGroup.clearTimeout(tid);
-            dispatchVisible({ value: true });
-          },
-        });
-        asyncGroup.fromEvent([targetEl.current, popupEl], 'blur').subscribe({
-          next: () => {
-            tid = asyncGroup.setTimeout(() => {
-              dispatchVisible({ value: false });
-            }, 20);
-          },
-        });
-      }
-
-      if (dTrigger === 'click') {
-        let tid: number | null = null;
-
-        asyncGroup.fromEvent(popupEl, 'click').subscribe({
-          next: () => {
-            tid && asyncGroup.clearTimeout(tid);
-            dispatchVisible({ value: true });
-          },
-        });
-        asyncGroup.fromEvent(targetEl.current, 'click').subscribe({
-          next: () => {
-            tid && asyncGroup.clearTimeout(tid);
-            dispatchVisible({ reverse: true });
-          },
-        });
-        asyncGroup.fromEvent(document, 'click', { capture: true }).subscribe({
-          next: () => {
-            tid = asyncGroup.setTimeout(() => {
-              dispatchVisible({ value: false });
-            }, 20);
-          },
-        });
-      }
+    if (dTrigger === 'click') {
+      asyncGroup.fromEvent(document, 'click', { capture: true }).subscribe({
+        next: () => {
+          currentData.tid = asyncGroup.setTimeout(() => {
+            setVisible(false);
+          }, 20);
+        },
+      });
     }
 
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [dVisible, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger, asyncCapture, popupRefContent, targetEl, dispatchVisible]);
+  }, [asyncCapture, currentData, dTrigger, setVisible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (visible && popupRefContent && popupRefContent.el) {
-      asyncGroup.onResize(popupRefContent.el, () => popupRefContent.transitionThrottle.run(updatePosition));
+    if (visible && transitionRefContent && popupEl) {
+      asyncGroup.onResize(popupEl, () => transitionRefContent.transitionThrottle.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, visible, popupRefContent, updatePosition]);
+  }, [asyncCapture, visible, transitionRefContent, updatePosition, popupEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (visible && targetEl.current && popupRefContent) {
-      asyncGroup.onResize(targetEl.current, () => popupRefContent.transitionThrottle.run(updatePosition));
+    if (visible && targetEl.current && transitionRefContent) {
+      asyncGroup.onResize(targetEl.current, () => transitionRefContent.transitionThrottle.run(updatePosition));
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, popupRefContent, targetEl, visible, updatePosition]);
+  }, [asyncCapture, transitionRefContent, targetEl, visible, updatePosition]);
 
   useEffect(() => {
-    if (visible && popupRefContent) {
-      const tid = globalScrollCapture.addTask(() => popupRefContent.transitionThrottle.run(updatePosition));
+    if (visible && transitionRefContent) {
+      const tid = globalScrollCapture.addTask(() => transitionRefContent.transitionThrottle.run(updatePosition));
       return () => {
         globalScrollCapture.deleteTask(tid);
       };
     }
-  }, [visible, popupRefContent, updatePosition]);
+  }, [visible, transitionRefContent, updatePosition]);
 
   useEffect(() => {
-    if (popupRefContent) {
-      popupRefContent.transitionThrottle.run(updatePosition);
+    if (transitionRefContent) {
+      transitionRefContent.transitionThrottle.run(updatePosition);
     }
-  }, [popupRefContent, updatePosition]);
+  }, [transitionRefContent, updatePosition]);
   //#endregion
 
   useImperativeHandle(
     ref,
     () => ({
-      el: popupRefContent?.el ?? null,
-      target: dTarget,
+      el: popupEl,
+      targetEl,
       updatePosition,
     }),
-    [popupRefContent, dTarget, updatePosition]
+    [popupEl, targetEl, updatePosition]
   );
 
+  const triggerNode = useMemo(() => {
+    const _triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_triggerNode, {
+      ..._triggerNode.props,
+      [`data-${dPrefix}popup-target`]: id,
+      onMouseEnter: (e) => {
+        _triggerNode.props.onMouseEnter?.(e);
+
+        if (dTrigger === 'hover') {
+          currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+          currentData.tid = asyncCapture.setTimeout(() => {
+            currentData.tid = null;
+            setVisible(true);
+          }, dMouseEnterDelay);
+        }
+      },
+      onMouseLeave: (e) => {
+        _triggerNode.props.onMouseLeave?.(e);
+
+        if (dTrigger === 'hover') {
+          currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+          currentData.tid = asyncCapture.setTimeout(() => {
+            currentData.tid = null;
+            setVisible(false);
+          }, dMouseLeaveDelay);
+        }
+      },
+      onFocus: (e) => {
+        _triggerNode.props.onFocus?.(e);
+
+        if (dTrigger === 'focus') {
+          currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+          setVisible(true);
+        }
+      },
+      onBlur: (e) => {
+        _triggerNode.props.onBlur?.(e);
+
+        if (dTrigger === 'focus') {
+          currentData.tid = asyncCapture.setTimeout(() => setVisible(false), 20);
+        }
+      },
+      onClick: (e) => {
+        _triggerNode.props.onClick?.(e);
+
+        if (dTrigger === 'click') {
+          currentData.tid && asyncCapture.clearTimeout(currentData.tid);
+          setVisible(undefined, true);
+        }
+      },
+    });
+  }, [asyncCapture, currentData, dMouseEnterDelay, dMouseLeaveDelay, dPrefix, dTrigger, dTriggerNode, id, setVisible]);
+
   return (
-    containerEl.current &&
-    ReactDOM.createPortal(
-      <DTransition
-        ref={popupRef}
-        dVisible={visible}
-        dStateList={updatePosition}
-        dCallbackList={{
-          afterEnter: () => {
-            afterVisibleChange?.(true);
-          },
-          afterLeave: () => {
-            afterVisibleChange?.(false);
-          },
-        }}
-      >
-        <div
-          {...restProps}
-          className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
-          style={{
-            ...style,
-            zIndex,
-            ...popupPositionStyle,
-          }}
-          tabIndex={-1}
-        >
-          {dArrow && <div className={`${dPrefix}popup__arrow`}></div>}
-          {children}
-        </div>
-      </DTransition>,
-      containerEl.current
-    )
+    <>
+      {triggerNode}
+      {children &&
+        containerEl.current &&
+        ReactDOM.createPortal(
+          <DTransition
+            ref={transitionRef}
+            dEl={popupEl}
+            dVisible={visible}
+            dStateList={updatePosition}
+            dCallbackList={{
+              afterEnter: () => {
+                afterVisibleChange?.(true);
+              },
+              afterLeave: () => {
+                afterVisibleChange?.(false);
+              },
+            }}
+            dDestroy={dDestroy}
+          >
+            <div
+              {...restProps}
+              ref={popupRef}
+              className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
+              style={{
+                ...style,
+                ...popupPositionStyle,
+                zIndex,
+              }}
+              tabIndex={-1}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onClick={handleClick}
+            >
+              {dArrow && <div className={`${dPrefix}popup__arrow`}></div>}
+              {children}
+            </div>
+          </DTransition>,
+          containerEl.current
+        )}
+    </>
   );
 });

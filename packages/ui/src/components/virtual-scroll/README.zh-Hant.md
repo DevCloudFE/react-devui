@@ -23,7 +23,7 @@ title: 虚拟滚动
 | dItemWidth | 手动设定列表条目宽度 | number | - |
 | dItemHeight | 手动设定列表条目高度 | number | - |
 | dList | 列表数据 | T[] | - |
-| dRenderItem | 列表条目渲染 | `(item: T, index: number) => React.ReactNode` | - | 
+| dItemRender | 列表条目渲染 | `(item: T, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
 | dCustomSize | 启用多尺寸混合 | `(item: T, index: number) => number` | - |
 | onScrollEnd | 滚动到列表底部时的回调函数 | `() => void` | - |
 <!-- prettier-ignore-end -->

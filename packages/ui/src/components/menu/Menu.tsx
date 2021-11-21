@@ -1,42 +1,46 @@
+import type { DMenuItemProps } from './MenuItem';
+
 import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef, useAsync } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
-import { generateChildren } from './utils';
 
 enableMapSet();
 
-export type DMenuContextData = {
-  dMode: 'horizontal' | 'vertical' | 'popup' | 'icon';
-  dExpandTrigger: 'hover' | 'click';
-  dExpandOne: boolean;
-  activeId: string | null;
-  onActiveChange: (id: string) => void;
-  currentExpandId: string | null;
-  onExpandChange: (id: string, expand: boolean) => void;
-  inMenu: boolean;
-  currentData: {
-    ids: Map<string, string[]>;
-    expands: Set<string>;
+type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
+
+export interface DMenuContextData {
+  menuMode: DMenuMode;
+  menuExpandTrigger?: 'hover' | 'click';
+  menuActiveId: string | null;
+  menuExpandIds: Set<string>;
+  menuFocusId: [string, string] | null;
+  menuCurrentData: {
+    navIds: Set<string>;
+    ids: Map<string, Set<string>>;
+    mode: [DMenuMode, DMenuMode];
   };
-} | null;
-export const DMenuContext = React.createContext<DMenuContextData>(null);
+  menuPopup: boolean;
+  onActiveChange: (id: string) => void;
+  onExpandChange: (id: string, expand: boolean) => void;
+  onFocus: (dId: string, id: string) => void;
+  onBlur: () => void;
+}
+export const DMenuContext = React.createContext<DMenuContextData | null>(null);
 
 export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
   dActive?: string;
   dDefaultActive?: string;
   dDefaultExpands?: string[];
-  dMode?: 'horizontal' | 'vertical' | 'popup' | 'icon';
+  dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
-  dHeader?: React.ReactNode;
-  dFooter?: React.ReactNode;
-  onActiveChange?: (id: string) => void;
+  onActiveChange?: (id: string | null) => void;
   onExpandsChange?: (ids: string[]) => void;
 }
 
@@ -48,8 +52,6 @@ export function DMenu(props: DMenuProps) {
     dMode = 'vertical',
     dExpandOne = false,
     dExpandTrigger,
-    dHeader,
-    dFooter,
     onActiveChange,
     onExpandsChange,
     className,
@@ -57,91 +59,143 @@ export function DMenu(props: DMenuProps) {
     ...restProps
   } = useDComponentConfig('menu', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-
-  const [activeId, dispatchActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive);
-
-  const [currentData] = useState({
-    ids: new Map<string, string[]>(),
-    expands: new Set(dDefaultExpands),
-  });
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
-  const [focusId, setFocusId] = useImmer(new Set<string>());
-
-  const [currentExpandId, setCurrentExpandId] = useImmer<string | null>(null);
-
-  const [inMenu, setInMenu] = useImmer(false);
   //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
+  //#region Ref
+  const [navEl, navRef] = useCustomRef<HTMLElement>();
+  //#endregion
+
+  const [currentData] = useState<DMenuContextData['menuCurrentData']>({
+    navIds: new Set(),
+    ids: new Map(),
+    mode: [dMode, dMode],
+  });
+  if (currentData.mode[1] !== dMode) {
+    currentData.mode[0] = currentData.mode[1];
+    currentData.mode[1] = dMode;
+  }
+
+  const asyncCapture = useAsync();
+  const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
+  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
+  const [expandIds, setExpandIds] = useImmer(() => new Set(dDefaultExpands));
+  const [popup, setPopup] = useImmer(dMode !== 'vertical');
+
+  const [activeId, setActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive, onActiveChange);
+  const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
+
   const handleTrigger = useCallback(
     (val) => {
-      setInMenu(val);
+      if (dMode === 'vertical' && expandTrigger === 'hover' && !val) {
+        setExpandIds((draft) => {
+          draft.clear();
+        });
+      }
     },
-    [setInMenu]
+    [expandTrigger, dMode, setExpandIds]
   );
 
-  const _onActiveChange = useCallback(
-    (id) => {
-      onActiveChange?.(id);
-      dispatchActiveId({ value: id });
-    },
-    [onActiveChange, dispatchActiveId]
-  );
+  //#region DidUpdate
+  useEffect(() => {
+    let isFocus = false;
+    if (focusId) {
+      navEl?.childNodes.forEach((child) => {
+        if (focusId[1] === (child as HTMLElement)?.id) {
+          isFocus = true;
+        }
+      });
+    }
+    setActiveDescendant(isFocus ? focusId?.[1] : undefined);
+  }, [focusId, navEl, setActiveDescendant]);
 
-  const onExpandChange = useCallback(
-    (id: string, expand: boolean) => {
-      setCurrentExpandId(expand ? id : null);
-      onExpandsChange?.(Array.from(currentData.expands));
-    },
-    [onExpandsChange, currentData, setCurrentExpandId]
-  );
+  useEffect(() => {
+    onExpandsChange?.(Array.from(expandIds));
+  }, [expandIds, onExpandsChange]);
+
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    if (dMode !== 'vertical') {
+      asyncGroup.setTimeout(() => {
+        setPopup(true);
+      }, 200 + 10);
+    } else {
+      asyncGroup.setTimeout(() => {
+        setPopup(false);
+      }, 200 + 10);
+    }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, dMode, setPopup]);
   //#endregion
 
-  //#region React.cloneElement.
-  /*
-   * @see https://reactjs.org/docs/react-api.html#cloneelement
-   *
-   * - Vue: Scoped Slots.
-   * @see https://v3.vuejs.org/guide/component-slots.html#scoped-slots
-   * - Angular: NgTemplateOutlet.
-   * @see https://angular.io/api/common/NgTemplateOutlet
-   */
+  const contextValue = useMemo<DMenuContextData>(
+    () => ({
+      menuMode: dMode,
+      menuExpandTrigger: expandTrigger,
+      menuActiveId: activeId,
+      menuExpandIds: expandIds,
+      menuFocusId: focusId,
+      menuPopup: popup,
+      menuCurrentData: currentData,
+      onActiveChange: (id) => {
+        setActiveId(id);
+      },
+      onExpandChange: (id, expand) => {
+        setExpandIds((draft) => {
+          if (expand) {
+            if (dExpandOne) {
+              for (const ids of [...Array.from(currentData.ids.values()), currentData.navIds]) {
+                if (ids.has(id)) {
+                  for (const sameLevelId of ids) {
+                    draft.delete(sameLevelId);
+                  }
+                  break;
+                }
+              }
+            }
+            draft.add(id);
+          } else {
+            draft.delete(id);
+          }
+        });
+      },
+      onFocus: (dId, id) => {
+        setFocusId([dId, id]);
+      },
+      onBlur: () => {
+        setFocusId(null);
+      },
+    }),
+    [activeId, currentData, dExpandOne, dMode, expandIds, expandTrigger, focusId, popup, setActiveId, setExpandIds, setFocusId]
+  );
+
   const childs = useMemo(() => {
-    const arr: string[] = [];
-    const _childs = generateChildren(children).map((child, index) => {
-      arr.push(child.props.dId);
+    currentData.navIds.clear();
+    currentData.ids.clear();
+
+    const getAllIds = (child: React.ReactElement) => {
+      if (child.props?.dId) {
+        const nodes = (React.Children.toArray(child.props?.children) as React.ReactElement[]).filter((node) => node.props?.dId);
+        const ids = nodes.map((node) => node.props?.dId);
+        currentData.ids.set(child.props?.dId, new Set(ids));
+
+        nodes.forEach((node) => {
+          getAllIds(node);
+        });
+      }
+    };
+
+    React.Children.toArray(children).forEach((node) => {
+      getAllIds(node as React.ReactElement);
+    });
+
+    return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) => {
+      child.props.dId && currentData.navIds.add(child.props.dId);
 
       let tabIndex = child.props.tabIndex;
       if (index === 0) {
@@ -151,57 +205,26 @@ export function DMenu(props: DMenuProps) {
       return React.cloneElement(child, {
         ...child.props,
         tabIndex,
-        __navMenu: true,
-        __onFocus: (id: string) => {
-          setFocusId((draft) => {
-            draft.add(id);
-          });
-        },
-        __onBlur: (id: string) => {
-          setFocusId((draft) => {
-            draft.delete(id);
-          });
-        },
       });
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    currentData.ids.set(Symbol('menu') as any, arr);
-    return _childs;
-  }, [children, currentData, setFocusId]);
-  //#endregion
-
-  const contextValue = useMemo(
-    () => ({
-      dMode,
-      dExpandTrigger: isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger,
-      dExpandOne,
-      activeId,
-      onActiveChange: _onActiveChange,
-      currentExpandId,
-      onExpandChange,
-      inMenu,
-      currentData,
-    }),
-    [dMode, dExpandTrigger, dExpandOne, activeId, _onActiveChange, currentExpandId, onExpandChange, inMenu, currentData]
-  );
+  }, [children, currentData]);
 
   return (
     <DMenuContext.Provider value={contextValue}>
-      <DCollapseTransition dVisible={dMode !== 'icon'} dDirection="width" dDuring={200} dSpace={80}>
+      <DCollapseTransition dEl={navEl} dVisible={dMode !== 'icon'} dDirection="width" dDuring={200} dSpace={80}>
         <DTrigger dTrigger="hover" onTrigger={handleTrigger}>
           <nav
             {...restProps}
+            ref={navRef}
             className={getClassName(className, `${dPrefix}menu`, {
               'is-horizontal': dMode === 'horizontal',
             })}
             tabIndex={-1}
             role="menubar"
             aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-            aria-activedescendant={Array.from(focusId)[0] ?? undefined}
+            aria-activedescendant={activedescendant}
           >
-            {dHeader}
             {childs}
-            {dFooter}
           </nav>
         </DTrigger>
       </DCollapseTransition>

@@ -12,38 +12,19 @@ export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
 export function DDrawerHeader(props: DDrawerHeaderProps) {
   const { className, ...restProps } = useDComponentConfig('drawer-header', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const { id: _id, onClose: _onClose } = useCustomContext(DDrawerContext);
-
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const handleClose = useCallback(() => {
-    _onClose?.();
-  }, [_onClose]);
+  const { drawerId, closeDrawer } = useCustomContext(DDrawerContext);
   //#endregion
+
+  const handleClose = useCallback(() => {
+    closeDrawer?.();
+  }, [closeDrawer]);
 
   return (
     <DHeader
       {...restProps}
-      id={_id ? `${dPrefix}drawer-content__header-${_id}` : undefined}
+      id={drawerId ? `${dPrefix}drawer-content__header-${drawerId}` : undefined}
       className={getClassName(className, `${dPrefix}drawer-content__header`)}
       onClose={handleClose}
     ></DHeader>

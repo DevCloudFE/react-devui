@@ -1,7 +1,7 @@
 import type { ThrottleByAnimationFrame } from '../../hooks/throttle';
 
 import { isFunction, isNumber, isString, isUndefined } from 'lodash';
-import React, { useMemo, useEffect, useImperativeHandle, useState } from 'react';
+import React, { useMemo, useImperativeHandle, useCallback, useLayoutEffect, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { useAsync, useThrottle } from '../../hooks';
@@ -27,163 +27,132 @@ export interface DTransitionCallbackList {
 }
 
 export interface DTransitionProps {
+  dEl: HTMLElement | null;
   dVisible?: boolean;
   dStateList?: DTransitionStateList | ((el: HTMLElement) => DTransitionStateList | undefined);
   dCallbackList?: DTransitionCallbackList | ((el: HTMLElement) => DTransitionCallbackList | undefined);
-  dAutoHidden?: boolean;
+  dDestroy?: boolean;
+  dHidden?: boolean;
   dSkipFirst?: boolean;
   children: React.ReactNode;
 }
 
 export interface DTransitionRef {
-  el: HTMLElement | null;
   transitionThrottle: ThrottleByAnimationFrame;
 }
 
 export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((props, ref) => {
-  const { dVisible = false, dStateList, dCallbackList, dAutoHidden = true, dSkipFirst = true, children } = props;
+  const { dEl, dVisible = false, dStateList, dCallbackList, dDestroy = false, dHidden = true, dSkipFirst = true, children } = props;
+
+  const [currentData] = useState({
+    first: dSkipFirst && dVisible,
+  });
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
+  const [cssRecord] = useImmer(() => new CssRecord());
 
-  const [currentData] = useState<{ visible?: boolean }>({
-    visible: undefined,
-  });
+  const [hidden, setHidden] = useImmer(!dVisible);
 
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
-  const [cssRecord] = useImmer(new CssRecord());
-  const [el, setEl] = useImmer<HTMLElement | null>(null);
-  //#endregion
+  const transition = useCallback(() => {
+    if (dEl && !isUndefined(dStateList)) {
+      cssRecord.backCss(dEl);
+      asyncCapture.clearAll();
+      throttleByAnimationFrame.skipThrottle();
 
-  //#region React.cloneElement.
-  /*
-   * @see https://reactjs.org/docs/react-api.html#cloneelement
-   *
-   * - Vue: Scoped Slots.
-   * @see https://v3.vuejs.org/guide/component-slots.html#scoped-slots
-   * - Angular: NgTemplateOutlet.
-   * @see https://angular.io/api/common/NgTemplateOutlet
-   */
-  const child = useMemo(() => {
-    const _child = children as React.ReactElement;
-    return React.cloneElement(_child, {
-      ..._child.props,
-      ref: (node: HTMLElement | null) => {
-        setEl(node);
-      },
-    });
-  }, [children, setEl]);
-  //#endregion
+      const stateList = isFunction(dStateList) ? dStateList(dEl) ?? {} : dStateList;
+      const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(dEl) ?? {} : dCallbackList;
 
-  if (el && isUndefined(currentData.visible) && !dVisible) {
-    cssRecord.setCss(el, { display: 'none' });
-    const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(el) ?? {} : dCallbackList;
-    callbackList.init?.(el);
-  }
+      callbackList[dVisible ? 'beforeEnter' : 'beforeLeave']?.(dEl);
+      cssRecord.setCss(dEl, {
+        ...stateList[dVisible ? 'enter-from' : 'leave-from'],
+        ...stateList[dVisible ? 'enter-active' : 'leave-active'],
+      });
 
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
-  useEffect(() => {
-    if (el) {
-      if (dSkipFirst && isUndefined(currentData.visible)) {
-        currentData.visible = dVisible;
-        dAutoHidden && cssRecord.setCss(el, { display: dVisible ? '' : 'none' });
-      } else if (currentData.visible !== dVisible) {
-        currentData.visible = dVisible;
-        cssRecord.backCss(el);
-        asyncCapture.clearAll();
+      asyncCapture.setTimeout(() => {
+        cssRecord.backCss(dEl);
+        cssRecord.setCss(dEl, {
+          ...stateList[dVisible ? 'enter-to' : 'leave-to'],
+          ...stateList[dVisible ? 'enter-active' : 'leave-active'],
+        });
+        callbackList[dVisible ? 'enter' : 'leave']?.(dEl);
 
-        if (!isUndefined(dStateList)) {
-          throttleByAnimationFrame.skipThrottle();
+        const timeout = getMaxTime(
+          dVisible
+            ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
+            : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
+        );
+        asyncCapture.setTimeout(() => {
+          if (!dVisible) {
+            setHidden(true);
+          }
+          cssRecord.backCss(dEl);
+          callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl, cssRecord.setCss.bind(cssRecord));
+          throttleByAnimationFrame.continueThrottle();
+        }, timeout);
+      }, 20);
+    }
+  }, [asyncCapture, cssRecord, dCallbackList, dEl, dStateList, dVisible, setHidden, throttleByAnimationFrame]);
 
-          const stateList = isFunction(dStateList) ? dStateList(el) ?? {} : dStateList;
-          const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(el) ?? {} : dCallbackList;
+  //#region DidUpdate
+  useLayoutEffect(() => {
+    if (dVisible) {
+      setHidden(false);
+    } else if (dEl) {
+      transition();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dEl, dVisible]);
 
-          callbackList[dVisible ? 'beforeEnter' : 'beforeLeave']?.(el);
-          cssRecord.setCss(el, {
-            ...stateList[dVisible ? 'enter-from' : 'leave-from'],
-            ...stateList[dVisible ? 'enter-active' : 'leave-active'],
-          });
-
-          asyncCapture.setTimeout(() => {
-            cssRecord.backCss(el);
-            cssRecord.setCss(el, {
-              ...stateList[dVisible ? 'enter-to' : 'leave-to'],
-              ...stateList[dVisible ? 'enter-active' : 'leave-active'],
-            });
-            callbackList[dVisible ? 'enter' : 'leave']?.(el);
-
-            const timeout = getMaxTime(
-              dVisible
-                ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
-                : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
-            );
-            asyncCapture.setTimeout(() => {
-              cssRecord.backCss(el);
-              dAutoHidden && cssRecord.setCss(el, { display: dVisible ? '' : 'none' });
-              callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(el, cssRecord.setCss.bind(cssRecord));
-              throttleByAnimationFrame.continueThrottle();
-            }, timeout);
-          }, 20);
-        }
+  useLayoutEffect(() => {
+    if (dEl && !hidden) {
+      if (currentData.first) {
+        currentData.first = false;
+      } else {
+        transition();
       }
     }
-  }, [dCallbackList, dStateList, el, dVisible, dAutoHidden, dSkipFirst, asyncCapture, currentData, cssRecord, throttleByAnimationFrame]);
-  //#endregion
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dEl, hidden]);
 
   useImperativeHandle(
     ref,
     () => ({
-      el,
       transitionThrottle: throttleByAnimationFrame,
     }),
-    [el, throttleByAnimationFrame]
+    [throttleByAnimationFrame]
   );
 
-  return child;
+  const child = useMemo(() => {
+    const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_child, {
+      ..._child.props,
+      style: {
+        ..._child.props.style,
+        display: !dDestroy && dHidden && hidden ? 'none' : undefined,
+      },
+    });
+  }, [children, dDestroy, dHidden, hidden]);
+
+  return dDestroy && hidden ? null : child;
 });
 
 export interface DCollapseTransitionProps {
+  dEl: HTMLElement | null;
   dVisible?: boolean;
   dCallbackList?: DTransitionCallbackList;
-  dSkipFirst?: boolean;
   dDirection?: 'width' | 'height';
   dDuring?: number;
   dTimingFunction?: string | { enter: string; leave: string };
   dSpace?: number | string;
+  dDestroy?: boolean;
+  dHidden?: boolean;
+  dSkipFirst?: boolean;
   children: React.ReactNode;
 }
 
 export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTransitionProps>((props, ref) => {
-  const {
-    dVisible = false,
-    dCallbackList,
-    dSkipFirst = true,
-    dDirection = 'height',
-    dTimingFunction,
-    dDuring = 300,
-    dSpace = 0,
-    children,
-  } = props;
+  const { dCallbackList, dDirection = 'height', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
 
   const enterTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.enter) : 'linear';
   const leaveTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.leave) : 'linear';
@@ -191,8 +160,7 @@ export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTra
 
   return (
     <DTransition
-      ref={ref}
-      dVisible={dVisible}
+      {...restProps}
       dStateList={(el) => {
         const rect = el.getBoundingClientRect();
         // handle nested
@@ -222,10 +190,6 @@ export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTra
           setCss(el, { [dDirection]: isNumber(dSpace) ? dSpace + 'px' : dSpace });
         },
       }}
-      dAutoHidden={dSpace === 0}
-      dSkipFirst={dSkipFirst}
-    >
-      {children}
-    </DTransition>
+    />
   );
 });

@@ -15,32 +15,13 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 export function DHeader(props: DHeaderProps) {
   const { dCloseIcon, dExtraIcons, onClose, className, children, ...restProps } = props;
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
+  //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
   const handleCloseClick = useCallback(() => {
     onClose?.();
   }, [onClose]);
-  //#endregion
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}header`)}>

@@ -1,36 +1,32 @@
-import type { Updater } from 'use-immer';
+import type { DMenuItemProps } from './MenuItem';
 
 import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useCustomContext, useAsync } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomRef, useCustomContext } from '../../hooks';
 import { getClassName, getFixedSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
 import { DMenuContext } from './Menu';
-import { generateChildren, getAllIds } from './utils';
 
 enableMapSet();
 
-export type DMenuSubContextData = {
-  setPopupIds: Updater<Set<string>>;
-} | null;
-export const DMenuSubContext = React.createContext<DMenuSubContextData>(null);
+export interface DMenuSubContextData {
+  dActive?: string;
+  onPopupTrigger: (id: string, visible: boolean) => void;
+}
+export const DMenuSubContext = React.createContext<DMenuSubContextData | null>(null);
 
 export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dIcon?: React.ReactNode;
   dTitle: React.ReactNode;
-  dDefaultExpand?: boolean;
   dDisabled?: boolean;
   __level?: number;
-  __navMenu?: boolean;
-  __onFocus?: (id: string) => void;
-  __onBlur?: (id: string) => void;
 }
 
 export function DMenuSub(props: DMenuSubProps) {
@@ -38,12 +34,9 @@ export function DMenuSub(props: DMenuSubProps) {
     dId,
     dIcon,
     dTitle,
-    dDefaultExpand,
     dDisabled = false,
     __level = 0,
-    __navMenu = false,
-    __onFocus,
-    __onBlur,
+    id,
     className,
     style,
     tabIndex,
@@ -53,81 +46,75 @@ export function DMenuSub(props: DMenuSubProps) {
     ...restProps
   } = useDComponentConfig('menu-sub', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
   const {
-    dMode: _dMode,
-    dExpandTrigger: _dExpandTrigger,
-    dExpandOne: _dExpandOne,
-    activeId: _activeId,
-    currentExpandId: _currentExpandId,
-    onExpandChange: _onExpandChange,
-    inMenu: _inMenu,
-    currentData: _currentData,
+    menuMode,
+    menuExpandTrigger,
+    menuActiveId,
+    menuExpandIds,
+    menuFocusId,
+    menuPopup,
+    menuCurrentData,
+    onExpandChange,
+    onFocus: _onFocus,
+    onBlur: _onBlur,
   } = useCustomContext(DMenuContext);
-  const { setPopupIds: _setPopupIds } = useCustomContext(DMenuSubContext);
-
-  const asyncCapture = useAsync();
-
-  //#region Refs.
-  /*
-   * @see https://reactjs.org/docs/refs-and-the-dom.html
-   *
-   * - Vue: ref.
-   * @see https://v3.vuejs.org/guide/component-template-refs.html
-   * - Angular: ViewChild.
-   * @see https://angular.io/api/core/ViewChild
-   */
-  const [liEl, liRef] = useCustomRef<HTMLElement>();
+  const { onPopupTrigger } = useCustomContext(DMenuSubContext);
   //#endregion
 
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
-  const [expand, setExpand] = useImmer(
-    isUndefined(dDefaultExpand) ? Array.from(_currentData?.expands ?? []).includes(dId) : dDefaultExpand
-  );
-  const [visible, setVisible] = useImmer(false);
-  const [currentVisible, setCurrentVisible] = useImmer(false);
-
-  const [focusId, setFocusId] = useImmer(new Set<string>());
+  //#region Ref
+  const [menuCollapseEl, menuCollapseRef] = useCustomRef<HTMLUListElement>();
+  const [menuPopupEl, menuPopupRef] = useCustomRef<HTMLUListElement>();
+  //#endregion
 
   const [menuWidth, setMenuWidth] = useImmer<number | undefined>(undefined);
+  const [childrenPopup, setChildrenPopup] = useImmer(new Map<string, boolean>());
+  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
 
-  const [popupIds, setPopupIds] = useImmer(new Set<string>());
-
-  const [popup, setPopup] = useImmer(_dMode !== 'vertical');
-  //#endregion
-
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const horizontal = useMemo(() => _dMode === 'horizontal' && __navMenu, [_dMode, __navMenu]);
+  const expand = menuExpandIds?.has(dId) ?? false;
+  const popupVisible = useMemo(() => {
+    let visible = false;
+    for (const childVisible of childrenPopup.values()) {
+      if (childVisible) {
+        visible = true;
+        break;
+      }
+    }
+    return visible;
+  }, [childrenPopup]);
+  const inNav = menuCurrentData?.navIds.has(dId) ?? false;
+  const horizontal = menuMode === 'horizontal' && inNav;
+  const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
+  const isActive = useMemo(() => {
+    if (menuPopup ? !popupVisible : !expand) {
+      const ids: string[] = [];
+      const getAllIds = (id: string) => {
+        ids.push(id);
+        const childIds = menuCurrentData?.ids.get(id);
+        if (childIds) {
+          for (const childId of childIds.values()) {
+            getAllIds(childId);
+          }
+        }
+      };
+      getAllIds(dId);
+      return menuActiveId ? ids.includes(menuActiveId) : false;
+    }
+    return false;
+  }, [dId, expand, menuActiveId, menuCurrentData?.ids, menuPopup, popupVisible]);
+  const iconRotate = useMemo(() => {
+    if (horizontal && popupVisible) {
+      return 180;
+    }
+    if (menuMode === 'vertical' && expand) {
+      return 180;
+    }
+    if (menuMode !== 'vertical' && !horizontal) {
+      return -90;
+    }
+    return undefined;
+  }, [expand, horizontal, menuMode, popupVisible]);
 
   const customTransition = useCallback(
     (popupEl, targetEl) => {
@@ -135,7 +122,7 @@ export function DMenuSub(props: DMenuSubProps) {
         popupEl,
         targetEl,
         horizontal ? 'bottom' : 'right',
-        horizontal ? 12 : __navMenu ? 10 : 18
+        horizontal ? 12 : inNav ? 10 : 18
       );
       setMenuWidth(targetEl.getBoundingClientRect().width - 32);
       return {
@@ -153,142 +140,121 @@ export function DMenuSub(props: DMenuSubProps) {
         },
       };
     },
-    [__navMenu, horizontal, setMenuWidth]
+    [horizontal, inNav, setMenuWidth]
   );
 
-  const handleTrigger = useCallback(
+  const handleExpandTrigger = useCallback(
     (val) => {
-      if (_dExpandTrigger === 'click') {
-        setExpand(!expand);
+      if (menuExpandTrigger === 'click') {
+        onExpandChange?.(dId, !expand);
       } else if (val) {
-        setExpand(true);
+        onExpandChange?.(dId, true);
       }
     },
-    [_dExpandTrigger, expand, setExpand]
+    [dId, expand, menuExpandTrigger, onExpandChange]
+  );
+
+  const handlePopupTrigger = useCallback(
+    (visible) => {
+      setChildrenPopup((draft) => {
+        draft.set(dId, visible);
+      });
+      onPopupTrigger?.(dId, visible);
+    },
+    [setChildrenPopup, onPopupTrigger, dId]
   );
 
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
-      __onFocus?.(`menu-sub-${toId(dId)}`);
+
+      !dDisabled && _onFocus?.(dId, _id);
     },
-    [__onFocus, dId, onFocus]
+    [_id, _onFocus, dDisabled, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
-      __onBlur?.(`menu-sub-${toId(dId)}`);
+      _onBlur?.();
     },
-    [__onBlur, dId, onBlur]
+    [_onBlur, onBlur]
   );
 
-  const handlePopupTrigger = useCallback(
-    (visible) => {
-      if (visible) {
-        setCurrentVisible(true);
-      }
-      setVisible(visible);
-      _setPopupIds?.((draft) => {
-        visible ? draft.add(dId) : draft.delete(dId);
-      });
-    },
-    [_setPopupIds, dId, setVisible, setCurrentVisible]
-  );
-  //#endregion
-
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
+  //#region DidUpdate
   useEffect(() => {
-    if (_dMode === 'vertical' && !_inMenu && _dExpandTrigger === 'hover') {
-      setExpand(false);
-    }
-  }, [_dMode, _inMenu, _dExpandTrigger, setExpand]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (_dMode === 'popup' || _dMode === 'icon') {
-      asyncGroup.setTimeout(() => {
-        setPopup(true);
-      }, 200 + 10);
-    } else {
-      setPopup(_dMode === 'horizontal');
-    }
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [_dMode, asyncCapture, setPopup]);
-
-  useEffect(() => {
-    expand ? _currentData?.expands.add(dId) : _currentData?.expands.delete(dId);
-    _onExpandChange?.(dId, expand);
-    return () => {
-      _currentData?.expands.delete(dId);
-    };
-  }, [_currentData, _onExpandChange, dId, expand]);
-
-  useEffect(() => {
-    if (_dExpandOne && _currentExpandId && _currentExpandId !== dId) {
-      for (const ids of _currentData?.ids.values() ?? []) {
-        if (ids.includes(_currentExpandId) && ids.includes(dId)) {
-          setExpand(false);
+    let isFocus = false;
+    if (menuFocusId) {
+      (menuPopup ? menuPopupEl : menuCollapseEl)?.childNodes.forEach((child) => {
+        if (menuFocusId[1] === (child as HTMLElement)?.id) {
+          isFocus = true;
         }
-      }
+      });
     }
-  }, [_dExpandOne, _currentExpandId, _currentData, dId, setExpand]);
+    setActiveDescendant(isFocus ? menuFocusId?.[1] : undefined);
+  }, [menuCollapseEl, menuFocusId, menuPopup, menuPopupEl, setActiveDescendant]);
 
   useEffect(() => {
-    if (!visible && popupIds.size === 0) {
-      setCurrentVisible(false);
-    }
-  }, [popupIds, visible, setCurrentVisible]);
-  //#endregion
-
-  //#region React.cloneElement.
-  /*
-   * @see https://reactjs.org/docs/react-api.html#cloneelement
-   *
-   * - Vue: Scoped Slots.
-   * @see https://v3.vuejs.org/guide/component-slots.html#scoped-slots
-   * - Angular: NgTemplateOutlet.
-   * @see https://angular.io/api/common/NgTemplateOutlet
-   */
-  const childs = useMemo(() => {
-    const arr: string[] = [];
-    const _childs = generateChildren(children, !popup).map((child) => {
-      arr.push(child.props.dId);
-      return React.cloneElement(child, {
-        ...child.props,
-        __level: popup ? 0 : __level + 1,
-        __onFocus: (id: string) => {
-          setFocusId((draft) => {
-            draft.add(id);
-          });
-        },
-        __onBlur: (id: string) => {
-          setFocusId((draft) => {
-            draft.delete(id);
-          });
-        },
+    if (menuMode === 'vertical') {
+      setChildrenPopup((draft) => {
+        draft.clear();
       });
-    });
-    _currentData?.ids.set(dId, arr);
-    return _childs;
-  }, [__level, _currentData, dId, popup, children, setFocusId]);
+    }
+  }, [menuMode, setChildrenPopup]);
   //#endregion
 
-  const contextValue = useMemo(() => ({ setPopupIds }), [setPopupIds]);
+  const childs = useMemo(() => {
+    const length = React.Children.count(children);
 
-  const menu = (
+    return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) =>
+      React.cloneElement(child, {
+        ...child.props,
+        className: getClassName(child.props.className, {
+          'is-first': length > 1 && index === 0,
+          'is-last': length > 1 && index === length - 1,
+        }),
+        __level: menuMode !== 'vertical' && menuPopup ? 0 : __level + 1,
+      })
+    );
+  }, [children, menuMode, menuPopup, __level]);
+
+  const liNode = (
+    <li
+      {...restProps}
+      id={_id}
+      className={getClassName(className, `${dPrefix}menu-sub`, {
+        'is-active': isActive,
+        'is-expand': menuPopup ? popupVisible : expand,
+        'is-horizontal': horizontal,
+        'is-icon': menuMode === 'icon' && inNav,
+        'is-disabled': dDisabled,
+      })}
+      style={{
+        ...style,
+        paddingLeft: 16 + __level * 20,
+      }}
+      role="menuitem"
+      tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+      aria-haspopup={true}
+      aria-expanded={menuPopup ? popupVisible : expand}
+      aria-disabled={dDisabled}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
+      <div className={`${dPrefix}menu-sub__indicator`}>
+        <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
+      </div>
+      {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
+      <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
+      <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
+        <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
+      </DIcon>
+    </li>
+  );
+
+  const menuNode = (ref: (instance: HTMLUListElement | null) => void) => (
     <ul
+      ref={ref}
       className={`${dPrefix}menu-list`}
       style={{
         width: horizontal ? menuWidth : undefined,
@@ -296,86 +262,60 @@ export function DMenuSub(props: DMenuSubProps) {
       }}
       role="menu"
       tabIndex={-1}
-      aria-labelledby={`menu-sub-${toId(dId)}`}
+      aria-labelledby={_id}
       aria-orientation="vertical"
-      aria-activedescendant={Array.from(focusId)[0] ?? undefined}
+      aria-activedescendant={activedescendant}
     >
       {childs}
     </ul>
   );
 
+  const contextValue = useMemo<DMenuSubContextData>(
+    () => ({
+      onPopupTrigger: (id, visible) => {
+        setChildrenPopup((draft) => {
+          draft.set(id, visible);
+        });
+        onPopupTrigger?.(id, visible);
+      },
+    }),
+    [onPopupTrigger, setChildrenPopup]
+  );
+
   return (
     <DMenuSubContext.Provider value={contextValue}>
-      <DTrigger
-        ref={liRef}
-        dTrigger={popup ? undefined : _dExpandTrigger}
-        dDisabled={dDisabled}
-        dMouseEnterDelay={0}
-        onTrigger={handleTrigger}
-      >
-        <li
-          {...restProps}
-          id={`menu-sub-${toId(dId)}`}
-          className={getClassName(className, `${dPrefix}menu-sub`, {
-            'is-active': (popup ? !currentVisible : !expand) && getAllIds(dId, _currentData?.ids).includes(_activeId as string),
-            'is-expand': popup ? currentVisible : expand,
-            'is-horizontal': horizontal,
-            'is-icon': _dMode === 'icon' && __navMenu,
-          })}
-          style={{
-            ...style,
-            paddingLeft: 16 + __level * 20,
-          }}
-          role="menuitem"
-          tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-          aria-haspopup={true}
-          aria-expanded={popup ? currentVisible : expand}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        >
-          <div className={`${dPrefix}menu-sub__indicator`}>
-            <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
-          </div>
-          {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
-          <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
-          <DIcon
-            className={`${dPrefix}menu-sub__arrow`}
-            dSize={14}
-            dRotate={
-              (_dMode === 'popup' || popup) && !horizontal
-                ? -90
-                : (horizontal && currentVisible) || (_dMode === 'vertical' && expand)
-                ? 180
-                : undefined
-            }
-          >
-            <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-          </DIcon>
-        </li>
-      </DTrigger>
-      {!dDisabled &&
-        (popup ? (
-          <DPopup
-            className={`${dPrefix}menu-sub__popup`}
-            dVisible={currentVisible}
-            dTrigger={_dExpandTrigger}
-            dTarget={liEl}
-            dArrow={false}
-            dCustomPopup={customTransition}
-            onTrigger={handlePopupTrigger}
-          >
-            {menu}
-          </DPopup>
-        ) : (
+      {dDisabled ? (
+        liNode
+      ) : (
+        <>
+          {menuPopup ? (
+            <DPopup
+              className={`${dPrefix}menu-sub__popup`}
+              dVisible={popupVisible}
+              dTrigger={menuExpandTrigger}
+              dArrow={false}
+              dCustomPopup={customTransition}
+              dTriggerNode={liNode}
+              onTrigger={handlePopupTrigger}
+            >
+              {menuNode(menuPopupRef)}
+            </DPopup>
+          ) : (
+            <DTrigger dTrigger={menuExpandTrigger} onTrigger={handleExpandTrigger}>
+              {liNode}
+            </DTrigger>
+          )}
           <DCollapseTransition
-            dVisible={_dMode !== 'vertical' && __level === 0 ? false : expand}
-            dSkipFirst={!(expand && __level === 0)}
+            dEl={menuCollapseEl}
+            dVisible={menuMode !== 'vertical' ? false : expand}
             dDirection="height"
             dDuring={200}
+            dDestroy={menuMode !== 'vertical'}
           >
-            {menu}
+            {menuNode(menuCollapseRef)}
           </DCollapseTransition>
-        ))}
+        </>
+      )}
     </DMenuSubContext.Provider>
   );
 }

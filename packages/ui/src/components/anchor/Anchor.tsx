@@ -7,14 +7,12 @@ import { useImmer } from 'use-immer';
 import { useDPrefixConfig, useDComponentConfig, useCustomRef, useElement } from '../../hooks';
 import { getClassName, globalScrollCapture, CustomScroll } from '../../utils';
 
-export type DAnchorContextData = {
-  activeHref: string | null;
-  onClick: (href: string) => void;
-  currentData: {
-    links: Map<string, HTMLElement>;
-  };
-} | null;
-export const DAnchorContext = React.createContext<DAnchorContextData>(null);
+export interface DAnchorContextData {
+  anchorActiveHref: string | null;
+  onLinkClick: (href: string) => void;
+  onLinkChange: (href: string, el?: HTMLElement) => void;
+}
+export const DAnchorContext = React.createContext<DAnchorContextData | null>(null);
 
 export interface DAnchorProps extends React.HTMLAttributes<HTMLUListElement> {
   dDistance?: number;
@@ -36,67 +34,24 @@ export function DAnchor(props: DAnchorProps) {
     ...restProps
   } = useDComponentConfig('anchor', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
+  //#endregion
+
+  //#region Ref
+  const [anchorEl, anchorRef] = useCustomRef<HTMLUListElement>();
+  //#endregion
 
   const [currentData] = useState({
     links: new Map<string, HTMLElement>(),
   });
 
-  //#region Refs.
-  /*
-   * @see https://reactjs.org/docs/refs-and-the-dom.html
-   *
-   * - Vue: ref.
-   * @see https://v3.vuejs.org/guide/component-template-refs.html
-   * - Angular: ViewChild.
-   * @see https://angular.io/api/core/ViewChild
-   */
-  const [anchorEl, anchorRef] = useCustomRef<HTMLUListElement>();
-  //#endregion
-
-  //#region Element
-  const pageEl = useElement(dPage ?? null);
-  //#endregion
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
   const [customScroll] = useImmer(new CustomScroll());
-
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
-
   const [activeHref, setActiveHref] = useImmer<string | null>(null);
-  //#endregion
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
+  const pageEl = useElement(dPage ?? null);
+
   const updateAnchor = useCallback(() => {
     if (anchorEl) {
       let pageTop = 0;
@@ -141,7 +96,7 @@ export function DAnchor(props: DAnchorProps) {
     }
   }, [dDistance, dPage, currentData, pageEl, anchorEl, setActiveHref, setDotStyle]);
 
-  const onClick = useCallback(
+  const onLinkClick = useCallback(
     (href: string) => {
       let pageTop = 0;
       let _pageEl: HTMLElement = document.documentElement;
@@ -170,18 +125,8 @@ export function DAnchor(props: DAnchorProps) {
     },
     [dPage, dScrollBehavior, dDistance, customScroll, pageEl]
   );
-  //#endregion
 
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
+  //#region DidUpdate
   useEffect(() => {
     onHrefChange?.(activeHref);
   }, [onHrefChange, activeHref]);
@@ -198,7 +143,20 @@ export function DAnchor(props: DAnchorProps) {
   }, [updateAnchor]);
   //#endregion
 
-  const contextValue = useMemo(() => ({ activeHref, onClick, currentData }), [activeHref, onClick, currentData]);
+  const contextValue = useMemo<DAnchorContextData>(
+    () => ({
+      anchorActiveHref: activeHref,
+      onLinkClick,
+      onLinkChange: (href, el) => {
+        if (isUndefined(el)) {
+          currentData.links.delete(href);
+        } else {
+          currentData.links.set(href, el);
+        }
+      },
+    }),
+    [activeHref, currentData, onLinkClick]
+  );
 
   return (
     <DAnchorContext.Provider value={contextValue}>

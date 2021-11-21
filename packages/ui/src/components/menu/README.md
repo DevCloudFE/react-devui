@@ -24,8 +24,6 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | dMode | Menu type | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | Keep the same level of the menu, expand at most one sub-menu | boolean | false |
 | dExpandTrigger | How to trigger the expansion, adjust the trigger behavior according to `dMode` by default | 'hover' \| 'click' | - |
-| dHeader | Menu header | React.ReactNode | - |
-| dFooter | Menu footer | React.ReactNode | - |
 | onActiveChange | Callback for active menu item change | `(id: string) => void` | - |
 | onExpandsChange | Callback for changes in expanded submenu | `(ids: string[]) => void` | - |
 <!-- prettier-ignore-end -->
@@ -51,7 +49,6 @@ Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 | dId | Uniquely identifies | string | - |
 | dIcon | Settings submenu icon | React.ReactNode | - |
 | dTitle | Set submenu title | React.ReactNode | - |
-| dDefaultExpand | Whether to expand by default | boolean | - |
 | dDisabled | Whether to disable | boolean | false |
 <!-- prettier-ignore-end -->
 

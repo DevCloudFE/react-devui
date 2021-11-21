@@ -4,6 +4,10 @@ import { useImmer } from 'use-immer';
 
 import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig } from '../../hooks';
 
+export interface DItemRenderProps {
+  'data-virtual-scroll-reference'?: string;
+}
+
 export interface DVirtualScrollProps<T> {
   dTag?: string;
   dWidth?: string | number;
@@ -11,7 +15,7 @@ export interface DVirtualScrollProps<T> {
   dItemWidth?: number;
   dItemHeight?: number;
   dList: T[];
-  dRenderItem: (item: T, index: number) => React.ReactNode;
+  dItemRender: (item: T, index: number, props: DItemRenderProps) => React.ReactNode;
   dCustomSize?: (item: T, index: number) => number;
   onScrollEnd?: () => void;
   [index: string]: unknown;
@@ -25,7 +29,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     dItemWidth,
     dItemHeight,
     dList,
-    dRenderItem,
+    dItemRender,
     dCustomSize,
     onScrollEnd,
     style,
@@ -33,59 +37,25 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     ...restProps
   } = useDComponentConfig('virtual-scroll', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
+  //#endregion
+
   const { throttleByAnimationFrame } = useThrottle();
   const asyncCapture = useAsync();
-
-  //#region States.
-  /*
-   * @see https://reactjs.org/docs/state-and-lifecycle.html
-   *
-   * - Vue: data.
-   * @see https://v3.vuejs.org/api/options-data.html#data-2
-   * - Angular: property on a class.
-   * @example
-   * export class HeroChildComponent {
-   *   public data: 'example';
-   * }
-   */
   const id = useId();
-
   const [list, setList] = useImmer<React.ReactNode[]>([]);
   const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
-  //#endregion
 
-  //#region Element
-  const el = useElement(`[data-${dPrefix}virtual-scroll-${id}]`);
-  const referenceEl = useElement(`[data-${dPrefix}virtual-scroll-reference-${id}]`);
-  //#endregion
+  const listEl = useElement(`[data-virtual-scroll="${id}"]`);
+  const referenceEl = useElement(`[data-virtual-scroll-reference="${id}"]`);
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const itemSizeArr = useMemo(() => (dCustomSize ? dList.map((item, index) => dCustomSize(item, index)) : []), [dCustomSize, dList]);
+  const itemSize = useMemo(() => (dCustomSize ? dList.map((item, index) => dCustomSize(item, index)) : []), [dCustomSize, dList]);
 
   const updateList = useCallback(() => {
-    if (el.current) {
-      const scrollSize = isUndefined(dWidth) ? el.current.scrollTop : el.current.scrollLeft;
-      const rect = el.current.getBoundingClientRect();
+    if (listEl.current) {
+      const scrollSize = isUndefined(dWidth) ? listEl.current.scrollTop : listEl.current.scrollLeft;
+      const rect = listEl.current.getBoundingClientRect();
       const size = isUndefined(dWidth) ? dItemHeight ?? rect.height : dItemWidth ?? rect.width;
       if (isUndefined(dCustomSize)) {
         if (referenceEl.current) {
@@ -96,7 +66,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           if (size && itemSize) {
             const startIndex = Math.max(~~(scrollSize / itemSize) - 2, 1);
             const endIndex = Math.min(~~(scrollSize / itemSize) + ~~(size / itemSize) + 1 + 2, dList.length);
-            setList(dList.slice(startIndex, endIndex).map((item, index) => dRenderItem(item, startIndex + index)));
+            setList(dList.slice(startIndex, endIndex).map((item, index) => dItemRender(item, startIndex + index, {})));
 
             setFillSize([
               { [isUndefined(dWidth) ? 'height' : 'width']: Math.max(itemSize * (startIndex - 1), 0) },
@@ -112,8 +82,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           let accumulateSize = 0;
           let startInfo: [number, number] | undefined;
           let endInfo: [number, number] | undefined;
-          for (const [index, itemSize] of itemSizeArr.entries()) {
-            accumulateSize += itemSize;
+          for (const [index, value] of itemSize.entries()) {
+            accumulateSize += value;
             if (accumulateSize > scrollSize && isUndefined(startInfo)) {
               startInfo = [index, accumulateSize];
             }
@@ -124,19 +94,16 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
           const startIndex = Math.max((startInfo?.[0] ?? 0) - 2, 0);
           const endIndex = Math.min((endInfo?.[0] ?? dList.length) + 1 + 2, dList.length);
-          setList(dList.slice(startIndex, endIndex).map((item, index) => dRenderItem(item, startIndex + index)));
+          setList(dList.slice(startIndex, endIndex).map((item, index) => dItemRender(item, startIndex + index, {})));
 
           const preFillSize = Math.max(
             startInfo
-              ? (startInfo[1] ?? 0) -
-                  (itemSizeArr[startInfo[0]] ?? 0) -
-                  (itemSizeArr[startInfo[0] - 1] ?? 0) -
-                  (itemSizeArr[startInfo[0] - 2] ?? 0)
+              ? (startInfo[1] ?? 0) - (itemSize[startInfo[0]] ?? 0) - (itemSize[startInfo[0] - 1] ?? 0) - (itemSize[startInfo[0] - 2] ?? 0)
               : 0,
             0
           );
           const sufFillSize = Math.max(
-            endInfo ? accumulateSize - endInfo[1] - (itemSizeArr[endInfo[0] + 1] ?? 0) - (itemSizeArr[endInfo[0] + 2] ?? 0) : 0,
+            endInfo ? accumulateSize - endInfo[1] - (itemSize[endInfo[0] + 1] ?? 0) - (itemSize[endInfo[0] + 2] ?? 0) : 0,
             0
           );
           setFillSize([
@@ -149,23 +116,20 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         }
       }
     }
-  }, [el, dWidth, dItemHeight, dItemWidth, dCustomSize, referenceEl, dList, setList, setFillSize, onScrollEnd, dRenderItem, itemSizeArr]);
+  }, [listEl, dWidth, dItemHeight, dItemWidth, dCustomSize, referenceEl, dList, setList, setFillSize, dItemRender, onScrollEnd, itemSize]);
 
   const reference = useMemo(() => {
     if (dList[0] && isUndefined(dCustomSize)) {
-      const _reference = dRenderItem(dList[0], 0) as React.ReactElement;
       const [asyncGroup] = asyncCapture.createGroup('reference');
       asyncGroup.setTimeout(() => {
         if (referenceEl.current) {
           asyncGroup.onResize(referenceEl.current, () => throttleByAnimationFrame.run(updateList));
         }
       }, 20);
-      return React.cloneElement(_reference, {
-        ..._reference.props,
-        [`data-${dPrefix}virtual-scroll-reference-${id}`]: 'true',
-      });
+
+      return dItemRender(dList[0], 0, { 'data-virtual-scroll-reference': String(id) });
     }
-  }, [asyncCapture, dCustomSize, dList, dPrefix, dRenderItem, id, referenceEl, throttleByAnimationFrame, updateList]);
+  }, [asyncCapture, dCustomSize, dItemRender, dList, id, referenceEl, throttleByAnimationFrame, updateList]);
 
   const handleScroll = useCallback(
     (e) => {
@@ -174,18 +138,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     },
     [onScroll, throttleByAnimationFrame, updateList]
   );
-  //#endregion
 
-  //#region DidUpdate.
-  /*
-   * We need a service(ReactConvertService) that implement useEffect.
-   * @see https://reactjs.org/docs/hooks-effect.html
-   *
-   * - Vue: onUpdated.
-   * @see https://v3.vuejs.org/api/composition-api.html#lifecycle-hooks
-   * - Angular: ngDoCheck.
-   * @see https://angular.io/api/core/DoCheck
-   */
+  //#region DidUpdate
   useEffect(() => {
     throttleByAnimationFrame.run(updateList);
   }, [throttleByAnimationFrame, updateList]);
@@ -203,7 +157,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         overflowX: isUndefined(dWidth) ? undefined : 'auto',
         overflowY: isUndefined(dHeight) ? undefined : 'auto',
       },
-      [`data-${dPrefix}virtual-scroll-${id}`]: 'true',
+      'data-virtual-scroll': String(id),
       onScroll: handleScroll,
     },
     [

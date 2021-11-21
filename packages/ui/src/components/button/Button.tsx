@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import { isUndefined } from 'lodash';
+import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useWave, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useWave, useCustomContext, useCustomRef } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DIcon } from '../icon';
@@ -19,8 +20,8 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 
 export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props, ref) => {
   const {
-    dType,
-    dColor,
+    dType = 'primary',
+    dColor = 'primary',
     dLoading = false,
     dBlock = false,
     dShape,
@@ -34,46 +35,31 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
     ...restProps
   } = useDComponentConfig('button', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
-  const { dColor: _dColor, dSize: _dSize, dType: _dType } = useCustomContext(DButtonGroupContext);
+  const { buttonGroupType, buttonGroupColor, buttonGroupSize } = useCustomContext(DButtonGroupContext);
+  //#endregion
+
+  //#region Ref
+  const [loadingEl, loadingRef] = useCustomRef<HTMLElement>();
+  //#endregion
+
   const wave = useWave();
 
-  //#region Getters.
-  /*
-   * When the dependency changes, recalculate the value.
-   * In React, usually use `useMemo` to handle this situation.
-   * Notice: `useCallback` also as getter that target at function.
-   *
-   * - Vue: computed.
-   * @see https://v3.vuejs.org/guide/computed.html#computed-properties
-   * - Angular: get property on a class.
-   * @example
-   * // ReactConvertService is a service that implement the
-   * // methods when need to convert react to angular.
-   * export class HeroChildComponent {
-   *   public get data():string {
-   *     return this.reactConvert.useMemo(factory, [deps]);
-   *   }
-   *
-   *   constructor(private reactConvert: ReactConvertService) {}
-   * }
-   */
-  const type = useMemo(() => dType ?? _dType ?? 'primary', [_dType, dType]);
-  const color = useMemo(() => dColor ?? _dColor ?? 'primary', [_dColor, dColor]);
-  const size = useMemo(() => dSize ?? _dSize, [_dSize, dSize]);
-
-  const dDisabled = useMemo(() => disabled || dLoading, [disabled, dLoading]);
+  const type = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
+  const color = isUndefined(props.dColor) ? buttonGroupColor ?? dColor : dColor;
+  const size = isUndefined(props.dSize) ? buttonGroupSize ?? dSize : dSize;
+  const _disabled = disabled || dLoading;
 
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e) => {
       onClick?.(e);
       if (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed') {
         wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
       }
     },
-    [dPrefix, wave, color, type, onClick]
+    [color, dPrefix, onClick, type, wave]
   );
-  //#endregion
 
   const loadingIcon = (
     <DIcon dSpin>
@@ -99,16 +85,18 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
         },
         className
       )}
-      disabled={dDisabled}
-      aria-disabled={dDisabled}
+      disabled={_disabled}
+      aria-disabled={_disabled}
       onClick={handleClick}
     >
       {!dIconLeft && children}
       {dIcon ? (
         <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>{dLoading ? loadingIcon : dIcon}</span>
       ) : (
-        <DCollapseTransition dVisible={dLoading} dDirection="width">
-          <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>{loadingIcon}</span>
+        <DCollapseTransition dEl={loadingEl} dVisible={dLoading} dDirection="width" dDestroy>
+          <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>
+            {loadingIcon}
+          </span>
         </DCollapseTransition>
       )}
       {dIconLeft && children}
