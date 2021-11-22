@@ -1,7 +1,8 @@
 import type { DElementSelector } from '../../hooks/element';
+import type { DDragProps } from './Drag';
 
 import { enableMapSet } from 'immer';
-import { isArray, isNumber, isUndefined } from 'lodash';
+import { isArray, isEqual, isNumber, isUndefined } from 'lodash';
 import React, { useState } from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
@@ -12,163 +13,160 @@ import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPref
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 
-export type DDropContextData = {
-  currentData: {
-    els: Map<number, { current: HTMLElement | null }>;
+export interface DDropContextData {
+  dropEl: { current: HTMLElement | null };
+  dropCurrentData: {
+    drags: Map<string, string>;
+    placeholders: Map<string, string>;
+    outDrop: boolean;
   };
-} | null;
-export const DDropContext = React.createContext<DDropContextData>(null);
+}
+export const DDropContext = React.createContext<DDropContextData | null>(null);
 
 export interface DDropProps extends React.HTMLAttributes<HTMLDivElement> {
   dTag?: string;
   dDirection: 'horizontal' | 'vertical';
-  dPlaceholderClass?: string;
-  dPlaceholderStyle?: React.CSSProperties;
+  dPlaceholder?: React.ReactNode;
   children: React.ReactNode;
   [index: string]: unknown;
 }
 
 export function DDrop(props: DDropProps) {
-  const {
-    dTag = 'div',
-    dDirection = 'vertical',
-    dPlaceholderClass,
-    dPlaceholderStyle,
-    children,
-    ...restProps
-  } = useDComponentConfig('drop', props);
+  const { dTag = 'div', dDirection = 'vertical', dPlaceholder, children, ...restProps } = useDComponentConfig('drop', props);
 
+  //#region Context
   const dPrefix = useDPrefixConfig();
+  //#endregion
 
-  const [currentData] = useState<NonNullable<DDropContextData>['currentData']>({
-    els: new Map(),
+  const [currentData] = useState<
+    DDropContextData['dropCurrentData'] & {
+      order: string[];
+      preOrder?: string[];
+      dragId?: string;
+    }
+  >({
+    drags: new Map(),
+    placeholders: new Map(),
+    outDrop: false,
+    order: Array<string>(),
   });
 
+  const [updateChildren, setUpdateChildren] = useState(0);
   const id = useId();
 
-  const dropPlaceholderEl = useElement(`[data-${dPrefix}drop-placeholder-${id}]`);
+  const [orderChildren, setOrderChildren] = useImmer<React.ReactElement[]>([]);
 
-  const [orderChildren, dispatchOrderChildren] = useImmerReducer<
-    React.ReactElement[],
-    | { type: 'onDragStart'; data: { __index: number; placeholder: React.ReactElement } }
-    | { type: 'onDrag'; data: { __index: number; center: { top: number; left: number }; placeholder: React.ReactElement } }
-  >(
-    (draft, action) => {
-      if (action.type === 'onDragStart') {
-        const { __index, placeholder } = action.data;
-        const index = draft.findIndex((orderChild) => (orderChild as React.ReactElement).props.__index === __index);
-        draft.splice(
-          index,
-          0,
-          React.cloneElement(placeholder, {
-            ...placeholder.props,
-            key: `${dPrefix}drop-placeholder-${id}`,
-            className: getClassName(dPlaceholderClass, placeholder.props.className),
-            style: { ...dPlaceholderStyle, ...placeholder.props.style },
-            [`data-${dPrefix}drop-placeholder-${id}`]: 'true',
-          })
-        );
+  const dropEl = useElement(`[data-${dPrefix}drop="${id}"]`);
+
+  //#region DidUpdate
+  useEffect(() => {
+    const _childs = React.Children.toArray(children) as Array<React.ReactElement<DDragProps>>;
+    const allIds = _childs.map((child) => child.props.dId as string);
+    currentData.order = currentData.order.filter((id) => allIds.includes(id));
+    currentData.order.length = allIds.length;
+    let addIndex = allIds.findIndex((id) => !currentData.order.includes(id));
+    if (addIndex !== -1) {
+      const addIds: string[] = [];
+      for (; addIndex < allIds.length; addIndex++) {
+        if (!currentData.order.includes(allIds[addIndex])) {
+          addIds.push(allIds[addIndex]);
+        } else {
+          break;
+        }
       }
-      if (action.type === 'onDrag') {
-        const { __index, center, placeholder } = action.data;
-        enum Quadrant {
-          One = 1,
-          Two,
-          Three,
-          Four,
-        }
-        let quadrant: Quadrant | undefined;
-        const getQuadrant = (coordinate: { top: number; left: number }, elCoordinate: { top: number; left: number }) => {
-          if (coordinate.top < elCoordinate.top && coordinate.left > elCoordinate.left) {
-            return Quadrant.One;
-          }
-          if (coordinate.top < elCoordinate.top && coordinate.left < elCoordinate.left) {
-            return Quadrant.Two;
-          }
-          if (coordinate.top > elCoordinate.top && coordinate.left < elCoordinate.left) {
-            return Quadrant.Three;
-          }
-          if (coordinate.top > elCoordinate.top && coordinate.left > elCoordinate.left) {
-            return Quadrant.Four;
-          }
-        };
-        let minDistance: number | undefined;
-        let placeholderIndex: number | undefined;
-        const calculate = (el: HTMLElement, index?: number) => {
-          const elRect = el.getBoundingClientRect() as DOMRect;
-          const elCenter = { top: elRect.top + elRect.height / 2, left: elRect.left + elRect.width / 2 };
-          const distance = Math.pow(Math.pow(elCenter.top - center.top, 2) + Math.pow(elCenter.left - center.left, 2), 0.5);
-          if (isUndefined(minDistance) || distance < minDistance) {
-            minDistance = distance;
-            placeholderIndex = index;
-            console.log(placeholderIndex);
-            quadrant = getQuadrant(center, elCenter);
-            // replaceIndex = quadrant === Quadrant.One || quadrant === Quadrant.Two ? index : index + 1;
-          }
-        };
-        if (dropPlaceholderEl.current) {
-          calculate(dropPlaceholderEl.current);
-        }
-        draft.forEach((node) => {
-          if (node.props.__index !== __index) {
-            const el = currentData.els.get(node.props.__index)?.current;
-            if (el) {
-              calculate(el, node.props.__index);
+      currentData.order.splice(addIndex, 0, ...addIds);
+    }
+
+    setOrderChildren(
+      currentData.order.map((id) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const node = _childs.find((child) => child.props.dId === id)!;
+
+        return React.cloneElement<DDragProps>(node, {
+          ...node.props,
+          dPlaceholder: dPlaceholder,
+          __onDragStart: () => {
+            currentData.dragId = node.props.dId;
+          },
+          __onDrag: (center) => {
+            if (!currentData.outDrop) {
+              enum Quadrant {
+                One = 1,
+                Two,
+                Three,
+                Four,
+              }
+              let quadrant: Quadrant | undefined;
+              const getQuadrant = (coordinate: { top: number; left: number }, elCoordinate: { top: number; left: number }) => {
+                if (coordinate.top < elCoordinate.top && coordinate.left > elCoordinate.left) {
+                  return Quadrant.One;
+                }
+                if (coordinate.top < elCoordinate.top && coordinate.left < elCoordinate.left) {
+                  return Quadrant.Two;
+                }
+                if (coordinate.top > elCoordinate.top && coordinate.left < elCoordinate.left) {
+                  return Quadrant.Three;
+                }
+                if (coordinate.top > elCoordinate.top && coordinate.left > elCoordinate.left) {
+                  return Quadrant.Four;
+                }
+              };
+              let minDistance: number | undefined;
+              let replaceIndex: number | undefined;
+              currentData.order.forEach((id, index) => {
+                let el: HTMLElement | null = null;
+                if (id === currentData.dragId) {
+                  const selector = currentData.placeholders.get(id);
+                  el = selector ? document.querySelector(selector) : null;
+                } else {
+                  const selector = currentData.drags.get(id);
+                  el = selector ? document.querySelector(selector) : null;
+                }
+                if (el) {
+                  const elRect = el.getBoundingClientRect();
+                  const elCenter = { top: elRect.top + elRect.height / 2, left: elRect.left + elRect.width / 2 };
+                  const distance = Math.pow(Math.pow(elCenter.top - center.top, 2) + Math.pow(elCenter.left - center.left, 2), 0.5);
+                  if (isUndefined(minDistance) || distance < minDistance) {
+                    minDistance = distance;
+                    if (id !== currentData.dragId) {
+                      quadrant = getQuadrant(center, elCenter);
+                      replaceIndex = quadrant === Quadrant.One || quadrant === Quadrant.Two ? index : index + 1;
+                    }
+                  }
+                }
+              });
+
+              if (!isUndefined(replaceIndex)) {
+                currentData.order.splice(
+                  currentData.order.findIndex((id) => id === currentData.dragId),
+                  1,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  undefined as any
+                );
+
+                currentData.order.splice(replaceIndex, 0, currentData.dragId as string);
+
+                currentData.order = currentData.order.filter((id) => !!id);
+
+                if (!isEqual(currentData.preOrder, currentData.order)) {
+                  currentData.preOrder = [...currentData.order];
+                  setUpdateChildren((prev) => prev + 1);
+                }
+              }
             }
-          }
+          },
         });
+      })
+    );
+  }, [children, currentData, dPlaceholder, updateChildren, setOrderChildren]);
+  //#endregion
 
-        if (!isUndefined(placeholderIndex)) {
-          const index = draft.findIndex((node) => node.props[`data-${dPrefix}drop-placeholder-${id}`]);
-          if (index !== -1) {
-            draft.splice(index, 1);
-          }
-          let replaceIndex = draft.findIndex((node) => node.props.__index === placeholderIndex);
-          replaceIndex = quadrant === Quadrant.One || quadrant === Quadrant.Two ? replaceIndex : replaceIndex + 1;
-          draft.splice(
-            replaceIndex,
-            0,
-            React.cloneElement(placeholder, {
-              ...placeholder.props,
-              key: `${dPrefix}drop-placeholder-${id}`,
-              className: getClassName(dPlaceholderClass, placeholder.props.className),
-              style: { ...dPlaceholderStyle, ...placeholder.props.style },
-              [`data-${dPrefix}drop-placeholder-${id}`]: 'true',
-            })
-          );
-        }
-      }
-      return draft;
-    },
-    React.Children.toArray(children).map((child, index) => {
-      const _child = child as React.ReactElement;
-      let placeholderNode: React.ReactElement;
-      return React.cloneElement(_child, {
-        ..._child.props,
-        dPlaceholder: false,
-        __index: index,
-        __onDragStart: (__index: number, placeholder: React.ReactElement) => {
-          placeholderNode = placeholder;
-          dispatchOrderChildren({ type: 'onDragStart', data: { __index, placeholder } });
-        },
-        __onDrag: (__index: number, center: { top: number; left: number }) => {
-          dispatchOrderChildren({ type: 'onDrag', data: { __index, center, placeholder: placeholderNode } });
-        },
-      });
-    })
-  );
-
-  const childs = useMemo(() => {
-    React.Children.map(children, (child, index) => {
-      const _child = child as React.ReactElement;
-    });
-  }, []);
-
-  const contextValue = useMemo(
+  const contextValue = useMemo<DDropContextData>(
     () => ({
-      currentData,
+      dropEl,
+      dropCurrentData: currentData,
     }),
-    [currentData]
+    [currentData, dropEl]
   );
 
   return (
@@ -177,6 +175,7 @@ export function DDrop(props: DDropProps) {
         dTag,
         {
           ...restProps,
+          [`data-${dPrefix}drop`]: String(id),
         },
         [...orderChildren]
       )}

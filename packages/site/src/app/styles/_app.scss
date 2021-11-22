@@ -40,18 +40,22 @@ body {
 
 .app-demo-drag {
   position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
   width: 160px;
   height: 40px;
-  background-color: var(--d-color-primary);
+
   color: #fff;
+
+  background-color: var(--d-color-primary);
 
   @include font-size(0.8rem);
 
   & + &,
-  & + .app-demo-drag-placeholder {
+  & + .app-demo-drag-placeholder,
+  .app-demo-drag-placeholder + & {
     margin-top: 8px;
   }
 }
