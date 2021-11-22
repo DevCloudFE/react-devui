@@ -5,7 +5,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef, useAsync } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -23,9 +23,7 @@ export interface DMenuContextData {
   menuCurrentData: {
     navIds: Set<string>;
     ids: Map<string, Set<string>>;
-    mode: [DMenuMode, DMenuMode];
   };
-  menuPopup: boolean;
   onActiveChange: (id: string) => void;
   onExpandChange: (id: string, expand: boolean) => void;
   onFocus: (dId: string, id: string) => void;
@@ -70,20 +68,13 @@ export function DMenu(props: DMenuProps) {
   const [currentData] = useState<DMenuContextData['menuCurrentData']>({
     navIds: new Set(),
     ids: new Map(),
-    mode: [dMode, dMode],
   });
-  if (currentData.mode[1] !== dMode) {
-    currentData.mode[0] = currentData.mode[1];
-    currentData.mode[1] = dMode;
-  }
 
-  const asyncCapture = useAsync();
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
   const [expandIds, setExpandIds] = useImmer(() => new Set(dDefaultExpands));
-  const [popup, setPopup] = useImmer(dMode !== 'vertical');
 
-  const [activeId, setActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive, onActiveChange);
+  const [activeId, dispatchActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive, onActiveChange);
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
 
   const handleTrigger = useCallback(
@@ -113,24 +104,6 @@ export function DMenu(props: DMenuProps) {
   useEffect(() => {
     onExpandsChange?.(Array.from(expandIds));
   }, [expandIds, onExpandsChange]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
-    if (dMode !== 'vertical') {
-      asyncGroup.setTimeout(() => {
-        setPopup(true);
-      }, 200 + 10);
-    } else {
-      asyncGroup.setTimeout(() => {
-        setPopup(false);
-      }, 200 + 10);
-    }
-
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, dMode, setPopup]);
   //#endregion
 
   const contextValue = useMemo<DMenuContextData>(
@@ -140,10 +113,9 @@ export function DMenu(props: DMenuProps) {
       menuActiveId: activeId,
       menuExpandIds: expandIds,
       menuFocusId: focusId,
-      menuPopup: popup,
       menuCurrentData: currentData,
       onActiveChange: (id) => {
-        setActiveId(id);
+        dispatchActiveId({ value: id });
       },
       onExpandChange: (id, expand) => {
         setExpandIds((draft) => {
@@ -171,7 +143,7 @@ export function DMenu(props: DMenuProps) {
         setFocusId(null);
       },
     }),
-    [activeId, currentData, dExpandOne, dMode, expandIds, expandTrigger, focusId, popup, setActiveId, setExpandIds, setFocusId]
+    [activeId, currentData, dExpandOne, dMode, dispatchActiveId, expandIds, expandTrigger, focusId, setExpandIds, setFocusId]
   );
 
   const childs = useMemo(() => {

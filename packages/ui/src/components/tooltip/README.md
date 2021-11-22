@@ -29,7 +29,9 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dVisible | Manually control the display of popup | boolean | - |
+| dPopupContent | The contents of the popup | React.ReactNode | - |
 | dContainer | Mount node of popup, `false` represents the parent node mounted to the target node | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null \| false | - |
+| dTriggerNode |  Custom popup target node | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null | - |
 | dPlacement | popup direction | 'top' \| 'top-left' \| 'top-right' \| 'right' \| 'right-top' \| 'right-bottom' \| 'bottom' \| 'bottom-left' \| 'bottom-right' \| 'left' \| 'left-top' \| 'left-bottom' | 'top' |
 | dAutoPlace | When the popup is occluded, the position is automatically adjusted. If the `dContainer` attribute is not specified, the `window` view will be compared by default | boolean | true |
 | dTrigger | Trigger behavior | 'hover' \| 'focus' \| 'click' \| null | 'hover' |
@@ -40,7 +42,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dMouseEnterDelay | How many milliseconds after the mouse is moved to display | number | 150 |
 | dMouseLeaveDelay | How many milliseconds after the mouse is moved out will it be displayed | number | 150 |
 | dCustomPopup | Custom popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList }` | - |
-| dTriggerNode | Target node | React.ReactNode | - |
 | onTrigger | Trigger popup display/hide callback | `(visible: boolean) => void` | - |
 | afterVisibleChange | Callback for the end of the popup show/hide animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->

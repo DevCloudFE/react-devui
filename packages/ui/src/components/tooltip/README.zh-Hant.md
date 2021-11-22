@@ -12,7 +12,7 @@ title: 文字提示
 
 ### DTooltipProps
 
-继承 `Omit<DPopupProps, 'dTriggerNode'>`。
+继承 `Omit<DPopupProps, 'dPopupContent'>`。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
@@ -28,7 +28,9 @@ title: 文字提示
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
 | dVisible | 手动控制 popup 的显示 | boolean | - |
+| dPopupContent | popup 的内容 | React.ReactNode | - |
 | dContainer |  popup 的挂载节点，`false` 代表挂载到目标节点的父节点 | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null \| false | - |
+| dTriggerNode |  自定义 popup 的目标节点 | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null | - |
 | dPlacement |  popup 弹出方向 | 'top' \| 'top-left' \| 'top-right' \| 'right' \| 'right-top' \| 'right-bottom' \| 'bottom' \| 'bottom-left' \| 'bottom-right' \| 'left' \| 'left-top' \| 'left-bottom' | 'top' |
 | dAutoPlace | 当 popup 被遮挡时，自动调整位置，如果未指定 `dContainer` 属性，那么默认比较 `window` 视图 | boolean | true |
 | dTrigger | 触发行为 | 'hover' \| 'focus' \| 'click' \| null | 'hover' |
@@ -39,7 +41,6 @@ title: 文字提示
 | dMouseEnterDelay | 鼠标移入后多少毫秒后显示 | number | 150 |
 | dMouseLeaveDelay | 鼠标移出后多少毫秒后显示 | number | 150 |
 | dCustomPopup | 自定义 popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList }` | - |
-| dTriggerNode | 目标节点 | React.ReactNode | - |
 | onTrigger | 触发 popup 显示/隐藏的回调 | `(visible: boolean) => void` | - |
 | afterVisibleChange |  popup 显示/隐藏动画结束的回调 | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->

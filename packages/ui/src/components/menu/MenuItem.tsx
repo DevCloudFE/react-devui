@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React from 'react';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useCustomRef } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -33,15 +33,11 @@ export function DMenuItem(props: DMenuItemProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const {
-    menuMode,
-    menuActiveId,
-    menuCurrentData,
-    menuPopup,
-    onActiveChange,
-    onFocus: _onFocus,
-    onBlur: _onBlur,
-  } = useCustomContext(DMenuContext);
+  const { menuMode, menuActiveId, menuCurrentData, onActiveChange, onFocus: _onFocus, onBlur: _onBlur } = useCustomContext(DMenuContext);
+  //#endregion
+
+  //#region Ref
+  const [liEl, liRef] = useCustomRef<HTMLLIElement>();
   //#endregion
 
   const inNav = menuCurrentData?.navIds.has(dId) ?? false;
@@ -73,40 +69,36 @@ export function DMenuItem(props: DMenuItemProps) {
     [_onBlur, onBlur]
   );
 
-  const node = (
-    <li
-      {...restProps}
-      id={_id}
-      className={getClassName(className, `${dPrefix}menu-item`, {
-        'is-active': menuActiveId === dId,
-        'is-horizontal': menuMode === 'horizontal' && inNav,
-        'is-icon': menuMode === 'icon' && inNav,
-        'is-disabled': dDisabled,
-      })}
-      style={{
-        ...style,
-        paddingLeft: 16 + __level * 20,
-      }}
-      role="menuitem"
-      tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-      aria-disabled={dDisabled}
-      onClick={handleClick}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-    >
-      <div className={`${dPrefix}menu-item__indicator`}>
-        <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
-      </div>
-      {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
-      <div className={`${dPrefix}menu-item__title`}>{children}</div>
-    </li>
-  );
-
-  return inNav && (menuMode === 'icon' || menuCurrentData?.mode[0] === 'icon') && menuPopup ? (
-    <DTooltip dTitle={children} dPlacement="right">
-      {node}
-    </DTooltip>
-  ) : (
-    node
+  return (
+    <>
+      <li
+        {...restProps}
+        ref={liRef}
+        id={_id}
+        className={getClassName(className, `${dPrefix}menu-item`, {
+          'is-active': menuActiveId === dId,
+          'is-horizontal': menuMode === 'horizontal' && inNav,
+          'is-icon': menuMode === 'icon' && inNav,
+          'is-disabled': dDisabled,
+        })}
+        style={{
+          ...style,
+          paddingLeft: 16 + __level * 20,
+        }}
+        role="menuitem"
+        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+        aria-disabled={dDisabled}
+        onClick={handleClick}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      >
+        <div className={`${dPrefix}menu-item__indicator`}>
+          <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
+        </div>
+        {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
+        <div className={`${dPrefix}menu-item__title`}>{children}</div>
+      </li>
+      {inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerNode={liEl} dPlacement="right" />}
+    </>
   );
 }

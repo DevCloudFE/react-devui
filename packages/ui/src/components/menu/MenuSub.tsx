@@ -54,7 +54,6 @@ export function DMenuSub(props: DMenuSubProps) {
     menuActiveId,
     menuExpandIds,
     menuFocusId,
-    menuPopup,
     menuCurrentData,
     onExpandChange,
     onFocus: _onFocus,
@@ -66,6 +65,7 @@ export function DMenuSub(props: DMenuSubProps) {
   //#region Ref
   const [menuCollapseEl, menuCollapseRef] = useCustomRef<HTMLUListElement>();
   const [menuPopupEl, menuPopupRef] = useCustomRef<HTMLUListElement>();
+  const [liEl, liRef] = useCustomRef<HTMLLIElement>();
   //#endregion
 
   const [menuWidth, setMenuWidth] = useImmer<number | undefined>(undefined);
@@ -73,6 +73,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
 
   const expand = menuExpandIds?.has(dId) ?? false;
+  const popupMode = menuMode !== 'vertical';
   const popupVisible = useMemo(() => {
     let visible = false;
     for (const childVisible of childrenPopup.values()) {
@@ -87,7 +88,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const horizontal = menuMode === 'horizontal' && inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
   const isActive = useMemo(() => {
-    if (menuPopup ? !popupVisible : !expand) {
+    if (popupMode ? !popupVisible : !expand) {
       const ids: string[] = [];
       const getAllIds = (id: string) => {
         ids.push(id);
@@ -102,7 +103,7 @@ export function DMenuSub(props: DMenuSubProps) {
       return menuActiveId ? ids.includes(menuActiveId) : false;
     }
     return false;
-  }, [dId, expand, menuActiveId, menuCurrentData?.ids, menuPopup, popupVisible]);
+  }, [dId, expand, menuActiveId, menuCurrentData?.ids, popupMode, popupVisible]);
   const iconRotate = useMemo(() => {
     if (horizontal && popupVisible) {
       return 180;
@@ -110,11 +111,11 @@ export function DMenuSub(props: DMenuSubProps) {
     if (menuMode === 'vertical' && expand) {
       return 180;
     }
-    if (menuMode !== 'vertical' && !horizontal) {
+    if (popupMode && !horizontal) {
       return -90;
     }
     return undefined;
-  }, [expand, horizontal, menuMode, popupVisible]);
+  }, [expand, horizontal, menuMode, popupMode, popupVisible]);
 
   const customTransition = useCallback(
     (popupEl, targetEl) => {
@@ -185,22 +186,22 @@ export function DMenuSub(props: DMenuSubProps) {
   useEffect(() => {
     let isFocus = false;
     if (menuFocusId) {
-      (menuPopup ? menuPopupEl : menuCollapseEl)?.childNodes.forEach((child) => {
+      (popupMode ? menuPopupEl : menuCollapseEl)?.childNodes.forEach((child) => {
         if (menuFocusId[1] === (child as HTMLElement)?.id) {
           isFocus = true;
         }
       });
     }
     setActiveDescendant(isFocus ? menuFocusId?.[1] : undefined);
-  }, [menuCollapseEl, menuFocusId, menuPopup, menuPopupEl, setActiveDescendant]);
+  }, [menuCollapseEl, menuFocusId, popupMode, menuPopupEl, setActiveDescendant]);
 
   useEffect(() => {
-    if (menuMode === 'vertical') {
+    if (!popupMode) {
       setChildrenPopup((draft) => {
         draft.clear();
       });
     }
-  }, [menuMode, setChildrenPopup]);
+  }, [popupMode, setChildrenPopup]);
   //#endregion
 
   const childs = useMemo(() => {
@@ -213,44 +214,12 @@ export function DMenuSub(props: DMenuSubProps) {
           'is-first': length > 1 && index === 0,
           'is-last': length > 1 && index === length - 1,
         }),
-        __level: menuMode !== 'vertical' && menuPopup ? 0 : __level + 1,
+        __level: popupMode ? 0 : __level + 1,
       })
     );
-  }, [children, menuMode, menuPopup, __level]);
+  }, [children, popupMode, __level]);
 
-  const liNode = (
-    <li
-      {...restProps}
-      id={_id}
-      className={getClassName(className, `${dPrefix}menu-sub`, {
-        'is-active': isActive,
-        'is-expand': menuPopup ? popupVisible : expand,
-        'is-horizontal': horizontal,
-        'is-icon': menuMode === 'icon' && inNav,
-        'is-disabled': dDisabled,
-      })}
-      style={{
-        ...style,
-        paddingLeft: 16 + __level * 20,
-      }}
-      role="menuitem"
-      tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-      aria-haspopup={true}
-      aria-expanded={menuPopup ? popupVisible : expand}
-      aria-disabled={dDisabled}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-    >
-      <div className={`${dPrefix}menu-sub__indicator`}>
-        <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
-      </div>
-      {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
-      <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
-      <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
-        <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-      </DIcon>
-    </li>
-  );
+  const triggerNode = <div style={{ position: 'absolute', zIndex: -1, top: 0, right: 0, bottom: 0, left: 0 }}></div>;
 
   const menuNode = (ref: (instance: HTMLUListElement | null) => void) => (
     <ul
@@ -284,38 +253,62 @@ export function DMenuSub(props: DMenuSubProps) {
 
   return (
     <DMenuSubContext.Provider value={contextValue}>
-      {dDisabled ? (
-        liNode
+      <li
+        {...restProps}
+        ref={liRef}
+        id={_id}
+        className={getClassName(className, `${dPrefix}menu-sub`, {
+          'is-active': isActive,
+          'is-expand': popupMode ? popupVisible : expand,
+          'is-horizontal': horizontal,
+          'is-icon': menuMode === 'icon' && inNav,
+          'is-disabled': dDisabled,
+        })}
+        style={{
+          ...style,
+          paddingLeft: 16 + __level * 20,
+        }}
+        role="menuitem"
+        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+        aria-haspopup={true}
+        aria-expanded={popupMode ? popupVisible : expand}
+        aria-disabled={dDisabled}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      >
+        <div className={`${dPrefix}menu-sub__indicator`}>
+          <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
+        </div>
+        {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
+        <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
+        <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
+          <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
+        </DIcon>
+        {triggerNode}
+      </li>
+      {popupMode ? (
+        <DPopup
+          className={`${dPrefix}menu-sub__popup`}
+          dVisible={popupVisible}
+          dPopupContent={menuNode(menuPopupRef)}
+          dTrigger={menuExpandTrigger}
+          dArrow={false}
+          dCustomPopup={customTransition}
+          dTriggerNode={liEl}
+          onTrigger={handlePopupTrigger}
+        />
       ) : (
-        <>
-          {menuPopup ? (
-            <DPopup
-              className={`${dPrefix}menu-sub__popup`}
-              dVisible={popupVisible}
-              dTrigger={menuExpandTrigger}
-              dArrow={false}
-              dCustomPopup={customTransition}
-              dTriggerNode={liNode}
-              onTrigger={handlePopupTrigger}
-            >
-              {menuNode(menuPopupRef)}
-            </DPopup>
-          ) : (
-            <DTrigger dTrigger={menuExpandTrigger} onTrigger={handleExpandTrigger}>
-              {liNode}
-            </DTrigger>
-          )}
-          <DCollapseTransition
-            dEl={menuCollapseEl}
-            dVisible={menuMode !== 'vertical' ? false : expand}
-            dDirection="height"
-            dDuring={200}
-            dDestroy={menuMode !== 'vertical'}
-          >
-            {menuNode(menuCollapseRef)}
-          </DCollapseTransition>
-        </>
+        <DTrigger dTrigger={menuExpandTrigger} dTriggerNode={liEl} onTrigger={handleExpandTrigger} />
       )}
+      <DCollapseTransition
+        dEl={menuCollapseEl}
+        dVisible={popupMode ? false : expand}
+        dDirection="height"
+        dDuring={200}
+        dDestroy={popupMode}
+      >
+        {menuNode(menuCollapseRef)}
+      </DCollapseTransition>
     </DMenuSubContext.Provider>
   );
 }
