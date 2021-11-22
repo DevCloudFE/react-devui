@@ -72,8 +72,9 @@ export function DDrag(props: DDragProps) {
 
       asyncGroup.fromEvent<MouseEvent>(window, 'mousemove').subscribe({
         next: (e) => {
+          e.preventDefault();
+
           if (e.movementY !== 0 || e.movementX !== 0) {
-            e.preventDefault();
             movementY += e.movementY / window.devicePixelRatio;
             movementX += e.movementX / window.devicePixelRatio;
             throttleByAnimationFrame.run(() => {

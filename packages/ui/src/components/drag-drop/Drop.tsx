@@ -64,12 +64,12 @@ export function DDrop(props: DDropProps) {
     const allIds = _childs.map((child) => child.props.dId as string);
     currentData.order = currentData.order.filter((id) => allIds.includes(id));
     currentData.order.length = allIds.length;
-    let addIndex = allIds.findIndex((id) => !currentData.order.includes(id));
+    const addIndex = allIds.findIndex((id) => !currentData.order.includes(id));
     if (addIndex !== -1) {
       const addIds: string[] = [];
-      for (; addIndex < allIds.length; addIndex++) {
-        if (!currentData.order.includes(allIds[addIndex])) {
-          addIds.push(allIds[addIndex]);
+      for (let n = addIndex; n < allIds.length; n++) {
+        if (!currentData.order.includes(allIds[n])) {
+          addIds.push(allIds[n]);
         } else {
           break;
         }
