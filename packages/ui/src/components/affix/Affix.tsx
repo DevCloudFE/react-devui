@@ -7,17 +7,17 @@ import { useImmer } from 'use-immer';
 import { useDPrefixConfig, useDComponentConfig, useCustomRef, useAsync, useThrottle, useElement } from '../../hooks';
 import { getClassName, toPx, globalScrollCapture } from '../../utils';
 
+export interface DAffixRef {
+  el: HTMLDivElement | null;
+  updatePosition: () => void;
+}
+
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
   dTop?: string | number;
   dBottom?: string | number;
   dZIndex?: number;
   onFixedChange?: (fixed: boolean) => void;
-}
-
-export interface DAffixRef {
-  el: HTMLDivElement | null;
-  updatePosition: () => void;
 }
 
 export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {

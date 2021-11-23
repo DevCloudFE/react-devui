@@ -11,6 +11,12 @@ import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoSt
 import { getClassName, globalMaxIndexManager, globalScrollCapture, getPopupPlacementStyle } from '../../utils';
 import { DTransition } from '../_transition';
 
+export interface DPopupRef {
+  el: HTMLDivElement | null;
+  triggerEl: { current: HTMLElement | null };
+  updatePosition: () => void;
+}
+
 export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
   dPopupContent: React.ReactNode;
@@ -28,12 +34,6 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dCustomPopup?: (popupEl: HTMLElement, triggerEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList };
   onTrigger?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
-}
-
-export interface DPopupRef {
-  el: HTMLDivElement | null;
-  triggerEl: { current: HTMLElement | null };
-  updatePosition: () => void;
 }
 
 export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {

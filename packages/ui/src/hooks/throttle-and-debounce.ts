@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 export class ThrottleByAnimationFrame {
@@ -70,4 +70,35 @@ export function useThrottle() {
   }, [throttleByAnimationFrame]);
 
   return throttle;
+}
+
+export function useDebounce() {
+  const [currentData] = useState<{ tid: number | null }>({
+    tid: null,
+  });
+
+  const debounce = useMemo(
+    () => ({
+      debounceByTime: (cb: () => void, timeout: number) => {
+        if (currentData.tid) {
+          clearTimeout(currentData.tid);
+        }
+        currentData.tid = window.setTimeout(() => {
+          currentData.tid = null;
+          cb();
+        }, timeout);
+      },
+    }),
+    [currentData]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (currentData.tid) {
+        clearTimeout(currentData.tid);
+      }
+    };
+  }, [currentData]);
+
+  return debounce;
 }

@@ -1,7 +1,8 @@
-import type { ThrottleByAnimationFrame } from '../../hooks/throttle';
+import type { ThrottleByAnimationFrame } from '../../hooks/throttle-and-debounce';
 
 import { isFunction, isNumber, isString, isUndefined } from 'lodash';
-import React, { useMemo, useImperativeHandle, useCallback, useLayoutEffect, useState } from 'react';
+import React, { useMemo, useImperativeHandle, useCallback, useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useImmer } from 'use-immer';
 
 import { useAsync, useThrottle } from '../../hooks';
@@ -26,6 +27,10 @@ export interface DTransitionCallbackList {
   afterLeave?: (el: HTMLElement, setCss: CssRecord['setCss']) => void;
 }
 
+export interface DTransitionRef {
+  transitionThrottle: ThrottleByAnimationFrame;
+}
+
 export interface DTransitionProps {
   dEl: HTMLElement | null;
   dVisible?: boolean;
@@ -35,10 +40,6 @@ export interface DTransitionProps {
   dHidden?: boolean;
   dSkipFirst?: boolean;
   children: React.ReactNode;
-}
-
-export interface DTransitionRef {
-  transitionThrottle: ThrottleByAnimationFrame;
 }
 
 export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((props, ref) => {
@@ -83,37 +84,41 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
             : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
         );
         asyncCapture.setTimeout(() => {
-          if (!dVisible) {
-            setHidden(true);
-          }
           cssRecord.backCss(dEl);
           callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl, cssRecord.setCss.bind(cssRecord));
           throttleByAnimationFrame.continueThrottle();
+          if (!dVisible) {
+            flushSync(() => {
+              setHidden(true);
+            });
+          }
         }, timeout);
       }, 20);
     }
   }, [asyncCapture, cssRecord, dCallbackList, dEl, dStateList, dVisible, setHidden, throttleByAnimationFrame]);
 
   //#region DidUpdate
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (dVisible) {
-      setHidden(false);
+      Promise.resolve().then(() => {
+        flushSync(() => {
+          setHidden(false);
+        });
+        if (dEl) {
+          if (currentData.first) {
+            currentData.first = false;
+          } else {
+            transition();
+          }
+        }
+      });
     } else if (dEl) {
       transition();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, dVisible]);
-
-  useLayoutEffect(() => {
-    if (dEl && !hidden) {
-      if (currentData.first) {
-        currentData.first = false;
-      } else {
-        transition();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dEl, hidden]);
+  //#endregion
 
   useImperativeHandle(
     ref,

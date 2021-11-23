@@ -19,7 +19,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dVisible | Is the drawer visible | boolean | false |
-| dContainer | The mounted node of the drawer, `false` means it is mounted on the current node | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null \| false | - |
+| dContainer | The mounted node of the drawer, `false` means it is mounted on the current node | DElementSelector \| false | - |
 | dPlacement | Drawer pop-up direction | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | Drawer width | number \| string | 400 |
 | dHeight | Drawer height | number \| string | 280 |
@@ -33,6 +33,15 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | onClose | Callback when the drawer is closed | `() => void` | - |
 | afterVisibleChange | Callback for the end of the drawer opening/closing animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
+
+### DDrawerRef
+
+```tsx
+export interface DDrawerRef {
+  el: HTMLElement | null;
+  updatePosition: () => void;
+}
+```
 
 ### DDrawerHeaderProps
 
@@ -75,3 +84,9 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | onOkClick | The callback of clicking the OK button | `() => void` | - |
 | onCancelClick | The callback of clicking the cancel button | `() => void` | - |
 <!-- prettier-ignore-end -->
+
+### DElementSelector
+
+```tsx
+export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
+```

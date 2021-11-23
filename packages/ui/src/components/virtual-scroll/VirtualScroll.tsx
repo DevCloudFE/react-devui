@@ -1,15 +1,23 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { flushSync } from 'react-dom';
 import { useImmer } from 'use-immer';
 
 import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig } from '../../hooks';
+
+export interface DListRenderProps {
+  style: React.CSSProperties;
+  'data-virtual-scroll': string;
+  onScroll: React.UIEventHandler<HTMLElement>;
+  children: React.ReactNode;
+}
 
 export interface DItemRenderProps {
   'data-virtual-scroll-reference'?: string;
 }
 
 export interface DVirtualScrollProps<T> {
-  dTag?: string;
+  dListRender: (props: DListRenderProps) => React.ReactNode;
   dWidth?: string | number;
   dHeight?: string | number;
   dItemWidth?: number;
@@ -18,24 +26,13 @@ export interface DVirtualScrollProps<T> {
   dItemRender: (item: T, index: number, props: DItemRenderProps) => React.ReactNode;
   dCustomSize?: (item: T, index: number) => number;
   onScrollEnd?: () => void;
-  [index: string]: unknown;
 }
 
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
-  const {
-    dTag = 'div',
-    dWidth,
-    dHeight,
-    dItemWidth,
-    dItemHeight,
-    dList,
-    dItemRender,
-    dCustomSize,
-    onScrollEnd,
-    style,
-    onScroll,
-    ...restProps
-  } = useDComponentConfig('virtual-scroll', props);
+  const { dListRender, dWidth, dHeight, dItemWidth, dItemHeight, dList, dItemRender, dCustomSize, onScrollEnd } = useDComponentConfig(
+    'virtual-scroll',
+    props
+  );
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -116,7 +113,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         }
       }
     }
-  }, [listEl, dWidth, dItemHeight, dItemWidth, dCustomSize, referenceEl, dList, setList, setFillSize, dItemRender, onScrollEnd, itemSize]);
+  }, [dCustomSize, dItemHeight, dItemRender, dItemWidth, dList, dWidth, itemSize, listEl, onScrollEnd, referenceEl, setFillSize, setList]);
 
   const reference = useMemo(() => {
     if (dList[0] && isUndefined(dCustomSize)) {
@@ -131,26 +128,15 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     }
   }, [asyncCapture, dCustomSize, dItemRender, dList, id, referenceEl, throttleByAnimationFrame, updateList]);
 
-  const handleScroll = useCallback(
-    (e) => {
-      (onScroll as React.UIEventHandler<HTMLElement>)?.(e);
-      throttleByAnimationFrame.run(updateList);
-    },
-    [onScroll, throttleByAnimationFrame, updateList]
-  );
-
   //#region DidUpdate
   useEffect(() => {
     throttleByAnimationFrame.run(updateList);
   }, [throttleByAnimationFrame, updateList]);
   //#endregion
 
-  return React.createElement(
-    dTag,
-    {
-      ...restProps,
+  const listRenderProps = useMemo<DListRenderProps>(
+    () => ({
       style: {
-        ...(style as React.CSSProperties),
         width: dWidth,
         height: dHeight,
         whiteSpace: isUndefined(dWidth) ? undefined : 'nowrap',
@@ -158,25 +144,36 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         overflowY: isUndefined(dHeight) ? undefined : 'auto',
       },
       'data-virtual-scroll': String(id),
-      onScroll: handleScroll,
-    },
-    [
-      reference,
-      <div
-        key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
-        style={{
-          ...fillSize[0],
-          display: isUndefined(dWidth) ? undefined : 'inline-block',
-        }}
-      ></div>,
-      ...list,
-      <div
-        key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
-        style={{
-          ...fillSize[1],
-          display: isUndefined(dWidth) ? undefined : 'inline-block',
-        }}
-      ></div>,
-    ]
+      onScroll: () => {
+        throttleByAnimationFrame.run(() => {
+          flushSync(() => {
+            updateList();
+          });
+        });
+      },
+      children: (
+        <>
+          {reference}
+          <div
+            key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
+            style={{
+              ...fillSize[0],
+              display: isUndefined(dWidth) ? undefined : 'inline-block',
+            }}
+          ></div>
+          {list}
+          <div
+            key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
+            style={{
+              ...fillSize[1],
+              display: isUndefined(dWidth) ? undefined : 'inline-block',
+            }}
+          ></div>
+        </>
+      ),
+    }),
+    [dHeight, dPrefix, dWidth, fillSize, id, list, reference, throttleByAnimationFrame, updateList]
   );
+
+  return dListRender(listRenderProps);
 }

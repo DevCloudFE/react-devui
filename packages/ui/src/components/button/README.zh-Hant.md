@@ -27,6 +27,12 @@ title: 按钮
 | dIconLeft | 设置图标在左侧 | boolean | true |
 <!-- prettier-ignore-end -->
 
+### DButtonRef
+
+```tsx
+export type DButtonRef = HTMLButtonElement;
+```
+
 ### DButtonGroupProps
 
 继承 `React.HTMLAttributes<HTMLDivElement>`。

@@ -21,6 +21,12 @@ Extend `Omit<DPopupProps, 'dTriggerNode'>`.
 | dTitle | Prompt text | React.ReactNode | - |
 <!-- prettier-ignore-end -->
 
+### DTooltipRef
+
+```tsx
+export type DTooltipRef = DPopupRef;
+```
+
 ### DPopupProps
 
 Extend `React.HTMLAttributes<HTMLDivElement>`.
@@ -30,8 +36,8 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | --- | --- | --- | --- | 
 | dVisible | Manually control the display of popup | boolean | - |
 | dPopupContent | The contents of the popup | React.ReactNode | - |
-| dContainer | Mount node of popup, `false` represents the parent node mounted to the target node | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null \| false | - |
-| dTriggerNode |  Custom popup target node | string \| HTMLElement \| `(() => HTMLElement \| null)` \| null | - |
+| dContainer | Mount node of popup, `false` represents the parent node mounted to the target node | DElementSelector \| false | - |
+| dTriggerNode |  Custom popup target node | DElementSelector | - |
 | dPlacement | popup direction | 'top' \| 'top-left' \| 'top-right' \| 'right' \| 'right-top' \| 'right-bottom' \| 'bottom' \| 'bottom-left' \| 'bottom-right' \| 'left' \| 'left-top' \| 'left-bottom' | 'top' |
 | dAutoPlace | When the popup is occluded, the position is automatically adjusted. If the `dContainer` attribute is not specified, the `window` view will be compared by default | boolean | true |
 | dTrigger | Trigger behavior | 'hover' \| 'focus' \| 'click' \| null | 'hover' |
@@ -46,6 +52,16 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | afterVisibleChange | Callback for the end of the popup show/hide animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
+### DPopupRef
+
+```tsx
+export interface DPopupRef {
+  el: HTMLDivElement | null;
+  triggerEl: { current: HTMLElement | null };
+  updatePosition: () => void;
+}
+```
+
 ### DTransitionStateList
 
 ```tsx
@@ -57,4 +73,10 @@ export interface DTransitionStateList {
   'leave-active'?: Partial<CSSStyleDeclaration>;
   'leave-to'?: Partial<CSSStyleDeclaration>;
 }
+```
+
+### DElementSelector
+
+```tsx
+export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 ```

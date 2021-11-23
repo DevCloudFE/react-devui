@@ -7,6 +7,8 @@ import { DCollapseTransition } from '../_transition';
 import { DIcon } from '../icon';
 import { DButtonGroupContext } from './ButtonGroup';
 
+export type DButtonRef = HTMLButtonElement;
+
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';
   dColor?: 'primary' | 'success' | 'warning' | 'danger';
@@ -18,7 +20,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconLeft?: boolean;
 }
 
-export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props, ref) => {
+export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) => {
   const {
     dType = 'primary',
     dColor = 'primary',

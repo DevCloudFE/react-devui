@@ -7,11 +7,13 @@ import { useDPrefixConfig, useDComponentConfig, useId } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 
+export type DTooltipRef = DPopupRef;
+
 export interface DTooltipProps extends Omit<DPopupProps, 'dPopupContent'> {
   dTitle: React.ReactNode;
 }
 
-export const DTooltip = React.forwardRef<DPopupRef, DTooltipProps>((props, ref) => {
+export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref) => {
   const { dTitle, dTriggerNode, id, className, children, ...restProps } = useDComponentConfig('tooltip', props);
 
   //#region Context

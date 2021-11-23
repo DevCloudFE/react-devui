@@ -4,6 +4,7 @@ import type { DTransitionRef } from '../_transition';
 import { isUndefined } from 'lodash';
 import React, { useEffect, useCallback, useMemo, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { flushSync } from 'react-dom';
 import { useImmer } from 'use-immer';
 
 import { useDPrefixConfig, useDComponentConfig, useLockScroll, useCustomRef, useId, useAsync, useElement } from '../../hooks';
@@ -16,6 +17,11 @@ export interface DDrawerContextData {
   closeDrawer: () => void;
 }
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
+
+export interface DDrawerRef {
+  el: HTMLElement | null;
+  updatePosition: () => void;
+}
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
@@ -33,11 +39,6 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
-}
-
-export interface DDrawerRef {
-  el: HTMLElement | null;
-  updatePosition: () => void;
 }
 
 export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) => {
@@ -225,7 +226,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   const drawerNode = (
     <DDrawerContext.Provider value={contextValue}>
-      {dDestroy && hidden ? null : (
+      {dDestroy && !dVisible && hidden ? null : (
         <div
           {...restProps}
           ref={drawerRef}
@@ -243,7 +244,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
                 : dPlacement === 'bottom'
                 ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
                 : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
-            display: !dDestroy && hidden ? 'none' : undefined,
+            display: !dDestroy && !dVisible && hidden ? 'none' : undefined,
           }}
           role="dialog"
           aria-modal="true"
@@ -273,14 +274,18 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
             dCallbackList={() => {
               return {
                 beforeEnter: (el) => {
-                  updatePosition();
-                  const rect = el.getBoundingClientRect();
-                  __onVisibleChange?.({
-                    visible: true,
-                    top: distance.top + (dPlacement === 'top' ? rect.height : 0),
-                    right: distance.right + (dPlacement === 'right' ? rect.width : 0),
-                    bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
-                    left: distance.left + (dPlacement === 'left' ? rect.width : 0),
+                  Promise.resolve().then(() => {
+                    flushSync(() => {
+                      updatePosition();
+                    });
+                    const rect = el.getBoundingClientRect();
+                    __onVisibleChange?.({
+                      visible: true,
+                      top: distance.top + (dPlacement === 'top' ? rect.height : 0),
+                      right: distance.right + (dPlacement === 'right' ? rect.width : 0),
+                      bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
+                      left: distance.left + (dPlacement === 'left' ? rect.width : 0),
+                    });
                   });
                 },
                 afterEnter: (el) => {
