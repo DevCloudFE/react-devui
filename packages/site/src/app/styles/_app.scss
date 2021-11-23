@@ -64,4 +64,16 @@ body {
   display: inline-block;
   padding: 12px;
   border: 1px dashed var(--#{$variable-prefix}divider-color);
+
+  &.is-horizontal {
+    display: inline-flex;
+    align-items: center;
+
+    .app-demo-drag + .app-demo-drag,
+    .app-demo-drag + .app-demo-drag-placeholder,
+    .app-demo-drag-placeholder + .app-demo-drag {
+      margin-top: 0;
+      margin-left: 8px;
+    }
+  }
 }

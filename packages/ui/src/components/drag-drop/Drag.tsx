@@ -1,11 +1,21 @@
 import type { DElementSelector } from '../../hooks/element';
 
 import { isNumber, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { flushSync } from 'react-dom';
 import { useImmer } from 'use-immer';
 
-import { useDComponentConfig, useElement, useThrottle, useAsync, useDPrefixConfig, useId, useCustomContext } from '../../hooks';
+import {
+  useDComponentConfig,
+  useElement,
+  useThrottle,
+  useAsync,
+  useDPrefixConfig,
+  useId,
+  useCustomContext,
+  useDebounce,
+} from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -55,13 +65,13 @@ export function DDrag(props: DDragProps) {
 
   //#region DidUpdate
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging && isNumber(fixedStyle.top) && isNumber(fixedStyle.left) && isNumber(fixedStyle.height) && isNumber(fixedStyle.width)) {
       __onDrag?.({
-        top: (fixedStyle.top as number) + (fixedStyle.height as number) / 2,
-        left: (fixedStyle.left as number) + (fixedStyle.width as number) / 2,
+        top: fixedStyle.top + fixedStyle.height / 2,
+        left: fixedStyle.left + fixedStyle.width / 2,
       });
     }
-  }, [__onDrag, fixedStyle, isDragging]);
+  }, [__onDrag, fixedStyle.height, fixedStyle.left, fixedStyle.top, fixedStyle.width, isDragging]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -78,40 +88,42 @@ export function DDrag(props: DDragProps) {
             movementY += e.movementY / window.devicePixelRatio;
             movementX += e.movementX / window.devicePixelRatio;
             throttleByAnimationFrame.run(() => {
-              setFixedStyle((draft) => {
-                draft.top = (draft.top as number) + movementY;
-                if (draft.top < 0) {
-                  draft.top = 0;
-                }
-                if (draft.top > window.innerHeight - dragingParams.height) {
-                  draft.top = window.innerHeight - dragingParams.height;
-                }
-
-                draft.left = (draft.left as number) + movementX;
-                if ((draft.left as number) < 0) {
-                  draft.left = 0;
-                }
-                if ((draft.left as number) > window.innerWidth - dragingParams.width) {
-                  draft.left = window.innerWidth - dragingParams.width;
-                }
-
-                let outDrop = false;
-                if (dropEl?.current) {
-                  const dropRect = dropEl.current.getBoundingClientRect();
-                  if (
-                    draft.top + (draft.height as number) < dropRect.top ||
-                    draft.top > dropRect.top + dropRect.height ||
-                    draft.left + (draft.width as number) < dropRect.left ||
-                    draft.left > dropRect.left + dropRect.width
-                  ) {
-                    outDrop = true;
+              flushSync(() => {
+                setFixedStyle((draft) => {
+                  draft.top = (draft.top as number) + movementY;
+                  if (draft.top < 0) {
+                    draft.top = 0;
                   }
-                }
-                if (dropCurrentData) {
-                  dropCurrentData.outDrop = outDrop;
-                }
+                  if (draft.top > window.innerHeight - dragingParams.height) {
+                    draft.top = window.innerHeight - dragingParams.height;
+                  }
 
-                draft.cursor = outDrop ? 'not-allowed' : 'grabbing';
+                  draft.left = (draft.left as number) + movementX;
+                  if ((draft.left as number) < 0) {
+                    draft.left = 0;
+                  }
+                  if ((draft.left as number) > window.innerWidth - dragingParams.width) {
+                    draft.left = window.innerWidth - dragingParams.width;
+                  }
+
+                  let outDrop = false;
+                  if (dropEl?.current) {
+                    const dropRect = dropEl.current.getBoundingClientRect();
+                    if (
+                      draft.top + (draft.height as number) < dropRect.top ||
+                      draft.top > dropRect.top + dropRect.height ||
+                      draft.left + (draft.width as number) < dropRect.left ||
+                      draft.left > dropRect.left + dropRect.width
+                    ) {
+                      outDrop = true;
+                    }
+                  }
+                  if (dropCurrentData) {
+                    dropCurrentData.outDrop = outDrop;
+                  }
+
+                  draft.cursor = outDrop ? 'not-allowed' : 'grabbing';
+                });
               });
               movementY = 0;
               movementX = 0;
@@ -143,7 +155,8 @@ export function DDrag(props: DDragProps) {
                 draft.cursor = undefined;
               }
             });
-            asyncGroup.setTimeout(() => {
+
+            asyncCapture.setTimeout(() => {
               setFixedStyle({});
               setFixedDrag(false);
               setShowPlaceholder(false);
@@ -202,11 +215,7 @@ export function DDrag(props: DDragProps) {
         _child.props.onMouseDown?.(e);
         __onDragStart?.();
 
-        const rect = e.currentTarget.getBoundingClientRect();
-
-        setIsDragging(true);
-        setFixedDrag(true);
-        setShowPlaceholder(true);
+        const rect = (e.target as HTMLElement).getBoundingClientRect();
 
         setDragingParams({
           width: rect.width,
@@ -223,6 +232,10 @@ export function DDrag(props: DDragProps) {
           height: rect.height,
           cursor: 'grab',
         });
+
+        setShowPlaceholder(true);
+        setFixedDrag(true);
+        setIsDragging(true);
       },
     });
   }, [

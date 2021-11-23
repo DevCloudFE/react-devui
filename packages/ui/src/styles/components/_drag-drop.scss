@@ -2,6 +2,10 @@
   position: relative;
 
   border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
+
+  @include when(horizontal) {
+    display: inline-block;
+  }
 }
 
 @include b(drop) {

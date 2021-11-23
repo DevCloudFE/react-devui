@@ -15,6 +15,7 @@ import { DCollapseTransition } from '../_transition';
 
 export interface DDropContextData {
   dropEl: { current: HTMLElement | null };
+  dropDirection: 'horizontal' | 'vertical';
   dropCurrentData: {
     drags: Map<string, string>;
     placeholders: Map<string, string>;
@@ -23,16 +24,15 @@ export interface DDropContextData {
 }
 export const DDropContext = React.createContext<DDropContextData | null>(null);
 
-export interface DDropProps extends React.HTMLAttributes<HTMLDivElement> {
-  dTag?: string;
-  dDirection: 'horizontal' | 'vertical';
+export interface DDropProps {
+  dContainer: DElementSelector;
+  dDirection?: 'horizontal' | 'vertical';
   dPlaceholder?: React.ReactNode;
   children: React.ReactNode;
-  [index: string]: unknown;
 }
 
 export function DDrop(props: DDropProps) {
-  const { dTag = 'div', dDirection = 'vertical', dPlaceholder, children, ...restProps } = useDComponentConfig('drop', props);
+  const { dContainer, dDirection = 'vertical', dPlaceholder, children } = useDComponentConfig('drop', props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -52,11 +52,10 @@ export function DDrop(props: DDropProps) {
   });
 
   const [updateChildren, setUpdateChildren] = useState(0);
-  const id = useId();
 
   const [orderChildren, setOrderChildren] = useImmer<React.ReactElement[]>([]);
 
-  const dropEl = useElement(`[data-${dPrefix}drop="${id}"]`);
+  const containerEl = useElement(dContainer);
 
   //#region DidUpdate
   useEffect(() => {
@@ -128,9 +127,17 @@ export function DDrop(props: DDropProps) {
                   const distance = Math.pow(Math.pow(elCenter.top - center.top, 2) + Math.pow(elCenter.left - center.left, 2), 0.5);
                   if (isUndefined(minDistance) || distance < minDistance) {
                     minDistance = distance;
+
                     if (id !== currentData.dragId) {
                       quadrant = getQuadrant(center, elCenter);
-                      replaceIndex = quadrant === Quadrant.One || quadrant === Quadrant.Two ? index : index + 1;
+                      replaceIndex =
+                        dDirection === 'vertical'
+                          ? quadrant === Quadrant.One || quadrant === Quadrant.Two
+                            ? index
+                            : index + 1
+                          : quadrant === Quadrant.Two || quadrant === Quadrant.Three
+                          ? index
+                          : index + 1;
                     }
                   }
                 }
@@ -158,27 +165,17 @@ export function DDrop(props: DDropProps) {
         });
       })
     );
-  }, [children, currentData, dPlaceholder, updateChildren, setOrderChildren]);
+  }, [children, currentData, dPlaceholder, updateChildren, setOrderChildren, dDirection]);
   //#endregion
 
   const contextValue = useMemo<DDropContextData>(
     () => ({
-      dropEl,
+      dropEl: containerEl,
+      dropDirection: dDirection,
       dropCurrentData: currentData,
     }),
-    [currentData, dropEl]
+    [containerEl, dDirection, currentData]
   );
 
-  return (
-    <DDropContext.Provider value={contextValue}>
-      {React.createElement(
-        dTag,
-        {
-          ...restProps,
-          [`data-${dPrefix}drop`]: String(id),
-        },
-        [...orderChildren]
-      )}
-    </DDropContext.Provider>
-  );
+  return <DDropContext.Provider value={contextValue}>{orderChildren}</DDropContext.Provider>;
 }
