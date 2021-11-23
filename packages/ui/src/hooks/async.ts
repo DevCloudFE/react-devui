@@ -2,7 +2,8 @@
 import { isUndefined } from 'lodash';
 import { useEffect } from 'react';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
-import { useImmer } from 'use-immer';
+
+import { useImmer } from './immer';
 
 interface CaptureMethod {
   fromEvent: typeof fromEvent;

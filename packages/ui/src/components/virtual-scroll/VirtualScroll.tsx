@@ -1,9 +1,8 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { flushSync } from 'react-dom';
-import { useImmer } from 'use-immer';
 
-import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig } from '../../hooks';
+import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig, useImmer } from '../../hooks';
 
 export interface DListRenderProps {
   style: React.CSSProperties;
@@ -146,9 +145,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       'data-virtual-scroll': String(id),
       onScroll: () => {
         throttleByAnimationFrame.run(() => {
-          flushSync(() => {
-            updateList();
-          });
+          flushSync(() => updateList());
         });
       },
       children: (

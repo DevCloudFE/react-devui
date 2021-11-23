@@ -1,19 +1,15 @@
 import type { DMenuItemProps } from './MenuItem';
 
-import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomRef, useCustomContext, useImmer } from '../../hooks';
 import { getClassName, getFixedSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
 import { DMenuContext } from './Menu';
-
-enableMapSet();
 
 export interface DMenuSubContextData {
   dActive?: string;

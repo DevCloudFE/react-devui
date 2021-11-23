@@ -5,9 +5,8 @@ import { isUndefined } from 'lodash';
 import React, { useEffect, useCallback, useMemo, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { flushSync } from 'react-dom';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useLockScroll, useCustomRef, useId, useAsync, useElement } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useLockScroll, useCustomRef, useId, useAsync, useElement, useImmer } from '../../hooks';
 import { getClassName, globalMaxIndexManager, globalEscStack, globalScrollCapture, getFillingStyle } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -251,11 +250,12 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
           aria-labelledby={dHeader ? `${dPrefix}drawer-content__header-${id}` : undefined}
           aria-describedby={`${dPrefix}drawer-content-${id}`}
         >
-          {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
+          {dMask && <DMask dVisible={dVisible} dTransitionProps={{ dSkipFirst: !dDestroy }} onClose={handleMaskClose} />}
           <DTransition
             ref={transitionRef}
             dEl={drawerContentEl}
             dVisible={dVisible}
+            dSkipFirst={!dDestroy}
             dStateList={() => {
               const transform =
                 dPlacement === 'top'
@@ -278,6 +278,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
                     flushSync(() => {
                       updatePosition();
                     });
+
                     const rect = el.getBoundingClientRect();
                     __onVisibleChange?.({
                       visible: true,

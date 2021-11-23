@@ -1,16 +1,12 @@
 import type { DMenuItemProps } from './MenuItem';
 
-import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef, useImmer } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
-
-enableMapSet();
 
 type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 

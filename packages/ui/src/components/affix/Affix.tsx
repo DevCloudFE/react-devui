@@ -2,9 +2,8 @@ import type { DElementSelector } from '../../hooks/element';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useAsync, useThrottle, useElement } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomRef, useAsync, useThrottle, useElement, useImmer } from '../../hooks';
 import { getClassName, toPx, globalScrollCapture } from '../../utils';
 
 export interface DAffixRef {

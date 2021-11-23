@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { useImmer } from 'use-immer';
+
+import { useImmer } from './immer';
 
 export function useCustomRef<T>(): [T | null, React.RefCallback<T>] {
   const [el, setEl] = useImmer<T | null>(null);

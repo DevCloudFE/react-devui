@@ -5,6 +5,7 @@ export { useCustomRef } from './ref';
 export { useDComponentConfig, useDPrefixConfig } from './d-config';
 export { useElement } from './element';
 export { useId } from './id';
+export { useImmer, useImmerReducer } from './immer';
 export { useLockScroll } from './lock-scroll';
 export { useManualOrAutoState } from './manual-or-auto-state';
 export { useThrottle, useDebounce } from './throttle-and-debounce';

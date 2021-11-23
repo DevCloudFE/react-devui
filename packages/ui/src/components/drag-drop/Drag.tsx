@@ -1,10 +1,8 @@
 import { isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { flushSync } from 'react-dom';
-import { useImmer } from 'use-immer';
 
-import { useDComponentConfig, useElement, useThrottle, useAsync, useDPrefixConfig, useId, useCustomContext } from '../../hooks';
+import { useDComponentConfig, useElement, useThrottle, useAsync, useDPrefixConfig, useId, useCustomContext, useImmer } from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -22,18 +20,14 @@ export function DDrag(props: DDragProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { dropEl, dropOuter, dropCurrentData } = useCustomContext(DDropContext);
+  const { dropOuter, dropCurrentData } = useCustomContext(DDropContext);
   //#endregion
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
   const id = useId();
-  const [fixedStyle, setFixedStyle] = useImmer<
-    React.CSSProperties & {
-      width: number;
-      height: number;
-    }
-  >({ width: 0, height: 0 });
+  const [dragSize, setDragSize] = useImmer<{ width: number; height: number }>({ width: 0, height: 0 });
+  const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
   const [isDragging, setIsDragging] = useImmer(false);
   const [showPlaceholder, setShowPlaceholder] = useImmer(false);
   const [fixedDrag, setFixedDrag] = useImmer(false);
@@ -54,15 +48,15 @@ export function DDrag(props: DDragProps) {
 
   //#region DidUpdate
   useEffect(() => {
-    if (isDragging && isNumber(fixedStyle.top) && isNumber(fixedStyle.left) && isNumber(fixedStyle.height) && isNumber(fixedStyle.width)) {
+    if (isDragging && isNumber(fixedStyle.top) && isNumber(fixedStyle.left)) {
       __onDrag?.({
-        width: fixedStyle.width,
-        height: fixedStyle.height,
+        width: dragSize.width,
+        height: dragSize.height,
         top: fixedStyle.top,
         left: fixedStyle.left,
       });
     }
-  }, [__onDrag, fixedStyle.height, fixedStyle.left, fixedStyle.top, fixedStyle.width, isDragging]);
+  }, [__onDrag, dragSize.height, dragSize.width, fixedStyle.left, fixedStyle.top, isDragging]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -75,35 +69,34 @@ export function DDrag(props: DDragProps) {
         next: (e) => {
           e.preventDefault();
 
-          if (e.movementY !== 0 || e.movementX !== 0) {
-            movementY += e.movementY / window.devicePixelRatio;
-            movementX += e.movementX / window.devicePixelRatio;
-            throttleByAnimationFrame.run(() => {
-              flushSync(() => {
-                setFixedStyle((draft) => {
-                  draft.top = (draft.top as number) + movementY;
-                  if (draft.top < 0) {
-                    draft.top = 0;
-                  }
-                  if (draft.top > window.innerHeight - fixedStyle.height) {
-                    draft.top = window.innerHeight - fixedStyle.height;
-                  }
+          movementY += e.movementY / window.devicePixelRatio;
+          movementX += e.movementX / window.devicePixelRatio;
 
-                  draft.left = (draft.left as number) + movementX;
-                  if ((draft.left as number) < 0) {
-                    draft.left = 0;
-                  }
-                  if ((draft.left as number) > window.innerWidth - fixedStyle.width) {
-                    draft.left = window.innerWidth - fixedStyle.width;
-                  }
+          throttleByAnimationFrame.run(() => {
+            const _movementY = movementY;
+            const _movementX = movementX;
+            movementY = 0;
+            movementX = 0;
+            setFixedStyle((draft) => {
+              draft.top = (draft.top as number) + _movementY;
+              if (draft.top < 0) {
+                draft.top = 0;
+              }
+              if (draft.top > window.innerHeight - dragSize.height) {
+                draft.top = window.innerHeight - dragSize.height;
+              }
 
-                  draft.cursor = dropOuter ? 'not-allowed' : 'grabbing';
-                });
-              });
-              movementY = 0;
-              movementX = 0;
+              draft.left = (draft.left as number) + _movementX;
+              if (draft.left < 0) {
+                draft.left = 0;
+              }
+              if (draft.left > window.innerWidth - dragSize.width) {
+                draft.left = window.innerWidth - dragSize.width;
+              }
+
+              draft.cursor = dropOuter ? 'not-allowed' : 'grabbing';
             });
-          }
+          });
         },
       });
     }
@@ -111,17 +104,7 @@ export function DDrag(props: DDragProps) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [
-    asyncCapture,
-    dropCurrentData,
-    dropEl,
-    dropOuter,
-    fixedStyle.height,
-    fixedStyle.width,
-    isDragging,
-    setFixedStyle,
-    throttleByAnimationFrame,
-  ]);
+  }, [asyncCapture, dragSize.height, dragSize.width, dropOuter, isDragging, setFixedStyle, throttleByAnimationFrame]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -192,6 +175,11 @@ export function DDrag(props: DDragProps) {
 
         const rect = (e.target as HTMLElement).getBoundingClientRect();
 
+        setDragSize({
+          width: rect.width,
+          height: rect.height,
+        });
+
         setFixedStyle({
           position: 'fixed',
           margin: 0,
@@ -216,6 +204,7 @@ export function DDrag(props: DDragProps) {
     fixedDrag,
     fixedStyle,
     id,
+    setDragSize,
     setFixedDrag,
     setFixedStyle,
     setIsDragging,
@@ -229,15 +218,15 @@ export function DDrag(props: DDragProps) {
         ..._placeholder.props,
         style: {
           ..._placeholder.props.style,
-          width: fixedStyle.width,
-          height: fixedStyle.height,
+          width: dragSize.width,
+          height: dragSize.height,
         },
         [`data-${dPrefix}drag-placeholder`]: String(id),
       });
     }
 
     return null;
-  }, [dPlaceholder, dPrefix, fixedStyle.height, fixedStyle.width, id]);
+  }, [dPlaceholder, dPrefix, dragSize.height, dragSize.width, id]);
 
   return (
     <>

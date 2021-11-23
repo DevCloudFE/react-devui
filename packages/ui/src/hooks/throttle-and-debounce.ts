@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useImmer } from 'use-immer';
+
+import { useImmer } from './immer';
 
 export class ThrottleByAnimationFrame {
   private skip = false;

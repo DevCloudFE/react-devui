@@ -5,9 +5,8 @@ import type { DTransitionStateList, DTransitionRef } from '../_transition';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoState, useId } from '../../hooks';
+import { useDPrefixConfig, useCustomRef, useAsync, useElement, useManualOrAutoState, useId, useImmer } from '../../hooks';
 import { getClassName, globalMaxIndexManager, globalScrollCapture, getPopupPlacementStyle } from '../../utils';
 import { DTransition } from '../_transition';
 

@@ -1,3 +1,5 @@
+import type { DTransitionProps } from '../_transition';
+
 import React, { useCallback } from 'react';
 
 import { useCustomRef, useDPrefixConfig } from '../../hooks';
@@ -6,12 +8,13 @@ import { DTransition } from '../_transition';
 
 export interface DMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
+  dTransitionProps?: Omit<DTransitionProps, 'dEl' | 'children'>;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 export function DMask(props: DMaskProps) {
-  const { dVisible, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
+  const { dVisible, dTransitionProps, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -47,6 +50,7 @@ export function DMask(props: DMaskProps) {
         },
       }}
       dDestroy
+      {...dTransitionProps}
     >
       <div {...restProps} ref={maskRef} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>
     </DTransition>

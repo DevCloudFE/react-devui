@@ -3,9 +3,8 @@ import type { ThrottleByAnimationFrame } from '../../hooks/throttle-and-debounce
 import { isFunction, isNumber, isString, isUndefined } from 'lodash';
 import React, { useMemo, useImperativeHandle, useCallback, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
-import { useImmer } from 'use-immer';
 
-import { useAsync, useThrottle } from '../../hooks';
+import { useAsync, useThrottle, useImmer } from '../../hooks';
 import { getMaxTime, CssRecord } from './utils';
 
 export interface DTransitionStateList {
@@ -88,9 +87,7 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
           callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl, cssRecord.setCss.bind(cssRecord));
           throttleByAnimationFrame.continueThrottle();
           if (!dVisible) {
-            flushSync(() => {
-              setHidden(true);
-            });
+            flushSync(() => setHidden(true));
           }
         }, timeout);
       }, 20);
@@ -101,9 +98,9 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
   useEffect(() => {
     if (dVisible) {
       Promise.resolve().then(() => {
-        flushSync(() => {
-          setHidden(false);
-        });
+        if (hidden) {
+          flushSync(() => setHidden(false));
+        }
         if (dEl) {
           if (currentData.first) {
             currentData.first = false;

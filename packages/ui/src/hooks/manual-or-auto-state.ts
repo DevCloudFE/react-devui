@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isUndefined } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { useImmerReducer } from 'use-immer';
+
+import { useImmerReducer } from './immer';
 
 export function useManualOrAutoState(
   defaultState: boolean,

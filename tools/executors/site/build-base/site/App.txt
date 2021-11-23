@@ -4,10 +4,9 @@
 import React, { useCallback, useEffect, Suspense, lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
-import { useImmer } from 'use-immer';
 
 import { DI18NContext } from '@react-devui/ui';
-import { useAsync } from '@react-devui/ui/hooks';
+import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppHeader, AppSidebar } from './components';

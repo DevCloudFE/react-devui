@@ -2,9 +2,8 @@ import type { DElementSelector } from '../../hooks/element';
 
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useElement } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomRef, useElement, useImmer } from '../../hooks';
 import { getClassName, globalScrollCapture, CustomScroll } from '../../utils';
 
 export interface DAnchorContextData {
@@ -81,17 +80,19 @@ export function DAnchor(props: DAnchorProps) {
         }
       }
 
-      let activeHref = null;
+      const activeHref = nearestEl ? nearestEl[0] : null;
       setDotStyle((draft) => {
         draft.opacity = nearestEl ? 1 : 0;
-        if (anchorEl && nearestEl) {
-          const href = nearestEl[0];
-          activeHref = href;
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const rect = currentData.links.get(href)!.getBoundingClientRect();
-          draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
+        if (activeHref) {
+          const rect = currentData.links.get(activeHref)?.getBoundingClientRect();
+          if (rect) {
+            draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
+          }
         }
+
+        return draft;
       });
+
       setActiveHref(activeHref);
     }
   }, [dDistance, dPage, currentData, pageEl, anchorEl, setActiveHref, setDotStyle]);

@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useImmer } from 'use-immer';
 
 import { DTooltip, DIcon } from '@react-devui/ui';
-import { useAsync } from '@react-devui/ui/hooks';
+import { useAsync, useImmer } from '@react-devui/ui/hooks';
 import { copy, getClassName } from '@react-devui/ui/utils';
 
 import './DemoBox.scss';

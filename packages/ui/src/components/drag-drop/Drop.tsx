@@ -4,12 +4,10 @@ import type { DDragProps } from './Drag';
 import { isEqual, isUndefined } from 'lodash';
 import React, { useImperativeHandle, useState } from 'react';
 import { useEffect, useMemo } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDComponentConfig, useElement, useAsync } from '../../hooks';
+import { useDComponentConfig, useElement, useAsync, useImmer } from '../../hooks';
 
 export interface DDropContextData {
-  dropEl: { current: HTMLElement | null };
   dropDirection: 'horizontal' | 'vertical';
   dropOuter: boolean;
   dropCurrentData: {
@@ -189,12 +187,11 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
 
   const contextValue = useMemo<DDropContextData>(
     () => ({
-      dropEl: containerEl,
       dropDirection: dDirection,
       dropOuter: isOuter,
       dropCurrentData: currentData,
     }),
-    [containerEl, dDirection, isOuter, currentData]
+    [dDirection, isOuter, currentData]
   );
 
   useImperativeHandle(ref, () => currentData.order, [currentData.order]);
