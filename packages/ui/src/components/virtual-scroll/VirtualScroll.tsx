@@ -1,15 +1,22 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useImmer } from 'use-immer';
+import { flushSync } from 'react-dom';
 
-import { useDComponentConfig, useElement, useId, useThrottle, useAsync, useDPrefixConfig } from '../../hooks';
+import { useDComponentConfig, useRefSelector, useId, useThrottle, useAsync, useDPrefixConfig, useImmer } from '../../hooks';
+
+export interface DListRenderProps {
+  style: React.CSSProperties;
+  'data-virtual-scroll': string;
+  onScroll: React.UIEventHandler<HTMLElement>;
+  children: React.ReactNode;
+}
 
 export interface DItemRenderProps {
   'data-virtual-scroll-reference'?: string;
 }
 
 export interface DVirtualScrollProps<T> {
-  dTag?: string;
+  dListRender: (props: DListRenderProps) => React.ReactNode;
   dWidth?: string | number;
   dHeight?: string | number;
   dItemWidth?: number;
@@ -18,24 +25,13 @@ export interface DVirtualScrollProps<T> {
   dItemRender: (item: T, index: number, props: DItemRenderProps) => React.ReactNode;
   dCustomSize?: (item: T, index: number) => number;
   onScrollEnd?: () => void;
-  [index: string]: unknown;
 }
 
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
-  const {
-    dTag = 'div',
-    dWidth,
-    dHeight,
-    dItemWidth,
-    dItemHeight,
-    dList,
-    dItemRender,
-    dCustomSize,
-    onScrollEnd,
-    style,
-    onScroll,
-    ...restProps
-  } = useDComponentConfig('virtual-scroll', props);
+  const { dListRender, dWidth, dHeight, dItemWidth, dItemHeight, dList, dItemRender, dCustomSize, onScrollEnd } = useDComponentConfig(
+    'virtual-scroll',
+    props
+  );
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -47,21 +43,21 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const [list, setList] = useImmer<React.ReactNode[]>([]);
   const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
 
-  const listEl = useElement(`[data-virtual-scroll="${id}"]`);
-  const referenceEl = useElement(`[data-virtual-scroll-reference="${id}"]`);
+  const listRef = useRefSelector(`[data-virtual-scroll="${id}"]`);
+  const referenceRef = useRefSelector(`[data-virtual-scroll-reference="${id}"]`);
 
   const itemSize = useMemo(() => (dCustomSize ? dList.map((item, index) => dCustomSize(item, index)) : []), [dCustomSize, dList]);
 
   const updateList = useCallback(() => {
-    if (listEl.current) {
-      const scrollSize = isUndefined(dWidth) ? listEl.current.scrollTop : listEl.current.scrollLeft;
-      const rect = listEl.current.getBoundingClientRect();
+    if (listRef.current) {
+      const scrollSize = isUndefined(dWidth) ? listRef.current.scrollTop : listRef.current.scrollLeft;
+      const rect = listRef.current.getBoundingClientRect();
       const size = isUndefined(dWidth) ? dItemHeight ?? rect.height : dItemWidth ?? rect.width;
       if (isUndefined(dCustomSize)) {
-        if (referenceEl.current) {
+        if (referenceRef.current) {
           const itemSize = isUndefined(dWidth)
-            ? referenceEl.current.getBoundingClientRect().height
-            : referenceEl.current.getBoundingClientRect().width;
+            ? referenceRef.current.getBoundingClientRect().height
+            : referenceRef.current.getBoundingClientRect().width;
 
           if (size && itemSize) {
             const startIndex = Math.max(~~(scrollSize / itemSize) - 2, 1);
@@ -116,41 +112,46 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         }
       }
     }
-  }, [listEl, dWidth, dItemHeight, dItemWidth, dCustomSize, referenceEl, dList, setList, setFillSize, dItemRender, onScrollEnd, itemSize]);
+  }, [
+    dCustomSize,
+    dItemHeight,
+    dItemRender,
+    dItemWidth,
+    dList,
+    dWidth,
+    itemSize,
+    listRef,
+    onScrollEnd,
+    referenceRef,
+    setFillSize,
+    setList,
+  ]);
 
   const reference = useMemo(() => {
     if (dList[0] && isUndefined(dCustomSize)) {
-      const [asyncGroup] = asyncCapture.createGroup('reference');
-      asyncGroup.setTimeout(() => {
-        if (referenceEl.current) {
-          asyncGroup.onResize(referenceEl.current, () => throttleByAnimationFrame.run(updateList));
-        }
-      }, 20);
-
       return dItemRender(dList[0], 0, { 'data-virtual-scroll-reference': String(id) });
     }
-  }, [asyncCapture, dCustomSize, dItemRender, dList, id, referenceEl, throttleByAnimationFrame, updateList]);
-
-  const handleScroll = useCallback(
-    (e) => {
-      (onScroll as React.UIEventHandler<HTMLElement>)?.(e);
-      throttleByAnimationFrame.run(updateList);
-    },
-    [onScroll, throttleByAnimationFrame, updateList]
-  );
+  }, [dCustomSize, dItemRender, dList, id]);
 
   //#region DidUpdate
   useEffect(() => {
-    throttleByAnimationFrame.run(updateList);
-  }, [throttleByAnimationFrame, updateList]);
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (referenceRef.current) {
+      asyncGroup.onResize(referenceRef.current, updateList);
+    }
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, referenceRef, updateList]);
+
+  useEffect(() => {
+    updateList();
+  }, [updateList]);
   //#endregion
 
-  return React.createElement(
-    dTag,
-    {
-      ...restProps,
+  const listRenderProps = useMemo<DListRenderProps>(
+    () => ({
       style: {
-        ...(style as React.CSSProperties),
         width: dWidth,
         height: dHeight,
         whiteSpace: isUndefined(dWidth) ? undefined : 'nowrap',
@@ -158,25 +159,34 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         overflowY: isUndefined(dHeight) ? undefined : 'auto',
       },
       'data-virtual-scroll': String(id),
-      onScroll: handleScroll,
-    },
-    [
-      reference,
-      <div
-        key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
-        style={{
-          ...fillSize[0],
-          display: isUndefined(dWidth) ? undefined : 'inline-block',
-        }}
-      ></div>,
-      ...list,
-      <div
-        key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
-        style={{
-          ...fillSize[1],
-          display: isUndefined(dWidth) ? undefined : 'inline-block',
-        }}
-      ></div>,
-    ]
+      onScroll: () => {
+        throttleByAnimationFrame.run(() => {
+          flushSync(() => updateList());
+        });
+      },
+      children: (
+        <>
+          {reference}
+          <div
+            key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
+            style={{
+              ...fillSize[0],
+              display: isUndefined(dWidth) ? undefined : 'inline-block',
+            }}
+          ></div>
+          {list}
+          <div
+            key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
+            style={{
+              ...fillSize[1],
+              display: isUndefined(dWidth) ? undefined : 'inline-block',
+            }}
+          ></div>
+        </>
+      ),
+    }),
+    [dHeight, dPrefix, dWidth, fillSize, id, list, reference, throttleByAnimationFrame, updateList]
   );
+
+  return dListRender(listRenderProps);
 }

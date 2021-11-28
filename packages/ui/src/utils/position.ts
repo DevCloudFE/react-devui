@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { isUndefined } from 'lodash';
 
 import { toPx } from './to-px';
@@ -181,19 +180,19 @@ export function getPopupPlacementStyle(
     return { top, left };
   };
 
-  const getAutoFixedPosition = (placements: DPlacement[]) => {
-    for (const placement of placements) {
-      const { top, left } = getFixedPosition(placement);
-      const noOver = [top, window.innerWidth - left - width, window.innerHeight - top - height, left].every(
-        (num, index) => num >= space![index]
-      );
-      if (noOver) {
-        return { top, left, placement };
-      }
-    }
-  };
-
   if (!isUndefined(space)) {
+    const getAutoFixedPosition = (placements: DPlacement[]) => {
+      for (const placement of placements) {
+        const { top, left } = getFixedPosition(placement);
+        const noOver = [top, window.innerWidth - left - width, window.innerHeight - top - height, left].every(
+          (num, index) => num >= space[index]
+        );
+        if (noOver) {
+          return { top, left, placement };
+        }
+      }
+    };
+
     let positionStyle: { top: number; left: number; placement: DPlacement } | undefined;
     if (placement.startsWith('top')) {
       positionStyle = getAutoFixedPosition([

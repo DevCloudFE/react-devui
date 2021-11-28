@@ -20,7 +20,7 @@ export default function __Route__() {
 
   useEffect(() => {
     _onMount?.();
-  }, [_onMount]);
+  }, []);
 
   return <AppRoute {...props} />;
 }

@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
-import { useImmer } from 'use-immer';
+import { useEffect, useMemo, useRef } from 'react';
+
+import { useImmer } from './immer';
 
 export class ThrottleByAnimationFrame {
   private skip = false;
@@ -70,4 +71,36 @@ export function useThrottle() {
   }, [throttleByAnimationFrame]);
 
   return throttle;
+}
+
+export function useDebounce() {
+  const dataRef = useRef<{ tid: number | null }>({
+    tid: null,
+  });
+
+  const debounce = useMemo(
+    () => ({
+      debounceByTime: (cb: () => void, timeout: number) => {
+        if (dataRef.current.tid) {
+          clearTimeout(dataRef.current.tid);
+        }
+        dataRef.current.tid = window.setTimeout(() => {
+          dataRef.current.tid = null;
+          cb();
+        }, timeout);
+      },
+    }),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      if (dataRef.current.tid) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        clearTimeout(dataRef.current.tid);
+      }
+    };
+  }, []);
+
+  return debounce;
 }

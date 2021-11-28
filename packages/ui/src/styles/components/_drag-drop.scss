@@ -1,0 +1,17 @@
+@include b(drag-placeholder) {
+  position: relative;
+
+  border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
+
+  @include when(horizontal) {
+    display: inline-block;
+  }
+}
+
+@include b(drop) {
+  position: relative;
+
+  display: inline-block;
+  padding: 12px;
+  border: 1px dashed var(--#{$variable-prefix}divider-color);
+}

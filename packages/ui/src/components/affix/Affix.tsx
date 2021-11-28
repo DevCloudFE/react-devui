@@ -1,11 +1,15 @@
-import type { DElementSelector } from '../../hooks/element';
+import type { DElementSelector } from '../../hooks/element-ref';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useAsync, useThrottle, useElement } from '../../hooks';
-import { getClassName, toPx, globalScrollCapture } from '../../utils';
+import { useDPrefixConfig, useDComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback } from '../../hooks';
+import { getClassName, toPx } from '../../utils';
+
+export interface DAffixRef {
+  el: HTMLDivElement | null;
+  updatePosition: () => void;
+}
 
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
@@ -13,11 +17,6 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dBottom?: string | number;
   dZIndex?: number;
   onFixedChange?: (fixed: boolean) => void;
-}
-
-export interface DAffixRef {
-  el: HTMLDivElement | null;
-  updatePosition: () => void;
 }
 
 export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
@@ -38,29 +37,28 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   //#endregion
 
   //#region Ref
-  const [affixEl, affixRef] = useCustomRef<HTMLDivElement>();
-  const [referenceEl, referenceRef] = useCustomRef<HTMLDivElement>();
+  const [affixEl, affixRef] = useRefCallback<HTMLDivElement>();
+  const [referenceEl, referenceRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const { throttleByAnimationFrame } = useThrottle();
   const asyncCapture = useAsync();
   const [fixed, setFixed] = useImmer<boolean | undefined>(undefined);
   const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
   const [referenceStyle, setReferenceStyle] = useImmer<React.CSSProperties>({});
 
-  const targetEl = useElement(dTarget ?? null);
+  const targetRef = useRefSelector(dTarget ?? null);
 
   const top = isString(dTop) ? toPx(dTop, true) : dTop;
   const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
 
   const updatePosition = useCallback(() => {
-    if ((isUndefined(dTarget) || targetEl.current) && affixEl && referenceEl) {
+    if ((isUndefined(dTarget) || targetRef.current) && affixEl && referenceEl) {
       let targetRect = {
         top: 0,
         bottom: window.innerHeight,
       };
-      if (targetEl.current) {
-        targetRect = targetEl.current.getBoundingClientRect();
+      if (targetRef.current) {
+        targetRect = targetRef.current.getBoundingClientRect();
       }
 
       const offsetEl = fixed === true ? referenceEl : affixEl;
@@ -100,7 +98,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
     }
   }, [
     dTarget,
-    targetEl,
+    targetRef,
     affixEl,
     referenceEl,
     fixed,
@@ -119,23 +117,24 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (fixed && referenceEl) {
-      asyncGroup.onResize(referenceEl, () => throttleByAnimationFrame.run(updatePosition));
+      asyncGroup.onResize(referenceEl, updatePosition);
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [throttleByAnimationFrame, asyncCapture, fixed, referenceEl, updatePosition]);
+  }, [asyncCapture, fixed, referenceEl, updatePosition]);
 
   useEffect(() => {
-    const tid = globalScrollCapture.addTask(() => throttleByAnimationFrame.run(updatePosition));
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    asyncGroup.onGlobalScroll(updatePosition);
     return () => {
-      globalScrollCapture.deleteTask(tid);
+      asyncCapture.deleteGroup(asyncId);
     };
-  }, [throttleByAnimationFrame, updatePosition]);
+  }, [asyncCapture, updatePosition]);
 
   useEffect(() => {
-    throttleByAnimationFrame.run(updatePosition);
-  }, [throttleByAnimationFrame, updatePosition]);
+    updatePosition();
+  }, [updatePosition]);
   //#endregion
 
   useImperativeHandle(

@@ -1,13 +1,13 @@
 @mixin button-hover-focus {
-  &:not([disabled]):hover,
-  &:not([disabled]):focus {
+  &:not([disabled]):not(.is-loading):hover,
+  &:not([disabled]):not(.is-loading):focus {
     z-index: 2;
     @content;
   }
 }
 
 @mixin button-active {
-  &:not([disabled]):active {
+  &:not([disabled]):not(.is-loading):active {
     z-index: 1;
     @content;
   }
@@ -34,6 +34,8 @@
   text-align: unset;
   text-transform: none;
 
+  outline: none;
+
   cursor: pointer;
 
   transition: all 0.2s linear;
@@ -42,44 +44,39 @@
 
   @include font-size(0.9rem);
 
+  @include utils-disabled(1px, ':disabled');
+  @include utils-disabled(1px, '.is-loading');
+
   & + & {
     margin-left: 10px;
   }
 
-  &:focus {
-    outline: none;
-  }
-
-  &:disabled {
-    @include utils-disabled(1px);
-  }
-
-  @each $color in $themes {
-    &.#{$variable-prefix}button--primary-#{$color} {
-      border-color: var(--#{$variable-prefix}color-#{$color});
+  @each $theme, $rgb in $themes {
+    &.#{$variable-prefix}button--primary-#{$theme} {
+      border-color: var(--#{$variable-prefix}color-#{$theme});
 
       color: #fff;
 
-      background-color: var(--#{$variable-prefix}color-#{$color});
+      background-color: var(--#{$variable-prefix}color-#{$theme});
 
       @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
         color: #fff;
 
-        background-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        background-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
       }
 
       @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
         color: #fff;
 
-        background-color: var(--#{$variable-prefix}color-#{$color}-darker);
+        background-color: var(--#{$variable-prefix}color-#{$theme}-darker);
       }
     }
 
-    &.#{$variable-prefix}button--secondary-#{$color} {
+    &.#{$variable-prefix}button--secondary-#{$theme} {
       border-color: var(--#{$variable-prefix}color-step-150);
 
       color: var(--#{$variable-prefix}text-color);
@@ -87,86 +84,86 @@
       background-color: transparent;
 
       @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
-        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
         background-color: transparent;
       }
 
       @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
-        color: var(--#{$variable-prefix}color-#{$color}-darker);
+        color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
         background-color: transparent;
       }
     }
 
-    &.#{$variable-prefix}button--outline-#{$color},
-    &.#{$variable-prefix}button--dashed-#{$color} {
-      border-color: var(--#{$variable-prefix}color-#{$color});
+    &.#{$variable-prefix}button--outline-#{$theme},
+    &.#{$variable-prefix}button--dashed-#{$theme} {
+      border-color: var(--#{$variable-prefix}color-#{$theme});
 
-      color: var(--#{$variable-prefix}color-#{$color});
+      color: var(--#{$variable-prefix}color-#{$theme});
 
       background-color: transparent;
 
       @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
-        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
         background-color: transparent;
       }
 
       @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$color}-darker);
+        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
-        color: var(--#{$variable-prefix}color-#{$color}-darker);
+        color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
         background-color: transparent;
       }
     }
 
-    &.#{$variable-prefix}button--dashed-#{$color} {
+    &.#{$variable-prefix}button--dashed-#{$theme} {
       border-style: dashed;
     }
 
-    &.#{$variable-prefix}button--text-#{$color} {
+    &.#{$variable-prefix}button--text-#{$theme} {
       border-color: transparent;
 
-      color: var(--#{$variable-prefix}color-#{$color});
+      color: var(--#{$variable-prefix}color-#{$theme});
 
       background-color: transparent;
 
       @include button-hover-focus {
         border-color: transparent;
 
-        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
-        background-color: rgb(var(--#{$variable-prefix}color-#{$color}-rgb) / 4%);
+        background-color: rgb(var(--#{$variable-prefix}color-#{$theme}-rgb) / 4%);
       }
 
       @include button-active {
         border-color: transparent;
 
-        color: var(--#{$variable-prefix}color-#{$color}-darker);
+        color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
-        background-color: rgb(var(--#{$variable-prefix}color-#{$color}-rgb) / 10%);
+        background-color: rgb(var(--#{$variable-prefix}color-#{$theme}-rgb) / 10%);
       }
     }
 
-    &.#{$variable-prefix}button--link-#{$color} {
+    &.#{$variable-prefix}button--link-#{$theme} {
       border-color: transparent;
 
-      color: var(--#{$variable-prefix}color-#{$color});
+      color: var(--#{$variable-prefix}color-#{$theme});
 
       background-color: transparent;
 
       @include button-hover-focus {
         border-color: transparent;
 
-        color: var(--#{$variable-prefix}color-#{$color}-lighter);
+        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
         background-color: transparent;
       }
@@ -174,7 +171,7 @@
       @include button-active {
         border-color: transparent;
 
-        color: var(--#{$variable-prefix}color-#{$color}-darker);
+        color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
         background-color: transparent;
       }

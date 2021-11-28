@@ -1,8 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isUndefined } from 'lodash';
 import { useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
-import { useImmer } from 'use-immer';
+
+import { useImmer } from '../immer';
+import { ThrottleByAnimationFrame } from '../throttle-and-debounce';
+import { globalEscStack } from './esc';
 
 interface CaptureMethod {
   fromEvent: typeof fromEvent;
@@ -20,28 +23,29 @@ class BaseAsyncCapture {
     this.onDestroy$.complete();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fromEvent(...args: any) {
+    return fromEvent(...(args as Parameters<typeof fromEvent>)).pipe(takeUntil(this.onDestroy$));
+  }
+
   setTimeout(handler: TimerHandler, timeout?: number) {
     const tid = window.setTimeout(handler, timeout);
-    this.tids.set(tid, () => clearTimeout(tid));
-    return tid;
-  }
-  clearTimeout(tid: number) {
-    window.clearTimeout(tid);
-    this.tids.delete(tid);
+    const clear = () => {
+      clearTimeout(tid);
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
   }
 
   requestAnimationFrame(...args: Parameters<typeof requestAnimationFrame>) {
     const tid = requestAnimationFrame(...args);
-    this.tids.set(tid, () => cancelAnimationFrame(tid));
-    return tid;
-  }
-  cancelAnimationFrame(tid: number) {
-    cancelAnimationFrame(tid);
-    this.tids.delete(tid);
-  }
-
-  fromEvent(...args: any) {
-    return fromEvent(...(args as Parameters<typeof fromEvent>)).pipe(takeUntil(this.onDestroy$));
+    const clear = () => {
+      cancelAnimationFrame(tid);
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
   }
 
   onResize(el: HTMLElement, handle: () => void, skipFirst = true) {
@@ -50,19 +54,47 @@ class BaseAsyncCapture {
       if (skipFirst && isFirst) {
         isFirst = false;
       } else {
-        handle();
+        flushSync(() => handle());
       }
     });
     observer.observe(el);
-    this.tids.set(Symbol(), () => observer.disconnect());
+    const tid = Symbol();
+    const clear = () => {
+      observer.disconnect();
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
   }
-  cancelResize(tid: symbol) {
-    const cb = this.tids.get(tid);
-    cb?.();
+
+  onGlobalScroll(cb: (e: Event) => void) {
+    const throttleByAnimationFrame = new ThrottleByAnimationFrame();
+    const observer = fromEvent(window, 'scroll', { capture: true }).subscribe({
+      next: (e) => throttleByAnimationFrame.run(() => cb(e)),
+    });
+    const tid = Symbol();
+    const clear = () => {
+      observer.unsubscribe();
+      throttleByAnimationFrame.clearTids();
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
+  }
+
+  onEscKeydown(cb: () => void) {
+    const tid = Symbol();
+    globalEscStack.stackPush(tid, cb);
+    const clear = () => {
+      globalEscStack.stackDelete(tid);
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
   }
 }
 
-class AsyncCapture extends BaseAsyncCapture {
+export class AsyncCapture extends BaseAsyncCapture {
   private groups = new Map<symbol | string, BaseAsyncCapture>();
 
   createGroup(id?: string): [Omit<BaseAsyncCapture, 'fromEvent'> & CaptureMethod, symbol | string] {

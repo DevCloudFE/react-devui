@@ -8,10 +8,13 @@
   padding: 0 16px;
 
   list-style: none;
-  outline: none;
   cursor: pointer;
 
   transition: all 0.2s ease-out;
+
+  @include utils-outline();
+
+  @include utils-disabled();
 
   &:not(.is-disabled) {
     &:focus,
@@ -20,10 +23,6 @@
 
       background-color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 8%);
     }
-  }
-
-  @include when(disabled) {
-    @include utils-disabled();
   }
 
   @include when(active) {
@@ -162,7 +161,7 @@
       width: 2px;
       height: 100%;
 
-      background-color: var(--#{$variable-prefix}background-color-indicator);
+      background-color: var(--#{$variable-prefix}indicator-background-color);
 
       &::before {
         position: absolute;
@@ -226,7 +225,7 @@
 
   color: var(--#{$variable-prefix}color-step-400);
 
-  outline: none;
+  @include utils-outline();
 
   @include font-size(0.85rem);
 

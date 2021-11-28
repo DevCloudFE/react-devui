@@ -1,11 +1,13 @@
-import type { ThrottleByAnimationFrame } from '../../hooks/throttle';
+/* eslint-disable react-hooks/exhaustive-deps */
+import type { ThrottleByAnimationFrame } from '../../hooks/throttle-and-debounce';
 
-import { isFunction, isNumber, isString, isUndefined } from 'lodash';
-import React, { useMemo, useImperativeHandle, useCallback, useLayoutEffect, useState } from 'react';
-import { useImmer } from 'use-immer';
+import { isFunction, isNumber, isString } from 'lodash';
+import React, { useImperativeHandle, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { count, first, mergeWith, take, timer } from 'rxjs';
 
-import { useAsync, useThrottle } from '../../hooks';
-import { getMaxTime, CssRecord } from './utils';
+import { useAsync, useThrottle, useImmer } from '../../hooks';
+import { CssRecord, getTransitinNum, getMaxTime } from './utils';
 
 export interface DTransitionStateList {
   'enter-from'?: Partial<CSSStyleDeclaration>;
@@ -17,53 +19,53 @@ export interface DTransitionStateList {
 }
 
 export interface DTransitionCallbackList {
-  init?: (el: HTMLElement) => void;
-  beforeEnter?: (el: HTMLElement) => void;
-  enter?: (el: HTMLElement) => void;
-  afterEnter?: (el: HTMLElement, setCss: CssRecord['setCss']) => void;
-  beforeLeave?: (el: HTMLElement) => void;
-  leave?: (el: HTMLElement) => void;
-  afterLeave?: (el: HTMLElement, setCss: CssRecord['setCss']) => void;
-}
-
-export interface DTransitionProps {
-  dEl: HTMLElement | null;
-  dVisible?: boolean;
-  dStateList?: DTransitionStateList | ((el: HTMLElement) => DTransitionStateList | undefined);
-  dCallbackList?: DTransitionCallbackList | ((el: HTMLElement) => DTransitionCallbackList | undefined);
-  dDestroy?: boolean;
-  dHidden?: boolean;
-  dSkipFirst?: boolean;
-  children: React.ReactNode;
+  beforeEnter?: () => void;
+  enter?: () => void;
+  afterEnter?: () => void;
+  beforeLeave?: () => void;
+  leave?: () => void;
+  afterLeave?: () => void;
 }
 
 export interface DTransitionRef {
   transitionThrottle: ThrottleByAnimationFrame;
 }
 
-export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((props, ref) => {
-  const { dEl, dVisible = false, dStateList, dCallbackList, dDestroy = false, dHidden = true, dSkipFirst = true, children } = props;
+export interface DTransitionProps {
+  dEl: HTMLElement | null;
+  dVisible?: boolean;
+  dStateList?: DTransitionStateList | (() => DTransitionStateList | undefined);
+  dCallbackList?: DTransitionCallbackList | (() => DTransitionCallbackList | undefined);
+  dEndStyle?: { enter?: Partial<CSSStyleDeclaration>; leave?: Partial<CSSStyleDeclaration> };
+  dSkipFirst?: boolean;
+  dRender: (hidden: boolean) => React.ReactNode;
+}
 
-  const [currentData] = useState({
-    first: dSkipFirst && dVisible,
+export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((props, ref) => {
+  const { dEl, dVisible = false, dStateList, dCallbackList, dEndStyle, dSkipFirst = true, dRender } = props;
+
+  const dataRef = useRef({
+    elRendered: true,
+    preVisible: dVisible,
   });
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
+  const [hidden, setHidden] = useImmer(!dVisible);
   const [cssRecord] = useImmer(() => new CssRecord());
 
-  const [hidden, setHidden] = useImmer(!dVisible);
+  const [startEnterTransition, setStartEnterTransition] = useState(0);
 
-  const transition = useCallback(() => {
-    if (dEl && !isUndefined(dStateList)) {
+  const transition = () => {
+    if (dEl) {
       cssRecord.backCss(dEl);
       asyncCapture.clearAll();
       throttleByAnimationFrame.skipThrottle();
 
-      const stateList = isFunction(dStateList) ? dStateList(dEl) ?? {} : dStateList;
-      const callbackList = isUndefined(dCallbackList) ? {} : isFunction(dCallbackList) ? dCallbackList(dEl) ?? {} : dCallbackList;
+      const stateList = isFunction(dStateList) ? dStateList() ?? {} : dStateList ?? {};
+      const callbackList = isFunction(dCallbackList) ? dCallbackList() ?? {} : dCallbackList ?? {};
 
-      callbackList[dVisible ? 'beforeEnter' : 'beforeLeave']?.(dEl);
+      callbackList[dVisible ? 'beforeEnter' : 'beforeLeave']?.();
       cssRecord.setCss(dEl, {
         ...stateList[dVisible ? 'enter-from' : 'leave-from'],
         ...stateList[dVisible ? 'enter-active' : 'leave-active'],
@@ -75,45 +77,80 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
           ...stateList[dVisible ? 'enter-to' : 'leave-to'],
           ...stateList[dVisible ? 'enter-active' : 'leave-active'],
         });
-        callbackList[dVisible ? 'enter' : 'leave']?.(dEl);
+        callbackList[dVisible ? 'enter' : 'leave']?.();
+
+        const transitinNum = getTransitinNum(
+          dVisible
+            ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
+            : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
+        );
 
         const timeout = getMaxTime(
           dVisible
             ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
             : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
         );
-        asyncCapture.setTimeout(() => {
-          if (!dVisible) {
-            setHidden(true);
-          }
-          cssRecord.backCss(dEl);
-          callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl, cssRecord.setCss.bind(cssRecord));
-          throttleByAnimationFrame.continueThrottle();
-        }, timeout);
+
+        asyncCapture
+          .fromEvent(dEl, 'transitionend')
+          .pipe(take(transitinNum), count())
+          .pipe(mergeWith(timer(timeout + 5)))
+          .pipe(first())
+          .subscribe(() => {
+            cssRecord.backCss(dEl);
+            cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
+            callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.();
+            flushSync(() => {
+              if (!dVisible) {
+                setHidden(true);
+              }
+            });
+            throttleByAnimationFrame.continueThrottle();
+          });
       }, 20);
     }
-  }, [asyncCapture, cssRecord, dCallbackList, dEl, dStateList, dVisible, setHidden, throttleByAnimationFrame]);
+  };
+
+  const prepareTransition = () => {
+    dataRef.current.preVisible = dVisible;
+    if (dVisible) {
+      setHidden(false);
+      if (dEl) {
+        dataRef.current.elRendered = true;
+        setStartEnterTransition((pre) => pre + 1);
+      } else {
+        dataRef.current.elRendered = false;
+      }
+    } else {
+      dataRef.current.elRendered = true;
+      transition();
+    }
+  };
 
   //#region DidUpdate
   useLayoutEffect(() => {
-    if (dVisible) {
-      setHidden(false);
-    } else if (dEl) {
-      transition();
+    transition();
+  }, [startEnterTransition]);
+
+  useEffect(() => {
+    if (!dSkipFirst) {
+      prepareTransition();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dEl, dVisible]);
+  }, []);
+
+  useEffect(() => {
+    if (dVisible !== dataRef.current.preVisible) {
+      prepareTransition();
+    }
+  }, [dVisible]);
 
   useLayoutEffect(() => {
-    if (dEl && !hidden) {
-      if (currentData.first) {
-        currentData.first = false;
-      } else {
-        transition();
-      }
+    if (!hidden && dEl && !dataRef.current.elRendered) {
+      dataRef.current.elRendered = true;
+      transition();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, hidden]);
+  //#endregion
 
   useImperativeHandle(
     ref,
@@ -123,73 +160,60 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
     [throttleByAnimationFrame]
   );
 
-  const child = useMemo(() => {
-    const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_child, {
-      ..._child.props,
-      style: {
-        ..._child.props.style,
-        display: !dDestroy && dHidden && hidden ? 'none' : undefined,
-      },
-    });
-  }, [children, dDestroy, dHidden, hidden]);
-
-  return dDestroy && hidden ? null : child;
+  return <>{dRender(hidden)}</>;
 });
 
-export interface DCollapseTransitionProps {
-  dEl: HTMLElement | null;
-  dVisible?: boolean;
-  dCallbackList?: DTransitionCallbackList;
+export interface DCollapseTransitionProps extends DTransitionProps {
   dDirection?: 'width' | 'height';
   dDuring?: number;
   dTimingFunction?: string | { enter: string; leave: string };
   dSpace?: number | string;
-  dDestroy?: boolean;
-  dHidden?: boolean;
-  dSkipFirst?: boolean;
-  children: React.ReactNode;
 }
 
 export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTransitionProps>((props, ref) => {
-  const { dCallbackList, dDirection = 'height', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
+  const { dEl, dCallbackList, dDirection = 'height', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
 
   const enterTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.enter) : 'linear';
   const leaveTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.leave) : 'linear';
-  const opacity = dSpace === 0 ? '0' : '1';
+
+  const shouldHidden = dSpace === 0;
+
+  const space = isNumber(dSpace) ? dSpace + 'px' : dSpace;
+  const opacity = shouldHidden ? '0' : '1';
 
   return (
     <DTransition
       {...restProps}
-      dStateList={(el) => {
-        const rect = el.getBoundingClientRect();
-        // handle nested
-        if (rect[dDirection] === 0) {
-          return undefined;
+      ref={ref}
+      dEl={dEl}
+      dStateList={() => {
+        if (dEl) {
+          const rect = dEl.getBoundingClientRect();
+          // handle nested
+          if (rect[dDirection] === 0) {
+            return undefined;
+          }
+
+          const size = rect[dDirection] + 'px';
+
+          return {
+            'enter-from': { [dDirection]: space, opacity },
+            'enter-active': { overflow: 'hidden' },
+            'enter-to': {
+              [dDirection]: size,
+              transition: `${dDirection} ${dDuring}ms ${enterTimeFunction}, opacity ${dDuring}ms ${enterTimeFunction}`,
+            },
+            'leave-from': { [dDirection]: size },
+            'leave-active': { overflow: 'hidden' },
+            'leave-to': {
+              [dDirection]: space,
+              opacity,
+              transition: `${dDirection} ${dDuring}ms ${leaveTimeFunction}, opacity ${dDuring}ms ${leaveTimeFunction}`,
+            },
+          };
         }
-        return {
-          'enter-from': { [dDirection]: isNumber(dSpace) ? dSpace + 'px' : dSpace, opacity },
-          'enter-active': { overflow: 'hidden' },
-          'enter-to': {
-            transition: `${dDirection} ${dDuring}ms ${enterTimeFunction}, opacity ${dDuring}ms ${enterTimeFunction}`,
-            [dDirection]: rect[dDirection] + 'px',
-          },
-          'leave-from': { [dDirection]: rect[dDirection] + 'px' },
-          'leave-active': { overflow: 'hidden' },
-          'leave-to': {
-            transition: `${dDirection} ${dDuring}ms ${leaveTimeFunction}, opacity ${dDuring}ms ${leaveTimeFunction}`,
-            [dDirection]: isNumber(dSpace) ? dSpace + 'px' : dSpace,
-            opacity,
-          },
-        };
       }}
-      dCallbackList={{
-        ...dCallbackList,
-        afterLeave: (el, setCss) => {
-          dCallbackList?.afterLeave?.(el, setCss);
-          setCss(el, { [dDirection]: isNumber(dSpace) ? dSpace + 'px' : dSpace });
-        },
-      }}
+      dEndStyle={shouldHidden ? undefined : { leave: { [dDirection]: space } }}
     />
   );
 });

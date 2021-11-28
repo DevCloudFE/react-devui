@@ -1,78 +1,83 @@
-import type { DElementSelector } from '../../hooks/element';
-
 import { isUndefined } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useRef } from 'react';
+import { useEffect, useMemo } from 'react';
+import { flushSync } from 'react-dom';
 
 import { useAsync } from '../../hooks';
-import { useElement } from '../../hooks/element';
 
 export type DTriggerType = 'hover' | 'focus' | 'click';
+
+export interface DRenderProps {
+  onMouseEnter?: React.MouseEventHandler<HTMLElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLElement>;
+  onFocus?: React.FocusEventHandler<HTMLElement>;
+  onBlur?: React.FocusEventHandler<HTMLElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+}
 
 export interface DTriggerProps {
   dTrigger?: DTriggerType | DTriggerType[];
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
-  dTriggerNode?: DElementSelector;
-  children?: React.ReactNode;
+  dTriggerEl?: HTMLElement | null;
+  dRender?: (props: DRenderProps) => React.ReactNode;
   onTrigger?: (state?: boolean) => void;
 }
 
 export function DTrigger(props: DTriggerProps) {
-  const { dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dTriggerNode, children, onTrigger } = props;
+  const { dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dTriggerEl, dRender, onTrigger } = props;
 
-  const [currentData] = useState<{ tid: number | null }>({
-    tid: null,
+  const dataRef = useRef<{ clearTid: (() => void) | null }>({
+    clearTid: null,
   });
 
   const asyncCapture = useAsync();
 
-  const triggerEl = useElement(dTriggerNode ?? null);
-
   //#region DidUpdate
   useEffect(() => {
-    if (!isUndefined(dTriggerNode)) {
+    if (!isUndefined(dTriggerEl)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
-      if (triggerEl.current) {
+      if (dTriggerEl) {
         if (dTrigger === 'hover') {
-          asyncGroup.fromEvent(triggerEl.current, 'mouseenter').subscribe({
+          asyncGroup.fromEvent(dTriggerEl, 'mouseenter').subscribe({
             next: () => {
-              currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-              currentData.tid = asyncCapture.setTimeout(() => {
-                currentData.tid = null;
-                onTrigger?.(true);
+              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+                dataRef.current.clearTid = null;
+                flushSync(() => onTrigger?.(true));
               }, dMouseEnterDelay);
             },
           });
-          asyncGroup.fromEvent(triggerEl.current, 'mouseleave').subscribe({
+          asyncGroup.fromEvent(dTriggerEl, 'mouseleave').subscribe({
             next: () => {
-              currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-              currentData.tid = asyncCapture.setTimeout(() => {
-                currentData.tid = null;
-                onTrigger?.(false);
+              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+                dataRef.current.clearTid = null;
+                flushSync(() => onTrigger?.(false));
               }, dMouseLeaveDelay);
             },
           });
         }
 
         if (dTrigger === 'focus') {
-          asyncGroup.fromEvent(triggerEl.current, 'focus').subscribe({
+          asyncGroup.fromEvent(dTriggerEl, 'focus').subscribe({
             next: () => {
-              currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-              onTrigger?.(true);
+              dataRef.current.clearTid && dataRef.current.clearTid();
+              flushSync(() => onTrigger?.(true));
             },
           });
-          asyncGroup.fromEvent(triggerEl.current, 'blur').subscribe({
+          asyncGroup.fromEvent(dTriggerEl, 'blur').subscribe({
             next: () => {
-              currentData.tid = asyncCapture.setTimeout(() => onTrigger?.(false), 20);
+              dataRef.current.clearTid = asyncCapture.setTimeout(() => flushSync(() => onTrigger?.(false)), 20);
             },
           });
         }
 
         if (dTrigger === 'click') {
-          asyncGroup.fromEvent(triggerEl.current, 'click').subscribe({
+          asyncGroup.fromEvent(dTriggerEl, 'click').subscribe({
             next: () => {
-              currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-              onTrigger?.();
+              dataRef.current.clearTid && dataRef.current.clearTid();
+              flushSync(() => onTrigger?.());
             },
           });
         }
@@ -82,70 +87,45 @@ export function DTrigger(props: DTriggerProps) {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, currentData, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerNode, onTrigger, triggerEl]);
+  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, onTrigger]);
   //#endregion
 
-  const child = useMemo(() => {
-    if (isUndefined(dTriggerNode)) {
-      const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-      let childProps: React.HTMLAttributes<HTMLElement> = {};
-
-      if (dTrigger === 'hover') {
-        childProps = {
-          onMouseEnter: (e) => {
-            _child.props.onMouseEnter?.(e);
-
-            currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-            currentData.tid = asyncCapture.setTimeout(() => {
-              currentData.tid = null;
-              onTrigger?.(true);
-            }, dMouseEnterDelay);
-          },
-          onMouseLeave: (e) => {
-            _child.props.onMouseLeave?.(e);
-
-            currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-            currentData.tid = asyncCapture.setTimeout(() => {
-              currentData.tid = null;
-              onTrigger?.(false);
-            }, dMouseLeaveDelay);
-          },
-        };
-      }
-      if (dTrigger === 'focus') {
-        childProps = {
-          onFocus: (e) => {
-            _child.props.onFocus?.(e);
-
-            currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-            onTrigger?.(true);
-          },
-          onBlur: (e) => {
-            _child.props.onBlur?.(e);
-
-            currentData.tid = asyncCapture.setTimeout(() => onTrigger?.(false), 20);
-          },
-        };
-      }
-      if (dTrigger === 'click') {
-        childProps = {
-          onClick: (e) => {
-            _child.props.onClick?.(e);
-
-            currentData.tid && asyncCapture.clearTimeout(currentData.tid);
-            onTrigger?.();
-          },
-        };
-      }
-
-      return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_child, {
-        ..._child.props,
-        ...childProps,
-      });
+  const renderProps = useMemo<DRenderProps>(() => {
+    const _renderProps: DRenderProps = {};
+    if (dTrigger === 'hover') {
+      _renderProps.onMouseEnter = () => {
+        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+          dataRef.current.clearTid = null;
+          onTrigger?.(true);
+        }, dMouseEnterDelay);
+      };
+      _renderProps.onMouseLeave = () => {
+        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+          dataRef.current.clearTid = null;
+          onTrigger?.(false);
+        }, dMouseLeaveDelay);
+      };
+    }
+    if (dTrigger === 'focus') {
+      _renderProps.onFocus = () => {
+        dataRef.current.clearTid && dataRef.current.clearTid();
+        onTrigger?.(true);
+      };
+      _renderProps.onBlur = () => {
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => onTrigger?.(false), 20);
+      };
+    }
+    if (dTrigger === 'click') {
+      _renderProps.onClick = () => {
+        dataRef.current.clearTid && dataRef.current.clearTid();
+        onTrigger?.();
+      };
     }
 
-    return null;
-  }, [asyncCapture, children, currentData, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerNode, onTrigger]);
+    return _renderProps;
+  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger]);
 
-  return child;
+  return dRender ? <>{dRender(renderProps)}</> : null;
 }

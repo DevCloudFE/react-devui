@@ -6,14 +6,16 @@ export type DElementSelector = HTMLElement | null | string | (() => HTMLElement 
 
 type SelectorHandle = () => HTMLElement | null;
 
-export function useElement(selector: DElementSelector): { current: HTMLElement | null };
-export function useElement(selector: any, handle: SelectorHandle): { current: HTMLElement | null };
-export function useElement(selector: any, handle?: SelectorHandle): { current: HTMLElement | null } {
-  const [afterRender, setAfterRender] = useState({
+export function useRefSelector(selector: DElementSelector): React.RefObject<HTMLElement>;
+export function useRefSelector(selector: any, handle: SelectorHandle): React.RefObject<HTMLElement>;
+export function useRefSelector(selector: any, handle?: SelectorHandle): React.RefObject<HTMLElement> {
+  const [updateProxy, setUpdateProxy] = useState({
     hasEl: false,
   });
 
   const proxy = useMemo(() => {
+    updateProxy.hasEl = false;
+
     const handler: ProxyHandler<any> = {
       get: function (target: any, key: string | symbol, receiver: any) {
         if (key === 'current') {
@@ -34,16 +36,14 @@ export function useElement(selector: any, handle?: SelectorHandle): { current: H
 
     return new Proxy({}, handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector, handle, afterRender]);
-
-  afterRender.hasEl = proxy.current !== null;
+  }, [selector, handle]);
 
   useEffect(() => {
-    if (!afterRender.hasEl) {
-      setAfterRender({ hasEl: false });
+    if (proxy.current !== null && !updateProxy.hasEl) {
+      setUpdateProxy({ hasEl: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector, handle]);
+  }, [proxy]);
 
   return proxy;
 }

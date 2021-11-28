@@ -1,8 +1,7 @@
 import { isUndefined } from 'lodash';
-import React from 'react';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useCustomRef } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -37,7 +36,7 @@ export function DMenuItem(props: DMenuItemProps) {
   //#endregion
 
   //#region Ref
-  const [liEl, liRef] = useCustomRef<HTMLLIElement>();
+  const [liEl, liRef] = useRefCallback<HTMLLIElement>();
   //#endregion
 
   const inNav = menuCurrentData?.navIds.has(dId) ?? false;
@@ -98,7 +97,7 @@ export function DMenuItem(props: DMenuItemProps) {
         {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
         <div className={`${dPrefix}menu-item__title`}>{children}</div>
       </li>
-      {inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerNode={liEl} dPlacement="right" />}
+      {inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerEl={liEl} dPlacement="right" />}
     </>
   );
 }

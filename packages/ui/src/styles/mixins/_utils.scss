@@ -36,18 +36,46 @@
   text-overflow: ellipsis;
 }
 
-@mixin utils-disabled($border: 0) {
-  &::before {
+@mixin utils-disabled($border: 0, $disabled: '.is-disabled') {
+  &#{$disabled}::before {
     position: absolute;
     top: -$border;
     right: -$border;
     bottom: -$border;
     left: -$border;
-    z-index: 10;
+    z-index: 1;
 
     background-color: var(--#{$variable-prefix}disabled-cover-color);
     cursor: not-allowed;
 
     content: '';
+  }
+}
+
+@mixin utils-break-word {
+  $selector: &;
+
+  overflow-wrap: break-word;
+
+  @at-root {
+    body.CJK #{$selector} {
+      word-break: break-all;
+    }
+  }
+}
+
+@mixin utils-dark() {
+  body.dark {
+    @content;
+  }
+}
+
+@mixin utils-outline($disabled: '.is-disabled') {
+  outline: none;
+
+  &:not(#{$disabled}) {
+    &:focus-visible {
+      outline: 1px dashed var(--#{$variable-prefix}color-primary);
+    }
   }
 }

@@ -5,24 +5,15 @@ export function toId(id: string | number) {
     return id;
   }
 
-  if (/\s/.test(id)) {
-    let _id = id.replace(/\s/g, '-');
-    _id = _id.toLowerCase();
-    return _id;
-  }
-  if (/^[A-Z]+$/.test(id)) {
-    return id.toLowerCase();
-  }
+  const _id = id
+    .replace(/[A-Z]+/g, (match) => '-' + match.toLowerCase())
+    .replace(/[0-9]+/g, (match) => '-' + match)
+    .replace(/\s+/g, () => '-')
+    .replace(/-+/g, () => '-');
 
-  const arr = id.split('');
-  let _id = '';
-  arr.forEach((char, index) => {
-    if (/[A-Z]/.test(char) && index !== 0) {
-      _id += '-';
-    }
-
-    _id += char.toLowerCase();
-  });
+  if (_id[0] === '-') {
+    return _id.slice(1);
+  }
 
   return _id;
 }

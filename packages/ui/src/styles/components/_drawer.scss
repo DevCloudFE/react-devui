@@ -1,4 +1,10 @@
 @include b(drawer) {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
   overflow: hidden;
 }
 
@@ -16,9 +22,7 @@
   background-color: var(--#{$variable-prefix}background-color);
   box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
 
-  &:focus {
-    outline: none;
-  }
+  @include utils-outline();
 
   @include m(top) {
     top: 0;

@@ -15,7 +15,7 @@
 
     width: 2px;
 
-    background-color: var(--#{$variable-prefix}background-color-indicator);
+    background-color: var(--#{$variable-prefix}indicator-background-color);
 
     .#{$variable-prefix}anchor__dot-indicator {
       position: absolute;
@@ -53,24 +53,20 @@
   padding-left: 4px;
 
   & > a {
+    @include utils-break-word;
+
     display: block;
     padding: 8px 0;
 
     color: var(--#{$variable-prefix}text-color);
-
     text-decoration: none;
-    word-break: break-all;
-
-    outline: none;
 
     transition: color 0.2s linear;
 
+    @include utils-outline();
+
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
-    }
-
-    &:focus-visible {
-      outline: 1px dashed var(--#{$variable-prefix}color-primary);
     }
   }
 

@@ -1,11 +1,12 @@
 export { useTranslation } from './i18n';
 export { useAsync } from './async';
 export { useCustomContext } from './context';
-export { useCustomRef } from './ref';
 export { useDComponentConfig, useDPrefixConfig } from './d-config';
-export { useElement } from './element';
+export { useRefSelector } from './element-ref';
 export { useId } from './id';
+export { useImmer, useImmerReducer } from './immer';
 export { useLockScroll } from './lock-scroll';
 export { useManualOrAutoState } from './manual-or-auto-state';
-export { useThrottle } from './throttle';
+export { useThrottle, useDebounce } from './throttle-and-debounce';
+export { useRefCallback } from './ref';
 export { useWave } from './wave';

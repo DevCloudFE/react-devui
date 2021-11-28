@@ -2,9 +2,8 @@ import type { DFooterProps } from '../_footer';
 
 import { isBoolean } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { useImmer } from 'use-immer';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DFooter } from '../_footer';
 import { DDrawerContext } from './Drawer';

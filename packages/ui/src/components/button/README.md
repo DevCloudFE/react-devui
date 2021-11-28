@@ -28,6 +28,12 @@ Extend `React.ButtonHTMLAttributes<HTMLButtonElement>`.
 | dIconLeft | Settings icon on the left | boolean | true |
 <!-- prettier-ignore-end -->
 
+### DButtonRef
+
+```tsx
+export type DButtonRef = HTMLButtonElement;
+```
+
 ### DButtonGroupProps
 
 Extend `React.HTMLAttributes<HTMLDivElement>`.

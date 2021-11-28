@@ -1,24 +1,27 @@
+import type { DTransitionProps } from '../_transition';
+
 import React, { useCallback } from 'react';
 
-import { useCustomRef, useDPrefixConfig } from '../../hooks';
+import { useDPrefixConfig, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DTransition } from '../_transition';
 
 export interface DMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
+  dTransitionProps?: Omit<DTransitionProps, 'dRender'>;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 export function DMask(props: DMaskProps) {
-  const { dVisible, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
+  const { dVisible, dTransitionProps, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
 
   //#region Context
   const dPrefix = useDPrefixConfig();
   //#endregion
 
   //#region Ref
-  const [maskEl, maskRef] = useCustomRef<HTMLElement>();
+  const [el, ref] = useRefCallback();
   //#endregion
 
   const handleClick = useCallback(
@@ -31,7 +34,7 @@ export function DMask(props: DMaskProps) {
 
   return (
     <DTransition
-      dEl={maskEl}
+      dEl={el}
       dVisible={dVisible}
       dStateList={{
         'enter-from': { opacity: '0' },
@@ -46,9 +49,11 @@ export function DMask(props: DMaskProps) {
           afterVisibleChange?.(false);
         },
       }}
-      dDestroy
-    >
-      <div {...restProps} ref={maskRef} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>
-    </DTransition>
+      dRender={(hidden) =>
+        !hidden && <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>
+      }
+      dSkipFirst={false}
+      {...dTransitionProps}
+    />
   );
 }

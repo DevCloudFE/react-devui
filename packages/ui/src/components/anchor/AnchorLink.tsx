@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomRef, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DAnchorContext } from './Anchor';
 
@@ -18,7 +18,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
   //#endregion
 
   //#region Ref
-  const [linkEl, linkRef] = useCustomRef<HTMLLIElement>();
+  const [linkEl, linkRef] = useRefCallback<HTMLLIElement>();
   //#endregion
 
   const handleClick = useCallback(

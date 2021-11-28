@@ -38,7 +38,9 @@ body {
   border-right: 1px solid var(--d-divider-color);
 }
 
-.app-demo-block {
+.app-demo-drag {
+  position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,4 +52,28 @@ body {
   background-color: var(--d-color-primary);
 
   @include font-size(0.8rem);
+
+  & + &,
+  & + .app-demo-drag-placeholder,
+  .app-demo-drag-placeholder + & {
+    margin-top: 8px;
+  }
+}
+
+.app-demo-drop {
+  display: inline-block;
+  padding: 12px;
+  border: 1px dashed var(--#{$variable-prefix}divider-color);
+
+  &.is-horizontal {
+    display: inline-flex;
+    align-items: center;
+
+    .app-demo-drag + .app-demo-drag,
+    .app-demo-drag + .app-demo-drag-placeholder,
+    .app-demo-drag-placeholder + .app-demo-drag {
+      margin-top: 0;
+      margin-left: 8px;
+    }
+  }
 }

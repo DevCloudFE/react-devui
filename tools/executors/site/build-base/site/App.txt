@@ -4,17 +4,14 @@
 import React, { useCallback, useEffect, Suspense, lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
-import { useImmer } from 'use-immer';
 
 import { DI18NContext } from '@react-devui/ui';
-import { useAsync } from '@react-devui/ui/hooks';
+import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppHeader, AppSidebar } from './components';
 
 __import__
-
-let hash = window.location.hash;
 
 export type AppContextData = { onMount: () => void } | null;
 export const AppContext = React.createContext<AppContextData>(null);
@@ -57,10 +54,10 @@ export function App() {
     () => ({
       onMount: () => {
         if (mainEl) {
-          if (hash) {
+          if (window.location.hash) {
+            const hash = window.location.hash;
             window.location.hash = '';
             window.location.hash = hash;
-            hash = '';
           } else if (!environment.production) {
             mainEl.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
           }

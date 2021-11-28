@@ -1,16 +1,13 @@
+import type { DRenderProps } from '../_trigger';
 import type { DMenuItemProps } from './MenuItem';
 
-import { enableMapSet } from 'immer';
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useImmer } from 'use-immer';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useCustomRef } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useImmer, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
-
-enableMapSet();
 
 type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
@@ -20,12 +17,14 @@ export interface DMenuContextData {
   menuActiveId: string | null;
   menuExpandIds: Set<string>;
   menuFocusId: [string, string] | null;
+  menuPopupIds: Map<string, Array<{ id: string; visible: boolean }>>;
   menuCurrentData: {
     navIds: Set<string>;
     ids: Map<string, Set<string>>;
   };
   onActiveChange: (id: string) => void;
   onExpandChange: (id: string, expand: boolean) => void;
+  onPopupIdChange: (id: string, visible: boolean) => void;
   onFocus: (dId: string, id: string) => void;
   onBlur: () => void;
 }
@@ -38,7 +37,7 @@ export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
-  onActiveChange?: (id: string | null) => void;
+  onActiveChange?: (id: string) => void;
   onExpandsChange?: (ids: string[]) => void;
 }
 
@@ -54,6 +53,11 @@ export function DMenu(props: DMenuProps) {
     onExpandsChange,
     className,
     children,
+    onMouseEnter,
+    onMouseLeave,
+    onFocus,
+    onBlur,
+    onClick,
     ...restProps
   } = useDComponentConfig('menu', props);
 
@@ -62,10 +66,10 @@ export function DMenu(props: DMenuProps) {
   //#endregion
 
   //#region Ref
-  const [navEl, navRef] = useCustomRef<HTMLElement>();
+  const [navEl, navRef] = useRefCallback();
   //#endregion
 
-  const [currentData] = useState<DMenuContextData['menuCurrentData']>({
+  const dataRef = useRef<DMenuContextData['menuCurrentData']>({
     navIds: new Set(),
     ids: new Map(),
   });
@@ -73,6 +77,7 @@ export function DMenu(props: DMenuProps) {
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
   const [expandIds, setExpandIds] = useImmer(() => new Set(dDefaultExpands));
+  const [popupIds, setPopupIds] = useImmer<DMenuContextData['menuPopupIds']>(() => new Map());
 
   const [activeId, dispatchActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive, onActiveChange);
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
@@ -90,6 +95,14 @@ export function DMenu(props: DMenuProps) {
 
   //#region DidUpdate
   useEffect(() => {
+    if (dMode === 'vertical') {
+      setPopupIds((draft) => {
+        draft.clear();
+      });
+    }
+  }, [dMode, setPopupIds]);
+
+  useEffect(() => {
     let isFocus = false;
     if (focusId) {
       navEl?.childNodes.forEach((child) => {
@@ -99,7 +112,7 @@ export function DMenu(props: DMenuProps) {
       });
     }
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
-  }, [focusId, navEl, setActiveDescendant]);
+  }, [focusId, navEl?.childNodes, setActiveDescendant]);
 
   useEffect(() => {
     onExpandsChange?.(Array.from(expandIds));
@@ -113,7 +126,8 @@ export function DMenu(props: DMenuProps) {
       menuActiveId: activeId,
       menuExpandIds: expandIds,
       menuFocusId: focusId,
-      menuCurrentData: currentData,
+      menuPopupIds: popupIds,
+      menuCurrentData: dataRef.current,
       onActiveChange: (id) => {
         dispatchActiveId({ value: id });
       },
@@ -121,7 +135,7 @@ export function DMenu(props: DMenuProps) {
         setExpandIds((draft) => {
           if (expand) {
             if (dExpandOne) {
-              for (const ids of [...Array.from(currentData.ids.values()), currentData.navIds]) {
+              for (const ids of [...Array.from(dataRef.current.ids.values()), dataRef.current.navIds]) {
                 if (ids.has(id)) {
                   for (const sameLevelId of ids) {
                     draft.delete(sameLevelId);
@@ -136,6 +150,48 @@ export function DMenu(props: DMenuProps) {
           }
         });
       },
+      onPopupIdChange: (id, visible) => {
+        setPopupIds((draft) => {
+          if (visible) {
+            if (dataRef.current.navIds.has(id)) {
+              draft.set(id, [{ id, visible }]);
+            } else {
+              for (const sameLevelIds of draft.values()) {
+                if (sameLevelIds.length > 0) {
+                  const lastLevelId = sameLevelIds[sameLevelIds.length - 1].id;
+                  if (dataRef.current.ids.get(lastLevelId)?.has(id)) {
+                    sameLevelIds.push({ id, visible });
+                    break;
+                  }
+                }
+              }
+            }
+          } else {
+            let hasFind = false;
+            for (const sameLevelIds of draft.values()) {
+              if (hasFind) {
+                break;
+              }
+              for (const popup of sameLevelIds) {
+                if (popup.id === id) {
+                  popup.visible = visible;
+                  hasFind = true;
+                  break;
+                }
+              }
+              if (hasFind) {
+                for (let index = sameLevelIds.length - 1; index >= 0; index--) {
+                  if (sameLevelIds[index].visible === false) {
+                    sameLevelIds.pop();
+                  } else {
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+      },
       onFocus: (dId, id) => {
         setFocusId([dId, id]);
       },
@@ -143,18 +199,18 @@ export function DMenu(props: DMenuProps) {
         setFocusId(null);
       },
     }),
-    [activeId, currentData, dExpandOne, dMode, dispatchActiveId, expandIds, expandTrigger, focusId, setExpandIds, setFocusId]
+    [activeId, dExpandOne, dMode, dispatchActiveId, expandIds, expandTrigger, focusId, popupIds, setExpandIds, setFocusId, setPopupIds]
   );
 
   const childs = useMemo(() => {
-    currentData.navIds.clear();
-    currentData.ids.clear();
+    dataRef.current.navIds.clear();
+    dataRef.current.ids.clear();
 
     const getAllIds = (child: React.ReactElement) => {
       if (child.props?.dId) {
         const nodes = (React.Children.toArray(child.props?.children) as React.ReactElement[]).filter((node) => node.props?.dId);
         const ids = nodes.map((node) => node.props?.dId);
-        currentData.ids.set(child.props?.dId, new Set(ids));
+        dataRef.current.ids.set(child.props?.dId, new Set(ids));
 
         nodes.forEach((node) => {
           getAllIds(node);
@@ -167,7 +223,7 @@ export function DMenu(props: DMenuProps) {
     });
 
     return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) => {
-      child.props.dId && currentData.navIds.add(child.props.dId);
+      child.props.dId && dataRef.current.navIds.add(child.props.dId);
 
       let tabIndex = child.props.tabIndex;
       if (index === 0) {
@@ -179,27 +235,65 @@ export function DMenu(props: DMenuProps) {
         tabIndex,
       });
     });
-  }, [children, currentData]);
+  }, [children]);
+
+  const handleEvent = useCallback<(renderProps: DRenderProps) => React.HTMLAttributes<HTMLElement>>(
+    (renderProps) => ({
+      onMouseEnter: (e) => {
+        onMouseEnter?.(e);
+        renderProps.onMouseEnter?.(e);
+      },
+      onMouseLeave: (e) => {
+        onMouseLeave?.(e);
+        renderProps.onMouseLeave?.(e);
+      },
+      onFocus: (e) => {
+        onFocus?.(e);
+        renderProps.onFocus?.(e);
+      },
+      onBlur: (e) => {
+        onBlur?.(e);
+        renderProps.onBlur?.(e);
+      },
+      onClick: (e) => {
+        onClick?.(e);
+        renderProps.onClick?.(e);
+      },
+    }),
+    [onBlur, onClick, onFocus, onMouseEnter, onMouseLeave]
+  );
 
   return (
     <DMenuContext.Provider value={contextValue}>
-      <DCollapseTransition dEl={navEl} dVisible={dMode !== 'icon'} dDirection="width" dDuring={200} dSpace={80}>
-        <DTrigger dTrigger="hover" onTrigger={handleTrigger}>
-          <nav
-            {...restProps}
-            ref={navRef}
-            className={getClassName(className, `${dPrefix}menu`, {
-              'is-horizontal': dMode === 'horizontal',
-            })}
-            tabIndex={-1}
-            role="menubar"
-            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-            aria-activedescendant={activedescendant}
-          >
-            {childs}
-          </nav>
-        </DTrigger>
-      </DCollapseTransition>
+      <DCollapseTransition
+        dEl={navEl}
+        dVisible={dMode !== 'icon'}
+        dDirection="width"
+        dDuring={200}
+        dSpace={80}
+        dRender={() => (
+          <DTrigger
+            dTrigger="hover"
+            dRender={(triggerRenderProps) => (
+              <nav
+                {...restProps}
+                {...handleEvent(triggerRenderProps)}
+                ref={navRef}
+                className={getClassName(className, `${dPrefix}menu`, {
+                  'is-horizontal': dMode === 'horizontal',
+                })}
+                tabIndex={-1}
+                role="menubar"
+                aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+                aria-activedescendant={activedescendant}
+              >
+                {childs}
+              </nav>
+            )}
+            onTrigger={handleTrigger}
+          />
+        )}
+      />
     </DMenuContext.Provider>
   );
 }

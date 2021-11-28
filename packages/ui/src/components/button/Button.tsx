@@ -1,11 +1,13 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useWave, useCustomContext, useCustomRef } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useWave, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DIcon } from '../icon';
 import { DButtonGroupContext } from './ButtonGroup';
+
+export type DButtonRef = HTMLButtonElement;
 
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';
@@ -18,7 +20,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconLeft?: boolean;
 }
 
-export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props, ref) => {
+export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) => {
   const {
     dType = 'primary',
     dColor = 'primary',
@@ -41,7 +43,7 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
   //#endregion
 
   //#region Ref
-  const [loadingEl, loadingRef] = useCustomRef<HTMLElement>();
+  const [loadingEl, loadingRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
   const wave = useWave();
@@ -49,16 +51,18 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
   const type = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
   const color = isUndefined(props.dColor) ? buttonGroupColor ?? dColor : dColor;
   const size = isUndefined(props.dSize) ? buttonGroupSize ?? dSize : dSize;
-  const _disabled = disabled || dLoading;
 
   const handleClick = useCallback(
     (e) => {
-      onClick?.(e);
-      if (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed') {
-        wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
+      if (!dLoading) {
+        onClick?.(e);
+
+        if (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed') {
+          wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
+        }
       }
     },
-    [color, dPrefix, onClick, type, wave]
+    [color, dLoading, dPrefix, onClick, type, wave]
   );
 
   const loadingIcon = (
@@ -68,38 +72,46 @@ export const DButton = React.forwardRef<HTMLButtonElement, DButtonProps>((props,
   );
 
   return (
-    <button
-      {...restProps}
-      ref={ref}
-      className={getClassName(
-        `${dPrefix}button`,
-        `${dPrefix}button--${type}-${color}`,
-        {
-          [`${dPrefix}button--circle`]: dShape === 'circle',
-          [`${dPrefix}button--round`]: dShape === 'round',
+    <DCollapseTransition
+      dEl={loadingEl}
+      dVisible={dLoading}
+      dDirection="width"
+      dRender={(hidden) => (
+        <button
+          {...restProps}
+          ref={ref}
+          className={getClassName(
+            `${dPrefix}button`,
+            `${dPrefix}button--${type}-${color}`,
+            {
+              [`${dPrefix}button--circle`]: dShape === 'circle',
+              [`${dPrefix}button--round`]: dShape === 'round',
 
-          [`${dPrefix}button--smaller`]: size === 'smaller',
-          [`${dPrefix}button--larger`]: size === 'larger',
-          'is-block': dBlock,
-          'is-only-icon': !children,
-        },
-        className
+              [`${dPrefix}button--smaller`]: size === 'smaller',
+              [`${dPrefix}button--larger`]: size === 'larger',
+              'is-block': dBlock,
+              'is-only-icon': !children,
+              'is-loading': dLoading,
+            },
+            className
+          )}
+          disabled={disabled}
+          aria-disabled={disabled}
+          onClick={handleClick}
+        >
+          {!dIconLeft && children}
+          {dIcon ? (
+            <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>{dLoading ? loadingIcon : dIcon}</span>
+          ) : (
+            !hidden && (
+              <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>
+                {loadingIcon}
+              </span>
+            )
+          )}
+          {dIconLeft && children}
+        </button>
       )}
-      disabled={_disabled}
-      aria-disabled={_disabled}
-      onClick={handleClick}
-    >
-      {!dIconLeft && children}
-      {dIcon ? (
-        <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>{dLoading ? loadingIcon : dIcon}</span>
-      ) : (
-        <DCollapseTransition dEl={loadingEl} dVisible={dLoading} dDirection="width" dDestroy>
-          <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>
-            {loadingIcon}
-          </span>
-        </DCollapseTransition>
-      )}
-      {dIconLeft && children}
-    </button>
+    />
   );
 });

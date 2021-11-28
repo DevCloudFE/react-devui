@@ -12,12 +12,12 @@ var operators_1 = require("rxjs/operators");
 var yamlFront = require('yaml-front-matter');
 var renderer = new marked_1.Renderer();
 renderer.heading = function (text, level) {
-    var link = "<a href=\"#" + text + "\" class=\"anchor\">#</a>";
-    var head = "\n<h" + level + " id=\"" + text + "\">\n  <span>" + text + "</span>\n  " + link + "\n</h" + level + ">\n";
+    var link = "<a href=\"#".concat(text, "\" class=\"anchor\">#</a>");
+    var head = "\n<h".concat(level, " id=\"").concat(text, "\">\n  <span>").concat(text, "</span>\n  ").concat(link, "\n</h").concat(level, ">\n");
     return head;
 };
 renderer.table = function (header, body) {
-    return "\n<div class=\"app-table-container\">\n <table>\n   <thead>" + header + "</thead>\n   <tbody>" + body + "</tbody>\n </table>\n</div>\n";
+    return "\n<div class=\"app-table-container\">\n <table>\n   <thead>".concat(header, "</thead>\n   <tbody>").concat(body, "</tbody>\n </table>\n</div>\n");
 };
 marked_1.default.setOptions({
     renderer: renderer,
@@ -115,11 +115,11 @@ var GenerateSite = /** @class */ (function () {
                 if (scss) {
                     outTSX =
                         String.raw(templateObject_4 || (templateObject_4 = (0, tslib_1.__makeTemplateObject)(["import './", ".scss';\n"], ["import './", ".scss';\n"])), fileName) + outTSX;
-                    this.outputFile(path_1.default.join(outDir, fileName + ".scss"), String.raw(templateObject_5 || (templateObject_5 = (0, tslib_1.__makeTemplateObject)(["\n#", "{\n  ", "\n}\n"], ["\n#", "{\n  ", "\n}\n"])), id, scss.split(/\n/g).join('\n  ')));
+                    this.outputFile(path_1.default.join(outDir, "".concat(fileName, ".scss")), String.raw(templateObject_5 || (templateObject_5 = (0, tslib_1.__makeTemplateObject)(["\n#", "{\n  ", "\n}\n"], ["\n#", "{\n  ", "\n}\n"])), id, scss.split(/\n/g).join('\n  ')));
                 }
                 outTSX =
                     String.raw(templateObject_6 || (templateObject_6 = (0, tslib_1.__makeTemplateObject)(["/* eslint-disable */\n// @ts-nocheck\n"], ["/* eslint-disable */\n// @ts-nocheck\n"]))) + outTSX;
-                this.outputFile(path_1.default.join(outDir, fileName + ".tsx"), outTSX);
+                this.outputFile(path_1.default.join(outDir, "".concat(fileName, ".tsx")), outTSX);
                 var demo_1 = new Map([
                     ['en-US', {}],
                     ['zh-Hant', {}],
@@ -130,7 +130,7 @@ var GenerateSite = /** @class */ (function () {
                     obj.id = id;
                     obj.name = fileName;
                     obj.title = meta.title[lang];
-                    var descriptionRegExp = new RegExp(String.raw(templateObject_7 || (templateObject_7 = (0, tslib_1.__makeTemplateObject)(["(?<=# ", ")[sS]*", ""], ["(?<=# ", ")[\\s\\S]*", ""])), lang, index === langs.length - 1 ? '(?=```tsx)' : "(?=# " + langs[index + 1] + ")"), 'g');
+                    var descriptionRegExp = new RegExp(String.raw(templateObject_7 || (templateObject_7 = (0, tslib_1.__makeTemplateObject)(["(?<=# ", ")[sS]*", ""], ["(?<=# ", ")[\\s\\S]*", ""])), lang, index === langs.length - 1 ? '(?=```tsx)' : "(?=# ".concat(langs[index + 1], ")")), 'g');
                     var description = (_a = meta.__content.match(descriptionRegExp)) === null || _a === void 0 ? void 0 : _a[0];
                     if (description) {
                         obj.description = (0, marked_1.default)(description);
@@ -167,7 +167,7 @@ var GenerateSite = /** @class */ (function () {
             };
             var menuGroupIndex = this.menuConfig.findIndex(function (menuGroup) { return menuGroup.title === enMeta.group; });
             if (menuGroupIndex === -1) {
-                console.error(enMeta.group + " dont exist");
+                console.error("".concat(enMeta.group, " dont exist"));
             }
             else {
                 var menuItemIndex = this.menuConfig[menuGroupIndex].children.findIndex(function (menuItem) { return menuItem.title === meta.title['en-US']; });
@@ -252,7 +252,7 @@ var GenerateSite = /** @class */ (function () {
                     var langRegExp = new RegExp(String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
                     routeTmp_1 = routeTmp_1.replace(langRegExp, routeArticleProps);
                 });
-                this.outputFile(path_1.default.join(outDir, meta.title['en-US'] + ".tsx"), routeTmp_1);
+                this.outputFile(path_1.default.join(outDir, "".concat(meta.title['en-US'], ".tsx")), routeTmp_1);
             }
         }
     });
@@ -452,7 +452,7 @@ function siteBuildExecutor(options, context) {
         return (0, tslib_1.__generator)(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.info("Bundling files of " + context.projectName + "...");
+                    console.info("Bundling files of ".concat(context.projectName, "..."));
                     generateMediator = new GenerateSite();
                     generateMediator.generateAll();
                     if (!options.watch) return [3 /*break*/, 4];
@@ -464,9 +464,9 @@ function siteBuildExecutor(options, context) {
                             var componentPath = path_1.default.join(COMPONENT_DIR, component);
                             if (!component.startsWith('_') && (0, fs_extra_1.statSync)(componentPath).isDirectory() && (0, fs_extra_1.readdirSync)(componentPath).includes('README.md')) {
                                 var task = {
-                                    id: "generateComponentRoute_" + component,
+                                    id: "generateComponentRoute_".concat(component),
                                     callback: function () {
-                                        console.info("Update " + component + "...");
+                                        console.info("Update ".concat(component, "..."));
                                         generateMediator.generateComponentRoute({ name: component, path: componentPath, data: components }, path_1.default.join(OUTPUT_DIR, 'routes', 'components', component));
                                         generateMediator.generateGlobalFiles();
                                     },

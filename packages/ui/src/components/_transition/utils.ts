@@ -1,3 +1,14 @@
+export function getTransitinNum(strs: Array<string | undefined>) {
+  let num = 1;
+  strs.forEach((str) => {
+    if (str) {
+      num = str.split(',').length;
+    }
+  });
+
+  return num;
+}
+
 export function getMaxTime(strs: Array<string | undefined>) {
   const milliseconds: number[] = [];
   strs.forEach((str) => {

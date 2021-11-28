@@ -1,11 +1,21 @@
-$variable-prefix: 'd-' !default;
-$themes: primary, success, warning, danger !default;
+/* stylelint-disable scss/operator-no-unspaced */
+
+$namespace: 'd' !default;
+$variable-prefix: '#{$namespace}-' !default;
+$themes: (
+  'primary': 94 124 224,
+  'success': 45 211 111,
+  'warning': 255 196 9,
+  'danger': 235 68 90,
+) !default;
 
 :root {
+  /** basic **/
   --#{$variable-prefix}text-color: #212529;
   --#{$variable-prefix}background-color: #fff;
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}divider-color: #f0f0f0;
+  --#{$variable-prefix}indicator-background-color: #dfe1e6;
   --#{$variable-prefix}disabled-cover-color: rgb(255 255 255 / 50%);
 
   /** step **/
@@ -29,33 +39,22 @@ $themes: primary, success, warning, danger !default;
   --#{$variable-prefix}color-step-900: #191919;
   --#{$variable-prefix}color-step-950: #0d0d0d;
 
-  /** theme **/
-  --#{$variable-prefix}color-primary: #5e7ce0;
-  --#{$variable-prefix}color-success: #25cc68;
-  --#{$variable-prefix}color-warning: #ffc409;
-  --#{$variable-prefix}color-danger: #eb445a;
+  @each $theme, $rgb in $themes {
+    /** rgb **/
+    --#{$variable-prefix}color-#{$theme}-rgb: #{$rgb};
 
-  /** rgb **/
-  --#{$variable-prefix}color-primary-rgb: 94 124 224;
-  --#{$variable-prefix}color-success-rgb: 45 211 111;
-  --#{$variable-prefix}color-warning-rgb: 255 196 9;
-  --#{$variable-prefix}color-danger-rgb: 235 68 90;
+    /** theme **/
+    --#{$variable-prefix}color-#{$theme}: rgb(#{$rgb});
 
-  /** lighter **/
-  --#{$variable-prefix}color-primary-lighter: #{color.scale(#5e7ce0, $lightness: 30%)};
-  --#{$variable-prefix}color-success-lighter: #{color.scale(#25cc68, $lightness: 30%)};
-  --#{$variable-prefix}color-warning-lighter: #{color.scale(#ffc409, $lightness: 30%)};
-  --#{$variable-prefix}color-danger-lighter: #{color.scale(#eb445a, $lightness: 30%)};
+    /** lighter **/
+    --#{$variable-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
 
-  /** darker **/
-  --#{$variable-prefix}color-primary-darker: #{color.scale(#5e7ce0, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
-  --#{$variable-prefix}color-success-darker: #{color.scale(#25cc68, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
-  --#{$variable-prefix}color-warning-darker: #{color.scale(#ffc409, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
-  --#{$variable-prefix}color-danger-darker: #{color.scale(#eb445a, $lightness: -20%, $saturation: -20%)}; /* stylelint-disable-line scss/operator-no-unspaced */
+    /** darker **/
+    --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+  }
 
   /** component **/
-  --#{$variable-prefix}text-color-popup: #dfe1e6;
-  --#{$variable-prefix}background-color-popup: #464d6e;
-  --#{$variable-prefix}background-color-indicator: #dfe1e6;
-  --#{$variable-prefix}background-color-mask: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}popup-text-color: #dfe1e6;
+  --#{$variable-prefix}popup-background-color: #464d6e;
+  --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
 }
