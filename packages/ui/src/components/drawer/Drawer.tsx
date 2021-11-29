@@ -1,4 +1,5 @@
 import type { DElementSelector } from '../../hooks/element-ref';
+import type { Updater } from '../../hooks/immer';
 import type { DTransitionRef } from '../_transition';
 
 import { isUndefined } from 'lodash';
@@ -31,7 +32,7 @@ export interface DDrawerRef {
 }
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
-  dVisible?: boolean;
+  dVisible: [boolean, Updater<boolean>?];
   dContainer?: DElementSelector | false;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dWidth?: number | string;
@@ -50,7 +51,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) => {
   const {
-    dVisible = false,
+    dVisible,
     dContainer,
     dPlacement = 'right',
     dWidth = 400,
@@ -90,6 +91,8 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   const [absoluteStyle, setAbsoluteStyle] = useImmer<React.CSSProperties>({});
   const [zIndex, setZIndex] = useImmer(1000);
 
+  const [visible, setVisible] = dVisible;
+
   const handleContainer = useCallback(() => {
     if (isUndefined(dContainer)) {
       let el = document.getElementById(`${dPrefix}drawer-root`);
@@ -116,9 +119,10 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   const handleMaskClose = useCallback(() => {
     if (dMaskClosable) {
+      setVisible?.(false);
       onClose?.();
     }
-  }, [dMaskClosable, onClose]);
+  }, [dMaskClosable, onClose, setVisible]);
 
   const updatePosition = useCallback(() => {
     if (drawerEl && containerRef.current) {
@@ -130,14 +134,15 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   }, [containerRef, drawerEl, setAbsoluteStyle]);
 
   const closeDrawer = useCallback(() => {
+    setVisible?.(false);
     onClose?.();
-  }, [onClose]);
+  }, [onClose, setVisible]);
 
-  useLockScroll(dVisible && isUndefined(dContainer));
+  useLockScroll(visible && isUndefined(dContainer));
 
   //#region DidUpdate
   useEffect(() => {
-    if (dVisible) {
+    if (visible) {
       if (isUndefined(dZIndex)) {
         if (isUndefined(dContainer)) {
           const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
@@ -152,11 +157,11 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
         setZIndex(dZIndex);
       }
     }
-  }, [dContainer, dVisible, dZIndex, setZIndex]);
+  }, [dContainer, dZIndex, setZIndex, visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible && !isUndefined(dContainer) && containerRef.current) {
+    if (visible && !isUndefined(dContainer) && containerRef.current) {
       const throttleUpdate = () => {
         if (transition) {
           transition.transitionThrottle.run(updatePosition);
@@ -172,17 +177,17 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, containerRef, dContainer, dVisible, transition, updatePosition]);
+  }, [asyncCapture, containerRef, dContainer, transition, updatePosition, visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible) {
-      asyncGroup.onEscKeydown(() => onClose?.());
+    if (visible) {
+      asyncGroup.onEscKeydown(closeDrawer);
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dVisible, id, onClose]);
+  }, [asyncCapture, closeDrawer, id, visible]);
   //#endregion
 
   useImperativeHandle(
@@ -214,7 +219,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
       <DTransition
         dEl={drawerContentEl}
         ref={transitionRef}
-        dVisible={dVisible}
+        dVisible={visible}
         dStateList={() => {
           const transform =
             dPlacement === 'top'
@@ -292,7 +297,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
               aria-labelledby={dHeader ? `${dPrefix}drawer-content__header-${id}` : undefined}
               aria-describedby={`${dPrefix}drawer-content-${id}`}
             >
-              {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
+              {dMask && <DMask dVisible={visible} onClose={handleMaskClose} />}
               <div
                 ref={drawerContentRef}
                 id={`${dPrefix}drawer-content-${id}`}

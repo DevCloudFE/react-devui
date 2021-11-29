@@ -35,14 +35,6 @@ export function AppDemoBox(props: AppDemoBoxProps) {
     setCopycode(true);
   }, [setCopycode, tsxSource]);
 
-  const [copyVisible, setCopyVisible] = useImmer(false);
-  const handleCopyTrige = useCallback(
-    (v) => {
-      setCopyVisible(v);
-    },
-    [setCopyVisible]
-  );
-
   const afterCopyTrige = useCallback(
     (v) => {
       if (!v) {
@@ -100,12 +92,7 @@ export function AppDemoBox(props: AppDemoBoxProps) {
             <path d="M848 359.3H627.7L825.8 109c4.1-5.3.4-13-6.3-13H436c-2.8 0-5.5 1.5-6.9 4L170 547.5c-3.1 5.3.7 12 6.9 12h174.4l-89.4 357.6c-1.9 7.8 7.5 13.3 13.3 7.7L853.5 373c5.2-4.9 1.7-13.7-5.5-13.7zM378.2 732.5l60.3-241H281.1l189.6-327.4h224.6L487 427.4h211L378.2 732.5z"></path>
           </DIcon>
         </DTooltip>
-        <DTooltip
-          dVisible={copyVisible}
-          dTitle={copyCode ? t('Copied!') : t('Copy code')}
-          onTrigger={handleCopyTrige}
-          afterVisibleChange={afterCopyTrige}
-        >
+        <DTooltip dTitle={copyCode ? t('Copied!') : t('Copy code')} afterVisibleChange={afterCopyTrige}>
           <DIcon className="icon-button" dSize={18} onClick={handleCopyClick}>
             {copyCode ? (
               <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 00-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"></path>

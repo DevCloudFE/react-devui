@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,14 +12,7 @@ export function AppSidebar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const [activeId, setActiveId] = useImmer<string | undefined>(undefined);
-
-  const handleActiveChange = useCallback(
-    (id) => {
-      setActiveId(id);
-    },
-    [setActiveId]
-  );
+  const [activeId, setActiveId] = useImmer<string | null>(null);
 
   useEffect(() => {
     if (window.location.href.includes(String.raw`/components/`)) {
@@ -36,7 +29,7 @@ export function AppSidebar() {
 
   return (
     <nav className="app-sidebar">
-      <DMenu dActive={activeId} onActiveChange={handleActiveChange}>
+      <DMenu dActive={[activeId, setActiveId]}>
         {menu.map((group) => (
           <DMenuGroup key={group.title} dId={group.title} dTitle={t(`menu-group.${group.title}`)}>
             {group.children.map((child) => (

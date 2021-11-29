@@ -1,10 +1,12 @@
+import type { Updater } from '../../hooks/immer';
 import type { DRenderProps } from '../_trigger';
 import type { DMenuItemProps } from './MenuItem';
 
+import { produce } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useManualOrAutoState, useImmer, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useImmer, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -31,21 +33,19 @@ export interface DMenuContextData {
 export const DMenuContext = React.createContext<DMenuContextData | null>(null);
 
 export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
-  dActive?: string;
-  dDefaultActive?: string;
-  dDefaultExpands?: string[];
+  dActive?: [string | null, Updater<string | null>?];
+  dExpands?: [Set<string>, Updater<Set<string>>?];
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
   onActiveChange?: (id: string) => void;
-  onExpandsChange?: (ids: string[]) => void;
+  onExpandsChange?: (ids: Set<string>) => void;
 }
 
 export function DMenu(props: DMenuProps) {
   const {
     dActive,
-    dDefaultActive,
-    dDefaultExpands,
+    dExpands,
     dMode = 'vertical',
     dExpandOne = false,
     dExpandTrigger,
@@ -76,21 +76,40 @@ export function DMenu(props: DMenuProps) {
 
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
-  const [expandIds, setExpandIds] = useImmer(() => new Set(dDefaultExpands));
   const [popupIds, setPopupIds] = useImmer<DMenuContextData['menuPopupIds']>(() => new Map());
 
-  const [activeId, dispatchActiveId] = useManualOrAutoState(dDefaultActive ?? null, dActive, onActiveChange);
+  const setActiveId = dActive?.[1];
+  const [autoActiveId, setAutoActiveId] = useImmer<string | null>(null);
+  const activeId = dActive?.[0] ?? autoActiveId;
+  const changeActiveId = useCallback(
+    (val: string) => {
+      setActiveId?.(val);
+      setAutoActiveId(val);
+      onActiveChange?.(val);
+    },
+    [onActiveChange, setActiveId, setAutoActiveId]
+  );
+
+  const setExpandIds = dExpands?.[1];
+  const [autoExpandIds, setAutoExpandIds] = useImmer(new Set<string>());
+  const expandIds = useMemo(() => (dExpands?.[0] ? dExpands?.[0] : autoExpandIds), [autoExpandIds, dExpands]);
+  const changeExpandIds = useCallback(
+    (val: Set<string>) => {
+      setExpandIds?.(val);
+      setAutoExpandIds(val);
+      onExpandsChange?.(val);
+    },
+    [onExpandsChange, setAutoExpandIds, setExpandIds]
+  );
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
 
   const handleTrigger = useCallback(
     (val) => {
       if (dMode === 'vertical' && expandTrigger === 'hover' && !val) {
-        setExpandIds((draft) => {
-          draft.clear();
-        });
+        changeExpandIds(new Set());
       }
     },
-    [expandTrigger, dMode, setExpandIds]
+    [dMode, expandTrigger, changeExpandIds]
   );
 
   //#region DidUpdate
@@ -113,10 +132,6 @@ export function DMenu(props: DMenuProps) {
     }
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
   }, [focusId, navEl?.childNodes, setActiveDescendant]);
-
-  useEffect(() => {
-    onExpandsChange?.(Array.from(expandIds));
-  }, [expandIds, onExpandsChange]);
   //#endregion
 
   const contextValue = useMemo<DMenuContextData>(
@@ -129,10 +144,10 @@ export function DMenu(props: DMenuProps) {
       menuPopupIds: popupIds,
       menuCurrentData: dataRef.current,
       onActiveChange: (id) => {
-        dispatchActiveId({ value: id });
+        changeActiveId(id);
       },
       onExpandChange: (id, expand) => {
-        setExpandIds((draft) => {
+        const newExpandIds = produce(expandIds, (draft) => {
           if (expand) {
             if (dExpandOne) {
               for (const ids of [...Array.from(dataRef.current.ids.values()), dataRef.current.navIds]) {
@@ -149,6 +164,7 @@ export function DMenu(props: DMenuProps) {
             draft.delete(id);
           }
         });
+        changeExpandIds(newExpandIds);
       },
       onPopupIdChange: (id, visible) => {
         setPopupIds((draft) => {
@@ -199,7 +215,7 @@ export function DMenu(props: DMenuProps) {
         setFocusId(null);
       },
     }),
-    [activeId, dExpandOne, dMode, dispatchActiveId, expandIds, expandTrigger, focusId, popupIds, setExpandIds, setFocusId, setPopupIds]
+    [activeId, changeActiveId, changeExpandIds, dExpandOne, dMode, expandIds, expandTrigger, focusId, popupIds, setFocusId, setPopupIds]
   );
 
   const childs = useMemo(() => {

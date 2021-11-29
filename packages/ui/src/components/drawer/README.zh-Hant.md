@@ -17,7 +17,7 @@ title: 抽屉
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dVisible | 抽屉是否可见 | boolean | false |
+| dVisible | 抽屉是否可见 | [boolean, Updater\<boolean\>?] | - |
 | dContainer | 抽屉的挂载节点, `false` 表示挂载在当前节点 | DElementSelector \| false | - |
 | dPlacement | 抽屉弹出方向 | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | 抽屉宽度 | number \| string | 400 |

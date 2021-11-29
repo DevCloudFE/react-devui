@@ -18,14 +18,13 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dActive | Manually control the active menu item, the value is `dId` | string | - |
-| dDefaultActive | The default active menu item, the value is `dId` | string | - |
-| dDefaultExpands | The sub-menu expanded by default, the value is `dId` | string[]  | - |
+| dActive | Manually control the active menu item, the value is `dId` | [string \| null, Updater\<string \| null\>?] | - |
+| dExpands | Expanded sub-menu, the value is `dId` | [Set\<string\>, Updater\<Set\<string\>\>?]  | - |
 | dMode | Menu type | 'horizontal' \| 'vertical' \| 'popup' \| 'icon' | 'vertical' |
 | dExpandOne | Keep the same level of the menu, expand at most one sub-menu | boolean | false |
 | dExpandTrigger | How to trigger the expansion, adjust the trigger behavior according to `dMode` by default | 'hover' \| 'click' | - |
 | onActiveChange | Callback for active menu item change | `(id: string) => void` | - |
-| onExpandsChange | Callback for changes in expanded submenu | `(ids: string[]) => void` | - |
+| onExpandsChange | Callback for changes in expanded submenu | `(ids: Set<string>) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DMenuGroupProps

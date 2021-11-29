@@ -34,7 +34,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dVisible | Manually control the display of popup | boolean | - |
+| dVisible | Manually control the display of popup | [boolean, Updater\<boolean\>] | - |
 | dPopupContent | The contents of the popup | React.ReactNode | - |
 | dTriggerRender | The target node of the popup | `(props: DTriggerRenderProps) => React.ReactNode` | - |
 | dTriggerEl |  Custom popup target node | HTMLElement \| null | - |

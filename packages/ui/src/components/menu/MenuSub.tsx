@@ -264,7 +264,7 @@ export function DMenuSub(props: DMenuSubProps) {
               {popupMode ? (
                 <DPopup
                   className={`${dPrefix}menu-sub__popup`}
-                  dVisible={popupVisible}
+                  dVisible={[popupVisible]}
                   dPopupContent={menuNode({ ref: menuPopupRef })}
                   dTrigger={menuExpandTrigger}
                   dArrow={false}

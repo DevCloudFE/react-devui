@@ -33,7 +33,7 @@ export type DTooltipRef = DPopupRef;
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dVisible | 手动控制 popup 的显示 | boolean | - |
+| dVisible | 手动控制 popup 的显示 | [boolean, Updater\<boolean\>] | - |
 | dPopupContent | popup 的内容 | React.ReactNode | - |
 | dTriggerRender | popup 的目标节点 | `(props: DTriggerRenderProps) => React.ReactNode` | - |
 | dTriggerEl |  自定义 popup 的目标节点 | HTMLElement \| null | - |

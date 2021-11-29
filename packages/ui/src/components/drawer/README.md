@@ -18,7 +18,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dVisible | Is the drawer visible | boolean | false |
+| dVisible | Is the drawer visible | [boolean, Updater\<boolean\>?] | - |
 | dContainer | The mounted node of the drawer, `false` means it is mounted on the current node | DElementSelector \| false | - |
 | dPlacement | Drawer pop-up direction | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | Drawer width | number \| string | 400 |
