@@ -13,9 +13,9 @@ export interface DButtonGroupContextData {
 export const DButtonGroupContext = React.createContext<DButtonGroupContextData | null>(null);
 
 export interface DButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  dType: DButtonProps['dType'];
-  dColor: DButtonProps['dColor'];
-  dSize: DButtonProps['dSize'];
+  dType?: DButtonProps['dType'];
+  dColor?: DButtonProps['dColor'];
+  dSize?: DButtonProps['dSize'];
 }
 
 export function DButtonGroup(props: DButtonGroupProps) {

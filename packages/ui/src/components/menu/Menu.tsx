@@ -6,7 +6,7 @@ import { produce } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useImmer, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -78,29 +78,9 @@ export function DMenu(props: DMenuProps) {
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
   const [popupIds, setPopupIds] = useImmer<DMenuContextData['menuPopupIds']>(() => new Map());
 
-  const setActiveId = dActive?.[1];
-  const [autoActiveId, setAutoActiveId] = useImmer<string | null>(null);
-  const activeId = dActive?.[0] ?? autoActiveId;
-  const changeActiveId = useCallback(
-    (val: string) => {
-      setActiveId?.(val);
-      setAutoActiveId(val);
-      onActiveChange?.(val);
-    },
-    [onActiveChange, setActiveId, setAutoActiveId]
-  );
+  const [activeId, changeActiveId] = useTwoWayBinding<string | null>(null, dActive, onActiveChange);
+  const [expandIds, changeExpandIds] = useTwoWayBinding(new Set<string>(), dExpands, onExpandsChange);
 
-  const setExpandIds = dExpands?.[1];
-  const [autoExpandIds, setAutoExpandIds] = useImmer(new Set<string>());
-  const expandIds = useMemo(() => (dExpands?.[0] ? dExpands?.[0] : autoExpandIds), [autoExpandIds, dExpands]);
-  const changeExpandIds = useCallback(
-    (val: Set<string>) => {
-      setExpandIds?.(val);
-      setAutoExpandIds(val);
-      onExpandsChange?.(val);
-    },
-    [onExpandsChange, setAutoExpandIds, setExpandIds]
-  );
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
 
   const handleTrigger = useCallback(
@@ -169,15 +149,25 @@ export function DMenu(props: DMenuProps) {
       onPopupIdChange: (id, visible) => {
         setPopupIds((draft) => {
           if (visible) {
-            if (dataRef.current.navIds.has(id)) {
-              draft.set(id, [{ id, visible }]);
-            } else {
-              for (const sameLevelIds of draft.values()) {
-                if (sameLevelIds.length > 0) {
-                  const lastLevelId = sameLevelIds[sameLevelIds.length - 1].id;
-                  if (dataRef.current.ids.get(lastLevelId)?.has(id)) {
-                    sameLevelIds.push({ id, visible });
-                    break;
+            let saved = null;
+            for (const sameLevelIds of draft.values()) {
+              saved = sameLevelIds.find((item) => item.id === id);
+              if (saved) {
+                saved.visible = true;
+                break;
+              }
+            }
+            if (!saved) {
+              if (dataRef.current.navIds.has(id)) {
+                draft.set(id, [{ id, visible }]);
+              } else {
+                for (const sameLevelIds of draft.values()) {
+                  if (sameLevelIds.length > 0) {
+                    const lastLevelId = sameLevelIds[sameLevelIds.length - 1].id;
+                    if (dataRef.current.ids.get(lastLevelId)?.has(id)) {
+                      sameLevelIds.push({ id, visible });
+                      break;
+                    }
                   }
                 }
               }

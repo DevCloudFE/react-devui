@@ -1,0 +1,223 @@
+@mixin button-radio {
+  --#{$variable-prefix}radio-margin: 0 0 0 -1px;
+
+  .#{$variable-prefix}radio__input-wrapper {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .#{$variable-prefix}radio__label {
+    display: inline-flex;
+    align-items: center;
+    height: var(--#{$variable-prefix}radio-height);
+    padding: var(--#{$variable-prefix}radio-padding);
+  }
+
+  &.#{$variable-prefix}radio-group.is-vertical {
+    --#{$variable-prefix}radio-margin: -1px 0 0 0;
+  }
+}
+
+@include b(radio) {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  cursor: pointer;
+
+  @include font-size(0.9rem);
+
+  @include utils-disabled();
+
+  @include when(disabled) {
+    .#{$variable-prefix}radio__input-wrapper {
+      background-color: var(--#{$variable-prefix}color-step-50);
+
+      &::after {
+        background-color: var(--#{$variable-prefix}color-step-400);
+      }
+    }
+  }
+
+  &:not(.is-disabled) {
+    &:hover {
+      .#{$variable-prefix}radio__input {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+    }
+
+    .#{$variable-prefix}radio__input {
+      @include utils-outline();
+
+      &:focus {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / 12%);
+      }
+    }
+
+    &.is-checked .#{$variable-prefix}radio__input-wrapper {
+      &::before {
+        animation: radio-wave 0.36s ease-in-out;
+        animation-fill-mode: both;
+      }
+
+      .#{$variable-prefix}radio__input {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+  }
+
+  @include e(input-wrapper) {
+    position: relative;
+
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      border: 1px solid var(--#{$variable-prefix}color-primary);
+      border-radius: 50%;
+
+      opacity: 0;
+
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      bottom: 4px;
+      left: 4px;
+
+      border-radius: 50%;
+
+      background-color: var(--#{$variable-prefix}color-primary);
+      transform: scale(0);
+      opacity: 0;
+
+      transition: all 133ms linear;
+
+      content: '';
+    }
+  }
+
+  @include e(input) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 1px solid var(--#{$variable-prefix}color-step-200);
+    border-radius: 50%;
+
+    outline: none;
+
+    cursor: inherit;
+
+    transition: all 133ms linear;
+
+    appearance: none;
+  }
+
+  @include e(label) {
+    padding-left: 8px;
+
+    cursor: inherit;
+
+    transition: color 133ms linear;
+  }
+
+  @include when(checked) {
+    .#{$variable-prefix}radio__input-wrapper {
+      &::after {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    &.#{$variable-prefix}button {
+      z-index: 20;
+    }
+  }
+}
+
+@include b(radio-group) {
+  --#{$variable-prefix}radio-margin: 0 0 0 12px;
+  --#{$variable-prefix}radio-padding: 0 16px;
+  --#{$variable-prefix}radio-height: 32px;
+
+  position: relative;
+
+  display: block;
+
+  & + & {
+    margin: 0;
+  }
+
+  .#{$variable-prefix}radio + .#{$variable-prefix}radio {
+    margin: var(--#{$variable-prefix}radio-margin);
+  }
+
+  .#{$variable-prefix}radio.#{$variable-prefix}button {
+    padding: 0;
+
+    transition: all 0.2s linear, color 0s, background-color 116ms ease-out;
+  }
+
+  @include m(outline) {
+    @include button-radio;
+  }
+
+  @include m(fill) {
+    @include button-radio;
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}radio-padding: 0 12px;
+    --#{$variable-prefix}radio-height: 28px;
+
+    .#{$variable-prefix}radio {
+      @include font-size(0.8rem);
+    }
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}radio-padding: 0 20px;
+    --#{$variable-prefix}radio-height: 38px;
+
+    .#{$variable-prefix}radio {
+      @include font-size(1rem);
+    }
+  }
+
+  @include when(vertical) {
+    --#{$variable-prefix}radio-margin: 10px 0 0 0;
+
+    .#{$variable-prefix}radio {
+      display: flex;
+    }
+
+    .#{$variable-prefix}button:nth-child(1):not(.#{$variable-prefix}button:only-child) {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .#{$variable-prefix}button:last-child:not(.#{$variable-prefix}button:only-child) {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+}

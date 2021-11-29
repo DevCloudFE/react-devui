@@ -10,7 +10,7 @@
 
 @include b(drawer-content) {
   position: absolute;
-  z-index: 10;
+  z-index: 1;
 
   display: flex;
   flex-direction: column;

@@ -38,19 +38,21 @@ export function DMenuSub(props: DMenuSubProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const {
-    menuMode,
-    menuExpandTrigger,
-    menuActiveId,
-    menuExpandIds,
-    menuFocusId,
-    menuPopupIds,
-    menuCurrentData,
-    onExpandChange,
-    onPopupIdChange,
-    onFocus: _onFocus,
-    onBlur: _onBlur,
-  } = useCustomContext(DMenuContext);
+  const [
+    {
+      menuMode,
+      menuExpandTrigger,
+      menuActiveId,
+      menuExpandIds,
+      menuFocusId,
+      menuPopupIds,
+      menuCurrentData,
+      onExpandChange,
+      onPopupIdChange,
+      onFocus: _onFocus,
+      onBlur: _onBlur,
+    },
+  ] = useCustomContext(DMenuContext);
   //#endregion
 
   //#region Ref

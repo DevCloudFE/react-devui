@@ -19,6 +19,9 @@ export { DIcon } from './icon';
 export type { DMenuProps, DMenuGroupProps, DMenuItemProps, DMenuSubProps } from './menu';
 export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 
+export type { DRadioProps, DRadioGroupProps } from './radio';
+export { DRadio, DRadioGroup } from './radio';
+
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
 

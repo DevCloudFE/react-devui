@@ -1,4 +1,4 @@
-import { isNumber, isUndefined } from 'lodash';
+import { isNumber } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -29,15 +29,11 @@ export function DDrag(props: DDragProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const {
-    dropOuter,
-    dropCurrentData,
-    dropPlaceholder,
-    onDragStart: _onDragStart,
-    onDrag: _onDrag,
-    onDragEnd: _onDragEnd,
-  } = useCustomContext(DDropContext);
+  const [{ dropOuter, dropCurrentData, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
+    useCustomContext(DDropContext);
   //#endregion
+
+  const inDrop = dropContext !== null;
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
@@ -47,8 +43,6 @@ export function DDrag(props: DDragProps) {
   const [isDragging, setIsDragging] = useImmer(false);
   const [showPlaceholder, setShowPlaceholder] = useImmer(false);
   const [fixedDrag, setFixedDrag] = useImmer(false);
-
-  const inDrop = !isUndefined(dropCurrentData);
 
   const placeholderRef = useRefSelector(`[data-${dPrefix}drag-placeholder="${id}"]`);
 

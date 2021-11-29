@@ -39,7 +39,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { buttonGroupType, buttonGroupColor, buttonGroupSize } = useCustomContext(DButtonGroupContext);
+  const [{ buttonGroupType, buttonGroupColor, buttonGroupSize }] = useCustomContext(DButtonGroupContext);
   //#endregion
 
   //#region Ref
@@ -80,21 +80,13 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
         <button
           {...restProps}
           ref={ref}
-          className={getClassName(
-            `${dPrefix}button`,
-            `${dPrefix}button--${type}-${color}`,
-            {
-              [`${dPrefix}button--circle`]: dShape === 'circle',
-              [`${dPrefix}button--round`]: dShape === 'round',
-
-              [`${dPrefix}button--smaller`]: size === 'smaller',
-              [`${dPrefix}button--larger`]: size === 'larger',
-              'is-block': dBlock,
-              'is-only-icon': !children,
-              'is-loading': dLoading,
-            },
-            className
-          )}
+          className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${type}-${color}`, {
+            [`${dPrefix}button--${dShape}`]: dShape,
+            [`${dPrefix}button--${size}`]: size,
+            'is-block': dBlock,
+            'is-only-icon': !children,
+            'is-loading': dLoading,
+          })}
           disabled={disabled}
           aria-disabled={disabled}
           onClick={handleClick}

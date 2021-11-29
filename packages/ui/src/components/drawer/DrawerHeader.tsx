@@ -14,7 +14,7 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { drawerId, closeDrawer } = useCustomContext(DDrawerContext);
+  const [{ drawerId, closeDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
   const handleClose = useCallback(() => {

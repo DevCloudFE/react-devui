@@ -43,7 +43,7 @@
     right: -$border;
     bottom: -$border;
     left: -$border;
-    z-index: 1;
+    z-index: var(--#{$variable-prefix}disabled-z-index);
 
     background-color: var(--#{$variable-prefix}disabled-cover-color);
     cursor: not-allowed;

@@ -32,7 +32,7 @@ export function DMenuItem(props: DMenuItemProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { menuMode, menuActiveId, menuCurrentData, onActiveChange, onFocus: _onFocus, onBlur: _onBlur } = useCustomContext(DMenuContext);
+  const [{ menuMode, menuActiveId, menuCurrentData, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 
   //#region Ref

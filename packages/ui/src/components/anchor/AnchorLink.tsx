@@ -14,7 +14,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { anchorActiveHref, onLinkChange, onLinkClick } = useCustomContext(DAnchorContext);
+  const [{ anchorActiveHref, onLinkChange, onLinkClick }] = useCustomContext(DAnchorContext);
   //#endregion
 
   //#region Ref

@@ -1,14 +1,14 @@
 @mixin button-hover-focus {
   &:not([disabled]):not(.is-loading):hover,
   &:not([disabled]):not(.is-loading):focus {
-    z-index: 2;
+    z-index: var(--#{$variable-prefix}hover-focus-z-index);
     @content;
   }
 }
 
 @mixin button-active {
   &:not([disabled]):not(.is-loading):active {
-    z-index: 1;
+    z-index: var(--#{$variable-prefix}active-z-index);
     @content;
   }
 }

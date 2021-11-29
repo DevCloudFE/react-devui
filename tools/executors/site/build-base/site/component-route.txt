@@ -16,7 +16,7 @@ export default function __Route__() {
     'zh-Hant': __zh-Hant__,
   };
 
-  const { onMount: _onMount } = useCustomContext(AppContext);
+  const [{ onMount: _onMount }] = useCustomContext(AppContext);
 
   useEffect(() => {
     _onMount?.();

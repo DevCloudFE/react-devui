@@ -9,7 +9,7 @@ export function DDragPlaceholder(props: DDragPlaceholderProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { dropDirection } = useCustomContext(DDropContext);
+  const [{ dropDirection }] = useCustomContext(DDropContext);
   //#endregion
 
   return (

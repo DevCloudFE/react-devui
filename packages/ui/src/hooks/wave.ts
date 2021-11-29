@@ -2,11 +2,14 @@ import { useEffect, useMemo } from 'react';
 import { Subject } from 'rxjs';
 
 import { useAsync } from './async';
+import { useDPrefixConfig } from './d-config';
 
 export function useWave() {
+  const dPrefix = useDPrefixConfig();
+
   const asyncCapture = useAsync();
 
-  const subject$ = useMemo(() => new Subject<[HTMLElement, string]>(), []);
+  const subject$ = useMemo(() => new Subject<[HTMLElement, string, string?]>(), []);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -14,7 +17,7 @@ export function useWave() {
     let removeChild: null | (() => void) = null;
 
     const ob = subject$.subscribe({
-      next: ([el, color]) => {
+      next: ([el, color, animation]) => {
         asyncGroup.clearAll();
         removeChild?.();
 
@@ -33,16 +36,13 @@ export function useWave() {
         waveEl.style.bottom = '0';
         waveEl.style.left = '0';
         waveEl.style.backgroundColor = 'transparent';
-        waveEl.style.transition = 'box-shadow 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), opacity 2s cubic-bezier(0.08, 0.82, 0.17, 1)';
         waveEl.style.boxShadow = `0px 0px 0px 0px ${color}`;
         waveEl.style.opacity = '0.2';
+        waveEl.style.setProperty(`--${dPrefix}wave-color`, color);
+        waveEl.style.animation = animation ?? 'wave 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), wave-fade 2s cubic-bezier(0.08, 0.82, 0.17, 1)';
+        waveEl.style.animationFillMode = 'forwards';
 
         el.appendChild(waveEl);
-
-        asyncGroup.setTimeout(() => {
-          waveEl.style.boxShadow = `0px 0px 0px 6px ${color}`;
-          waveEl.style.opacity = '0';
-        }, 20);
 
         removeChild = () => {
           el.removeChild(waveEl);
@@ -58,7 +58,7 @@ export function useWave() {
       ob.unsubscribe();
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, subject$]);
+  }, [asyncCapture, dPrefix, subject$]);
 
   return subject$;
 }

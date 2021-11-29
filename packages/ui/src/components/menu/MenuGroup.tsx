@@ -30,7 +30,7 @@ export function DMenuGroup(props: DMenuGroupProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { onFocus: _onFocus, onBlur: _onBlur } = useCustomContext(DMenuContext);
+  const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 
   const _id = id ?? `${dPrefix}menu-group-${toId(dId)}`;

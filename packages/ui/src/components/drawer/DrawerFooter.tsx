@@ -21,7 +21,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const { closeDrawer } = useCustomContext(DDrawerContext);
+  const [{ closeDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
   const [okLoading, setOkLoading] = useImmer(false);
