@@ -118,7 +118,7 @@ export function DMenuSub(props: DMenuSubProps) {
         popupEl,
         targetEl,
         horizontal ? 'bottom' : 'right',
-        horizontal ? 12 : inNav ? 10 : 18
+        horizontal ? 12 : inNav ? 10 : 14
       );
       setMenuWidth(targetEl.getBoundingClientRect().width - 32);
       return {

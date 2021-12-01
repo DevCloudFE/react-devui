@@ -21,7 +21,7 @@
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
 
-      background-color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 8%);
+      background-color: var(--#{$variable-prefix}color-primary-background-5);
     }
   }
 
@@ -279,7 +279,14 @@
     }
 
     .#{$variable-prefix}menu-list {
-      padding: 8px;
+      padding: 4px;
+
+      .#{$variable-prefix}menu-group {
+        padding-right: 8px;
+      }
+      .#{$variable-prefix}menu-sub {
+        padding-right: 8px;
+      }
     }
   }
 }

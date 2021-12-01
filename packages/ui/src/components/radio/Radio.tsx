@@ -1,12 +1,10 @@
 import type { Updater } from '../../hooks/immer';
 import type { DFormControl } from '../form';
 
-import { isUndefined } from 'lodash';
 import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useId, useTwoWayBinding } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useId, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DButton } from '../button';
 import { DRadioGroupContext } from './RadioGroup';
 
 export type DRadioRef = HTMLInputElement;
@@ -20,7 +18,7 @@ export interface DRadioProps extends React.HTMLAttributes<HTMLElement>, DFormCon
   onCheckedChange?: (checked: boolean) => void;
 }
 
-export function DRadio(props: DRadioProps) {
+export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
   const {
     dFormControlName,
     dChecked,
@@ -40,7 +38,13 @@ export function DRadio(props: DRadioProps) {
     useCustomContext(DRadioGroupContext);
   //#endregion
 
+  //#region Ref
+  const [radioEl, radioRef] = useRefCallback();
+  //#endregion
+
   const inGroup = radioGroupContext !== null;
+
+  const wave = useWave();
 
   const _id = useId();
   const __id = id ?? `${dPrefix}radio-${_id}`;
@@ -61,15 +65,26 @@ export function DRadio(props: DRadioProps) {
       if (!disabled) {
         changeSingleChecked(true);
         onValueChange?.(dValue);
+        if (radioEl && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
+          wave.next([radioEl, `var(--${dPrefix}color-primary)`]);
+        }
       }
     },
-    [changeSingleChecked, dValue, disabled, onChange, onValueChange]
+    [changeSingleChecked, dPrefix, dValue, disabled, onChange, onValueChange, radioEl, radioGroupType, wave]
   );
 
-  const node = (
-    <>
+  return (
+    <div
+      {...restProps}
+      ref={radioRef}
+      className={getClassName(className, `${dPrefix}radio`, {
+        'is-checked': checked,
+        'is-disabled': disabled,
+      })}
+    >
       <div className={`${dPrefix}radio__input-wrapper`}>
         <input
+          ref={ref}
           id={__id}
           className={`${dPrefix}radio__input`}
           checked={checked}
@@ -85,29 +100,6 @@ export function DRadio(props: DRadioProps) {
       <label id={`${dPrefix}radio-label-${_id}`} className={`${dPrefix}radio__label`} htmlFor={__id}>
         {children}
       </label>
-    </>
-  );
-
-  return isUndefined(radioGroupType) ? (
-    <div
-      {...restProps}
-      className={getClassName(className, `${dPrefix}radio`, {
-        'is-checked': checked,
-        'is-disabled': disabled,
-      })}
-    >
-      {node}
     </div>
-  ) : (
-    <DButton
-      {...restProps}
-      className={getClassName(className, `${dPrefix}radio`, {
-        'is-checked': checked,
-      })}
-      disabled={disabled}
-      dType={checked ? (radioGroupType === 'fill' ? 'primary' : 'outline') : 'secondary'}
-    >
-      {node}
-    </DButton>
   );
-}
+});

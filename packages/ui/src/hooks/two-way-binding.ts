@@ -7,7 +7,7 @@ import { useCustomContext } from './context';
 import { useImmer } from './immer';
 
 export function useTwoWayBinding<T>(
-  initialValue: T,
+  initialValue: T | (() => T),
   input?: [T, Updater<T>?],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onValueChange?: (value: any) => void,

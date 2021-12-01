@@ -36,7 +36,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
   //#region DidUpdate
   useEffect(() => {
     if (linkEl && href) {
-      onLinkChange?.(href, linkEl as HTMLElement);
+      onLinkChange?.(href, linkEl);
       return () => {
         onLinkChange?.(href);
       };

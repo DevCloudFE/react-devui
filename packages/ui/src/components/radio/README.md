@@ -24,6 +24,12 @@ Extend `React.HTMLAttributes<HTMLElement>, DFormControl`.
 | onCheckedChange | Selected change callback | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
+### DRadioRef
+
+```tsx
+export type DRadioRef = HTMLInputElement;
+```
+
 ### DRadioGroupProps
 
 Extend `React.HTMLAttributes<HTMLDivElement>, DFormControl`.

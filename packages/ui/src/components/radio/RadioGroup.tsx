@@ -6,7 +6,6 @@ import React, { useMemo } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DButtonGroup } from '../button';
 
 export interface DRadioGroupContextData {
   radioGroupName?: string;
@@ -63,7 +62,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
 
   return (
     <DRadioGroupContext.Provider value={contextValue}>
-      <DButtonGroup
+      <div
         {...restProps}
         className={getClassName(className, `${dPrefix}radio-group`, {
           [`${dPrefix}radio-group--${dType}`]: dType,
@@ -71,10 +70,9 @@ export function DRadioGroup(props: DRadioGroupProps) {
           'is-vertical': dVertical,
         })}
         role="radiogroup"
-        dSize={dSize}
       >
         {children}
-      </DButtonGroup>
+      </div>
     </DRadioGroupContext.Provider>
   );
 }

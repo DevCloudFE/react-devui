@@ -132,8 +132,6 @@
     &.#{$variable-prefix}button--text-#{$theme} {
       border-color: transparent;
 
-      color: var(--#{$variable-prefix}color-#{$theme});
-
       background-color: transparent;
 
       @include button-hover-focus {
@@ -141,7 +139,7 @@
 
         color: var(--#{$variable-prefix}color-#{$theme}-lighter);
 
-        background-color: rgb(var(--#{$variable-prefix}color-#{$theme}-rgb) / 4%);
+        background-color: var(--#{$variable-prefix}color-#{$theme}-background-6);
       }
 
       @include button-active {
@@ -149,7 +147,7 @@
 
         color: var(--#{$variable-prefix}color-#{$theme}-darker);
 
-        background-color: rgb(var(--#{$variable-prefix}color-#{$theme}-rgb) / 10%);
+        background-color: var(--#{$variable-prefix}color-#{$theme}-background);
       }
     }
 

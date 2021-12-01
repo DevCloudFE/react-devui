@@ -23,6 +23,12 @@ title: 单选组
 | onCheckedChange | 选中改变的回调 | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
+### DRadioRef
+
+```tsx
+export type DRadioRef = HTMLInputElement;
+```
+
 ### DRadioGroupProps
 
 继承 `React.HTMLAttributes<HTMLDivElement>, DFormControl`。

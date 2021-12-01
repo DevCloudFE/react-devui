@@ -9,7 +9,7 @@ import { getClassName, CustomScroll } from '../../utils';
 export interface DAnchorContextData {
   anchorActiveHref: string | null;
   onLinkClick: (href: string) => void;
-  onLinkChange: (href: string, el?: HTMLElement) => void;
+  onLinkChange: (href: string, el?: HTMLElement | null) => void;
 }
 export const DAnchorContext = React.createContext<DAnchorContextData | null>(null);
 
@@ -42,7 +42,7 @@ export function DAnchor(props: DAnchorProps) {
   //#endregion
 
   const dataRef = useRef({
-    links: new Map<string, HTMLElement>(),
+    links: new Map<string, HTMLElement | null>(),
   });
 
   const asyncCapture = useAsync();

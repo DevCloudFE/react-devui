@@ -56,6 +56,18 @@ $themes: (
 
     /** darker **/
     --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+
+    /** background **/
+    --#{$variable-prefix}color-#{$theme}-background: #{color.scale(rgb($rgb), $lightness: 90%)};
+    --#{$variable-prefix}color-#{$theme}-background-1: #{color.scale(rgb($rgb), $lightness: 91%)};
+    --#{$variable-prefix}color-#{$theme}-background-2: #{color.scale(rgb($rgb), $lightness: 92%)};
+    --#{$variable-prefix}color-#{$theme}-background-3: #{color.scale(rgb($rgb), $lightness: 93%)};
+    --#{$variable-prefix}color-#{$theme}-background-4: #{color.scale(rgb($rgb), $lightness: 94%)};
+    --#{$variable-prefix}color-#{$theme}-background-5: #{color.scale(rgb($rgb), $lightness: 95%)};
+    --#{$variable-prefix}color-#{$theme}-background-6: #{color.scale(rgb($rgb), $lightness: 96%)};
+    --#{$variable-prefix}color-#{$theme}-background-7: #{color.scale(rgb($rgb), $lightness: 97%)};
+    --#{$variable-prefix}color-#{$theme}-background-8: #{color.scale(rgb($rgb), $lightness: 98%)};
+    --#{$variable-prefix}color-#{$theme}-background-9: #{color.scale(rgb($rgb), $lightness: 99%)};
   }
 
   /** component **/

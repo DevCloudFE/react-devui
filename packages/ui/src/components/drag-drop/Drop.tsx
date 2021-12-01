@@ -1,8 +1,8 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 import type { DDragProps } from './Drag';
 
-import { isEqual, isUndefined } from 'lodash';
-import React, { useImperativeHandle, useRef } from 'react';
+import { cloneDeep, isEqual, isUndefined } from 'lodash';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEffect, useMemo } from 'react';
 
 import { useDComponentConfig, useRefSelector, useImmer } from '../../hooks';
@@ -46,20 +46,14 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
     onDragEnd,
   } = useDComponentConfig('drop', props);
 
-  const dataRef = useRef<
-    DDropContextData['dropCurrentData'] & {
-      order: string[];
-      preOrder?: string[];
-    }
-  >({
+  const dataRef = useRef<DDropContextData['dropCurrentData']>({
     drags: new Map(),
     placeholders: new Map(),
-    order: Array<string>(),
   });
 
-  const [updateChildren, setUpdateChildren] = useImmer(0);
   const [isOuter, setIsOuter] = useImmer(false);
 
+  const [orderIds, setOrderIds] = useState<string[]>([]);
   const [orderChildren, setOrderChildren] = useImmer<React.ReactElement[]>([]);
 
   const containerRef = useRefSelector(dContainer);
@@ -68,24 +62,27 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
   useEffect(() => {
     const _childs = React.Children.toArray(children) as Array<React.ReactElement<DDragProps>>;
     const allIds = _childs.map((child) => child.props.dId as string);
-    dataRef.current.order = dataRef.current.order.filter((id) => allIds.includes(id));
-    dataRef.current.order.length = allIds.length;
-    const addIndex = allIds.findIndex((id) => !dataRef.current.order.includes(id));
+    const newOrderIds = cloneDeep(orderIds.filter((id) => allIds.includes(id)));
+    newOrderIds.length = allIds.length;
+    const addIndex = allIds.findIndex((id) => !newOrderIds.includes(id));
     if (addIndex !== -1) {
       const addIds: string[] = [];
       for (let n = addIndex; n < allIds.length; n++) {
-        if (!dataRef.current.order.includes(allIds[n])) {
+        if (!newOrderIds.includes(allIds[n])) {
           addIds.push(allIds[n]);
         } else {
           break;
         }
       }
-      dataRef.current.order.splice(addIndex, 0, ...addIds);
+      newOrderIds.splice(addIndex, 0, ...addIds);
     }
 
+    if (!isEqual(newOrderIds, orderIds)) {
+      setOrderIds(newOrderIds);
+    }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    setOrderChildren(dataRef.current.order.map((id) => _childs.find((child) => child.props.dId === id)!));
-  }, [children, updateChildren, setOrderChildren]);
+    setOrderChildren(newOrderIds.map((id) => _childs.find((child) => child.props.dId === id)!));
+  }, [children, setOrderChildren, orderIds, setOrderIds]);
   //#endregion
 
   const contextValue = useMemo<DDropContextData>(
@@ -145,7 +142,9 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
           top: rect.top + rect.height / 2,
           left: rect.left + rect.width / 2,
         };
-        dataRef.current.order.forEach((id, index) => {
+
+        let newOrderIds = cloneDeep(orderIds);
+        newOrderIds.forEach((id, index) => {
           let el: HTMLElement | null = null;
           if (id === dragId) {
             const selector = dataRef.current.placeholders.get(id);
@@ -175,34 +174,32 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
             }
           }
         });
-
         if (!isUndefined(replaceIndex)) {
-          dataRef.current.order.splice(
-            dataRef.current.order.findIndex((id) => id === dragId),
+          newOrderIds.splice(
+            newOrderIds.findIndex((id) => id === dragId),
             1,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             undefined as any
           );
 
-          dataRef.current.order.splice(replaceIndex, 0, dragId as string);
+          newOrderIds.splice(replaceIndex, 0, dragId as string);
 
-          dataRef.current.order = dataRef.current.order.filter((id) => !!id);
+          newOrderIds = newOrderIds.filter((id) => !!id);
+        }
 
-          if (!isEqual(dataRef.current.preOrder, dataRef.current.order)) {
-            dataRef.current.preOrder = [...dataRef.current.order];
-            setUpdateChildren((prev) => prev + 1);
-            onOrderChange?.(dataRef.current.order);
-          }
+        if (!isEqual(newOrderIds, orderIds)) {
+          setOrderIds(newOrderIds);
+          onOrderChange?.(newOrderIds);
         }
       },
       onDragEnd: (id) => {
         onDragEnd?.(id);
       },
     }),
-    [dDirection, isOuter, dPlaceholder, onDragStart, onDrag, containerRef, setIsOuter, setUpdateChildren, onOrderChange, onDragEnd]
+    [containerRef, dDirection, dPlaceholder, isOuter, onDrag, onDragEnd, onDragStart, onOrderChange, orderIds, setIsOuter, setOrderIds]
   );
 
-  useImperativeHandle(ref, () => dataRef.current.order, []);
+  useImperativeHandle(ref, () => orderIds, [orderIds]);
 
   return <DDropContext.Provider value={contextValue}>{orderChildren}</DDropContext.Provider>;
 });

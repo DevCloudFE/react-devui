@@ -1,6 +1,42 @@
 @mixin button-radio {
   --#{$variable-prefix}radio-margin: 0 0 0 -1px;
 
+  .#{$variable-prefix}radio {
+    border: 1px solid var(--#{$variable-prefix}color-step-150);
+
+    transition: border-color 116ms ease-out, background-color 116ms ease-out;
+
+    &:first-of-type {
+      border-radius: 2px 0 0 2px;
+    }
+
+    &:last-of-type {
+      border-radius: 0 2px 2px 0;
+    }
+
+    &:not(.is-disabled) {
+      &.is-checked {
+        z-index: 5;
+
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+
+      &:not(.is-checked):hover {
+        z-index: 1;
+
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+        color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+    }
+
+    &.is-disabled.is-checked {
+      color: var(--#{$variable-prefix}color-step-400);
+
+      background-color: var(--#{$variable-prefix}color-step-100);
+    }
+  }
+
   .#{$variable-prefix}radio__input-wrapper {
     width: 0;
     height: 0;
@@ -147,10 +183,6 @@
         opacity: 1;
       }
     }
-
-    &.#{$variable-prefix}button {
-      z-index: 20;
-    }
   }
 }
 
@@ -161,28 +193,26 @@
 
   position: relative;
 
-  display: block;
-
-  & + & {
-    margin: 0;
-  }
-
   .#{$variable-prefix}radio + .#{$variable-prefix}radio {
     margin: var(--#{$variable-prefix}radio-margin);
   }
 
-  .#{$variable-prefix}radio.#{$variable-prefix}button {
-    padding: 0;
-
-    transition: all 0.2s linear, color 0s, background-color 116ms ease-out;
-  }
-
   @include m(outline) {
     @include button-radio;
+
+    .#{$variable-prefix}radio:not(.is-disabled).is-checked {
+      color: var(--#{$variable-prefix}color-primary);
+    }
   }
 
   @include m(fill) {
     @include button-radio;
+
+    .#{$variable-prefix}radio:not(.is-disabled).is-checked {
+      color: #fff;
+
+      background-color: var(--#{$variable-prefix}color-primary);
+    }
   }
 
   @include m(smaller) {
@@ -206,18 +236,18 @@
   @include when(vertical) {
     --#{$variable-prefix}radio-margin: 10px 0 0 0;
 
+    display: inline-block;
+
     .#{$variable-prefix}radio {
       display: flex;
-    }
 
-    .#{$variable-prefix}button:nth-child(1):not(.#{$variable-prefix}button:only-child) {
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-    }
+      &:first-of-type {
+        border-radius: 2px 2px 0 0;
+      }
 
-    .#{$variable-prefix}button:last-child:not(.#{$variable-prefix}button:only-child) {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+      &:last-of-type {
+        border-radius: 0 0 2px 2px;
+      }
     }
   }
 }

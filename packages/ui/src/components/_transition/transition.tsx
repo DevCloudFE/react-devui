@@ -4,7 +4,7 @@ import type { ThrottleByAnimationFrame } from '../../hooks/throttle-and-debounce
 import { isFunction, isNumber, isString } from 'lodash';
 import React, { useImperativeHandle, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { count, first, mergeWith, take, timer } from 'rxjs';
+import { count, filter, first, mergeWith, take, timer } from 'rxjs';
 
 import { useAsync, useThrottle, useImmer } from '../../hooks';
 import { CssRecord, getTransitinNum, getMaxTime } from './utils';
@@ -93,6 +93,7 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
 
         asyncCapture
           .fromEvent(dEl, 'transitionend')
+          .pipe(filter((e) => e.target === dEl))
           .pipe(take(transitinNum), count())
           .pipe(mergeWith(timer(timeout + 5)))
           .pipe(first())
