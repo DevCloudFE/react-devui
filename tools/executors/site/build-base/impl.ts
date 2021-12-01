@@ -254,23 +254,26 @@ class GenerateSite {
   id="__id__"
   renderer={<__renderer__Demo />}
   title="__title__"
-  description={String.raw${'`'}__description__${'`'}}
-  tsx={String.raw${'`'}__tsx__${'`'}}
+  description={[__description__]}
+  tsx={[__tsx__]}
   __scss__
-  tsxSource={String.raw${'`'}__tsxSource__${'`'}}
+  tsxSource={[__tsxSource__]}
   __scssSource__
 />
 `;
             demoStr = demoStr.replace(/__id__/g, demo.get(lang)!.id!);
             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang)!.name!);
             demoStr = demoStr.replace(/__title__/g, demo.get(lang)!.title!);
-            demoStr = demoStr.replace(/__description__/g, demo.get(lang)!.description!);
-            demoStr = demoStr.replace(/__tsx__/g, marked(demo.get(lang)!.tsx!));
+            demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang)!.description!).join());
+            demoStr = demoStr.replace(/__tsx__/g, new TextEncoder().encode(marked(demo.get(lang)!.tsx!)).join());
             demoStr = demoStr.replace(
               /__scss__/g,
               demo.get(lang)!.scss ? String.raw`scss={String.raw${'`'}${marked(demo.get(lang)!.scss!)}${'`'}}` : ''
             );
-            demoStr = demoStr.replace(/__tsxSource__/g, demo.get(lang)!.tsx!.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)![0]);
+            demoStr = demoStr.replace(
+              /__tsxSource__/g,
+              new TextEncoder().encode(demo.get(lang)!.tsx!.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)![0]).join()
+            );
             demoStr = demoStr.replace(
               /__scssSource__/g,
               demo.get(lang)!.scss
@@ -288,8 +291,8 @@ class GenerateSite {
 {
   title: '__title__',
   subtitle: '__subtitle__',
-  description: String.raw${'`'}__description__${'`'},
-  api: String.raw${'`'}__api__${'`'},
+  description: [__description__],
+  api: [__api__],
   demos: (
     <>
       ${demosStr}
@@ -306,8 +309,8 @@ class GenerateSite {
         const description = article.match(/^[\s\S]*(?=## API)/g)?.[0];
         const api = article.match(/## API[\s\S]*$/g)?.[0];
         if (description && api) {
-          routeArticleProps = routeArticleProps.replace(/__description__/g, marked(description));
-          routeArticleProps = routeArticleProps.replace(/__api__/g, marked(api));
+          routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode(marked(description)).join());
+          routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode(marked(api)).join());
         }
         const langRegExp = new RegExp(String.raw`__${lang}__`, 'g');
         routeTmp = routeTmp.replace(langRegExp, routeArticleProps);

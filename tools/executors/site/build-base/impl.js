@@ -224,21 +224,21 @@ var GenerateSite = /** @class */ (function () {
                     var linksStr = '';
                     demoList_1.forEach(function (demo) {
                         if (demo) {
-                            var demoStr = String.raw(templateObject_13 || (templateObject_13 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={String.raw", "__description__", "}\n  tsx={String.raw", "__tsx__", "}\n  __scss__\n  tsxSource={String.raw", "__tsxSource__", "}\n  __scssSource__\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={String.raw", "__description__", "}\n  tsx={String.raw", "__tsx__", "}\n  __scss__\n  tsxSource={String.raw", "__tsxSource__", "}\n  __scssSource__\n/>\n"])), '`', '`', '`', '`', '`', '`');
+                            var demoStr = String.raw(templateObject_13 || (templateObject_13 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"])));
                             demoStr = demoStr.replace(/__id__/g, demo.get(lang).id);
                             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang).name);
                             demoStr = demoStr.replace(/__title__/g, demo.get(lang).title);
-                            demoStr = demoStr.replace(/__description__/g, demo.get(lang).description);
-                            demoStr = demoStr.replace(/__tsx__/g, (0, marked_1.default)(demo.get(lang).tsx));
+                            demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang).description).join());
+                            demoStr = demoStr.replace(/__tsx__/g, new TextEncoder().encode((0, marked_1.default)(demo.get(lang).tsx)).join());
                             demoStr = demoStr.replace(/__scss__/g, demo.get(lang).scss ? String.raw(templateObject_14 || (templateObject_14 = (0, tslib_1.__makeTemplateObject)(["scss={String.raw", "", "", "}"], ["scss={String.raw", "", "", "}"])), '`', (0, marked_1.default)(demo.get(lang).scss), '`') : '');
-                            demoStr = demoStr.replace(/__tsxSource__/g, demo.get(lang).tsx.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)[0]);
+                            demoStr = demoStr.replace(/__tsxSource__/g, new TextEncoder().encode(demo.get(lang).tsx.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)[0]).join());
                             demoStr = demoStr.replace(/__scssSource__/g, demo.get(lang).scss
                                 ? String.raw(templateObject_15 || (templateObject_15 = (0, tslib_1.__makeTemplateObject)(["scssSource={String.raw", "", "", "}"], ["scssSource={String.raw", "", "", "}"])), '`', demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0], '`') : '');
                             demosStr += demoStr;
                             linksStr += String.raw(templateObject_16 || (templateObject_16 = (0, tslib_1.__makeTemplateObject)(["{ href: '#", "', title: '", "' }, "], ["{ href: '#", "', title: '", "' }, "])), demo.get(lang).id, demo.get(lang).title);
                         }
                     });
-                    var routeArticleProps = String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: String.raw", "__description__", ",\n  api: String.raw", "__api__", ",\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: String.raw", "__description__", ",\n  api: String.raw", "__api__", ",\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), '`', '`', '`', '`', demosStr);
+                    var routeArticleProps = String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), demosStr);
                     routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
                     routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
                     routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
@@ -246,8 +246,8 @@ var GenerateSite = /** @class */ (function () {
                     var description = (_a = article.match(/^[\s\S]*(?=## API)/g)) === null || _a === void 0 ? void 0 : _a[0];
                     var api = (_b = article.match(/## API[\s\S]*$/g)) === null || _b === void 0 ? void 0 : _b[0];
                     if (description && api) {
-                        routeArticleProps = routeArticleProps.replace(/__description__/g, (0, marked_1.default)(description));
-                        routeArticleProps = routeArticleProps.replace(/__api__/g, (0, marked_1.default)(api));
+                        routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode((0, marked_1.default)(description)).join());
+                        routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode((0, marked_1.default)(api)).join());
                     }
                     var langRegExp = new RegExp(String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
                     routeTmp_1 = routeTmp_1.replace(langRegExp, routeArticleProps);

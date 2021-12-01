@@ -165,14 +165,14 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
 });
 
 export interface DCollapseTransitionProps extends DTransitionProps {
-  dDirection?: 'width' | 'height';
+  dDirection?: 'horizontal' | 'vertical';
   dDuring?: number;
   dTimingFunction?: string | { enter: string; leave: string };
   dSpace?: number | string;
 }
 
 export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTransitionProps>((props, ref) => {
-  const { dEl, dCallbackList, dDirection = 'height', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
+  const { dEl, dCallbackList, dDirection = 'vertical', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
 
   const enterTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.enter) : 'linear';
   const leaveTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.leave) : 'linear';
@@ -181,6 +181,8 @@ export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTra
 
   const space = isNumber(dSpace) ? dSpace + 'px' : dSpace;
   const opacity = shouldHidden ? '0' : '1';
+
+  const attribute = dDirection === 'horizontal' ? 'width' : 'height';
 
   return (
     <DTransition
@@ -191,30 +193,30 @@ export const DCollapseTransition = React.forwardRef<DTransitionRef, DCollapseTra
         if (dEl) {
           const rect = dEl.getBoundingClientRect();
           // handle nested
-          if (rect[dDirection] === 0) {
+          if (rect[attribute] === 0) {
             return undefined;
           }
 
-          const size = rect[dDirection] + 'px';
+          const size = rect[attribute] + 'px';
 
           return {
-            'enter-from': { [dDirection]: space, opacity },
+            'enter-from': { [attribute]: space, opacity },
             'enter-active': { overflow: 'hidden' },
             'enter-to': {
-              [dDirection]: size,
-              transition: `${dDirection} ${dDuring}ms ${enterTimeFunction}, opacity ${dDuring}ms ${enterTimeFunction}`,
+              [attribute]: size,
+              transition: `${attribute} ${dDuring}ms ${enterTimeFunction}, opacity ${dDuring}ms ${enterTimeFunction}`,
             },
-            'leave-from': { [dDirection]: size },
+            'leave-from': { [attribute]: size },
             'leave-active': { overflow: 'hidden' },
             'leave-to': {
-              [dDirection]: space,
+              [attribute]: space,
               opacity,
-              transition: `${dDirection} ${dDuring}ms ${leaveTimeFunction}, opacity ${dDuring}ms ${leaveTimeFunction}`,
+              transition: `${attribute} ${dDuring}ms ${leaveTimeFunction}, opacity ${dDuring}ms ${leaveTimeFunction}`,
             },
           };
         }
       }}
-      dEndStyle={shouldHidden ? undefined : { leave: { [dDirection]: space } }}
+      dEndStyle={shouldHidden ? undefined : { leave: { [attribute]: space } }}
     />
   );
 });

@@ -6,21 +6,26 @@ import { useAsync, useImmer } from '@react-devui/ui/hooks';
 import { copy, getClassName } from '@react-devui/ui/utils';
 
 import './DemoBox.scss';
+import { toString } from './utils';
 
 export interface AppDemoBoxProps {
   id: string;
   renderer: React.ReactNode;
   title: string;
-  description: string;
-  tsx: string;
+  description: number[];
+  tsx: number[];
   scss?: string;
-  tsxSource: string;
+  tsxSource: number[];
   scssSource?: string;
 }
 
 export function AppDemoBox(props: AppDemoBoxProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, renderer, title, description, tsx, scss, tsxSource, scssSource } = props;
+  const { id, renderer, title, scss, scssSource } = props;
+
+  const description = toString(props.description);
+  const tsx = toString(props.tsx);
+  const tsxSource = toString(props.tsxSource);
 
   const asyncCapture = useAsync();
 

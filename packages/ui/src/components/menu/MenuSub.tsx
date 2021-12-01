@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback } from '../../hooks';
-import { getClassName, getFixedSideStyle, toId } from '../../utils';
+import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -114,13 +114,12 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const customTransition = useCallback(
     (popupEl, targetEl) => {
-      const { top, left, transformOrigin } = getFixedSideStyle(
-        popupEl,
-        targetEl,
-        horizontal ? 'bottom' : 'right',
-        horizontal ? 12 : inNav ? 10 : 14
-      );
-      setMenuWidth(targetEl.getBoundingClientRect().width - 32);
+      const { top, left, transformOrigin } = horizontal
+        ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
+        : getHorizontalSideStyle(popupEl, targetEl, 'right', inNav ? 10 : 14);
+      if (horizontal) {
+        setMenuWidth(targetEl.getBoundingClientRect().width - 32);
+      }
       return {
         top,
         left: horizontal ? left + 16 : left,
@@ -146,7 +145,7 @@ export function DMenuSub(props: DMenuSubProps) {
     [dId, expand, menuExpandTrigger, onExpandChange]
   );
 
-  const handlePopupTrigger = useCallback(
+  const handlePopupVisibleChange = useCallback(
     (visible) => {
       onPopupIdChange?.(dId, visible);
     },
@@ -199,8 +198,6 @@ export function DMenuSub(props: DMenuSubProps) {
     );
   }, [children, popupMode, __level]);
 
-  const triggerNode = <div style={{ position: 'absolute', zIndex: -1, top: 0, right: 0, bottom: 0, left: 0 }}></div>;
-
   const menuNode = (_props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
     <ul
       {..._props}
@@ -224,7 +221,6 @@ export function DMenuSub(props: DMenuSubProps) {
     <DCollapseTransition
       dEl={menuCollapseEl}
       dVisible={popupMode ? false : expand}
-      dDirection="height"
       dDuring={200}
       dRender={(hidden) => (
         <>
@@ -259,7 +255,6 @@ export function DMenuSub(props: DMenuSubProps) {
             <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
               <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
             </DIcon>
-            {triggerNode}
           </li>
           {!dDisabled && (
             <>
@@ -273,7 +268,7 @@ export function DMenuSub(props: DMenuSubProps) {
                   dCustomPopup={customTransition}
                   dTriggerEl={liEl}
                   dMouseLeaveDelay={150 + 116 + 50}
-                  onTrigger={handlePopupTrigger}
+                  onVisibleChange={handlePopupVisibleChange}
                 />
               ) : (
                 <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />

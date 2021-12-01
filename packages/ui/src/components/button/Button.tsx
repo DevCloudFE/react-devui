@@ -17,7 +17,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dShape?: 'circle' | 'round';
   dSize?: 'smaller' | 'larger';
   dIcon?: React.ReactNode;
-  dIconLeft?: boolean;
+  dIconRight?: boolean;
 }
 
 export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) => {
@@ -29,7 +29,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     dShape,
     dSize,
     dIcon,
-    dIconLeft = true,
+    dIconRight = false,
     className,
     disabled,
     children,
@@ -39,7 +39,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const [{ buttonGroupType, buttonGroupColor, buttonGroupSize }] = useCustomContext(DButtonGroupContext);
+  const [{ buttonGroupType, buttonGroupColor, buttonGroupSize, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
   //#endregion
 
   //#region Ref
@@ -54,9 +54,9 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
 
   const handleClick = useCallback(
     (e) => {
-      if (!dLoading) {
-        onClick?.(e);
+      onClick?.(e);
 
+      if (!dLoading) {
         if (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed') {
           wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
         }
@@ -75,7 +75,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     <DCollapseTransition
       dEl={loadingEl}
       dVisible={dLoading}
-      dDirection="width"
+      dDirection="horizontal"
       dRender={(hidden) => (
         <button
           {...restProps}
@@ -87,21 +87,21 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
             'is-only-icon': !children,
             'is-loading': dLoading,
           })}
-          disabled={disabled}
-          aria-disabled={disabled}
+          disabled={buttonGroupDisabled || disabled}
+          aria-disabled={buttonGroupDisabled || disabled}
           onClick={handleClick}
         >
-          {!dIconLeft && children}
+          {dIconRight && children}
           {dIcon ? (
-            <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>{dLoading ? loadingIcon : dIcon}</span>
+            <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': dIconRight })}>{dLoading ? loadingIcon : dIcon}</span>
           ) : (
             !hidden && (
-              <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': !dIconLeft })}>
+              <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': dIconRight })}>
                 {loadingIcon}
               </span>
             )
           )}
-          {dIconLeft && children}
+          {!dIconRight && children}
         </button>
       )}
     />

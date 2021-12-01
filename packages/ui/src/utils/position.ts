@@ -274,10 +274,132 @@ export function getPopupPlacementStyle(
   }
 }
 
-export function getFixedSideStyle(
+export function getVerticalSideStyle(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
-  placement: 'top' | 'right' | 'bottom' | 'left' = 'right',
+  placement: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right',
+  offset = 10
+): {
+  top: number;
+  left: number;
+  transformOrigin: string;
+  arrowPosition: React.CSSProperties;
+} {
+  const { width, height } = popupEl.getBoundingClientRect();
+
+  const targetRect = targetEl.getBoundingClientRect();
+
+  let arrowPosition: React.CSSProperties = {};
+
+  switch (placement) {
+    case 'top':
+      arrowPosition = {
+        bottom: 0,
+        left: '50%',
+
+        transform: 'translate(-50%, 50%) rotate(45deg)',
+      };
+      break;
+
+    case 'top-left':
+      arrowPosition = {
+        bottom: 0,
+        left: 20,
+
+        transform: 'translate(0, 50%) rotate(45deg)',
+      };
+      break;
+
+    case 'top-right':
+      arrowPosition = {
+        right: 20,
+        bottom: 0,
+
+        transform: 'translate(0, 50%) rotate(45deg)',
+      };
+      break;
+
+    case 'bottom':
+      arrowPosition = {
+        top: 0,
+        left: '50%',
+
+        transform: 'translate(-50%, -50%) rotate(45deg)',
+      };
+      break;
+
+    case 'bottom-left':
+      arrowPosition = {
+        top: 0,
+        left: 20,
+
+        transform: 'translate(0, -50%) rotate(45deg)',
+      };
+      break;
+
+    case 'bottom-right':
+      arrowPosition = {
+        top: 0,
+        right: 20,
+
+        transform: 'translate(0, -50%) rotate(45deg)',
+      };
+      break;
+
+    default:
+      break;
+  }
+
+  let top =
+    placement === 'top' || placement === 'top-left' || placement === 'top-right'
+      ? targetRect.top - height - offset
+      : targetRect.top + targetRect.height + offset;
+  top = Math.min(Math.max(top, 10), window.innerHeight - height - 10);
+
+  let left =
+    placement === 'top' || placement === 'bottom'
+      ? targetRect.left + (targetRect.width - width) / 2
+      : placement === 'top-left' || placement === 'bottom-left'
+      ? targetRect.left
+      : targetRect.left + targetRect.width - width;
+  left = Math.min(Math.max(left, 10), window.innerWidth - width - 10);
+
+  const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
+
+  if ((placement.includes('top') && top === 10) || (placement.includes('bottom') && top === window.innerHeight - height - 10)) {
+    if (popupEl.dataset['dVerticalSidePosition']) {
+      const [top, left, transformOrigin] = popupEl.dataset['dVerticalSidePosition'].split(',');
+      delete popupEl.dataset['dVerticalSidePosition'];
+      return {
+        top: Number(top),
+        left: Number(left),
+        transformOrigin,
+        arrowPosition,
+      };
+    } else {
+      popupEl.dataset['dVerticalSidePosition'] = [top, left, transformOrigin].join();
+      return getVerticalSideStyle(
+        popupEl,
+        targetEl,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (placement.includes('top') ? placement.replace('top', 'bottom') : placement.replace('bottom', 'top')) as any
+      );
+    }
+  }
+
+  delete popupEl.dataset['dVerticalSidePosition'];
+  return {
+    top,
+    left,
+    transformOrigin,
+    arrowPosition,
+  };
+}
+
+export function getHorizontalSideStyle(
+  popupEl: HTMLElement,
+  targetEl: HTMLElement,
+  placement: 'right' | 'left',
   offset = 10
 ): {
   top: number;
@@ -288,46 +410,17 @@ export function getFixedSideStyle(
 
   const targetRect = targetEl.getBoundingClientRect();
 
-  let top =
-    placement === 'left' || placement === 'right'
-      ? targetRect.top
-      : placement === 'top'
-      ? targetRect.top - height - offset
-      : targetRect.top + targetRect.height + offset;
+  let top = targetRect.top;
   top = Math.min(Math.max(top, 10), window.innerHeight - height - 10);
 
-  const left =
-    placement === 'right'
-      ? targetRect.left + targetRect.width + offset
-      : placement === 'left'
-      ? targetRect.left - width - offset
-      : targetRect.left;
+  let left = placement === 'right' ? targetRect.left + targetRect.width + offset : targetRect.left - width - offset;
+  left = Math.min(Math.max(left, 10), window.innerWidth - width - 10);
 
   const transformOrigin =
-    placement === 'top'
-      ? 'center bottom'
-      : placement === 'right'
+    placement === 'right'
       ? `left ${Math.min(targetRect.top - top + targetRect.height / 2, height)}px`
-      : placement === 'bottom'
-      ? 'center top'
       : `right ${Math.min(targetRect.top - top + targetRect.height / 2, height)}px`;
 
-  if ((placement === 'top' && top === 10) || (placement === 'bottom' && top === window.innerHeight - height - 10)) {
-    if (popupEl.dataset['dMenuPosition']) {
-      const [top, left, transformOrigin] = popupEl.dataset['dMenuPosition'].split(',');
-      delete popupEl.dataset['dMenuPosition'];
-      return {
-        top: Number(top),
-        left: Number(left),
-        transformOrigin,
-      };
-    } else {
-      popupEl.dataset['dMenuPosition'] = [top, left, transformOrigin].join();
-      return getFixedSideStyle(popupEl, targetEl, placement === 'top' ? 'bottom' : 'top');
-    }
-  }
-
-  delete popupEl.dataset['dMenuPosition'];
   return {
     top,
     left,

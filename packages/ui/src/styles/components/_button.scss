@@ -232,7 +232,8 @@
 }
 
 @include b(button-group) {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
   & + & {
     margin-left: 10px;

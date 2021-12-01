@@ -9,6 +9,7 @@ export interface DButtonGroupContextData {
   buttonGroupType: DButtonProps['dType'];
   buttonGroupColor: DButtonProps['dColor'];
   buttonGroupSize: DButtonProps['dSize'];
+  buttonGroupDisabled: boolean;
 }
 export const DButtonGroupContext = React.createContext<DButtonGroupContextData | null>(null);
 
@@ -16,10 +17,19 @@ export interface DButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> 
   dType?: DButtonProps['dType'];
   dColor?: DButtonProps['dColor'];
   dSize?: DButtonProps['dSize'];
+  dDisabled?: boolean;
 }
 
 export function DButtonGroup(props: DButtonGroupProps) {
-  const { dType = 'secondary', dColor = 'primary', dSize, className, children, ...restProps } = useDComponentConfig('button-group', props);
+  const {
+    dType = 'secondary',
+    dColor = 'primary',
+    dDisabled = false,
+    dSize,
+    className,
+    children,
+    ...restProps
+  } = useDComponentConfig('button-group', props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -30,8 +40,9 @@ export function DButtonGroup(props: DButtonGroupProps) {
       buttonGroupType: dType,
       buttonGroupColor: dColor,
       buttonGroupSize: dSize,
+      buttonGroupDisabled: dDisabled,
     }),
-    [dType, dColor, dSize]
+    [dType, dColor, dSize, dDisabled]
   );
 
   return (

@@ -17,6 +17,7 @@ export interface DTriggerRenderProps {
   onFocus?: React.FocusEventHandler<HTMLElement>;
   onBlur?: React.FocusEventHandler<HTMLElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  [key: `data-${string}popup-trigger`]: string;
 }
 
 export interface DPopupRef {
@@ -40,8 +41,11 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dDestroy?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
-  dCustomPopup?: (popupEl: HTMLElement, triggerEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList };
-  onTrigger?: (visible: boolean) => void;
+  dCustomPopup?: (
+    popupEl: HTMLElement,
+    triggerEl: HTMLElement
+  ) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties };
+  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -62,7 +66,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     dCustomPopup,
-    onTrigger,
+    onVisibleChange,
     afterVisibleChange,
     className,
     children,
@@ -89,10 +93,11 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   const asyncCapture = useAsync();
   const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
+  const [arrowPosition, setArrowStyle] = useImmer<React.CSSProperties | undefined>(undefined);
   const [zIndex, setZIndex] = useImmer(1000);
   const id = useId();
 
-  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onTrigger);
+  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
 
   const [autoPlacement, setAutoPlacement] = useImmer<DPlacement>(dPlacement);
 
@@ -219,7 +224,8 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
           'leave-to': { transform: 'scale(0)', opacity: '0', transition: 'transform 0.1s ease-in, opacity 0.1s ease-in', transformOrigin },
         };
       } else {
-        const { top, left, stateList } = dCustomPopup(popupEl, triggerRef.current);
+        const { top, left, stateList, arrowPosition } = dCustomPopup(popupEl, triggerRef.current);
+        setArrowStyle(arrowPosition);
         setPopupPositionStyle({
           position: fixed ? 'fixed' : 'absolute',
           top,
@@ -237,6 +243,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     dDistance,
     dPlacement,
     popupEl,
+    setArrowStyle,
     setAutoPlacement,
     setPopupPositionStyle,
     triggerRef,
@@ -433,7 +440,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   );
 
   const triggerRenderProps = useMemo<DTriggerRenderProps>(() => {
-    const _triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: id };
+    const _triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: String(id) };
     if (dTrigger === 'hover') {
       _triggerRenderProps.onMouseEnter = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
@@ -506,7 +513,14 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
               onBlur={handleBlur}
               onClick={handleClick}
             >
-              {dArrow && <div className={`${dPrefix}popup__arrow`}></div>}
+              {dArrow && (
+                <div
+                  className={getClassName(`${dPrefix}popup__arrow`, {
+                    'is-custom': arrowPosition,
+                  })}
+                  style={arrowPosition}
+                ></div>
+              )}
               {dPopupContent}
             </div>,
             containerRef.current

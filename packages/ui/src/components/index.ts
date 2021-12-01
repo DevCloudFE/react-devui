@@ -13,6 +13,9 @@ export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 
+export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps } from './dropdown';
+export { DDropdown, DDropdownItem, DDropdownSub } from './dropdown';
+
 export type { DIconProps } from './icon';
 export { DIcon } from './icon';
 

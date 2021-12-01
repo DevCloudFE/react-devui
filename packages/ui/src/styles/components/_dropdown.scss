@@ -1,0 +1,96 @@
+@mixin dropdown-base($selector) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 32px;
+  margin: 0;
+  padding: 0 24px 0 12px;
+
+  list-style: none;
+  cursor: pointer;
+
+  transition: all 0.2s ease-out;
+
+  @include utils-outline();
+
+  @include utils-disabled();
+
+  &:not(.is-disabled) {
+    &:focus,
+    &:hover {
+      background-color: var(--#{$variable-prefix}color-step-50);
+    }
+  }
+
+  @include e(icon) {
+    flex-shrink: 0;
+    width: calc(1.05rem + 8px);
+
+    transition: all 0.2s linear;
+
+    @include font-size(1.05rem);
+
+    & > .#{$variable-prefix}icon {
+      transition: all 0.2s linear;
+    }
+  }
+
+  @include e(title) {
+    flex: 1 0 0;
+    min-width: 1em;
+
+    @include utils-ellipsis;
+  }
+}
+
+@include b(dropdown-popup) {
+  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+
+  &.#{$variable-prefix}popup {
+    background-color: var(--#{$variable-prefix}background-color);
+  }
+}
+
+@include b(dropdown) {
+  position: relative;
+
+  min-width: 120px;
+
+  padding: 4px 0;
+  overflow-x: hidden;
+
+  @include font-size(0.95rem);
+}
+
+@include b(dropdown-item) {
+  @include dropdown-base(dropdown-item);
+}
+
+@include b(dropdown-sub) {
+  @include dropdown-base(dropdown-item);
+
+  @include e(arrow) {
+    position: absolute;
+    right: 6px;
+
+    display: inline-flex;
+    align-items: center;
+
+    height: 100%;
+
+    color: var(--#{$variable-prefix}color-step-450);
+  }
+}
+
+@include b(dropdown-list) {
+  position: relative;
+
+  min-width: 120px;
+  margin: 0;
+
+  padding: 4px 0;
+  overflow-x: hidden;
+
+  list-style: none;
+}

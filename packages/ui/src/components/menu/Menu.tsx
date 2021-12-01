@@ -274,7 +274,7 @@ export function DMenu(props: DMenuProps) {
       <DCollapseTransition
         dEl={navEl}
         dVisible={dMode !== 'icon'}
-        dDirection="width"
+        dDirection="horizontal"
         dDuring={200}
         dSpace={80}
         dRender={() => (

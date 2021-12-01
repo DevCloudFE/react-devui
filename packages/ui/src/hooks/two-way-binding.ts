@@ -1,5 +1,6 @@
 import type { Updater } from './immer';
 
+import { isEqual } from 'lodash';
 import { useCallback } from 'react';
 
 import { DFormItemContext } from '../components/form';
@@ -35,9 +36,11 @@ export function useTwoWayBinding<T>(
         setAutoValue(val);
       }
 
-      onValueChange?.(val);
+      if (!isEqual(val, formControlEnable ? (formControlValue as T) : value)) {
+        onValueChange?.(val);
+      }
     },
-    [formControlEnable, formControlName, onFormControlValueChange, onValueChange, setAutoValue, setValue]
+    [formControlEnable, formControlName, formControlValue, onFormControlValueChange, onValueChange, setAutoValue, setValue, value]
   );
 
   return [formControlEnable ? (formControlValue as T) : value, changeValue];

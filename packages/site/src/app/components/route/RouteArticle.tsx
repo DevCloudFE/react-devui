@@ -3,18 +3,22 @@ import { useTranslation } from 'react-i18next';
 import { DTooltip, DIcon, DAnchor, DAnchorLink } from '@react-devui/ui';
 
 import './RouteArticle.scss';
+import { toString } from './utils';
 
 export interface AppRouteArticleProps {
   title: string;
   subtitle: string;
-  description: string;
-  api: string;
+  description: number[];
+  api: number[];
   demos: React.ReactNode;
   links: Array<{ href: string; title: string }>;
 }
 
 export function AppRouteArticle(props: AppRouteArticleProps) {
-  const { title, subtitle, description, api, demos, links } = props;
+  const { title, subtitle, demos, links } = props;
+
+  const description = toString(props.description);
+  const api = toString(props.api);
 
   const { t, i18n } = useTranslation();
 

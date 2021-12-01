@@ -1,5 +1,5 @@
 @mixin arrow-placement() {
-  $arrow-selector: '.#{$variable-prefix}popup__arrow';
+  $arrow-selector: '.#{$variable-prefix}popup__arrow:not(.is-custom)';
 
   @at-root {
     & > #{$arrow-selector} {
@@ -24,7 +24,7 @@
     width: 6px;
     height: 6px;
 
-    background-color: var(--#{$variable-prefix}popup-background-color);
+    background-color: inherit;
   }
 
   @include m(top) {

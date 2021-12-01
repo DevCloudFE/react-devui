@@ -24,7 +24,7 @@ export function useRefSelector(selector: any, handle?: SelectorHandle): React.Re
             return el;
           } else if (isFunction(selector)) {
             return selector();
-          } else if (selector instanceof HTMLElement || selector === null) {
+          } else if (selector instanceof Element || selector === null) {
             return selector;
           } else {
             return handle?.();

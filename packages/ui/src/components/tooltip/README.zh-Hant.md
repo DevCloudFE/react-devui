@@ -47,8 +47,8 @@ export type DTooltipRef = DPopupRef;
 | dDestroy | 关闭后销毁节点 | boolean | false |
 | dMouseEnterDelay | 鼠标移入后多少毫秒后显示 | number | 150 |
 | dMouseLeaveDelay | 鼠标移出后多少毫秒后显示 | number | 150 |
-| dCustomPopup | 自定义 popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList }` | - |
-| onTrigger | 触发 popup 显示/隐藏的回调 | `(visible: boolean) => void` | - |
+| dCustomPopup | 自定义 popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties }` | - |
+| onVisibleChange | popup 显示/隐藏的回调 | `(visible: boolean) => void` | - |
 | afterVisibleChange |  popup 显示/隐藏动画结束的回调 | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -71,6 +71,7 @@ export interface DTriggerRenderProps {
   onFocus?: React.FocusEventHandler<HTMLElement>;
   onBlur?: React.FocusEventHandler<HTMLElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  [key: `data-${string}popup-trigger`]: string;
 }
 ```
 
