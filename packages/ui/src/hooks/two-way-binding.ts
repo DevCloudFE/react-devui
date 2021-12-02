@@ -29,15 +29,18 @@ export function useTwoWayBinding<T>(
     (val: T) => {
       if (formControlEnable) {
         if (formControlName) {
-          onFormControlValueChange?.(val, formControlName);
+          if (!isEqual(val, formControlValue)) {
+            onFormControlValueChange?.(val, formControlName);
+          }
+        } else {
+          console.warn('Please add formControlName to component that in FormControl');
         }
       } else {
         setValue?.(val);
         setAutoValue(val);
-      }
-
-      if (!isEqual(val, formControlEnable ? (formControlValue as T) : value)) {
-        onValueChange?.(val);
+        if (!isEqual(val, value)) {
+          onValueChange?.(val);
+        }
       }
     },
     [formControlEnable, formControlName, formControlValue, onFormControlValueChange, onValueChange, setAutoValue, setValue, value]

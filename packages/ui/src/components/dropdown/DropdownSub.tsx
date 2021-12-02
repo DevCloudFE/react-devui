@@ -7,6 +7,11 @@ import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
 import { DDropdownContext } from './Dropdown';
 
+export interface DDropdownSubContextData {
+  onPopupTrigger: (visible: boolean) => void;
+}
+export const DDropdownSubContext = React.createContext<DDropdownSubContextData | null>(null);
+
 export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dIcon?: React.ReactNode;
@@ -32,8 +37,9 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const [{ dropdownPopupIds, dropdownFocusId, dropdownPopupTrigger, onPopupIdChange, onFocus: _onFocus, onBlur: _onBlur }] =
+  const [{ dropdownVisible, dropdownFocusId, dropdownPopupTrigger, onFocus: _onFocus, onBlur: _onBlur }] =
     useCustomContext(DDropdownContext);
+  const [{ onPopupTrigger }] = useCustomContext(DDropdownSubContext);
   //#endregion
 
   //#region Ref
@@ -43,19 +49,9 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
 
-  const popupVisible = useMemo(() => {
-    let visible = false;
-    if (dropdownPopupIds) {
-      for (const popupIds of dropdownPopupIds.values()) {
-        const popup = popupIds.find((item) => item.id === dId);
-        if (popup) {
-          visible = popup.visible;
-          break;
-        }
-      }
-    }
-    return visible;
-  }, [dId, dropdownPopupIds]);
+  const [currentPopupVisible, setCurrentPopupVisible] = useImmer(false);
+  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(false);
+  const popupVisible = currentPopupVisible || childrenPopupVisiable;
 
   const _id = id ?? `${dPrefix}dropdown-sub-${toId(dId)}`;
 
@@ -75,9 +71,9 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   const handlePopupVisibleChange = useCallback(
     (visible) => {
-      onPopupIdChange?.(dId, visible);
+      setCurrentPopupVisible(visible);
     },
-    [dId, onPopupIdChange]
+    [setCurrentPopupVisible]
   );
 
   const handleFocus = useCallback(
@@ -109,10 +105,29 @@ export function DDropdownSub(props: DDropdownSubProps) {
     }
     setActiveDescendant(isFocus ? dropdownFocusId?.[1] : undefined);
   }, [dropdownFocusId, ulEl, setActiveDescendant]);
+
+  useEffect(() => {
+    if (!dropdownVisible) {
+      setCurrentPopupVisible(false);
+    }
+  }, [dropdownVisible, setCurrentPopupVisible]);
+
+  useEffect(() => {
+    onPopupTrigger?.(popupVisible);
+  }, [onPopupTrigger, popupVisible]);
   //#endregion
 
+  const contextValue = useMemo<DDropdownSubContextData>(
+    () => ({
+      onPopupTrigger: (visible) => {
+        setChildrenPopupVisiable(visible);
+      },
+    }),
+    [setChildrenPopupVisiable]
+  );
+
   return (
-    <>
+    <DDropdownSubContext.Provider value={contextValue}>
       <li
         {...restProps}
         ref={liRef}
@@ -159,6 +174,6 @@ export function DDropdownSub(props: DDropdownSubProps) {
           onVisibleChange={handlePopupVisibleChange}
         />
       )}
-    </>
+    </DDropdownSubContext.Provider>
   );
 }

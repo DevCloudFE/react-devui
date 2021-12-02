@@ -11,6 +11,11 @@ import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
 import { DMenuContext } from './Menu';
 
+export interface DMenuSubContextData {
+  onPopupTrigger: (visible: boolean) => void;
+}
+export const DMenuSubContext = React.createContext<DMenuSubContextData | null>(null);
+
 export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dIcon?: React.ReactNode;
@@ -45,14 +50,14 @@ export function DMenuSub(props: DMenuSubProps) {
       menuActiveId,
       menuExpandIds,
       menuFocusId,
-      menuPopupIds,
       menuCurrentData,
       onExpandChange,
-      onPopupIdChange,
       onFocus: _onFocus,
       onBlur: _onBlur,
     },
   ] = useCustomContext(DMenuContext);
+  const [{ onPopupTrigger }] = useCustomContext(DMenuSubContext);
+
   //#endregion
 
   //#region Ref
@@ -66,19 +71,9 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const expand = menuExpandIds?.has(dId) ?? false;
   const popupMode = menuMode !== 'vertical';
-  const popupVisible = useMemo(() => {
-    let visible = false;
-    if (menuPopupIds) {
-      for (const popupIds of menuPopupIds.values()) {
-        const popup = popupIds.find((item) => item.id === dId);
-        if (popup) {
-          visible = popup.visible;
-          break;
-        }
-      }
-    }
-    return visible;
-  }, [dId, menuPopupIds]);
+  const [currentPopupVisible, setCurrentPopupVisible] = useImmer(false);
+  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(false);
+  const popupVisible = currentPopupVisible || childrenPopupVisiable;
   const inNav = menuCurrentData?.navIds.has(dId) ?? false;
   const horizontal = menuMode === 'horizontal' && inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
@@ -147,9 +142,9 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const handlePopupVisibleChange = useCallback(
     (visible) => {
-      onPopupIdChange?.(dId, visible);
+      setCurrentPopupVisible(visible);
     },
-    [dId, onPopupIdChange]
+    [setCurrentPopupVisible]
   );
 
   const handleFocus = useCallback(
@@ -181,6 +176,16 @@ export function DMenuSub(props: DMenuSubProps) {
     }
     setActiveDescendant(isFocus ? menuFocusId?.[1] : undefined);
   }, [menuCollapseEl, menuFocusId, menuPopupEl, popupMode, setActiveDescendant]);
+
+  useEffect(() => {
+    if (!popupMode) {
+      setCurrentPopupVisible(false);
+    }
+  }, [popupMode, setCurrentPopupVisible]);
+
+  useEffect(() => {
+    onPopupTrigger?.(popupVisible);
+  }, [onPopupTrigger, popupVisible]);
   //#endregion
 
   const childs = useMemo(() => {
@@ -217,72 +222,82 @@ export function DMenuSub(props: DMenuSubProps) {
     </ul>
   );
 
+  const contextValue = useMemo<DMenuSubContextData>(
+    () => ({
+      onPopupTrigger: (visible) => {
+        setChildrenPopupVisiable(visible);
+      },
+    }),
+    [setChildrenPopupVisiable]
+  );
+
   return (
-    <DCollapseTransition
-      dEl={menuCollapseEl}
-      dVisible={popupMode ? false : expand}
-      dDuring={200}
-      dRender={(hidden) => (
-        <>
-          <li
-            {...restProps}
-            ref={liRef}
-            id={_id}
-            className={getClassName(className, `${dPrefix}menu-sub`, {
-              'is-active': isActive,
-              'is-expand': popupMode ? popupVisible : expand,
-              'is-horizontal': horizontal,
-              'is-icon': menuMode === 'icon' && inNav,
-              'is-disabled': dDisabled,
-            })}
-            style={{
-              ...style,
-              paddingLeft: 16 + __level * 20,
-            }}
-            role="menuitem"
-            tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-            aria-haspopup={true}
-            aria-expanded={popupMode ? popupVisible : expand}
-            aria-disabled={dDisabled}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          >
-            <div className={`${dPrefix}menu-sub__indicator`}>
-              <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
-            </div>
-            {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
-            <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
-            <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
-              <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-            </DIcon>
-          </li>
-          {!dDisabled && (
-            <>
-              {popupMode ? (
-                <DPopup
-                  className={`${dPrefix}menu-sub__popup`}
-                  dVisible={[popupVisible]}
-                  dPopupContent={menuNode({ ref: menuPopupRef })}
-                  dTrigger={menuExpandTrigger}
-                  dArrow={false}
-                  dCustomPopup={customTransition}
-                  dTriggerEl={liEl}
-                  dMouseLeaveDelay={150 + 116 + 50}
-                  onVisibleChange={handlePopupVisibleChange}
-                />
-              ) : (
-                <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
-              )}
-              {popupMode && hidden
-                ? null
-                : menuNode({
-                    ref: menuCollapseRef,
-                    style: { display: hidden ? 'none' : undefined },
-                  })}
-            </>
-          )}
-        </>
-      )}
-    />
+    <DMenuSubContext.Provider value={contextValue}>
+      <DCollapseTransition
+        dEl={menuCollapseEl}
+        dVisible={popupMode ? false : expand}
+        dDuring={200}
+        dRender={(hidden) => (
+          <>
+            <li
+              {...restProps}
+              ref={liRef}
+              id={_id}
+              className={getClassName(className, `${dPrefix}menu-sub`, {
+                'is-active': isActive,
+                'is-expand': popupMode ? popupVisible : expand,
+                'is-horizontal': horizontal,
+                'is-icon': menuMode === 'icon' && inNav,
+                'is-disabled': dDisabled,
+              })}
+              style={{
+                ...style,
+                paddingLeft: 16 + __level * 20,
+              }}
+              role="menuitem"
+              tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+              aria-haspopup={true}
+              aria-expanded={popupMode ? popupVisible : expand}
+              aria-disabled={dDisabled}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            >
+              <div className={`${dPrefix}menu-sub__indicator`}>
+                <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
+              </div>
+              {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
+              <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
+              <DIcon className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate}>
+                <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
+              </DIcon>
+            </li>
+            {!dDisabled && (
+              <>
+                {popupMode ? (
+                  <DPopup
+                    className={`${dPrefix}menu-sub__popup`}
+                    dVisible={[popupVisible]}
+                    dPopupContent={menuNode({ ref: menuPopupRef })}
+                    dTrigger={menuExpandTrigger}
+                    dArrow={false}
+                    dCustomPopup={customTransition}
+                    dTriggerEl={liEl}
+                    onVisibleChange={handlePopupVisibleChange}
+                  />
+                ) : (
+                  <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
+                )}
+                {popupMode && hidden
+                  ? null
+                  : menuNode({
+                      ref: menuCollapseRef,
+                      style: { display: hidden ? 'none' : undefined },
+                    })}
+              </>
+            )}
+          </>
+        )}
+      />
+    </DMenuSubContext.Provider>
   );
 }

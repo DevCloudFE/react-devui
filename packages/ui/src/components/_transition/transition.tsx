@@ -4,10 +4,9 @@ import type { ThrottleByAnimationFrame } from '../../hooks/throttle-and-debounce
 import { isFunction, isNumber, isString } from 'lodash';
 import React, { useImperativeHandle, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { count, filter, first, mergeWith, take, timer } from 'rxjs';
 
 import { useAsync, useThrottle, useImmer } from '../../hooks';
-import { CssRecord, getTransitinNum, getMaxTime } from './utils';
+import { CssRecord, getMaxTime } from './utils';
 
 export interface DTransitionStateList {
   'enter-from'?: Partial<CSSStyleDeclaration>;
@@ -79,35 +78,23 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
         });
         callbackList[dVisible ? 'enter' : 'leave']?.();
 
-        const transitinNum = getTransitinNum(
-          dVisible
-            ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
-            : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
-        );
-
         const timeout = getMaxTime(
           dVisible
             ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
             : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
         );
 
-        asyncCapture
-          .fromEvent(dEl, 'transitionend')
-          .pipe(filter((e) => e.target === dEl))
-          .pipe(take(transitinNum), count())
-          .pipe(mergeWith(timer(timeout + 5)))
-          .pipe(first())
-          .subscribe(() => {
-            cssRecord.backCss(dEl);
-            cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
-            callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.();
-            flushSync(() => {
-              if (!dVisible) {
-                setHidden(true);
-              }
-            });
-            throttleByAnimationFrame.continueThrottle();
+        asyncCapture.setTimeout(() => {
+          cssRecord.backCss(dEl);
+          cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
+          callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.();
+          flushSync(() => {
+            if (!dVisible) {
+              setHidden(true);
+            }
           });
+          throttleByAnimationFrame.continueThrottle();
+        }, timeout);
       }, 20);
     }
   };

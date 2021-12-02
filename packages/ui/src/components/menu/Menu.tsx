@@ -19,14 +19,12 @@ export interface DMenuContextData {
   menuActiveId: string | null;
   menuExpandIds: Set<string>;
   menuFocusId: [string, string] | null;
-  menuPopupIds: Map<string, Array<{ id: string; visible: boolean }>>;
   menuCurrentData: {
     navIds: Set<string>;
     ids: Map<string, Set<string>>;
   };
   onActiveChange: (id: string) => void;
   onExpandChange: (id: string, expand: boolean) => void;
-  onPopupIdChange: (id: string, visible: boolean) => void;
   onFocus: (dId: string, id: string) => void;
   onBlur: () => void;
 }
@@ -76,7 +74,6 @@ export function DMenu(props: DMenuProps) {
 
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
-  const [popupIds, setPopupIds] = useImmer<DMenuContextData['menuPopupIds']>(() => new Map());
 
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(null, dActive, onActiveChange);
   const [expandIds, changeExpandIds] = useTwoWayBinding(new Set<string>(), dExpands, onExpandsChange);
@@ -93,14 +90,6 @@ export function DMenu(props: DMenuProps) {
   );
 
   //#region DidUpdate
-  useEffect(() => {
-    if (dMode === 'vertical') {
-      setPopupIds((draft) => {
-        draft.clear();
-      });
-    }
-  }, [dMode, setPopupIds]);
-
   useEffect(() => {
     let isFocus = false;
     if (focusId) {
@@ -121,7 +110,6 @@ export function DMenu(props: DMenuProps) {
       menuActiveId: activeId,
       menuExpandIds: expandIds,
       menuFocusId: focusId,
-      menuPopupIds: popupIds,
       menuCurrentData: dataRef.current,
       onActiveChange: (id) => {
         changeActiveId(id);
@@ -146,58 +134,6 @@ export function DMenu(props: DMenuProps) {
         });
         changeExpandIds(newExpandIds);
       },
-      onPopupIdChange: (id, visible) => {
-        setPopupIds((draft) => {
-          if (visible) {
-            let saved = null;
-            for (const sameLevelIds of draft.values()) {
-              saved = sameLevelIds.find((item) => item.id === id);
-              if (saved) {
-                saved.visible = true;
-                break;
-              }
-            }
-            if (!saved) {
-              if (dataRef.current.navIds.has(id)) {
-                draft.set(id, [{ id, visible }]);
-              } else {
-                for (const sameLevelIds of draft.values()) {
-                  if (sameLevelIds.length > 0) {
-                    const lastLevelId = sameLevelIds[sameLevelIds.length - 1].id;
-                    if (dataRef.current.ids.get(lastLevelId)?.has(id)) {
-                      sameLevelIds.push({ id, visible });
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-          } else {
-            let hasFind = false;
-            for (const sameLevelIds of draft.values()) {
-              if (hasFind) {
-                break;
-              }
-              for (const popup of sameLevelIds) {
-                if (popup.id === id) {
-                  popup.visible = visible;
-                  hasFind = true;
-                  break;
-                }
-              }
-              if (hasFind) {
-                for (let index = sameLevelIds.length - 1; index >= 0; index--) {
-                  if (sameLevelIds[index].visible === false) {
-                    sameLevelIds.pop();
-                  } else {
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        });
-      },
       onFocus: (dId, id) => {
         setFocusId([dId, id]);
       },
@@ -205,7 +141,7 @@ export function DMenu(props: DMenuProps) {
         setFocusId(null);
       },
     }),
-    [activeId, changeActiveId, changeExpandIds, dExpandOne, dMode, expandIds, expandTrigger, focusId, popupIds, setFocusId, setPopupIds]
+    [activeId, changeActiveId, changeExpandIds, dExpandOne, dMode, expandIds, expandTrigger, focusId, setFocusId]
   );
 
   const childs = useMemo(() => {
@@ -253,20 +189,12 @@ export function DMenu(props: DMenuProps) {
         onMouseLeave?.(e);
         renderProps.onMouseLeave?.(e);
       },
-      onFocus: (e) => {
-        onFocus?.(e);
-        renderProps.onFocus?.(e);
-      },
-      onBlur: (e) => {
-        onBlur?.(e);
-        renderProps.onBlur?.(e);
-      },
       onClick: (e) => {
         onClick?.(e);
         renderProps.onClick?.(e);
       },
     }),
-    [onBlur, onClick, onFocus, onMouseEnter, onMouseLeave]
+    [onClick, onMouseEnter, onMouseLeave]
   );
 
   return (

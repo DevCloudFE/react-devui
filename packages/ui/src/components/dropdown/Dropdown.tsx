@@ -8,11 +8,10 @@ import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 
 export interface DDropdownContextData {
-  dropdownPopupTrigger?: 'hover' | 'click';
+  dropdownVisible: boolean;
+  dropdownPopupTrigger: 'hover' | 'click';
   dropdownFocusId: [string, string] | null;
-  dropdownPopupIds: Map<string, Array<{ id: string; visible: boolean }>>;
   onItemClick: (id: string) => void;
-  onPopupIdChange: (id: string, visible: boolean) => void;
   onFocus: (dId: string, id: string) => void;
   onBlur: () => void;
 }
@@ -64,7 +63,6 @@ export function DDropdown(props: DDropdownProps) {
 
   const [focusId, setFocusId] = useImmer<DDropdownContextData['dropdownFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
-  const [popupIds, setPopupIds] = useImmer<DDropdownContextData['dropdownPopupIds']>(() => new Map());
 
   const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
 
@@ -92,14 +90,6 @@ export function DDropdown(props: DDropdownProps) {
 
   //#region DidUpdate
   useEffect(() => {
-    if (!visible) {
-      setPopupIds((draft) => {
-        draft.clear();
-      });
-    }
-  }, [setPopupIds, visible]);
-
-  useEffect(() => {
     let isFocus = false;
     if (focusId) {
       navEl?.childNodes.forEach((child) => {
@@ -114,9 +104,9 @@ export function DDropdown(props: DDropdownProps) {
 
   const contextValue = useMemo<DDropdownContextData>(
     () => ({
+      dropdownVisible: visible,
       dropdownPopupTrigger: dSubTrigger,
       dropdownFocusId: focusId,
-      dropdownPopupIds: popupIds,
       onItemClick: (id) => {
         onItemClick?.(id);
 
@@ -126,58 +116,6 @@ export function DDropdown(props: DDropdownProps) {
           changeVisible(false);
         }, 20);
       },
-      onPopupIdChange: (id, visible) => {
-        setPopupIds((draft) => {
-          if (visible) {
-            let saved = null;
-            for (const sameLevelIds of draft.values()) {
-              saved = sameLevelIds.find((item) => item.id === id);
-              if (saved) {
-                saved.visible = true;
-                break;
-              }
-            }
-            if (!saved) {
-              if (dataRef.current.navIds.has(id)) {
-                draft.set(id, [{ id, visible }]);
-              } else {
-                for (const sameLevelIds of draft.values()) {
-                  if (sameLevelIds.length > 0) {
-                    const lastLevelId = sameLevelIds[sameLevelIds.length - 1].id;
-                    if (dataRef.current.ids.get(lastLevelId)?.has(id)) {
-                      sameLevelIds.push({ id, visible });
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-          } else {
-            let hasFind = false;
-            for (const sameLevelIds of draft.values()) {
-              if (hasFind) {
-                break;
-              }
-              for (const popup of sameLevelIds) {
-                if (popup.id === id) {
-                  popup.visible = visible;
-                  hasFind = true;
-                  break;
-                }
-              }
-              if (hasFind) {
-                for (let index = sameLevelIds.length - 1; index >= 0; index--) {
-                  if (sameLevelIds[index].visible === false) {
-                    sameLevelIds.pop();
-                  } else {
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        });
-      },
       onFocus: (dId, id) => {
         setFocusId([dId, id]);
       },
@@ -185,7 +123,7 @@ export function DDropdown(props: DDropdownProps) {
         setFocusId(null);
       },
     }),
-    [asyncCapture, changeVisible, dSubTrigger, focusId, onItemClick, popupIds, setFocusId, setPopupIds]
+    [asyncCapture, changeVisible, dSubTrigger, focusId, onItemClick, setFocusId]
   );
 
   const childs = useMemo(() => {
