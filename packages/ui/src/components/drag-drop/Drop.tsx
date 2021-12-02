@@ -52,6 +52,7 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
   });
 
   const [isOuter, setIsOuter] = useImmer(false);
+  const [dragEnd, setDragEnd] = useImmer(false);
 
   const [orderIds, setOrderIds] = useState<string[]>([]);
   const [orderChildren, setOrderChildren] = useImmer<React.ReactElement[]>([]);
@@ -60,10 +61,15 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
 
   //#region DidUpdate
   useEffect(() => {
+    if (dragEnd) {
+      onOrderChange?.(orderIds);
+    }
+  }, [dragEnd, onOrderChange, orderIds]);
+
+  useEffect(() => {
     const _childs = React.Children.toArray(children) as Array<React.ReactElement<DDragProps>>;
     const allIds = _childs.map((child) => child.props.dId as string);
     const newOrderIds = cloneDeep(orderIds.filter((id) => allIds.includes(id)));
-    newOrderIds.length = allIds.length;
     const addIndex = allIds.findIndex((id) => !newOrderIds.includes(id));
     if (addIndex !== -1) {
       const addIds: string[] = [];
@@ -92,6 +98,7 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
       dropCurrentData: dataRef.current,
       dropPlaceholder: dPlaceholder,
       onDragStart: (id) => {
+        setDragEnd(false);
         onDragStart?.(id);
       },
       onDrag: (dragId, rect) => {
@@ -189,14 +196,14 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
 
         if (!isEqual(newOrderIds, orderIds)) {
           setOrderIds(newOrderIds);
-          onOrderChange?.(newOrderIds);
         }
       },
       onDragEnd: (id) => {
+        setDragEnd(true);
         onDragEnd?.(id);
       },
     }),
-    [containerRef, dDirection, dPlaceholder, isOuter, onDrag, onDragEnd, onDragStart, onOrderChange, orderIds, setIsOuter, setOrderIds]
+    [containerRef, dDirection, dPlaceholder, isOuter, onDrag, onDragEnd, onDragStart, orderIds, setDragEnd, setIsOuter]
   );
 
   useImperativeHandle(ref, () => orderIds, [orderIds]);

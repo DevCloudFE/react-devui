@@ -5,7 +5,6 @@
   align-items: center;
   height: 32px;
   margin: 0;
-  padding: 0 24px 0 12px;
 
   list-style: none;
   cursor: pointer;
@@ -64,10 +63,14 @@
 }
 
 @include b(dropdown-item) {
+  padding: 0 12px;
+
   @include dropdown-base(dropdown-item);
 }
 
 @include b(dropdown-sub) {
+  padding: 0 24px 0 12px;
+
   @include dropdown-base(dropdown-item);
 
   @include e(arrow) {
