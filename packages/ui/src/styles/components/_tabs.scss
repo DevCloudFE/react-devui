@@ -1,6 +1,6 @@
 @include b(tabs) {
   --#{$variable-prefix}tabs-tab-size: 44px;
-  --#{$variable-prefix}tabs-tab-margin: 32px;
+  --#{$variable-prefix}tabs-tab-gap: 0 32px;
   --#{$variable-prefix}tabs-tab-padding: 16px;
 
   position: relative;
@@ -38,10 +38,15 @@
     opacity: 0;
   }
 
-  @include e(button) {
+  @include e(button-container) {
     position: sticky;
     z-index: 6;
 
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  @include e(button) {
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
@@ -65,12 +70,14 @@
     }
 
     &.is-more {
+      border: 1px solid transparent;
+
       box-shadow: -3px 0 8px -2px var(--#{$variable-prefix}shadow-color);
 
       transition: color 0.2s linear, box-shadow 166ms linear;
 
       &.is-end {
-        border-left: 1px solid var(--#{$variable-prefix}indicator-background-color);
+        border-left-color: var(--#{$variable-prefix}indicator-background-color);
 
         box-shadow: none;
       }
@@ -91,17 +98,18 @@
       }
     }
 
-    .#{$variable-prefix}tabs__button {
+    .#{$variable-prefix}tabs__button-container {
       right: 0;
     }
 
     .#{$variable-prefix}tabs__tablist-wrapper {
       width: 100%;
       padding-bottom: 2px;
-      overflow-x: auto;
+      overflow: auto hidden;
     }
 
     .#{$variable-prefix}tabs__tablist {
+      gap: var(--#{$variable-prefix}tabs-tab-gap);
       min-width: 100%;
 
       &::after {
@@ -123,12 +131,6 @@
       transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
     }
 
-    .#{$variable-prefix}tab + .#{$variable-prefix}tab,
-    .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
-    .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
-      margin-left: var(--#{$variable-prefix}tabs-tab-margin);
-    }
-
     .#{$variable-prefix}tabpanel {
       margin-top: 20px;
     }
@@ -143,17 +145,18 @@
       }
     }
 
-    .#{$variable-prefix}tabs__button {
+    .#{$variable-prefix}tabs__button-container {
       right: 0;
     }
 
     .#{$variable-prefix}tabs__tablist-wrapper {
       width: 100%;
       padding-top: 2px;
-      overflow-x: auto;
+      overflow: auto hidden;
     }
 
     .#{$variable-prefix}tabs__tablist {
+      gap: var(--#{$variable-prefix}tabs-tab-gap);
       min-width: 100%;
 
       &::after {
@@ -175,12 +178,6 @@
       transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
     }
 
-    .#{$variable-prefix}tab + .#{$variable-prefix}tab,
-    .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
-    .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
-      margin-left: var(--#{$variable-prefix}tabs-tab-margin);
-    }
-
     .#{$variable-prefix}tabpanel {
       margin-bottom: 20px;
     }
@@ -196,9 +193,14 @@
       }
     }
 
-    .#{$variable-prefix}tabs__button {
+    .#{$variable-prefix}tabs__button-container {
       bottom: 0;
 
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .#{$variable-prefix}tabs__button {
       width: 100%;
       height: 36px;
 
@@ -206,8 +208,8 @@
         box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
 
         &.is-end {
-          border-top: 1px solid var(--#{$variable-prefix}indicator-background-color);
-          border-left: none;
+          border-top-color: var(--#{$variable-prefix}indicator-background-color);
+          border-left-color: transparent;
 
           box-shadow: none;
         }
@@ -216,7 +218,7 @@
 
     .#{$variable-prefix}tabs__tablist-wrapper {
       padding-right: 2px;
-      overflow-y: auto;
+      overflow: hidden auto;
     }
 
     .#{$variable-prefix}tabs__tablist {
@@ -262,9 +264,14 @@
       }
     }
 
-    .#{$variable-prefix}tabs__button {
+    .#{$variable-prefix}tabs__button-container {
       bottom: 0;
 
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .#{$variable-prefix}tabs__button {
       width: 100%;
       height: 36px;
 
@@ -272,8 +279,8 @@
         box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
 
         &.is-end {
-          border-top: 1px solid var(--#{$variable-prefix}indicator-background-color);
-          border-left: none;
+          border-top-color: var(--#{$variable-prefix}indicator-background-color);
+          border-left-color: transparent;
 
           box-shadow: none;
         }
@@ -282,7 +289,7 @@
 
     .#{$variable-prefix}tabs__tablist-wrapper {
       padding-left: 2px;
-      overflow-y: auto;
+      overflow: hidden auto;
     }
 
     .#{$variable-prefix}tabs__tablist {
@@ -354,6 +361,8 @@
     }
 
     .#{$variable-prefix}tabs__tablist {
+      gap: 0;
+
       &::after {
         content: none;
       }
@@ -363,12 +372,6 @@
     &.#{$variable-prefix}tabs--bottom {
       .#{$variable-prefix}tab {
         padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
-      }
-
-      .#{$variable-prefix}tab + .#{$variable-prefix}tab,
-      .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
-      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
-        margin-left: 0;
       }
 
       .#{$variable-prefix}tabs__slider-indicator {
@@ -408,14 +411,12 @@
   @include m(wrap) {
     &.#{$variable-prefix}tabs--top,
     &.#{$variable-prefix}tabs--bottom {
-      .#{$variable-prefix}tab {
-        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+      .#{$variable-prefix}tabs__tablist {
+        gap: 0;
       }
 
-      .#{$variable-prefix}tab + .#{$variable-prefix}tab,
-      .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
-      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
-        margin-left: 0;
+      .#{$variable-prefix}tab {
+        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
       }
 
       .#{$variable-prefix}tabs__wrap-indicator {
@@ -469,7 +470,7 @@
 
   @include m(larger) {
     --#{$variable-prefix}tabs-tab-size: 52px;
-    --#{$variable-prefix}tabs-tab-margin: 36px;
+    --#{$variable-prefix}tabs-tab-gap: 36px;
     --#{$variable-prefix}tabs-tab-padding: 20px;
 
     .#{$variable-prefix}tabs__tablist {
@@ -479,7 +480,7 @@
 
   @include m(smaller) {
     --#{$variable-prefix}tabs-tab-size: 36px;
-    --#{$variable-prefix}tabs-tab-margin: 24px;
+    --#{$variable-prefix}tabs-tab-gap: 24px;
     --#{$variable-prefix}tabs-tab-padding: 12px;
 
     .#{$variable-prefix}tabs__tablist {
@@ -536,14 +537,6 @@
       color: var(--#{$variable-prefix}color-step-500);
 
       font-size: 12px;
-    }
-  }
-
-  @at-root {
-    .#{$variable-prefix}tabs:not(.#{$variable-prefix}tabs--left):not(.#{$variable-prefix}tabs--right):not(.#{$variable-prefix}tabs--slider):not(.#{$variable-prefix}tabs--wrap) {
-      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__button {
-        margin-left: var(--#{$variable-prefix}tabs-tab-margin);
-      }
     }
   }
 }

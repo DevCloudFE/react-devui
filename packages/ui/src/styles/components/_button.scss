@@ -235,6 +235,10 @@
   display: inline-flex;
   align-items: center;
 
+  .#{$variable-prefix}button {
+    flex: 0 0 auto;
+  }
+
   & + & {
     margin-left: 10px;
   }

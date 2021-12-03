@@ -289,54 +289,56 @@ export function DTabs(props: DTabsProps) {
             ) : (
               childs
             )}
-            {listOverflow && (
-              <DDropdown
-                className={`${dPrefix}tabs__dropdown`}
-                dTriggerNode={
-                  <div
-                    className={getClassName(`${dPrefix}tabs__button`, 'is-more', {
-                      'is-end': scrollEnd,
-                    })}
-                    style={{
-                      right: isHorizontal && onAddClick ? 52 : undefined,
-                      bottom: !isHorizontal && onAddClick ? 36 : undefined,
-                    }}
-                    tabIndex={-1}
-                    aria-label={t('More')}
-                  >
-                    <DIcon dSize={18}>
-                      <path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
-                    </DIcon>
-                  </div>
-                }
-                dCloseOnItemClick={false}
-                dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
-                {...dDropdownProps}
-              >
-                {dropdownList.map((item) => (
-                  <DDropdownItem key={item.props.dId} dId={item.props.dId}>
-                    {React.cloneElement(item, {
-                      ...item.props,
-                      __dropdown: true,
-                    })}
-                  </DDropdownItem>
-                ))}
-              </DDropdown>
-            )}
-            {onAddClick && (
-              <div
-                className={getClassName(`${dPrefix}tabs__button`, 'is-add')}
-                role="button"
-                tabIndex={-1}
-                aria-label={t('Add')}
-                onClick={handleAddClick}
-              >
-                <DIcon dSize={18}>
-                  <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-                  <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
-                </DIcon>
-              </div>
-            )}
+            <div className={`${dPrefix}tabs__button-container`}>
+              {listOverflow && (
+                <DDropdown
+                  className={`${dPrefix}tabs__dropdown`}
+                  dTriggerNode={
+                    <div
+                      className={getClassName(`${dPrefix}tabs__button`, 'is-more', {
+                        'is-end': scrollEnd,
+                      })}
+                      style={{
+                        right: isHorizontal && onAddClick ? 52 : undefined,
+                        bottom: !isHorizontal && onAddClick ? 36 : undefined,
+                      }}
+                      tabIndex={-1}
+                      aria-label={t('More')}
+                    >
+                      <DIcon dSize={18}>
+                        <path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
+                      </DIcon>
+                    </div>
+                  }
+                  dCloseOnItemClick={false}
+                  dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
+                  {...dDropdownProps}
+                >
+                  {dropdownList.map((item) => (
+                    <DDropdownItem key={item.props.dId} dId={item.props.dId}>
+                      {React.cloneElement(item, {
+                        ...item.props,
+                        __dropdown: true,
+                      })}
+                    </DDropdownItem>
+                  ))}
+                </DDropdown>
+              )}
+              {onAddClick && (
+                <div
+                  className={getClassName(`${dPrefix}tabs__button`, 'is-add')}
+                  role="button"
+                  tabIndex={-1}
+                  aria-label={t('Add')}
+                  onClick={handleAddClick}
+                >
+                  <DIcon dSize={18}>
+                    <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                    <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                  </DIcon>
+                </div>
+              )}
+            </div>
             {activeId === null ? null : dType === 'wrap' ? (
               <div className={`${dPrefix}tabs__wrap-indicator`} style={dotStyle}></div>
             ) : dType === 'slider' ? (

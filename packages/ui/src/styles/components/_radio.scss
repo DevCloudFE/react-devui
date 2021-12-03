@@ -1,5 +1,9 @@
 @mixin button-radio {
-  --#{$variable-prefix}radio-margin: 0 0 0 -1px;
+  flex-wrap: nowrap;
+
+  .#{$variable-prefix}radio + .#{$variable-prefix}radio {
+    margin-left: -1px;
+  }
 
   .#{$variable-prefix}radio {
     border: 1px solid var(--#{$variable-prefix}color-step-150);
@@ -51,7 +55,10 @@
   }
 
   &.#{$variable-prefix}radio-group.is-vertical {
-    --#{$variable-prefix}radio-margin: -1px 0 0 0;
+    .#{$variable-prefix}radio + .#{$variable-prefix}radio {
+      margin-top: -1px;
+      margin-left: 0;
+    }
   }
 }
 
@@ -187,14 +194,21 @@
 }
 
 @include b(radio-group) {
-  --#{$variable-prefix}radio-margin: 0 0 0 12px;
   --#{$variable-prefix}radio-padding: 0 16px;
   --#{$variable-prefix}radio-height: 32px;
 
   position: relative;
 
-  .#{$variable-prefix}radio + .#{$variable-prefix}radio {
-    margin: var(--#{$variable-prefix}radio-margin);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  &:not(.#{$variable-prefix}radio-group--outline):not(.#{$variable-prefix}radio-group--fill) {
+    gap: 8px 12px;
+  }
+
+  .#{$variable-prefix}radio {
+    flex: 0 0 auto;
   }
 
   @include m(outline) {
@@ -234,13 +248,10 @@
   }
 
   @include when(vertical) {
-    --#{$variable-prefix}radio-margin: 10px 0 0 0;
-
-    display: inline-block;
+    flex-direction: column;
+    align-items: flex-start;
 
     .#{$variable-prefix}radio {
-      display: flex;
-
       &:first-of-type {
         border-radius: 2px 2px 0 0;
       }
