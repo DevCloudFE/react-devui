@@ -3,7 +3,7 @@ import type { DMenuItemProps } from './MenuItem';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DMenuContext } from './Menu';
 
@@ -32,6 +32,8 @@ export function DMenuGroup(props: DMenuGroupProps) {
   const dPrefix = useDPrefixConfig();
   const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
+
+  const [t] = useTranslation('Common');
 
   const _id = id ?? `${dPrefix}menu-group-${toId(dId)}`;
 
@@ -84,7 +86,13 @@ export function DMenuGroup(props: DMenuGroupProps) {
       >
         {dTitle}
       </div>
-      {childs}
+      {React.Children.count(childs) === 0 ? (
+        <span className={`${dPrefix}menu__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+          {t('No Data')}
+        </span>
+      ) : (
+        childs
+      )}
     </>
   );
 }

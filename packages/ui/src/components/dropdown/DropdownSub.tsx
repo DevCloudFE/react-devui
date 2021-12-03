@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
@@ -46,6 +46,8 @@ export function DDropdownSub(props: DDropdownSubProps) {
   const [ulEl, ulRef] = useRefCallback<HTMLUListElement>();
   const [liEl, liRef] = useRefCallback<HTMLLIElement>();
   //#endregion
+
+  const [t] = useTranslation('Common');
 
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
 
@@ -163,7 +165,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
               aria-orientation="vertical"
               aria-activedescendant={activedescendant}
             >
-              {children}
+              {React.Children.count(children) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : children}
             </ul>
           }
           dTrigger={dropdownPopupTrigger}

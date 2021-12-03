@@ -3,7 +3,7 @@ import type { DMenuItemProps } from './MenuItem';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -65,6 +65,8 @@ export function DMenuSub(props: DMenuSubProps) {
   const [menuPopupEl, menuPopupRef] = useRefCallback<HTMLUListElement>();
   const [liEl, liRef] = useRefCallback<HTMLLIElement>();
   //#endregion
+
+  const [t] = useTranslation('Common');
 
   const [menuWidth, setMenuWidth] = useImmer<number | undefined>(undefined);
   const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
@@ -218,7 +220,13 @@ export function DMenuSub(props: DMenuSubProps) {
       aria-orientation="vertical"
       aria-activedescendant={activedescendant}
     >
-      {childs}
+      {React.Children.count(childs) === 0 ? (
+        <span className={`${dPrefix}menu__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+          {t('No Data')}
+        </span>
+      ) : (
+        childs
+      )}
     </ul>
   );
 

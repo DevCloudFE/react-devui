@@ -1,4 +1,10 @@
 {
+  "Common": {
+    "No Data": {
+      "en-US": "No Data",
+      "zh-Hant": "无数据"
+    }
+  },
   "DFooter": {
     "Cancel": {
       "en-US": "Cancel",

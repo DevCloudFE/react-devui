@@ -3,7 +3,16 @@ import type { DDropdownItemProps } from './DropdownItem';
 
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useId, useAsync } from '../../hooks';
+import {
+  useDPrefixConfig,
+  useDComponentConfig,
+  useImmer,
+  useRefCallback,
+  useTwoWayBinding,
+  useId,
+  useAsync,
+  useTranslation,
+} from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 
@@ -60,6 +69,8 @@ export function DDropdown(props: DDropdownProps) {
     navIds: new Set(),
     ids: new Map(),
   });
+
+  const [t] = useTranslation('Common');
 
   const asyncCapture = useAsync();
 
@@ -183,7 +194,7 @@ export function DDropdown(props: DDropdownProps) {
             aria-orientation="vertical"
             aria-activedescendant={activedescendant}
           >
-            {childs}
+            {React.Children.count(childs) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : childs}
           </nav>
         }
         dCustomPopup={customTransition}
