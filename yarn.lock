@@ -10075,7 +10075,7 @@ raw-loader@^4.0.2:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-react-dom@^18.0.0-beta-0cc724c77-20211125:
+react-dom@^18.0.0-beta-149b420f6-20211119:
   version "18.0.0-beta-fdc1d617a-20211118"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.0.0-beta-fdc1d617a-20211118.tgz#0d2ddaa962fae1bbcf17c0eac5e3879d30793753"
   integrity sha512-BlA0NdAKE+Ibe5orAfHphf76ltL9+PiWsexrjVjtRcumrra3WH3rDYT+evXfLFBzxpbZDjhkL1oQ1/zCjKyWBA==
@@ -10157,10 +10157,10 @@ react-test-renderer@^16.0.0-0:
     react-is "^16.8.6"
     scheduler "^0.19.1"
 
-react@^18.0.0-beta-0cc724c77-20211125:
-  version "18.0.0-beta-fdc1d617a-20211118"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.0.0-beta-fdc1d617a-20211118.tgz#ed8dd1674ddcab02bfff88ba368ad4d44db79fa7"
-  integrity sha512-+02tXs7Wc5az4Aw+dWp7Vwmd68POpiJF0pD20dVCwS+W8xxQ9GFEJrd5VE4Nal+HWDkGzSb6dApxoahULK/8ZA==
+react@^18.0.0-beta-149b420f6-20211119:
+  version "18.0.0-beta-149b420f6-20211119"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.0.0-beta-149b420f6-20211119.tgz#4acc03dddb74a93aec83a8d6aadeb6b503061f4b"
+  integrity sha512-cxLRM4Yqhe5fYAeYyMEGphtDnSJmKrvrsQyXskcVViGN/EmONHbFfwt1lRUCiZyXX44+/NOgIJ1OjGX2rHmpdQ==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
