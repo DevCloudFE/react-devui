@@ -76,6 +76,7 @@ export function DTabs(props: DTabsProps) {
   const [scrollEnd, setScrollEnd] = useImmer(false);
   const [closeIds, setCloseIds] = useImmer<string[]>([]);
 
+  const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
     () => {
       const childs = React.Children.toArray(children) as Array<React.ReactElement<DTabProps>>;
@@ -91,10 +92,9 @@ export function DTabs(props: DTabsProps) {
 
   const updateDropdown = useCallback(() => {
     if (tablistWrapperEl) {
-      const isOverflow =
-        dPlacement === 'top' || dPlacement === 'bottom'
-          ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
-          : tablistWrapperEl.scrollHeight > tablistWrapperEl.clientHeight;
+      const isOverflow = isHorizontal
+        ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
+        : tablistWrapperEl.scrollHeight > tablistWrapperEl.clientHeight;
       setListOverflow(isOverflow);
 
       if (isOverflow) {
@@ -104,7 +104,7 @@ export function DTabs(props: DTabsProps) {
           const el = dataRef.current.tabEls.get(child.props.dId);
           if (el) {
             const elRect = el.getBoundingClientRect();
-            if (dPlacement === 'top' || dPlacement === 'bottom') {
+            if (isHorizontal) {
               if (elRect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || elRect.right < tablistWrapperRect.left) {
                 dropdownList.push(child);
               }
@@ -118,7 +118,19 @@ export function DTabs(props: DTabsProps) {
         setDropdownList(dropdownList);
       }
     }
-  }, [children, dPlacement, onAddClick, setDropdownList, setListOverflow, tablistWrapperEl]);
+  }, [children, isHorizontal, onAddClick, setDropdownList, setListOverflow, tablistWrapperEl]);
+
+  const checkScrollEnd = useCallback(() => {
+    if (tablistWrapperEl) {
+      setScrollEnd(
+        Math.abs(
+          isHorizontal
+            ? tablistWrapperEl.scrollWidth - tablistWrapperEl.scrollLeft - tablistWrapperEl.clientWidth
+            : tablistWrapperEl.scrollHeight - tablistWrapperEl.scrollTop - tablistWrapperEl.clientHeight
+        ) < 1
+      );
+    }
+  }, [isHorizontal, setScrollEnd, tablistWrapperEl]);
 
   const getDotStyle = useCallback(() => {
     dataRef.current.clearTid && dataRef.current.clearTid();
@@ -129,10 +141,10 @@ export function DTabs(props: DTabsProps) {
         const activeEl = tablistEl.querySelector(`.${dPrefix}tab.is-active`);
         if (activeEl) {
           const rect = activeEl.getBoundingClientRect();
-          if (dPlacement === 'top' || dPlacement === 'bottom') {
+          if (isHorizontal) {
             setDotStyle({ left: rect.left - tablistRect.left, width: rect.width, opacity: 1 });
           }
-          if (dPlacement === 'left' || dPlacement === 'right') {
+          if (!isHorizontal) {
             setDotStyle({ top: rect.top - tablistRect.top, opacity: 1 });
           }
         } else {
@@ -140,7 +152,7 @@ export function DTabs(props: DTabsProps) {
         }
       }
     }, 20);
-  }, [asyncCapture, dPlacement, dPrefix, setDotStyle, tablistEl]);
+  }, [asyncCapture, dPrefix, isHorizontal, setDotStyle, tablistEl]);
 
   const handleOrderChange = useCallback(
     (order) => {
@@ -150,24 +162,18 @@ export function DTabs(props: DTabsProps) {
     [getDotStyle, onOrderChange]
   );
 
+  const handleDragStart = useCallback(() => {
+    setDotStyle({});
+  }, [setDotStyle]);
+
   const handleAddClick = useCallback(() => {
     onAddClick?.();
   }, [onAddClick]);
 
-  const handleScroll = useCallback<React.UIEventHandler>(
-    (e) => {
-      setScrollEnd(
-        Math.abs(
-          dPlacement === 'top' || dPlacement === 'bottom'
-            ? e.currentTarget.scrollWidth - e.currentTarget.scrollLeft - e.currentTarget.clientWidth
-            : e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight
-        ) < 1
-      );
-
-      updateDropdown();
-    },
-    [dPlacement, setScrollEnd, updateDropdown]
-  );
+  const handleScroll = useCallback<React.UIEventHandler>(() => {
+    updateDropdown();
+    checkScrollEnd();
+  }, [checkScrollEnd, updateDropdown]);
 
   //#region DidUpdate
   useLayoutEffect(() => {
@@ -181,12 +187,19 @@ export function DTabs(props: DTabsProps) {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (tablistWrapperEl && tablistEl) {
-      asyncGroup.onResize(tablistEl, updateDropdown, false);
+      asyncGroup.onResize(
+        tablistEl,
+        () => {
+          updateDropdown();
+          checkScrollEnd();
+        },
+        false
+      );
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, tablistEl, tablistWrapperEl, updateDropdown]);
+  }, [asyncCapture, checkScrollEnd, tablistEl, tablistWrapperEl, updateDropdown]);
   //#endregion
 
   const [childs, tabpanels] = useMemo(() => {
@@ -259,14 +272,15 @@ export function DTabs(props: DTabsProps) {
             className={`${dPrefix}tabs__tablist`}
             role="tablist"
             aria-label={dTabAriaLabel}
-            aria-orientation={dPlacement === 'top' || dPlacement === 'bottom' ? 'horizontal' : 'vertical'}
+            aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
           >
             {dDraggable ? (
               <DDrop
                 dContainer={tablistWrapperEl}
-                dDirection={dPlacement === 'left' || dPlacement === 'right' ? 'vertical' : 'horizontal'}
+                dDirection={isHorizontal ? 'horizontal' : 'vertical'}
                 dPlaceholder={<DDragPlaceholder className={`${dPrefix}tabs__drop-placeholder`} />}
                 onOrderChange={handleOrderChange}
+                onDragStart={handleDragStart}
               >
                 {childs}
               </DDrop>
@@ -282,8 +296,8 @@ export function DTabs(props: DTabsProps) {
                       'is-end': scrollEnd,
                     })}
                     style={{
-                      right: (dPlacement === 'top' || dPlacement === 'bottom') && onAddClick ? 52 : undefined,
-                      bottom: (dPlacement === 'left' || dPlacement === 'right') && onAddClick ? 36 : undefined,
+                      right: isHorizontal && onAddClick ? 52 : undefined,
+                      bottom: !isHorizontal && onAddClick ? 36 : undefined,
                     }}
                     role="button"
                     tabIndex={-1}
