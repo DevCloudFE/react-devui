@@ -64,7 +64,7 @@ export function DDrawer(props: DDrawerProps) {
     style,
     children,
     ...restProps
-  } = useDComponentConfig('drawer', props);
+  } = useDComponentConfig(DDrawer.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

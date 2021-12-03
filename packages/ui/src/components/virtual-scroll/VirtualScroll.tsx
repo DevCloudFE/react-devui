@@ -29,7 +29,7 @@ export interface DVirtualScrollProps<T> {
 
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const { dListRender, dWidth, dHeight, dItemWidth, dItemHeight, dList, dItemRender, dCustomSize, onScrollEnd } = useDComponentConfig(
-    'virtual-scroll',
+    DVirtualScroll.name,
     props
   );
 

@@ -10,7 +10,7 @@ export interface DAnchorLinkProps extends React.LiHTMLAttributes<HTMLLIElement> 
 }
 
 export function DAnchorLink(props: DAnchorLinkProps) {
-  const { dLevel = 0, href, className, children, onClick, ...restProps } = useDComponentConfig('anchor-link', props);
+  const { dLevel = 0, href, className, children, onClick, ...restProps } = useDComponentConfig(DAnchorLink.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

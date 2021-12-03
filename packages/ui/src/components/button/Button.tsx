@@ -35,7 +35,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     children,
     onClick,
     ...restProps
-  } = useDComponentConfig('button', props);
+  } = useDComponentConfig(DButton.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

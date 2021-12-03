@@ -5,7 +5,7 @@ import { DDropContext } from './Drop';
 export type DDragPlaceholderProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function DDragPlaceholder(props: DDragPlaceholderProps) {
-  const { className, ...restProps } = useDComponentConfig('drag-placeholder', props);
+  const { className, ...restProps } = useDComponentConfig(DDragPlaceholder.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

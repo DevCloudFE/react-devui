@@ -29,7 +29,7 @@ export function DButtonGroup(props: DButtonGroupProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig('button-group', props);
+  } = useDComponentConfig(DButtonGroup.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

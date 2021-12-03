@@ -10,7 +10,7 @@ import { DDrawerContext } from './Drawer';
 export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
 
 export function DDrawerHeader(props: DDrawerHeaderProps) {
-  const { className, ...restProps } = useDComponentConfig('drawer-header', props);
+  const { className, ...restProps } = useDComponentConfig(DDrawerHeader.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

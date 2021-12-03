@@ -33,7 +33,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig('dropdown-sub', props);
+  } = useDComponentConfig(DDropdownSub.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

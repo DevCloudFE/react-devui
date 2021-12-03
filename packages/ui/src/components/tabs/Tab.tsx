@@ -28,7 +28,7 @@ export function DTab(props: DTabProps) {
     className,
     onClick,
     ...restProps
-  } = useDComponentConfig('tab', props);
+  } = useDComponentConfig(DTab.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

@@ -38,7 +38,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     style,
     children,
     ...restProps
-  } = useDComponentConfig('icon', props);
+  } = useDComponentConfig(DIcon.name, props);
 
   const paths = useMemo(() => {
     if (!children) {

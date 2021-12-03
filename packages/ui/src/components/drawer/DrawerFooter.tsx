@@ -15,7 +15,7 @@ export interface DDrawerFooterProps extends DFooterProps {
 
 export function DDrawerFooter(props: DDrawerFooterProps) {
   const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useDComponentConfig(
-    'drawer-footer',
+    DDrawerFooter.name,
     props
   );
 

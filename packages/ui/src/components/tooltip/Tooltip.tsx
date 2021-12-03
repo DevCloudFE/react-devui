@@ -13,7 +13,7 @@ export interface DTooltipProps extends Omit<DPopupProps, 'dPopupContent'> {
 }
 
 export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref) => {
-  const { dTitle, id, className, children, ...restProps } = useDComponentConfig('tooltip', props);
+  const { dTitle, id, className, children, ...restProps } = useDComponentConfig(DTooltip.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

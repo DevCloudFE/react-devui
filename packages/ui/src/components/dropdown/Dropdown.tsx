@@ -55,7 +55,7 @@ export function DDropdown(props: DDropdownProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig('dropdown', props);
+  } = useDComponentConfig(DDropdown.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

@@ -28,7 +28,7 @@ export function DMenuItem(props: DMenuItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig('menu-item', props);
+  } = useDComponentConfig(DMenuItem.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

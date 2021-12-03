@@ -24,7 +24,7 @@ export function DDropdownItem(props: DDropdownItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig('dropdown-item', props);
+  } = useDComponentConfig(DDropdownItem.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

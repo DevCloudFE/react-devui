@@ -25,7 +25,7 @@ export interface DDragProps {
 }
 
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDrag, onDragEnd } = useDComponentConfig('drag', props);
+  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDrag, onDragEnd } = useDComponentConfig(DDrag.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

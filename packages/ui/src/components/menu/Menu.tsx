@@ -57,7 +57,7 @@ export function DMenu(props: DMenuProps) {
     onBlur,
     onClick,
     ...restProps
-  } = useDComponentConfig('menu', props);
+  } = useDComponentConfig(DMenu.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

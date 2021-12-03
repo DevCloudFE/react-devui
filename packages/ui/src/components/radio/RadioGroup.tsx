@@ -39,7 +39,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig('button-group', props);
+  } = useDComponentConfig(DRadioGroup.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

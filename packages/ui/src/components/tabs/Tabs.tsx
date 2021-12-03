@@ -53,7 +53,7 @@ export function DTabs(props: DTabsProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig('menu', props);
+  } = useDComponentConfig(DTabs.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

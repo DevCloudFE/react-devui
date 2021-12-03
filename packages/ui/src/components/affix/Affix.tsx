@@ -30,7 +30,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
     style,
     children,
     ...restProps
-  } = useDComponentConfig('affix', props);
+  } = useDComponentConfig(DAffix.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

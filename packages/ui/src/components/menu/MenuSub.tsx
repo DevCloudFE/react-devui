@@ -39,7 +39,7 @@ export function DMenuSub(props: DMenuSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig('menu-sub', props);
+  } = useDComponentConfig(DMenuSub.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

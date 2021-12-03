@@ -31,7 +31,7 @@ export function DAnchor(props: DAnchorProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig('anchor', props);
+  } = useDComponentConfig(DAnchor.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

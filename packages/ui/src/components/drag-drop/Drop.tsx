@@ -44,7 +44,7 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
     onDragStart,
     onDrag,
     onDragEnd,
-  } = useDComponentConfig('drop', props);
+  } = useDComponentConfig(DDrop.name, props);
 
   const dataRef = useRef<DDropContextData['dropCurrentData']>({
     drags: new Map(),

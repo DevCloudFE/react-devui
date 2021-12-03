@@ -30,7 +30,7 @@ export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
     children,
     onChange,
     ...restProps
-  } = useDComponentConfig('button', props);
+  } = useDComponentConfig(DRadio.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();

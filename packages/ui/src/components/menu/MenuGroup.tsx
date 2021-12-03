@@ -26,7 +26,7 @@ export function DMenuGroup(props: DMenuGroupProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig('menu-group', props);
+  } = useDComponentConfig(DMenuGroup.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();
