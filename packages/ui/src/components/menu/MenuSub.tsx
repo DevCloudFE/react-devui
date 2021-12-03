@@ -75,7 +75,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(false);
   const popupVisible = currentPopupVisible || childrenPopupVisiable;
   const inNav = menuCurrentData?.navIds.has(dId) ?? false;
-  const horizontal = menuMode === 'horizontal' && inNav;
+  const inHorizontalNav = menuMode === 'horizontal' && inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
   const isActive = useMemo(() => {
     if (popupMode ? !popupVisible : !expand) {
@@ -95,38 +95,38 @@ export function DMenuSub(props: DMenuSubProps) {
     return false;
   }, [dId, expand, menuActiveId, menuCurrentData?.ids, popupMode, popupVisible]);
   const iconRotate = useMemo(() => {
-    if (horizontal && popupVisible) {
+    if (inHorizontalNav && popupVisible) {
       return 180;
     }
     if (menuMode === 'vertical' && expand) {
       return 180;
     }
-    if (popupMode && !horizontal) {
+    if (popupMode && !inHorizontalNav) {
       return -90;
     }
     return undefined;
-  }, [expand, horizontal, menuMode, popupMode, popupVisible]);
+  }, [expand, inHorizontalNav, menuMode, popupMode, popupVisible]);
 
   const customTransition = useCallback(
     (popupEl, targetEl) => {
-      const { top, left, transformOrigin } = horizontal
+      const { top, left, transformOrigin } = inHorizontalNav
         ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
         : getHorizontalSideStyle(popupEl, targetEl, 'right', inNav ? 10 : 14);
-      if (horizontal) {
+      if (inHorizontalNav) {
         setMenuWidth(targetEl.getBoundingClientRect().width - 32);
       }
       return {
         top,
-        left: horizontal ? left + 16 : left,
+        left: inHorizontalNav ? left + 16 : left,
         stateList: {
-          'enter-from': { transform: horizontal ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
+          'enter-from': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
           'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
           'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-          'leave-to': { transform: horizontal ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
+          'leave-to': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
         },
       };
     },
-    [horizontal, inNav, setMenuWidth]
+    [inHorizontalNav, inNav, setMenuWidth]
   );
 
   const handleExpandTrigger = useCallback(
@@ -209,8 +209,8 @@ export function DMenuSub(props: DMenuSubProps) {
       className={getClassName(_props.className, `${dPrefix}menu-list`)}
       style={{
         ..._props.style,
-        width: horizontal ? menuWidth : undefined,
-        minWidth: horizontal ? undefined : 160,
+        width: inHorizontalNav ? menuWidth : undefined,
+        minWidth: inHorizontalNav ? undefined : 160,
       }}
       role="menu"
       tabIndex={-1}
@@ -246,7 +246,7 @@ export function DMenuSub(props: DMenuSubProps) {
               className={getClassName(className, `${dPrefix}menu-sub`, {
                 'is-active': isActive,
                 'is-expand': popupMode ? popupVisible : expand,
-                'is-horizontal': horizontal,
+                'is-horizontal': inHorizontalNav,
                 'is-icon': menuMode === 'icon' && inNav,
                 'is-disabled': dDisabled,
               })}

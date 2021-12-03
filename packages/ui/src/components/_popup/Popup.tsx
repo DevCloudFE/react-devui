@@ -7,7 +7,16 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useImperativeHandle, useRef } from 'react';
 import ReactDOM, { flushSync } from 'react-dom';
 
-import { useDPrefixConfig, useAsync, useRefSelector, useId, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
+import {
+  useDPrefixConfig,
+  useAsync,
+  useRefSelector,
+  useId,
+  useImmer,
+  useRefCallback,
+  useTwoWayBinding,
+  useDContentConfig,
+} from '../../hooks';
 import { getClassName, globalMaxIndexManager, getPopupPlacementStyle } from '../../utils';
 import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
@@ -81,6 +90,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
+  const rootContentRef = useDContentConfig();
   //#endregion
 
   //#region Ref
@@ -106,8 +116,9 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   const triggerRef = useRefSelector(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${id}"]` : dTriggerEl);
 
+  const isFixed = isUndefined(dContainer);
   const handleContainer = useCallback(() => {
-    if (isUndefined(dContainer)) {
+    if (isFixed) {
       let el = document.getElementById(`${dPrefix}popup-root`);
       if (!el) {
         el = document.createElement('div');
@@ -119,21 +130,19 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
       return triggerRef.current?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, dPrefix, triggerRef]);
+  }, [dContainer, dPrefix, isFixed, triggerRef]);
   const containerRef = useRefSelector(dContainer, handleContainer);
 
   const placement = dAutoPlace ? autoPlacement : dPlacement;
 
   const updatePosition = useCallback(() => {
     if (popupEl && triggerRef.current && containerRef.current) {
-      const fixed = isUndefined(dContainer);
-
       if (isUndefined(dCustomPopup)) {
         let currentPlacement = dAutoPlace ? dPlacement : autoPlacement;
 
         if (dAutoPlace) {
           let space: [number, number, number, number] = [0, 0, 0, 0];
-          if (!fixed) {
+          if (!isFixed) {
             const containerRect = containerRef.current.getBoundingClientRect();
             space = [
               containerRect.top,
@@ -142,27 +151,27 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
               containerRect.left,
             ];
           }
-          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, fixed, space);
+          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, isFixed, space);
           if (position) {
             currentPlacement = position.placement;
             setAutoPlacement(position.placement);
             setPopupPositionStyle({
-              position: fixed ? 'fixed' : 'absolute',
+              position: isFixed ? 'fixed' : 'absolute',
               top: position.top,
               left: position.left,
             });
           } else {
-            const position = getPopupPlacementStyle(popupEl, triggerRef.current, autoPlacement, dDistance, fixed);
+            const position = getPopupPlacementStyle(popupEl, triggerRef.current, autoPlacement, dDistance, isFixed);
             setPopupPositionStyle({
-              position: fixed ? 'fixed' : 'absolute',
+              position: isFixed ? 'fixed' : 'absolute',
               top: position.top,
               left: position.left,
             });
           }
         } else {
-          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, fixed);
+          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, isFixed);
           setPopupPositionStyle({
-            position: fixed ? 'fixed' : 'absolute',
+            position: isFixed ? 'fixed' : 'absolute',
             top: position.top,
             left: position.left,
           });
@@ -230,7 +239,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
         const { top, left, stateList, arrowPosition } = dCustomPopup(popupEl, triggerRef.current);
         setArrowStyle(arrowPosition);
         setPopupPositionStyle({
-          position: fixed ? 'fixed' : 'absolute',
+          position: isFixed ? 'fixed' : 'absolute',
           top,
           left,
         });
@@ -241,10 +250,10 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     autoPlacement,
     containerRef,
     dAutoPlace,
-    dContainer,
     dCustomPopup,
     dDistance,
     dPlacement,
+    isFixed,
     popupEl,
     setArrowStyle,
     setAutoPlacement,
@@ -337,7 +346,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   useEffect(() => {
     if (visible) {
       if (isUndefined(dZIndex)) {
-        if (isUndefined(dContainer)) {
+        if (isFixed) {
           const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
           setZIndex(maxZIndex);
           return () => {
@@ -350,7 +359,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
         setZIndex(dZIndex);
       }
     }
-  }, [dContainer, dZIndex, setZIndex, visible]);
+  }, [dZIndex, isFixed, setZIndex, visible]);
 
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
@@ -440,6 +449,10 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
       throttleUpdate();
 
+      if (!isFixed && rootContentRef.current) {
+        asyncGroup.onResize(rootContentRef.current, throttleUpdate);
+      }
+
       asyncGroup.onResize(popupEl, throttleUpdate);
 
       asyncGroup.onResize(triggerRef.current, throttleUpdate);
@@ -449,7 +462,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, visible, updatePosition, triggerRef, popupEl, transition]);
+  }, [asyncCapture, visible, updatePosition, triggerRef, popupEl, transition, rootContentRef, isFixed]);
   //#endregion
 
   useImperativeHandle(

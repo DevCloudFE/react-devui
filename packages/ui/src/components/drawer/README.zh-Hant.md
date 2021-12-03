@@ -33,15 +33,6 @@ title: 抽屉
 | afterVisibleChange | 抽屉打开/关闭动画结束的回调 | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
-### DDrawerRef
-
-```tsx
-export interface DDrawerRef {
-  el: HTMLDivElement | null;
-  updatePosition: () => void;
-}
-```
-
 ### DDrawerHeaderProps
 
 等于 `Omit<DHeaderProps, 'onClose'>`。
