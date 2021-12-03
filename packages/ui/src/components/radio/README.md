@@ -43,6 +43,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>, DFormControl`.
 | dType | Radio group style | 'outline' \| 'fill' | - |
 | dSize | Radio button size | 'smaller' \| 'larger' | - |
 | dVertical | Radio group arranged vertically | boolean | false |
+| onValueChange | Callback when the selected item is changed | `(checked: DValue) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DValue

@@ -42,6 +42,7 @@ export type DRadioRef = HTMLInputElement;
 | dType | 单选组样式 | 'outline' \| 'fill' | - |
 | dSize | 单选组按钮尺寸 | 'smaller' \| 'larger' | - |
 | dVertical | 单选组垂直排布 | boolean | false |
+| onValueChange | 选中项改变的回调 | `(checked: DValue) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DValue
