@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig } from '../../hooks';
+import { useDPrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -18,6 +18,8 @@ export function DHeader(props: DHeaderProps) {
   //#region Context
   const dPrefix = useDPrefixConfig();
   //#endregion
+
+  const [t] = useTranslation('Common');
 
   const handleCloseClick = useCallback(() => {
     onClose?.();
@@ -40,6 +42,7 @@ export function DHeader(props: DHeaderProps) {
                 dCloseIcon
               )
             }
+            aria-label={t('Close')}
             onClick={handleCloseClick}
           ></DButton>
         )}

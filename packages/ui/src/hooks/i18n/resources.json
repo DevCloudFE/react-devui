@@ -1,5 +1,21 @@
 {
   "Common": {
+    "Loading": {
+      "en-US": "Loading",
+      "zh-Hant": "加载中"
+    },
+    "Add": {
+      "en-US": "Add",
+      "zh-Hant": "新增"
+    },
+    "Close": {
+      "en-US": "Close",
+      "zh-Hant": "关闭"
+    },
+    "More": {
+      "en-US": "More",
+      "zh-Hant": "更多"
+    },
     "No Data": {
       "en-US": "No Data",
       "zh-Hant": "无数据"

@@ -5,7 +5,7 @@ import type { DTabProps } from './Tab';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DDrag, DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
@@ -68,6 +68,8 @@ export function DTabs(props: DTabsProps) {
     clearTid: null,
     tabEls: new Map(),
   });
+
+  const [t] = useTranslation('Common');
 
   const asyncCapture = useAsync();
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
@@ -299,8 +301,8 @@ export function DTabs(props: DTabsProps) {
                       right: isHorizontal && onAddClick ? 52 : undefined,
                       bottom: !isHorizontal && onAddClick ? 36 : undefined,
                     }}
-                    role="button"
                     tabIndex={-1}
+                    aria-label={t('More')}
                   >
                     <DIcon dSize={18}>
                       <path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
@@ -322,7 +324,13 @@ export function DTabs(props: DTabsProps) {
               </DDropdown>
             )}
             {onAddClick && (
-              <div className={getClassName(`${dPrefix}tabs__button`, 'is-add')} role="button" tabIndex={-1} onClick={handleAddClick}>
+              <div
+                className={getClassName(`${dPrefix}tabs__button`, 'is-add')}
+                role="button"
+                tabIndex={-1}
+                aria-label={t('Add')}
+                onClick={handleAddClick}
+              >
                 <DIcon dSize={18}>
                   <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
                   <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>

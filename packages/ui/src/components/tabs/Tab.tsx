@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -38,6 +38,8 @@ export function DTab(props: DTabProps) {
   //#region Ref
   const [tabEl, tabRef] = useRefCallback();
   //#endregion
+
+  const [t] = useTranslation('Common');
 
   const _id = id ?? `${dPrefix}tab-${toId(dId)}`;
 
@@ -105,6 +107,7 @@ export function DTab(props: DTabProps) {
               dCloseIcon
             )
           }
+          aria-label={t('Close')}
           onClick={handleCloseClick}
         ></DButton>
       )}

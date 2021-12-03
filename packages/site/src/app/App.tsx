@@ -1,17 +1,13 @@
-/* eslint-disable */
-// @ts-nocheck
-
-import React, { useCallback, useEffect, Suspense, lazy, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Route, Routes } from 'react-router-dom';
 
-import { DI18NContext, DConfigContext } from '@react-devui/ui';
+import { DI18NContext, DConfigContext, DIconContext } from '@react-devui/ui';
 import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppHeader, AppSidebar } from './components';
-
-__import__
+import icons from './icons.json';
+import { AppRoutes } from './routes/Routes';
 
 export type AppContextData = { onMount: () => void } | null;
 export const AppContext = React.createContext<AppContextData>(null);
@@ -19,10 +15,6 @@ export const AppContext = React.createContext<AppContextData>(null);
 export function App() {
   const { i18n } = useTranslation();
   const asyncCapture = useAsync();
-
-  useEffect(() => {
-    localStorage.setItem('language', i18n.language);
-  }, [i18n.language]);
 
   const [mainEl, setMainEl] = useImmer<HTMLElement | null>(null);
   const mainRef = useCallback(
@@ -33,6 +25,10 @@ export function App() {
     },
     [setMainEl]
   );
+
+  useEffect(() => {
+    localStorage.setItem('language', i18n.language);
+  }, [i18n.language]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -71,13 +67,13 @@ export function App() {
     <AppContext.Provider value={contextValue}>
       <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
         <DConfigContext.Provider value={{ content: 'main .app-route-article' }}>
-          <AppHeader />
-          <AppSidebar />
-          <main ref={mainRef} className="app-main">
-            <Routes>
-__Route__
-            </Routes>
-          </main>
+          <DIconContext.Provider value={icons}>
+            <AppHeader />
+            <AppSidebar />
+            <main ref={mainRef} className="app-main">
+              <AppRoutes></AppRoutes>
+            </main>
+          </DIconContext.Provider>
         </DConfigContext.Provider>
       </DI18NContext.Provider>
     </AppContext.Provider>

@@ -8,7 +8,7 @@ export type DIconContextData = Array<{
   name: string;
   list: Array<{
     paths: string[];
-    type: string;
+    type?: string;
   }>;
 }>;
 export const DIconContext = React.createContext<DIconContextData>([]);
@@ -42,16 +42,16 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
 
   const paths = useMemo(() => {
     if (!children) {
-      if (isUndefined(dName) || isUndefined(dType)) {
-        throw new Error('Missing `dName` or `dType` prop');
+      if (isUndefined(dName)) {
+        throw new Error('Missing "dName" prop');
       }
       const list = iconContext.find((icon) => icon.name === dName)?.list;
       if (isUndefined(list)) {
-        throw new Error(`name ${dName} dont exist`);
+        throw new Error(`name "${dName}" dont exist`);
       } else {
         const icon = list.find((icon) => icon.type === dType);
         if (isUndefined(icon)) {
-          throw new Error(`type ${dType} dont exist in ${dName}`);
+          throw new Error(`type "${dType}" dont exist in "${dName}"`);
         } else {
           return icon.paths.map((path) => <path key={path} d={path}></path>);
         }
@@ -82,7 +82,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
         animation: dSpin === true ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
       }}
     >
-      <title>{dName}</title>
+      {dName && <title>{dName}</title>}
       {children ? children : paths}
     </svg>
   );

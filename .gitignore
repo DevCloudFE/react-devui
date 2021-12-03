@@ -5,6 +5,8 @@
 /tmp
 /out-tsc
 /tools-dist
+packages/site/src/app/configs
+packages/site/src/app/routes
 
 # dependencies
 /node_modules
