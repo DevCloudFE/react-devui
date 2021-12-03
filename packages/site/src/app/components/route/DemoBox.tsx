@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { DTooltip, DIcon } from '@react-devui/ui';
+import { DTooltip, DIcon, DTabs, DTab } from '@react-devui/ui';
 import { useAsync, useImmer } from '@react-devui/ui/hooks';
 import { copy, getClassName } from '@react-devui/ui/utils';
 
@@ -20,7 +20,6 @@ export interface AppDemoBoxProps {
 }
 
 export function AppDemoBox(props: AppDemoBoxProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id, renderer, title, scss, scssSource } = props;
 
   const description = toString(props.description);
@@ -29,6 +28,8 @@ export function AppDemoBox(props: AppDemoBoxProps) {
 
   const asyncCapture = useAsync();
 
+  const [tab, setTab] = useImmer<string | null>('tsx');
+
   const [openCode, setOpencode] = useImmer(false);
   const handleOpenClick = useCallback(() => {
     setOpencode((draft) => !draft);
@@ -36,9 +37,9 @@ export function AppDemoBox(props: AppDemoBoxProps) {
 
   const [copyCode, setCopycode] = useImmer(false);
   const handleCopyClick = useCallback(() => {
-    copy(tsxSource);
+    copy(tab === 'tsx' ? tsxSource : (scssSource as string));
     setCopycode(true);
-  }, [setCopycode, tsxSource]);
+  }, [scssSource, setCopycode, tab, tsxSource]);
 
   const afterCopyTrige = useCallback(
     (v) => {
@@ -118,8 +119,16 @@ export function AppDemoBox(props: AppDemoBoxProps) {
       </div>
       {openCode && (
         <div className="app-demo-box__code">
-          <div className="app-demo-box__tsx" dangerouslySetInnerHTML={{ __html: tsx }} />
-          {/* {scss && <div className="app-demo-box__scss" dangerouslySetInnerHTML={{ __html: scss }} />} */}
+          {!scss && <div dangerouslySetInnerHTML={{ __html: tsx }} />}
+          {scss && (
+            <DTabs dActive={[tab, setTab]} dSize="smaller" dCenter>
+              {['tsx', 'scss'].map((code) => (
+                <DTab key={code} dId={code} dTitle={code}>
+                  <div dangerouslySetInnerHTML={{ __html: code === 'tsx' ? tsx : scss }} />
+                </DTab>
+              ))}
+            </DTabs>
+          )}
         </div>
       )}
     </section>

@@ -25,6 +25,9 @@ export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
 
+export type { DTabProps, DTabsProps } from './tabs';
+export { DTab, DTabs } from './tabs';
+
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
 

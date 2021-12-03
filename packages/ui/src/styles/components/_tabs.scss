@@ -1,0 +1,553 @@
+@include b(tabs) {
+  --#{$variable-prefix}tabs-tab-size: 44px;
+  --#{$variable-prefix}tabs-tab-margin: 32px;
+  --#{$variable-prefix}tabs-tab-padding: 16px;
+
+  position: relative;
+
+  display: flex;
+
+  @include e(dropdown) {
+    max-height: 35vh;
+  }
+
+  @include e(tablist-wrapper) {
+    position: relative;
+  }
+
+  @include e(tablist) {
+    position: relative;
+
+    display: inline-flex;
+
+    &::after {
+      position: absolute;
+
+      background-color: var(--#{$variable-prefix}indicator-background-color);
+
+      content: '';
+    }
+  }
+
+  @include e(indicator) {
+    position: absolute;
+
+    z-index: 1;
+
+    background-color: var(--#{$variable-prefix}color-primary);
+    opacity: 0;
+  }
+
+  @include e(button) {
+    position: sticky;
+    z-index: 6;
+
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: var(--#{$variable-prefix}tabs-tab-size);
+
+    background-color: var(--#{$variable-prefix}background-color);
+
+    cursor: pointer;
+
+    transition: color 0.2s linear;
+
+    appearance: none;
+
+    @include utils-outline();
+    @include utils-disabled();
+
+    &.is-add {
+      border: 1px solid var(--#{$variable-prefix}indicator-background-color);
+    }
+
+    &.is-more {
+      box-shadow: -3px 0 8px -2px var(--#{$variable-prefix}shadow-color);
+
+      transition: color 0.2s linear, box-shadow 166ms linear;
+
+      &.is-end {
+        border-left: 1px solid var(--#{$variable-prefix}indicator-background-color);
+
+        box-shadow: none;
+      }
+    }
+
+    &:focus,
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include m(top) {
+    flex-direction: column;
+
+    &:not(.#{$variable-prefix}tabs--slider) {
+      .#{$variable-prefix}tabs__button.is-add {
+        border-bottom: none;
+      }
+    }
+
+    .#{$variable-prefix}tabs__button {
+      right: 0;
+    }
+
+    .#{$variable-prefix}tabs__tablist-wrapper {
+      width: 100%;
+      padding-bottom: 2px;
+      overflow-x: auto;
+    }
+
+    .#{$variable-prefix}tabs__tablist {
+      min-width: 100%;
+
+      &::after {
+        bottom: -1px;
+        left: 0;
+
+        width: 100%;
+        height: 1px;
+      }
+    }
+
+    .#{$variable-prefix}tabs__indicator {
+      bottom: -2px;
+      left: 0;
+
+      width: 0;
+      height: 2px;
+
+      transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
+    }
+
+    .#{$variable-prefix}tab + .#{$variable-prefix}tab,
+    .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
+    .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
+      margin-left: var(--#{$variable-prefix}tabs-tab-margin);
+    }
+
+    .#{$variable-prefix}tabpanel {
+      margin-top: 20px;
+    }
+  }
+
+  @include m(bottom) {
+    flex-direction: column-reverse;
+
+    &:not(.#{$variable-prefix}tabs--slider) {
+      .#{$variable-prefix}tabs__button.is-add {
+        border-top: none;
+      }
+    }
+
+    .#{$variable-prefix}tabs__button {
+      right: 0;
+    }
+
+    .#{$variable-prefix}tabs__tablist-wrapper {
+      width: 100%;
+      padding-top: 2px;
+      overflow-x: auto;
+    }
+
+    .#{$variable-prefix}tabs__tablist {
+      min-width: 100%;
+
+      &::after {
+        top: -1px;
+        left: 0;
+
+        width: 100%;
+        height: 1px;
+      }
+    }
+
+    .#{$variable-prefix}tabs__indicator {
+      top: -2px;
+      left: 0;
+
+      width: 0;
+      height: 2px;
+
+      transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
+    }
+
+    .#{$variable-prefix}tab + .#{$variable-prefix}tab,
+    .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
+    .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
+      margin-left: var(--#{$variable-prefix}tabs-tab-margin);
+    }
+
+    .#{$variable-prefix}tabpanel {
+      margin-bottom: 20px;
+    }
+  }
+
+  @include m(left) {
+    flex-direction: row;
+
+    &:not(.#{$variable-prefix}tabs--slider) {
+      .#{$variable-prefix}tabs__button.is-add {
+        border-right: none;
+        border-left: none;
+      }
+    }
+
+    .#{$variable-prefix}tabs__button {
+      bottom: 0;
+
+      width: 100%;
+      height: 36px;
+
+      &.is-more {
+        box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
+
+        &.is-end {
+          border-top: 1px solid var(--#{$variable-prefix}indicator-background-color);
+          border-left: none;
+
+          box-shadow: none;
+        }
+      }
+    }
+
+    .#{$variable-prefix}tabs__tablist-wrapper {
+      padding-right: 2px;
+      overflow-y: auto;
+    }
+
+    .#{$variable-prefix}tabs__tablist {
+      flex-direction: column;
+
+      &::after {
+        top: 0;
+        right: -1px;
+
+        width: 1px;
+        height: 100%;
+      }
+    }
+
+    .#{$variable-prefix}tabs__indicator {
+      top: 0;
+      right: -2px;
+
+      width: 2px;
+      height: var(--#{$variable-prefix}tabs-tab-size);
+
+      transition: top 0.3s ease-in-out, opacity 160ms linear;
+    }
+
+    .#{$variable-prefix}tab {
+      justify-content: flex-end;
+      padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+    }
+
+    .#{$variable-prefix}tabpanel {
+      flex: 1 0 0;
+      margin-left: 20px;
+    }
+  }
+
+  @include m(right) {
+    flex-direction: row-reverse;
+
+    &:not(.#{$variable-prefix}tabs--slider) {
+      .#{$variable-prefix}tabs__button.is-add {
+        border-right: none;
+        border-left: none;
+      }
+    }
+
+    .#{$variable-prefix}tabs__button {
+      bottom: 0;
+
+      width: 100%;
+      height: 36px;
+
+      &.is-more {
+        box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
+
+        &.is-end {
+          border-top: 1px solid var(--#{$variable-prefix}indicator-background-color);
+          border-left: none;
+
+          box-shadow: none;
+        }
+      }
+    }
+
+    .#{$variable-prefix}tabs__tablist-wrapper {
+      padding-left: 2px;
+      overflow-y: auto;
+    }
+
+    .#{$variable-prefix}tabs__tablist {
+      flex-direction: column;
+
+      &::after {
+        top: 0;
+        left: -1px;
+
+        width: 1px;
+        height: 100%;
+      }
+    }
+
+    .#{$variable-prefix}tabs__indicator {
+      top: 0;
+      left: -2px;
+
+      width: 2px;
+      height: var(--#{$variable-prefix}tabs-tab-size);
+
+      transition: top 0.3s ease-in-out, opacity 160ms linear;
+    }
+
+    .#{$variable-prefix}tab {
+      justify-content: flex-start;
+      padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+    }
+
+    .#{$variable-prefix}tabpanel {
+      flex: 1 0 0;
+      margin-right: 20px;
+    }
+  }
+
+  @include when(center) {
+    .#{$variable-prefix}tabs__tablist {
+      justify-content: center;
+    }
+  }
+
+  @include e(slider-indicator) {
+    position: absolute;
+    z-index: 1;
+
+    opacity: 0;
+
+    &::after {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      bottom: 3px;
+      left: 3px;
+
+      border-radius: 2px;
+
+      background-color: var(--#{$variable-prefix}background-color);
+      box-shadow: 0 2px 4px 0 var(--#{$variable-prefix}shadow-color);
+
+      content: '';
+    }
+  }
+
+  @include m(slider) {
+    .#{$variable-prefix}tabs__tablist-wrapper {
+      padding: 0;
+
+      background-color: var(--#{$variable-prefix}color-primary-background);
+    }
+
+    .#{$variable-prefix}tabs__tablist {
+      &::after {
+        content: none;
+      }
+    }
+
+    &.#{$variable-prefix}tabs--top,
+    &.#{$variable-prefix}tabs--bottom {
+      .#{$variable-prefix}tab {
+        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+      }
+
+      .#{$variable-prefix}tab + .#{$variable-prefix}tab,
+      .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
+      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
+        margin-left: 0;
+      }
+
+      .#{$variable-prefix}tabs__slider-indicator {
+        left: 0;
+
+        width: 0;
+        height: 100%;
+
+        transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
+      }
+    }
+
+    &.#{$variable-prefix}tabs--left,
+    &.#{$variable-prefix}tabs--right {
+      .#{$variable-prefix}tabs__slider-indicator {
+        top: 0;
+
+        width: 100%;
+        height: var(--#{$variable-prefix}tabs-tab-size);
+
+        transition: top 0.3s ease-in-out, opacity 160ms linear;
+      }
+    }
+  }
+
+  @include e(wrap-indicator) {
+    position: absolute;
+    z-index: 1;
+
+    border: 1px solid var(--#{$variable-prefix}indicator-background-color);
+
+    background-color: var(--#{$variable-prefix}color-primary-background);
+
+    opacity: 0;
+  }
+
+  @include m(wrap) {
+    &.#{$variable-prefix}tabs--top,
+    &.#{$variable-prefix}tabs--bottom {
+      .#{$variable-prefix}tab {
+        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+      }
+
+      .#{$variable-prefix}tab + .#{$variable-prefix}tab,
+      .#{$variable-prefix}tabs__drop-placeholder + .#{$variable-prefix}tab,
+      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__drop-placeholder {
+        margin-left: 0;
+      }
+
+      .#{$variable-prefix}tabs__wrap-indicator {
+        left: 0;
+
+        width: 0;
+        height: calc(100% + 1px);
+
+        transition: left 0.3s ease-in-out, opacity 160ms linear, width 160ms linear;
+      }
+    }
+
+    &.#{$variable-prefix}tabs--top .#{$variable-prefix}tabs__wrap-indicator {
+      top: 0;
+
+      border-bottom: none;
+      border-radius: 2px 2px 0 0;
+    }
+    &.#{$variable-prefix}tabs--bottom .#{$variable-prefix}tabs__wrap-indicator {
+      bottom: 0;
+
+      border-top: none;
+      border-radius: 0 0 2px 2px;
+    }
+
+    &.#{$variable-prefix}tabs--left,
+    &.#{$variable-prefix}tabs--right {
+      .#{$variable-prefix}tabs__wrap-indicator {
+        top: 0;
+
+        width: calc(100% + 1px);
+        height: var(--#{$variable-prefix}tabs-tab-size);
+
+        transition: top 0.3s ease-in-out, opacity 160ms linear;
+      }
+    }
+
+    &.#{$variable-prefix}tabs--left .#{$variable-prefix}tabs__wrap-indicator {
+      left: 0;
+
+      border-right: none;
+      border-radius: 0 2px 2px 0;
+    }
+    &.#{$variable-prefix}tabs--right .#{$variable-prefix}tabs__wrap-indicator {
+      right: 0;
+
+      border-left: none;
+      border-radius: 2px 0 0 2px;
+    }
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}tabs-tab-size: 52px;
+    --#{$variable-prefix}tabs-tab-margin: 36px;
+    --#{$variable-prefix}tabs-tab-padding: 20px;
+
+    .#{$variable-prefix}tabs__tablist {
+      @include font-size(1.15rem);
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}tabs-tab-size: 36px;
+    --#{$variable-prefix}tabs-tab-margin: 24px;
+    --#{$variable-prefix}tabs-tab-padding: 12px;
+
+    .#{$variable-prefix}tabs__tablist {
+      @include font-size(0.9rem);
+    }
+  }
+}
+
+@include b(tab) {
+  position: relative;
+  z-index: 5;
+
+  display: inline-flex;
+  align-items: center;
+  height: var(--#{$variable-prefix}tabs-tab-size);
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease-out;
+
+  @include utils-outline();
+
+  @include utils-disabled();
+
+  &:not(.is-disabled) {
+    &:focus,
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include when(active) {
+    color: var(--#{$variable-prefix}color-primary);
+  }
+
+  @include when(dropdown) {
+    width: 100%;
+    height: 100%;
+
+    .#{$variable-prefix}tab__close {
+      margin-left: auto;
+    }
+  }
+
+  .#{$variable-prefix}tab__close {
+    margin-left: 4px;
+
+    &.#{$variable-prefix}button {
+      min-width: 24px;
+      min-height: 24px;
+
+      color: var(--#{$variable-prefix}color-step-500);
+
+      font-size: 12px;
+    }
+  }
+
+  @at-root {
+    .#{$variable-prefix}tabs:not(.#{$variable-prefix}tabs--left):not(.#{$variable-prefix}tabs--right):not(.#{$variable-prefix}tabs--slider):not(.#{$variable-prefix}tabs--wrap) {
+      .#{$variable-prefix}tab + .#{$variable-prefix}tabs__button {
+        margin-left: var(--#{$variable-prefix}tabs-tab-margin);
+      }
+    }
+  }
+}
+
+@include b(tabpanel) {
+  @include utils-outline();
+}

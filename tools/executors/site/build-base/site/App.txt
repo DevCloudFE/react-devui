@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, Suspense, lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
 
-import { DI18NContext } from '@react-devui/ui';
+import { DI18NContext, DConfigContext } from '@react-devui/ui';
 import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
@@ -70,13 +70,15 @@ export function App() {
   return (
     <AppContext.Provider value={contextValue}>
       <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
-        <AppHeader />
-        <AppSidebar />
-        <main ref={mainRef} className="app-main">
-          <Routes>
+        <DConfigContext.Provider value={{ content: 'main .app-route-article' }}>
+          <AppHeader />
+          <AppSidebar />
+          <main ref={mainRef} className="app-main">
+            <Routes>
 __Route__
-          </Routes>
-        </main>
+            </Routes>
+          </main>
+        </DConfigContext.Provider>
       </DI18NContext.Provider>
     </AppContext.Provider>
   );

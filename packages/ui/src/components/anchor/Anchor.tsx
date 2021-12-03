@@ -3,7 +3,7 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useRefSelector, useImmer, useAsync, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useRefSelector, useImmer, useAsync, useRefCallback, useDContentConfig } from '../../hooks';
 import { getClassName, CustomScroll } from '../../utils';
 
 export interface DAnchorContextData {
@@ -35,6 +35,7 @@ export function DAnchor(props: DAnchorProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
+  const rootContentRef = useDContentConfig();
   //#endregion
 
   //#region Ref
@@ -136,11 +137,14 @@ export function DAnchor(props: DAnchorProps) {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (rootContentRef.current) {
+      asyncGroup.onResize(rootContentRef.current, updateAnchor);
+    }
     asyncGroup.onGlobalScroll(updateAnchor);
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, updateAnchor]);
+  }, [asyncCapture, rootContentRef, updateAnchor]);
   //#endregion
 
   const contextValue = useMemo<DAnchorContextData>(

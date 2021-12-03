@@ -34,15 +34,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | afterVisibleChange | Callback for the end of the drawer opening/closing animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
-### DDrawerRef
-
-```tsx
-export interface DDrawerRef {
-  el: HTMLDivElement | null;
-  updatePosition: () => void;
-}
-```
-
 ### DDrawerHeaderProps
 
 Equal `Omit<DHeaderProps, 'onClose'>`.

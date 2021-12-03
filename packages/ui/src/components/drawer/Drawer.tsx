@@ -1,9 +1,8 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 import type { Updater } from '../../hooks/immer';
-import type { DTransitionRef } from '../_transition';
 
 import { isUndefined } from 'lodash';
-import React, { useEffect, useCallback, useMemo, useImperativeHandle, useRef } from 'react';
+import React, { useEffect, useCallback, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -16,7 +15,7 @@ import {
   useImmer,
   useRefCallback,
 } from '../../hooks';
-import { getClassName, globalMaxIndexManager, getFillingStyle } from '../../utils';
+import { getClassName, globalMaxIndexManager } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 
@@ -25,11 +24,6 @@ export interface DDrawerContextData {
   closeDrawer: () => void;
 }
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
-
-export interface DDrawerRef {
-  el: HTMLDivElement | null;
-  updatePosition: () => void;
-}
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: [boolean, Updater<boolean>?];
@@ -49,7 +43,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
 }
 
-export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) => {
+export function DDrawer(props: DDrawerProps) {
   const {
     dVisible,
     dContainer,
@@ -77,7 +71,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   //#endregion
 
   //#region Ref
-  const [transition, transitionRef] = useRefCallback<DTransitionRef>();
   const [drawerEl, drawerRef] = useRefCallback<HTMLDivElement>();
   const [drawerContentEl, drawerContentRef] = useRefCallback<HTMLDivElement>();
   //#endregion
@@ -88,13 +81,13 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
 
   const asyncCapture = useAsync();
   const id = useId();
-  const [absoluteStyle, setAbsoluteStyle] = useImmer<React.CSSProperties>({});
   const [zIndex, setZIndex] = useImmer(1000);
 
   const [visible, setVisible] = dVisible;
 
+  const isFixed = isUndefined(dContainer);
   const handleContainer = useCallback(() => {
-    if (isUndefined(dContainer)) {
+    if (isFixed) {
       let el = document.getElementById(`${dPrefix}drawer-root`);
       if (!el) {
         el = document.createElement('div');
@@ -106,7 +99,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
       return drawerEl?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, dPrefix, drawerEl?.parentElement]);
+  }, [dContainer, dPrefix, drawerEl?.parentElement, isFixed]);
   const containerRef = useRefSelector(dContainer, handleContainer);
 
   const [distance, setDistance] = useImmer<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
@@ -124,27 +117,18 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
     }
   }, [dMaskClosable, onClose, setVisible]);
 
-  const updatePosition = useCallback(() => {
-    if (drawerEl && containerRef.current) {
-      setAbsoluteStyle({
-        position: 'absolute',
-        ...getFillingStyle(drawerEl, containerRef.current, false),
-      });
-    }
-  }, [containerRef, drawerEl, setAbsoluteStyle]);
-
   const closeDrawer = useCallback(() => {
     setVisible?.(false);
     onClose?.();
   }, [onClose, setVisible]);
 
-  useLockScroll(visible && isUndefined(dContainer));
+  useLockScroll(visible && isFixed);
 
   //#region DidUpdate
   useEffect(() => {
     if (visible) {
       if (isUndefined(dZIndex)) {
-        if (isUndefined(dContainer)) {
+        if (isFixed) {
           const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
           setZIndex(maxZIndex);
           return () => {
@@ -157,27 +141,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
         setZIndex(dZIndex);
       }
     }
-  }, [dContainer, dZIndex, setZIndex, visible]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (visible && !isUndefined(dContainer) && containerRef.current) {
-      const throttleUpdate = () => {
-        if (transition) {
-          transition.transitionThrottle.run(updatePosition);
-        }
-      };
-
-      throttleUpdate();
-
-      asyncGroup.onResize(containerRef.current, throttleUpdate);
-
-      asyncGroup.onGlobalScroll(throttleUpdate);
-    }
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, containerRef, dContainer, transition, updatePosition, visible]);
+  }, [dZIndex, isFixed, setZIndex, visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -189,15 +153,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
     };
   }, [asyncCapture, closeDrawer, id, visible]);
   //#endregion
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      el: drawerEl,
-      updatePosition,
-    }),
-    [drawerEl, updatePosition]
-  );
 
   const childDrawer = useMemo(() => {
     if (dChildDrawer) {
@@ -218,7 +173,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
     <DDrawerContext.Provider value={contextValue}>
       <DTransition
         dEl={drawerContentEl}
-        ref={transitionRef}
         dVisible={visible}
         dStateList={() => {
           const transform =
@@ -238,9 +192,6 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
         dCallbackList={() => {
           return {
             beforeEnter: () => {
-              if (!isUndefined(dContainer)) {
-                updatePosition();
-              }
               if (drawerContentEl) {
                 const rect = drawerContentEl.getBoundingClientRect();
                 __onVisibleChange?.({
@@ -279,7 +230,7 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
               className={getClassName(className, `${dPrefix}drawer`)}
               style={{
                 ...style,
-                ...(isUndefined(dContainer) ? {} : absoluteStyle),
+                position: isFixed ? undefined : 'absolute',
                 display: hidden ? 'none' : undefined,
                 zIndex,
                 transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
@@ -321,4 +272,4 @@ export const DDrawer = React.forwardRef<DDrawerRef, DDrawerProps>((props, ref) =
   );
 
   return dContainer === false ? drawerNode : containerRef.current && ReactDOM.createPortal(drawerNode, containerRef.current);
-});
+}

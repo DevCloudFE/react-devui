@@ -3,7 +3,7 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback } from '../../hooks';
+import { useDPrefixConfig, useDComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback, useDContentConfig } from '../../hooks';
 import { getClassName, toPx } from '../../utils';
 
 export interface DAffixRef {
@@ -34,6 +34,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
+  const rootContentRef = useDContentConfig();
   //#endregion
 
   //#region Ref
@@ -126,11 +127,14 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (rootContentRef.current) {
+      asyncGroup.onResize(rootContentRef.current, updatePosition);
+    }
     asyncGroup.onGlobalScroll(updatePosition);
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, updatePosition]);
+  }, [asyncCapture, rootContentRef, updatePosition]);
 
   useEffect(() => {
     updatePosition();

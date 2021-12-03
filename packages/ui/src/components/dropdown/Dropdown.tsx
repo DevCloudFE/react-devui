@@ -25,6 +25,7 @@ export interface DDropdownProps extends React.HTMLAttributes<HTMLElement> {
   dSubTrigger?: 'hover' | 'click';
   dDestroy?: boolean;
   dArrow?: boolean;
+  dCloseOnItemClick?: boolean;
   onVisibleChange?: (visible: boolean) => void;
   onItemClick?: (id: string) => void;
 }
@@ -38,6 +39,7 @@ export function DDropdown(props: DDropdownProps) {
     dSubTrigger = 'hover',
     dDestroy = false,
     dArrow = false,
+    dCloseOnItemClick = true,
     onVisibleChange,
     onItemClick,
     id,
@@ -112,9 +114,11 @@ export function DDropdown(props: DDropdownProps) {
 
         // The `DPopup` will emit `onVisibleChange` callback when click popup.
         // So use `setTimeout` make sure change visible.
-        asyncCapture.setTimeout(() => {
-          changeVisible(false);
-        }, 20);
+        if (dCloseOnItemClick) {
+          asyncCapture.setTimeout(() => {
+            changeVisible(false);
+          }, 20);
+        }
       },
       onFocus: (dId, id) => {
         setFocusId([dId, id]);
@@ -123,7 +127,7 @@ export function DDropdown(props: DDropdownProps) {
         setFocusId(null);
       },
     }),
-    [asyncCapture, changeVisible, dSubTrigger, focusId, onItemClick, setFocusId]
+    [asyncCapture, changeVisible, dCloseOnItemClick, dSubTrigger, focusId, onItemClick, setFocusId, visible]
   );
 
   const childs = useMemo(() => {

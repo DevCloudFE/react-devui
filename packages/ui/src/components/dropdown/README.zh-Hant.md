@@ -24,6 +24,7 @@ title: 下拉菜单
 | dSubTrigger | 子菜单弹出的触发行为 | 'hover' \| 'click' | 'hover' |
 | dDestroy | 关闭后销毁节点 | boolean | false |
 | dArrow | 是否显示箭头 | boolean | false |
+| dCloseOnItemClick | 点击菜单项是否关闭菜单 | boolean | true |
 | onVisibleChange | 菜单显示/隐藏的回调 | `(visible: boolean) => void` | - |
 | onItemClick | 点击菜单项的回调 | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->

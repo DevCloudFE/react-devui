@@ -25,6 +25,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | dSubTrigger | Trigger behavior of submenu popup | 'hover' \| 'click' | 'hover' |
 | dDestroy | Destroy the node after shutdown | boolean | false |
 | dArrow | Whether to show arrow | boolean | false |
+| dCloseOnItemClick | Click on the menu item to close the menu | boolean | true |
 | onVisibleChange | Menu display/hide callback | `(visible: boolean) => void` | - |
 | onItemClick | Click the callback of the menu item | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
