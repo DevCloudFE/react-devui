@@ -13,7 +13,7 @@ $themes: (
   /** z-index **/
   --#{$variable-prefix}disabled-z-index: 10;
   --#{$variable-prefix}active-z-index: 20;
-  --#{$variable-prefix}hover-focus-z-index: 21;
+  --#{$variable-prefix}hover-z-index: 21;
 
   /** basic **/
   --#{$variable-prefix}text-color: #212529;

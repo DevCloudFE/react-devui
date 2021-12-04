@@ -16,7 +16,7 @@ export function DDragPlaceholder(props: DDragPlaceholderProps) {
     <div
       {...restProps}
       className={getClassName(className, `${dPrefix}drag-placeholder`, {
-        'is-horizontal': dropDirection === 'horizontal',
+        [`${dPrefix}drag-placeholder--horizontal`]: dropDirection === 'horizontal',
       })}
     ></div>
   );

@@ -82,9 +82,9 @@ export function DTab(props: DTabProps) {
       ref={tabRef}
       id={_id}
       className={getClassName(className, `${dPrefix}tab`, {
+        [`${dPrefix}tab--dropdown`]: __dropdown,
         'is-active': tabsActiveId === dId,
         'is-disabled': dDisabled,
-        'is-dropdown': __dropdown,
       })}
       role="tab"
       aria-controls={panelId}

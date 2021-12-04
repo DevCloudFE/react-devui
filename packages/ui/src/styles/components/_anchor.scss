@@ -16,45 +16,43 @@
     width: 2px;
 
     background-color: var(--#{$variable-prefix}indicator-background-color);
+  }
 
-    .#{$variable-prefix}anchor__dot-indicator {
-      position: absolute;
-      left: 50%;
+  @include e(dot-indicator) {
+    position: absolute;
+    left: 50%;
 
-      width: 8px;
-      height: 8px;
-      border: 2px solid var(--#{$variable-prefix}color-primary);
-      border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--#{$variable-prefix}color-primary);
+    border-radius: 50%;
 
-      background-color: var(--#{$variable-prefix}background-color);
-      transform: translate(-50%, -50%);
-      opacity: 0;
+    background-color: var(--#{$variable-prefix}background-color);
+    transform: translate(-50%, -50%);
+    opacity: 0;
 
-      transition: top 0.3s ease-in-out, opacity 160ms linear;
-    }
+    transition: top 0.3s ease-in-out, opacity 160ms linear;
+  }
 
-    .#{$variable-prefix}anchor__line-indicator {
-      position: absolute;
-      left: 0;
+  @include e(line-indicator) {
+    position: absolute;
+    left: 0;
 
-      width: 2px;
-      height: 20px;
+    width: 2px;
+    height: 20px;
 
-      background-color: var(--#{$variable-prefix}color-primary);
-      transform: translate(0, -50%);
-      opacity: 0;
+    background-color: var(--#{$variable-prefix}color-primary);
+    transform: translate(0, -50%);
+    opacity: 0;
 
-      transition: top 0.3s ease-in-out, opacity 160ms linear;
-    }
+    transition: top 0.3s ease-in-out, opacity 160ms linear;
   }
 }
 
 @include b(anchor-link) {
   padding-left: 4px;
 
-  & > a {
-    @include utils-break-word;
-
+  @include e(link) {
     display: block;
     padding: 8px 0;
 
@@ -63,15 +61,16 @@
 
     transition: color 0.2s linear;
 
-    @include utils-outline();
-
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
     }
-  }
 
-  &.is-active > a {
-    color: var(--#{$variable-prefix}color-primary);
-    font-weight: 500;
+    @include utils-break-word;
+    @include utils-outline;
+
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+      font-weight: 500;
+    }
   }
 }

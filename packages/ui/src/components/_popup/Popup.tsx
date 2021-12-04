@@ -568,14 +568,16 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
                 {dArrow && (
                   <div
                     className={getClassName(`${dPrefix}popup__arrow`, {
-                      'is-custom': arrowPosition,
+                      [`${dPrefix}popup__arrow--custom`]: arrowPosition,
                     })}
                     style={arrowPosition}
                   ></div>
                 )}
                 {dPopupContent}
               </div>
-              {dTrigger === 'hover' && <div ref={hoverReferenceRef} style={{ ...popupPositionStyle, visibility: 'hidden' }}></div>}
+              {dTrigger === 'hover' && (
+                <div ref={hoverReferenceRef} style={{ ...popupPositionStyle, visibility: 'hidden' }} aria-hidden="true"></div>
+              )}
             </>,
             containerRef.current
           )

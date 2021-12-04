@@ -153,19 +153,19 @@ export function DDropdownSub(props: DDropdownSubProps) {
       </li>
       {!dDisabled && (
         <DPopup
-          className={`${dPrefix}dropdown-popup`}
+          className={`${dPrefix}dropdown-sub__popup`}
           dVisible={[popupVisible]}
           dPopupContent={
             <ul
               ref={ulRef}
-              className={`${dPrefix}dropdown-list`}
+              className={`${dPrefix}dropdown-sub__list`}
               role="menu"
               tabIndex={-1}
               aria-labelledby={_id}
               aria-orientation="vertical"
               aria-activedescendant={activedescendant}
             >
-              {React.Children.count(children) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : children}
+              {React.Children.count(children) === 0 ? <span className={`${dPrefix}dropdown-sub__empty`}>{t('No Data')}</span> : children}
             </ul>
           }
           dTrigger={dropdownPopupTrigger}

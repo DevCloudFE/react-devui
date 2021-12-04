@@ -1,11 +1,20 @@
 @mixin button-radio {
+  $radio-selector: '.#{$variable-prefix}radio';
+
   flex-wrap: nowrap;
 
-  .#{$variable-prefix}radio + .#{$variable-prefix}radio {
+  &#{$radio-selector}-group--vertical {
+    #{$radio-selector} + #{$radio-selector} {
+      margin-top: -1px;
+      margin-left: 0;
+    }
+  }
+
+  #{$radio-selector} + #{$radio-selector} {
     margin-left: -1px;
   }
 
-  .#{$variable-prefix}radio {
+  #{$radio-selector} {
     border: 1px solid var(--#{$variable-prefix}color-step-150);
 
     transition: border-color 116ms ease-out, background-color 116ms ease-out;
@@ -19,7 +28,7 @@
     }
 
     &:not(.is-disabled) {
-      &.is-checked {
+      @include when(checked) {
         z-index: 5;
 
         border-color: var(--#{$variable-prefix}color-primary);
@@ -34,30 +43,27 @@
       }
     }
 
-    &.is-disabled.is-checked {
+    @include when(disabled) {
       color: var(--#{$variable-prefix}color-step-400);
 
       background-color: var(--#{$variable-prefix}color-step-100);
+
+      @include when(checked) {
+        color: var(--#{$variable-prefix}color-primary);
+      }
     }
-  }
 
-  .#{$variable-prefix}radio__input-wrapper {
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
+    #{$radio-selector}__input-wrapper {
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
 
-  .#{$variable-prefix}radio__label {
-    display: inline-flex;
-    align-items: center;
-    height: var(--#{$variable-prefix}radio-height);
-    padding: var(--#{$variable-prefix}radio-padding);
-  }
-
-  &.#{$variable-prefix}radio-group.is-vertical {
-    .#{$variable-prefix}radio + .#{$variable-prefix}radio {
-      margin-top: -1px;
-      margin-left: 0;
+    #{$radio-selector}__label {
+      display: inline-flex;
+      align-items: center;
+      height: var(--#{$variable-prefix}radio-height);
+      padding: var(--#{$variable-prefix}radio-padding);
     }
   }
 }
@@ -70,12 +76,43 @@
 
   cursor: pointer;
 
+  &:not(.is-disabled) {
+    &:hover {
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+    }
+
+    @include when(checked) {
+      @include e(input-wrapper) {
+        &::before {
+          animation: radio-wave 0.36s ease-in-out;
+          animation-fill-mode: both;
+        }
+      }
+
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+
+    @include e(input) {
+      @include utils-outline;
+
+      &:focus {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / 12%);
+      }
+    }
+  }
+
   @include font-size(0.9rem);
 
-  @include utils-disabled();
+  @include utils-disabled;
 
   @include when(disabled) {
-    .#{$variable-prefix}radio__input-wrapper {
+    @include e(input-wrapper) {
       background-color: var(--#{$variable-prefix}color-step-50);
 
       &::after {
@@ -84,31 +121,11 @@
     }
   }
 
-  &:not(.is-disabled) {
-    &:hover {
-      .#{$variable-prefix}radio__input {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-      }
-    }
-
-    .#{$variable-prefix}radio__input {
-      @include utils-outline();
-
-      &:focus {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-
-        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / 12%);
-      }
-    }
-
-    &.is-checked .#{$variable-prefix}radio__input-wrapper {
-      &::before {
-        animation: radio-wave 0.36s ease-in-out;
-        animation-fill-mode: both;
-      }
-
-      .#{$variable-prefix}radio__input {
-        border-color: var(--#{$variable-prefix}color-primary);
+  @include when(checked) {
+    @include e(input-wrapper) {
+      &::after {
+        transform: scale(1);
+        opacity: 1;
       }
     }
   }
@@ -182,18 +199,11 @@
 
     transition: color 133ms linear;
   }
-
-  @include when(checked) {
-    .#{$variable-prefix}radio__input-wrapper {
-      &::after {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-  }
 }
 
 @include b(radio-group) {
+  $selector: &;
+
   --#{$variable-prefix}radio-padding: 0 16px;
   --#{$variable-prefix}radio-height: 32px;
 
@@ -203,18 +213,19 @@
   flex-wrap: wrap;
   align-items: center;
 
-  &:not(.#{$variable-prefix}radio-group--outline):not(.#{$variable-prefix}radio-group--fill) {
+  &:not(#{$selector}--outline):not(#{$selector}--fill) {
     gap: 8px 12px;
   }
 
-  .#{$variable-prefix}radio {
+  $radio-selector: '.#{$variable-prefix}radio';
+  #{$radio-selector} {
     flex: 0 0 auto;
   }
 
   @include m(outline) {
     @include button-radio;
 
-    .#{$variable-prefix}radio:not(.is-disabled).is-checked {
+    #{$radio-selector}:not(.is-disabled).is-checked {
       color: var(--#{$variable-prefix}color-primary);
     }
   }
@@ -222,7 +233,7 @@
   @include m(fill) {
     @include button-radio;
 
-    .#{$variable-prefix}radio:not(.is-disabled).is-checked {
+    #{$radio-selector}:not(.is-disabled).is-checked {
       color: #fff;
 
       background-color: var(--#{$variable-prefix}color-primary);
@@ -233,7 +244,7 @@
     --#{$variable-prefix}radio-padding: 0 12px;
     --#{$variable-prefix}radio-height: 28px;
 
-    .#{$variable-prefix}radio {
+    #{$radio-selector} {
       @include font-size(0.8rem);
     }
   }
@@ -242,16 +253,16 @@
     --#{$variable-prefix}radio-padding: 0 20px;
     --#{$variable-prefix}radio-height: 38px;
 
-    .#{$variable-prefix}radio {
+    #{$radio-selector} {
       @include font-size(1rem);
     }
   }
 
-  @include when(vertical) {
+  @include m(vertical) {
     flex-direction: column;
     align-items: flex-start;
 
-    .#{$variable-prefix}radio {
+    #{$radio-selector} {
       &:first-of-type {
         border-radius: 2px 2px 0 0;
       }

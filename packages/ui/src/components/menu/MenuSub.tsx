@@ -197,8 +197,8 @@ export function DMenuSub(props: DMenuSubProps) {
       React.cloneElement(child, {
         ...child.props,
         className: getClassName(child.props.className, {
-          'is-first': length > 1 && index === 0,
-          'is-last': length > 1 && index === length - 1,
+          'js-first': length > 1 && index === 0,
+          'js-last': length > 1 && index === length - 1,
         }),
         __level: popupMode ? 0 : __level + 1,
       })
@@ -208,7 +208,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const menuNode = (_props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
     <ul
       {..._props}
-      className={getClassName(_props.className, `${dPrefix}menu-list`)}
+      className={getClassName(_props.className, `${dPrefix}menu-sub__list`)}
       style={{
         ..._props.style,
         width: inHorizontalNav ? menuWidth : undefined,
@@ -221,7 +221,7 @@ export function DMenuSub(props: DMenuSubProps) {
       aria-activedescendant={activedescendant}
     >
       {React.Children.count(childs) === 0 ? (
-        <span className={`${dPrefix}menu__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+        <span className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
           {t('No Data')}
         </span>
       ) : (
@@ -252,10 +252,10 @@ export function DMenuSub(props: DMenuSubProps) {
               ref={liRef}
               id={_id}
               className={getClassName(className, `${dPrefix}menu-sub`, {
+                [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
+                [`${dPrefix}menu-sub--icon`]: menuMode === 'icon' && inNav,
                 'is-active': isActive,
                 'is-expand': popupMode ? popupVisible : expand,
-                'is-horizontal': inHorizontalNav,
-                'is-icon': menuMode === 'icon' && inNav,
                 'is-disabled': dDisabled,
               })}
               style={{

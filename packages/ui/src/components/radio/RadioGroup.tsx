@@ -67,7 +67,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
         className={getClassName(className, `${dPrefix}radio-group`, {
           [`${dPrefix}radio-group--${dType}`]: dType,
           [`${dPrefix}radio-group--${dSize}`]: dSize,
-          'is-vertical': dVertical,
+          [`${dPrefix}radio-group--vertical`]: dVertical,
         })}
         role="radiogroup"
       >

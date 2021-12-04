@@ -45,15 +45,14 @@ export function DAnchorLink(props: DAnchorLinkProps) {
   //#endregion
 
   return (
-    <li
-      {...restProps}
-      ref={linkRef}
-      className={getClassName(className, `${dPrefix}anchor-link`, {
-        'is-active': href && anchorActiveHref === href,
-      })}
-      onClick={handleClick}
-    >
-      <a style={{ paddingLeft: 12 + dLevel * 16 }} href={href}>
+    <li {...restProps} ref={linkRef} className={getClassName(className, `${dPrefix}anchor-link`)} onClick={handleClick}>
+      <a
+        className={getClassName(`${dPrefix}anchor-link__link`, {
+          'is-active': href && anchorActiveHref === href,
+        })}
+        style={{ paddingLeft: 12 + dLevel * 16 }}
+        href={href}
+      >
         {children}
       </a>
     </li>

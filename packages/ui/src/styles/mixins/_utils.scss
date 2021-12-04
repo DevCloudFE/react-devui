@@ -1,34 +1,3 @@
-@mixin utils-clearfix {
-  $selector: &;
-
-  @at-root {
-    #{$selector}::before,
-    #{$selector}::after {
-      display: table;
-
-      content: '';
-    }
-    #{$selector}::after {
-      clear: both;
-    }
-  }
-}
-
-@mixin utils-vertical-center {
-  $selector: &;
-
-  @at-root {
-    #{$selector}::after {
-      display: inline-block;
-      height: 100%;
-
-      vertical-align: middle;
-
-      content: '';
-    }
-  }
-}
-
 @mixin utils-ellipsis {
   overflow: hidden;
 
@@ -64,16 +33,16 @@
   }
 }
 
-@mixin utils-dark() {
-  body.dark {
-    @content;
-  }
-}
-
 @mixin utils-outline($disabled: '.is-disabled') {
   outline: none;
 
-  &:not(#{$disabled}) {
+  @if $disabled {
+    &:not(#{$disabled}) {
+      &:focus-visible {
+        outline: 1px dashed var(--#{$variable-prefix}color-primary);
+      }
+    }
+  } @else {
     &:focus-visible {
       outline: 1px dashed var(--#{$variable-prefix}color-primary);
     }

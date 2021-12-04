@@ -181,7 +181,7 @@ export function DDropdown(props: DDropdownProps) {
   return (
     <DDropdownContext.Provider value={contextValue}>
       <DPopup
-        className={`${dPrefix}dropdown-popup`}
+        className={`${dPrefix}dropdown__popup`}
         dVisible={[visible]}
         dTrigger={dTrigger}
         dPopupContent={

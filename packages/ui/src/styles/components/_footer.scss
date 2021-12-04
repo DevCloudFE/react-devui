@@ -9,10 +9,12 @@
   @include m(left) {
     justify-content: left;
   }
-  @include m(center) {
-    justify-content: center;
-  }
+
   @include m(right) {
     justify-content: right;
+  }
+
+  @include m(center) {
+    justify-content: center;
   }
 }

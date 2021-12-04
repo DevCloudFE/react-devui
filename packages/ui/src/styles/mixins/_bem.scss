@@ -6,7 +6,7 @@
   }
 }
 
-@mixin e($element) {
+@mixin e($element, $nesting: false) {
   $E: $element !global;
   $selector: &;
   $currentSelector: '';
@@ -14,7 +14,7 @@
     $currentSelector: #{$currentSelector + '.' + $B + $element-separator + $unit + ','};
   }
 
-  @if hitAllSpecialNestRule($selector) {
+  @if hitAllSpecialNestRule($selector) or $nesting {
     @at-root {
       #{$selector} {
         #{$currentSelector} {
@@ -45,9 +45,30 @@
   }
 }
 
+// Signify that a class is responsible for adding a Theme to a view.
+@mixin theme($theme) {
+  @at-root {
+    &.#{$theme-prefix + $theme} {
+      @content;
+    }
+  }
+}
+
+// Signify that the piece of UI in question is currently
+// styled a certain way because of a state or condition.
 @mixin when($state) {
   @at-root {
     &.#{$state-prefix + $state} {
+      @content;
+    }
+  }
+}
+
+// Signify that this piece of the DOM has some behaviour acting upon it,
+// and that JavaScript binds onto it to provide that behaviour.
+@mixin js($js) {
+  @at-root {
+    &.#{$js-prefix + $js} {
       @content;
     }
   }

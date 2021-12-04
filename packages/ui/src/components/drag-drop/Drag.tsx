@@ -33,8 +33,6 @@ export function DDrag(props: DDragProps) {
     useCustomContext(DDropContext);
   //#endregion
 
-  const inDrop = dropContext !== null;
-
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
   const id = useId();
@@ -43,6 +41,8 @@ export function DDrag(props: DDragProps) {
   const [isDragging, setIsDragging] = useImmer(false);
   const [showPlaceholder, setShowPlaceholder] = useImmer(false);
   const [fixedDrag, setFixedDrag] = useImmer(false);
+
+  const inDrop = dropContext !== null;
 
   const placeholderRef = useRefSelector(`[data-${dPrefix}drag-placeholder="${id}"]`);
 

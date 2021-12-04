@@ -75,9 +75,9 @@ export function DMenuItem(props: DMenuItemProps) {
         ref={liRef}
         id={_id}
         className={getClassName(className, `${dPrefix}menu-item`, {
+          [`${dPrefix}menu-item--horizontal`]: menuMode === 'horizontal' && inNav,
+          [`${dPrefix}menu-item--icon`]: menuMode === 'icon' && inNav,
           'is-active': menuActiveId === dId,
-          'is-horizontal': menuMode === 'horizontal' && inNav,
-          'is-icon': menuMode === 'icon' && inNav,
           'is-disabled': dDisabled,
         })}
         style={{

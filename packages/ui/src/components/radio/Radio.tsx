@@ -42,12 +42,12 @@ export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
   const [radioEl, radioRef] = useRefCallback();
   //#endregion
 
-  const inGroup = radioGroupContext !== null;
-
   const wave = useWave();
 
   const _id = useId();
   const __id = id ?? `${dPrefix}radio-${_id}`;
+
+  const inGroup = radioGroupContext !== null;
 
   const disabled = radioGroupDisabled || dDisabled;
 

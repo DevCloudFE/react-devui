@@ -56,10 +56,8 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     (e) => {
       onClick?.(e);
 
-      if (!dLoading) {
-        if (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed') {
-          wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
-        }
+      if (!dLoading && (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed')) {
+        wave.next([e.currentTarget, `var(--${dPrefix}color-${color})`]);
       }
     },
     [color, dLoading, dPrefix, onClick, type, wave]
@@ -71,6 +69,17 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     </DIcon>
   );
 
+  const buttonIcon = (loading: boolean, ref?: React.LegacyRef<HTMLSpanElement>) => (
+    <span
+      ref={ref}
+      className={getClassName(`${dPrefix}button__icon`, {
+        [`${dPrefix}button__icon--right`]: dIconRight,
+      })}
+    >
+      {loading ? loadingIcon : dIcon}
+    </span>
+  );
+
   return (
     <DCollapseTransition
       dEl={loadingEl}
@@ -80,11 +89,11 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
         <button
           {...restProps}
           ref={ref}
-          className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${type}-${color}`, {
+          className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${type}`, `t-${color}`, {
             [`${dPrefix}button--${dShape}`]: dShape,
             [`${dPrefix}button--${size}`]: size,
-            'is-block': dBlock,
-            'is-only-icon': !children,
+            [`${dPrefix}button--block`]: dBlock,
+            [`${dPrefix}button--icon`]: !children,
             'is-loading': dLoading,
           })}
           disabled={buttonGroupDisabled || disabled}
@@ -92,15 +101,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
           onClick={handleClick}
         >
           {dIconRight && children}
-          {dIcon ? (
-            <span className={getClassName(`${dPrefix}button__icon`, { 'is-right': dIconRight })}>{dLoading ? loadingIcon : dIcon}</span>
-          ) : (
-            !hidden && (
-              <span ref={loadingRef} className={getClassName(`${dPrefix}button__icon`, { 'is-right': dIconRight })}>
-                {loadingIcon}
-              </span>
-            )
-          )}
+          {dIcon ? buttonIcon(dLoading) : !hidden && buttonIcon(true, loadingRef)}
           {!dIconRight && children}
         </button>
       )}

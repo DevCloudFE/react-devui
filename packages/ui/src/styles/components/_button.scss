@@ -1,7 +1,7 @@
-@mixin button-hover-focus {
+@mixin button-hover {
   &:not([disabled]):not(.is-loading):hover,
   &:not([disabled]):not(.is-loading):focus {
-    z-index: var(--#{$variable-prefix}hover-focus-z-index);
+    z-index: var(--#{$variable-prefix}hover-z-index);
     @content;
   }
 }
@@ -14,6 +14,8 @@
 }
 
 @include b(button) {
+  $selector: &;
+
   position: relative;
 
   display: inline-flex;
@@ -23,156 +25,148 @@
   min-height: 32px;
   margin: 0;
   padding: 0 16px;
-  border-style: solid;
-  border-width: 1px;
   border-radius: 2px;
 
   font-family: inherit;
   line-height: inherit;
   white-space: nowrap;
-
   text-align: unset;
   text-transform: none;
 
   outline: none;
-
   cursor: pointer;
 
   transition: all 0.2s linear;
 
-  appearance: button;
-
-  @include font-size(0.9rem);
-
-  @include utils-disabled(1px, ':disabled');
-  @include utils-disabled(1px, '.is-loading');
+  appearance: none;
 
   & + & {
     margin-left: 10px;
   }
 
-  @each $theme, $rgb in $themes {
-    &.#{$variable-prefix}button--primary-#{$theme} {
-      border-color: var(--#{$variable-prefix}color-#{$theme});
+  @include font-size(0.9rem);
+  @include utils-disabled(1px, ':disabled');
+  @include utils-disabled(1px, '.is-loading');
 
-      color: #fff;
+  @include m(primary) {
+    z-index: 1;
 
-      background-color: var(--#{$variable-prefix}color-#{$theme});
+    border: 1px solid var(--#{$variable-prefix}button-color);
 
-      @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    color: #fff;
 
-        color: #fff;
+    background-color: var(--#{$variable-prefix}button-color);
 
-        background-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
-      }
+    @include button-hover {
+      border-color: var(--#{$variable-prefix}button-color-lighter);
 
-      @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        color: #fff;
-
-        background-color: var(--#{$variable-prefix}color-#{$theme}-darker);
-      }
+      background-color: var(--#{$variable-prefix}button-color-lighter);
     }
 
-    &.#{$variable-prefix}button--secondary-#{$theme} {
-      border-color: var(--#{$variable-prefix}color-step-150);
+    @include button-active {
+      border-color: var(--#{$variable-prefix}button-color-darker);
 
-      color: var(--#{$variable-prefix}text-color);
+      background-color: var(--#{$variable-prefix}button-color-darker);
+    }
+  }
 
-      background-color: transparent;
+  @include m(secondary) {
+    border: 1px solid var(--#{$variable-prefix}color-step-150);
 
-      @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    color: var(--#{$variable-prefix}text-color);
 
-        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    background-color: transparent;
 
-        background-color: transparent;
-      }
+    @include button-hover {
+      border-color: var(--#{$variable-prefix}button-color-lighter);
 
-      @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        background-color: transparent;
-      }
+      color: var(--#{$variable-prefix}button-color-lighter);
     }
 
-    &.#{$variable-prefix}button--outline-#{$theme},
-    &.#{$variable-prefix}button--dashed-#{$theme} {
-      border-color: var(--#{$variable-prefix}color-#{$theme});
+    @include button-active {
+      border-color: var(--#{$variable-prefix}button-color-darker);
 
-      color: var(--#{$variable-prefix}color-#{$theme});
+      color: var(--#{$variable-prefix}button-color-darker);
+    }
+  }
 
-      background-color: transparent;
+  @include m(outline) {
+    z-index: 1;
 
-      @include button-hover-focus {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    border: 1px solid var(--#{$variable-prefix}button-color);
 
-        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    color: var(--#{$variable-prefix}button-color);
 
-        background-color: transparent;
-      }
+    background-color: transparent;
 
-      @include button-active {
-        border-color: var(--#{$variable-prefix}color-#{$theme}-darker);
+    @include button-hover {
+      border-color: var(--#{$variable-prefix}button-color-lighter);
 
-        color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        background-color: transparent;
-      }
+      color: var(--#{$variable-prefix}button-color-lighter);
     }
 
-    &.#{$variable-prefix}button--dashed-#{$theme} {
-      border-style: dashed;
+    @include button-active {
+      border-color: var(--#{$variable-prefix}button-color-darker);
+
+      color: var(--#{$variable-prefix}button-color-darker);
+    }
+  }
+
+  @include m(dashed) {
+    z-index: 1;
+
+    border: 1px dashed var(--#{$variable-prefix}button-color);
+
+    color: var(--#{$variable-prefix}button-color);
+
+    background-color: transparent;
+
+    @include button-hover {
+      border-color: var(--#{$variable-prefix}button-color-lighter);
+
+      color: var(--#{$variable-prefix}button-color-lighter);
     }
 
-    &.#{$variable-prefix}button--text-#{$theme} {
-      border-color: transparent;
+    @include button-active {
+      border-color: var(--#{$variable-prefix}button-color-darker);
 
-      background-color: transparent;
+      color: var(--#{$variable-prefix}button-color-darker);
+    }
+  }
 
-      @include button-hover-focus {
-        border-color: transparent;
+  @include m(text) {
+    border: none;
 
-        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    color: var(--#{$variable-prefix}text-color);
 
-        background-color: var(--#{$variable-prefix}color-#{$theme}-background-6);
-      }
+    background-color: transparent;
 
-      @include button-active {
-        border-color: transparent;
+    @include button-hover {
+      color: var(--#{$variable-prefix}button-color-lighter);
 
-        color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        background-color: var(--#{$variable-prefix}color-#{$theme}-background);
-      }
+      background-color: var(--#{$variable-prefix}button-text-hover-background);
     }
 
-    &.#{$variable-prefix}button--link-#{$theme} {
-      border-color: transparent;
+    @include button-active {
+      color: var(--#{$variable-prefix}button-color-darker);
 
-      color: var(--#{$variable-prefix}color-#{$theme});
+      background-color: var(--#{$variable-prefix}button-text-active-background);
+    }
+  }
 
-      background-color: transparent;
+  @include m(link) {
+    border: none;
 
-      @include button-hover-focus {
-        border-color: transparent;
+    color: var(--#{$variable-prefix}button-color);
 
-        color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+    background-color: transparent;
 
-        background-color: transparent;
-      }
+    @include button-hover {
+      color: var(--#{$variable-prefix}button-color-lighter);
+    }
 
-      @include button-active {
-        border-color: transparent;
-
-        color: var(--#{$variable-prefix}color-#{$theme}-darker);
-
-        background-color: transparent;
-      }
+    @include button-active {
+      color: var(--#{$variable-prefix}button-color-darker);
     }
   }
 
@@ -200,7 +194,7 @@
     @include font-size(1.05rem);
   }
 
-  @include when(block) {
+  @include m(block) {
     width: 100%;
 
     & + & {
@@ -209,15 +203,25 @@
     }
   }
 
-  @include when(only-icon) {
-    &:not(.#{$variable-prefix}button--round) {
+  @include m(icon) {
+    &:not(#{$selector}--round) {
       padding: 0;
     }
 
-    .#{$variable-prefix}button__icon {
+    @include e(icon) {
       width: auto;
 
       font-size: 1.2em;
+    }
+  }
+
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
+      --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
+      --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
+      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}color-#{$theme}-background-6);
+      --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}color-#{$theme}-background);
     }
   }
 
@@ -225,7 +229,7 @@
     display: inline-block;
     width: calc(1em + 8px);
 
-    @include when(right) {
+    @include m(right) {
       text-align: right;
     }
   }
@@ -235,29 +239,29 @@
   display: inline-flex;
   align-items: center;
 
-  .#{$variable-prefix}button {
-    flex: 0 0 auto;
-  }
-
   & + & {
     margin-left: 10px;
   }
 
-  .#{$variable-prefix}button:not(.#{$variable-prefix}button:nth-child(1)):not(.#{$variable-prefix}button:last-child) {
-    border-radius: 0;
-  }
+  $button-selector: '.#{$variable-prefix}button';
+  #{$button-selector} {
+    flex: 0 0 auto;
 
-  .#{$variable-prefix}button:nth-child(1):not(.#{$variable-prefix}button:only-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
+    &:not(:first-child):not(:last-child) {
+      border-radius: 0;
+    }
 
-  .#{$variable-prefix}button:last-child:not(.#{$variable-prefix}button:only-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
+    &:first-child:not(:only-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
 
-  .#{$variable-prefix}button + .#{$variable-prefix}button {
+    &:last-child:not(:only-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+  #{$button-selector} + #{$button-selector} {
     margin-left: -1px;
   }
 }

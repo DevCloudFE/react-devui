@@ -1,4 +1,15 @@
-@mixin dropdown-base($selector) {
+@mixin dropdown-popup() {
+  $popup-selector: '.#{$variable-prefix}popup';
+
+  @include e(popup) {
+    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+    &#{$popup-selector} {
+      background-color: var(--#{$variable-prefix}background-color);
+    }
+  }
+}
+
+@mixin dropdown-item() {
   position: relative;
 
   display: flex;
@@ -11,10 +22,6 @@
 
   transition: all 0.2s ease-out;
 
-  @include utils-outline();
-
-  @include utils-disabled();
-
   &:not(.is-disabled) {
     &:focus,
     &:hover {
@@ -22,32 +29,20 @@
     }
   }
 
+  @include utils-outline;
+  @include utils-disabled;
+
   @include e(icon) {
     flex-shrink: 0;
     width: calc(1.05rem + 8px);
 
-    transition: all 0.2s linear;
-
     @include font-size(1.05rem);
-
-    & > .#{$variable-prefix}icon {
-      transition: all 0.2s linear;
-    }
   }
 
   @include e(title) {
     flex: 1 0 0;
-    min-width: 1em;
 
     @include utils-ellipsis;
-  }
-}
-
-@include b(dropdown-popup) {
-  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
-
-  &.#{$variable-prefix}popup {
-    background-color: var(--#{$variable-prefix}background-color);
   }
 }
 
@@ -60,6 +55,8 @@
   overflow-x: hidden;
 
   @include font-size(0.95rem);
+
+  @include dropdown-popup;
 
   @include e(empty) {
     display: flex;
@@ -75,13 +72,14 @@
 @include b(dropdown-item) {
   padding: 0 12px;
 
-  @include dropdown-base(dropdown-item);
+  @include dropdown-item;
 }
 
 @include b(dropdown-sub) {
   padding: 0 24px 0 12px;
 
-  @include dropdown-base(dropdown-item);
+  @include dropdown-item;
+  @include dropdown-popup;
 
   @include e(arrow) {
     position: absolute;
@@ -94,20 +92,20 @@
 
     color: var(--#{$variable-prefix}color-step-450);
   }
-}
 
-@include b(dropdown-list) {
-  position: relative;
+  @include e(list) {
+    position: relative;
 
-  min-width: 120px;
-  margin: 0;
+    min-width: 120px;
+    margin: 0;
 
-  padding: 4px 0;
-  overflow-x: hidden;
+    padding: 4px 0;
+    overflow-x: hidden;
 
-  list-style: none;
+    list-style: none;
+  }
 
-  .#{$variable-prefix}dropdown__empty {
+  @include e(empty) {
     justify-content: flex-start;
     padding: 0 12px;
   }

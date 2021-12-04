@@ -214,7 +214,7 @@ export function DMenu(props: DMenuProps) {
                 {...handleEvent(triggerRenderProps)}
                 ref={navRef}
                 className={getClassName(className, `${dPrefix}menu`, {
-                  'is-horizontal': dMode === 'horizontal',
+                  [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
                 })}
                 tabIndex={-1}
                 role="menubar"

@@ -24,8 +24,8 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
   return (
     <DHeader
       {...restProps}
-      id={drawerId ? `${dPrefix}drawer-content__header-${drawerId}` : undefined}
-      className={getClassName(className, `${dPrefix}drawer-content__header`)}
+      id={drawerId ? `${dPrefix}drawer-header-${drawerId}` : undefined}
+      className={getClassName(className, `${dPrefix}drawer-header`)}
       onClose={handleClose}
     ></DHeader>
   );

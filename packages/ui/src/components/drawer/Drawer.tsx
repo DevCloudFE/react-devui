@@ -245,14 +245,14 @@ export function DDrawer(props: DDrawerProps) {
               }}
               role="dialog"
               aria-modal="true"
-              aria-labelledby={dHeader ? `${dPrefix}drawer-content__header-${id}` : undefined}
+              aria-labelledby={dHeader ? `${dPrefix}drawer-header-${id}` : undefined}
               aria-describedby={`${dPrefix}drawer-content-${id}`}
             >
               {dMask && <DMask dVisible={visible} onClose={handleMaskClose} />}
               <div
                 ref={drawerContentRef}
                 id={`${dPrefix}drawer-content-${id}`}
-                className={getClassName(`${dPrefix}drawer-content`, `${dPrefix}drawer-content--${dPlacement}`)}
+                className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
                 style={{
                   width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
                   height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
@@ -260,7 +260,7 @@ export function DDrawer(props: DDrawerProps) {
                 tabIndex={-1}
               >
                 {dHeader}
-                <div className={`${dPrefix}drawer-content__body`}>{children}</div>
+                <div className={`${dPrefix}drawer__content-body`}>{children}</div>
                 {dFooter}
               </div>
             </div>

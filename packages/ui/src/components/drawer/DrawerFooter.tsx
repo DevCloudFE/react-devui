@@ -80,7 +80,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
   return (
     <DFooter
       {...restProps}
-      className={getClassName(className, `${dPrefix}drawer-content__footer`)}
+      className={getClassName(className, `${dPrefix}drawer-footer`)}
       dOkButtonProps={okButtonProps}
       dCancelButtonProps={cancelButtonProps}
       onOkClick={handleOkClick}

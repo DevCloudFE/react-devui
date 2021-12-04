@@ -4,9 +4,11 @@
   @include m(success) {
     color: var(--#{$variable-prefix}color-success);
   }
+
   @include m(warning) {
     color: var(--#{$variable-prefix}color-warning);
   }
+
   @include m(danger) {
     color: var(--#{$variable-prefix}color-danger);
   }

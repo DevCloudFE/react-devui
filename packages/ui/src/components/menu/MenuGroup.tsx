@@ -60,8 +60,8 @@ export function DMenuGroup(props: DMenuGroupProps) {
       React.cloneElement(child, {
         ...child.props,
         className: getClassName(child.props.className, {
-          'is-first': length > 1 && index === 0,
-          'is-last': length > 1 && index === length - 1,
+          'js-first': length > 1 && index === 0,
+          'js-last': length > 1 && index === length - 1,
         }),
         __level: __level + 1,
       })
@@ -87,7 +87,7 @@ export function DMenuGroup(props: DMenuGroupProps) {
         {dTitle}
       </div>
       {React.Children.count(childs) === 0 ? (
-        <span className={`${dPrefix}menu__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+        <span className={`${dPrefix}menu-group__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
           {t('No Data')}
         </span>
       ) : (

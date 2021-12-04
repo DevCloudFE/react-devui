@@ -1,8 +1,7 @@
-@mixin arrow-placement() {
-  $arrow-selector: '.#{$variable-prefix}popup__arrow:not(.is-custom)';
-
-  @at-root {
-    & > #{$arrow-selector} {
+@mixin popup-arrow() {
+  @include e(arrow) {
+    $selector: &;
+    &:not(#{$selector}--custom) {
       @content;
     }
   }
@@ -17,18 +16,8 @@
 
   @include font-size(1rem);
 
-  @include e(arrow) {
-    position: absolute;
-    z-index: -1;
-
-    width: 6px;
-    height: 6px;
-
-    background-color: inherit;
-  }
-
   @include m(top) {
-    @include arrow-placement {
+    @include popup-arrow {
       bottom: 0;
       left: 50%;
 
@@ -37,7 +26,7 @@
   }
 
   @include m(top-left) {
-    @include arrow-placement {
+    @include popup-arrow {
       bottom: 0;
       left: 20px;
 
@@ -46,7 +35,7 @@
   }
 
   @include m(top-right) {
-    @include arrow-placement {
+    @include popup-arrow {
       right: 20px;
       bottom: 0;
 
@@ -55,7 +44,7 @@
   }
 
   @include m(right) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 50%;
       left: 0;
 
@@ -64,7 +53,7 @@
   }
 
   @include m(right-top) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 12px;
       left: 0;
 
@@ -73,7 +62,7 @@
   }
 
   @include m(right-bottom) {
-    @include arrow-placement {
+    @include popup-arrow {
       bottom: 12px;
       left: 0;
 
@@ -82,7 +71,7 @@
   }
 
   @include m(bottom) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 0;
       left: 50%;
 
@@ -91,7 +80,7 @@
   }
 
   @include m(bottom-left) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 0;
       left: 20px;
 
@@ -100,7 +89,7 @@
   }
 
   @include m(bottom-right) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 0;
       right: 20px;
 
@@ -109,7 +98,7 @@
   }
 
   @include m(left) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 50%;
       right: 0;
 
@@ -118,7 +107,7 @@
   }
 
   @include m(left-top) {
-    @include arrow-placement {
+    @include popup-arrow {
       top: 12px;
       right: 0;
 
@@ -127,11 +116,21 @@
   }
 
   @include m(left-bottom) {
-    @include arrow-placement {
+    @include popup-arrow {
       right: 0;
       bottom: 12px;
 
       transform: translate(50%, 0) rotate(45deg);
     }
+  }
+
+  @include e(arrow) {
+    position: absolute;
+    z-index: -1;
+
+    width: 6px;
+    height: 6px;
+
+    background-color: inherit;
   }
 }
