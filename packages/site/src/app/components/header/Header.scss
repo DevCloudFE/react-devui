@@ -1,5 +1,63 @@
 @import '~rfs/scss';
 
+.hamburger {
+  position: relative;
+
+  width: 28px;
+  height: 22px;
+
+  cursor: pointer;
+
+  .line {
+    position: absolute;
+    left: 0;
+
+    display: block;
+    width: 28px;
+    height: 2px;
+    border-radius: 2px;
+
+    background-color: var(--d-text-color);
+    transform-origin: center center;
+
+    transition: all 0.3s ease-in-out;
+
+    &:nth-child(1) {
+      top: 2px;
+    }
+
+    &:nth-child(2) {
+      top: 10px;
+    }
+
+    &:nth-child(3) {
+      top: 18px;
+    }
+  }
+
+  &.is-active {
+    .line {
+      background-color: var(--d-color-primary-lighter);
+    }
+
+    .line:nth-child(1) {
+      top: 10px;
+
+      transform: rotate(45deg);
+    }
+
+    .line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .line:nth-child(3) {
+      top: 10px;
+
+      transform: rotate(-45deg);
+    }
+  }
+}
+
 .app-header {
   position: relative;
   z-index: 910;
@@ -8,7 +66,7 @@
   align-items: center;
   width: 100%;
   height: 64px;
-  padding: 0;
+  padding: 0 20px;
 
   background-color: var(--d-background-color);
 
@@ -16,8 +74,15 @@
     box-shadow: 0 2px 8px 0 var(--d-shadow-color);
   }
 
-  .app-header__logo {
-    margin-left: 28px;
+  .app-header__menu-button {
+    margin-right: auto;
+    padding: 4px;
+  }
+
+  .app-header__logo-container {
+    display: none;
+    align-items: center;
+    margin-right: auto;
   }
 
   .app-header__title {
@@ -25,5 +90,37 @@
 
     font-weight: bold;
     @include font-size(1.5rem);
+  }
+
+  .app-header__github {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 12px;
+    padding: 0;
+    border: 1px solid var(--d-color-step-150);
+    border-radius: 8px;
+  }
+
+  .app-header__github-icon {
+    width: 20px;
+    height: 20px;
+
+    /* stylelint-disable-next-line */
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjQwcHgiIGhlaWdodD0iNDBweCIgdmlld0JveD0iMTIgMTIgNDAgNDAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMTIgMTIgNDAgNDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwYXRoIGZpbGw9IiMzMzMzMzMiIGQ9Ik0zMiAxMy40Yy0xMC41IDAtMTkgOC41LTE5IDE5YzAgOC40IDUuNSAxNS41IDEzIDE4YzEgMC4yIDEuMy0wLjQgMS4zLTAuOWMwLTAuNSAwLTEuNyAwLTMuMiBjLTUuMyAxLjEtNi40LTIuNi02LjQtMi42QzIwIDQxLjYgMTguOCA0MSAxOC44IDQxYy0xLjctMS4yIDAuMS0xLjEgMC4xLTEuMWMxLjkgMC4xIDIuOSAyIDIuOSAyYzEuNyAyLjkgNC41IDIuMSA1LjUgMS42IGMwLjItMS4yIDAuNy0yLjEgMS4yLTIuNmMtNC4yLTAuNS04LjctMi4xLTguNy05LjRjMC0yLjEgMC43LTMuNyAyLTUuMWMtMC4yLTAuNS0wLjgtMi40IDAuMi01YzAgMCAxLjYtMC41IDUuMiAyIGMxLjUtMC40IDMuMS0wLjcgNC44LTAuN2MxLjYgMCAzLjMgMC4yIDQuNyAwLjdjMy42LTIuNCA1LjItMiA1LjItMmMxIDIuNiAwLjQgNC42IDAuMiA1YzEuMiAxLjMgMiAzIDIgNS4xYzAgNy4zLTQuNSA4LjktOC43IDkuNCBjMC43IDAuNiAxLjMgMS43IDEuMyAzLjVjMCAyLjYgMCA0LjYgMCA1LjJjMCAwLjUgMC40IDEuMSAxLjMgMC45YzcuNS0yLjYgMTMtOS43IDEzLTE4LjFDNTEgMjEuOSA0Mi41IDEzLjQgMzIgMTMuNHoiLz48L3N2Zz4=);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  @media (min-width: 768px) {
+    .app-header__menu-button {
+      display: none;
+    }
+
+    .app-header__logo-container {
+      display: inline-flex;
+    }
   }
 }

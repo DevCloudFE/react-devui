@@ -442,6 +442,7 @@
   z-index: 5;
 
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   height: var(--#{$variable-prefix}tabs-tab-size);
 

@@ -7,6 +7,9 @@
   border-bottom: 1px solid var(--#{$variable-prefix}divider-color);
 
   @include e(title) {
+    display: inline-flex;
+    align-items: center;
+
     font-weight: 500;
     line-height: 22px;
 

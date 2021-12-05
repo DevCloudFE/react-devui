@@ -1,19 +1,73 @@
 @import '~rfs/scss';
 
-.app-route-anchor {
+.app-route-anchor-md {
   position: fixed;
   top: 120px;
   right: 20px;
   z-index: 910;
+
+  display: none;
 
   width: 168px;
 
   .d-anchor-link > a {
     padding: 4px 0;
   }
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+}
+
+.app-route-anchor-conatiner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 909;
+
+  width: 100%;
+  height: calc(100% - 64px);
+  padding: 20px;
+  overflow: auto;
+
+  background-color: var(--d-background-color);
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.app-route__anchor-button {
+  position: fixed;
+  right: 20px;
+  bottom: 44px;
+  z-index: 910;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px 0;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--d-divider-color);
+  border-radius: 50%;
+
+  color: var(--d-color-primary-lighter);
+
+  background-color: var(--d-color-step-800);
+  box-shadow: 0 2px 20px 2px var(--d-shadow-color);
+
+  @media (min-width: 768px) {
+    display: none;
+  }
 }
 
 .app-route-article {
+  code {
+    word-break: break-all;
+  }
+
   pre > code {
     font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   }

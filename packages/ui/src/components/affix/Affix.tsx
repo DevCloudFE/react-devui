@@ -4,7 +4,7 @@ import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback, useDContentConfig } from '../../hooks';
-import { getClassName, toPx } from '../../utils';
+import { getClassName, toPx, mergeStyle } from '../../utils';
 
 export interface DAffixRef {
   el: HTMLDivElement | null;
@@ -156,10 +156,9 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
         {...restProps}
         ref={affixRef}
         className={getClassName(className, `${dPrefix}affix`)}
-        style={{
-          ...style,
+        style={mergeStyle(style, {
           ...(fixed ? fixedStyle : {}),
-        }}
+        })}
       >
         {children}
       </div>

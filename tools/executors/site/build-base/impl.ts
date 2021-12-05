@@ -214,7 +214,7 @@ class GenerateSite {
       }
 
       this.routeConfig.set(meta.title['en-US'], {
-        import: String.raw`./components/${file.name}/${meta.title['en-US']}`,
+        import: String.raw`./${file.name}/${meta.title['en-US']}`,
         path: String.raw`/components/${meta.title['en-US']}`,
       });
 
@@ -322,28 +322,24 @@ class GenerateSite {
 
   generateGlobalFiles() {
     this.outputJson(path.join(OUTPUT_DIR, 'configs', 'menu.json'), this.menuConfig);
-    this.outputJson(path.join(OUTPUT_DIR, 'configs', 'resources.json'), this.resources);
+    this.outputJson(path.join(OUTPUT_DIR, 'i18n', 'resources.json'), this.resources);
 
     let importStr = '';
     let routeStr = '';
     for (const [key, value] of this.routeConfig.entries()) {
-      importStr += String.raw`const ${key} = lazy(() => import('${value.import}'));
+      importStr += String.raw`const ${key}Route = lazy(() => import('${value.import}'));
 `;
       routeStr += String.raw`
-<Route 
-  path="${value.path}"
-  element={
-    <Suspense fallback={<div className="app-top-line-loader" />}>
-      <${key} />
-    </Suspense>
-  }
-/>
+{
+  path: '${value.path}',
+  component: ${key}Route,
+},
 `;
     }
     let routesTmp = this.routesTmp;
     routesTmp = routesTmp.replace(/__import__/g, importStr);
     routesTmp = routesTmp.replace(/__Route__/g, routeStr);
-    this.outputFile(path.join(OUTPUT_DIR, 'routes', 'Routes.tsx'), routesTmp);
+    this.outputFile(path.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), routesTmp);
   }
 
   generateAll() {
@@ -364,7 +360,7 @@ class GenerateSite {
   updateTmp() {
     this.resources = readJsonSync(path.join(__dirname, 'site', 'resources.json'));
     this.menuGroups = readJsonSync(path.join(__dirname, 'site', 'menu-groups.json'));
-    this.routesTmp = readFileSync(path.join(__dirname, 'site', 'Routes.txt')).toString();
+    this.routesTmp = readFileSync(path.join(__dirname, 'site', 'routes.txt')).toString();
     this.routeTmp = readFileSync(path.join(__dirname, 'site', 'Route.txt')).toString();
 
     this.menuConfig = [];

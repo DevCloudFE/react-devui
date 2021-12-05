@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
-import { getClassName, toId } from '../../utils';
+import { getClassName, toId, mergeStyle } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
 
@@ -80,10 +80,9 @@ export function DMenuItem(props: DMenuItemProps) {
           'is-active': menuActiveId === dId,
           'is-disabled': dDisabled,
         })}
-        style={{
-          ...style,
+        style={mergeStyle(style, {
           paddingLeft: 16 + __level * 20,
-        }}
+        })}
         role="menuitem"
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         aria-disabled={dDisabled}

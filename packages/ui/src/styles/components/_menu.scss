@@ -209,11 +209,16 @@
   position: relative;
 
   padding: 8px 0;
-  overflow-x: hidden;
 
   @include font-size(0.95rem);
 
+  &:not(&--horizontal) {
+    overflow-x: hidden;
+  }
+
   @include m(horizontal) {
+    white-space: nowrap;
+
     &::after {
       position: absolute;
       right: 4px;

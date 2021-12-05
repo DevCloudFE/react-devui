@@ -2,7 +2,7 @@ import { isUndefined, isNumber } from 'lodash';
 import React, { useMemo, useContext } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { getClassName, mergeStyle } from '../../utils';
 
 export type DIconContextData = Array<{
   name: string;
@@ -36,6 +36,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     dSpinSpeed = 1,
     className,
     style,
+    viewBox = '0 0 1024 1024',
     children,
     ...restProps
   } = useDComponentConfig(DIcon.name, props);
@@ -66,7 +67,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 1024 1024"
+      viewBox={viewBox}
       fill="currentColor"
       stroke="currentColor"
       height={dSize}
@@ -76,11 +77,10 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
         [`${dPrefix}icon--warning`]: dColor === 'warning',
         [`${dPrefix}icon--danger`]: dColor === 'danger',
       })}
-      style={{
-        ...style,
+      style={mergeStyle(style, {
         transform: !isUndefined(dRotate) ? `rotate(${dRotate}deg)` : undefined,
         animation: dSpin === true ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
-      }}
+      })}
     >
       {dName && <title>{dName}</title>}
       {children ? children : paths}

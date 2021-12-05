@@ -17,7 +17,7 @@ import {
   useTwoWayBinding,
   useDContentConfig,
 } from '../../hooks';
-import { getClassName, globalMaxIndexManager, getPopupPlacementStyle } from '../../utils';
+import { getClassName, globalMaxIndexManager, getPopupPlacementStyle, mergeStyle } from '../../utils';
 import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
 
@@ -79,6 +79,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     onVisibleChange,
     afterVisibleChange,
     className,
+    style,
     children,
     onMouseEnter,
     onMouseLeave,
@@ -107,7 +108,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   const asyncCapture = useAsync();
   const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
   const [arrowPosition, setArrowStyle] = useImmer<React.CSSProperties | undefined>(undefined);
-  const [zIndex, setZIndex] = useImmer(1000);
+  const [zIndex, setZIndex] = useImmer<string | number>(1000);
   const id = useId();
 
   const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
@@ -353,13 +354,13 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
             globalMaxIndexManager.deleteRecord(key);
           };
         } else {
-          setZIndex(10);
+          setZIndex(`var(--${dPrefix}absolute-z-index)`);
         }
       } else {
         setZIndex(dZIndex);
       }
     }
-  }, [dZIndex, isFixed, setZIndex, visible]);
+  }, [dPrefix, dZIndex, isFixed, setZIndex, visible]);
 
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
@@ -553,11 +554,11 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
                 {...restProps}
                 ref={popupRef}
                 className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
-                style={{
+                style={mergeStyle(style, {
                   ...popupPositionStyle,
                   display: hidden ? 'none' : undefined,
                   zIndex,
-                }}
+                })}
                 tabIndex={-1}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}

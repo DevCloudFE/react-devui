@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
-import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId } from '../../utils';
+import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -258,10 +258,9 @@ export function DMenuSub(props: DMenuSubProps) {
                 'is-expand': popupMode ? popupVisible : expand,
                 'is-disabled': dDisabled,
               })}
-              style={{
-                ...style,
+              style={mergeStyle(style, {
                 paddingLeft: 16 + __level * 20,
-              }}
+              })}
               role="menuitem"
               tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
               aria-haspopup={true}

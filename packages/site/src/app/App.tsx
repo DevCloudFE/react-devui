@@ -6,15 +6,23 @@ import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppHeader, AppSidebar } from './components';
-import icons from './icons.json';
+import icons from './configs/icons.json';
 import { AppRoutes } from './routes/Routes';
 
-export type AppContextData = { onMount: () => void } | null;
-export const AppContext = React.createContext<AppContextData>(null);
+export interface AppContextData {
+  menuOpen: boolean;
+  pageMounted: boolean;
+  onMount: () => void;
+  onMenuOpenChange: (open: boolean) => void;
+}
+export const AppContext = React.createContext<AppContextData | null>(null);
 
 export function App() {
   const { i18n } = useTranslation();
   const asyncCapture = useAsync();
+
+  const [menuOpen, setMenuOpen] = useImmer(false);
+  const [pageMounted, setPageMounted] = useImmer(false);
 
   const [mainEl, setMainEl] = useImmer<HTMLElement | null>(null);
   const mainRef = useCallback(
@@ -46,9 +54,12 @@ export function App() {
     }
   }, [asyncCapture, mainEl]);
 
-  const contextValue = useMemo(
+  const contextValue = useMemo<AppContextData>(
     () => ({
+      menuOpen,
+      pageMounted,
       onMount: () => {
+        setPageMounted(true);
         if (mainEl) {
           if (window.location.hash) {
             const hash = window.location.hash;
@@ -59,8 +70,11 @@ export function App() {
           }
         }
       },
+      onMenuOpenChange: (open) => {
+        setMenuOpen(open);
+      },
     }),
-    [mainEl]
+    [mainEl, menuOpen, pageMounted, setMenuOpen, setPageMounted]
   );
 
   return (
@@ -71,7 +85,7 @@ export function App() {
             <AppHeader />
             <AppSidebar />
             <main ref={mainRef} className="app-main">
-              <AppRoutes></AppRoutes>
+              <AppRoutes />
             </main>
           </DIconContext.Provider>
         </DConfigContext.Provider>

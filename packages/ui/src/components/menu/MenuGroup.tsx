@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 import { useDPrefixConfig, useDComponentConfig, useCustomContext, useTranslation } from '../../hooks';
-import { getClassName, toId } from '../../utils';
+import { getClassName, toId, mergeStyle } from '../../utils';
 import { DMenuContext } from './Menu';
 
 export interface DMenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -74,10 +74,9 @@ export function DMenuGroup(props: DMenuGroupProps) {
         {...restProps}
         id={_id}
         className={getClassName(className, `${dPrefix}menu-group`)}
-        style={{
-          ...style,
+        style={mergeStyle(style, {
           paddingLeft: 16 + __level * 20,
-        }}
+        })}
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         role="separator"
         aria-orientation="horizontal"

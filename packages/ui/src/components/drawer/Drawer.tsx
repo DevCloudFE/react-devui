@@ -15,7 +15,7 @@ import {
   useImmer,
   useRefCallback,
 } from '../../hooks';
-import { getClassName, globalMaxIndexManager } from '../../utils';
+import { getClassName, globalMaxIndexManager, mergeStyle } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 
@@ -81,7 +81,7 @@ export function DDrawer(props: DDrawerProps) {
 
   const asyncCapture = useAsync();
   const id = useId();
-  const [zIndex, setZIndex] = useImmer(1000);
+  const [zIndex, setZIndex] = useImmer<string | number>(1000);
 
   const [visible, setVisible] = dVisible;
 
@@ -135,13 +135,13 @@ export function DDrawer(props: DDrawerProps) {
             globalMaxIndexManager.deleteRecord(key);
           };
         } else {
-          setZIndex(10);
+          setZIndex(`var(--${dPrefix}absolute-z-index)`);
         }
       } else {
         setZIndex(dZIndex);
       }
     }
-  }, [dZIndex, isFixed, setZIndex, visible]);
+  }, [dPrefix, dZIndex, isFixed, setZIndex, visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -228,8 +228,7 @@ export function DDrawer(props: DDrawerProps) {
               {...restProps}
               ref={drawerRef}
               className={getClassName(className, `${dPrefix}drawer`)}
-              style={{
-                ...style,
+              style={mergeStyle(style, {
                 position: isFixed ? undefined : 'absolute',
                 display: hidden ? 'none' : undefined,
                 zIndex,
@@ -242,7 +241,7 @@ export function DDrawer(props: DDrawerProps) {
                     : dPlacement === 'bottom'
                     ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
                     : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
-              }}
+              })}
               role="dialog"
               aria-modal="true"
               aria-labelledby={dHeader ? `${dPrefix}drawer-header-${id}` : undefined}

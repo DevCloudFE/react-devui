@@ -14,6 +14,7 @@ $themes: (
   --#{$variable-prefix}disabled-z-index: 10;
   --#{$variable-prefix}active-z-index: 20;
   --#{$variable-prefix}hover-z-index: 21;
+  --#{$variable-prefix}absolute-z-index: 100;
 
   /** basic **/
   --#{$variable-prefix}text-color: #212529;
