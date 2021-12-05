@@ -21,7 +21,6 @@ Need to dynamically adjust the component position.
 | dZIndex | Manually set `zIndex` | number | 1000 |
 | children | Drag node | React.ReactNode | - |
 | onDragStart | Callback for the start of the drag | `() => void` | - |
-| onDrag | Drag callback | `() => void` | - |
 | onDragEnd | Callback for the end of the drag | `() => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -36,7 +35,6 @@ Need to dynamically adjust the component position.
 | children | Drag nodes | React.ReactNode | - |
 | onOrderChange | Callback for changing the order of child nodes | `(order: string[]) => void` | - |
 | onDragStart | Callback for the start of the drag | `(id: string) => void` | - |
-| onDrag | Drag callback | `(id: string) => void` | - |
 | onDragEnd | Callback for the end of the drag | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
 

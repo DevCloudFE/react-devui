@@ -3,13 +3,22 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useRefSelector, useImmer, useAsync, useRefCallback, useDContentConfig } from '../../hooks';
+import {
+  useDPrefixConfig,
+  useDComponentConfig,
+  useRefSelector,
+  useImmer,
+  useAsync,
+  useRefCallback,
+  useDContentConfig,
+  useValueChange,
+} from '../../hooks';
 import { getClassName, CustomScroll } from '../../utils';
 
 export interface DAnchorContextData {
   anchorActiveHref: string | null;
   onLinkClick: (href: string) => void;
-  onLinkChange: (href: string, el?: HTMLElement | null) => void;
+  onLinkRendered: (href: string, el?: HTMLElement | null) => void;
 }
 export const DAnchorContext = React.createContext<DAnchorContextData | null>(null);
 
@@ -53,6 +62,8 @@ export function DAnchor(props: DAnchorProps) {
 
   const pageRef = useRefSelector(dPage ?? null);
 
+  useValueChange(activeHref, onHrefChange);
+
   const updateAnchor = useCallback(() => {
     let pageTop = 0;
     if (!isUndefined(dPage)) {
@@ -81,12 +92,12 @@ export function DAnchor(props: DAnchorProps) {
       }
     }
 
-    const activeHref = nearestEl ? nearestEl[0] : null;
-    setActiveHref(activeHref);
+    const newHref = nearestEl ? nearestEl[0] : null;
+    setActiveHref(newHref);
     setDotStyle((draft) => {
       draft.opacity = nearestEl ? 1 : 0;
-      if (activeHref) {
-        const rect = dataRef.current.links.get(activeHref)?.getBoundingClientRect();
+      if (newHref) {
+        const rect = dataRef.current.links.get(newHref)?.getBoundingClientRect();
         if (rect && anchorEl) {
           draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
         }
@@ -128,10 +139,6 @@ export function DAnchor(props: DAnchorProps) {
 
   //#region DidUpdate
   useEffect(() => {
-    onHrefChange?.(activeHref);
-  }, [onHrefChange, activeHref]);
-
-  useEffect(() => {
     updateAnchor();
   }, [updateAnchor]);
 
@@ -151,7 +158,7 @@ export function DAnchor(props: DAnchorProps) {
     () => ({
       anchorActiveHref: activeHref,
       onLinkClick,
-      onLinkChange: (href, el) => {
+      onLinkRendered: (href, el) => {
         if (isUndefined(el)) {
           dataRef.current.links.delete(href);
         } else {

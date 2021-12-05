@@ -16,7 +16,7 @@ export interface DTabsContextData {
   tabsCloseIds: string[];
   getDotStyle: () => void;
   onActiveChange: (id: string) => void;
-  onTabChange: (id: string, el?: HTMLElement | null) => void;
+  onTabRendered: (id: string, el?: HTMLElement | null) => void;
   onClose: (id: string) => void;
 }
 export const DTabsContext = React.createContext<DTabsContextData | null>(null);
@@ -238,7 +238,7 @@ export function DTabs(props: DTabsProps) {
       onActiveChange: (id) => {
         changeActiveId(id);
       },
-      onTabChange: (id, el) => {
+      onTabRendered: (id, el) => {
         if (isUndefined(el)) {
           dataRef.current.tabEls.delete(id);
         } else {

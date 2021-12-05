@@ -9,4 +9,5 @@ export { useLockScroll } from './lock-scroll';
 export { useThrottle, useDebounce } from './throttle-and-debounce';
 export { useRefCallback } from './ref';
 export { useTwoWayBinding } from './two-way-binding';
+export { useValueChange } from './value-change';
 export { useWave } from './wave';

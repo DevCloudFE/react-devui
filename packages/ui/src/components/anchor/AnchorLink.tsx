@@ -14,7 +14,7 @@ export function DAnchorLink(props: DAnchorLinkProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const [{ anchorActiveHref, onLinkChange, onLinkClick }] = useCustomContext(DAnchorContext);
+  const [{ anchorActiveHref, onLinkRendered, onLinkClick }] = useCustomContext(DAnchorContext);
   //#endregion
 
   //#region Ref
@@ -36,12 +36,12 @@ export function DAnchorLink(props: DAnchorLinkProps) {
   //#region DidUpdate
   useEffect(() => {
     if (linkEl && href) {
-      onLinkChange?.(href, linkEl);
+      onLinkRendered?.(href, linkEl);
       return () => {
-        onLinkChange?.(href);
+        onLinkRendered?.(href);
       };
     }
-  }, [href, linkEl, onLinkChange]);
+  }, [href, linkEl, onLinkRendered]);
   //#endregion
 
   return (

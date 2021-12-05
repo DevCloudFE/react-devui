@@ -20,7 +20,6 @@ title: 拖放
 | dZIndex | 手动设定 `zIndex` | number | 1000 |
 | children | 拖拽节点 | React.ReactNode | - |
 | onDragStart | 拖动开始的回调 | `() => void` | - |
-| onDrag | 拖动的回调 | `() => void` | - |
 | onDragEnd | 拖动结束的回调 | `() => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -35,7 +34,6 @@ title: 拖放
 | children | 拖拽节点 | React.ReactNode | - |
 | onOrderChange | 子节点顺序改变的回调 | `(order: string[]) => void` | - |
 | onDragStart | 拖动开始的回调 | `(id: string) => void` | - |
-| onDrag | 拖动的回调 | `(id: string) => void` | - |
 | onDragEnd | 拖动结束的回调 | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
 

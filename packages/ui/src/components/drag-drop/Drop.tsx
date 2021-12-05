@@ -30,7 +30,6 @@ export interface DDropProps {
   children: React.ReactNode;
   onOrderChange?: (order: string[]) => void;
   onDragStart?: (id: string) => void;
-  onDrag?: (id: string) => void;
   onDragEnd?: (id: string) => void;
 }
 
@@ -42,7 +41,6 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
     children,
     onOrderChange,
     onDragStart,
-    onDrag,
     onDragEnd,
   } = useDComponentConfig(DDrop.name, props);
 
@@ -102,7 +100,6 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
         onDragStart?.(id);
       },
       onDrag: (dragId, rect) => {
-        onDrag?.(dragId);
         let _isOuter = false;
         const containerCurrentEl = containerRef.current;
         if (containerCurrentEl) {
@@ -203,7 +200,7 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
         onDragEnd?.(id);
       },
     }),
-    [containerRef, dDirection, dPlaceholder, isOuter, onDrag, onDragEnd, onDragStart, orderIds, setDragEnd, setIsOuter]
+    [containerRef, dDirection, dPlaceholder, isOuter, onDragEnd, onDragStart, orderIds, setDragEnd, setIsOuter]
   );
 
   useImperativeHandle(ref, () => orderIds, [orderIds]);

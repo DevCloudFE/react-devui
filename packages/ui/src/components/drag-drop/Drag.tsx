@@ -20,12 +20,11 @@ export interface DDragProps {
   dZIndex?: number;
   children: React.ReactNode;
   onDragStart?: () => void;
-  onDrag?: () => void;
   onDragEnd?: () => void;
 }
 
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDrag, onDragEnd } = useDComponentConfig(DDrag.name, props);
+  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDragEnd } = useDComponentConfig(DDrag.name, props);
 
   //#region Context
   const dPrefix = useDPrefixConfig();
@@ -67,9 +66,8 @@ export function DDrag(props: DDragProps) {
           left: fixedStyle.left,
         });
       }
-      onDrag?.();
     }
-  }, [_onDrag, dId, dragSize.height, dragSize.width, fixedStyle.left, fixedStyle.top, isDragging, onDrag]);
+  }, [_onDrag, dId, dragSize.height, dragSize.width, fixedStyle.left, fixedStyle.top, isDragging]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

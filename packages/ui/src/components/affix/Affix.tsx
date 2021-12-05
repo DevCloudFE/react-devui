@@ -3,7 +3,16 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback, useDContentConfig } from '../../hooks';
+import {
+  useDPrefixConfig,
+  useDComponentConfig,
+  useAsync,
+  useRefSelector,
+  useImmer,
+  useRefCallback,
+  useDContentConfig,
+  useValueChange,
+} from '../../hooks';
 import { getClassName, toPx, mergeStyle } from '../../utils';
 
 export interface DAffixRef {
@@ -43,7 +52,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
   //#endregion
 
   const asyncCapture = useAsync();
-  const [fixed, setFixed] = useImmer<boolean | undefined>(undefined);
+  const [fixed, setFixed] = useImmer(false);
   const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
   const [referenceStyle, setReferenceStyle] = useImmer<React.CSSProperties>({});
 
@@ -51,6 +60,8 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
 
   const top = isString(dTop) ? toPx(dTop, true) : dTop;
   const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
+
+  useValueChange(fixed, onFixedChange);
 
   const updatePosition = useCallback(() => {
     if ((isUndefined(dTarget) || targetRef.current) && affixEl && referenceEl) {
@@ -86,32 +97,12 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
           width: affixRect.width,
           height: affixRect.height,
         });
-        if (!isUndefined(fixed) && fixed === false) {
-          onFixedChange?.(true);
-        }
         setFixed(true);
       } else {
-        if (!isUndefined(fixed) && fixed === true) {
-          onFixedChange?.(false);
-        }
         setFixed(false);
       }
     }
-  }, [
-    dTarget,
-    targetRef,
-    affixEl,
-    referenceEl,
-    fixed,
-    top,
-    props.dBottom,
-    bottom,
-    setFixedStyle,
-    dZIndex,
-    setReferenceStyle,
-    setFixed,
-    onFixedChange,
-  ]);
+  }, [dTarget, targetRef, affixEl, referenceEl, fixed, top, props.dBottom, bottom, setFixedStyle, dZIndex, setReferenceStyle, setFixed]);
   //#endregion
 
   //#region DidUpdate

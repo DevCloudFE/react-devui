@@ -32,7 +32,7 @@ export function DTab(props: DTabProps) {
 
   //#region Context
   const dPrefix = useDPrefixConfig();
-  const [{ tabsActiveId, tabsCloseIds, getDotStyle, onActiveChange, onTabChange, onClose }] = useCustomContext(DTabsContext);
+  const [{ tabsActiveId, tabsCloseIds, getDotStyle, onActiveChange, onTabRendered, onClose }] = useCustomContext(DTabsContext);
   //#endregion
 
   //#region Ref
@@ -66,8 +66,8 @@ export function DTab(props: DTabProps) {
 
   //#region DidUpdate
   useEffect(() => {
-    !__dropdown && onTabChange?.(dId, tabEl);
-  }, [__dropdown, dId, onTabChange, tabEl]);
+    !__dropdown && onTabRendered?.(dId, tabEl);
+  }, [__dropdown, dId, onTabRendered, tabEl]);
 
   useEffect(() => {
     if (!__dropdown && tabsActiveId === dId) {
