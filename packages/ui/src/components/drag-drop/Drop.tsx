@@ -5,7 +5,7 @@ import { cloneDeep, isEqual, isUndefined } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEffect, useMemo } from 'react';
 
-import { useDComponentConfig, useRefSelector, useImmer } from '../../hooks';
+import { useComponentConfig, useRefSelector, useImmer } from '../../hooks';
 
 export interface DDropContextData {
   dropDirection: 'horizontal' | 'vertical';
@@ -42,7 +42,7 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
     onOrderChange,
     onDragStart,
     onDragEnd,
-  } = useDComponentConfig(DDrop.name, props);
+  } = useComponentConfig(DDrop.name, props);
 
   const dataRef = useRef<DDropContextData['dropCurrentData']>({
     drags: new Map(),

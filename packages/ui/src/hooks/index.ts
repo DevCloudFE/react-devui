@@ -1,7 +1,7 @@
 export { useTranslation } from './i18n';
 export { useAsync } from './async';
 export { useCustomContext } from './context';
-export { useDPrefixConfig, useDContentConfig, useDComponentConfig } from './d-config';
+export { usePrefixConfig, useRootContentConfig, useComponentConfig } from './d-config';
 export { useRefSelector } from './element-ref';
 export { useId } from './id';
 export { useImmer, useImmerReducer } from './immer';

@@ -1,8 +1,8 @@
 import type { DButtonProps } from '../button';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useTranslation } from '../../hooks';
+import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
@@ -15,11 +15,13 @@ export interface DFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   onCancelClick?: () => void;
 }
 
+const DEFAULT_PROPS = {
+  dButtons: ['cancel', 'ok'],
+};
 export function DFooter(props: DFooterProps) {
-  const defaultButtons = useMemo(() => ['cancel', 'ok'], []);
   const {
     dAlign = 'right',
-    dButtons = defaultButtons,
+    dButtons = DEFAULT_PROPS.dButtons,
     dOkButtonProps,
     dCancelButtonProps,
     onOkClick,
@@ -29,7 +31,7 @@ export function DFooter(props: DFooterProps) {
   } = props;
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   const [t] = useTranslation('DFooter');

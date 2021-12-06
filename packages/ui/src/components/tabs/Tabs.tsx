@@ -5,7 +5,7 @@ import type { DTabProps } from './Tab';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DDrag, DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
@@ -53,10 +53,10 @@ export function DTabs(props: DTabsProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig(DTabs.name, props);
+  } = useComponentConfig(DTabs.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref

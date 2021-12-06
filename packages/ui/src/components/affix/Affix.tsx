@@ -4,13 +4,13 @@ import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 
 import {
-  useDPrefixConfig,
-  useDComponentConfig,
+  usePrefixConfig,
+  useComponentConfig,
   useAsync,
   useRefSelector,
   useImmer,
   useRefCallback,
-  useDContentConfig,
+  useRootContentConfig,
   useValueChange,
 } from '../../hooks';
 import { getClassName, toPx, mergeStyle } from '../../utils';
@@ -39,11 +39,11 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
     style,
     children,
     ...restProps
-  } = useDComponentConfig(DAffix.name, props);
+  } = useComponentConfig(DAffix.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
-  const rootContentRef = useDContentConfig();
+  const dPrefix = usePrefixConfig();
+  const rootContentRef = useRootContentConfig();
   //#endregion
 
   //#region Ref

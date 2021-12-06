@@ -2,7 +2,7 @@ import type { DHeaderProps } from '../_header';
 
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DHeader } from '../_header';
 import { DDrawerContext } from './Drawer';
@@ -10,10 +10,10 @@ import { DDrawerContext } from './Drawer';
 export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
 
 export function DDrawerHeader(props: DDrawerHeaderProps) {
-  const { className, ...restProps } = useDComponentConfig(DDrawerHeader.name, props);
+  const { className, ...restProps } = useComponentConfig(DDrawerHeader.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ drawerId, closeDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 

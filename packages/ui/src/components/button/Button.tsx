@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useWave, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useWave, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DIcon } from '../icon';
@@ -35,10 +35,10 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
     children,
     onClick,
     ...restProps
-  } = useDComponentConfig(DButton.name, props);
+  } = useComponentConfig(DButton.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ buttonGroupType, buttonGroupColor, buttonGroupSize, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
   //#endregion
 

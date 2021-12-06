@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DDropdownContext } from './Dropdown';
 
@@ -24,10 +24,10 @@ export function DDropdownItem(props: DDropdownItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig(DDropdownItem.name, props);
+  } = useComponentConfig(DDropdownItem.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ onItemClick, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DDropdownContext);
   //#endregion
 

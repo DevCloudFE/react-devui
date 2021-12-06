@@ -4,8 +4,8 @@ import type { DDropdownItemProps } from './DropdownItem';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import {
-  useDPrefixConfig,
-  useDComponentConfig,
+  usePrefixConfig,
+  useComponentConfig,
   useImmer,
   useRefCallback,
   useTwoWayBinding,
@@ -55,10 +55,10 @@ export function DDropdown(props: DDropdownProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig(DDropdown.name, props);
+  } = useComponentConfig(DDropdown.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref

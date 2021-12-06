@@ -2,10 +2,10 @@ import { useEffect, useMemo } from 'react';
 import { Subject } from 'rxjs';
 
 import { useAsync } from './async';
-import { useDPrefixConfig } from './d-config';
+import { usePrefixConfig } from './d-config';
 
 export function useWave() {
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
 
   const asyncCapture = useAsync();
 

@@ -3,7 +3,7 @@ import type { DFooterProps } from '../_footer';
 import { isBoolean } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DFooter } from '../_footer';
 import { DDrawerContext } from './Drawer';
@@ -14,13 +14,13 @@ export interface DDrawerFooterProps extends DFooterProps {
 }
 
 export function DDrawerFooter(props: DDrawerFooterProps) {
-  const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useDComponentConfig(
+  const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useComponentConfig(
     DDrawerFooter.name,
     props
   );
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ closeDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 

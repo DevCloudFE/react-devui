@@ -6,7 +6,7 @@ import { produce } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
@@ -57,10 +57,10 @@ export function DMenu(props: DMenuProps) {
     onBlur,
     onClick,
     ...restProps
-  } = useDComponentConfig(DMenu.name, props);
+  } = useComponentConfig(DMenu.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref

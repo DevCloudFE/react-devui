@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -28,10 +28,10 @@ export function DTab(props: DTabProps) {
     className,
     onClick,
     ...restProps
-  } = useDComponentConfig(DTab.name, props);
+  } = useComponentConfig(DTab.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ tabsActiveId, tabsCloseIds, getDotStyle, onActiveChange, onTabRendered, onClose }] = useCustomContext(DTabsContext);
   //#endregion
 

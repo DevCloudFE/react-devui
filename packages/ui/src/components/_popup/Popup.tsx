@@ -8,14 +8,14 @@ import React, { useCallback, useEffect, useMemo, useImperativeHandle, useRef } f
 import ReactDOM, { flushSync } from 'react-dom';
 
 import {
-  useDPrefixConfig,
+  usePrefixConfig,
   useAsync,
   useRefSelector,
   useId,
   useImmer,
   useRefCallback,
   useTwoWayBinding,
-  useDContentConfig,
+  useRootContentConfig,
 } from '../../hooks';
 import { getClassName, globalMaxIndexManager, getPopupPlacementStyle, mergeStyle } from '../../utils';
 import { DTransition } from '../_transition';
@@ -80,7 +80,6 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     afterVisibleChange,
     className,
     style,
-    children,
     onMouseEnter,
     onMouseLeave,
     onFocus,
@@ -90,8 +89,8 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   } = props;
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
-  const rootContentRef = useDContentConfig();
+  const dPrefix = usePrefixConfig();
+  const rootContentRef = useRootContentConfig();
   //#endregion
 
   //#region Ref

@@ -1,14 +1,14 @@
-import { useCustomContext, useDComponentConfig, useDPrefixConfig } from '../../hooks';
+import { useCustomContext, useComponentConfig, usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DDropContext } from './Drop';
 
 export type DDragPlaceholderProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function DDragPlaceholder(props: DDragPlaceholderProps) {
-  const { className, ...restProps } = useDComponentConfig(DDragPlaceholder.name, props);
+  const { className, ...restProps } = useComponentConfig(DDragPlaceholder.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ dropDirection }] = useCustomContext(DDropContext);
   //#endregion
 

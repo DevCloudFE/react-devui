@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName, toId, mergeStyle } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -28,10 +28,10 @@ export function DMenuItem(props: DMenuItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig(DMenuItem.name, props);
+  } = useComponentConfig(DMenuItem.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ menuMode, menuActiveId, menuCurrentData, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 

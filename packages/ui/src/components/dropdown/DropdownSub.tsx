@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
@@ -33,10 +33,10 @@ export function DDropdownSub(props: DDropdownSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig(DDropdownSub.name, props);
+  } = useComponentConfig(DDropdownSub.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ dropdownVisible, dropdownFocusId, dropdownPopupTrigger, onFocus: _onFocus, onBlur: _onBlur }] =
     useCustomContext(DDropdownContext);
   const [{ onPopupTrigger }] = useCustomContext(DDropdownSubContext);

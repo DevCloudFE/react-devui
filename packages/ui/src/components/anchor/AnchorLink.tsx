@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DAnchorContext } from './Anchor';
 
@@ -10,10 +10,10 @@ export interface DAnchorLinkProps extends React.LiHTMLAttributes<HTMLLIElement> 
 }
 
 export function DAnchorLink(props: DAnchorLinkProps) {
-  const { dLevel = 0, href, className, children, onClick, ...restProps } = useDComponentConfig(DAnchorLink.name, props);
+  const { dLevel = 0, href, className, children, onClick, ...restProps } = useComponentConfig(DAnchorLink.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ anchorActiveHref, onLinkRendered, onLinkClick }] = useCustomContext(DAnchorContext);
   //#endregion
 

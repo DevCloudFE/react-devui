@@ -2,7 +2,7 @@ import type { DButtonProps } from './Button';
 
 import React, { useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 
 export interface DButtonGroupContextData {
@@ -29,10 +29,10 @@ export function DButtonGroup(props: DButtonGroupProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig(DButtonGroup.name, props);
+  } = useComponentConfig(DButtonGroup.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   const contextValue = useMemo<DButtonGroupContextData>(

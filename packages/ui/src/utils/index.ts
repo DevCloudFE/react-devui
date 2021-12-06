@@ -1,5 +1,6 @@
 export { getClassName } from './class-name';
 export { copy } from './copy';
+export { getFragmentChildren } from './fragment-children';
 export { getMaxIndex, globalMaxIndexManager } from './max-index';
 export { mergeStyle } from './merge-style';
 export { getFillingStyle, getPopupPlacementStyle, getHorizontalSideStyle, getVerticalSideStyle } from './position';

@@ -4,7 +4,7 @@ import type { DValue } from './Radio';
 
 import React, { useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useTwoWayBinding } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
 
 export interface DRadioGroupContextData {
@@ -39,10 +39,10 @@ export function DRadioGroup(props: DRadioGroupProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig(DRadioGroup.name, props);
+  } = useComponentConfig(DRadioGroup.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   const [value, changeValue] = useTwoWayBinding(undefined, dValue, onValueChange, { name: dFormControlName });

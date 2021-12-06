@@ -2,16 +2,7 @@ import { isNumber } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  useDComponentConfig,
-  useRefSelector,
-  useThrottle,
-  useAsync,
-  useDPrefixConfig,
-  useId,
-  useCustomContext,
-  useImmer,
-} from '../../hooks';
+import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useId, useCustomContext, useImmer } from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -24,10 +15,10 @@ export interface DDragProps {
 }
 
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDragEnd } = useDComponentConfig(DDrag.name, props);
+  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDragEnd } = useComponentConfig(DDrag.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ dropOuter, dropCurrentData, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
     useCustomContext(DDropContext);
   //#endregion

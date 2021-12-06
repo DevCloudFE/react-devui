@@ -3,7 +3,7 @@ import type { DFormControl } from '../form';
 
 import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useId, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useId, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
@@ -30,10 +30,10 @@ export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
     children,
     onChange,
     ...restProps
-  } = useDComponentConfig(DRadio.name, props);
+  } = useComponentConfig(DRadio.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ radioGroupValue, radioGroupName, radioGroupType, radioGroupDisabled, onValueChange }, radioGroupContext] =
     useCustomContext(DRadioGroupContext);
   //#endregion

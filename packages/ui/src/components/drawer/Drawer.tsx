@@ -5,16 +5,7 @@ import { isUndefined } from 'lodash';
 import React, { useEffect, useCallback, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  useDPrefixConfig,
-  useDComponentConfig,
-  useLockScroll,
-  useId,
-  useAsync,
-  useRefSelector,
-  useImmer,
-  useRefCallback,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useLockScroll, useId, useAsync, useRefSelector, useImmer, useRefCallback } from '../../hooks';
 import { getClassName, globalMaxIndexManager, mergeStyle } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -64,10 +55,10 @@ export function DDrawer(props: DDrawerProps) {
     style,
     children,
     ...restProps
-  } = useDComponentConfig(DDrawer.name, props);
+  } = useComponentConfig(DDrawer.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref

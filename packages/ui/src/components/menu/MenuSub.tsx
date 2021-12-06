@@ -3,7 +3,7 @@ import type { DMenuItemProps } from './MenuItem';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -39,10 +39,10 @@ export function DMenuSub(props: DMenuSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig(DMenuSub.name, props);
+  } = useComponentConfig(DMenuSub.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [
     {
       menuMode,

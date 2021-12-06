@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { useDPrefixConfig, useTranslation } from '../../hooks';
+import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -16,7 +16,7 @@ export function DHeader(props: DHeaderProps) {
   const { dCloseIcon, dExtraIcons, onClose, className, children, ...restProps } = props;
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   const [t] = useTranslation('Common');

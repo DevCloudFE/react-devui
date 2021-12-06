@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useDComponentConfig, useRefSelector, useId, useThrottle, useAsync, useDPrefixConfig, useImmer } from '../../hooks';
+import { useComponentConfig, useRefSelector, useId, useThrottle, useAsync, usePrefixConfig, useImmer } from '../../hooks';
 
 export interface DListRenderProps {
   style: React.CSSProperties;
@@ -28,13 +28,13 @@ export interface DVirtualScrollProps<T> {
 }
 
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
-  const { dListRender, dWidth, dHeight, dItemWidth, dItemHeight, dList, dItemRender, dCustomSize, onScrollEnd } = useDComponentConfig(
+  const { dListRender, dWidth, dHeight, dItemWidth, dItemHeight, dList, dItemRender, dCustomSize, onScrollEnd } = useComponentConfig(
     DVirtualScroll.name,
     props
   );
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   const { throttleByAnimationFrame } = useThrottle();

@@ -2,7 +2,7 @@ import type { DTransitionProps } from '../_transition';
 
 import React, { useCallback } from 'react';
 
-import { useDPrefixConfig, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DTransition } from '../_transition';
 
@@ -17,7 +17,7 @@ export function DMask(props: DMaskProps) {
   const { dVisible, dTransitionProps, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref

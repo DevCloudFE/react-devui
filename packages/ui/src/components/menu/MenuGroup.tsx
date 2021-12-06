@@ -3,7 +3,7 @@ import type { DMenuItemProps } from './MenuItem';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig, useCustomContext, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useTranslation } from '../../hooks';
 import { getClassName, toId, mergeStyle } from '../../utils';
 import { DMenuContext } from './Menu';
 
@@ -26,10 +26,10 @@ export function DMenuGroup(props: DMenuGroupProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useDComponentConfig(DMenuGroup.name, props);
+  } = useComponentConfig(DMenuGroup.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 

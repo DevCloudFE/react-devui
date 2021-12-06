@@ -4,13 +4,13 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import {
-  useDPrefixConfig,
-  useDComponentConfig,
+  usePrefixConfig,
+  useComponentConfig,
   useRefSelector,
   useImmer,
   useAsync,
   useRefCallback,
-  useDContentConfig,
+  useRootContentConfig,
   useValueChange,
 } from '../../hooks';
 import { getClassName, CustomScroll } from '../../utils';
@@ -40,11 +40,11 @@ export function DAnchor(props: DAnchorProps) {
     className,
     children,
     ...restProps
-  } = useDComponentConfig(DAnchor.name, props);
+  } = useComponentConfig(DAnchor.name, props);
 
   //#region Context
-  const dPrefix = useDPrefixConfig();
-  const rootContentRef = useDContentConfig();
+  const dPrefix = usePrefixConfig();
+  const rootContentRef = useRootContentConfig();
   //#endregion
 
   //#region Ref

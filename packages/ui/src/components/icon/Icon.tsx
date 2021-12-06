@@ -1,7 +1,7 @@
 import { isUndefined, isNumber } from 'lodash';
 import React, { useMemo, useContext } from 'react';
 
-import { useDPrefixConfig, useDComponentConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 
 export type DIconContextData = Array<{
@@ -25,7 +25,7 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
 
 export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) => {
   const iconContext = useContext(DIconContext);
-  const dPrefix = useDPrefixConfig();
+  const dPrefix = usePrefixConfig();
   const {
     dName,
     dType,
@@ -39,7 +39,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     viewBox = '0 0 1024 1024',
     children,
     ...restProps
-  } = useDComponentConfig(DIcon.name, props);
+  } = useComponentConfig(DIcon.name, props);
 
   const paths = useMemo(() => {
     if (!children) {
