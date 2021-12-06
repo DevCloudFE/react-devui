@@ -16,6 +16,9 @@ export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps } from './dropdown';
 export { DDropdown, DDropdownItem, DDropdownSub } from './dropdown';
 
+export type { DRowProps, DColProps } from './grid';
+export { DRow, DCol } from './grid';
+
 export type { DIconProps } from './icon';
 export { DIcon } from './icon';
 

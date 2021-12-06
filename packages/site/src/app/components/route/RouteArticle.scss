@@ -1,25 +1,19 @@
 @import '~rfs/scss';
 
-.app-route-anchor-md {
+.app-route__anchor {
   position: fixed;
   top: 120px;
   right: 20px;
   z-index: 910;
-
-  display: none;
 
   width: 168px;
 
   .d-anchor-link > a {
     padding: 4px 0;
   }
-
-  @media (min-width: 768px) {
-    display: block;
-  }
 }
 
-.app-route-anchor-conatiner {
+.app-route__anchor-conatiner {
   position: fixed;
   right: 0;
   bottom: 0;
@@ -31,10 +25,6 @@
   overflow: auto;
 
   background-color: var(--d-background-color);
-
-  @media (min-width: 768px) {
-    display: none;
-  }
 }
 
 .app-route__anchor-button {
@@ -50,7 +40,6 @@
   justify-content: center;
   width: 60px;
   height: 60px;
-  border: 1px solid var(--d-divider-color);
   border-radius: 50%;
 
   color: var(--d-color-primary-lighter);
@@ -58,9 +47,7 @@
   background-color: var(--d-color-step-800);
   box-shadow: 0 2px 20px 2px var(--d-shadow-color);
 
-  @media (min-width: 768px) {
-    display: none;
-  }
+  appearance: none;
 }
 
 .app-route-article {
@@ -74,12 +61,6 @@
 
   pre code.hljs {
     background-color: var(--app-code-background-color);
-  }
-
-  .app-route-article__demos {
-    pre code.hljs {
-      background-color: transparent;
-    }
   }
 
   code:not(pre > code) {
@@ -189,6 +170,12 @@
 
   .app-route-article__subtitle {
     margin-left: 12px;
+  }
+
+  .app-route-article__demos {
+    pre code.hljs {
+      background-color: transparent;
+    }
   }
 
   .app-route-article__api {

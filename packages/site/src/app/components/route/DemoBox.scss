@@ -22,20 +22,20 @@
     position: relative;
 
     border-top: 1px solid var(--d-divider-color);
+  }
 
-    .app-demo-box__title {
-      position: absolute;
-      top: -14px;
-      left: 16px;
+  .app-demo-box__title {
+    position: absolute;
+    top: -14px;
+    left: 16px;
 
-      padding: 1px 8px;
+    padding: 1px 8px;
 
-      background-color: var(--d-background-color);
-    }
+    background-color: var(--d-background-color);
+  }
 
-    .app-demo-box__description {
-      padding: 24px;
-    }
+  .app-demo-box__description {
+    padding: 24px;
   }
 
   .app-demo-box__toolbar {

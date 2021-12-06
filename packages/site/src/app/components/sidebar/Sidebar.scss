@@ -5,7 +5,6 @@
   bottom: 0;
   left: 0;
 
-  display: none;
   width: 260px;
   height: calc(100% - 64px);
   padding: 20px 0;
@@ -22,10 +21,6 @@
     background-color: var(--d-divider-color);
 
     content: '';
-  }
-
-  @media (min-width: 768px) {
-    display: block;
   }
 }
 
