@@ -27,7 +27,7 @@ describe('DFooter', () => {
     footer.find(DButton).forEach((button, index) => {
       switch (index) {
         case 0:
-          expect(button.text()).toBe('Cancel');
+          expect(button.key()).toBe('cancel');
           break;
 
         case 1:
@@ -35,7 +35,7 @@ describe('DFooter', () => {
           break;
 
         case 2:
-          expect(button.text()).toBe('OK');
+          expect(button.key()).toBe('ok');
           break;
 
         default:
