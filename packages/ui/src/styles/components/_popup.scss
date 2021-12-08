@@ -10,9 +10,7 @@
 @include b(popup) {
   position: fixed;
 
-  font-weight: 400;
-
-  background-color: var(--#{$variable-prefix}popup-background-color);
+  background-color: var(--#{$variable-prefix}background-color);
 
   @include font-size(1rem);
 

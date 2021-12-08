@@ -1,14 +1,3 @@
-@mixin dropdown-popup() {
-  $popup-selector: '.#{$variable-prefix}popup';
-
-  @include e(popup) {
-    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
-    &#{$popup-selector} {
-      background-color: var(--#{$variable-prefix}background-color);
-    }
-  }
-}
-
 @mixin dropdown-item() {
   position: relative;
 
@@ -56,7 +45,9 @@
 
   @include font-size(0.95rem);
 
-  @include dropdown-popup;
+  @include e(popup) {
+    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+  }
 
   @include e(empty) {
     display: flex;
@@ -79,7 +70,10 @@
   padding: 0 24px 0 12px;
 
   @include dropdown-item;
-  @include dropdown-popup;
+
+  @include e(popup) {
+    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+  }
 
   @include e(arrow) {
     position: absolute;

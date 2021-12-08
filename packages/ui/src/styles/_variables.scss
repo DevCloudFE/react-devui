@@ -72,7 +72,7 @@ $themes: (
   }
 
   /** component **/
-  --#{$variable-prefix}popup-text-color: #dfe1e6;
-  --#{$variable-prefix}popup-background-color: #464d6e;
+  --#{$variable-prefix}tooltip-text-color: #dfe1e6;
+  --#{$variable-prefix}tooltip-background-color: #464d6e;
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
 }

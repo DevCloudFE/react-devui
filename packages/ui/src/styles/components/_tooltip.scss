@@ -2,6 +2,8 @@
   padding: 4px 12px;
   border-radius: 4px;
 
-  color: var(--#{$variable-prefix}popup-text-color);
+  color: var(--#{$variable-prefix}tooltip-text-color);
   white-space: pre;
+
+  background-color: var(--#{$variable-prefix}tooltip-background-color);
 }

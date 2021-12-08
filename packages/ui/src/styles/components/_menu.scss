@@ -319,13 +319,9 @@
   }
 
   @include e(popup) {
-    $popup-selector: '.#{$variable-prefix}popup';
     $group-selector: '.#{$variable-prefix}menu-group';
 
-    &#{$popup-selector} {
-      background-color: var(--#{$variable-prefix}background-color);
-      box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
-    }
+    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
 
     @include e(arrow, true) {
       right: 6px;
