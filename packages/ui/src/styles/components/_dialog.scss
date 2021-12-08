@@ -1,0 +1,28 @@
+@include b(dialog) {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  overflow: hidden;
+
+  @include e(content) {
+    max-width: 100%;
+
+    background-color: var(--#{$variable-prefix}background-color);
+    box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
+
+    @include utils-outline;
+  }
+}
+
+@include b(mask) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: var(--#{$variable-prefix}mask-background-color);
+}

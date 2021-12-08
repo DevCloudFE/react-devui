@@ -1,12 +1,4 @@
 @include b(drawer) {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  overflow: hidden;
-
   @include e(content) {
     position: absolute;
     z-index: 1;
@@ -14,14 +6,8 @@
     display: flex;
     flex-direction: column;
 
-    max-width: 100%;
     height: 100%;
     overflow: hidden;
-
-    background-color: var(--#{$variable-prefix}background-color);
-    box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
-
-    @include utils-outline;
 
     @include m(top) {
       top: 0;
