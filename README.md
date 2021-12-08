@@ -24,20 +24,20 @@ For non-new component contributions, please refer to [Contribution Guide](CONTRI
 
 ```
 ├── packages                                    // Root Directory: Project
+│   │
+│   │
 │   ├── site                                    // Root Directory: Website
 │   │   └── src
 │   │       ├── app
 │   │       │   ├── components                  // Components
-│   │       │   │   ├── header
-│   │       │   │   ├── route
-│   │       │   │   └── sidebar
 │   │       │   ├── configs                     // Configuration files (json)
-│   │       │   ├── i18n
+│   │       │   ├── i18n                        // Internationalization
 │   │       │   ├── routes                      // Routes
 │   │       │   └── styles                      // Styles
 │   │       ├── assets                          // Static resources
-│   │       │   └── components
 │   │       └── environments                    // Configuration files in development and production environments
+│   │
+│   │
 │   └── ui                                      // Root Directory: Components
 │       └── src
 │           ├── components                      // Components
@@ -45,6 +45,8 @@ For non-new component contributions, please refer to [Contribution Guide](CONTRI
 │           ├── styles                          // Styles
 │           ├── tests                           // Test configuration
 │           └── utils                           // Utility function
+│
+│
 └── tools                                       // Root Directory: Project Cli
 ```
 
@@ -61,7 +63,7 @@ Refer to [README.md](https://github.com/xiejay97/react-devui/tree/main/.vscode) 
 - Support two-way binding ([useTwoWayBinding](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/hooks/two-way-binding.ts)), refer to [DRadio](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/radio/Radio.tsx).
 - Data entry must be implemented using native `input`, and use [useTwoWayBinding](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/hooks/two-way-binding.ts) to support future `form` components, refer to [DRadio](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/radio/Radio.tsx).
 - Use `useAsync` to manage asynchronous functions. By intercepting asynchronous methods, such as `setTimeout`, we ensure that asynchronous functions will not be executed after the component is destroyed.
-- Be sure to follow [WAI-ARIA](https://www.w3.org/TR/wai-aria-practices-1.1/), some undefined components, such as `Drawer`, we should also try our best according to the usage Provide WAI-ARIA support.
+- Be sure to follow [WAI-ARIA](https://www.w3.org/TR/wai-aria-practices-1.2/), some undefined components, such as `Drawer`, we should also try our best according to the usage Provide WAI-ARIA support.
 - Support internationalization, refer to [DFooter](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/_footer/Footer.tsx).
 - Don't introduce third-party components, we want components to be completely controllable.
 - Use class instead of style whenever possible to allow users to modify the style.

@@ -24,20 +24,20 @@ yarn site:serve
 
 ```
 ├── packages                                    // 根目录：项目
+│   │
+│   │
 │   ├── site                                    // 根目录：网站
 │   │   └── src
 │   │       ├── app
 │   │       │   ├── components                  // 组件
-│   │       │   │   ├── header
-│   │       │   │   ├── route
-│   │       │   │   └── sidebar
 │   │       │   ├── configs                     // 配置文件（json）
-│   │       │   ├── i18n
+│   │       │   ├── i18n                        // 国际化
 │   │       │   ├── routes                      // 路由
 │   │       │   └── styles                      // 样式
 │   │       ├── assets                          // 静态资源
-│   │       │   └── components
 │   │       └── environments                    // 开发和生产环境下的配置文件
+│   │
+│   │
 │   └── ui                                      // 根目录：组件
 │       └── src
 │           ├── components                      // 组件
@@ -45,6 +45,8 @@ yarn site:serve
 │           ├── styles                          // 样式
 │           ├── tests                           // 测试配置
 │           └── utils                           // 实用函数
+│
+│
 └── tools                                       // 根目录：项目脚手架
 ```
 
@@ -61,7 +63,7 @@ yarn site:serve
 - 支持双向绑定（[useTwoWayBinding](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/hooks/two-way-binding.ts)），参考 [DRadio](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/radio/Radio.tsx)。
 - 数据录入务必使用原生的 `input` 实现，并且使用 [useTwoWayBinding](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/hooks/two-way-binding.ts) 以支持未来的 `form` 组件，参考 [DRadio](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/radio/Radio.tsx)。
 - 使用 `useAsync` 管理异步函数，通过拦截异步方法，如 `setTimeout`， 我们确保异步函数不会在组件销毁后执行。
-- 务必遵循 [WAI-ARIA](https://www.w3.org/TR/wai-aria-practices-1.1/)，一些未定义的组件，如 `Drawer`，我们也应该尽可能根据使用情况提供 WAI-ARIA 支持。
+- 务必遵循 [WAI-ARIA](https://www.w3.org/TR/wai-aria-practices-1.2/)，一些未定义的组件，如 `Drawer`，我们也应该尽可能根据使用情况提供 WAI-ARIA 支持。
 - 支持国际化，参考 [DFooter](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/_footer/Footer.tsx)。
 - 不要引入第三方组件，我们希望组件是完全可控的。
 - 尽可能使用 class 而不是 style 以允许使用者可以修改样式。
@@ -77,6 +79,4 @@ yarn site:serve
 
 - 不要使用快照（我有充分的理由让你相信为什么不使用它）。
 - 测试应当专注于功能的完整性， 即输入 Props 是否能够得到我们期望的响应。
-- 如果组件非 Props 的变更会影响测试，如组件样式（调整图标位置）、组件包含的文字内容（测试组件中的按钮时经常会用文字来判断是否为预期的按钮），那么应当怀疑测试是否合理。
-
-参考 [DFooter](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/_footer/Footer.tsx)。
+- 如果组件非 Props 的变更会影响测试，如组件样式（调整图标位置）、组件包含的文字内容（测试组件中的按钮时经常会用文字来判断是否为预期的按钮），那么应当怀疑测试是否合理。参考 [DFooter](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/_footer/Footer.tsx)。
