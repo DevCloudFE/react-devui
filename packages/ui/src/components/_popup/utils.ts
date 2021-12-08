@@ -3,7 +3,7 @@ import { fromEvent } from 'rxjs';
 let pointerX = 0;
 let pointerY = 0;
 
-fromEvent<MouseEvent>(window, 'mousemove').subscribe({
+fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
   next: (e) => {
     pointerX = e.clientX;
 

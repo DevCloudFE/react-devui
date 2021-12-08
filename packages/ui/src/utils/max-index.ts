@@ -9,7 +9,7 @@ export function getMaxIndex(el: HTMLElement) {
   return maxZIndex + 1;
 }
 
-export const globalMaxIndexManager = {
+export const MAX_INDEX_MANAGER = {
   record: new Map<symbol, number>(),
 
   getMaxIndex(): [symbol, number] {

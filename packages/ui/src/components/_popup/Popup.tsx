@@ -17,7 +17,7 @@ import {
   useTwoWayBinding,
   useRootContentConfig,
 } from '../../hooks';
-import { getClassName, globalMaxIndexManager, getPopupPlacementStyle, mergeStyle } from '../../utils';
+import { getClassName, MAX_INDEX_MANAGER, getPopupPlacementStyle, mergeStyle } from '../../utils';
 import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
 
@@ -347,10 +347,10 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     if (visible) {
       if (isUndefined(dZIndex)) {
         if (isFixed) {
-          const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
+          const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
           setZIndex(maxZIndex);
           return () => {
-            globalMaxIndexManager.deleteRecord(key);
+            MAX_INDEX_MANAGER.deleteRecord(key);
           };
         } else {
           setZIndex(`var(--${dPrefix}absolute-z-index)`);

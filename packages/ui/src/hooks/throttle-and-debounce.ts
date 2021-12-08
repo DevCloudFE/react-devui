@@ -6,15 +6,11 @@ export class ThrottleByAnimationFrame {
   private skip = false;
   private skipCallback?: () => void;
   private tid: number | null = null;
-  private debounceTid: number | null = null;
+  private lastCallback?: () => void;
 
   clearTids() {
-    if (this.debounceTid) {
-      clearTimeout(this.debounceTid);
-      this.debounceTid = null;
-    }
     if (this.tid) {
-      clearTimeout(this.tid);
+      cancelAnimationFrame(this.tid);
       this.tid = null;
     }
   }
@@ -38,18 +34,17 @@ export class ThrottleByAnimationFrame {
       return;
     }
 
-    if (this.debounceTid) {
-      clearTimeout(this.debounceTid);
-    }
-
     if (this.tid === null) {
-      this.tid = window.setTimeout(() => (this.tid = null), 12);
-      cb();
+      this.lastCallback = cb;
+      this.tid = window.requestAnimationFrame(() => {
+        if (this.lastCallback) {
+          this.lastCallback();
+          this.lastCallback = undefined;
+        }
+        this.tid = null;
+      });
     } else {
-      this.debounceTid = window.setTimeout(() => {
-        this.debounceTid = null;
-        cb();
-      }, 20);
+      this.lastCallback = cb;
     }
   }
 }

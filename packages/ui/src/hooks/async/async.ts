@@ -69,7 +69,7 @@ class BaseAsyncCapture {
 
   onGlobalScroll(cb: (e: Event) => void) {
     const throttleByAnimationFrame = new ThrottleByAnimationFrame();
-    const observer = fromEvent(window, 'scroll', { capture: true }).subscribe({
+    const observer = fromEvent(window, 'scroll', { capture: true, passive: true }).subscribe({
       next: (e) => throttleByAnimationFrame.run(() => cb(e)),
     });
     const tid = Symbol();

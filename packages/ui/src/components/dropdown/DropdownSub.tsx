@@ -172,7 +172,6 @@ export function DDropdownSub(props: DDropdownSubProps) {
           dArrow={false}
           dCustomPopup={customTransition}
           dTriggerEl={liEl}
-          dMouseLeaveDelay={150 + 116 + 50}
           onVisibleChange={handlePopupVisibleChange}
         />
       )}

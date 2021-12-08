@@ -70,32 +70,34 @@ export const DTransition = React.forwardRef<DTransitionRef, DTransitionProps>((p
         ...stateList[dVisible ? 'enter-active' : 'leave-active'],
       });
 
-      asyncCapture.setTimeout(() => {
-        cssRecord.backCss(dEl);
-        cssRecord.setCss(dEl, {
-          ...stateList[dVisible ? 'enter-to' : 'leave-to'],
-          ...stateList[dVisible ? 'enter-active' : 'leave-active'],
-        });
-        callbackList[dVisible ? 'enter' : 'leave']?.();
-
-        const timeout = getMaxTime(
-          dVisible
-            ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
-            : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
-        );
-
+      asyncCapture.requestAnimationFrame(() => {
         asyncCapture.setTimeout(() => {
           cssRecord.backCss(dEl);
-          cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
-          callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.();
-          flushSync(() => {
-            if (!dVisible) {
-              setHidden(true);
-            }
+          cssRecord.setCss(dEl, {
+            ...stateList[dVisible ? 'enter-to' : 'leave-to'],
+            ...stateList[dVisible ? 'enter-active' : 'leave-active'],
           });
-          throttleByAnimationFrame.continueThrottle();
-        }, timeout);
-      }, 20);
+          callbackList[dVisible ? 'enter' : 'leave']?.();
+
+          const timeout = getMaxTime(
+            dVisible
+              ? [stateList['enter-from']?.transition, stateList['enter-active']?.transition, stateList['enter-to']?.transition]
+              : [stateList['leave-from']?.transition, stateList['leave-active']?.transition, stateList['leave-to']?.transition]
+          );
+
+          asyncCapture.setTimeout(() => {
+            cssRecord.backCss(dEl);
+            cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
+            callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.();
+            flushSync(() => {
+              if (!dVisible) {
+                setHidden(true);
+              }
+            });
+            throttleByAnimationFrame.continueThrottle();
+          }, timeout);
+        });
+      });
     }
   };
 

@@ -6,7 +6,7 @@ import React, { useEffect, useCallback, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useLockScroll, useId, useAsync, useRefSelector, useImmer, useRefCallback } from '../../hooks';
-import { getClassName, globalMaxIndexManager, mergeStyle } from '../../utils';
+import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 
@@ -120,10 +120,10 @@ export function DDrawer(props: DDrawerProps) {
     if (visible) {
       if (isUndefined(dZIndex)) {
         if (isFixed) {
-          const [key, maxZIndex] = globalMaxIndexManager.getMaxIndex();
+          const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
           setZIndex(maxZIndex);
           return () => {
-            globalMaxIndexManager.deleteRecord(key);
+            MAX_INDEX_MANAGER.deleteRecord(key);
           };
         } else {
           setZIndex(`var(--${dPrefix}absolute-z-index)`);
