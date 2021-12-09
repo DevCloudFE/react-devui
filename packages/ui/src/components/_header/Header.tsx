@@ -30,7 +30,7 @@ export function DHeader(props: DHeaderProps) {
       <div className={`${dPrefix}header__title`}>{children}</div>
       <div className={`${dPrefix}header__buttons`}>
         {dExtraIcons && dExtraIcons.map((icon, index) => <DButton key={index} dType="text" dIcon={icon}></DButton>)}
-        {dCloseIcon !== null && (
+        {dCloseIcon && (
           <DButton
             dType="text"
             dIcon={
