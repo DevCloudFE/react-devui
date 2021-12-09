@@ -225,11 +225,16 @@ export function DRow(props: DRowProps) {
     return React.Children.toArray(_childs);
   }, [children, dAsListener, dColNum, dRender, gap, getMaxBreakpoint, maxBreakpoint, mediaMatch]);
 
-  return dAsListener ? (
-    (childs as React.ReactElement)
-  ) : (
-    <div {...restProps} className={getClassName(className, `${dPrefix}row`)} style={mergeStyle(style, { gap: gap.join(' ') })}>
-      {childs}
-    </div>
+  return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {dAsListener ? (
+        childs
+      ) : (
+        <div {...restProps} className={getClassName(className, `${dPrefix}row`)} style={mergeStyle(style, { gap: gap.join(' ') })}>
+          {childs}
+        </div>
+      )}
+    </>
   );
 }

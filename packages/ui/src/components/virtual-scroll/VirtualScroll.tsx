@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useComponentConfig, useRefSelector, useId, useThrottle, useAsync, usePrefixConfig, useImmer } from '../../hooks';
+import { useComponentConfig, useRefSelector, useId, useAsync, usePrefixConfig, useImmer } from '../../hooks';
 
 export interface DListRenderProps {
   style: React.CSSProperties;
@@ -37,7 +37,6 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const { throttleByAnimationFrame } = useThrottle();
   const asyncCapture = useAsync();
   const id = useId();
   const [list, setList] = useImmer<React.ReactNode[]>([]);
@@ -160,9 +159,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       },
       'data-virtual-scroll': String(id),
       onScroll: () => {
-        throttleByAnimationFrame.run(() => {
-          flushSync(() => updateList());
-        });
+        flushSync(() => updateList());
       },
       children: (
         <>
@@ -185,7 +182,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         </>
       ),
     }),
-    [dHeight, dPrefix, dWidth, fillSize, id, list, reference, throttleByAnimationFrame, updateList]
+    [dHeight, dPrefix, dWidth, fillSize, id, list, reference, updateList]
   );
 
   return dListRender(listRenderProps);

@@ -2,8 +2,8 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import type { Updater } from '../../hooks/immer';
 import type { DDialogRef } from '../_dialog';
 
-import { isUndefined } from 'lodash';
-import React, { useEffect, useCallback, useMemo } from 'react';
+import { isUndefined, toNumber } from 'lodash';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useRefCallback, useLockScroll } from '../../hooks';
@@ -32,6 +32,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
+  __zIndex?: number;
 }
 
 export function DDrawer(props: DDrawerProps) {
@@ -51,6 +52,7 @@ export function DDrawer(props: DDrawerProps) {
     onClose,
     afterVisibleChange,
     __onVisibleChange,
+    __zIndex,
     className,
     style,
     children,
@@ -65,7 +67,7 @@ export function DDrawer(props: DDrawerProps) {
   const [dialogRefContent, dialogRef] = useRefCallback<DDialogRef>();
   //#endregion
 
-  const [zIndex, setZIndex] = useImmer<string | number>(1000);
+  const [zIndex, setZIndex] = useImmer(1000);
 
   const [visible, setVisible] = dVisible;
 
@@ -105,20 +107,24 @@ export function DDrawer(props: DDrawerProps) {
   useEffect(() => {
     if (visible) {
       if (isUndefined(dZIndex)) {
-        if (isFixed) {
-          const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
-          setZIndex(maxZIndex);
-          return () => {
-            MAX_INDEX_MANAGER.deleteRecord(key);
-          };
+        if (isUndefined(__zIndex)) {
+          if (isFixed) {
+            const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
+            setZIndex(maxZIndex);
+            return () => {
+              MAX_INDEX_MANAGER.deleteRecord(key);
+            };
+          } else {
+            setZIndex(toNumber(getComputedStyle(document.body).getPropertyValue(`--${dPrefix}absolute-z-index`)));
+          }
         } else {
-          setZIndex(`var(--${dPrefix}absolute-z-index)`);
+          setZIndex(__zIndex);
         }
       } else {
         setZIndex(dZIndex);
       }
     }
-  }, [dPrefix, dZIndex, isFixed, setZIndex, visible]);
+  }, [__zIndex, dPrefix, dZIndex, isFixed, setZIndex, visible]);
   //#endregion
 
   const childDrawer = useMemo(() => {
@@ -129,10 +135,11 @@ export function DDrawer(props: DDrawerProps) {
         __onVisibleChange: (distance) => {
           setDistance(distance);
         },
+        __zIndex: zIndex + 1,
       });
     }
     return null;
-  }, [dChildDrawer, setDistance]);
+  }, [dChildDrawer, setDistance, zIndex]);
 
   const contextValue = useMemo<DDrawerContextData>(
     () => ({
@@ -152,6 +159,22 @@ export function DDrawer(props: DDrawerProps) {
     }),
     [dHeight, dPlacement, dPrefix, dWidth]
   );
+
+  const transitionState = (() => {
+    const transform =
+      dPlacement === 'top'
+        ? 'translate(0, -100%)'
+        : dPlacement === 'right'
+        ? 'translate(100%, 0)'
+        : dPlacement === 'bottom'
+        ? 'translate(0, 100%)'
+        : 'translate(-100%, 0)';
+    return {
+      'enter-from': { transform },
+      'enter-to': { transition: 'transform 0.2s ease-out' },
+      'leave-to': { transform, transition: 'transform 0.2s ease-in' },
+    };
+  })();
 
   const drawerNode = (
     <>
@@ -174,48 +197,33 @@ export function DDrawer(props: DDrawerProps) {
         })}
         aria-labelledby={dHeader ? `${dPrefix}drawer-header-${dialogRefContent?.id}` : undefined}
         dVisible={visible}
-        dStateList={() => {
-          const transform =
-            dPlacement === 'top'
-              ? 'translate(0, -100%)'
-              : dPlacement === 'right'
-              ? 'translate(100%, 0)'
-              : dPlacement === 'bottom'
-              ? 'translate(0, 100%)'
-              : 'translate(-100%, 0)';
-          return {
-            'enter-from': { transform },
-            'enter-to': { transition: 'transform 0.2s ease-out' },
-            'leave-to': { transform, transition: 'transform 0.2s ease-in' },
-          };
-        }}
-        dCallbackList={() => {
-          return {
-            beforeEnter: () => {
-              if (dialogRefContent?.contentEl) {
-                const rect = dialogRefContent.contentEl.getBoundingClientRect();
-                __onVisibleChange?.({
-                  visible: true,
-                  top: distance.top + (dPlacement === 'top' ? rect.height : 0),
-                  right: distance.right + (dPlacement === 'right' ? rect.width : 0),
-                  bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
-                  left: distance.left + (dPlacement === 'left' ? rect.width : 0),
-                });
-              }
-            },
-            afterEnter: () => {
-              afterVisibleChange?.(true);
-            },
-            beforeLeave: () => {
-              __onVisibleChange?.({
-                ...distance,
-                visible: false,
-              });
-            },
-            afterLeave: () => {
-              afterVisibleChange?.(false);
-            },
-          };
+        dCallbackList={{
+          beforeEnter: (el) => {
+            const rect = el.getBoundingClientRect();
+            __onVisibleChange?.({
+              visible: true,
+              top: distance.top + (dPlacement === 'top' ? rect.height : 0),
+              right: distance.right + (dPlacement === 'right' ? rect.width : 0),
+              bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
+              left: distance.left + (dPlacement === 'left' ? rect.width : 0),
+            });
+
+            return transitionState;
+          },
+          afterEnter: () => {
+            afterVisibleChange?.(true);
+          },
+          beforeLeave: () => {
+            __onVisibleChange?.({
+              ...distance,
+              visible: false,
+            });
+
+            return transitionState;
+          },
+          afterLeave: () => {
+            afterVisibleChange?.(false);
+          },
         }}
         dContentProps={contentProps}
         dMask={dMask}

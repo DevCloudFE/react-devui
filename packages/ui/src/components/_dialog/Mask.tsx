@@ -32,19 +32,22 @@ export function DMask(props: DMaskProps) {
     [onClick, onClose]
   );
 
+  const transitionState = {
+    'enter-from': { opacity: '0' },
+    'enter-to': { transition: 'opacity 0.1s linear' },
+    'leave-to': { opacity: '0', transition: 'opacity 0.1s linear' },
+  };
+
   return (
     <DTransition
       dEl={el}
       dVisible={dVisible}
-      dStateList={{
-        'enter-from': { opacity: '0' },
-        'enter-to': { transition: 'opacity 0.1s linear' },
-        'leave-to': { opacity: '0', transition: 'opacity 0.1s linear' },
-      }}
       dCallbackList={{
+        beforeEnter: () => transitionState,
         afterEnter: () => {
           afterVisibleChange?.(true);
         },
+        beforeLeave: () => transitionState,
         afterLeave: () => {
           afterVisibleChange?.(false);
         },

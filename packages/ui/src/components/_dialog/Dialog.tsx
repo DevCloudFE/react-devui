@@ -1,6 +1,5 @@
 import type { DTransitionProps } from '../_transition';
 
-import { isFunction } from 'lodash';
 import React, { useEffect, useCallback, useRef, useImperativeHandle } from 'react';
 
 import { usePrefixConfig, useId, useAsync, useRefCallback } from '../../hooks';
@@ -16,7 +15,6 @@ export interface DDialogRef {
 
 export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: boolean;
-  dStateList: NonNullable<DTransitionProps['dStateList']>;
   dCallbackList?: NonNullable<DTransitionProps['dCallbackList']>;
   dContentProps?: React.HTMLAttributes<HTMLDivElement>;
   dMask?: boolean;
@@ -28,7 +26,6 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
 export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) => {
   const {
     dVisible,
-    dStateList,
     dCallbackList,
     dContentProps,
     dMask = true,
@@ -89,23 +86,18 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
     <DTransition
       dEl={dialogContentEl}
       dVisible={dVisible}
-      dStateList={dStateList}
-      dCallbackList={() => {
-        const callbackList = isFunction(dCallbackList) ? dCallbackList() : dCallbackList;
-        return {
-          ...callbackList,
-          afterEnter: () => {
-            callbackList?.afterEnter?.();
-            if (dialogContentEl) {
-              dataRef.current.preActiveEl = document.activeElement as HTMLElement | null;
-              dialogContentEl.focus({ preventScroll: true });
-            }
-          },
-          beforeLeave: () => {
-            callbackList?.beforeLeave?.();
-            dataRef.current.preActiveEl?.focus({ preventScroll: true });
-          },
-        };
+      dCallbackList={{
+        ...dCallbackList,
+        beforeEnter: (el) => dCallbackList?.beforeEnter(el),
+        afterEnter: (el) => {
+          dCallbackList?.afterEnter?.(el);
+          dataRef.current.preActiveEl = document.activeElement as HTMLElement | null;
+          el.focus({ preventScroll: true });
+        },
+        beforeLeave: (el) => {
+          dataRef.current.preActiveEl?.focus({ preventScroll: true });
+          return dCallbackList?.beforeLeave(el);
+        },
       }}
       dRender={(hidden) =>
         !(dDestroy && hidden) && (

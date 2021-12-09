@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useEffect, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 
@@ -127,5 +127,6 @@ export function DTrigger(props: DTriggerProps) {
     return _renderProps;
   }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger]);
 
-  return dRender ? <>{dRender(renderProps)}</> : null;
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{dRender?.(renderProps)}</>;
 }

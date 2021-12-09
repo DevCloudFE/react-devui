@@ -4,7 +4,6 @@ import { flushSync } from 'react-dom';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
 import { useImmer } from '../immer';
-import { ThrottleByAnimationFrame } from '../throttle-and-debounce';
 import { globalEscStack } from './esc';
 
 interface CaptureMethod {
@@ -67,15 +66,13 @@ class BaseAsyncCapture {
     return clear;
   }
 
-  onGlobalScroll(cb: (e: Event) => void) {
-    const throttleByAnimationFrame = new ThrottleByAnimationFrame();
-    const observer = fromEvent(window, 'scroll', { capture: true, passive: true }).subscribe({
-      next: (e) => throttleByAnimationFrame.run(() => cb(e)),
+  onGlobalScroll(cb: (e: UIEvent) => void) {
+    const observer = fromEvent<UIEvent>(window, 'scroll', { capture: true, passive: true }).subscribe({
+      next: (e) => cb(e),
     });
     const tid = Symbol();
     const clear = () => {
       observer.unsubscribe();
-      throttleByAnimationFrame.clearTids();
       this.tids.delete(tid);
     };
     this.tids.set(tid, clear);

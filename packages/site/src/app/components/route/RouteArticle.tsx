@@ -53,6 +53,12 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
     </DIcon>
   );
 
+  const transitionState = {
+    'enter-from': { opacity: '0', transform: 'translateY(120px)' },
+    'enter-to': { transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
+    'leave-to': { opacity: '0', transform: 'translateY(120px)', transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
+  };
+
   return (
     <DRow
       dAsListener
@@ -74,10 +80,9 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
               <DTransition
                 dEl={el}
                 dVisible={menuOpen}
-                dStateList={{
-                  'enter-from': { opacity: '0', transform: 'translateY(120px)' },
-                  'enter-to': { transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
-                  'leave-to': { opacity: '0', transform: 'translateY(120px)', transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
+                dCallbackList={{
+                  beforeEnter: () => transitionState,
+                  beforeLeave: () => transitionState,
                 }}
                 dRender={(hidden) => (
                   <div ref={ref} className="app-route__anchor-conatiner" style={{ visibility: hidden ? 'hidden' : undefined }}>

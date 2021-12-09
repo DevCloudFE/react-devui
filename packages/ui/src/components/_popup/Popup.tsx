@@ -1,13 +1,13 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 import type { DPlacement } from '../../utils/position';
-import type { DTransitionStateList, DTransitionRef } from '../_transition';
+import type { DTransitionStateList } from '../_transition';
 
-import { isUndefined } from 'lodash';
+import { isUndefined, toNumber } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useImperativeHandle, useRef } from 'react';
 import ReactDOM, { flushSync } from 'react-dom';
 
 import { usePrefixConfig, useAsync, useRefSelector, useId, useImmer, useRefCallback, useRootContentConfig } from '../../hooks';
-import { getClassName, MAX_INDEX_MANAGER, getPopupPlacementStyle, mergeStyle } from '../../utils';
+import { getClassName, getPopupPlacementStyle, mergeStyle, MAX_INDEX_MANAGER } from '../../utils';
 import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
 
@@ -84,12 +84,11 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   //#endregion
 
   //#region Ref
-  const [transition, transitionRef] = useRefCallback<DTransitionRef>();
   const [popupEl, popupRef] = useRefCallback<HTMLDivElement>();
   const [hoverReferenceEl, hoverReferenceRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const dataRef = useRef<{ clearTid: (() => void) | null; hasCancelLeave: boolean }>({
+  const dataRef = useRef<{ clearTid: (() => void) | null; hasCancelLeave: boolean; transitionState?: DTransitionStateList }>({
     clearTid: null,
     hasCancelLeave: false,
   });
@@ -97,7 +96,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   const asyncCapture = useAsync();
   const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
   const [arrowPosition, setArrowStyle] = useImmer<React.CSSProperties | undefined>(undefined);
-  const [zIndex, setZIndex] = useImmer<string | number>(1000);
+  const [zIndex, setZIndex] = useImmer(1000);
   const id = useId();
 
   const [autoPlacement, setAutoPlacement] = useImmer<DPlacement>(dPlacement);
@@ -218,7 +217,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
           default:
             break;
         }
-        return {
+        dataRef.current.transitionState = {
           'enter-from': { transform: 'scale(0)', opacity: '0' },
           'enter-to': { transition: 'transform 0.1s ease-out, opacity 0.1s ease-out', transformOrigin },
           'leave-to': { transform: 'scale(0)', opacity: '0', transition: 'transform 0.1s ease-in, opacity 0.1s ease-in', transformOrigin },
@@ -231,7 +230,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
           top,
           left,
         });
-        return stateList;
+        dataRef.current.transitionState = stateList;
       }
     }
   }, [
@@ -341,7 +340,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
             MAX_INDEX_MANAGER.deleteRecord(key);
           };
         } else {
-          setZIndex(`var(--${dPrefix}absolute-z-index)`);
+          setZIndex(toNumber(getComputedStyle(document.body).getPropertyValue(`--${dPrefix}absolute-z-index`)));
         }
       } else {
         setZIndex(dZIndex);
@@ -429,28 +428,20 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (dVisible && triggerRef.current && popupEl) {
-      const throttleUpdate = () => {
-        if (transition) {
-          transition.transitionThrottle.run(updatePosition);
-        }
-      };
-
-      throttleUpdate();
-
       if (!isFixed && rootContentRef.current) {
-        asyncGroup.onResize(rootContentRef.current, throttleUpdate);
+        asyncGroup.onResize(rootContentRef.current, updatePosition);
       }
 
-      asyncGroup.onResize(popupEl, throttleUpdate);
+      asyncGroup.onResize(popupEl, updatePosition);
 
-      asyncGroup.onResize(triggerRef.current, throttleUpdate);
+      asyncGroup.onResize(triggerRef.current, updatePosition);
 
-      asyncGroup.onGlobalScroll(throttleUpdate);
+      asyncGroup.onGlobalScroll(updatePosition);
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, updatePosition, triggerRef, popupEl, transition, rootContentRef, isFixed, dVisible]);
+  }, [asyncCapture, dVisible, updatePosition, triggerRef, popupEl, rootContentRef, isFixed]);
   //#endregion
 
   useImperativeHandle(
@@ -509,17 +500,18 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
       {dTriggerRender?.(triggerRenderProps)}
       <DTransition
         dEl={popupEl}
-        ref={transitionRef}
         dVisible={dVisible}
-        dStateList={updatePosition}
         dCallbackList={{
-          beforeEnter: () => {
-            if (popupEl && hoverReferenceEl) {
-              const rect = popupEl.getBoundingClientRect();
+          beforeEnter: (el) => {
+            if (hoverReferenceEl) {
+              const rect = el.getBoundingClientRect();
               hoverReferenceEl.style.width = rect.width + 'px';
               hoverReferenceEl.style.height = rect.height + 'px';
               dataRef.current.hasCancelLeave = false;
             }
+            updatePosition();
+
+            return dataRef.current.transitionState;
           },
           afterEnter: () => {
             if (dataRef.current.hasCancelLeave && checkMouseLeave()) {
@@ -527,6 +519,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
             }
             afterVisibleChange?.(true);
           },
+          beforeLeave: () => dataRef.current.transitionState,
           afterLeave: () => {
             afterVisibleChange?.(false);
           },
