@@ -1,19 +1,21 @@
+import type { Updater } from '../../hooks/immer';
 import type { DPopupProps, DPopupRef, DTriggerRenderProps } from '../_popup';
 
 import React, { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useId } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useId, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 
 export type DTooltipRef = DPopupRef;
 
-export interface DTooltipProps extends Omit<DPopupProps, 'dPopupContent'> {
+export interface DTooltipProps extends Omit<DPopupProps, 'dVisible' | 'dPopupContent'> {
+  dVisible?: [boolean, Updater<boolean>?];
   dTitle: React.ReactNode;
 }
 
 export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref) => {
-  const { dTitle, id, className, children, ...restProps } = useComponentConfig(DTooltip.name, props);
+  const { dVisible, dTitle, onVisibleChange, id, className, children, ...restProps } = useComponentConfig(DTooltip.name, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -21,6 +23,8 @@ export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref
 
   const _id = useId();
   const __id = id ?? `${dPrefix}tooltip-${_id}`;
+
+  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
 
   const renderTrigger = useCallback(
     ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {
@@ -73,8 +77,10 @@ export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref
       id={__id}
       className={getClassName(className, `${dPrefix}tooltip`)}
       role="tooltip"
+      dVisible={visible}
       dPopupContent={dTitle}
       dTriggerRender={renderTrigger}
+      onVisibleChange={changeVisible}
     />
   );
 });

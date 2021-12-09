@@ -1,11 +1,10 @@
-import type { Updater } from '../../hooks/immer';
 import type { DTransitionProps } from '../_transition';
 
-import { isFunction, isUndefined } from 'lodash';
+import { isFunction } from 'lodash';
 import React, { useEffect, useCallback, useRef, useImperativeHandle } from 'react';
 
-import { usePrefixConfig, useLockScroll, useId, useAsync, useImmer, useRefCallback } from '../../hooks';
-import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
+import { usePrefixConfig, useId, useAsync, useRefCallback } from '../../hooks';
+import { getClassName, mergeStyle } from '../../utils';
 import { DTransition } from '../_transition';
 import { DMask } from './Mask';
 
@@ -13,16 +12,13 @@ export interface DDialogRef {
   id: number;
   el: HTMLDivElement | null;
   contentEl: HTMLDivElement | null;
-  closeDialog: () => void;
 }
 
 export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
-  dVisible: [boolean, Updater<boolean>?];
+  dVisible: boolean;
   dStateList: NonNullable<DTransitionProps['dStateList']>;
   dCallbackList?: NonNullable<DTransitionProps['dCallbackList']>;
   dContentProps?: React.HTMLAttributes<HTMLDivElement>;
-  dLockScroll?: boolean;
-  dZIndex?: number;
   dMask?: boolean;
   dMaskClosable?: boolean;
   dDestroy?: boolean;
@@ -35,8 +31,6 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
     dStateList,
     dCallbackList,
     dContentProps,
-    dLockScroll,
-    dZIndex,
     dMask = true,
     dMaskClosable = true,
     dDestroy = false,
@@ -62,48 +56,23 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
 
   const asyncCapture = useAsync();
   const id = useId();
-  const [zIndex, setZIndex] = useImmer<string | number>(1000);
-
-  const [visible, setVisible] = dVisible;
 
   const handleMaskClose = useCallback(() => {
     if (dMaskClosable) {
-      setVisible?.(false);
       onClose?.();
     }
-  }, [dMaskClosable, onClose, setVisible]);
-
-  const closeDialog = useCallback(() => {
-    setVisible?.(false);
-    onClose?.();
-  }, [onClose, setVisible]);
-
-  useLockScroll(dLockScroll ?? visible);
+  }, [dMaskClosable, onClose]);
 
   //#region DidUpdate
   useEffect(() => {
-    if (visible) {
-      if (isUndefined(dZIndex)) {
-        const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
-        setZIndex(maxZIndex);
-        return () => {
-          MAX_INDEX_MANAGER.deleteRecord(key);
-        };
-      } else {
-        setZIndex(dZIndex);
-      }
-    }
-  }, [dPrefix, dZIndex, setZIndex, visible]);
-
-  useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (visible) {
-      asyncGroup.onEscKeydown(closeDialog);
+    if (dVisible) {
+      asyncGroup.onEscKeydown(() => onClose?.());
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, closeDialog, id, visible]);
+  }, [asyncCapture, dVisible, onClose]);
   //#endregion
 
   useImperativeHandle(
@@ -112,15 +81,14 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
       id,
       el: dialogEl,
       contentEl: dialogContentEl,
-      closeDialog,
     }),
-    [closeDialog, dialogContentEl, dialogEl, id]
+    [dialogContentEl, dialogEl, id]
   );
 
   return (
     <DTransition
       dEl={dialogContentEl}
-      dVisible={visible}
+      dVisible={dVisible}
       dStateList={dStateList}
       dCallbackList={() => {
         const callbackList = isFunction(dCallbackList) ? dCallbackList() : dCallbackList;
@@ -145,15 +113,12 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
             {...restProps}
             ref={dialogRef}
             className={getClassName(className, `${dPrefix}dialog`)}
-            style={mergeStyle(style, {
-              display: hidden ? 'none' : undefined,
-              zIndex,
-            })}
+            style={mergeStyle(style, { display: hidden ? 'none' : undefined })}
             role="dialog"
             aria-modal="true"
             aria-describedby={`${dPrefix}dialog-content-${id}`}
           >
-            {dMask && <DMask dVisible={visible} onClose={handleMaskClose} />}
+            {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
             <div
               {...dContentProps}
               ref={dialogContentRef}

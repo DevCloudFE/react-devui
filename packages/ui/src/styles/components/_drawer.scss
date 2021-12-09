@@ -42,7 +42,7 @@
     }
   }
 
-  @include e(content-body) {
+  @include e(body) {
     position: relative;
 
     flex-grow: 1;

@@ -13,11 +13,12 @@ Replace the system default `title` prompt.
 
 ### DTooltipProps
 
-Extend `Omit<DPopupProps, 'dTriggerNode'>`.
+Extend `Omit<DPopupProps, 'dVisible' | 'dPopupContent'>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
+| dVisible | Manually control the display of tooltip | [boolean, Updater\<boolean\>] | - |
 | dTitle | Prompt text | React.ReactNode | - |
 <!-- prettier-ignore-end -->
 
@@ -34,7 +35,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dVisible | Manually control the display of popup | [boolean, Updater\<boolean\>] | - |
+| dVisible | Control the display of popup | boolean | - |
 | dPopupContent | The contents of the popup | React.ReactNode | - |
 | dTriggerRender | The target node of the popup | `(props: DTriggerRenderProps) => React.ReactNode` | - |
 | dTriggerEl |  Custom popup target node | HTMLElement \| null | - |

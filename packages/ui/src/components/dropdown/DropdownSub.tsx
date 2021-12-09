@@ -154,7 +154,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
       {!dDisabled && (
         <DPopup
           className={`${dPrefix}dropdown-sub__popup`}
-          dVisible={[popupVisible]}
+          dVisible={popupVisible}
           dPopupContent={
             <ul
               ref={ulRef}

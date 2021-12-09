@@ -6,7 +6,7 @@ import { isUndefined } from 'lodash';
 import React, { useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useRefCallback, useLockScroll } from '../../hooks';
 import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 
@@ -67,7 +67,7 @@ export function DDrawer(props: DDrawerProps) {
 
   const [zIndex, setZIndex] = useImmer<string | number>(1000);
 
-  const [visible] = dVisible;
+  const [visible, setVisible] = dVisible;
 
   const isFixed = isUndefined(dContainer);
   const handleContainer = useCallback(() => {
@@ -94,16 +94,12 @@ export function DDrawer(props: DDrawerProps) {
     left: 0,
   });
 
-  const contentProps = useMemo<React.HTMLAttributes<HTMLDivElement>>(
-    () => ({
-      className: getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`),
-      style: {
-        width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
-        height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
-      },
-    }),
-    [dHeight, dPlacement, dPrefix, dWidth]
-  );
+  const closeDrawer = useCallback(() => {
+    setVisible?.(false);
+    onClose?.();
+  }, [onClose, setVisible]);
+
+  useLockScroll(isFixed && visible);
 
   //#region DidUpdate
   useEffect(() => {
@@ -141,13 +137,24 @@ export function DDrawer(props: DDrawerProps) {
   const contextValue = useMemo<DDrawerContextData>(
     () => ({
       drawerId: dialogRefContent?.id,
-      closeDrawer: dialogRefContent?.closeDialog,
+      closeDrawer,
     }),
-    [dialogRefContent?.closeDialog, dialogRefContent?.id]
+    [closeDrawer, dialogRefContent?.id]
+  );
+
+  const contentProps = useMemo<React.HTMLAttributes<HTMLDivElement>>(
+    () => ({
+      className: getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`),
+      style: {
+        width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
+        height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
+      },
+    }),
+    [dHeight, dPlacement, dPrefix, dWidth]
   );
 
   const drawerNode = (
-    <DDrawerContext.Provider value={contextValue}>
+    <>
       <DDialog
         {...restProps}
         ref={dialogRef}
@@ -163,9 +170,10 @@ export function DDrawer(props: DDrawerProps) {
               : dPlacement === 'bottom'
               ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
               : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
+          zIndex,
         })}
         aria-labelledby={dHeader ? `${dPrefix}drawer-header-${dialogRefContent?.id}` : undefined}
-        dVisible={dVisible}
+        dVisible={visible}
         dStateList={() => {
           const transform =
             dPlacement === 'top'
@@ -209,20 +217,20 @@ export function DDrawer(props: DDrawerProps) {
             },
           };
         }}
-        dLockScroll={visible && isFixed}
-        dZIndex={zIndex as number}
+        dContentProps={contentProps}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
         dDestroy={dDestroy}
-        dContentProps={contentProps}
-        onClose={onClose}
+        onClose={closeDrawer}
       >
-        {dHeader}
-        <div className={`${dPrefix}drawer__content-body`}>{children}</div>
-        {dFooter}
+        <DDrawerContext.Provider value={contextValue}>
+          {dHeader}
+          <div className={`${dPrefix}drawer__body`}>{children}</div>
+          {dFooter}
+        </DDrawerContext.Provider>
       </DDialog>
       {childDrawer}
-    </DDrawerContext.Provider>
+    </>
   );
 
   return dContainer === false ? drawerNode : containerRef.current && ReactDOM.createPortal(drawerNode, containerRef.current);
