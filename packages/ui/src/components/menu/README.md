@@ -29,7 +29,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 
 ### DMenuGroupProps
 
-Extend `React.HTMLAttributes<HTMLDivElement>`.
+Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 

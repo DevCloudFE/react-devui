@@ -29,6 +29,17 @@ title: 下拉菜单
 | onItemClick | 点击菜单项的回调 | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
 
+### DDropdownGroupProps
+
+继承 `React.LiHTMLAttributes<HTMLLIElement>`。
+
+<!-- prettier-ignore-start -->
+| 参数 | 说明 | 类型 | 默认值 | 
+| --- | --- | --- | --- | 
+| dId | 唯一标识 | string | - |
+| dTitle | 菜单分组的标题 | React.ReactNode | - |
+<!-- prettier-ignore-end -->
+
 ### DDropdownSubProps
 
 继承 `React.LiHTMLAttributes<HTMLLIElement>`。

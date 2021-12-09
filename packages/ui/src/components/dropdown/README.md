@@ -30,6 +30,17 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | onItemClick | Click the callback of the menu item | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
 
+### DDropdownGroupProps
+
+Extend `React.LiHTMLAttributes<HTMLLIElement>`.
+
+<!-- prettier-ignore-start -->
+| Property | Description | Type | Default | 
+| --- | --- | --- | --- | 
+| dId | Uniquely identifies | string | - |
+| dTitle | The title of the menu group | React.ReactNode | - |
+<!-- prettier-ignore-end -->
+
 ### DDropdownSubProps
 
 Extend `React.LiHTMLAttributes<HTMLLIElement>`.

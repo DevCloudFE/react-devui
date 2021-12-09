@@ -2,13 +2,14 @@ import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
-import { getClassName, toId } from '../../utils';
+import { getClassName, mergeStyle, toId } from '../../utils';
 import { DDropdownContext } from './Dropdown';
 
 export interface DDropdownItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dIcon?: React.ReactNode;
   dDisabled?: boolean;
+  __level?: number;
 }
 
 export function DDropdownItem(props: DDropdownItemProps) {
@@ -16,8 +17,10 @@ export function DDropdownItem(props: DDropdownItemProps) {
     dId,
     dIcon,
     dDisabled = false,
+    __level = 0,
     id,
     className,
+    style,
     tabIndex,
     children,
     onClick,
@@ -65,6 +68,9 @@ export function DDropdownItem(props: DDropdownItemProps) {
       id={_id}
       className={getClassName(className, `${dPrefix}dropdown-item`, {
         'is-disabled': dDisabled,
+      })}
+      style={mergeStyle(style, {
+        paddingLeft: 12 + __level * 16,
       })}
       role="menuitem"
       tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}

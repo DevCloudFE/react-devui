@@ -28,7 +28,7 @@ title: 导航菜单
 
 ### DMenuGroupProps
 
-继承 `React.HTMLAttributes<HTMLDivElement>`。
+继承 `React.LiHTMLAttributes<HTMLLIElement>`。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 

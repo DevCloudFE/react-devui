@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
-import { getClassName, getHorizontalSideStyle, toId } from '../../utils';
+import { getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
 import { DDropdownContext } from './Dropdown';
@@ -17,6 +17,7 @@ export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement>
   dIcon?: React.ReactNode;
   dTitle: React.ReactNode;
   dDisabled?: boolean;
+  __level?: number;
 }
 
 export function DDropdownSub(props: DDropdownSubProps) {
@@ -25,6 +26,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
     dIcon,
     dTitle,
     dDisabled = false,
+    __level = 0,
     id,
     className,
     style,
@@ -137,6 +139,9 @@ export function DDropdownSub(props: DDropdownSubProps) {
         className={getClassName(className, `${dPrefix}dropdown-sub`, {
           'is-disabled': dDisabled,
         })}
+        style={mergeStyle(style, {
+          paddingLeft: 12 + __level * 16,
+        })}
         role="menuitem"
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         aria-haspopup={true}
@@ -165,7 +170,18 @@ export function DDropdownSub(props: DDropdownSubProps) {
               aria-orientation="vertical"
               aria-activedescendant={activedescendant}
             >
-              {React.Children.count(children) === 0 ? <span className={`${dPrefix}dropdown-sub__empty`}>{t('No Data')}</span> : children}
+              {React.Children.count(children) === 0 ? (
+                <span
+                  className={`${dPrefix}dropdown-sub__empty`}
+                  style={{
+                    paddingLeft: 12 + __level * 16,
+                  }}
+                >
+                  {t('No Data')}
+                </span>
+              ) : (
+                children
+              )}
             </ul>
           }
           dTrigger={dropdownPopupTrigger}

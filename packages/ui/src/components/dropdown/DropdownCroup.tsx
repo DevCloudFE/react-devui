@@ -1,19 +1,18 @@
-import type { DMenuItemProps } from './MenuItem';
+import type { DDropdownItemProps } from './DropdownItem';
 
-import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useTranslation } from '../../hooks';
-import { getClassName, toId, mergeStyle } from '../../utils';
-import { DMenuContext } from './Menu';
+import { getClassName, mergeStyle, toId } from '../../utils';
+import { DDropdownContext } from './Dropdown';
 
-export interface DMenuGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
+export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dTitle: React.ReactNode;
   __level?: number;
 }
 
-export function DMenuGroup(props: DMenuGroupProps) {
+export function DDropdownGroup(props: DDropdownGroupProps) {
   const {
     dId,
     dTitle,
@@ -21,21 +20,22 @@ export function DMenuGroup(props: DMenuGroupProps) {
     id,
     className,
     style,
-    tabIndex,
+    tabIndex = -1,
     children,
+    onClick,
     onFocus,
     onBlur,
     ...restProps
-  } = useComponentConfig(DMenuGroup.name, props);
+  } = useComponentConfig(DDropdownGroup.name, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
+  const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DDropdownContext);
   //#endregion
 
   const [t] = useTranslation('Common');
 
-  const _id = id ?? `${dPrefix}menu-group-${toId(dId)}`;
+  const _id = id ?? `${dPrefix}dropdown-group-${toId(dId)}`;
 
   const handleFocus = useCallback(
     (e) => {
@@ -54,15 +54,9 @@ export function DMenuGroup(props: DMenuGroupProps) {
   );
 
   const childs = useMemo(() => {
-    const length = React.Children.count(children);
-
-    return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) =>
+    return React.Children.map(children as Array<React.ReactElement<DDropdownItemProps>>, (child) =>
       React.cloneElement(child, {
         ...child.props,
-        className: getClassName(child.props.className, {
-          'js-first': length > 1 && index === 0,
-          'js-last': length > 1 && index === length - 1,
-        }),
         __level: __level + 1,
       })
     );
@@ -73,11 +67,11 @@ export function DMenuGroup(props: DMenuGroupProps) {
       <li
         {...restProps}
         id={_id}
-        className={getClassName(className, `${dPrefix}menu-group`)}
         style={mergeStyle(style, {
-          paddingLeft: 16 + __level * 20,
+          paddingLeft: 12 + __level * 16,
         })}
-        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+        className={getClassName(className, `${dPrefix}dropdown-group`)}
+        tabIndex={tabIndex}
         role="separator"
         aria-orientation="horizontal"
         onFocus={handleFocus}
@@ -86,7 +80,12 @@ export function DMenuGroup(props: DMenuGroupProps) {
         {dTitle}
       </li>
       {React.Children.count(childs) === 0 ? (
-        <span className={`${dPrefix}menu-group__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+        <span
+          className={`${dPrefix}dropdown-group__empty`}
+          style={{
+            paddingLeft: style?.paddingLeft,
+          }}
+        >
           {t('No Data')}
         </span>
       ) : (

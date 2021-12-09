@@ -1,3 +1,5 @@
+$menu-item-height: 40px;
+
 @mixin menu-list() {
   @include e(list) {
     position: relative;
@@ -13,7 +15,7 @@
   @include e(empty) {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: $menu-item-height;
 
     color: var(--#{$variable-prefix}color-step-400);
   }
@@ -26,7 +28,7 @@
 
   display: flex;
   align-items: center;
-  height: 40px;
+  height: $menu-item-height;
   margin: 0;
 
   list-style: none;
@@ -236,7 +238,13 @@
 }
 
 @include b(menu-group) {
-  padding: 8px 16px;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: $menu-item-height;
+  margin: 0;
+  padding: 0 16px;
 
   color: var(--#{$variable-prefix}color-step-400);
 
@@ -246,14 +254,6 @@
   @include utils-ellipsis;
 
   @include menu-empty;
-
-  @include e(empty) {
-    display: flex;
-    align-items: center;
-    height: 40px;
-
-    color: var(--#{$variable-prefix}color-step-400);
-  }
 }
 
 @include b(menu-sub) {

@@ -13,8 +13,8 @@ export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 
-export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps } from './dropdown';
-export { DDropdown, DDropdownItem, DDropdownSub } from './dropdown';
+export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps, DDropdownGroupProps } from './dropdown';
+export { DDropdown, DDropdownItem, DDropdownSub, DDropdownGroup } from './dropdown';
 
 export type { DRowProps, DColProps } from './grid';
 export { DRow, DCol } from './grid';
