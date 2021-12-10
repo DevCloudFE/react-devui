@@ -78,6 +78,12 @@ $dropdown-item-height: 32px;
   @include dropdown-item;
   @include dropdown-empty;
 
+  @include when(disabled) {
+    @include e(arrow) {
+      color: inherit;
+    }
+  }
+
   @include e(popup) {
     box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
   }

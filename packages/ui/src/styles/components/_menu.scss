@@ -230,7 +230,7 @@ $menu-item-height: 40px;
 
       height: 1px;
 
-      background-color: var(--#{$variable-prefix}divider-color);
+      background-color: var(--#{$variable-prefix}indicator-background-color);
 
       content: '';
     }
@@ -301,6 +301,12 @@ $menu-item-height: 40px;
 
     @include e(arrow) {
       color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+  }
+
+  @include when(disabled) {
+    @include e(arrow) {
+      color: inherit;
     }
   }
 

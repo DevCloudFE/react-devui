@@ -1,0 +1,58 @@
+@include b(compose) {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  & > * {
+    flex-shrink: 0;
+    margin: 0 !important;
+
+    & + * {
+      margin-left: -1px !important;
+    }
+
+    &:not(:first-child):not(:last-child) {
+      border-radius: 0 !important;
+    }
+
+    &:first-child:not(:only-child) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+
+    &:last-child:not(:only-child) {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
+  }
+}
+
+@include b(compose-item) {
+  @include compose-item;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--#{$variable-prefix}border-color);
+  border-radius: 2px;
+
+  transition: all 0.2s linear;
+
+  @include utils-disabled;
+
+  @include m(gray) {
+    background-color: var(--#{$variable-prefix}color-step-20);
+
+    @include when(disabled) {
+      background-color: var(--#{$variable-prefix}disabled-background-color);
+    }
+  }
+
+  @include m(smaller) {
+    @include compose-item-smaller;
+  }
+
+  @include m(larger) {
+    @include compose-item-larger;
+  }
+}

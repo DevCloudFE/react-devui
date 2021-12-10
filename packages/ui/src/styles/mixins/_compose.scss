@@ -1,0 +1,36 @@
+@mixin compose-item($not-disabled: ':not(.is-loading)') {
+  $selector: &;
+  $compose-selector: '.#{$variable-prefix}compose';
+
+  min-width: 32px;
+  height: 32px;
+
+  @include font-size(0.9rem);
+
+  @at-root {
+    #{$compose-selector} {
+      #{$selector}#{$not-disabled}:hover,
+      #{$selector}#{$not-disabled}:focus {
+        z-index: var(--#{$variable-prefix}hover-z-index) !important;
+      }
+
+      #{$selector}#{$not-disabled}:active {
+        z-index: var(--#{$variable-prefix}active-z-index) !important;
+      }
+    }
+  }
+}
+
+@mixin compose-item-smaller {
+  min-width: 28px;
+  height: 28px;
+
+  @include font-size(0.75rem);
+}
+
+@mixin compose-item-larger {
+  min-width: 36px;
+  height: 36px;
+
+  @include font-size(1.05rem);
+}

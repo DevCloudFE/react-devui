@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { usePrefixConfig, useComponentConfig, useWave, useCustomContext, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DCollapseTransition } from '../_transition';
+import { useCompose } from '../compose';
 import { DIcon } from '../icon';
 import { DButtonGroupContext } from './ButtonGroup';
 
@@ -40,6 +41,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
   //#region Context
   const dPrefix = usePrefixConfig();
   const [{ buttonGroupType, buttonGroupColor, buttonGroupSize, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
+  const { composeSize, composeDisabled } = useCompose();
   //#endregion
 
   //#region Ref
@@ -50,7 +52,7 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
 
   const type = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
   const color = isUndefined(props.dColor) ? buttonGroupColor ?? dColor : dColor;
-  const size = isUndefined(props.dSize) ? buttonGroupSize ?? dSize : dSize;
+  const size = isUndefined(composeSize) ? (isUndefined(props.dSize) ? buttonGroupSize ?? dSize : dSize) : composeSize;
 
   const handleClick = useCallback(
     (e) => {
@@ -96,8 +98,8 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
             [`${dPrefix}button--icon`]: !children,
             'is-loading': dLoading,
           })}
-          disabled={buttonGroupDisabled || disabled}
-          aria-disabled={buttonGroupDisabled || disabled}
+          disabled={composeDisabled || buttonGroupDisabled || disabled}
+          aria-disabled={composeDisabled || buttonGroupDisabled || disabled}
           onClick={handleClick}
         >
           {dIconRight && children}

@@ -5,19 +5,15 @@
   text-overflow: ellipsis;
 }
 
-@mixin utils-disabled($border: 0, $disabled: '.is-disabled') {
-  &#{$disabled}::before {
-    position: absolute;
-    top: -$border;
-    right: -$border;
-    bottom: -$border;
-    left: -$border;
-    z-index: var(--#{$variable-prefix}disabled-z-index);
+@mixin utils-disabled($disabled: '.is-disabled', $background: false) {
+  &#{$disabled} {
+    color: var(--#{$variable-prefix}disabled-color);
 
-    background-color: var(--#{$variable-prefix}disabled-cover-color);
     cursor: not-allowed;
 
-    content: '';
+    @if $background {
+      background-color: var(--#{$variable-prefix}disabled-background-color);
+    }
   }
 }
 

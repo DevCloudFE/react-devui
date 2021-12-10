@@ -7,6 +7,9 @@ export { DAnchor, DAnchorLink } from './anchor';
 export type { DButtonProps, DButtonGroupProps } from './button';
 export { DButton, DButtonGroup } from './button';
 
+export type { DComposeProps, DComposeItemProps } from './compose';
+export { DCompose, DComposeItem } from './compose';
+
 export type { DDragProps, DDropProps, DDragPlaceholderProps } from './drag-drop';
 export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
 

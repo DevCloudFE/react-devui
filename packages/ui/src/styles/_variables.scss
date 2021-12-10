@@ -21,29 +21,35 @@ $themes: (
   --#{$variable-prefix}background-color: #fff;
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}divider-color: #eee;
+  --#{$variable-prefix}border-color: #d9d9d9;
   --#{$variable-prefix}indicator-background-color: #dfe1e6;
-  --#{$variable-prefix}disabled-cover-color: rgb(255 255 255 / 50%);
+  --#{$variable-prefix}disabled-background-color: #f5f5f5;
+  --#{$variable-prefix}disabled-color: #d5d5d5;
 
   /** step **/
-  --#{$variable-prefix}color-step-50: #f2f2f2;
-  --#{$variable-prefix}color-step-100: #e6e6e6;
-  --#{$variable-prefix}color-step-150: #d9d9d9;
-  --#{$variable-prefix}color-step-200: #ccc;
-  --#{$variable-prefix}color-step-250: #bfbfbf;
-  --#{$variable-prefix}color-step-300: #b3b3b3;
-  --#{$variable-prefix}color-step-350: #a6a6a6;
-  --#{$variable-prefix}color-step-400: #999;
-  --#{$variable-prefix}color-step-450: #8c8c8c;
-  --#{$variable-prefix}color-step-500: #808080;
-  --#{$variable-prefix}color-step-550: #737373;
-  --#{$variable-prefix}color-step-600: #666;
-  --#{$variable-prefix}color-step-650: #595959;
-  --#{$variable-prefix}color-step-700: #4d4d4d;
-  --#{$variable-prefix}color-step-750: #404040;
-  --#{$variable-prefix}color-step-800: #333;
-  --#{$variable-prefix}color-step-850: #262626;
-  --#{$variable-prefix}color-step-900: #191919;
-  --#{$variable-prefix}color-step-950: #0d0d0d;
+  --#{$variable-prefix}color-step-10: hsl(0deg 0% 99%);
+  --#{$variable-prefix}color-step-20: hsl(0deg 0% 98%);
+  --#{$variable-prefix}color-step-30: hsl(0deg 0% 97%);
+  --#{$variable-prefix}color-step-40: hsl(0deg 0% 96%);
+  --#{$variable-prefix}color-step-50: hsl(0deg 0% 95%);
+  --#{$variable-prefix}color-step-100: hsl(0deg 0% 90%);
+  --#{$variable-prefix}color-step-150: hsl(0deg 0% 85%);
+  --#{$variable-prefix}color-step-200: hsl(0deg 0% 80%);
+  --#{$variable-prefix}color-step-250: hsl(0deg 0% 75%);
+  --#{$variable-prefix}color-step-300: hsl(0deg 0% 70%);
+  --#{$variable-prefix}color-step-350: hsl(0deg 0% 65%);
+  --#{$variable-prefix}color-step-400: hsl(0deg 0% 60%);
+  --#{$variable-prefix}color-step-450: hsl(0deg 0% 55%);
+  --#{$variable-prefix}color-step-500: hsl(0deg 0% 50%);
+  --#{$variable-prefix}color-step-550: hsl(0deg 0% 45%);
+  --#{$variable-prefix}color-step-600: hsl(0deg 0% 40%);
+  --#{$variable-prefix}color-step-650: hsl(0deg 0% 35%);
+  --#{$variable-prefix}color-step-700: hsl(0deg 0% 30%);
+  --#{$variable-prefix}color-step-750: hsl(0deg 0% 25%);
+  --#{$variable-prefix}color-step-800: hsl(0deg 0% 20%);
+  --#{$variable-prefix}color-step-850: hsl(0deg 0% 15%);
+  --#{$variable-prefix}color-step-900: hsl(0deg 0% 10%);
+  --#{$variable-prefix}color-step-950: hsl(0deg 0% 5%);
 
   @each $theme, $rgb in $themes {
     /** rgb **/

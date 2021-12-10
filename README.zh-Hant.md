@@ -71,6 +71,7 @@ yarn site:serve
 ## 样式
 
 - class 命名遵循 [BEM](http://getbem.com/introduction/) 规范。
+- 设计组件时务必考虑是否应该添加到 [DCompose](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/compose/Compose.tsx)。理论上所有数据输入组件都应该能够被组合，实现可参考 [DButton](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/button/Button.tsx)。
 - 提供额外的 主题、状态、js 的 [mixin](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/styles/mixins/_bem.scss)，参考 [namespaces](https://csswizardry.com/2015/03/more-transparent-ui-code-with-namespaces/)。
 - 所有的 `font-size` 使用 [RFS](https://github.com/twbs/rfs#readme) 以实现响应式文字。
 - 我们使用 sass 输出样式，但是我们的变量使用原生的 `var()`。

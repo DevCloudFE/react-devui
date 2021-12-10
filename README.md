@@ -71,6 +71,7 @@ Refer to [README.md](https://github.com/xiejay97/react-devui/tree/main/.vscode) 
 ## Style
 
 - The class naming follows the [BEM](http://getbem.com/introduction/) specification.
+- When designing components, be sure to consider whether they should be added to [DCompose](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/compose/Compose.tsx). In theory, all data input components should be able to be combined. For implementation, please refer to [DButton](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/components/button/Button.tsx).
 - [Mixin](https://github.com/xiejay97/react-devui/blob/main/packages/ui/src/styles/mixins/_bem.scss) that provides additional themes, status, js, refer to [namespaces ](https://csswizardry.com/2015/03/more-transparent-ui-code-with-namespaces/).
 - All `font-size` use [RFS](https://github.com/twbs/rfs#readme) to achieve responsive text.
 - We use the sass output style, but our variables use the native `var()`.

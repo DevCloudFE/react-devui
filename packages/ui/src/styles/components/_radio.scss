@@ -15,7 +15,7 @@
   }
 
   #{$radio-selector} {
-    border: 1px solid var(--#{$variable-prefix}color-step-150);
+    border: 1px solid var(--#{$variable-prefix}border-color);
 
     transition: border-color 116ms ease-out, background-color 116ms ease-out;
 
@@ -44,12 +44,10 @@
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-step-400);
-
-      background-color: var(--#{$variable-prefix}color-step-100);
+      background-color: var(--#{$variable-prefix}disabled-background-color);
 
       @include when(checked) {
-        color: var(--#{$variable-prefix}color-primary);
+        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
       }
     }
 
@@ -113,10 +111,10 @@
 
   @include when(disabled) {
     @include e(input-wrapper) {
-      background-color: var(--#{$variable-prefix}color-step-50);
+      background-color: var(--#{$variable-prefix}disabled-background-color);
 
       &::after {
-        background-color: var(--#{$variable-prefix}color-step-400);
+        background-color: var(--#{$variable-prefix}disabled-color);
       }
     }
   }
@@ -180,7 +178,7 @@
     width: 100%;
     height: 100%;
     margin: 0;
-    border: 1px solid var(--#{$variable-prefix}color-step-200);
+    border: 1px solid var(--#{$variable-prefix}border-color);
     border-radius: 50%;
 
     outline: none;

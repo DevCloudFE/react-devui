@@ -14,6 +14,8 @@
 }
 
 @include b(button) {
+  @include compose-item(':not([disabled]):not(.is-loading)');
+
   $selector: &;
 
   position: relative;
@@ -21,8 +23,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
   margin: 0;
   padding: 0 16px;
   border-radius: 2px;
@@ -44,9 +44,13 @@
     margin-left: 10px;
   }
 
-  @include font-size(0.9rem);
-  @include utils-disabled(1px, ':disabled');
-  @include utils-disabled(1px, '.is-loading');
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  @include when(loading) {
+    cursor: not-allowed;
+  }
 
   @include m(primary) {
     z-index: 1;
@@ -56,6 +60,17 @@
     color: #fff;
 
     background-color: var(--#{$variable-prefix}button-color);
+
+    &:disabled {
+      /* stylelint-disable-next-line scss/no-global-function-names */
+      filter: saturate(50%) opacity(50%);
+    }
+
+    @include when(loading) {
+      border-color: var(--#{$variable-prefix}button-color-lighter);
+
+      background-color: var(--#{$variable-prefix}button-color-lighter);
+    }
 
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
@@ -71,11 +86,13 @@
   }
 
   @include m(secondary) {
-    border: 1px solid var(--#{$variable-prefix}color-step-150);
+    border: 1px solid var(--#{$variable-prefix}border-color);
 
     color: var(--#{$variable-prefix}text-color);
 
     background-color: transparent;
+
+    @include utils-disabled(':disabled', true);
 
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
@@ -99,6 +116,12 @@
 
     background-color: transparent;
 
+    &:disabled {
+      border-color: var(--#{$variable-prefix}border-color);
+
+      color: var(--#{$variable-prefix}disabled-color);
+    }
+
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
 
@@ -121,6 +144,12 @@
 
     background-color: transparent;
 
+    &:disabled {
+      border-color: var(--#{$variable-prefix}border-color);
+
+      color: var(--#{$variable-prefix}disabled-color);
+    }
+
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
 
@@ -140,6 +169,8 @@
     color: var(--#{$variable-prefix}text-color);
 
     background-color: transparent;
+
+    @include utils-disabled(':disabled', true);
 
     @include button-hover {
       color: var(--#{$variable-prefix}button-color-lighter);
@@ -161,6 +192,10 @@
 
     background-color: transparent;
 
+    &:disabled {
+      color: var(--#{$variable-prefix}disabled-color);
+    }
+
     @include button-hover {
       color: var(--#{$variable-prefix}button-color-lighter);
     }
@@ -179,19 +214,15 @@
   }
 
   @include m(smaller) {
-    min-width: 28px;
-    min-height: 28px;
     padding: 0 10px;
 
-    @include font-size(0.75rem);
+    @include compose-item-smaller;
   }
 
   @include m(larger) {
-    min-width: 38px;
-    min-height: 38px;
     padding: 0 20px;
 
-    @include font-size(1.05rem);
+    @include compose-item-larger;
   }
 
   @include m(block) {
