@@ -61,7 +61,7 @@ describe('DFooter', () => {
     const footer = shallow(<DFooter onOkClick={mockCallBack} />);
 
     okButton(footer).simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
+    expect(mockCallBack.mock.calls.length).toBe(1);
   });
 
   it('should `onCancelClick` work', () => {
@@ -69,6 +69,6 @@ describe('DFooter', () => {
     const footer = shallow(<DFooter onCancelClick={mockCallBack} />);
 
     cancelButton(footer).simulate('click');
-    expect(mockCallBack.mock.calls.length).toEqual(1);
+    expect(mockCallBack.mock.calls.length).toBe(1);
   });
 });
