@@ -11,7 +11,7 @@
       }
     },
     "build": {
-      "executor": "@nrwl/web:build",
+      "executor": "@nrwl/web:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -92,7 +92,6 @@
       "options": {
         "jestConfig": "packages/site/jest.config.js",
         "passWithNoTests": true,
-        "codeCoverage": true,
         "coverageReporters": ["clover", "json", "lcov", "text"]
       }
     }
