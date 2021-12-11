@@ -16,6 +16,9 @@ export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 
+export type { DModalProps } from './modal';
+export { DModal } from './modal';
+
 export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps, DDropdownGroupProps } from './dropdown';
 export { DDropdown, DDropdownItem, DDropdownSub, DDropdownGroup } from './dropdown';
 

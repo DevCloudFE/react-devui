@@ -13,6 +13,8 @@ export interface DFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   dCancelButtonProps?: DButtonProps;
   onOkClick?: () => void;
   onCancelClick?: () => void;
+  okText?: string | React.ReactNode;
+  cancelText?: string | React.ReactNode;
 }
 
 const DEFAULT_PROPS = {
@@ -27,6 +29,8 @@ export function DFooter(props: DFooterProps) {
     onOkClick,
     onCancelClick,
     className,
+    okText,
+    cancelText,
     ...restProps
   } = props;
 
@@ -49,11 +53,11 @@ export function DFooter(props: DFooterProps) {
       {dButtons.map((button, index) =>
         button === 'cancel' ? (
           <DButton key="cancel" {...dCancelButtonProps} dType="secondary" onClick={handleCancelClick}>
-            {t('Cancel')}
+            {cancelText ?? t('Cancel')}
           </DButton>
         ) : button === 'ok' ? (
           <DButton key="ok" {...dOkButtonProps} onClick={handleOkClick}>
-            {t('OK')}
+            {okText ?? t('OK')}
           </DButton>
         ) : (
           <React.Fragment key={index}>{button}</React.Fragment>
