@@ -1,9 +1,10 @@
 @include b(modal) {
   @include e(body) {
-    background-color: white;
     position: relative;
-    flex-grow: 1;
+
     padding: 20px;
     overflow: auto;
+
+    background-color: white;
   }
 }
