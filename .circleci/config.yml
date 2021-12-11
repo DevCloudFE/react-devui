@@ -4,6 +4,7 @@
 version: 2.1
 
 orbs:
+  nx: 'nrwl/nx@1.1.2'
   node: 'circleci/node@4.5.1'
   codecov: 'codecov/codecov@1.2.5'
 
@@ -26,8 +27,11 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: yarn
+      - nx/set-shas:
+          error-on-no-successful-workflow: true
+          main-branch-name: main
       - run:
-          command: 'yarn run <<parameters.run-command>>'
+          command: 'yarn <<parameters.run-command>>'
           name: 'Run YARN <<parameters.run-command>>'
 
 # -------------------------
@@ -38,7 +42,7 @@ workflows:
     jobs:
       - template:
           name: lint
-          run-command: 'lint:affected'
+          run-command: 'lint:affected --base=$NX_BASE --head=$NX_HEAD'
       - template:
           name: lint-style
           run-command: 'lint:style'
@@ -47,7 +51,7 @@ workflows:
     jobs:
       - template:
           name: test
-          run-command: 'test:affected --all --code-coverage'
+          run-command: 'test:affected --base=$NX_BASE --head=$NX_HEAD'
           post-steps:
             - 'codecov/upload'
 
@@ -55,4 +59,4 @@ workflows:
     jobs:
       - template:
           name: build
-          run-command: 'build:affected'
+          run-command: 'build:affected --base=$NX_BASE --head=$NX_HEAD'

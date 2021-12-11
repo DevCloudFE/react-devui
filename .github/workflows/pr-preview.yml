@@ -34,6 +34,8 @@ jobs:
             After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
           edit-mode: replace
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v2
         with:
           node-version: 14

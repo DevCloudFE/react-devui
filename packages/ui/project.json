@@ -41,6 +41,7 @@
       "options": {
         "jestConfig": "packages/ui/jest.config.js",
         "passWithNoTests": true,
+        "codeCoverage": true,
         "coverageReporters": ["clover", "json", "lcov", "text"]
       }
     }
