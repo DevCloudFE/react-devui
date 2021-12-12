@@ -283,11 +283,11 @@
 
   @include m(smaller) {
     --#{$variable-prefix}tabs-tab-size: 36px;
-    --#{$variable-prefix}tabs-tab-gap: 24px;
+    --#{$variable-prefix}tabs-tab-gap: 20px;
     --#{$variable-prefix}tabs-tab-padding: 12px;
 
     .#{$variable-prefix}tabs__tablist {
-      @include font-size(0.9rem);
+      @include font-size(0.85rem);
     }
   }
 

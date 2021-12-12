@@ -1,4 +1,5 @@
 /* stylelint-disable scss/operator-no-unspaced */
+@import '~rfs/scss';
 
 $namespace: 'd' !default;
 $variable-prefix: '#{$namespace}-' !default;
@@ -15,6 +16,20 @@ $themes: (
   --#{$variable-prefix}active-z-index: 20;
   --#{$variable-prefix}hover-z-index: 21;
   --#{$variable-prefix}absolute-z-index: 100;
+
+  /** size **/
+  --#{$variable-prefix}size: 32px;
+  --#{$variable-prefix}size-smaller: 28px;
+  --#{$variable-prefix}size-larger: 36px;
+  --#{$variable-prefix}padding-size: 16px;
+  --#{$variable-prefix}padding-size-smaller: 12px;
+  --#{$variable-prefix}padding-size-larger: 20px;
+  --#{$variable-prefix}margin-size: 8px;
+  --#{$variable-prefix}margin-size-smaller: 6px;
+  --#{$variable-prefix}margin-size-larger: 10px;
+  @include rfs(0.9rem, --#{$variable-prefix}font);
+  @include rfs(0.75rem, --#{$variable-prefix}font-smaller);
+  @include rfs(1.05rem, --#{$variable-prefix}font-larger);
 
   /** basic **/
   --#{$variable-prefix}text-color: #212529;

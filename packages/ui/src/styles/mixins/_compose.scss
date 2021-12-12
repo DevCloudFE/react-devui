@@ -2,11 +2,6 @@
   $selector: &;
   $compose-selector: '.#{$variable-prefix}compose';
 
-  min-width: 32px;
-  height: 32px;
-
-  @include font-size(0.9rem);
-
   @at-root {
     #{$compose-selector} {
       #{$selector}#{$not-disabled}:hover,
@@ -19,18 +14,4 @@
       }
     }
   }
-}
-
-@mixin compose-item-smaller {
-  min-width: 28px;
-  height: 28px;
-
-  @include font-size(0.75rem);
-}
-
-@mixin compose-item-larger {
-  min-width: 36px;
-  height: 36px;
-
-  @include font-size(1.05rem);
 }

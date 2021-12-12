@@ -28,13 +28,15 @@
 }
 
 @include b(compose-item) {
-  @include compose-item;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: var(--#{$variable-prefix}size);
+  height: var(--#{$variable-prefix}size);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: 2px;
+
+  font-size: var(--#{$variable-prefix}font);
 
   transition: all 0.2s linear;
 
@@ -49,10 +51,12 @@
   }
 
   @include m(smaller) {
-    @include compose-item-smaller;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
   }
 
   @include m(larger) {
-    @include compose-item-larger;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
   }
 }

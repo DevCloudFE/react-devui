@@ -15,6 +15,7 @@
   }
 
   #{$radio-selector} {
+    height: var(--#{$variable-prefix}size);
     border: 1px solid var(--#{$variable-prefix}border-color);
 
     transition: border-color 116ms ease-out, background-color 116ms ease-out;
@@ -60,8 +61,8 @@
     #{$radio-selector}__label {
       display: inline-flex;
       align-items: center;
-      height: var(--#{$variable-prefix}radio-height);
-      padding: var(--#{$variable-prefix}radio-padding);
+      height: 100%;
+      padding: 0 var(--#{$variable-prefix}padding-size);
     }
   }
 }
@@ -72,7 +73,11 @@
   display: inline-flex;
   align-items: center;
 
+  font-size: var(--#{$variable-prefix}font);
+
   cursor: pointer;
+
+  @include utils-disabled;
 
   &:not(.is-disabled) {
     &:hover {
@@ -104,10 +109,6 @@
       }
     }
   }
-
-  @include font-size(0.9rem);
-
-  @include utils-disabled;
 
   @include when(disabled) {
     @include e(input-wrapper) {
@@ -202,9 +203,6 @@
 @include b(radio-group) {
   $selector: &;
 
-  --#{$variable-prefix}radio-padding: 0 16px;
-  --#{$variable-prefix}radio-height: 32px;
-
   position: relative;
 
   display: flex;
@@ -239,21 +237,15 @@
   }
 
   @include m(smaller) {
-    --#{$variable-prefix}radio-padding: 0 12px;
-    --#{$variable-prefix}radio-height: 28px;
-
-    #{$radio-selector} {
-      @include font-size(0.8rem);
-    }
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
   }
 
   @include m(larger) {
-    --#{$variable-prefix}radio-padding: 0 20px;
-    --#{$variable-prefix}radio-height: 38px;
-
-    #{$radio-selector} {
-      @include font-size(1rem);
-    }
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
   }
 
   @include m(vertical) {

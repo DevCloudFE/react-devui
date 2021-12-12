@@ -32,7 +32,7 @@ When there are too many list entries, using virtual scrolling can greatly reduce
 ```tsx
 export interface DListRenderProps {
   style: React.CSSProperties;
-  'data-virtual-scroll': string;
+  [key: `data-${string}virtual-scroll`]: string;
   onScroll: React.UIEventHandler<HTMLElement>;
   children: React.ReactNode;
 }
@@ -42,6 +42,6 @@ export interface DListRenderProps {
 
 ```tsx
 export interface DItemRenderProps {
-  'data-virtual-scroll-reference'?: string;
+  [key: `data-${string}virtual-scroll-reference`]: string;
 }
 ```

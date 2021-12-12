@@ -23,10 +23,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: var(--#{$variable-prefix}size);
+  height: var(--#{$variable-prefix}size);
   margin: 0;
-  padding: 0 16px;
+  padding: 0 var(--#{$variable-prefix}padding-size);
   border-radius: 2px;
 
+  font-size: var(--#{$variable-prefix}font);
   font-family: inherit;
   line-height: inherit;
   white-space: nowrap;
@@ -41,7 +44,7 @@
   appearance: none;
 
   & + & {
-    margin-left: 10px;
+    margin-left: var(--#{$variable-prefix}margin-size);
   }
 
   &:disabled {
@@ -214,15 +217,17 @@
   }
 
   @include m(smaller) {
-    padding: 0 10px;
-
-    @include compose-item-smaller;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-smaller);
   }
 
   @include m(larger) {
-    padding: 0 20px;
-
-    @include compose-item-larger;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
   }
 
   @include m(block) {

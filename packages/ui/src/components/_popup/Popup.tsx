@@ -12,12 +12,12 @@ import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
 
 export interface DTriggerRenderProps {
+  [key: `data-${string}popup-trigger`]: string;
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
   onFocus?: React.FocusEventHandler<HTMLElement>;
   onBlur?: React.FocusEventHandler<HTMLElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
-  [key: `data-${string}popup-trigger`]: string;
 }
 
 export interface DPopupRef {

@@ -6,13 +6,13 @@ import { useComponentConfig, useRefSelector, useId, useAsync, usePrefixConfig, u
 
 export interface DListRenderProps {
   style: React.CSSProperties;
-  'data-virtual-scroll': string;
+  [key: `data-${string}virtual-scroll`]: string;
   onScroll: React.UIEventHandler<HTMLElement>;
   children: React.ReactNode;
 }
 
 export interface DItemRenderProps {
-  'data-virtual-scroll-reference'?: string;
+  [key: `data-${string}virtual-scroll-reference`]: string;
 }
 
 export interface DVirtualScrollProps<T> {
@@ -42,8 +42,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const [list, setList] = useImmer<React.ReactNode[]>([]);
   const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
 
-  const listRef = useRefSelector(`[data-virtual-scroll="${id}"]`);
-  const referenceRef = useRefSelector(`[data-virtual-scroll-reference="${id}"]`);
+  const listRef = useRefSelector(`[data-${dPrefix}virtual-scroll="${id}"]`);
+  const referenceRef = useRefSelector(`[data-${dPrefix}virtual-scroll-reference="${id}"]`);
 
   const itemSize = useMemo(() => (dCustomSize ? dList.map((item, index) => dCustomSize(item, index)) : []), [dCustomSize, dList]);
 
@@ -128,9 +128,9 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
   const reference = useMemo(() => {
     if (dList[0] && isUndefined(dCustomSize)) {
-      return dItemRender(dList[0], 0, { 'data-virtual-scroll-reference': String(id) });
+      return dItemRender(dList[0], 0, { [`data-${dPrefix}virtual-scroll-reference`]: String(id) });
     }
-  }, [dCustomSize, dItemRender, dList, id]);
+  }, [dCustomSize, dItemRender, dList, dPrefix, id]);
 
   //#region DidUpdate
   useEffect(() => {
@@ -148,40 +148,41 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   }, [updateList]);
   //#endregion
 
-  const listRenderProps = useMemo<DListRenderProps>(
-    () => ({
-      style: {
-        width: dWidth,
-        height: dHeight,
-        whiteSpace: isUndefined(dWidth) ? undefined : 'nowrap',
-        overflowX: isUndefined(dWidth) ? undefined : 'auto',
-        overflowY: isUndefined(dHeight) ? undefined : 'auto',
-      },
-      'data-virtual-scroll': String(id),
-      onScroll: () => {
-        flushSync(() => updateList());
-      },
-      children: (
-        <>
-          {reference}
-          <div
-            key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
-            style={{
-              ...fillSize[0],
-              display: isUndefined(dWidth) ? undefined : 'inline-block',
-            }}
-          ></div>
-          {list}
-          <div
-            key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
-            style={{
-              ...fillSize[1],
-              display: isUndefined(dWidth) ? undefined : 'inline-block',
-            }}
-          ></div>
-        </>
-      ),
-    }),
+  const listRenderProps = useMemo(
+    () =>
+      ({
+        style: {
+          width: dWidth,
+          height: dHeight,
+          whiteSpace: isUndefined(dWidth) ? undefined : 'nowrap',
+          overflowX: isUndefined(dWidth) ? undefined : 'auto',
+          overflowY: isUndefined(dHeight) ? undefined : 'auto',
+        },
+        [`data-${dPrefix}virtual-scroll`]: String(id),
+        onScroll: () => {
+          flushSync(() => updateList());
+        },
+        children: (
+          <>
+            {reference}
+            <div
+              key={`${dPrefix}virtual-scroll-pre-fill-${id}`}
+              style={{
+                ...fillSize[0],
+                display: isUndefined(dWidth) ? undefined : 'inline-block',
+              }}
+            ></div>
+            {list}
+            <div
+              key={`${dPrefix}virtual-scroll-sub-fill-${id}`}
+              style={{
+                ...fillSize[1],
+                display: isUndefined(dWidth) ? undefined : 'inline-block',
+              }}
+            ></div>
+          </>
+        ),
+      } as DListRenderProps),
     [dHeight, dPrefix, dWidth, fillSize, id, list, reference, updateList]
   );
 
