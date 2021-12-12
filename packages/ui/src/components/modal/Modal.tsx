@@ -1,9 +1,13 @@
+import type { DElementSelector } from '../../hooks/element-ref';
 import type { Updater } from '../../hooks/immer';
+import type { DDialogRef } from '../_dialog';
 
-import React, { useCallback, useMemo } from 'react';
+import { isUndefined, toNumber } from 'lodash';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useRefCallback, useImmer, useRefSelector } from '../../hooks';
+import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 import { DFooter } from '../_footer';
 import { DHeader } from '../_header';
@@ -12,90 +16,160 @@ export interface DModalContextData {
   modalId?: number;
   closeModal?: () => void;
 }
+export const DModalContext = React.createContext<DModalContextData | null>(null);
 
-export interface DModalProps {
-  visible: [boolean, Updater<boolean>?];
-  title?: string | React.ReactNode;
-  width?: string | number;
-  zIndex?: number;
-  mask?: boolean;
+export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
+  dVisible: [boolean, Updater<boolean>?];
+  dContainer?: DElementSelector | false;
+  dTitle?: string | React.ReactNode;
+  dWidth?: string | number;
+  dZIndex?: number;
+  dMask?: boolean;
   /**if click mask close the modal */
-  maskClosable?: boolean;
-  style?: React.CSSProperties;
-  okText?: React.ReactNode;
-  cancelText?: React.ReactNode;
-  afterClose?: () => void;
-  onOk?: () => void;
-  onCancel?: () => void;
+  dMaskClosable?: boolean;
+  dOkText?: React.ReactNode;
+  dCancelText?: React.ReactNode;
+  dAfterClose?: () => void;
+  dOnOk?: () => void;
+  dOnCancel?: () => void;
+  dChildModal?: React.ReactNode;
+  __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
+  __zIndex?: number;
 }
 
-const DModal: React.FC<DModalProps> = (props) => {
+export function DModal(props: DModalProps) {
   const {
-    visible,
-    title,
-    width = 520,
-    zIndex,
-    maskClosable,
+    dVisible,
+    dContainer,
+    dTitle,
+    dWidth = 520,
+    dZIndex,
+    dMaskClosable,
     style,
-    afterClose,
-    mask = true,
-    onOk,
-    onCancel,
+    dAfterClose,
+    dMask = true,
+    dOnOk,
+    dOnCancel,
+    // __onVisibleChange,
+    __zIndex,
     children,
-    okText,
-    cancelText,
+    dOkText,
+    dCancelText,
+    dChildModal,
   } = useComponentConfig(DModal.name, props);
+
+  //#region Context
   const dPrefix = usePrefixConfig();
+  //#endregion
+
+  //#region Ref
+  const [dialogRefContent, dialogRef] = useRefCallback<DDialogRef>();
+  //#endregion
+
+  const [zIndex, setZIndex] = useImmer(1000);
+
+  const [visible, setVisible] = dVisible;
+  const isFixed = isUndefined(dContainer);
+  const handleContainer = useCallback(() => {
+    if (isFixed) {
+      let el = document.getElementById(`${dPrefix}modal-root`);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = `${dPrefix}modal-root`;
+        document.body.appendChild(el);
+      }
+      return el;
+    } else if (dContainer === false) {
+      return dialogRefContent?.el?.parentElement ?? null;
+    }
+    return null;
+  }, [dContainer, dPrefix, dialogRefContent?.el?.parentElement, isFixed]);
+  const containerRef = useRefSelector(dContainer, handleContainer);
+
+  //#region DidUpdate
+  useEffect(() => {
+    if (visible) {
+      if (isUndefined(dZIndex)) {
+        if (isUndefined(__zIndex)) {
+          if (isFixed) {
+            const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
+            setZIndex(maxZIndex);
+            return () => {
+              MAX_INDEX_MANAGER.deleteRecord(key);
+            };
+          } else {
+            setZIndex(toNumber(getComputedStyle(document.body).getPropertyValue(`--${dPrefix}absolute-z-index`)));
+          }
+        } else {
+          setZIndex(__zIndex);
+        }
+      } else {
+        setZIndex(dZIndex);
+      }
+    }
+  }, [__zIndex, dPrefix, dZIndex, isFixed, setZIndex, visible]);
+  //#endregion
+
+  const childModal = useMemo(() => {
+    if (dChildModal) {
+      const _childModal = React.Children.only(dChildModal) as React.ReactElement<DModalProps>;
+      return React.cloneElement<DModalProps>(_childModal, {
+        ..._childModal.props,
+        __zIndex: zIndex + 1,
+      });
+    }
+    return null;
+  }, [dChildModal, zIndex]);
 
   const contentProps = useMemo<React.HTMLAttributes<HTMLDivElement>>(
     () => ({
       className: getClassName(`${dPrefix}modal__content`),
       style: {
-        width,
+        width: dWidth,
         margin: '0 auto',
         position: 'relative',
         top: '100px',
       },
     }),
-    [dPrefix, width]
+    [dPrefix, dWidth]
   );
-
-  const [dVisible, setVisible] = visible;
 
   const closeModal = useCallback(() => {
     setVisible?.(false);
-    afterClose?.();
-  }, [afterClose, setVisible]);
+    dAfterClose?.();
+  }, [dAfterClose, setVisible]);
 
-  return (
-    <div className={`${dPrefix}modal__root`}>
+  const modalNode = (
+    <>
       <DDialog
-        dMask={mask}
-        dVisible={dVisible}
+        ref={dialogRef}
+        dMask={dMask}
+        dVisible={visible}
         onClose={closeModal}
-        style={mergeStyle(style, { zIndex })}
+        style={mergeStyle(style, { zIndex: dZIndex })}
         dContentProps={contentProps}
-        dMaskClosable={maskClosable}
+        dMaskClosable={dMaskClosable}
       >
         <div className={`${dPrefix}modal__content`}>
-          <DHeader onClose={closeModal}>{title}</DHeader>
+          <DHeader onClose={closeModal}>{dTitle}</DHeader>
           <div className={`${dPrefix}modal__body`}>{children}</div>
           <DFooter
             onOkClick={() => {
-              onOk?.();
+              dOnOk?.();
               closeModal();
             }}
             onCancelClick={() => {
-              onCancel?.();
+              dOnCancel?.();
               closeModal();
             }}
-            okText={okText}
-            cancelText={cancelText}
+            okText={dOkText}
+            cancelText={dCancelText}
           />
         </div>
       </DDialog>
-    </div>
+      {childModal}
+    </>
   );
-};
 
-export { DModal };
+  return dContainer === false ? modalNode : containerRef.current && ReactDOM.createPortal(modalNode, containerRef.current);
+}
