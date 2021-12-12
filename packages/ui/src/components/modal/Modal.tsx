@@ -9,8 +9,6 @@ import ReactDOM from 'react-dom';
 import { usePrefixConfig, useComponentConfig, useRefCallback, useImmer, useRefSelector } from '../../hooks';
 import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
-import { DFooter } from '../_footer';
-import { DHeader } from '../_header';
 
 export interface DModalContextData {
   modalId?: number;
@@ -21,17 +19,14 @@ export const DModalContext = React.createContext<DModalContextData | null>(null)
 export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: [boolean, Updater<boolean>?];
   dContainer?: DElementSelector | false;
-  dTitle?: string | React.ReactNode;
   dWidth?: string | number;
   dZIndex?: number;
   dMask?: boolean;
   /**if click mask close the modal */
   dMaskClosable?: boolean;
-  dOkText?: React.ReactNode;
-  dCancelText?: React.ReactNode;
+  dHeader?: React.ReactNode;
+  dFooter?: React.ReactNode;
   dAfterClose?: () => void;
-  dOnOk?: () => void;
-  dOnCancel?: () => void;
   dChildModal?: React.ReactNode;
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
   __zIndex?: number;
@@ -41,20 +36,17 @@ export function DModal(props: DModalProps) {
   const {
     dVisible,
     dContainer,
-    dTitle,
     dWidth = 520,
     dZIndex,
     dMaskClosable,
+    dHeader,
+    dFooter,
     style,
     dAfterClose,
     dMask = true,
-    dOnOk,
-    dOnCancel,
     // __onVisibleChange,
     __zIndex,
     children,
-    dOkText,
-    dCancelText,
     dChildModal,
   } = useComponentConfig(DModal.name, props);
 
@@ -146,25 +138,14 @@ export function DModal(props: DModalProps) {
         dMask={dMask}
         dVisible={visible}
         onClose={closeModal}
-        style={mergeStyle(style, { zIndex: dZIndex })}
+        style={mergeStyle(style, { zIndex })}
         dContentProps={contentProps}
         dMaskClosable={dMaskClosable}
       >
         <div className={`${dPrefix}modal__content`}>
-          <DHeader onClose={closeModal}>{dTitle}</DHeader>
+          {dHeader}
           <div className={`${dPrefix}modal__body`}>{children}</div>
-          <DFooter
-            onOkClick={() => {
-              dOnOk?.();
-              closeModal();
-            }}
-            onCancelClick={() => {
-              dOnCancel?.();
-              closeModal();
-            }}
-            okText={dOkText}
-            cancelText={dCancelText}
-          />
+          {dFooter}
         </div>
       </DDialog>
       {childModal}
