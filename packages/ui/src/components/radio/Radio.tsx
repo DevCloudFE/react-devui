@@ -66,7 +66,7 @@ export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
         changeSingleChecked(true);
         onValueChange?.(dValue);
         if (radioEl && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
-          wave.next([radioEl, `var(--${dPrefix}color-primary)`]);
+          wave(radioEl, `var(--${dPrefix}color-primary)`);
         }
       }
     },

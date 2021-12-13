@@ -17,7 +17,7 @@ title: 组合
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dSize | 设置子项大小 | 'smaller' \| 'larger' | - |
+| dSize | 设置子项尺寸 | 'smaller' \| 'larger' | - |
 | dDisabled | 是否禁用子项 | boolean | false |
 <!-- prettier-ignore-end -->
 

@@ -262,8 +262,9 @@
   }
 
   @include e(icon) {
-    display: inline-block;
     width: calc(1em + 8px);
+
+    line-height: 0;
 
     @include m(right) {
       text-align: right;

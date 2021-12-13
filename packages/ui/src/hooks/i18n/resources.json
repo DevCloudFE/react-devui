@@ -12,6 +12,10 @@
       "en-US": "Close",
       "zh-Hant": "关闭"
     },
+    "Clear": {
+      "en-US": "Clear",
+      "zh-Hant": "清除"
+    },
     "More": {
       "en-US": "More",
       "zh-Hant": "更多"
@@ -29,6 +33,16 @@
     "OK": {
       "en-US": "OK",
       "zh-Hant": "确 定"
+    }
+  },
+  "DInputAffix": {
+    "Password is visible": {
+      "en-US": "Password is visible",
+      "zh-Hant": "密码可见"
+    },
+    "Password is not visible": {
+      "en-US": "Password is not visible",
+      "zh-Hant": "密码不可见"
     }
   }
 }

@@ -1,0 +1,165 @@
+@include b(input) {
+  $selector: &;
+
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: var(--#{$variable-prefix}size);
+  margin: 0;
+  padding: 3px 9px;
+  border: 1px solid var(--#{$variable-prefix}border-color);
+  border-radius: 2px;
+
+  font: inherit;
+  font-size: var(--#{$variable-prefix}font);
+  letter-spacing: inherit;
+
+  outline: none;
+
+  transition: all 0.2s linear;
+
+  appearance: none;
+  caret-color: var(--#{$variable-prefix}color-primary);
+
+  @include utils-disabled(':disabled', true);
+
+  @at-root {
+    .#{$variable-prefix}compose,
+    .#{$variable-prefix}input-affix {
+      #{$selector} {
+        flex: 1 0 0;
+        width: unset;
+      }
+    }
+  }
+
+  &:not(:disabled) {
+    &:hover {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:focus {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  &::placeholder {
+    color: var(--#{$variable-prefix}color-step-400);
+
+    transform: translateX(1px);
+  }
+
+  &:disabled::placeholder {
+    color: var(--#{$variable-prefix}color-step-100);
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+  }
+}
+
+@include b(input-affix) {
+  --#{$variable-prefix}input-affix-space: 11px;
+
+  $selector: &;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 var(--#{$variable-prefix}input-affix-space);
+  border: 1px solid var(--#{$variable-prefix}border-color);
+
+  font-size: var(--#{$variable-prefix}font);
+
+  transition: all 0.2s linear;
+
+  @include utils-disabled('.is-disabled', true);
+
+  @at-root {
+    .#{$variable-prefix}compose {
+      #{$selector} {
+        flex: 1 0 0;
+        width: unset;
+      }
+    }
+  }
+
+  &:not(.is-disabled) {
+    &:hover {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    @include when(focus) {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  .#{$variable-prefix}input {
+    height: calc(var(--#{$variable-prefix}size) - 2px);
+    padding: 0;
+    border: none;
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}input-affix-space: 7px;
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}input-affix-space: 15px;
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+  }
+
+  @include e(prefix) {
+    flex: 0 0 auto;
+    margin-right: 4px;
+  }
+
+  @include e(suffix) {
+    flex: 0 0 auto;
+    margin-left: 4px;
+  }
+
+  @include e(clear) {
+    flex: 0 0 auto;
+    min-width: unset;
+    height: 22px;
+    margin-left: 4px;
+
+    color: var(--d-color-step-400);
+
+    transition: all 0.2s linear, opacity 0.1s ease-out;
+
+    .#{$variable-prefix}icon {
+      transition: all 0.2s linear;
+    }
+  }
+
+  @include e(password) {
+    flex: 0 0 auto;
+    min-width: unset;
+    height: 22px;
+    margin-left: 4px;
+
+    color: var(--d-color-step-400);
+
+    .#{$variable-prefix}icon {
+      transition: all 0.2s linear;
+    }
+  }
+}

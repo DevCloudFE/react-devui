@@ -4,7 +4,6 @@
   align-items: center;
 
   & > * {
-    flex-shrink: 0;
     margin: 0 !important;
 
     & + * {
@@ -33,6 +32,7 @@
   justify-content: center;
   min-width: var(--#{$variable-prefix}size);
   height: var(--#{$variable-prefix}size);
+  padding: 0 var(--#{$variable-prefix}padding-size);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: 2px;
 
@@ -53,10 +53,12 @@
   @include m(smaller) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
   }
 }

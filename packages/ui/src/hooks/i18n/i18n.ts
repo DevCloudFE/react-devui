@@ -11,11 +11,12 @@ export const DI18NContext = React.createContext<{
   resources?: Resources;
 }>({ lang: 'en-US' });
 
-export function useTranslation(group: string) {
+export function useTranslation(group?: string) {
   const { lang, resources } = useContext(DI18NContext);
   const t = useCallback(
     (...keys: string[]) => {
-      let content = (resources ?? dResources)[group];
+      const _resources = resources ?? dResources;
+      let content = group ? _resources[group] : _resources;
       for (const key of keys) {
         content = content?.[key];
       }

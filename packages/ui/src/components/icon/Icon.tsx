@@ -7,6 +7,7 @@ import { getClassName, mergeStyle } from '../../utils';
 export type DIconContextData = Array<{
   name: string;
   list: Array<{
+    viewBox: string;
     paths: string[];
     type?: string;
   }>;
@@ -36,12 +37,12 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     dSpinSpeed = 1,
     className,
     style,
-    viewBox = '0 0 1024 1024',
+    viewBox,
     children,
     ...restProps
   } = useComponentConfig(DIcon.name, props);
 
-  const paths = useMemo(() => {
+  const [_viewBox, paths] = useMemo(() => {
     if (!children) {
       if (isUndefined(dName)) {
         throw new Error('Missing "dName" prop');
@@ -54,10 +55,12 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
         if (isUndefined(icon)) {
           throw new Error(`type "${dType}" dont exist in "${dName}"`);
         } else {
-          return icon.paths.map((path) => <path key={path} d={path}></path>);
+          return [icon.viewBox, icon.paths.map((path) => <path key={path} d={path}></path>)] as const;
         }
       }
     }
+
+    return [];
   }, [iconContext, dName, dType, children]);
 
   return (
@@ -67,7 +70,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox={viewBox}
+      viewBox={_viewBox ?? viewBox}
       fill="currentColor"
       stroke="currentColor"
       height={dSize}
@@ -82,8 +85,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
         animation: dSpin === true ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
       })}
     >
-      {dName && <title>{dName}</title>}
-      {children ? children : paths}
+      {paths ?? children}
     </svg>
   );
 });

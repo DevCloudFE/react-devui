@@ -25,6 +25,9 @@ export { DRow, DCol } from './grid';
 export type { DIconProps } from './icon';
 export { DIcon } from './icon';
 
+export type { DInputProps, DInputAffixProps } from './input';
+export { DInput, DInputAffix } from './input';
+
 export type { DMenuProps, DMenuGroupProps, DMenuItemProps, DMenuSubProps } from './menu';
 export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 
