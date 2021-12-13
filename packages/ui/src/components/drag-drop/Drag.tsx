@@ -94,6 +94,11 @@ export function DDrag(props: DDragProps) {
         });
       };
 
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+        next: (e) => {
+          e.preventDefault();
+        },
+      });
       asyncGroup.fromEvent<TouchEvent>(dataRef.current.dragEl, 'touchmove', { capture: true, passive: false }).subscribe({
         next: (e) => {
           e.preventDefault();
