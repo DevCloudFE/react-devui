@@ -1,5 +1,6 @@
 import { isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
+import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { merge } from 'rxjs';
 
@@ -23,6 +24,8 @@ export function DDrag(props: DDragProps) {
   const [{ dropOuter, dropCurrentData, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
     useCustomContext(DDropContext);
   //#endregion
+
+  const dataRef = useRef<{ dragEl: HTMLElement | null }>({ dragEl: null });
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
@@ -63,7 +66,7 @@ export function DDrag(props: DDragProps) {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (isDragging) {
+    if (isDragging && dataRef.current.dragEl) {
       let clientY: number | undefined;
       let clientX: number | undefined;
       let movementY = 0;
@@ -91,7 +94,7 @@ export function DDrag(props: DDragProps) {
         });
       };
 
-      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true }).subscribe({
+      asyncGroup.fromEvent<TouchEvent>(dataRef.current.dragEl, 'touchmove', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -99,8 +102,8 @@ export function DDrag(props: DDragProps) {
             clientY = e.touches[0].clientY;
             clientX = e.touches[0].clientX;
           } else {
-            movementY += clientY - e.touches[0].clientY;
-            movementX += clientX - e.touches[0].clientX;
+            movementY += e.touches[0].clientY - clientY;
+            movementX += e.touches[0].clientX - clientX;
             clientY = e.touches[0].clientY;
             clientX = e.touches[0].clientX;
           }
@@ -113,7 +116,7 @@ export function DDrag(props: DDragProps) {
         },
       });
 
-      merge(asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true })).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -138,10 +141,10 @@ export function DDrag(props: DDragProps) {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (isDragging) {
+    if (isDragging && dataRef.current.dragEl) {
       merge(
         asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }),
-        asyncGroup.fromEvent<MouseEvent>(window, 'touchend', { capture: true })
+        asyncGroup.fromEvent<MouseEvent>(dataRef.current.dragEl, 'touchend', { capture: true })
       ).subscribe({
         next: (e) => {
           e.preventDefault();
@@ -222,15 +225,17 @@ export function DDrag(props: DDragProps) {
 
       onDragStart: (e) => {
         e.preventDefault();
-
         _child.props.onDragStart?.(e);
+
         onDragStart?.();
         if (dId) {
           _onDragStart?.(dId);
         }
 
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        const dragStyle = getComputedStyle(e.currentTarget);
+        const currentTarget = e.currentTarget as HTMLElement;
+        dataRef.current.dragEl = currentTarget;
+        const rect = currentTarget.getBoundingClientRect();
+        const dragStyle = getComputedStyle(currentTarget);
 
         setDragSize({
           width: rect.width,
