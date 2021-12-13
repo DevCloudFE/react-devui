@@ -83,6 +83,12 @@ export function DInputAffix(props: DInputAffixProps) {
     [dPasswordToggle, password, setPassword]
   );
 
+  const handleMouseUp = useCallback((e) => {
+    if (document.activeElement === dataRef.current.inputEl) {
+      e.preventDefault();
+    }
+  }, []);
+
   const contextValue = useMemo<DInputAffixContextData>(
     () => ({
       inputAffixDisabled: disabled,
@@ -136,6 +142,7 @@ export function DInputAffix(props: DInputAffixProps) {
             }
             aria-label={t('Common', 'Clear')}
             onMouseDown={handleClearMouseDown}
+            onMouseUp={handleMouseUp}
           ></DButton>
         )}
         {dPassword && !disabled && (
@@ -158,6 +165,7 @@ export function DInputAffix(props: DInputAffixProps) {
             }
             aria-label={t('DInputAffix', password ? 'Password is visible' : 'Password is not visible')}
             onMouseDown={handlePasswordMouseDown}
+            onMouseUp={handleMouseUp}
           ></DButton>
         )}
         {dSuffix && <div className={`${dPrefix}input-affix__suffix`}>{dSuffix}</div>}

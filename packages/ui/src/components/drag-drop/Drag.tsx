@@ -1,6 +1,7 @@
 import { isNumber } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
+import { merge } from 'rxjs';
 
 import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useId, useCustomContext, useImmer } from '../../hooks';
 import { DDropContext } from './Drop';
@@ -67,7 +68,10 @@ export function DDrag(props: DDragProps) {
       let movementY = 0;
       let movementX = 0;
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
+      merge(
+        asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }),
+        asyncGroup.fromEvent<MouseEvent>(window, 'touchmove', { capture: true })
+      ).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -113,8 +117,13 @@ export function DDrag(props: DDragProps) {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (isDragging) {
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
-        next: () => {
+      merge(
+        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }),
+        asyncGroup.fromEvent<MouseEvent>(window, 'touchend', { capture: true })
+      ).subscribe({
+        next: (e) => {
+          e.preventDefault();
+
           setIsDragging(false);
           if (inDrop) {
             setFixedStyle((draft) => {
