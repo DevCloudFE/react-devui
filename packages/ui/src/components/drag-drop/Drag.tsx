@@ -199,7 +199,7 @@ export function DDrag(props: DDragProps) {
       [`data-${dPrefix}drag`]: String(id),
 
       onDragStart: (e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
         _child.props.onDragStart?.(e);
         onDragStart?.();
