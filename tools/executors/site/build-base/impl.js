@@ -27,7 +27,8 @@ marked_1.default.setOptions({
     langPrefix: 'hljs ',
 });
 var COMPONENT_DIR = String.raw(templateObject_1 || (templateObject_1 = (0, tslib_1.__makeTemplateObject)(["packages/ui/src/components"], ["packages/ui/src/components"])));
-var OUTPUT_DIR = String.raw(templateObject_2 || (templateObject_2 = (0, tslib_1.__makeTemplateObject)(["packages/site/src/app"], ["packages/site/src/app"])));
+var ROUTE_DIR = [String.raw(templateObject_2 || (templateObject_2 = (0, tslib_1.__makeTemplateObject)(["packages/site/src/app/routes/components"], ["packages/site/src/app/routes/components"])))];
+var OUTPUT_DIR = String.raw(templateObject_3 || (templateObject_3 = (0, tslib_1.__makeTemplateObject)(["packages/site/src/app"], ["packages/site/src/app"])));
 var GenerateSite = /** @class */ (function () {
     function GenerateSite() {
         Object.defineProperty(this, "hashList", {
@@ -60,7 +61,13 @@ var GenerateSite = /** @class */ (function () {
             writable: true,
             value: void 0
         });
-        Object.defineProperty(this, "routesTmp", {
+        Object.defineProperty(this, "componentRoutesTmp", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "componentRouteTmp", {
             enumerable: true,
             configurable: true,
             writable: true,
@@ -105,7 +112,7 @@ var GenerateSite = /** @class */ (function () {
         value: function (file, outDir) {
             var _a, _b, _c;
             var meta = yamlFront.loadFront(file.data);
-            var fileNameRegExp = new RegExp(String.raw(templateObject_3 || (templateObject_3 = (0, tslib_1.__makeTemplateObject)(["(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)"], ["(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)"]))), 'g');
+            var fileNameRegExp = new RegExp(String.raw(templateObject_4 || (templateObject_4 = (0, tslib_1.__makeTemplateObject)(["(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)"], ["(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)"]))), 'g');
             var fileName = (_a = file.name.match(fileNameRegExp)) === null || _a === void 0 ? void 0 : _a[0];
             var id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
             var tsx = (_b = meta.__content.match(/(?<=```tsx)[\s\S]*?(?=```)/g)) === null || _b === void 0 ? void 0 : _b[0];
@@ -114,11 +121,11 @@ var GenerateSite = /** @class */ (function () {
                 var outTSX = tsx;
                 if (scss) {
                     outTSX =
-                        String.raw(templateObject_4 || (templateObject_4 = (0, tslib_1.__makeTemplateObject)(["import './", ".scss';\n"], ["import './", ".scss';\n"])), fileName) + outTSX;
-                    this.outputFile(path_1.default.join(outDir, "".concat(fileName, ".scss")), String.raw(templateObject_5 || (templateObject_5 = (0, tslib_1.__makeTemplateObject)(["\n#", "{\n  ", "\n}\n"], ["\n#", "{\n  ", "\n}\n"])), id, scss.split(/\n/g).join('\n  ')));
+                        String.raw(templateObject_5 || (templateObject_5 = (0, tslib_1.__makeTemplateObject)(["import './", ".scss';\n"], ["import './", ".scss';\n"])), fileName) + outTSX;
+                    this.outputFile(path_1.default.join(outDir, "".concat(fileName, ".scss")), String.raw(templateObject_6 || (templateObject_6 = (0, tslib_1.__makeTemplateObject)(["\n#", "{\n  ", "\n}\n"], ["\n#", "{\n  ", "\n}\n"])), id, scss.split(/\n/g).join('\n  ')));
                 }
                 outTSX =
-                    String.raw(templateObject_6 || (templateObject_6 = (0, tslib_1.__makeTemplateObject)(["/* eslint-disable */\n// @ts-nocheck\n"], ["/* eslint-disable */\n// @ts-nocheck\n"]))) + outTSX;
+                    String.raw(templateObject_7 || (templateObject_7 = (0, tslib_1.__makeTemplateObject)(["/* eslint-disable */\n// @ts-nocheck\n"], ["/* eslint-disable */\n// @ts-nocheck\n"]))) + outTSX;
                 this.outputFile(path_1.default.join(outDir, "".concat(fileName, ".tsx")), outTSX);
                 var demo_1 = new Map([
                     ['en-US', {}],
@@ -130,12 +137,12 @@ var GenerateSite = /** @class */ (function () {
                     obj.id = id;
                     obj.name = fileName;
                     obj.title = meta.title[lang];
-                    var descriptionRegExp = new RegExp(String.raw(templateObject_7 || (templateObject_7 = (0, tslib_1.__makeTemplateObject)(["(?<=# ", ")[sS]*", ""], ["(?<=# ", ")[\\s\\S]*", ""])), lang, index === langs.length - 1 ? '(?=```tsx)' : "(?=# ".concat(langs[index + 1], ")")), 'g');
+                    var descriptionRegExp = new RegExp(String.raw(templateObject_8 || (templateObject_8 = (0, tslib_1.__makeTemplateObject)(["(?<=# ", ")[sS]*", ""], ["(?<=# ", ")[\\s\\S]*", ""])), lang, index === langs.length - 1 ? '(?=```tsx)' : "(?=# ".concat(langs[index + 1], ")")), 'g');
                     var description = (_a = meta.__content.match(descriptionRegExp)) === null || _a === void 0 ? void 0 : _a[0];
                     if (description) {
                         obj.description = (0, marked_1.default)(description);
                     }
-                    obj.importStatement = String.raw(templateObject_8 || (templateObject_8 = (0, tslib_1.__makeTemplateObject)(["import ", "Demo from './demos/", "';\n"], ["import ", "Demo from './demos/", "';\n"])), fileName, fileName);
+                    obj.importStatement = String.raw(templateObject_9 || (templateObject_9 = (0, tslib_1.__makeTemplateObject)(["import ", "Demo from './demos/", "';\n"], ["import ", "Demo from './demos/", "';\n"])), fileName, fileName);
                     obj.tsx = meta.__content.match(/```tsx[\s\S]*?```/g)[0];
                     if (scss) {
                         obj.scss = meta.__content.match(/```scss[\s\S]*?```/g)[0];
@@ -174,18 +181,18 @@ var GenerateSite = /** @class */ (function () {
                 if (menuItemIndex === -1) {
                     this.menuConfig[menuGroupIndex].children.push({
                         title: meta.title['en-US'],
-                        to: String.raw(templateObject_9 || (templateObject_9 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
+                        to: String.raw(templateObject_10 || (templateObject_10 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
                     });
                 }
                 else {
                     this.menuConfig[menuGroupIndex].children[menuItemIndex] = {
                         title: meta.title['en-US'],
-                        to: String.raw(templateObject_10 || (templateObject_10 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
+                        to: String.raw(templateObject_11 || (templateObject_11 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
                     };
                 }
                 this.routeConfig.set(meta.title['en-US'], {
-                    import: String.raw(templateObject_11 || (templateObject_11 = (0, tslib_1.__makeTemplateObject)(["./", "/", ""], ["./", "/", ""])), file.name, meta.title['en-US']),
-                    path: String.raw(templateObject_12 || (templateObject_12 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
+                    import: String.raw(templateObject_12 || (templateObject_12 = (0, tslib_1.__makeTemplateObject)(["./", "/", ""], ["./", "/", ""])), file.name, meta.title['en-US']),
+                    path: String.raw(templateObject_13 || (templateObject_13 = (0, tslib_1.__makeTemplateObject)(["/components/", ""], ["/components/", ""])), meta.title['en-US']),
                 });
                 var importStr = '';
                 var demoList_1 = [];
@@ -214,9 +221,9 @@ var GenerateSite = /** @class */ (function () {
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
-                var routeTmp_1 = this.routeTmp;
-                routeTmp_1 = routeTmp_1.replace(/__Route__/g, meta.title['en-US']);
-                routeTmp_1 = routeTmp_1.replace(/__import__/g, importStr);
+                var componentRouteTmp_1 = this.componentRouteTmp;
+                componentRouteTmp_1 = componentRouteTmp_1.replace(/__Route__/g, meta.title['en-US']);
+                componentRouteTmp_1 = componentRouteTmp_1.replace(/__import__/g, importStr);
                 ['en-US', 'zh-Hant'].forEach(function (lang) {
                     var _a, _b;
                     _this.resources[lang].translation.menu[meta.title['en-US']] = meta.title[lang];
@@ -224,21 +231,21 @@ var GenerateSite = /** @class */ (function () {
                     var linksStr = '';
                     demoList_1.forEach(function (demo) {
                         if (demo) {
-                            var demoStr = String.raw(templateObject_13 || (templateObject_13 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"])));
+                            var demoStr = String.raw(templateObject_14 || (templateObject_14 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"])));
                             demoStr = demoStr.replace(/__id__/g, demo.get(lang).id);
                             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang).name);
                             demoStr = demoStr.replace(/__title__/g, demo.get(lang).title);
                             demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang).description).join());
                             demoStr = demoStr.replace(/__tsx__/g, new TextEncoder().encode((0, marked_1.default)(demo.get(lang).tsx)).join());
-                            demoStr = demoStr.replace(/__scss__/g, demo.get(lang).scss ? String.raw(templateObject_14 || (templateObject_14 = (0, tslib_1.__makeTemplateObject)(["scss={String.raw", "", "", "}"], ["scss={String.raw", "", "", "}"])), '`', (0, marked_1.default)(demo.get(lang).scss), '`') : '');
+                            demoStr = demoStr.replace(/__scss__/g, demo.get(lang).scss ? String.raw(templateObject_15 || (templateObject_15 = (0, tslib_1.__makeTemplateObject)(["scss={String.raw", "", "", "}"], ["scss={String.raw", "", "", "}"])), '`', (0, marked_1.default)(demo.get(lang).scss), '`') : '');
                             demoStr = demoStr.replace(/__tsxSource__/g, new TextEncoder().encode(demo.get(lang).tsx.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)[0]).join());
                             demoStr = demoStr.replace(/__scssSource__/g, demo.get(lang).scss
-                                ? String.raw(templateObject_15 || (templateObject_15 = (0, tslib_1.__makeTemplateObject)(["scssSource={String.raw", "", "", "}"], ["scssSource={String.raw", "", "", "}"])), '`', demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0], '`') : '');
+                                ? String.raw(templateObject_16 || (templateObject_16 = (0, tslib_1.__makeTemplateObject)(["scssSource={String.raw", "", "", "}"], ["scssSource={String.raw", "", "", "}"])), '`', demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0], '`') : '');
                             demosStr += demoStr;
-                            linksStr += String.raw(templateObject_16 || (templateObject_16 = (0, tslib_1.__makeTemplateObject)(["{ href: '#", "', title: '", "' }, "], ["{ href: '#", "', title: '", "' }, "])), demo.get(lang).id, demo.get(lang).title);
+                            linksStr += String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["{ href: '#", "', title: '", "' }, "], ["{ href: '#", "', title: '", "' }, "])), demo.get(lang).id, demo.get(lang).title);
                         }
                     });
-                    var routeArticleProps = String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), demosStr);
+                    var routeArticleProps = String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), demosStr);
                     routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
                     routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
                     routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
@@ -249,11 +256,27 @@ var GenerateSite = /** @class */ (function () {
                         routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode((0, marked_1.default)(description)).join());
                         routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode((0, marked_1.default)(api)).join());
                     }
-                    var langRegExp = new RegExp(String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
-                    routeTmp_1 = routeTmp_1.replace(langRegExp, routeArticleProps);
+                    var langRegExp = new RegExp(String.raw(templateObject_19 || (templateObject_19 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
+                    componentRouteTmp_1 = componentRouteTmp_1.replace(langRegExp, routeArticleProps);
                 });
-                this.outputFile(path_1.default.join(outDir, "".concat(meta.title['en-US'], ".tsx")), routeTmp_1);
+                this.outputFile(path_1.default.join(outDir, "".concat(meta.title['en-US'], ".tsx")), componentRouteTmp_1);
             }
+        }
+    });
+    Object.defineProperty(GenerateSite.prototype, "generateRoute", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (routeName, dirPath) {
+            var routeTmp = this.routeTmp;
+            routeTmp = routeTmp.replace(/__Route__/g, routeName);
+            ['en-US', 'zh-Hant'].forEach(function (lang) {
+                var langRegExp = new RegExp(String.raw(templateObject_20 || (templateObject_20 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
+                routeTmp = routeTmp.replace(langRegExp, new TextEncoder()
+                    .encode((0, marked_1.default)((0, fs_extra_1.readFileSync)(path_1.default.join(dirPath, routeName + (lang === 'en-US' ? '' : ".".concat(lang))) + '.md').toString()))
+                    .join());
+            });
+            this.outputFile(path_1.default.join(dirPath, routeName, "".concat(routeName, ".tsx")), routeTmp);
         }
     });
     Object.defineProperty(GenerateSite.prototype, "generateGlobalFiles", {
@@ -269,8 +292,8 @@ var GenerateSite = /** @class */ (function () {
             try {
                 for (var _b = (0, tslib_1.__values)(this.routeConfig.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var _d = (0, tslib_1.__read)(_c.value, 2), key = _d[0], value = _d[1];
-                    importStr += String.raw(templateObject_19 || (templateObject_19 = (0, tslib_1.__makeTemplateObject)(["const ", "Route = lazy(() => import('", "'));\n"], ["const ", "Route = lazy(() => import('", "'));\n"])), key, value.import);
-                    routeStr += String.raw(templateObject_20 || (templateObject_20 = (0, tslib_1.__makeTemplateObject)(["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"], ["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"])), value.path, key);
+                    importStr += String.raw(templateObject_21 || (templateObject_21 = (0, tslib_1.__makeTemplateObject)(["const ", "Route = lazy(() => import('", "'));\n"], ["const ", "Route = lazy(() => import('", "'));\n"])), key, value.import);
+                    routeStr += String.raw(templateObject_22 || (templateObject_22 = (0, tslib_1.__makeTemplateObject)(["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"], ["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"])), value.path, key);
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -280,10 +303,10 @@ var GenerateSite = /** @class */ (function () {
                 }
                 finally { if (e_2) throw e_2.error; }
             }
-            var routesTmp = this.routesTmp;
-            routesTmp = routesTmp.replace(/__import__/g, importStr);
-            routesTmp = routesTmp.replace(/__Route__/g, routeStr);
-            this.outputFile(path_1.default.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), routesTmp);
+            var componentRoutesTmp = this.componentRoutesTmp;
+            componentRoutesTmp = componentRoutesTmp.replace(/__import__/g, importStr);
+            componentRoutesTmp = componentRoutesTmp.replace(/__Route__/g, routeStr);
+            this.outputFile(path_1.default.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), componentRoutesTmp);
         }
     });
     Object.defineProperty(GenerateSite.prototype, "generateAll", {
@@ -291,7 +314,8 @@ var GenerateSite = /** @class */ (function () {
         configurable: true,
         writable: true,
         value: function () {
-            var e_3, _a;
+            var e_3, _a, e_4, _b, e_5, _c;
+            var _d;
             var components = (0, fs_extra_1.readdirSync)(COMPONENT_DIR);
             try {
                 for (var components_1 = (0, tslib_1.__values)(components), components_1_1 = components_1.next(); !components_1_1.done; components_1_1 = components_1.next()) {
@@ -309,6 +333,34 @@ var GenerateSite = /** @class */ (function () {
                 }
                 finally { if (e_3) throw e_3.error; }
             }
+            try {
+                for (var ROUTE_DIR_1 = (0, tslib_1.__values)(ROUTE_DIR), ROUTE_DIR_1_1 = ROUTE_DIR_1.next(); !ROUTE_DIR_1_1.done; ROUTE_DIR_1_1 = ROUTE_DIR_1.next()) {
+                    var ROUTE = ROUTE_DIR_1_1.value;
+                    var files = (0, fs_extra_1.readdirSync)(ROUTE);
+                    try {
+                        for (var files_1 = (e_5 = void 0, (0, tslib_1.__values)(files)), files_1_1 = files_1.next(); !files_1_1.done; files_1_1 = files_1.next()) {
+                            var file = files_1_1.value;
+                            if (file.endsWith('.md') && ((_d = file.match(/\./g)) === null || _d === void 0 ? void 0 : _d.length) === 1) {
+                                this.generateRoute(file.slice(0, -3), ROUTE);
+                            }
+                        }
+                    }
+                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                    finally {
+                        try {
+                            if (files_1_1 && !files_1_1.done && (_c = files_1.return)) _c.call(files_1);
+                        }
+                        finally { if (e_5) throw e_5.error; }
+                    }
+                }
+            }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            finally {
+                try {
+                    if (ROUTE_DIR_1_1 && !ROUTE_DIR_1_1.done && (_b = ROUTE_DIR_1.return)) _b.call(ROUTE_DIR_1);
+                }
+                finally { if (e_4) throw e_4.error; }
+            }
             this.generateGlobalFiles();
         }
     });
@@ -320,7 +372,8 @@ var GenerateSite = /** @class */ (function () {
             var _this = this;
             this.resources = (0, fs_extra_1.readJsonSync)(path_1.default.join(__dirname, 'site', 'resources.json'));
             this.menuGroups = (0, fs_extra_1.readJsonSync)(path_1.default.join(__dirname, 'site', 'menu-groups.json'));
-            this.routesTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'routes.txt')).toString();
+            this.componentRoutesTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'component-routes.txt')).toString();
+            this.componentRouteTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'ComponentRoute.txt')).toString();
             this.routeTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'Route.txt')).toString();
             this.menuConfig = [];
             this.menuGroups.forEach(function (item) {
@@ -361,19 +414,19 @@ var FileWatcher = /** @class */ (function () {
         get: function () {
             var _this = this;
             return this.subject.pipe((0, operators_1.debounceTime)(200), (0, operators_1.tap)(function () {
-                var e_4, _a;
+                var e_6, _a;
                 try {
                     for (var _b = (0, tslib_1.__values)(_this.taskQueue.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                         var cb = _c.value;
                         cb();
                     }
                 }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
                 finally {
                     try {
                         if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                     }
-                    finally { if (e_4) throw e_4.error; }
+                    finally { if (e_6) throw e_6.error; }
                 }
                 _this.taskQueue.clear();
             }));
@@ -419,19 +472,19 @@ var FileWatcher = /** @class */ (function () {
         configurable: true,
         writable: true,
         value: function () {
-            var e_5, _a;
+            var e_7, _a;
             try {
                 for (var _b = (0, tslib_1.__values)(this.watcherList.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var watcher = _c.value;
                     watcher.close();
                 }
             }
-            catch (e_5_1) { e_5 = { error: e_5_1 }; }
+            catch (e_7_1) { e_7 = { error: e_7_1 }; }
             finally {
                 try {
                     if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
-                finally { if (e_5) throw e_5.error; }
+                finally { if (e_7) throw e_7.error; }
             }
             this.watcherList.clear();
         }
@@ -458,7 +511,8 @@ function siteBuildExecutor(options, context) {
                     if (!options.watch) return [3 /*break*/, 4];
                     fileWatcher_1 = new FileWatcher();
                     refreshComponentWatcher_1 = function () {
-                        var e_6, _a;
+                        var e_8, _a, e_9, _b;
+                        var _c;
                         var components = (0, fs_extra_1.readdirSync)(COMPONENT_DIR);
                         var _loop_1 = function (component) {
                             var componentPath = path_1.default.join(COMPONENT_DIR, component);
@@ -484,12 +538,59 @@ function siteBuildExecutor(options, context) {
                                 _loop_1(component);
                             }
                         }
-                        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                        catch (e_8_1) { e_8 = { error: e_8_1 }; }
                         finally {
                             try {
                                 if (components_2_1 && !components_2_1.done && (_a = components_2.return)) _a.call(components_2);
                             }
-                            finally { if (e_6) throw e_6.error; }
+                            finally { if (e_8) throw e_8.error; }
+                        }
+                        var _loop_2 = function (ROUTE) {
+                            var e_10, _d;
+                            var files = (0, fs_extra_1.readdirSync)(ROUTE);
+                            var _loop_3 = function (file) {
+                                if (file.endsWith('.md') && ((_c = file.match(/\./g)) === null || _c === void 0 ? void 0 : _c.length) === 1) {
+                                    var routeName_1 = file.slice(0, -3);
+                                    var task = {
+                                        id: "generateRoute_".concat(routeName_1),
+                                        callback: function () {
+                                            console.info("Update ".concat(routeName_1, "..."));
+                                            generateMediator.generateRoute(routeName_1, ROUTE);
+                                            generateMediator.generateGlobalFiles();
+                                        },
+                                    };
+                                    if (!fileWatcher_1.hasWatcher(path_1.default.join(ROUTE, file))) {
+                                        fileWatcher_1.addWatcher(path_1.default.join(ROUTE, routeName_1 + '.md'), task);
+                                        fileWatcher_1.addWatcher(path_1.default.join(ROUTE, routeName_1 + '.zh-Hant.md'), task);
+                                    }
+                                }
+                            };
+                            try {
+                                for (var files_2 = (e_10 = void 0, (0, tslib_1.__values)(files)), files_2_1 = files_2.next(); !files_2_1.done; files_2_1 = files_2.next()) {
+                                    var file = files_2_1.value;
+                                    _loop_3(file);
+                                }
+                            }
+                            catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                            finally {
+                                try {
+                                    if (files_2_1 && !files_2_1.done && (_d = files_2.return)) _d.call(files_2);
+                                }
+                                finally { if (e_10) throw e_10.error; }
+                            }
+                        };
+                        try {
+                            for (var ROUTE_DIR_2 = (0, tslib_1.__values)(ROUTE_DIR), ROUTE_DIR_2_1 = ROUTE_DIR_2.next(); !ROUTE_DIR_2_1.done; ROUTE_DIR_2_1 = ROUTE_DIR_2.next()) {
+                                var ROUTE = ROUTE_DIR_2_1.value;
+                                _loop_2(ROUTE);
+                            }
+                        }
+                        catch (e_9_1) { e_9 = { error: e_9_1 }; }
+                        finally {
+                            try {
+                                if (ROUTE_DIR_2_1 && !ROUTE_DIR_2_1.done && (_b = ROUTE_DIR_2.return)) _b.call(ROUTE_DIR_2);
+                            }
+                            finally { if (e_9) throw e_9.error; }
                         }
                     };
                     fileWatcher_1.addWatcher(path_1.default.join(__dirname, 'site'), {
@@ -519,4 +620,4 @@ function siteBuildExecutor(options, context) {
     });
 }
 exports.default = siteBuildExecutor;
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22;

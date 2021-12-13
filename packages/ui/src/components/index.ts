@@ -40,6 +40,9 @@ export { DSeparator } from './separator';
 export type { DTabProps, DTabsProps } from './tabs';
 export { DTab, DTabs } from './tabs';
 
+export type { DTextareaProps } from './textarea';
+export { DTextarea } from './textarea';
+
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
 

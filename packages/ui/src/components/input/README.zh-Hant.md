@@ -12,7 +12,7 @@ title: 输入框
 
 ### DInputProps
 
-继承 `React.InputHTMLAttributes<HTMLInputElement>, DFormControl`。
+继承 `React.InputHTMLAttributes<HTMLInputElement>`，[DFormControl](/components/Form#DFormControl)。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
@@ -44,11 +44,3 @@ export type DInputRef = HTMLInputElement;
 | dClearIcon | 自定义清除图标 | React.ReactNode | - |
 | dSize | 输入框尺寸 | 'smaller' \| 'larger' | - |
 <!-- prettier-ignore-end -->
-
-### DFormControl
-
-```tsx
-export interface DFormControl {
-  dFormControlName?: string;
-}
-```

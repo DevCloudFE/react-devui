@@ -19,7 +19,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dVisible | Is the drawer visible | [boolean, Updater\<boolean\>?] | - |
-| dContainer | The mounted node of the drawer, `false` means it is mounted on the current node | DElementSelector \| false | - |
+| dContainer | The mounted node of the drawer, `false` means it is mounted on the current node | [DElementSelector](/components/Interface#DElementSelector) \| false | - |
 | dPlacement | Drawer pop-up direction | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | Drawer width | number \| string | 400 |
 | dHeight | Drawer height | number \| string | 280 |
@@ -38,21 +38,13 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 
 Equal `Omit<DHeaderProps, 'onClose'>`.
 
-### DHeaderProps
-
-Extend `React.HTMLAttributes<HTMLDivElement>`.
-
-<!-- prettier-ignore-start -->
-| Property | Description | Type | Default | 
-| --- | --- | --- | --- | 
-| dCloseIcon | Set the icon of the close button, `null` means hide the button | React.ReactNode | - |
-| dExtraIcons | Add some extra action buttons | React.ReactNode[] | - |
-| onClose | Callback when the close button is clicked | `() => void` | - |
-<!-- prettier-ignore-end -->
+Please refer to [DHeaderProps](/components/Interface#DHeaderProps).
 
 ### DDrawerFooterProps
 
 Extend `DFooterProps`.
+
+Please refer to [DFooterProps](/components/Interface#DFooterProps).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -60,24 +52,3 @@ Extend `DFooterProps`.
 | onOkClick | The callback of clicking the OK button, the operation feedback depends on the return value, and asynchronous operation can be achieved through `Promise` | `() => void \| boolean \| Promise<void \| boolean>` | - |
 | onCancelClick | The callback of clicking the cancel button, the operation feedback depends on the return value, and asynchronous operation can be achieved through `Promise` | `() => void \| boolean \| Promise<void \| boolean>` | - |
 <!-- prettier-ignore-end -->
-
-### DFooterProps
-
-Extend `React.HTMLAttributes<HTMLDivElement>`.
-
-<!-- prettier-ignore-start -->
-| Property | Description | Type | Default | 
-| --- | --- | --- | --- | 
-| dAlign | Set the horizontal position of the button | 'left' \| 'center' \| 'right' | 'right' |
-| dButtons | Custom button, `'cancel'` stands for cancel button, `'ok'` stands for OK button | React.ReactNode[] | `['cancel', 'ok']` |
-| dOkButtonProps | Provide additional `Props` for the OK button | [DButtonProps](/components/Button#DButtonProps) | - |
-| dCancelButtonProps | Provide additional `Props` for the cancel button | [DButtonProps](/components/Button#DButtonProps) | - |
-| onOkClick | The callback of clicking the OK button | `() => void` | - |
-| onCancelClick | The callback of clicking the cancel button | `() => void` | - |
-<!-- prettier-ignore-end -->
-
-### DElementSelector
-
-```tsx
-export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
-```

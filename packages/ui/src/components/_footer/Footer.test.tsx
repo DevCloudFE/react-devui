@@ -1,74 +1,62 @@
-import type { ShallowWrapper } from 'enzyme';
-
-import { shallow } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import { PREFIX } from '../../tests';
 import { DButton } from '../button';
 import { DFooter } from './Footer';
 
 describe('DFooter', () => {
-  const okButton = (footer: ShallowWrapper) => {
-    return footer.find(DButton).at(1);
-  };
-  const cancelButton = (footer: ShallowWrapper) => {
-    return footer.find(DButton).at(0);
-  };
+  // const okButton = (footer: ShallowWrapper) => {
+  //   return footer.find(DButton).at(1);
+  // };
+  // const cancelButton = (footer: ShallowWrapper) => {
+  //   return footer.find(DButton).at(0);
+  // };
 
   it('should `dAlign` work', () => {
-    const footer = shallow(<DFooter dAlign="left" />);
-    expect(footer.find(`.${PREFIX}footer--left`).length).toBe(1);
+    render(<DFooter data-testid="footer" dAlign="left" />);
+    expect(screen.getByTestId('footer').classList.contains(`${PREFIX}footer--left`)).toBeTruthy();
   });
 
   it('should `dButtons` work', () => {
-    const footer = shallow(<DFooter dButtons={['cancel', <DButton>Button</DButton>, 'ok']} />);
+    render(<DFooter dButtons={['cancel', <DButton>Button</DButton>, 'ok']} />);
 
-    expect(footer.find(DButton).length).toBe(3);
+    expect(screen.queryAllByRole('button').length).toBe(3);
 
-    footer.find(DButton).forEach((button, index) => {
-      switch (index) {
-        case 0:
-          expect(button.key()).toBe('cancel');
-          break;
+    const buttons = screen.queryAllByRole('button');
 
-        case 1:
-          expect(button.text()).toBe('Button');
-          break;
+    expect(buttons[0].innerHTML).toBe('Cancel');
 
-        case 2:
-          expect(button.key()).toBe('ok');
-          break;
+    expect(buttons[1].innerHTML).toBe('Button');
 
-        default:
-          break;
-      }
-    });
+    expect(buttons[2].innerHTML).toBe('OK');
   });
 
   it('should `dOkButtonProps` work', () => {
-    const footer = shallow(<DFooter dOkButtonProps={{ disabled: true }} />);
-
-    expect(okButton(footer).prop('disabled')).toBe(true);
+    render(<DFooter dOkButtonProps={{ disabled: true }} />);
+    expect(screen.queryAllByRole('button')[1].getAttribute('disabled')).toBe('');
+    expect(screen.queryAllByRole('button')[1].getAttribute('aria-disabled')).toBeTruthy();
   });
 
   it('should `dCancelButtonProps` work', () => {
-    const footer = shallow(<DFooter dCancelButtonProps={{ disabled: true }} />);
+    render(<DFooter dCancelButtonProps={{ disabled: true }} />);
 
-    expect(cancelButton(footer).prop('disabled')).toBe(true);
+    expect(screen.queryAllByRole('button')[0].getAttribute('disabled')).toBe('');
+    expect(screen.queryAllByRole('button')[0].getAttribute('aria-disabled')).toBeTruthy();
   });
 
   it('should `onOkClick` work', () => {
     const mockCallBack = jest.fn();
-    const footer = shallow(<DFooter onOkClick={mockCallBack} />);
+    render(<DFooter onOkClick={mockCallBack} />);
+    fireEvent.click(screen.queryAllByRole('button')[1]);
 
-    okButton(footer).simulate('click');
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 
   it('should `onCancelClick` work', () => {
     const mockCallBack = jest.fn();
-    const footer = shallow(<DFooter onCancelClick={mockCallBack} />);
+    render(<DFooter onCancelClick={mockCallBack} />);
+    fireEvent.click(screen.queryAllByRole('button')[0]);
 
-    cancelButton(footer).simulate('click');
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 });

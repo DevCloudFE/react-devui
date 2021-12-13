@@ -32,6 +32,18 @@ body {
     overflow: auto;
   }
 
+  .app-icon-button {
+    color: var(--d-color-step-400);
+
+    cursor: pointer;
+
+    transition: color 0.1s linear;
+
+    &:hover {
+      color: var(--d-color-primary);
+    }
+  }
+
   @media (min-width: 768px) {
     .app-main {
       width: calc(100% - 260px);

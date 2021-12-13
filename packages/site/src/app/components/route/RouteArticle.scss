@@ -1,55 +1,5 @@
 @import '~rfs/scss';
 
-.app-route__anchor {
-  position: fixed;
-  top: 120px;
-  right: 20px;
-  z-index: 910;
-
-  width: 168px;
-
-  .d-anchor-link > a {
-    padding: 4px 0;
-  }
-}
-
-.app-route__anchor-conatiner {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  z-index: 909;
-
-  width: 100%;
-  height: calc(100% - 64px);
-  padding: 20px;
-  overflow: auto;
-
-  background-color: var(--d-background-color);
-}
-
-.app-route__anchor-button {
-  position: fixed;
-  right: 20px;
-  bottom: 44px;
-  z-index: 910;
-
-  display: flex;
-  flex-direction: column;
-  gap: 2px 0;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-
-  color: var(--d-color-primary-lighter);
-
-  background-color: var(--d-color-step-800);
-  box-shadow: 0 2px 20px 2px var(--d-shadow-color);
-
-  appearance: none;
-}
-
 .app-route-article {
   code {
     word-break: break-all;
@@ -103,12 +53,20 @@
     @include font-size(1.25rem);
   }
 
+  .app-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
   table {
     width: 100%;
+    min-width: 1200px;
     margin: 8px 0 16px;
     border: 1px solid var(--d-border-color);
     border-collapse: collapse;
     border-spacing: 0;
+
+    table-layout: fixed;
 
     empty-cells: show;
 
@@ -125,6 +83,30 @@
       border: 1px solid var(--d-divider-color);
 
       text-align: left;
+    }
+
+    th:nth-of-type(1) {
+      width: 260px;
+
+      white-space: nowrap;
+    }
+
+    th:nth-of-type(2) {
+      width: calc(100% - 720px);
+    }
+
+    th:nth-of-type(3) {
+      width: 300px;
+    }
+
+    th:nth-of-type(4) {
+      width: 160px;
+    }
+
+    td:nth-of-type(1),
+    td:nth-of-type(3),
+    td:nth-of-type(4) {
+      font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     }
   }
 
@@ -153,65 +135,6 @@
   h6 {
     &:hover .anchor {
       opacity: 1;
-    }
-  }
-
-  .icon-button {
-    color: var(--d-color-step-400);
-
-    cursor: pointer;
-
-    transition: color 0.1s linear;
-
-    &:hover {
-      color: var(--d-color-primary);
-    }
-  }
-
-  .app-route-article__subtitle {
-    margin-left: 12px;
-  }
-
-  .app-route-article__demos {
-    pre code.hljs {
-      background-color: transparent;
-    }
-  }
-
-  .app-route-article__api {
-    .app-table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      min-width: 1200px;
-
-      table-layout: fixed;
-
-      th:nth-of-type(1) {
-        width: 260px;
-
-        white-space: nowrap;
-      }
-
-      th:nth-of-type(2) {
-        width: calc(100% - 720px);
-      }
-
-      th:nth-of-type(3) {
-        width: 300px;
-      }
-
-      th:nth-of-type(4) {
-        width: 160px;
-      }
-
-      td:nth-of-type(1),
-      td:nth-of-type(3),
-      td:nth-of-type(4) {
-        font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-      }
     }
   }
 }

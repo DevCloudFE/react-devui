@@ -11,6 +11,9 @@
       "Copy code": "Copy code",
       "Copied!": "Copied!",
       "Edit this demo on GitHub": "Edit this demo on GitHub",
+      "Documentation": {
+        "Interface": "Interface"
+      },
       "menu-group": {},
       "menu": {}
     }
@@ -27,6 +30,9 @@
       "Copy code": "复制代码",
       "Copied!": "复制成功！",
       "Edit this demo on GitHub": "在 GitHub 上编辑此示例",
+      "Documentation": {
+        "Interface": "接口"
+      },
       "menu-group": {},
       "menu": {}
     }

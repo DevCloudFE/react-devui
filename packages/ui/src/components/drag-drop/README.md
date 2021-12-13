@@ -29,7 +29,7 @@ Need to dynamically adjust the component position.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dContainer | The container where the node is placed | DElementSelector | - |
+| dContainer | The container where the node is placed | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dDirection | The direction of the container to place the node | 'horizontal' \| 'vertical' | 'vertical' |
 | dPlaceholder | Placeholder node | React.ReactNode | 1000 |
 | children | Drag nodes | React.ReactNode | - |

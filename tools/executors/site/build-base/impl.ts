@@ -43,6 +43,7 @@ marked.setOptions({
 });
 
 const COMPONENT_DIR = String.raw`packages/ui/src/components`;
+const ROUTE_DIR = [String.raw`packages/site/src/app/routes/components`];
 const OUTPUT_DIR = String.raw`packages/site/src/app`;
 
 export interface SiteBuildExecutorOptions {
@@ -87,7 +88,8 @@ class GenerateSite {
     };
   };
   private menuGroups!: Array<{ 'en-US': string; 'zh-Hant': string }>;
-  private routesTmp!: string;
+  private componentRoutesTmp!: string;
+  private componentRouteTmp!: string;
   private routeTmp!: string;
 
   constructor() {
@@ -239,9 +241,9 @@ class GenerateSite {
         }
       }
 
-      let routeTmp = this.routeTmp;
-      routeTmp = routeTmp.replace(/__Route__/g, meta.title['en-US']);
-      routeTmp = routeTmp.replace(/__import__/g, importStr);
+      let componentRouteTmp = this.componentRouteTmp;
+      componentRouteTmp = componentRouteTmp.replace(/__Route__/g, meta.title['en-US']);
+      componentRouteTmp = componentRouteTmp.replace(/__import__/g, importStr);
       (['en-US', 'zh-Hant'] as const).forEach((lang) => {
         this.resources[lang].translation.menu[meta.title['en-US']] = meta.title[lang];
 
@@ -313,11 +315,26 @@ class GenerateSite {
           routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode(marked(api)).join());
         }
         const langRegExp = new RegExp(String.raw`__${lang}__`, 'g');
-        routeTmp = routeTmp.replace(langRegExp, routeArticleProps);
+        componentRouteTmp = componentRouteTmp.replace(langRegExp, routeArticleProps);
       });
 
-      this.outputFile(path.join(outDir, `${meta.title['en-US']}.tsx`), routeTmp);
+      this.outputFile(path.join(outDir, `${meta.title['en-US']}.tsx`), componentRouteTmp);
     }
+  }
+
+  generateRoute(routeName: string, dirPath: string) {
+    let routeTmp = this.routeTmp;
+    routeTmp = routeTmp.replace(/__Route__/g, routeName);
+    (['en-US', 'zh-Hant'] as const).forEach((lang) => {
+      const langRegExp = new RegExp(String.raw`__${lang}__`, 'g');
+      routeTmp = routeTmp.replace(
+        langRegExp,
+        new TextEncoder()
+          .encode(marked(readFileSync(path.join(dirPath, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString()))
+          .join()
+      );
+    });
+    this.outputFile(path.join(dirPath, routeName, `${routeName}.tsx`), routeTmp);
   }
 
   generateGlobalFiles() {
@@ -336,10 +353,10 @@ class GenerateSite {
 },
 `;
     }
-    let routesTmp = this.routesTmp;
-    routesTmp = routesTmp.replace(/__import__/g, importStr);
-    routesTmp = routesTmp.replace(/__Route__/g, routeStr);
-    this.outputFile(path.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), routesTmp);
+    let componentRoutesTmp = this.componentRoutesTmp;
+    componentRoutesTmp = componentRoutesTmp.replace(/__import__/g, importStr);
+    componentRoutesTmp = componentRoutesTmp.replace(/__Route__/g, routeStr);
+    this.outputFile(path.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), componentRoutesTmp);
   }
 
   generateAll() {
@@ -354,13 +371,23 @@ class GenerateSite {
       }
     }
 
+    for (const ROUTE of ROUTE_DIR) {
+      const files = readdirSync(ROUTE);
+      for (const file of files) {
+        if (file.endsWith('.md') && file.match(/\./g)?.length === 1) {
+          this.generateRoute(file.slice(0, -3), ROUTE);
+        }
+      }
+    }
+
     this.generateGlobalFiles();
   }
 
   updateTmp() {
     this.resources = readJsonSync(path.join(__dirname, 'site', 'resources.json'));
     this.menuGroups = readJsonSync(path.join(__dirname, 'site', 'menu-groups.json'));
-    this.routesTmp = readFileSync(path.join(__dirname, 'site', 'routes.txt')).toString();
+    this.componentRoutesTmp = readFileSync(path.join(__dirname, 'site', 'component-routes.txt')).toString();
+    this.componentRouteTmp = readFileSync(path.join(__dirname, 'site', 'ComponentRoute.txt')).toString();
     this.routeTmp = readFileSync(path.join(__dirname, 'site', 'Route.txt')).toString();
 
     this.menuConfig = [];
@@ -459,6 +486,27 @@ export default async function* siteBuildExecutor(options: SiteBuildExecutorOptio
             fileWatcher.addWatcher(path.join(componentPath, 'README.md'), task);
             fileWatcher.addWatcher(path.join(componentPath, 'README.zh-Hant.md'), task);
             fileWatcher.addWatcher(path.join(componentPath, 'demos'), task);
+          }
+        }
+      }
+      for (const ROUTE of ROUTE_DIR) {
+        const files = readdirSync(ROUTE);
+        for (const file of files) {
+          if (file.endsWith('.md') && file.match(/\./g)?.length === 1) {
+            const routeName = file.slice(0, -3);
+            const task = {
+              id: `generateRoute_${routeName}`,
+              callback: () => {
+                console.info(`Update ${routeName}...`);
+
+                generateMediator.generateRoute(routeName, ROUTE);
+                generateMediator.generateGlobalFiles();
+              },
+            };
+            if (!fileWatcher.hasWatcher(path.join(ROUTE, file))) {
+              fileWatcher.addWatcher(path.join(ROUTE, routeName + '.md'), task);
+              fileWatcher.addWatcher(path.join(ROUTE, routeName + '.zh-Hant.md'), task);
+            }
           }
         }
       }

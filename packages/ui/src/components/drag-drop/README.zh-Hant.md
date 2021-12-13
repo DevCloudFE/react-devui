@@ -28,7 +28,7 @@ title: 拖放
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dContainer | 放置节点的容器 | DElementSelector | - |
+| dContainer | 放置节点的容器 | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dDirection | 容器放置节点的方向 | 'horizontal' \| 'vertical' | 'vertical' |
 | dPlaceholder | 占位节点 | React.ReactNode | 1000 |
 | children | 拖拽节点 | React.ReactNode | - |

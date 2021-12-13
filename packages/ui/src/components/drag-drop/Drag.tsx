@@ -1,6 +1,8 @@
-import { isNumber } from 'lodash';
+import { isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
+import { useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { merge } from 'rxjs';
 
 import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useId, useCustomContext, useImmer } from '../../hooks';
 import { DDropContext } from './Drop';
@@ -22,6 +24,8 @@ export function DDrag(props: DDragProps) {
   const [{ dropOuter, dropCurrentData, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
     useCustomContext(DDropContext);
   //#endregion
+
+  const dataRef = useRef<{ dragEl: HTMLElement | null }>({ dragEl: null });
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
@@ -62,10 +66,60 @@ export function DDrag(props: DDragProps) {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
-    if (isDragging) {
+    if (isDragging && dataRef.current.dragEl) {
+      let clientY: number | undefined;
+      let clientX: number | undefined;
       let movementY = 0;
       let movementX = 0;
+
+      const handleMove = (movementY: number, movementX: number) => {
+        setFixedStyle((draft) => {
+          draft.top = (draft.top as number) + movementY;
+          if (draft.top < 0) {
+            draft.top = 0;
+          }
+          if (draft.top > window.innerHeight - dragSize.height) {
+            draft.top = window.innerHeight - dragSize.height;
+          }
+
+          draft.left = (draft.left as number) + movementX;
+          if (draft.left < 0) {
+            draft.left = 0;
+          }
+          if (draft.left > window.innerWidth - dragSize.width) {
+            draft.left = window.innerWidth - dragSize.width;
+          }
+
+          draft.cursor = dropOuter ? 'not-allowed' : 'grabbing';
+        });
+      };
+
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+        next: (e) => {
+          e.preventDefault();
+        },
+      });
+      asyncGroup.fromEvent<TouchEvent>(dataRef.current.dragEl, 'touchmove', { capture: true, passive: false }).subscribe({
+        next: (e) => {
+          e.preventDefault();
+
+          if (isUndefined(clientY) || isUndefined(clientX)) {
+            clientY = e.touches[0].clientY;
+            clientX = e.touches[0].clientX;
+          } else {
+            movementY += e.touches[0].clientY - clientY;
+            movementX += e.touches[0].clientX - clientX;
+            clientY = e.touches[0].clientY;
+            clientX = e.touches[0].clientX;
+          }
+          throttleByAnimationFrame.run(() => {
+            handleMove(movementY, movementX);
+
+            movementY = 0;
+            movementX = 0;
+          });
+        },
+      });
 
       asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
         next: (e) => {
@@ -75,27 +129,7 @@ export function DDrag(props: DDragProps) {
           movementX += e.movementX / window.devicePixelRatio;
 
           throttleByAnimationFrame.run(() => {
-            ((movementY, movementX) => {
-              setFixedStyle((draft) => {
-                draft.top = (draft.top as number) + movementY;
-                if (draft.top < 0) {
-                  draft.top = 0;
-                }
-                if (draft.top > window.innerHeight - dragSize.height) {
-                  draft.top = window.innerHeight - dragSize.height;
-                }
-
-                draft.left = (draft.left as number) + movementX;
-                if (draft.left < 0) {
-                  draft.left = 0;
-                }
-                if (draft.left > window.innerWidth - dragSize.width) {
-                  draft.left = window.innerWidth - dragSize.width;
-                }
-
-                draft.cursor = dropOuter ? 'not-allowed' : 'grabbing';
-              });
-            })(movementY, movementX);
+            handleMove(movementY, movementX);
 
             movementY = 0;
             movementX = 0;
@@ -112,9 +146,14 @@ export function DDrag(props: DDragProps) {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (isDragging) {
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
-        next: () => {
+    if (isDragging && dataRef.current.dragEl) {
+      merge(
+        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }),
+        asyncGroup.fromEvent<MouseEvent>(dataRef.current.dragEl, 'touchend', { capture: true })
+      ).subscribe({
+        next: (e) => {
+          e.preventDefault();
+
           setIsDragging(false);
           if (inDrop) {
             setFixedStyle((draft) => {
@@ -191,15 +230,17 @@ export function DDrag(props: DDragProps) {
 
       onDragStart: (e) => {
         e.preventDefault();
-
         _child.props.onDragStart?.(e);
+
         onDragStart?.();
         if (dId) {
           _onDragStart?.(dId);
         }
 
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        const dragStyle = getComputedStyle(e.currentTarget);
+        const currentTarget = e.currentTarget as HTMLElement;
+        dataRef.current.dragEl = currentTarget;
+        const rect = currentTarget.getBoundingClientRect();
+        const dragStyle = getComputedStyle(currentTarget);
 
         setDragSize({
           width: rect.width,

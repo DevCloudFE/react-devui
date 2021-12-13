@@ -12,7 +12,7 @@ title: 单选组
 
 ### DRadioProps
 
-继承 `React.HTMLAttributes<HTMLElement>, DFormControl`。
+继承 `React.HTMLAttributes<HTMLElement>`，[DFormControl](/components/Form#DFormControl)。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
@@ -31,7 +31,7 @@ export type DRadioRef = HTMLInputElement;
 
 ### DRadioGroupProps
 
-继承 `React.HTMLAttributes<HTMLDivElement>, DFormControl`。
+继承 `React.HTMLAttributes<HTMLDivElement>`，[DFormControl](/components/Form#DFormControl)。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
@@ -49,12 +49,4 @@ export type DRadioRef = HTMLInputElement;
 
 ```tsx
 export type DValue = React.InputHTMLAttributes<HTMLInputElement>['value'];
-```
-
-### DFormControl
-
-```tsx
-export interface DFormControl {
-  dFormControlName?: string;
-}
 ```

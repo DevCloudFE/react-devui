@@ -1,0 +1,56 @@
+@include b(textarea) {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 3px 9px;
+  border: 1px solid var(--#{$variable-prefix}border-color);
+  border-radius: 2px;
+
+  font: inherit;
+  font-size: var(--#{$variable-prefix}font);
+  line-height: 24px;
+  letter-spacing: inherit;
+
+  outline: none;
+
+  transition: border-color 0.2s linear;
+
+  appearance: none;
+  caret-color: var(--#{$variable-prefix}color-primary);
+
+  @include utils-disabled(':disabled', true);
+
+  &:not(:disabled) {
+    &:hover {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:focus {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  &::placeholder {
+    color: var(--#{$variable-prefix}color-step-400);
+
+    transform: translateX(1px);
+  }
+
+  &:disabled::placeholder {
+    color: var(--#{$variable-prefix}color-step-100);
+  }
+
+  @include e(count) {
+    color: var(--#{$variable-prefix}color-step-400);
+    font-size: var(--#{$variable-prefix}font);
+    font-variant-numeric: tabular-nums;
+    line-height: 28px;
+    text-align: right;
+  }
+}

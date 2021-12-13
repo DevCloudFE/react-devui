@@ -1,0 +1,61 @@
+@import '~rfs/scss';
+
+.app-component-route-article__anchor {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  z-index: 910;
+
+  width: 168px;
+
+  .d-anchor-link > a {
+    padding: 4px 0;
+  }
+}
+
+.app-component-route-article__anchor-conatiner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 909;
+
+  width: 100%;
+  height: calc(100% - 64px);
+  padding: 20px;
+  overflow: auto;
+
+  background-color: var(--d-background-color);
+}
+
+.app-component-route-article__anchor-button {
+  position: fixed;
+  right: 20px;
+  bottom: 44px;
+  z-index: 910;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px 0;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+
+  color: var(--d-color-primary-lighter);
+
+  background-color: var(--d-color-step-800);
+  box-shadow: 0 2px 20px 2px var(--d-shadow-color);
+
+  appearance: none;
+}
+
+.app-component-route-article__subtitle {
+  margin-left: 12px;
+}
+
+.app-component-route-article__demos {
+  pre code.hljs {
+    background-color: transparent;
+  }
+}
