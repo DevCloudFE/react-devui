@@ -29,7 +29,7 @@
     .#{$variable-prefix}input-affix {
       #{$selector} {
         flex: 1 0 0;
-        width: unset;
+        width: 0;
       }
     }
   }
@@ -90,7 +90,7 @@
     .#{$variable-prefix}compose {
       #{$selector} {
         flex: 1 0 0;
-        width: unset;
+        width: 0;
       }
     }
   }
