@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["jest", "node", "react/next", "react-dom/next"]
+    "types": ["jest", "node", "react/next", "react-dom/next", "@testing-library/jest-dom"]
   },
   "include": [
     "**/*.test.ts",

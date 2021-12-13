@@ -1,74 +1,60 @@
-import type { ShallowWrapper } from 'enzyme';
-
-import { shallow } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import { PREFIX } from '../../tests';
 import { DButton } from '../button';
 import { DFooter } from './Footer';
 
 describe('DFooter', () => {
-  const okButton = (footer: ShallowWrapper) => {
-    return footer.find(DButton).at(1);
+  const okButton = () => {
+    return screen.getByText('OK');
   };
-  const cancelButton = (footer: ShallowWrapper) => {
-    return footer.find(DButton).at(0);
+  const cancelButton = () => {
+    return screen.getByText('Cancel');
   };
 
   it('should `dAlign` work', () => {
-    const footer = shallow(<DFooter dAlign="left" />);
-    expect(footer.find(`.${PREFIX}footer--left`).length).toBe(1);
+    render(<DFooter data-testid="footer" dAlign="left" />);
+    expect(screen.getByTestId('footer').classList.contains(`${PREFIX}footer--left`)).toBeTruthy();
   });
 
   it('should `dButtons` work', () => {
-    const footer = shallow(<DFooter dButtons={['cancel', <DButton>Button</DButton>, 'ok']} />);
+    render(<DFooter dButtons={['cancel', <DButton>Button</DButton>, 'ok']} />);
 
-    expect(footer.find(DButton).length).toBe(3);
+    expect(screen.queryAllByRole('button').length).toBe(3);
 
-    footer.find(DButton).forEach((button, index) => {
-      switch (index) {
-        case 0:
-          expect(button.key()).toBe('cancel');
-          break;
+    const buttons = screen.queryAllByRole('button');
 
-        case 1:
-          expect(button.text()).toBe('Button');
-          break;
+    expect(buttons[0].textContent).toBe('Cancel');
 
-        case 2:
-          expect(button.key()).toBe('ok');
-          break;
+    expect(buttons[1].textContent).toBe('Button');
 
-        default:
-          break;
-      }
-    });
+    expect(buttons[2].textContent).toBe('OK');
   });
 
   it('should `dOkButtonProps` work', () => {
-    const footer = shallow(<DFooter dOkButtonProps={{ disabled: true }} />);
-
-    expect(okButton(footer).prop('disabled')).toBe(true);
+    render(<DFooter dOkButtonProps={{ disabled: true }} />);
+    expect(okButton()).toBeDisabled();
   });
 
   it('should `dCancelButtonProps` work', () => {
-    const footer = shallow(<DFooter dCancelButtonProps={{ disabled: true }} />);
+    render(<DFooter dCancelButtonProps={{ disabled: true }} />);
 
-    expect(cancelButton(footer).prop('disabled')).toBe(true);
+    expect(cancelButton()).toBeDisabled();
   });
 
   it('should `onOkClick` work', () => {
     const mockCallBack = jest.fn();
-    const footer = shallow(<DFooter onOkClick={mockCallBack} />);
+    render(<DFooter onOkClick={mockCallBack} />);
+    fireEvent.click(okButton());
 
-    okButton(footer).simulate('click');
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 
   it('should `onCancelClick` work', () => {
     const mockCallBack = jest.fn();
-    const footer = shallow(<DFooter onCancelClick={mockCallBack} />);
+    render(<DFooter onCancelClick={mockCallBack} />);
+    fireEvent.click(cancelButton());
 
-    cancelButton(footer).simulate('click');
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 });
