@@ -59,17 +59,16 @@ export const DTextarea = React.forwardRef<DTextareaRef, DTextareaProps>((props, 
     let maxHeight: number | undefined;
 
     if (!isUndefined(dRows)) {
+      overflow = 'hidden';
       height = rowNum * 24 + 8;
-      if (dRows === 'auto') {
-        overflow = 'hidden';
-      } else {
+      if (dRows !== 'auto') {
         if (isNumber(dRows.minRows)) {
           minHeight = dRows.minRows * 24 + 8;
         }
         if (isNumber(dRows.maxRows)) {
           maxHeight = dRows.maxRows * 24 + 8;
-          if (maxHeight > height) {
-            overflow = 'hidden';
+          if (maxHeight < height) {
+            overflow = undefined;
           }
         }
       }
@@ -85,11 +84,14 @@ export const DTextarea = React.forwardRef<DTextareaRef, DTextareaProps>((props, 
       const el = e.currentTarget;
       const overflow = el.style.overflow;
       const height = el.style.height;
+      const minHeight = el.style.minHeight;
       el.style.overflow = 'hidden';
       el.style.height = '32px';
-      setRowNum((el.scrollHeight - 6) / 24);
+      el.style.minHeight = '';
+      setRowNum(Math.round((el.scrollHeight - 6) / 24));
       el.style.overflow = overflow;
       el.style.height = height;
+      el.style.minHeight = minHeight;
     },
     [changeBindValue, onChange, setRowNum]
   );
@@ -97,7 +99,7 @@ export const DTextarea = React.forwardRef<DTextareaRef, DTextareaProps>((props, 
   //#region DidUpdate
   useEffect(() => {
     if (textareaEl) {
-      setRowNum((textareaEl.scrollHeight - 6) / 24);
+      setRowNum(Math.round((textareaEl.scrollHeight - 6) / 24));
     }
   }, [setRowNum, textareaEl]);
   //#endregion
