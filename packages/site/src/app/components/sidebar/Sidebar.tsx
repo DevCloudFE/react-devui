@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, DRow, DSeparator } from '@react-devui/ui';
+import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, DRow } from '@react-devui/ui';
 import { useCustomContext, useImmer } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../App';
@@ -37,19 +37,21 @@ export function AppSidebar() {
     <DMenu dActive={[activeId, setActiveId]} onActiveChange={() => onMenuOpenChange?.(false)}>
       {menu.map((group) => (
         <DMenuGroup key={group.title} dId={group.title} dTitle={t(`menu-group.${group.title}`)}>
-          {group.children.map((child) => (
-            <DMenuItem key={child.title} dId={child.title} onClick={() => navigate(child.to, { replace: true })}>
-              {child.title}
-              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
+          {group.title === 'Other' ? (
+            <DMenuItem key="Interface" dId="Interface" onClick={() => navigate('/components/Interface', { replace: true })}>
+              Interface
+              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`Documentation.Interface`)}</span>}
             </DMenuItem>
-          ))}
+          ) : (
+            group.children.map((child) => (
+              <DMenuItem key={child.title} dId={child.title} onClick={() => navigate(child.to, { replace: true })}>
+                {child.title}
+                {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
+              </DMenuItem>
+            ))
+          )}
         </DMenuGroup>
       ))}
-      <DSeparator></DSeparator>
-      <DMenuItem key="Interface" dId="Interface" onClick={() => navigate('/components/Interface', { replace: true })}>
-        Interface
-        {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`Documentation.Interface`)}</span>}
-      </DMenuItem>
     </DMenu>
   );
 

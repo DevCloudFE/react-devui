@@ -4,5 +4,6 @@
   { "en-US": "Navigation", "zh-Hant": "导航" },
   { "en-US": "Data Display", "zh-Hant": "数据展示" },
   { "en-US": "Data Entry", "zh-Hant": "数据录入" },
-  { "en-US": "Feedback", "zh-Hant": "反馈" }
+  { "en-US": "Feedback", "zh-Hant": "反馈" },
+  { "en-US": "Other", "zh-Hant": "其它" }
 ]

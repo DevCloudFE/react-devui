@@ -1,4 +1,4 @@
-import { isUndefined } from 'lodash';
+import { isString, isUndefined } from 'lodash';
 import { useEffect } from 'react';
 
 import { DIcon, DAnchor, DAnchorLink, DRow } from '@react-devui/ui';
@@ -63,8 +63,21 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       return () => {
         setLinks([]);
       };
+    } else {
+      setLinks(props.links);
     }
   }, [props.links, setLinks]);
+
+  useEffect(() => {
+    if (isString(html)) {
+      const el = document.querySelector(`.app-route-article > h1:first-child`);
+      const _title = document.title;
+      document.title = el?.id + ' - React DevUI';
+      return () => {
+        document.title = _title;
+      };
+    }
+  }, [html]);
 
   return (
     <DRow

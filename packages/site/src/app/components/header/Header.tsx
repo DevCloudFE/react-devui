@@ -15,10 +15,8 @@ export function AppHeader() {
 
   const changeLanguage = useCallback(() => {
     if (i18n.language === 'en-US') {
-      document.body.classList.add('CJK');
       i18n.changeLanguage('zh-Hant');
     } else {
-      document.body.classList.remove('CJK');
       i18n.changeLanguage('en-US');
     }
   }, [i18n]);

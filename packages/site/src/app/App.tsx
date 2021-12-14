@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { DI18NContext, DConfigContext, DIconContext } from '@react-devui/ui';
+import { DConfigRoot } from '@react-devui/ui';
 import { useAsync, useImmer } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
@@ -36,6 +36,7 @@ export function App() {
 
   useEffect(() => {
     localStorage.setItem('language', i18n.language);
+    document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
   useEffect(() => {
@@ -79,17 +80,13 @@ export function App() {
 
   return (
     <AppContext.Provider value={contextValue}>
-      <DI18NContext.Provider value={{ lang: i18n.language as 'en-US' | 'zh-Hant' }}>
-        <DConfigContext.Provider value={{ content: 'main .app-route-article' }}>
-          <DIconContext.Provider value={icons}>
-            <AppHeader />
-            <AppSidebar />
-            <main ref={mainRef} className="app-main">
-              <AppRoutes />
-            </main>
-          </DIconContext.Provider>
-        </DConfigContext.Provider>
-      </DI18NContext.Provider>
+      <DConfigRoot content="main .app-route-article" i18n={{ lang: i18n.language as 'en-US' | 'zh-Hant' }} icons={icons}>
+        <AppHeader />
+        <AppSidebar />
+        <main ref={mainRef} className="app-main">
+          <AppRoutes />
+        </main>
+      </DConfigRoot>
     </AppContext.Provider>
   );
 }

@@ -1,22 +1,13 @@
-import React, { useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
+import { DConfigContext } from '../d-config';
 import dResources from './resources.json';
 
-interface Resources {
-  [index: string]: string | Resources;
-}
-
-export const DI18NContext = React.createContext<{
-  lang: 'en-US' | 'zh-Hant';
-  resources?: Resources;
-}>({ lang: 'en-US' });
-
 export function useTranslation(group?: string) {
-  const { lang, resources } = useContext(DI18NContext);
+  const { lang = 'en-US', resources = dResources } = useContext(DConfigContext).i18n ?? {};
   const t = useCallback(
     (...keys: string[]) => {
-      const _resources = resources ?? dResources;
-      let content = group ? _resources[group] : _resources;
+      let content = group ? resources[group] : resources;
       for (const key of keys) {
         content = content?.[key];
       }

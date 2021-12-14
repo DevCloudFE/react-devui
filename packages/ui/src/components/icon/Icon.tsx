@@ -1,18 +1,9 @@
-import { isUndefined, isNumber } from 'lodash';
+import { isUndefined, isNumber, isArray } from 'lodash';
 import React, { useMemo, useContext } from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { DConfigContext } from '../../hooks/d-config';
 import { getClassName, mergeStyle } from '../../utils';
-
-export type DIconContextData = Array<{
-  name: string;
-  list: Array<{
-    viewBox: string;
-    paths: string[];
-    type?: string;
-  }>;
-}>;
-export const DIconContext = React.createContext<DIconContextData>([]);
 
 export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dName?: string;
@@ -25,7 +16,6 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
 }
 
 export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) => {
-  const iconContext = useContext(DIconContext);
   const dPrefix = usePrefixConfig();
   const {
     dName,
@@ -42,8 +32,10 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     ...restProps
   } = useComponentConfig(DIcon.name, props);
 
+  const iconContext = useContext(DConfigContext).icons;
+
   const [_viewBox, paths] = useMemo(() => {
-    if (!children) {
+    if (!children && isArray(iconContext)) {
       if (isUndefined(dName)) {
         throw new Error('Missing "dName" prop');
       }
