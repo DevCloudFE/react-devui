@@ -13,7 +13,7 @@ When the user needs to enter content.
 
 ### DRadioProps
 
-Extend `React.InputHTMLAttributes<HTMLInputElement>, DFormControl`.
+Extend `React.InputHTMLAttributes<HTMLInputElement>`, [DFormControl](/components/Form#DFormControl).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -45,11 +45,3 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dClearIcon | Custom clear icon | React.ReactNode | - |
 | dSize | Input size | 'smaller' \| 'larger' | - |
 <!-- prettier-ignore-end -->
-
-### DFormControl
-
-```tsx
-export interface DFormControl {
-  dFormControlName?: string;
-}
-```

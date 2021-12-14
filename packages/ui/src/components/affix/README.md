@@ -18,7 +18,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dTarget | Set the node that needs to listen to its scroll event, compare the `window` view by default | DElementSelector | - |
+| dTarget | Set the node that needs to listen to its scroll event, compare the `window` view by default | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dTop | Trigger after reaching the specified offset from the top | string \| number | 0 |
 | dBottom | Trigger after reaching the specified offset from the bottom | string \| number | 0 |
 | dZIndex | Manually control the value of `z-index` | number | 900 |
@@ -32,10 +32,4 @@ export interface DAffixRef {
   el: HTMLDivElement | null;
   updatePosition: () => void;
 }
-```
-
-### DElementSelector
-
-```tsx
-export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 ```

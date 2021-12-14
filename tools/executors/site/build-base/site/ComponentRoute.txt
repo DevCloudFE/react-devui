@@ -5,12 +5,14 @@ import { useEffect } from 'react';
 import { useCustomContext } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../../App';
-import { AppRoute } from '../../../components';
+import { AppComponentRoute, AppDemoBox } from '../../../components';
+
+__import__
 
 export default function __Route__() {
   const props = {
-    'en-US': { html: [__en-US__] },
-    'zh-Hant': { html: [__zh-Hant__] },
+    'en-US': __en-US__,
+    'zh-Hant': __zh-Hant__,
   };
 
   const [{ onMount: _onMount }] = useCustomContext(AppContext);
@@ -19,5 +21,5 @@ export default function __Route__() {
     _onMount?.();
   }, []);
 
-  return <AppRoute {...props} />;
+  return <AppComponentRoute {...props} />;
 }

@@ -17,7 +17,7 @@ title: 固钉
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dTarget | 设置需要监听其滚动事件的节点，默认比较 `window` 视图 | DElementSelector | - |
+| dTarget | 设置需要监听其滚动事件的节点，默认比较 `window` 视图 | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dTop | 距离顶部达到指定偏移量后触发 | string \| number | 0 |
 | dBottom | 距离底部达到指定偏移量后触发 | string \| number | 0 |
 | dZIndex | 手动控制 `z-index` 的值 | number | 900 |
@@ -31,10 +31,4 @@ export interface DAffixRef {
   el: HTMLDivElement | null;
   updatePosition: () => void;
 }
-```
-
-### DElementSelector
-
-```tsx
-export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 ```

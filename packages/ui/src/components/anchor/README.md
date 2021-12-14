@@ -19,7 +19,7 @@ Extend `React.HTMLAttributes<HTMLUListElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dDistance | Distance from page to anchor | number | 0 |
-| dPage | Set scrolling page, default is `window` view | DElementSelector | - |
+| dPage | Set scrolling page, default is `window` view | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dScrollBehavior | Custom scrolling behavior | 'instant' \| 'smooth' | 'instant' |
 | dIndicator | Custom indicator, pre-defined indicators of `'dot'` and `'line'` patterns | React.ReactNode | 'dot' |
 | onHrefChange | Anchor point change callback | `(href: string \| null) => void` | - |
@@ -35,9 +35,3 @@ Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 | dLevel | Set the anchor level | number | 0 |
 | href | Set anchor link | string | - |
 <!-- prettier-ignore-end -->
-
-### DElementSelector
-
-```tsx
-export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
-```

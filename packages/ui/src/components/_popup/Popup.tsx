@@ -518,6 +518,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
               onVisibleChange?.(false);
             }
             afterVisibleChange?.(true);
+            updatePosition();
           },
           beforeLeave: () => dataRef.current.transitionState,
           afterLeave: () => {

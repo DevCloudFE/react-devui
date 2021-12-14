@@ -27,7 +27,6 @@ export const DInput = React.forwardRef<DInputRef, DInputProps>((props, ref) => {
     className,
     type = 'text',
     disabled,
-    children,
     onClick,
     onFocus,
     onBlur,

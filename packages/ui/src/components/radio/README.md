@@ -13,7 +13,7 @@ The user needs to select a single option from a data set, and can view all the a
 
 ### DRadioProps
 
-Extend `React.HTMLAttributes<HTMLElement>, DFormControl`.
+Extend `React.HTMLAttributes<HTMLElement>`, [DFormControl](/components/Form#DFormControl).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -32,7 +32,7 @@ export type DRadioRef = HTMLInputElement;
 
 ### DRadioGroupProps
 
-Extend `React.HTMLAttributes<HTMLDivElement>, DFormControl`.
+Extend `React.HTMLAttributes<HTMLDivElement>`, [DFormControl](/components/Form#DFormControl).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -50,12 +50,4 @@ Extend `React.HTMLAttributes<HTMLDivElement>, DFormControl`.
 
 ```tsx
 export type DValue = React.InputHTMLAttributes<HTMLInputElement>['value'];
-```
-
-### DFormControl
-
-```tsx
-export interface DFormControl {
-  dFormControlName?: string;
-}
 ```

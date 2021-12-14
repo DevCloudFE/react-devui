@@ -3,4 +3,5 @@ src/app/configs/*
 
 src/app/i18n/resources.json
 
-src/app/routes/components/
+src/app/routes/components/*
+!src/app/routes/components/*.md
