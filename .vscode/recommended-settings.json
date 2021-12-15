@@ -8,6 +8,8 @@
     "source.fixAll.eslint": true,
     "source.fixAll.stylelint": true
   },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
   "files.associations": {
     "*.json": "jsonc",
     ".prettierrc": "jsonc",
