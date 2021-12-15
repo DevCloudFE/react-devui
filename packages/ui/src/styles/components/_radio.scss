@@ -230,6 +230,7 @@
     @include button-radio;
 
     #{$radio-selector}:not(.is-disabled).is-checked {
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
       color: #fff;
 
       background-color: var(--#{$variable-prefix}color-primary);

@@ -19,6 +19,7 @@
   height: 4px;
   overflow: hidden;
 
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   background-color: rgb(221 221 221 / 40%);
 
   &::after {

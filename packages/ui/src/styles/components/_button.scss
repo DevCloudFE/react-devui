@@ -60,6 +60,7 @@
 
     border: 1px solid var(--#{$variable-prefix}button-color);
 
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
     color: #fff;
 
     background-color: var(--#{$variable-prefix}button-color);
