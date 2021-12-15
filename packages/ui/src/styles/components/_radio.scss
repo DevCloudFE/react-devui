@@ -164,7 +164,7 @@
       transform: scale(0);
       opacity: 0;
 
-      transition: all 133ms linear;
+      transition: transform 133ms linear, opacity 133ms linear;
 
       content: '';
     }
@@ -186,7 +186,7 @@
 
     cursor: inherit;
 
-    transition: all 133ms linear;
+    transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
 
     appearance: none;
   }
@@ -215,7 +215,7 @@
 
   $radio-selector: '.#{$variable-prefix}radio';
   #{$radio-selector} {
-    flex: 0 0 auto;
+    flex-shrink: 0;
   }
 
   @include m(outline) {

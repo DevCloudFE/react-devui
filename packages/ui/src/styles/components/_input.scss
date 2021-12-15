@@ -17,7 +17,7 @@
 
   outline: none;
 
-  transition: all 0.2s linear;
+  transition: border-color 0.2s linear;
 
   appearance: none;
   caret-color: var(--#{$variable-prefix}color-primary);
@@ -28,9 +28,21 @@
     .#{$variable-prefix}compose,
     .#{$variable-prefix}input-affix {
       #{$selector} {
-        flex: 1 0 0;
+        flex-grow: 1;
         width: 0;
       }
+    }
+  }
+
+  &[type='number'] {
+    appearance: textfield; /* Firefox */
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+
+      /* display: none; <- Crashes Chrome on hover */
+      appearance: none;
     }
   }
 
@@ -82,15 +94,20 @@
 
   font-size: var(--#{$variable-prefix}font);
 
-  transition: all 0.2s linear;
+  transition: border-color 0.2s linear;
 
   @include utils-disabled('.is-disabled', true);
 
   @at-root {
     .#{$variable-prefix}compose {
       #{$selector} {
-        flex: 1 0 0;
+        flex-grow: 1;
         width: 0;
+
+        @include m(number) {
+          flex-grow: unset;
+          width: auto;
+        }
       }
     }
   }
@@ -115,6 +132,22 @@
     border: none;
   }
 
+  @include m(number) {
+    display: inline-flex;
+    width: auto;
+
+    .#{$variable-prefix}input {
+      width: 4em;
+    }
+
+    &:not(.is-disabled) {
+      padding-right: 0;
+      .#{$variable-prefix}input-affix__suffix {
+        margin-right: var(--#{$variable-prefix}input-affix-space);
+      }
+    }
+  }
+
   @include m(smaller) {
     --#{$variable-prefix}input-affix-space: 7px;
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
@@ -126,40 +159,52 @@
   }
 
   @include e(prefix) {
-    flex: 0 0 auto;
+    flex-shrink: 0;
     margin-right: 4px;
   }
 
   @include e(suffix) {
-    flex: 0 0 auto;
+    flex-shrink: 0;
     margin-left: 4px;
   }
 
   @include e(clear) {
-    flex: 0 0 auto;
+    flex-shrink: 0;
     min-width: unset;
     height: 22px;
     margin-left: 4px;
 
     color: var(--d-color-step-400);
 
-    transition: all 0.2s linear, opacity 0.1s ease-out;
-
-    .#{$variable-prefix}icon {
-      transition: all 0.2s linear;
-    }
+    transition: border-color 0.2s linear, color 0.2s linear, background-color 0.2s linear, opacity 0.1s ease-out;
   }
 
   @include e(password) {
-    flex: 0 0 auto;
+    flex-shrink: 0;
     min-width: unset;
     height: 22px;
     margin-left: 4px;
 
     color: var(--d-color-step-400);
+  }
 
-    .#{$variable-prefix}icon {
-      transition: all 0.2s linear;
+  @include e(number-container) {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 4px;
+  }
+
+  @include e(number) {
+    flex-grow: 1;
+    width: 24px;
+    min-width: unset;
+    height: unset;
+
+    color: var(--d-color-step-400);
+
+    & + & {
+      margin: 0;
     }
   }
 }

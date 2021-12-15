@@ -43,6 +43,14 @@
     "Password is not visible": {
       "en-US": "Password is not visible",
       "zh-Hant": "密码不可见"
+    },
+    "Increase number": {
+      "en-US": "Increase number",
+      "zh-Hant": "数字加"
+    },
+    "Decrease number": {
+      "en-US": "Decrease number",
+      "zh-Hant": "数字减"
     }
   }
 }

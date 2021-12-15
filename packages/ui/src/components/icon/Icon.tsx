@@ -28,6 +28,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
     className,
     style,
     viewBox,
+    fill = 'currentColor',
     children,
     ...restProps
   } = useComponentConfig(DIcon.name, props);
@@ -63,8 +64,7 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox={_viewBox ?? viewBox}
-      fill="currentColor"
-      stroke="currentColor"
+      fill={fill}
       height={dSize}
       width={dSize}
       className={getClassName(className, `${dPrefix}icon`, {

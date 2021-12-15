@@ -40,6 +40,7 @@ export type DInputRef = HTMLInputElement;
 | dDisabled | 是否禁用 | boolean | false |
 | dPassword | 是否为密码框 | boolean | false |
 | dPasswordToggle | 密码框是否能够切换密码显示 | boolean | true |
+| dNumber | 是否为数字框 | boolean | false |
 | dClearable | 是否能够清除 | boolean | false |
 | dClearIcon | 自定义清除图标 | React.ReactNode | - |
 | dSize | 输入框尺寸 | 'smaller' \| 'larger' | - |

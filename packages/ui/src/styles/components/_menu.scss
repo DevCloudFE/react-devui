@@ -34,7 +34,7 @@ $menu-item-height: 40px;
   list-style: none;
   cursor: pointer;
 
-  transition: all 0.2s ease-out;
+  transition: color 0.2s ease-out, background-color 0.2s ease-out;
 
   &:not(.is-disabled) {
     &:focus,
@@ -83,7 +83,7 @@ $menu-item-height: 40px;
     }
 
     @include e(title) {
-      flex: 0 0 auto;
+      flex-shrink: 0;
     }
   }
 
@@ -117,17 +117,17 @@ $menu-item-height: 40px;
     flex-shrink: 0;
     width: calc(1.05rem + 12px);
 
-    transition: all 0.2s linear;
+    transition: height 0.2s linear;
 
     @include font-size(1.05rem);
 
     & > .#{$variable-prefix}icon {
-      transition: all 0.2s linear;
+      transition: transform 0.2s linear, width 0.2s linear;
     }
   }
 
   @include e(title) {
-    flex: 1 0 0;
+    flex-grow: 1;
     min-width: 1em;
 
     @include utils-ellipsis;

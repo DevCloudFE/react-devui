@@ -39,7 +39,7 @@
   outline: none;
   cursor: pointer;
 
-  transition: all 0.2s linear;
+  transition: border-color 0.2s linear, color 0.2s linear, background-color 0.2s linear;
 
   appearance: none;
 
@@ -282,7 +282,7 @@
 
   $button-selector: '.#{$variable-prefix}button';
   #{$button-selector} {
-    flex: 0 0 auto;
+    flex-shrink: 0;
 
     &:not(:first-child):not(:last-child) {
       border-radius: 0;
