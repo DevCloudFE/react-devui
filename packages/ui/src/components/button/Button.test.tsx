@@ -153,6 +153,7 @@ describe('DCompose', () => {
       expect(iterator.classList.contains(className)).toBeTruthy();
     }
   };
+
   it('should `dSize` work', () => {
     const size = 'smaller';
     render(
