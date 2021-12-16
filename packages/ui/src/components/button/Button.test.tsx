@@ -35,12 +35,6 @@ describe('DButton', () => {
     expect(buttonClassList().contains(`t-${dColor}`)).toBeTruthy();
   });
 
-  it('should `dLoading` work', () => {
-    const { getByRole } = render(<DButton dLoading={true} />);
-    expect(buttonClassList().contains(`is-loading`)).toBeTruthy();
-    expect(getByRole('button').children.length).toBe(1);
-  });
-
   it('should `dIcon` work', () => {
     const { getByRole } = render(<DButton dIcon={icon} />);
     expect(getByRole('button').children.length).toBe(1);
