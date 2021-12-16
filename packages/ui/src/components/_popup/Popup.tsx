@@ -5,6 +5,7 @@ import type { DTransitionStateList } from '../_transition';
 import { isUndefined, toNumber } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useImperativeHandle, useRef } from 'react';
 import ReactDOM, { flushSync } from 'react-dom';
+import { filter } from 'rxjs';
 
 import { usePrefixConfig, useAsync, useRefSelector, useId, useImmer, useRefCallback, useRootContentConfig } from '../../hooks';
 import { getClassName, getPopupPlacementStyle, mergeStyle, MAX_INDEX_MANAGER } from '../../utils';
@@ -41,6 +42,7 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dDestroy?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
+  dEscClose?: boolean;
   dCustomPopup?: (
     popupEl: HTMLElement,
     triggerEl: HTMLElement
@@ -65,6 +67,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
     dDestroy = false,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
+    dEscClose = true,
     dCustomPopup,
     onVisibleChange,
     afterVisibleChange,
@@ -427,6 +430,25 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    if (dVisible && dEscClose) {
+      asyncGroup
+        .fromEvent<KeyboardEvent>(window, 'keydown')
+        .pipe(filter((e) => e.code === 'Escape'))
+        .subscribe({
+          next: () => {
+            flushSync(() => onVisibleChange?.(false));
+          },
+        });
+    }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, dEscClose, dVisible, onVisibleChange]);
+
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (dVisible && triggerRef.current && popupEl) {
       if (!isFixed && rootContentRef.current) {
         asyncGroup.onResize(rootContentRef.current, updatePosition);
@@ -558,7 +580,7 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
                 {dPopupContent}
               </div>
               {dTrigger === 'hover' && (
-                <div ref={hoverReferenceRef} style={{ ...popupPositionStyle, visibility: 'hidden' }} aria-hidden="true"></div>
+                <div ref={hoverReferenceRef} style={{ ...popupPositionStyle, visibility: 'hidden' }} aria-hidden={true}></div>
               )}
             </>,
             containerRef.current

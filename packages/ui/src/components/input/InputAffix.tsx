@@ -227,7 +227,7 @@ export function DInputAffix(props: DInputAffixProps) {
                 )}
               </DIcon>
             }
-            aria-label={t('DInputAffix', password ? 'Password is visible' : 'Password is not visible')}
+            aria-label={t('DInputAffix', password ? 'Password is not visible' : 'Password is visible')}
             onMouseDown={handlePasswordMouseDown}
             onMouseUp={handleMouseUp}
           ></DButton>

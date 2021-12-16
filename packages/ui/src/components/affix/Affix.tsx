@@ -153,7 +153,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
       >
         {children}
       </div>
-      <div {...restProps} ref={referenceRef} className={className} style={{ ...style, visibility: 'hidden' }} aria-hidden="true">
+      <div {...restProps} ref={referenceRef} className={className} style={{ ...style, visibility: 'hidden' }} aria-hidden={true}>
         <div
           style={{
             ...referenceStyle,

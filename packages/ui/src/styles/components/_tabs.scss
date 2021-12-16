@@ -381,8 +381,8 @@
       color: var(--#{$variable-prefix}color-primary);
     }
 
-    @include utils-outline();
-    @include utils-disabled();
+    @include utils-outline;
+    @include utils-disabled;
 
     @include m(add) {
       border: 1px solid var(--#{$variable-prefix}indicator-background-color);
@@ -459,8 +459,8 @@
     }
   }
 
-  @include utils-outline();
-  @include utils-disabled();
+  @include utils-outline;
+  @include utils-disabled;
 
   @include m(dropdown) {
     width: 100%;

@@ -96,7 +96,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(':disabled', true);
+    @include utils-disabled(true, ':disabled');
 
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
@@ -174,7 +174,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(':disabled', true);
+    @include utils-disabled(true, ':disabled');
 
     @include button-hover {
       color: var(--#{$variable-prefix}button-color-lighter);

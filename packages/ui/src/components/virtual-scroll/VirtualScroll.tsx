@@ -12,6 +12,8 @@ export interface DListRenderProps {
 }
 
 export interface DItemRenderProps {
+  'aria-setsize': number;
+  'aria-posinset': number;
   [key: `data-${string}virtual-scroll-reference`]: string;
 }
 
@@ -61,7 +63,14 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           if (size && itemSize) {
             const startIndex = Math.max(~~(scrollSize / itemSize) - 2, 1);
             const endIndex = Math.min(~~(scrollSize / itemSize) + ~~(size / itemSize) + 1 + 2, dList.length);
-            setList(dList.slice(startIndex, endIndex).map((item, index) => dItemRender(item, startIndex + index, {})));
+            setList(
+              dList.slice(startIndex, endIndex).map((item, index) =>
+                dItemRender(item, startIndex + index, {
+                  'aria-setsize': dList.length,
+                  'aria-posinset': startIndex + index + 1,
+                })
+              )
+            );
 
             setFillSize([
               { [isUndefined(dWidth) ? 'height' : 'width']: Math.max(itemSize * (startIndex - 1), 0) },
@@ -89,7 +98,14 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
           const startIndex = Math.max((startInfo?.[0] ?? 0) - 2, 0);
           const endIndex = Math.min((endInfo?.[0] ?? dList.length) + 1 + 2, dList.length);
-          setList(dList.slice(startIndex, endIndex).map((item, index) => dItemRender(item, startIndex + index, {})));
+          setList(
+            dList.slice(startIndex, endIndex).map((item, index) =>
+              dItemRender(item, startIndex + index, {
+                'aria-setsize': dList.length,
+                'aria-posinset': startIndex + index + 1,
+              })
+            )
+          );
 
           const preFillSize = Math.max(
             startInfo
@@ -128,7 +144,11 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
   const reference = useMemo(() => {
     if (dList[0] && isUndefined(dCustomSize)) {
-      return dItemRender(dList[0], 0, { [`data-${dPrefix}virtual-scroll-reference`]: String(id) });
+      return dItemRender(dList[0], 0, {
+        'aria-setsize': dList.length,
+        'aria-posinset': 1,
+        [`data-${dPrefix}virtual-scroll-reference`]: String(id),
+      } as DItemRenderProps);
     }
   }, [dCustomSize, dItemRender, dList, dPrefix, id]);
 
@@ -171,6 +191,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
                 ...fillSize[0],
                 display: isUndefined(dWidth) ? undefined : 'inline-block',
               }}
+              aria-hidden={true}
             ></div>
             {list}
             <div
@@ -179,6 +200,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
                 ...fillSize[1],
                 display: isUndefined(dWidth) ? undefined : 'inline-block',
               }}
+              aria-hidden={true}
             ></div>
           </>
         ),

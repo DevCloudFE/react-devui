@@ -1,10 +1,8 @@
 @include b(input) {
   $selector: &;
 
-  display: block;
-  box-sizing: border-box;
+  display: inline-block;
   width: 100%;
-  min-width: 0;
   height: var(--#{$variable-prefix}size);
   margin: 0;
   padding: 3px 9px;
@@ -22,7 +20,7 @@
   appearance: none;
   caret-color: var(--#{$variable-prefix}color-primary);
 
-  @include utils-disabled(':disabled', true);
+  @include utils-disabled(true, ':disabled');
 
   @at-root {
     .#{$variable-prefix}compose,
@@ -86,7 +84,7 @@
 
   $selector: &;
 
-  display: flex;
+  display: inline-flex;
   align-items: center;
   width: 100%;
   padding: 0 var(--#{$variable-prefix}input-affix-space);
@@ -96,7 +94,7 @@
 
   transition: border-color 0.2s linear;
 
-  @include utils-disabled('.is-disabled', true);
+  @include utils-disabled(true);
 
   @at-root {
     .#{$variable-prefix}compose {
@@ -133,7 +131,6 @@
   }
 
   @include m(number) {
-    display: inline-flex;
     width: auto;
 
     .#{$variable-prefix}input {

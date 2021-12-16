@@ -1,8 +1,6 @@
 @include b(textarea) {
   display: block;
-  box-sizing: border-box;
   width: 100%;
-  min-width: 0;
   min-height: 32px;
   margin: 0;
   padding: 3px 9px;
@@ -22,7 +20,7 @@
   resize: vertical;
   caret-color: var(--#{$variable-prefix}color-primary);
 
-  @include utils-disabled(':disabled', true);
+  @include utils-disabled(true, ':disabled');
 
   &:not(:disabled) {
     &:hover {

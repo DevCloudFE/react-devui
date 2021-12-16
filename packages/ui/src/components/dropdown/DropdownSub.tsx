@@ -17,6 +17,7 @@ export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement>
   dIcon?: React.ReactNode;
   dTitle: React.ReactNode;
   dDisabled?: boolean;
+  dPopupClassName?: string;
   __level?: number;
 }
 
@@ -26,6 +27,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
     dIcon,
     dTitle,
     dDisabled = false,
+    dPopupClassName,
     __level = 0,
     id,
     className,
@@ -158,7 +160,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
       </li>
       {!dDisabled && (
         <DPopup
-          className={`${dPrefix}dropdown-sub__popup`}
+          className={getClassName(dPopupClassName, `${dPrefix}dropdown-sub-popup`)}
           dVisible={popupVisible}
           dPopupContent={
             <ul
