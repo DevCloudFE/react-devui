@@ -23,12 +23,12 @@ export function AppRouteArticle(props: AppRouteArticleProps) {
 
   const icon = (top: boolean) => (
     <DIcon
-      dRotate={top ? 180 : undefined}
       style={{
         transform: menuOpen ? (top ? 'translateY(12px)' : 'translateY(-12px)') : undefined,
         transition: 'transform 0.2s ease',
       }}
       viewBox="0 0 926.23699 573.74994"
+      dRotate={top ? 180 : undefined}
     >
       <g transform="translate(904.92214,-879.1482)">
         <path

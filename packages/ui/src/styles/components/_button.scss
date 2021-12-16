@@ -35,6 +35,7 @@
   white-space: nowrap;
   text-align: unset;
   text-transform: none;
+  vertical-align: top;
 
   outline: none;
   cursor: pointer;
@@ -263,12 +264,11 @@
   }
 
   @include e(icon) {
+    display: inline-flex;
     width: calc(1em + 8px);
 
-    line-height: 0;
-
     @include m(right) {
-      text-align: right;
+      justify-content: flex-end;
     }
   }
 }
@@ -276,6 +276,8 @@
 @include b(button-group) {
   display: inline-flex;
   align-items: center;
+
+  vertical-align: top;
 
   & + & {
     margin-left: 10px;
