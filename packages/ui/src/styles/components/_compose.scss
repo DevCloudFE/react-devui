@@ -38,8 +38,6 @@
 
   font-size: var(--#{$variable-prefix}font);
 
-  transition: all 0.2s linear;
-
   @include utils-disabled;
 
   @include m(gray) {

@@ -11,25 +11,25 @@ export type DElementSelector = HTMLElement | null | string | (() => HTMLElement 
 继承 `React.HTMLAttributes<HTMLDivElement>`.
 
 <!-- prettier-ignore-start -->
-| Property | Description | Type | Default | 
+| 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dVisible | Control the display of popup | boolean | - |
-| dPopupContent | The contents of the popup | React.ReactNode | - |
-| dTriggerRender | The target node of the popup | `(props: DTriggerRenderProps) => React.ReactNode` | - |
-| dTriggerEl |  Custom popup target node | HTMLElement \| null | - |
-| dContainer | Mount node of popup, `false` represents the parent node mounted to the target node | [DElementSelector](/components/Interface#DElementSelector) \| false | - |
-| dPlacement | popup direction | 'top' \| 'top-left' \| 'top-right' \| 'right' \| 'right-top' \| 'right-bottom' \| 'bottom' \| 'bottom-left' \| 'bottom-right' \| 'left' \| 'left-top' \| 'left-bottom' | 'top' |
-| dAutoPlace | When the popup is occluded, the position is automatically adjusted. If the `dContainer` attribute is not specified, the `window` view will be compared by default | boolean | true |
-| dTrigger | Trigger behavior | 'hover' \| 'focus' \| 'click' \| null | 'hover' |
-| dDistance | The distance of the pop-up window from the target node | number | 10 |
-| dArrow | Whether to show arrow | boolean | true |
-| dZIndex | Manually control the value of `z-index` | number | - |
-| dDestroy | Destroy the node after shutdown | boolean | false |
-| dMouseEnterDelay | How many milliseconds after the mouse is moved to display | number | 150 |
-| dMouseLeaveDelay | How many milliseconds after the mouse is moved out will it be displayed | number | 150 |
-| dCustomPopup | Custom popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties }` | - |
-| onVisibleChange | popup display/hide callback | `(visible: boolean) => void` | - |
-| afterVisibleChange | Callback for the end of the popup show/hide animation | `(visible: boolean) => void` | - |
+| dVisible | 控制 popup 的显示 | boolean | - |
+| dPopupContent | popup 的内容 | React.ReactNode | - |
+| dTriggerRender | popup 的目标节点 | `(props: DTriggerRenderProps) => React.ReactNode` | - |
+| dTriggerEl |  自定义 popup 的目标节点 | HTMLElement \| null | - |
+| dContainer |  popup 的挂载节点，`false` 代表挂载到目标节点的父节点 | DElementSelector \| false | - |
+| dPlacement |  popup 弹出方向 | 'top' \| 'top-left' \| 'top-right' \| 'right' \| 'right-top' \| 'right-bottom' \| 'bottom' \| 'bottom-left' \| 'bottom-right' \| 'left' \| 'left-top' \| 'left-bottom' | 'top' |
+| dAutoPlace | 当 popup 被遮挡时，自动调整位置，如果未指定 `dContainer` 属性，那么默认比较 `window` 视图 | boolean | true |
+| dTrigger | 触发行为 | 'hover' \| 'focus' \| 'click' \| null | 'hover' |
+| dDistance | 弹出窗口距离目标节点的距离 | number | 10 |
+| dArrow | 是否显示箭头 | boolean | true |
+| dZIndex | 手动控制 `z-index` 的值 | number | - |
+| dDestroy | 关闭后销毁节点 | boolean | false |
+| dMouseEnterDelay | 鼠标移入后多少毫秒后显示 | number | 150 |
+| dMouseLeaveDelay | 鼠标移出后多少毫秒后显示 | number | 150 |
+| dCustomPopup | 自定义 popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties }` | - |
+| onVisibleChange | popup 显示/隐藏的回调 | `(visible: boolean) => void` | - |
+| afterVisibleChange |  popup 显示/隐藏动画结束的回调 | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
 ## DPopupRef

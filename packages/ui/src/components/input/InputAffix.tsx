@@ -1,15 +1,17 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useImmer } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useImmer, useAsync } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 import { useCompose } from '../compose';
 import { DIcon } from '../icon';
+import { getNumberAttribute } from './utils';
 
 export interface DInputAffixContextData {
   inputAffixDisabled: boolean;
-  inputAffixPassword?: boolean;
+  inputAffixPassword: boolean;
+  inputAffixNumber: boolean;
   inputAffixSize: DInputAffixProps['dSize'];
   onFocus: () => void;
   onBlur: () => void;
@@ -24,6 +26,7 @@ export interface DInputAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dDisabled?: boolean;
   dPassword?: boolean;
   dPasswordToggle?: boolean;
+  dNumber?: boolean;
   dClearable?: boolean;
   dClearIcon?: React.ReactNode;
   dSize?: 'smaller' | 'larger';
@@ -36,6 +39,7 @@ export function DInputAffix(props: DInputAffixProps) {
     dDisabled = false,
     dPassword = false,
     dPasswordToggle = true,
+    dNumber = false,
     dClearable = false,
     dClearIcon,
     dSize,
@@ -49,8 +53,14 @@ export function DInputAffix(props: DInputAffixProps) {
   const { composeSize, composeDisabled } = useCompose();
   //#endregion
 
-  const dataRef = useRef<{ changeBindValue?: (value: string) => void; inputEl?: HTMLInputElement }>({});
+  const dataRef = useRef<{
+    changeBindValue?: (value: string) => void;
+    inputEl?: HTMLInputElement;
+    clearLoop?: () => void;
+    clearTid?: () => void;
+  }>({});
 
+  const asyncCapture = useAsync();
   const [t] = useTranslation();
 
   const [isFocus, setIsFocus] = useImmer(false);
@@ -69,6 +79,29 @@ export function DInputAffix(props: DInputAffixProps) {
     }
   }, []);
 
+  const handleNumberChange = useCallback(
+    (isIncrease = true) => {
+      const handleFunc = () => {
+        if (dataRef.current.inputEl && dataRef.current.changeBindValue) {
+          const step = getNumberAttribute(dataRef.current.inputEl.step, 1);
+          const max = getNumberAttribute(dataRef.current.inputEl.max, Infinity);
+          const min = getNumberAttribute(dataRef.current.inputEl.min, -Infinity);
+          const value = getNumberAttribute(dataRef.current.inputEl.value, 0);
+          const newValue = isIncrease ? value + step : value - step;
+          dataRef.current.changeBindValue(Math.max(min, Math.min(max, newValue)).toFixed(step.toString().split('.')[1]?.length ?? 0));
+        }
+      };
+
+      handleFunc();
+      const loop = () => {
+        handleFunc();
+        dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
+      };
+      dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);
+    },
+    [asyncCapture]
+  );
+
   const handlePasswordMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
     (e) => {
       if (e.button === 0) {
@@ -83,16 +116,46 @@ export function DInputAffix(props: DInputAffixProps) {
     [dPasswordToggle, password, setPassword]
   );
 
+  const handleNumberIncreaseMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
+    (e) => {
+      if (e.button === 0) {
+        if (document.activeElement === dataRef.current.inputEl) {
+          e.preventDefault();
+        }
+
+        handleNumberChange();
+      }
+    },
+    [handleNumberChange]
+  );
+
+  const handleNumberDecreaseMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
+    (e) => {
+      if (e.button === 0) {
+        if (document.activeElement === dataRef.current.inputEl) {
+          e.preventDefault();
+        }
+
+        handleNumberChange(false);
+      }
+    },
+    [handleNumberChange]
+  );
+
   const handleMouseUp = useCallback((e) => {
     if (document.activeElement === dataRef.current.inputEl) {
       e.preventDefault();
     }
+
+    dataRef.current.clearLoop?.();
+    dataRef.current.clearTid?.();
   }, []);
 
   const contextValue = useMemo<DInputAffixContextData>(
     () => ({
       inputAffixDisabled: disabled,
       inputAffixPassword: dPassword ? password : false,
+      inputAffixNumber: dNumber,
       inputAffixSize: size,
       onFocus: () => {
         setIsFocus(true);
@@ -108,7 +171,7 @@ export function DInputAffix(props: DInputAffixProps) {
         dataRef.current.inputEl = inputEl;
       },
     }),
-    [dPassword, disabled, password, setClearable, setIsFocus, size]
+    [dNumber, dPassword, disabled, password, setClearable, setIsFocus, size]
   );
 
   return (
@@ -117,6 +180,7 @@ export function DInputAffix(props: DInputAffixProps) {
         {...restProps}
         className={getClassName(className, `${dPrefix}input-affix`, {
           [`${dPrefix}input-affix--${size}`]: size,
+          [`${dPrefix}input-affix--number`]: dNumber,
           'is-disabled': disabled,
           'is-focus': isFocus,
         })}
@@ -167,6 +231,36 @@ export function DInputAffix(props: DInputAffixProps) {
             onMouseDown={handlePasswordMouseDown}
             onMouseUp={handleMouseUp}
           ></DButton>
+        )}
+        {dNumber && !disabled && (
+          <div className={`${dPrefix}input-affix__number-container`}>
+            <DButton
+              className={`${dPrefix}input-affix__number`}
+              tabIndex={-1}
+              dType="text"
+              dIcon={
+                <DIcon viewBox="0 0 24 24" dSize={size === 'smaller' ? 12 : size === 'larger' ? 16 : 14}>
+                  <path d="M19.637 16.4369C19.0513 17.0227 18.1015 17.0227 17.5157 16.4369L11.8589 10.7801L6.20202 16.4369C5.61623 17.0227 4.66648 17.0227 4.0807 16.4369C3.49491 15.8511 3.49491 14.9014 4.0807 14.3156L10.7982 7.59809C11.384 7.01231 12.3337 7.01231 12.9195 7.59809L19.637 14.3156C20.2228 14.9014 20.2228 15.8511 19.637 16.4369Z"></path>
+                </DIcon>
+              }
+              aria-label={t('DInputAffix', 'Increase number')}
+              onMouseDown={handleNumberIncreaseMouseDown}
+              onMouseUp={handleMouseUp}
+            ></DButton>
+            <DButton
+              className={`${dPrefix}input-affix__number`}
+              tabIndex={-1}
+              dType="text"
+              dIcon={
+                <DIcon viewBox="0 0 24 24" dSize={size === 'smaller' ? 12 : size === 'larger' ? 16 : 14}>
+                  <path d="M4.08045 7.59809C4.66624 7.01231 5.61599 7.01231 6.20177 7.59809L11.8586 13.2549L17.5155 7.59809C18.1013 7.01231 19.051 7.01231 19.6368 7.59809C20.2226 8.18388 20.2226 9.13363 19.6368 9.71941L12.9193 16.4369C12.3335 17.0227 11.3838 17.0227 10.798 16.4369L4.08045 9.71941C3.49467 9.13363 3.49467 8.18388 4.08045 7.59809Z"></path>
+                </DIcon>
+              }
+              aria-label={t('DInputAffix', 'Decrease number')}
+              onMouseDown={handleNumberDecreaseMouseDown}
+              onMouseUp={handleMouseUp}
+            ></DButton>
+          </div>
         )}
         {dSuffix && <div className={`${dPrefix}input-affix__suffix`}>{dSuffix}</div>}
       </div>

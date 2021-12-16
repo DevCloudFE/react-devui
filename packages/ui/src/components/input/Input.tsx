@@ -37,7 +37,16 @@ export const DInput = React.forwardRef<DInputRef, DInputProps>((props, ref) => {
   //#region Context
   const dPrefix = usePrefixConfig();
   const [
-    { inputAffixPassword, inputAffixDisabled, inputAffixSize, onFocus: _onFocus, onBlur: _onBlur, onClearableChange, onInputRendered },
+    {
+      inputAffixPassword,
+      inputAffixNumber,
+      inputAffixDisabled,
+      inputAffixSize,
+      onFocus: _onFocus,
+      onBlur: _onBlur,
+      onClearableChange,
+      onInputRendered,
+    },
   ] = useCustomContext(DInputAffixContext);
   const { composeSize, composeDisabled } = useCompose();
   //#endregion
@@ -100,7 +109,7 @@ export const DInput = React.forwardRef<DInputRef, DInputProps>((props, ref) => {
         [`${dPrefix}input--${size}`]: size,
       })}
       value={bindValue}
-      type={inputAffixPassword ? 'password' : type}
+      type={inputAffixNumber ? 'number' : inputAffixPassword ? 'password' : type}
       disabled={_disabled}
       aria-disabled={_disabled}
       onChange={handleChange}

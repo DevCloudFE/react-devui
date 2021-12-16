@@ -44,5 +44,5 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dType | Set the shape of the buttons in the button group | Reference DButtonProps['dType'] | 'secondary' |
 | dColor | Set the color of the buttons in the button group | Reference DButtonProps['dColor'] | 'primary' |
 | dSize | Set the size of the buttons in the button group | Reference DButtonProps['dSize'] | - |
-| buttonGroupDisabled | Disable the buttons in the button group | boolean | false |
+| dDisabled | Disable the buttons in the button group | boolean | false |
 <!-- prettier-ignore-end -->

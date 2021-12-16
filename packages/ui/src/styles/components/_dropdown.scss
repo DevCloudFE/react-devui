@@ -11,7 +11,7 @@ $dropdown-item-height: 32px;
   list-style: none;
   cursor: pointer;
 
-  transition: all 0.2s ease-out;
+  transition: background-color 0.2s ease-out;
 
   &:not(.is-disabled) {
     &:focus,
@@ -31,7 +31,7 @@ $dropdown-item-height: 32px;
   }
 
   @include e(title) {
-    flex: 1 0 0;
+    flex-shrink: 0;
 
     @include utils-ellipsis;
   }
