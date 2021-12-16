@@ -20,6 +20,7 @@
     background-color: var(--d-text-color);
     transform-origin: center center;
 
+    /* stylelint-disable-next-line declaration-property-value-disallowed-list */
     transition: all 0.3s ease-in-out;
 
     &:nth-child(1) {

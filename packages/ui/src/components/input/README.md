@@ -41,6 +41,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dDisabled | Whether to disable | boolean | false |
 | dPassword | Is it a password input | boolean | false |
 | dPasswordToggle | Whether the password input can switch the password display | boolean | true |
+| dNumber | Is it a number input | boolean | false |
 | dClearable | Can it be cleared | boolean | false |
 | dClearIcon | Custom clear icon | React.ReactNode | - |
 | dSize | Input size | 'smaller' \| 'larger' | - |

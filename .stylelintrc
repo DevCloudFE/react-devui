@@ -16,6 +16,13 @@
         "ignoreTypes": ["/^d-/"]
       }
     ],
+    "declaration-property-value-allowed-list": {
+      "/color/": ["/var/", "currentColor", "transparent", "unset", "inherit"],
+      "font-size": ["/var/", "/[0-9]+em$/"]
+    },
+    "declaration-property-value-disallowed-list": {
+      "transition": ["/all/"]
+    },
     "declaration-empty-line-before": null,
     "custom-property-pattern": null,
     "selector-class-pattern": null
