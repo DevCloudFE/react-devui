@@ -44,5 +44,5 @@ export type DButtonRef = HTMLButtonElement;
 | dType | 设置按钮组中按钮的形态 | 参考 DButtonProps['dType'] | 'secondary' |
 | dColor | 设置按钮组中按钮的颜色 | 参考 DButtonProps['dColor'] | 'primary' |
 | dSize | 设置按钮组中按钮的尺寸 | 参考 DButtonProps['dSize'] | - |
-| buttonGroupDisabled | 禁用按钮组中的按钮 | boolean | false |
+| dDisabled | 禁用按钮组中的按钮 | boolean | false |
 <!-- prettier-ignore-end -->
