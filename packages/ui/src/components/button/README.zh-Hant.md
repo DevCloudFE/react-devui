@@ -25,6 +25,7 @@ title: 按钮
 | dSize | 设置按钮尺寸 | 'smaller' \| 'larger' | - |
 | dIcon | 设置按钮的图标 | React.ReactNode | - |
 | dIconRight | 设置图标在右侧 | boolean | false |
+| disabled | 设置按钮不可用 | boolean | false |
 <!-- prettier-ignore-end -->
 
 ### DButtonRef
