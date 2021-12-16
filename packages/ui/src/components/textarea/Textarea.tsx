@@ -18,7 +18,7 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
   onValueChange?: (value: string) => void;
 }
 
-export const DTextarea = React.forwardRef<DTextareaRef, DTextareaProps>((props, ref) => {
+const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
   const {
     dFormControlName,
     dValue,
@@ -122,13 +122,17 @@ export const DTextarea = React.forwardRef<DTextareaRef, DTextareaProps>((props, 
         aria-disabled={disabled}
         onChange={handleChange}
       />
-      <div className={`${dPrefix}textarea__count`} style={{ display: dShowCount === false ? 'none' : undefined }}>
-        {isFunction(dShowCount)
-          ? dShowCount(bindValue.length)
-          : isUndefined(maxLength)
-          ? bindValue.length
-          : `${bindValue.length} / ${maxLength}`}
-      </div>
+      {dShowCount !== false && (
+        <div className={`${dPrefix}textarea__count`}>
+          {isFunction(dShowCount)
+            ? dShowCount(bindValue.length)
+            : isUndefined(maxLength)
+            ? bindValue.length
+            : `${bindValue.length} / ${maxLength}`}
+        </div>
+      )}
     </>
   );
-});
+};
+
+export const DTextarea = React.forwardRef(Textarea);

@@ -18,7 +18,7 @@ export interface DRadioProps extends React.HTMLAttributes<HTMLElement>, DFormCon
   onCheckedChange?: (checked: boolean) => void;
 }
 
-export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
+const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, ref) => {
   const {
     dFormControlName,
     dChecked,
@@ -102,4 +102,6 @@ export const DRadio = React.forwardRef<DRadioRef, DRadioProps>((props, ref) => {
       </label>
     </div>
   );
-});
+};
+
+export const DRadio = React.forwardRef(Radio);

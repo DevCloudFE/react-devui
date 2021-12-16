@@ -11,19 +11,18 @@ When there are too many list entries, using virtual scrolling can greatly reduce
 
 ## API
 
-### DVirtualScrollProps\<T\>
+### DVirtualScrollProps
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dListRender | List rendering | `(props: DListRenderProps) => React.ReactNode` | - |
-| dWidth | List width, set this value to enable virtual scrolling in the horizontal direction | string \| number | - |
-| dHeight | List height, set this value to enable virtual scrolling in the vertical direction | string \| number | - |
+| dScrollY | Whether it is Y axis scrolling | boolean | true |
 | dItemWidth | Manually set the width of list entries | number | - |
 | dItemHeight | Manually set the height of list items | number | - |
-| dList | List data | T[] | - |
-| dItemRender | List item rendering | `(item: T, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
-| dCustomSize | Enable multi-size mixing | `(item: T, index: number) => number` | - |
+| dList | List data | any[] | - |
+| dItemRender | List item rendering | `(item: any, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
+| dCustomSize | Enable multi-size mixing | `(item: any, index: number) => number` | - |
 | onScrollEnd | Callback function when scrolling to the bottom of the list | `() => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -31,7 +30,6 @@ When there are too many list entries, using virtual scrolling can greatly reduce
 
 ```tsx
 export interface DListRenderProps {
-  style: React.CSSProperties;
   [key: `data-${string}virtual-scroll`]: string;
   onScroll: React.UIEventHandler<HTMLElement>;
   children: React.ReactNode;

@@ -15,7 +15,7 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dSpinSpeed?: string | number;
 }
 
-export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) => {
+const Icon: React.ForwardRefRenderFunction<SVGSVGElement, DIconProps> = (props, ref) => {
   const dPrefix = usePrefixConfig();
   const {
     dName,
@@ -80,4 +80,6 @@ export const DIcon = React.forwardRef<SVGSVGElement, DIconProps>((props, ref) =>
       {paths ?? children}
     </svg>
   );
-});
+};
+
+export const DIcon = React.forwardRef(Icon);

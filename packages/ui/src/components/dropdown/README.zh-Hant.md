@@ -25,6 +25,7 @@ title: 下拉菜单
 | dDestroy | 关闭后销毁节点 | boolean | false |
 | dArrow | 是否显示箭头 | boolean | false |
 | dCloseOnItemClick | 点击菜单项是否关闭菜单 | boolean | true |
+| dPopupClassName | 向弹窗添加 className | string | - |
 | onVisibleChange | 菜单显示/隐藏的回调 | `(visible: boolean) => void` | - |
 | onItemClick | 点击菜单项的回调 | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
@@ -51,6 +52,7 @@ title: 下拉菜单
 | dIcon | 设置子菜单图标 | React.ReactNode | - |
 | dTitle | 设置子菜单标题 | React.ReactNode | - |
 | dDisabled | 是否禁用 | boolean | false |
+| dPopupClassName | 向弹窗添加 className | string | - |
 <!-- prettier-ignore-end -->
 
 ### DDropdownItemProps

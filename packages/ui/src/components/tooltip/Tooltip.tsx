@@ -14,7 +14,7 @@ export interface DTooltipProps extends Omit<DPopupProps, 'dVisible' | 'dPopupCon
   dTitle: React.ReactNode;
 }
 
-export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref) => {
+const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (props, ref) => {
   const { dVisible, dTitle, onVisibleChange, id, className, children, ...restProps } = useComponentConfig(DTooltip.name, props);
 
   //#region Context
@@ -83,4 +83,6 @@ export const DTooltip = React.forwardRef<DTooltipRef, DTooltipProps>((props, ref
       onVisibleChange={changeVisible}
     />
   );
-});
+};
+
+export const DTooltip = React.forwardRef(Tooltip);

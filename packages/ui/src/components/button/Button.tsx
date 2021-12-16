@@ -21,7 +21,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconRight?: boolean;
 }
 
-export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) => {
+const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props, ref) => {
   const {
     dType = 'primary',
     dColor = 'primary',
@@ -109,4 +109,6 @@ export const DButton = React.forwardRef<DButtonRef, DButtonProps>((props, ref) =
       )}
     />
   );
-});
+};
+
+export const DButton = React.forwardRef(Button);

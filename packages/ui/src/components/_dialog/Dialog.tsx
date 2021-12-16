@@ -23,7 +23,7 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
 }
 
-export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) => {
+const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props, ref) => {
   const {
     dVisible,
     dCallbackList,
@@ -125,4 +125,6 @@ export const DDialog = React.forwardRef<DDialogRef, DDialogProps>((props, ref) =
       }
     />
   );
-});
+};
+
+export const DDialog = React.forwardRef(Dialog);

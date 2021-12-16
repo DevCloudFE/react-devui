@@ -51,7 +51,7 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
+const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, ref) => {
   const {
     dVisible,
     dPopupContent,
@@ -88,11 +88,16 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   //#region Ref
   const [popupEl, popupRef] = useRefCallback<HTMLDivElement>();
-  const [hoverReferenceEl, hoverReferenceRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const dataRef = useRef<{ clearTid: (() => void) | null; hasCancelLeave: boolean; transitionState?: DTransitionStateList }>({
+  const dataRef = useRef<{
+    clearTid: (() => void) | null;
+    clearResize: [(() => void) | null, (() => void) | null];
+    hasCancelLeave: boolean;
+    transitionState?: DTransitionStateList;
+  }>({
     clearTid: null,
+    clearResize: [null, null],
     hasCancelLeave: false,
   });
 
@@ -256,12 +261,12 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
   // trigger element emit `onMouseLeave`.
   // It's also no emit `onMouseEnter` when enter to popup element sometimes.
   const checkMouseLeave = useCallback(() => {
-    if (hoverReferenceEl && triggerRef.current) {
-      return checkOutEl(hoverReferenceEl) && checkOutEl(triggerRef.current);
+    if (popupEl && triggerRef.current) {
+      return checkOutEl(popupEl) && checkOutEl(triggerRef.current);
     }
 
     return false;
-  }, [hoverReferenceEl, triggerRef]);
+  }, [popupEl, triggerRef]);
 
   const handleMouseEnter = useCallback(
     (e) => {
@@ -449,21 +454,17 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible && triggerRef.current && popupEl) {
+    if (dVisible) {
       if (!isFixed && rootContentRef.current) {
         asyncGroup.onResize(rootContentRef.current, updatePosition);
       }
-
-      asyncGroup.onResize(popupEl, updatePosition);
-
-      asyncGroup.onResize(triggerRef.current, updatePosition);
 
       asyncGroup.onGlobalScroll(updatePosition);
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dVisible, updatePosition, triggerRef, popupEl, rootContentRef, isFixed]);
+  }, [asyncCapture, dVisible, updatePosition, rootContentRef, isFixed]);
   //#endregion
 
   useImperativeHandle(
@@ -524,27 +525,27 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
         dEl={popupEl}
         dVisible={dVisible}
         dCallbackList={{
-          beforeEnter: (el) => {
-            if (hoverReferenceEl) {
-              const rect = el.getBoundingClientRect();
-              hoverReferenceEl.style.width = rect.width + 'px';
-              hoverReferenceEl.style.height = rect.height + 'px';
-              dataRef.current.hasCancelLeave = false;
-            }
+          beforeEnter: () => {
+            dataRef.current.hasCancelLeave = false;
             updatePosition();
 
             return dataRef.current.transitionState;
           },
-          afterEnter: () => {
+          afterEnter: (el) => {
             if (dataRef.current.hasCancelLeave && checkMouseLeave()) {
               onVisibleChange?.(false);
             }
             afterVisibleChange?.(true);
             updatePosition();
+            dataRef.current.clearResize[0] = asyncCapture.onResize(el, updatePosition);
+            if (triggerRef.current) {
+              dataRef.current.clearResize[1] = asyncCapture.onResize(triggerRef.current, updatePosition);
+            }
           },
           beforeLeave: () => dataRef.current.transitionState,
           afterLeave: () => {
             afterVisibleChange?.(false);
+            dataRef.current.clearResize.forEach((cb) => cb?.());
           },
         }}
         dRender={(hidden) =>
@@ -552,41 +553,38 @@ export const DPopup = React.forwardRef<DPopupRef, DPopupProps>((props, ref) => {
           dPopupContent &&
           containerRef.current &&
           ReactDOM.createPortal(
-            <>
-              <div
-                {...restProps}
-                ref={popupRef}
-                className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
-                style={mergeStyle(style, {
-                  ...popupPositionStyle,
-                  display: hidden ? 'none' : undefined,
-                  zIndex,
-                })}
-                tabIndex={-1}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onClick={handleClick}
-              >
-                {dArrow && (
-                  <div
-                    className={getClassName(`${dPrefix}popup__arrow`, {
-                      [`${dPrefix}popup__arrow--custom`]: arrowPosition,
-                    })}
-                    style={arrowPosition}
-                  ></div>
-                )}
-                {dPopupContent}
-              </div>
-              {dTrigger === 'hover' && (
-                <div ref={hoverReferenceRef} style={{ ...popupPositionStyle, visibility: 'hidden' }} aria-hidden={true}></div>
+            <div
+              {...restProps}
+              ref={popupRef}
+              className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
+              style={mergeStyle(style, {
+                ...popupPositionStyle,
+                display: hidden ? 'none' : undefined,
+                zIndex,
+              })}
+              tabIndex={-1}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onClick={handleClick}
+            >
+              {dArrow && (
+                <div
+                  className={getClassName(`${dPrefix}popup__arrow`, {
+                    [`${dPrefix}popup__arrow--custom`]: arrowPosition,
+                  })}
+                  style={arrowPosition}
+                ></div>
               )}
-            </>,
+              {dPopupContent}
+            </div>,
             containerRef.current
           )
         }
       />
     </>
   );
-});
+};
+
+export const DPopup = React.forwardRef(Popup);

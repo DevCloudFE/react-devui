@@ -27,6 +27,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dDestroy | Destroy the node after shutdown | boolean | false |
 | dMouseEnterDelay | How many milliseconds after the mouse is moved to display | number | 150 |
 | dMouseLeaveDelay | How many milliseconds after the mouse is moved out will it be displayed | number | 150 |
+| dEscClose | Whether to close by pressing Esc | boolean | true |
 | dCustomPopup | Custom popup | `(popupEl: HTMLElement, targetEl: HTMLElement) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties }` | - |
 | onVisibleChange | popup display/hide callback | `(visible: boolean) => void` | - |
 | afterVisibleChange | Callback for the end of the popup show/hide animation | `(visible: boolean) => void` | - |

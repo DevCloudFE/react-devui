@@ -10,19 +10,18 @@ title: 虚拟滚动
 
 ## API
 
-### DVirtualScrollProps\<T\>
+### DVirtualScrollProps
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
 | dListRender | 列表渲染 | `(props: DListRenderProps) => React.ReactNode` | - |
-| dWidth | 列表宽度，设定该值启用水平方向的虚拟滚动 | string \| number | - |
-| dHeight | 列表高度，设定该值启用垂直方向的虚拟滚动 | string \| number | - |
+| dScrollY | 是否为Y轴滚动 | boolean | true |
 | dItemWidth | 手动设定列表条目宽度 | number | - |
 | dItemHeight | 手动设定列表条目高度 | number | - |
-| dList | 列表数据 | T[] | - |
-| dItemRender | 列表条目渲染 | `(item: T, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
-| dCustomSize | 启用多尺寸混合 | `(item: T, index: number) => number` | - |
+| dList | 列表数据 | any[] | - |
+| dItemRender | 列表条目渲染 | `(item: any, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
+| dCustomSize | 启用多尺寸混合 | `(item: any, index: number) => number` | - |
 | onScrollEnd | 滚动到列表底部时的回调函数 | `() => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -30,7 +29,6 @@ title: 虚拟滚动
 
 ```tsx
 export interface DListRenderProps {
-  style: React.CSSProperties;
   [key: `data-${string}virtual-scroll`]: string;
   onScroll: React.UIEventHandler<HTMLElement>;
   children: React.ReactNode;

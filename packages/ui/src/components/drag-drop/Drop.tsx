@@ -33,7 +33,7 @@ export interface DDropProps {
   onDragEnd?: (id: string) => void;
 }
 
-export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
+const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) => {
   const {
     dContainer,
     dDirection = 'vertical',
@@ -206,4 +206,6 @@ export const DDrop = React.forwardRef<DDropRef, DDropProps>((props, ref) => {
   useImperativeHandle(ref, () => orderIds, [orderIds]);
 
   return <DDropContext.Provider value={contextValue}>{orderChildren}</DDropContext.Provider>;
-});
+};
+
+export const DDrop = React.forwardRef(Drop);
