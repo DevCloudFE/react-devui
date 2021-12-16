@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, DRow } from '@react-devui/ui';
-import { useCustomContext, useImmer } from '@react-devui/ui/hooks';
+import { useCustomContext } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../App';
 import menu from '../../configs/menu.json';
@@ -14,7 +14,7 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const [{ menuOpen = false, pageMounted, onMenuOpenChange }] = useCustomContext(AppContext);
 
-  const [activeId, setActiveId] = useImmer<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     if (pageMounted && window.location.href.includes(String.raw`/components/`)) {

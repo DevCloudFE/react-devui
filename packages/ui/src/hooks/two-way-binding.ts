@@ -1,11 +1,13 @@
-import type { Updater } from './immer';
+import type { Updater as IUpdater } from './immer';
 
-import { isEqual } from 'lodash';
-import { useCallback } from 'react';
+import { freeze, produce } from 'immer';
+import { isFunction, isUndefined } from 'lodash';
+import { useCallback, useState } from 'react';
 
 import { DFormItemContext } from '../components/form';
 import { useCustomContext } from './context';
-import { useImmer } from './immer';
+
+export type Updater<S> = (value: S) => void;
 
 export function useTwoWayBinding<T>(
   initialValue: T | (() => T),
@@ -16,31 +18,35 @@ export function useTwoWayBinding<T>(
     enable?: boolean;
     name?: string;
   }
-): [T, (value: T) => void] {
+): [T, IUpdater<T>] {
   const [{ value: formControlValue, onValueChange: onFormControlValueChange }, formItemContext] = useCustomContext(DFormItemContext);
   const formControlEnable = formControlOptions && (formControlOptions.enable ?? true) && formItemContext !== null;
   const formControlName = formControlOptions?.name;
 
   const setValue = input?.[1];
-  const [autoValue, setAutoValue] = useImmer<T>(initialValue);
-  const value = input?.[0] ?? autoValue;
+  const [autoValue, setAutoValue] = useState<T>(initialValue);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const value = isUndefined(input?.[0]) ? autoValue : input![0];
 
   const currentValue = formControlEnable ? (formControlValue as T) : value;
 
   const changeValue = useCallback(
-    (val: T) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (updater: any) => {
+      const val = isFunction(updater) ? produce(currentValue, updater) : freeze(updater);
+
       if (formControlEnable) {
         if (formControlName) {
-          if (!isEqual(val, currentValue)) {
+          if (!Object.is(val, currentValue)) {
             onFormControlValueChange?.(val, formControlName);
           }
         } else {
-          console.warn('Please add formControlName to component that in FormControl');
+          console.warn('Please add `dFormControlName` to component that in `DFormControl`');
         }
       } else {
         setValue?.(val);
         setAutoValue(val);
-        if (!isEqual(val, currentValue)) {
+        if (!Object.is(val, currentValue)) {
           onValueChange?.(val);
         }
       }

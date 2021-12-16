@@ -18,7 +18,7 @@
     height: var(--#{$variable-prefix}size);
     border: 1px solid var(--#{$variable-prefix}border-color);
 
-    transition: border-color 116ms ease-out, background-color 116ms ease-out;
+    transition: border-color 116ms linear, background-color 116ms linear;
 
     &:first-of-type {
       border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);

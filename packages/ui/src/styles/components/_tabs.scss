@@ -399,10 +399,6 @@
     }
   }
 
-  @include e(dropdown) {
-    max-height: 35vh;
-  }
-
   @include e(slider-indicator) {
     position: absolute;
     z-index: 1;
@@ -450,7 +446,7 @@
 
   cursor: pointer;
 
-  transition: color 0.2s ease-out;
+  transition: color 0.2s linear;
 
   &:not(.is-disabled) {
     &:focus,

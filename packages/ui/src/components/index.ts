@@ -34,11 +34,17 @@ export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
 
+export type { DSelectSingleProps, DSelectMultipleProps } from './select';
+export { DSelect } from './select';
+
 export type { DSeparatorProps } from './separator';
 export { DSeparator } from './separator';
 
 export type { DTabProps, DTabsProps } from './tabs';
 export { DTab, DTabs } from './tabs';
+
+export type { DTagProps } from './tag';
+export { DTag } from './tag';
 
 export type { DTextareaProps } from './textarea';
 export { DTextarea } from './textarea';

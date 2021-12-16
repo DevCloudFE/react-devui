@@ -17,8 +17,10 @@ title: 虚拟滚动
 | --- | --- | --- | --- | 
 | dListRender | 列表渲染 | `(props: DListRenderProps) => React.ReactNode` | - |
 | dScrollY | 是否为Y轴滚动 | boolean | true |
-| dItemWidth | 手动设定列表条目宽度 | number | - |
-| dItemHeight | 手动设定列表条目高度 | number | - |
+| dWidth | 告知列表宽度，默认自动计算 | number | - |
+| dHeight | 告知列表高度，默认自动计算 | number | - |
+| dItemWidth | 告知列表条目宽度，默认自动计算 | number | - |
+| dItemHeight | 告知列表条目高度，默认自动计算 | number | - |
 | dList | 列表数据 | any[] | - |
 | dItemRender | 列表条目渲染 | `(item: any, index: number, props: DItemRenderProps)  => React.ReactNode` | - | 
 | dCustomSize | 启用多尺寸混合 | `(item: any, index: number) => number` | - |

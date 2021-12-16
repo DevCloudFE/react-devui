@@ -13,7 +13,7 @@ It is desirable to allow users to enter large amounts of free-form text, such as
 
 ### DTextareaProps
 
-Extend `React.InputHTMLAttributes<HTMLTextAreaElement>`, [DFormControl](/components/Form#DFormControl).
+Extend `React.InputHTMLAttributes<HTMLTextAreaElement>, DFormControl`, [DFormControl](/components/Form#DFormControl).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 

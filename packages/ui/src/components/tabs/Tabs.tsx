@@ -1,9 +1,9 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
 import type { DTabProps } from './Tab';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
@@ -72,9 +72,9 @@ export function DTabs(props: DTabsProps) {
 
   const asyncCapture = useAsync();
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
-  const [listOverflow, setListOverflow] = useImmer(true);
+  const [listOverflow, setListOverflow] = useState(true);
   const [dropdownList, setDropdownList] = useImmer<Array<React.ReactElement<DTabProps>>>([]);
-  const [scrollEnd, setScrollEnd] = useImmer(false);
+  const [scrollEnd, setScrollEnd] = useState(false);
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
@@ -287,7 +287,6 @@ export function DTabs(props: DTabsProps) {
               <div className={`${dPrefix}tabs__button-container`}>
                 {listOverflow && (
                   <DDropdown
-                    className={`${dPrefix}tabs__dropdown`}
                     dTriggerNode={
                       <div
                         className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--more`, {

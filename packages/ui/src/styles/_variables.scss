@@ -39,6 +39,7 @@ $themes: (
   /** basic **/
   --#{$variable-prefix}text-color: #212529;
   --#{$variable-prefix}background-color: #fff;
+  --#{$variable-prefix}background-color-rgb: 255 255 255;
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}divider-color: #eee;
   --#{$variable-prefix}border-color: #d9d9d9;
@@ -52,6 +53,10 @@ $themes: (
   --#{$variable-prefix}color-step-30: hsl(0deg 0% 97%);
   --#{$variable-prefix}color-step-40: hsl(0deg 0% 96%);
   --#{$variable-prefix}color-step-50: hsl(0deg 0% 95%);
+  --#{$variable-prefix}color-step-60: hsl(0deg 0% 94%);
+  --#{$variable-prefix}color-step-70: hsl(0deg 0% 93%);
+  --#{$variable-prefix}color-step-80: hsl(0deg 0% 92%);
+  --#{$variable-prefix}color-step-90: hsl(0deg 0% 91%);
   --#{$variable-prefix}color-step-100: hsl(0deg 0% 90%);
   --#{$variable-prefix}color-step-150: hsl(0deg 0% 85%);
   --#{$variable-prefix}color-step-200: hsl(0deg 0% 80%);

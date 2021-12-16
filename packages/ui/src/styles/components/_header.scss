@@ -17,6 +17,9 @@
   }
 
   @include e(buttons) {
+    display: inline-flex;
+    gap: 0 var(--#{$variable-prefix}margin-size);
+    align-items: center;
     margin-left: auto;
   }
 }

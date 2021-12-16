@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   usePrefixConfig,
@@ -56,9 +56,9 @@ export function DAnchor(props: DAnchorProps) {
   });
 
   const asyncCapture = useAsync();
-  const [customScroll] = useImmer(new CustomScroll());
+  const [customScroll] = useState(() => new CustomScroll());
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
-  const [activeHref, setActiveHref] = useImmer<string | null>(null);
+  const [activeHref, setActiveHref] = useState<string | null>(null);
 
   const pageRef = useRefSelector(dPage ?? null);
 

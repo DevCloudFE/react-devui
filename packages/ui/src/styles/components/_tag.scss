@@ -1,0 +1,62 @@
+@include b(tag) {
+  --#{$variable-prefix}tag-padding-size: 8px;
+  --#{$variable-prefix}tag-size: 24px;
+  @include rfs(0.8rem, --#{$variable-prefix}tag-font);
+
+  display: inline-flex;
+  align-items: center;
+  height: var(--#{$variable-prefix}tag-size);
+  padding: 0 var(--#{$variable-prefix}tag-padding-size);
+  border-radius: var(--#{$variable-prefix}border-radius);
+
+  font-size: var(--#{$variable-prefix}tag-font);
+
+  vertical-align: top;
+
+  @include m(primary) {
+    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
+
+    background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}color-step-40));
+  }
+
+  @include m(fill) {
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    color: #fff;
+
+    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-step-400));
+  }
+
+  @include m(outline) {
+    padding: 0 calc(var(--#{$variable-prefix}tag-padding-size) - 1px);
+
+    border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}border-color));
+
+    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-step-600));
+  }
+
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      --#{$variable-prefix}tag-color: var(--#{$variable-prefix}color-#{$theme});
+      --#{$variable-prefix}tag-border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+      --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}color-#{$theme}-background-2);
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}tag-padding-size: 6px;
+    --#{$variable-prefix}tag-size: 20px;
+    @include rfs(0.6rem, --#{$variable-prefix}tag-font);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}tag-padding-size: 10px;
+    --#{$variable-prefix}tag-size: 28px;
+    @include rfs(0.9rem, --#{$variable-prefix}tag-font);
+  }
+
+  @include e(close) {
+    margin-left: 4px;
+
+    cursor: pointer;
+  }
+}

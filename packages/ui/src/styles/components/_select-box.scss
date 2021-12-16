@@ -1,0 +1,177 @@
+@include b(select-box) {
+  --#{$variable-prefix}select-box-space: 11px;
+
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  height: var(--#{$variable-prefix}size);
+  padding: 0 var(--#{$variable-prefix}select-box-space);
+  border: 1px solid var(--#{$variable-prefix}border-color);
+
+  font-size: var(--#{$variable-prefix}font);
+  font-family: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+  text-align: unset;
+  text-transform: none;
+  vertical-align: top;
+
+  background-color: var(--#{$variable-prefix}background-color);
+
+  outline: none;
+  cursor: pointer;
+
+  transition: border-color 0.2s linear;
+
+  appearance: none;
+
+  @include utils-disabled(true);
+
+  @at-root {
+    .#{$variable-prefix}compose {
+      .#{$variable-prefix}select-box {
+        flex-grow: 1;
+        width: 0;
+      }
+    }
+  }
+
+  &:not(.is-disabled) {
+    &:hover {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:focus {
+      z-index: var(--#{$variable-prefix}hover-z-index);
+
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include when(expanded) {
+    z-index: var(--#{$variable-prefix}hover-z-index);
+
+    border-color: var(--#{$variable-prefix}color-primary);
+  }
+
+  @include when(disabled) {
+    .#{$variable-prefix}select-box__icon {
+      color: var(--#{$variable-prefix}disabled-color);
+    }
+    .#{$variable-prefix}select-box__placeholder {
+      color: var(--#{$variable-prefix}color-step-100);
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}select-box-space: 7px;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}select-box-space: 15px;
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+  }
+
+  @include e(content) {
+    flex-grow: 1;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(suffix) {
+    z-index: 1;
+
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+
+  @include e(search) {
+    z-index: 1;
+
+    flex-grow: 1;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+
+    font: inherit;
+    font-size: var(--#{$variable-prefix}font);
+    letter-spacing: inherit;
+
+    outline: none;
+
+    appearance: none;
+
+    &::-webkit-search-cancel-button {
+      display: none;
+
+      appearance: none;
+    }
+  }
+
+  @include e(placeholder) {
+    position: absolute;
+    top: 0;
+    right: var(--#{$variable-prefix}select-box-space);
+    bottom: 0;
+    left: var(--#{$variable-prefix}select-box-space);
+
+    display: flex;
+    align-items: center;
+
+    color: var(--#{$variable-prefix}color-step-400);
+
+    & > span {
+      @include utils-ellipsis;
+    }
+  }
+
+  @include e(clear) {
+    position: absolute;
+    right: var(--#{$variable-prefix}select-box-space);
+    z-index: 5;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--d-color-step-400);
+
+    background-color: var(--#{$variable-prefix}background-color);
+
+    transition: color 0.2s linear, opacity 0.1s linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
+  }
+
+  @include e(icon) {
+    z-index: 1;
+
+    flex-shrink: 0;
+    margin-left: 4px;
+
+    color: var(--#{$variable-prefix}color-step-400);
+
+    transition: transform 133ms linear, color 133ms linear;
+
+    @include when(expand) {
+      color: var(--#{$variable-prefix}color-primary);
+
+      transform: rotate(180deg);
+    }
+  }
+}

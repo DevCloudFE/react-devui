@@ -13,7 +13,7 @@ When the user needs to enter content.
 
 ### DRadioProps
 
-Extend `React.InputHTMLAttributes<HTMLInputElement>`, [DFormControl](/components/Form#DFormControl).
+Extend `React.InputHTMLAttributes<HTMLInputElement>, DFormControl`, [DFormControl](/components/Form#DFormControl).
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 

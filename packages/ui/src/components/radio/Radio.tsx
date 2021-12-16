@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
 import React, { useCallback } from 'react';
@@ -44,8 +44,8 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   const wave = useWave();
 
-  const _id = useId();
-  const __id = id ?? `${dPrefix}radio-${_id}`;
+  const uniqueId = useId();
+  const _id = id ?? `${dPrefix}radio-${uniqueId}`;
 
   const inGroup = radioGroupContext !== null;
 
@@ -85,19 +85,19 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
       <div className={`${dPrefix}radio__input-wrapper`}>
         <input
           ref={ref}
-          id={__id}
+          id={_id}
           className={`${dPrefix}radio__input`}
           checked={checked}
           type="radio"
           value={dValue}
           name={radioGroupName}
           disabled={disabled}
-          aria-labelledby={`${dPrefix}radio-label-${_id}`}
+          aria-labelledby={`${dPrefix}radio-label-${uniqueId}`}
           aria-checked={checked}
           onChange={handleChange}
         />
       </div>
-      <label id={`${dPrefix}radio-label-${_id}`} className={`${dPrefix}radio__label`} htmlFor={__id}>
+      <label id={`${dPrefix}radio-label-${uniqueId}`} className={`${dPrefix}radio__label`} htmlFor={_id}>
         {children}
       </label>
     </div>

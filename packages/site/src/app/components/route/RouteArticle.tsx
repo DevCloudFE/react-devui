@@ -1,12 +1,12 @@
 import { isString, isUndefined } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DIcon, DAnchor, DAnchorLink, DRow } from '@react-devui/ui';
 import { DTransition } from '@react-devui/ui/components/_transition';
 import { useImmer, useRefCallback } from '@react-devui/ui/hooks';
 
 import './RouteArticle.scss';
-import { toString } from './component/utils';
+import marked, { toString } from './utils';
 
 export interface AppRouteArticleProps {
   html?: number[];
@@ -15,10 +15,10 @@ export interface AppRouteArticleProps {
 }
 
 export function AppRouteArticle(props: AppRouteArticleProps) {
-  const html = props.html ? toString(props.html) : undefined;
+  const html = props.html ? marked(toString(props.html)) : undefined;
 
   const [links, setLinks] = useImmer<Array<{ href: string; title: string }>>(props.links ?? []);
-  const [menuOpen, setMenuOpen] = useImmer(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [el, ref] = useRefCallback();
 
   const icon = (top: boolean) => (
@@ -64,7 +64,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
         setLinks([]);
       };
     } else {
-      setLinks(props.links);
+      setLinks([...props.links, { href: '#API', title: 'API' }]);
     }
   }, [props.links, setLinks]);
 

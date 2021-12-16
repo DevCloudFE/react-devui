@@ -1,17 +1,15 @@
-$dropdown-item-height: 32px;
-
 @mixin dropdown-item() {
   position: relative;
 
   display: flex;
   align-items: center;
-  height: $dropdown-item-height;
+  height: 32px;
   margin: 0;
 
   list-style: none;
   cursor: pointer;
 
-  transition: background-color 0.2s ease-out;
+  transition: background-color 0.2s linear;
 
   &:not(.is-disabled) {
     &:focus,
@@ -43,7 +41,7 @@ $dropdown-item-height: 32px;
     display: flex;
     align-items: center;
     width: 100%;
-    height: $dropdown-item-height;
+    height: 32px;
     padding: 0 12px;
 
     color: var(--#{$variable-prefix}color-step-400);
@@ -51,9 +49,12 @@ $dropdown-item-height: 32px;
 }
 
 @include b(dropdown) {
+  --#{$variable-prefix}dropdown-item-height: 32px;
+
   position: relative;
 
   min-width: 120px;
+  max-height: calc(8px + 32px * 6);
 
   padding: 4px 0;
   overflow-x: hidden;
@@ -111,7 +112,7 @@ $dropdown-item-height: 32px;
 
   display: flex;
   align-items: center;
-  height: $dropdown-item-height;
+  height: 32px;
   margin: 0;
   padding: 0 12px;
 

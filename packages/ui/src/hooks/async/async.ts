@@ -1,9 +1,8 @@
 import { isUndefined } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
-import { useImmer } from '../immer';
 import { globalEscStack } from './esc';
 
 interface CaptureMethod {
@@ -132,7 +131,7 @@ export class AsyncCapture extends BaseAsyncCapture {
 }
 
 export function useAsync(): Omit<AsyncCapture, 'fromEvent'> & CaptureMethod {
-  const [asyncCapture] = useImmer(() => new AsyncCapture());
+  const [asyncCapture] = useState(() => new AsyncCapture());
 
   useEffect(() => {
     return () => {

@@ -1,9 +1,9 @@
 import type { DFooterProps } from '../_footer';
 
 import { isBoolean } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DFooter } from '../_footer';
 import { DDrawerContext } from './Drawer';
@@ -24,8 +24,8 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
   const [{ closeDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
-  const [okLoading, setOkLoading] = useImmer(false);
-  const [cancelLoading, setCancelLoading] = useImmer(false);
+  const [okLoading, setOkLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const okButtonProps = useMemo(() => {
     if (isBoolean(dOkButtonProps?.dLoading)) {

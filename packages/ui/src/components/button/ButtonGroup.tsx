@@ -7,7 +7,7 @@ import { getClassName } from '../../utils';
 
 export interface DButtonGroupContextData {
   buttonGroupType: DButtonProps['dType'];
-  buttonGroupColor: DButtonProps['dColor'];
+  buttonGroupTheme: DButtonProps['dTheme'];
   buttonGroupSize: DButtonProps['dSize'];
   buttonGroupDisabled: boolean;
 }
@@ -15,7 +15,7 @@ export const DButtonGroupContext = React.createContext<DButtonGroupContextData |
 
 export interface DButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   dType?: DButtonProps['dType'];
-  dColor?: DButtonProps['dColor'];
+  dTheme?: DButtonProps['dTheme'];
   dSize?: DButtonProps['dSize'];
   dDisabled?: boolean;
 }
@@ -23,7 +23,7 @@ export interface DButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> 
 export function DButtonGroup(props: DButtonGroupProps) {
   const {
     dType = 'secondary',
-    dColor = 'primary',
+    dTheme = 'primary',
     dDisabled = false,
     dSize,
     className,
@@ -38,11 +38,11 @@ export function DButtonGroup(props: DButtonGroupProps) {
   const contextValue = useMemo<DButtonGroupContextData>(
     () => ({
       buttonGroupType: dType,
-      buttonGroupColor: dColor,
+      buttonGroupTheme: dTheme,
       buttonGroupSize: dSize,
       buttonGroupDisabled: dDisabled,
     }),
-    [dType, dColor, dSize, dDisabled]
+    [dType, dTheme, dSize, dDisabled]
   );
 
   return (

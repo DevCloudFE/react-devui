@@ -20,15 +20,15 @@ describe('DButton', () => {
   });
 
   it('should `dType` work', () => {
-    const dType = 'secondary';
-    render(<DButton dType={dType} />);
-    expect(buttonClassList().contains(`${PREFIX}button--${dType}`)).toBeTruthy();
+    const type = 'secondary';
+    render(<DButton dType={type} />);
+    expect(buttonClassList().contains(`${PREFIX}button--${type}`)).toBeTruthy();
   });
 
-  it('should `dColor` work', () => {
-    const dColor = 'danger';
-    render(<DButton dColor={dColor} />);
-    expect(buttonClassList().contains(`t-${dColor}`)).toBeTruthy();
+  it('should `dTheme` work', () => {
+    const theme = 'danger';
+    render(<DButton dTheme={theme} />);
+    expect(buttonClassList().contains(`t-${theme}`)).toBeTruthy();
   });
 
   it('should `dLoading` work', () => {
@@ -103,16 +103,16 @@ describe('ButtonGroup', () => {
     expectBtnClass(`${PREFIX}button--${type}`);
   });
 
-  it('should `dColor` work', () => {
-    const color = 'warning';
+  it('should `dTheme` work', () => {
+    const theme = 'warning';
     render(
-      <DButtonGroup dColor={color}>
+      <DButtonGroup dTheme={theme}>
         <DButton>L</DButton>
         <DButton>M</DButton>
         <DButton>R</DButton>
       </DButtonGroup>
     );
-    expectBtnClass(`t-${color}`);
+    expectBtnClass(`t-${theme}`);
   });
 
   it('should `dSize` work', () => {

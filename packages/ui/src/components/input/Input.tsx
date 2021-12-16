@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
 import { isUndefined } from 'lodash';

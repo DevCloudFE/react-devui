@@ -32,10 +32,12 @@ export interface DTransitionProps {
   dEndStyle?: { enter?: Partial<CSSStyleDeclaration>; leave?: Partial<CSSStyleDeclaration> };
   dSkipFirst?: boolean;
   dRender: (hidden: boolean) => React.ReactNode;
+  afterEnter?: () => void;
+  afterLeave?: () => void;
 }
 
 export function DTransition(props: DTransitionProps) {
-  const { dEl, dVisible = false, dCallbackList, dEndStyle, dSkipFirst = true, dRender } = props;
+  const { dEl, dVisible = false, dCallbackList, dEndStyle, dSkipFirst = true, dRender, afterEnter, afterLeave } = props;
 
   const dataRef = useRef({
     hasfirstRun: false,
@@ -44,7 +46,7 @@ export function DTransition(props: DTransitionProps) {
   });
 
   const asyncCapture = useAsync();
-  const [hidden, setHidden] = useImmer(!dVisible);
+  const [hidden, setHidden] = useState(!dVisible);
   const [cssRecord] = useImmer(() => new CssRecord());
 
   const [startEnterTransition, setStartEnterTransition] = useState(0);
@@ -81,6 +83,7 @@ export function DTransition(props: DTransitionProps) {
             cssRecord.backCss(dEl);
             cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
             callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl);
+            dVisible ? afterEnter?.() : afterLeave?.();
             flushSync(() => {
               if (!dVisible) {
                 setHidden(true);

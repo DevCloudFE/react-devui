@@ -12,7 +12,7 @@ title: 文本域
 
 ### DTextareaProps
 
-继承 `React.InputHTMLAttributes<HTMLTextAreaElement>`，[DFormControl](/components/Form#DFormControl)。
+继承 `React.InputHTMLAttributes<HTMLTextAreaElement>, DFormControl`，[DFormControl](/components/Form#DFormControl)。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 

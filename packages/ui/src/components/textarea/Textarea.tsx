@@ -1,11 +1,11 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useMemo } from 'react';
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useImmer, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
@@ -49,7 +49,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     name: dFormControlName,
   });
 
-  const [rowNum, setRowNum] = useImmer(1);
+  const [rowNum, setRowNum] = useState(1);
 
   const resizable = dResizable && isUndefined(dRows);
   const heightStyle = useMemo(() => {

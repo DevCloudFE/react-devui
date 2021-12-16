@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useImmer, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useAsync } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 import { useCompose } from '../compose';
@@ -63,9 +63,9 @@ export function DInputAffix(props: DInputAffixProps) {
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
-  const [isFocus, setIsFocus] = useImmer(false);
-  const [clearable, setClearable] = useImmer(false);
-  const [password, setPassword] = useImmer(true);
+  const [isFocus, setIsFocus] = useState(false);
+  const [clearable, setClearable] = useState(false);
+  const [password, setPassword] = useState(true);
 
   const size = composeSize ?? dSize;
   const disabled = composeDisabled || dDisabled;

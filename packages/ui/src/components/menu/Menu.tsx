@@ -1,10 +1,8 @@
-import type { Updater } from '../../hooks/immer';
-import type { DRenderProps } from '../_trigger';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DMenuItemProps } from './MenuItem';
 
-import { produce } from 'immer';
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -73,7 +71,7 @@ export function DMenu(props: DMenuProps) {
   });
 
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
-  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
+  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(null, dActive, onActiveChange);
   const [expandIds, changeExpandIds] = useTwoWayBinding(new Set<string>(), dExpands, onExpandsChange);
@@ -115,7 +113,7 @@ export function DMenu(props: DMenuProps) {
         changeActiveId(id);
       },
       onExpandChange: (id, expand) => {
-        const newExpandIds = produce(expandIds, (draft) => {
+        changeExpandIds((draft) => {
           if (expand) {
             if (dExpandOne) {
               for (const ids of [...Array.from(dataRef.current.ids.values()), dataRef.current.navIds]) {
@@ -132,7 +130,6 @@ export function DMenu(props: DMenuProps) {
             draft.delete(id);
           }
         });
-        changeExpandIds(newExpandIds);
       },
       onFocus: (dId, id) => {
         setFocusId([dId, id]);
@@ -179,24 +176,6 @@ export function DMenu(props: DMenuProps) {
     });
   }, [children]);
 
-  const handleEvent = useCallback<(renderProps: DRenderProps) => React.HTMLAttributes<HTMLElement>>(
-    (renderProps) => ({
-      onMouseEnter: (e) => {
-        onMouseEnter?.(e);
-        renderProps.onMouseEnter?.(e);
-      },
-      onMouseLeave: (e) => {
-        onMouseLeave?.(e);
-        renderProps.onMouseLeave?.(e);
-      },
-      onClick: (e) => {
-        onClick?.(e);
-        renderProps.onClick?.(e);
-      },
-    }),
-    [onClick, onMouseEnter, onMouseLeave]
-  );
-
   return (
     <DMenuContext.Provider value={contextValue}>
       <DCollapseTransition
@@ -211,7 +190,6 @@ export function DMenu(props: DMenuProps) {
             dRender={(triggerRenderProps) => (
               <nav
                 {...restProps}
-                {...handleEvent(triggerRenderProps)}
                 ref={navRef}
                 className={getClassName(className, `${dPrefix}menu`, {
                   [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
@@ -220,6 +198,18 @@ export function DMenu(props: DMenuProps) {
                 role="menubar"
                 aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
                 aria-activedescendant={activedescendant}
+                onMouseEnter={(e) => {
+                  onMouseEnter?.(e);
+                  triggerRenderProps.onMouseEnter?.(e);
+                }}
+                onMouseLeave={(e) => {
+                  onMouseLeave?.(e);
+                  triggerRenderProps.onMouseLeave?.(e);
+                }}
+                onClick={(e) => {
+                  onClick?.(e);
+                  triggerRenderProps.onClick?.(e);
+                }}
               >
                 {childs}
               </nav>

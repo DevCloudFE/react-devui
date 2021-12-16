@@ -8,7 +8,7 @@ import { DTransition } from '../_transition';
 import { DMask } from './Mask';
 
 export interface DDialogRef {
-  id: number;
+  uniqueId: number;
   el: HTMLDivElement | null;
   contentEl: HTMLDivElement | null;
 }
@@ -21,6 +21,7 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dMaskClosable?: boolean;
   dDestroy?: boolean;
   onClose?: () => void;
+  afterVisibleChange?: (visible: boolean) => void;
 }
 
 const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props, ref) => {
@@ -32,6 +33,7 @@ const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props,
     dMaskClosable = true,
     dDestroy = false,
     onClose,
+    afterVisibleChange,
     className,
     style,
     children,
@@ -52,7 +54,7 @@ const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props,
   });
 
   const asyncCapture = useAsync();
-  const id = useId();
+  const uniqueId = useId();
 
   const handleMaskClose = useCallback(() => {
     if (dMaskClosable) {
@@ -75,11 +77,11 @@ const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props,
   useImperativeHandle(
     ref,
     () => ({
-      id,
+      uniqueId,
       el: dialogEl,
       contentEl: dialogContentEl,
     }),
-    [dialogContentEl, dialogEl, id]
+    [dialogContentEl, dialogEl, uniqueId]
   );
 
   return (
@@ -108,13 +110,13 @@ const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props,
             style={mergeStyle(style, { display: hidden ? 'none' : undefined })}
             role="dialog"
             aria-modal="true"
-            aria-describedby={`${dPrefix}dialog-content-${id}`}
+            aria-describedby={`${dPrefix}dialog-content-${uniqueId}`}
           >
             {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
             <div
               {...dContentProps}
               ref={dialogContentRef}
-              id={`${dPrefix}dialog-content-${id}`}
+              id={`${dPrefix}dialog-content-${uniqueId}`}
               className={getClassName(dContentProps?.className, `${dPrefix}dialog__content`)}
               tabIndex={-1}
             >
@@ -123,6 +125,12 @@ const Dialog: React.ForwardRefRenderFunction<DDialogRef, DDialogProps> = (props,
           </div>
         )
       }
+      afterEnter={() => {
+        afterVisibleChange?.(true);
+      }}
+      afterLeave={() => {
+        afterVisibleChange?.(false);
+      }}
     />
   );
 };

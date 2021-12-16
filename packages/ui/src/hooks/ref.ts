@@ -1,9 +1,7 @@
-import { useCallback } from 'react';
-
-import { useImmer } from './immer';
+import { useCallback, useState } from 'react';
 
 export function useRefCallback<T = HTMLElement>(): [T | null, React.RefCallback<T>] {
-  const [el, setEl] = useImmer<T | null>(null);
+  const [el, setEl] = useState<T | null>(null);
 
   const ref = useCallback(
     (node: T | null) => {
