@@ -13,7 +13,6 @@ import { DIcon } from '../icon';
 
 export interface DTabsContextData {
   tabsActiveId: string | null;
-  tabsCloseIds: string[];
   getDotStyle: () => void;
   onActiveChange: (id: string) => void;
   onTabRendered: (id: string, el?: HTMLElement | null) => void;
@@ -76,7 +75,6 @@ export function DTabs(props: DTabsProps) {
   const [listOverflow, setListOverflow] = useImmer(true);
   const [dropdownList, setDropdownList] = useImmer<Array<React.ReactElement<DTabProps>>>([]);
   const [scrollEnd, setScrollEnd] = useImmer(false);
-  const [closeIds, setCloseIds] = useImmer<string[]>([]);
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
@@ -107,11 +105,11 @@ export function DTabs(props: DTabsProps) {
           if (el) {
             const elRect = el.getBoundingClientRect();
             if (isHorizontal) {
-              if (elRect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || elRect.right < tablistWrapperRect.left) {
+              if (elRect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || elRect.left < tablistWrapperRect.left) {
                 dropdownList.push(child);
               }
             } else {
-              if (elRect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || elRect.bottom < tablistWrapperRect.top) {
+              if (elRect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || elRect.top < tablistWrapperRect.top) {
                 dropdownList.push(child);
               }
             }
@@ -184,7 +182,7 @@ export function DTabs(props: DTabsProps) {
 
   useEffect(() => {
     getDotStyle();
-  }, [dPlacement, dType, dSize, closeIds, getDotStyle]);
+  }, [dPlacement, dType, dSize, getDotStyle]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -233,7 +231,6 @@ export function DTabs(props: DTabsProps) {
   const contextValue = useMemo<DTabsContextData>(
     () => ({
       tabsActiveId: activeId,
-      tabsCloseIds: closeIds,
       getDotStyle,
       onActiveChange: (id) => {
         changeActiveId(id);
@@ -250,12 +247,9 @@ export function DTabs(props: DTabsProps) {
           changeActiveId(null);
         }
         onClose?.(id);
-        setCloseIds((draft) => {
-          draft.push(id);
-        });
       },
     }),
-    [activeId, changeActiveId, closeIds, getDotStyle, onClose, setCloseIds]
+    [activeId, changeActiveId, getDotStyle, onClose]
   );
 
   return (
