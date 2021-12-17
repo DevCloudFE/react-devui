@@ -31,6 +31,7 @@ $dropdown-item-height: 32px;
   }
 
   @include e(title) {
+    flex-grow: 1;
     flex-shrink: 0;
 
     @include utils-ellipsis;
