@@ -46,7 +46,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
 
   return (
     <AppRouteArticle links={links}>
-      <h1 id="title">
+      <h1 id="title" className="app-component-route-article__title">
         {title}
         {i18n.language !== 'en-US' && <span className="app-component-route-article__subtitle">{subtitle}</span>}
         <DTooltip dTitle={t('Edit this page on GitHub')}>
@@ -56,7 +56,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
         </DTooltip>
       </h1>
       <section className="app-component-route-article__description" dangerouslySetInnerHTML={{ __html: description }} />
-      <h2 id="Examples">
+      <h2 id="Examples" className="app-component-route-article__examples">
         {t('Examples')}
         <DTooltip dTitle={t('Expand all code')}>
           <DIcon className="app-icon-button" style={{ marginLeft: 4 }} viewBox="64 64 896 896" role="button" dSize={24}>

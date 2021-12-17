@@ -1,5 +1,16 @@
 @import '~rfs/scss';
 
+.app-route-article {
+  a:not(.d-anchor-link__link) {
+    color: var(--d-color-primary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--d-color-primary-lighter);
+    }
+  }
+}
+
 .app-route-article__anchor {
   position: fixed;
   top: 120px;
@@ -8,7 +19,7 @@
 
   width: 168px;
 
-  .d-anchor-link > a {
+  .d-anchor-link__link {
     padding: 4px 0;
   }
 }

@@ -127,9 +127,13 @@ $dropdown-item-height: 32px;
 }
 
 @include b(dropdown-popup) {
+  border-radius: var(--#{$variable-prefix}border-radius);
+
   box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
 }
 
 @include b(dropdown-sub-popup) {
+  border-radius: var(--#{$variable-prefix}border-radius);
+
   box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
 }

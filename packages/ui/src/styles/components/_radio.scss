@@ -21,11 +21,11 @@
     transition: border-color 116ms ease-out, background-color 116ms ease-out;
 
     &:first-of-type {
-      border-radius: 2px 0 0 2px;
+      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
     }
 
     &:last-of-type {
-      border-radius: 0 2px 2px 0;
+      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
     }
 
     &:not(.is-disabled) {
@@ -255,11 +255,11 @@
 
     #{$radio-selector} {
       &:first-of-type {
-        border-radius: 2px 2px 0 0;
+        border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
       }
 
       &:last-of-type {
-        border-radius: 0 0 2px 2px;
+        border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
       }
     }
   }

@@ -32,6 +32,10 @@ $themes: (
   @include rfs(0.75rem, --#{$variable-prefix}font-smaller);
   @include rfs(1.05rem, --#{$variable-prefix}font-larger);
 
+  /** border-radius **/
+  --#{$variable-prefix}border-radius: 2px;
+  --#{$variable-prefix}border-radius-larger: 4px;
+
   /** basic **/
   --#{$variable-prefix}text-color: #212529;
   --#{$variable-prefix}background-color: #fff;

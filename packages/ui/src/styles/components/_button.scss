@@ -27,7 +27,7 @@
   height: var(--#{$variable-prefix}size);
   margin: 0;
   padding: 0 var(--#{$variable-prefix}padding-size);
-  border-radius: 2px;
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
   font-family: inherit;
@@ -215,7 +215,7 @@
   }
 
   @include m(round) {
-    border-radius: 32px;
+    border-radius: var(--#{$variable-prefix}size);
   }
 
   @include m(smaller) {

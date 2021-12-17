@@ -1,5 +1,11 @@
 @import '~rfs/scss';
 
+.app-component-route-article__title,
+.app-component-route-article__examples {
+  display: flex;
+  align-items: center;
+}
+
 .app-component-route-article__subtitle {
   margin-left: 12px;
 }

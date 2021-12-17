@@ -80,12 +80,12 @@
       top: 0;
 
       border-bottom: none;
-      border-radius: 2px 2px 0 0;
+      border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
     } @else {
       bottom: 0;
 
       border-top: none;
-      border-radius: 0 0 2px 2px;
+      border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
     }
   }
 
@@ -199,12 +199,12 @@
       left: 0;
 
       border-right: none;
-      border-radius: 0 2px 2px 0;
+      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
     } @else {
       right: 0;
 
       border-left: none;
-      border-radius: 2px 0 0 2px;
+      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
     }
   }
 
@@ -416,7 +416,7 @@
       bottom: 3px;
       left: 3px;
 
-      border-radius: 2px;
+      border-radius: var(--#{$variable-prefix}border-radius);
 
       background-color: var(--#{$variable-prefix}background-color);
       box-shadow: 0 2px 4px 0 var(--#{$variable-prefix}shadow-color);

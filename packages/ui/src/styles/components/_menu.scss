@@ -345,6 +345,8 @@ $menu-item-height: 40px;
 }
 
 @include b(menu-sub-popup) {
+  border-radius: var(--#{$variable-prefix}border-radius);
+
   box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
 
   .#{$variable-prefix}menu-sub__arrow {

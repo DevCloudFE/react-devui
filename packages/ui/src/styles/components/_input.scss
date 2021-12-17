@@ -7,7 +7,7 @@
   margin: 0;
   padding: 3px 9px;
   border: 1px solid var(--#{$variable-prefix}border-color);
-  border-radius: 2px;
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   font: inherit;
   font-size: var(--#{$variable-prefix}font);
