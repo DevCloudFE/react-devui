@@ -33,7 +33,7 @@
     "react": "18.0.0-rc.0",
     "react-dom": "18.0.0-rc.0",
     "react-i18next": "^11.14.3",
-    "react-router-dom": "^6.0.2",
+    "react-router-dom": "^6.2.1",
     "regenerator-runtime": "^0.13.9",
     "rfs": "^9.0.6",
     "rxjs": "^7.4.0",

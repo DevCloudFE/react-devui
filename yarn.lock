@@ -6503,10 +6503,10 @@ highlight.js@^11.3.1:
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.3.1.tgz#813078ef3aa519c61700f84fe9047231c5dc3291"
   integrity sha512-PUhCRnPjLtiLHZAQ5A/Dt5F8cWZeMyj9KRsACsWT+OD6OP0x6dp5OmT5jdx0JgEyPxPZZIPQpRN2TciUT7occw==
 
-history@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/history/-/history-5.1.0.tgz#2e93c09c064194d38d52ed62afd0afc9d9b01ece"
-  integrity sha512-zPuQgPacm2vH2xdORvGGz1wQMuHSIB56yNAy5FnLuwOwgSYyPKptJtcMm6Ev+hRGeS+GzhbmRacHzvlESbFwDg==
+history@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/history/-/history-5.2.0.tgz#7cdd31cf9bac3c5d31f09c231c9928fad0007b7c"
+  integrity sha512-uPSF6lAJb3nSePJ43hN3eKj1dTWpN9gMod0ZssbFTIsen+WehTmEadgL+kg78xLJFdRfrrC//SavDzmRVdE+Ig==
   dependencies:
     "@babel/runtime" "^7.7.6"
 
@@ -10235,20 +10235,20 @@ react-refresh@^0.10.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.10.0.tgz#2f536c9660c0b9b1d500684d9e52a65e7404f7e3"
   integrity sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==
 
-react-router-dom@^6.0.2:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.1.0.tgz#94e650ee43b0cdeb80049dea72223402a27c7f61"
-  integrity sha512-ONVhgCiEHTPZvsz05AUiqKj9mrlkDyxt96FB51JrZH7Jlau2B8GJ+NfWw7rbu+oj9gfpZOsK14xJppLAWg2ifQ==
+react-router-dom@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.2.1.tgz#32ec81829152fbb8a7b045bf593a22eadf019bec"
+  integrity sha512-I6Zax+/TH/cZMDpj3/4Fl2eaNdcvoxxHoH1tYOREsQ22OKDYofGebrNm6CTPUcvLvZm63NL/vzCYdjf9CUhqmA==
   dependencies:
-    history "^5.1.0"
-    react-router "6.1.0"
+    history "^5.2.0"
+    react-router "6.2.1"
 
-react-router@6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.1.0.tgz#a34a2dbba7f6167d64a4c209009f28b635ea8477"
-  integrity sha512-96x4YGONBBz41ikne/I9Zw4jZm+KeFyUZraiNkSA384g/B8ps8nRNAfN8339EpZRt+t16RM+TA9z+NqlYATGzw==
+react-router@6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.2.1.tgz#be2a97a6006ce1d9123c28934e604faef51448a3"
+  integrity sha512-2fG0udBtxou9lXtK97eJeET2ki5//UWfQSl1rlJ7quwe6jrktK9FCCc8dQb5QY6jAv3jua8bBQRhhDOM/kVRsg==
   dependencies:
-    history "^5.1.0"
+    history "^5.2.0"
 
 react-shallow-renderer@^16.13.1:
   version "16.14.1"
