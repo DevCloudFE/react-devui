@@ -306,12 +306,6 @@ export function DSelect<T>(
             setfocusId(dataRef.current.focusId);
           }
         }
-      } else {
-        asyncCapture.requestAnimationFrame(() => {
-          if (selectBoxRef.current) {
-            selectBoxRef.current.focus({ preventScroll: true });
-          }
-        });
       }
     },
     [_changeVisible, asyncCapture, dGetId, findCanSelectItemIndex, options, select, selectListEl, setfocusId]
@@ -363,10 +357,16 @@ export function DSelect<T>(
 
       if (!dMultiple) {
         changeVisible(false);
+        asyncCapture.requestAnimationFrame(() => {
+          if (selectBoxRef.current) {
+            selectBoxRef.current.focus({ preventScroll: true });
+          }
+        });
       }
     },
     [
       allOptions,
+      asyncCapture,
       changeSelect,
       changeVisible,
       dGetId,
@@ -375,7 +375,6 @@ export function DSelect<T>(
       findCanSelectItemIndex,
       onExceed,
       setCreateOptions,
-      setfocusId,
     ]
   );
 
@@ -621,7 +620,12 @@ export function DSelect<T>(
         .pipe(filter((e) => e.code === 'Escape'))
         .subscribe({
           next: () => {
-            flushSync(() => changeVisible?.(false));
+            flushSync(() => changeVisible(false));
+            asyncGroup.requestAnimationFrame(() => {
+              if (selectBoxRef.current) {
+                selectBoxRef.current.focus({ preventScroll: true });
+              }
+            });
           },
         });
     }
