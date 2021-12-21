@@ -15,8 +15,6 @@ describe('DInput', () => {
     const value = '123';
     const { getByRole } = render(<DInput dValue={[value]} />);
     expect(getByRole('textbox').getAttribute('value')).toBe('123');
-    fireEvent.change(getByRole('textbox'), { target: { value: '42' } });
-    expect(getByRole('textbox').getAttribute('value')).toBe('42');
   });
 
   it('should `dSize` work', () => {
@@ -105,18 +103,17 @@ describe('DInputAffix', () => {
   });
 
   it('should `dNumber use button change value` work', () => {
-    const value = '100';
     const { getByTestId, getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="numberInput" dValue={[value]} />
+        <DInput data-testid="numberInput" />
       </DInputAffix>
     );
-    const [increaseButton, decreaseButton] = getAllByRole('button');
-    fireEvent.mouseDown(increaseButton);
-    expect(getByTestId('numberInput').getAttribute('value')).toBe('101');
+    const buttons = getAllByRole('button');
+    fireEvent.mouseDown(buttons[0]);
+    expect(getByTestId('numberInput').getAttribute('value')).toBe('1');
 
-    fireEvent.mouseDown(decreaseButton);
-    expect(getByTestId('numberInput').getAttribute('value')).toBe('100');
+    fireEvent.mouseDown(buttons[1]);
+    expect(getByTestId('numberInput').getAttribute('value')).toBe('0');
   });
 
   it('should `dClearable` work', () => {
