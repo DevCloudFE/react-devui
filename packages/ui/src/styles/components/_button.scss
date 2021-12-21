@@ -27,7 +27,7 @@
   height: var(--#{$variable-prefix}size);
   margin: 0;
   padding: 0 var(--#{$variable-prefix}padding-size);
-  border-radius: 2px;
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
   font-family: inherit;
@@ -35,6 +35,7 @@
   white-space: nowrap;
   text-align: unset;
   text-transform: none;
+  vertical-align: top;
 
   outline: none;
   cursor: pointer;
@@ -96,7 +97,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(':disabled', true);
+    @include utils-disabled(true, ':disabled');
 
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
@@ -174,7 +175,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(':disabled', true);
+    @include utils-disabled(true, ':disabled');
 
     @include button-hover {
       color: var(--#{$variable-prefix}button-color-lighter);
@@ -214,7 +215,7 @@
   }
 
   @include m(round) {
-    border-radius: 32px;
+    border-radius: var(--#{$variable-prefix}size);
   }
 
   @include m(smaller) {
@@ -263,12 +264,11 @@
   }
 
   @include e(icon) {
+    display: inline-flex;
     width: calc(1em + 8px);
 
-    line-height: 0;
-
     @include m(right) {
-      text-align: right;
+      justify-content: flex-end;
     }
   }
 }
@@ -276,6 +276,8 @@
 @include b(button-group) {
   display: inline-flex;
   align-items: center;
+
+  vertical-align: top;
 
   & + & {
     margin-left: 10px;

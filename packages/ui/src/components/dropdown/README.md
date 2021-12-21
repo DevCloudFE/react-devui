@@ -26,6 +26,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | dDestroy | Destroy the node after shutdown | boolean | false |
 | dArrow | Whether to show arrow | boolean | false |
 | dCloseOnItemClick | Click on the menu item to close the menu | boolean | true |
+| dPopupClassName | Add className to the popup | string | - |
 | onVisibleChange | Menu display/hide callback | `(visible: boolean) => void` | - |
 | onItemClick | Click the callback of the menu item | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
@@ -52,6 +53,7 @@ Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 | dIcon | Settings submenu icon | React.ReactNode | - |
 | dTitle | Set submenu title | React.ReactNode | - |
 | dDisabled | Whether to disable | boolean | false |
+| dPopupClassName | Add className to the popup | string | - |
 <!-- prettier-ignore-end -->
 
 ### DDropdownItemProps

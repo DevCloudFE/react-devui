@@ -28,7 +28,7 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   onFixedChange?: (fixed: boolean) => void;
 }
 
-export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
+const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, ref) => {
   const {
     dTarget,
     dTop = 0,
@@ -153,7 +153,7 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
       >
         {children}
       </div>
-      <div {...restProps} ref={referenceRef} className={className} style={{ ...style, visibility: 'hidden' }} aria-hidden="true">
+      <div {...restProps} ref={referenceRef} className={className} style={{ ...style, visibility: 'hidden' }} aria-hidden={true}>
         <div
           style={{
             ...referenceStyle,
@@ -163,4 +163,6 @@ export const DAffix = React.forwardRef<DAffixRef, DAffixProps>((props, ref) => {
       </div>
     </>
   );
-});
+};
+
+export const DAffix = React.forwardRef(Affix);

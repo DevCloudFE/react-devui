@@ -99,20 +99,12 @@ pre code.hljs {
 code:not(pre > code) {
   margin: 0 1px;
   padding: 4px 6px;
-  border-radius: 3px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  border-radius: 2px;
 
   font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 
   background-color: var(--app-code-background-color);
-}
-
-p a[href] {
-  color: var(--d-color-primary);
-  text-decoration: none;
-
-  &:hover {
-    color: var(--d-color-primary-lighter);
-  }
 }
 
 h1 {

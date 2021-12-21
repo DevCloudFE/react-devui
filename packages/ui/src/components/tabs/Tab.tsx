@@ -32,7 +32,7 @@ export function DTab(props: DTabProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ tabsActiveId, tabsCloseIds, getDotStyle, onActiveChange, onTabRendered, onClose }] = useCustomContext(DTabsContext);
+  const [{ tabsActiveId, getDotStyle, onActiveChange, onTabRendered, onClose }] = useCustomContext(DTabsContext);
   //#endregion
 
   //#region Ref
@@ -76,7 +76,7 @@ export function DTab(props: DTabProps) {
   }, [__dropdown, dId, getDotStyle, tabsActiveId]);
   //#endregion
 
-  return tabsCloseIds?.includes(dId) ? null : (
+  return (
     <div
       {...restProps}
       ref={tabRef}

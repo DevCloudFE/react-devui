@@ -1,7 +1,7 @@
 import type { Updater } from './immer';
 
 import { isEqual } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { DFormItemContext } from '../components/form';
 import { useCustomContext } from './context';
@@ -25,16 +25,13 @@ export function useTwoWayBinding<T>(
   const [autoValue, setAutoValue] = useImmer<T>(initialValue);
   const value = input?.[0] ?? autoValue;
 
-  const dataRef = useMemo(() => {
-    return { current: formControlEnable ? (formControlValue as T) : value };
-  }, [formControlEnable, formControlValue, value]);
+  const currentValue = formControlEnable ? (formControlValue as T) : value;
 
   const changeValue = useCallback(
     (val: T) => {
       if (formControlEnable) {
         if (formControlName) {
-          if (!isEqual(val, dataRef.current)) {
-            dataRef.current = val;
+          if (!isEqual(val, currentValue)) {
             onFormControlValueChange?.(val, formControlName);
           }
         } else {
@@ -43,14 +40,13 @@ export function useTwoWayBinding<T>(
       } else {
         setValue?.(val);
         setAutoValue(val);
-        if (!isEqual(val, dataRef.current)) {
-          dataRef.current = val;
+        if (!isEqual(val, currentValue)) {
           onValueChange?.(val);
         }
       }
     },
-    [dataRef, formControlEnable, formControlName, onFormControlValueChange, onValueChange, setAutoValue, setValue]
+    [currentValue, formControlEnable, formControlName, onFormControlValueChange, onValueChange, setAutoValue, setValue]
   );
 
-  return [dataRef.current, changeValue];
+  return [currentValue, changeValue];
 }

@@ -49,6 +49,7 @@ Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 | dIcon | Settings submenu icon | React.ReactNode | - |
 | dTitle | Set submenu title | React.ReactNode | - |
 | dDisabled | Whether to disable | boolean | false |
+| dPopupClassName | Add className to the popup | string | - |
 <!-- prettier-ignore-end -->
 
 ### DMenuItemProps

@@ -1,5 +1,7 @@
 import { fromEvent } from 'rxjs';
 
+import { getNoTransformElSize } from '../../utils';
+
 let pointerX = 0;
 let pointerY = 0;
 
@@ -13,5 +15,6 @@ fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
 
 export function checkOutEl(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
-  return pointerX < rect.left || pointerX > rect.right || pointerY < rect.top || pointerY > rect.bottom;
+  const { width, height } = getNoTransformElSize(el);
+  return pointerX < rect.left || pointerX > rect.left + width || pointerY < rect.top || pointerY > rect.top + height;
 }

@@ -18,7 +18,8 @@
     ],
     "declaration-property-value-allowed-list": {
       "/color/": ["/var/", "currentColor", "transparent", "unset", "inherit"],
-      "font-size": ["/var/", "/[0-9]+em$/"]
+      "font-size": ["/var/", "/[0-9]+em$/"],
+      "border-radius": ["/var/", "50%", "0"]
     },
     "declaration-property-value-disallowed-list": {
       "transition": ["/all/"]

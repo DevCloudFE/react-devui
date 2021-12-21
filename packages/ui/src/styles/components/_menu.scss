@@ -323,27 +323,6 @@ $menu-item-height: 40px;
 
     transition: color 0.2s ease-out, transform 0.2s linear;
   }
-
-  @include e(popup) {
-    $group-selector: '.#{$variable-prefix}menu-group';
-
-    box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
-
-    @include e(arrow, true) {
-      right: 6px;
-    }
-
-    @include e(list, true) {
-      padding: 4px;
-
-      #{$group-selector} {
-        padding-right: 8px;
-      }
-      #{$selector} {
-        padding-right: 24px;
-      }
-    }
-  }
 }
 
 @include b(menu-item) {
@@ -361,6 +340,27 @@ $menu-item-height: 40px;
           transform: scaleX(1);
         }
       }
+    }
+  }
+}
+
+@include b(menu-sub-popup) {
+  border-radius: var(--#{$variable-prefix}border-radius);
+
+  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+
+  .#{$variable-prefix}menu-sub__arrow {
+    right: 6px;
+  }
+
+  .#{$variable-prefix}menu-sub__list {
+    padding: 4px;
+
+    .#{$variable-prefix}menu-group {
+      padding-right: 8px;
+    }
+    .#{$variable-prefix}menu-sub {
+      padding-right: 24px;
     }
   }
 }

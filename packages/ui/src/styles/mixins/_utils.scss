@@ -5,7 +5,7 @@
   text-overflow: ellipsis;
 }
 
-@mixin utils-disabled($disabled: '.is-disabled', $background: false) {
+@mixin utils-disabled($background: false, $disabled: '.is-disabled') {
   &#{$disabled} {
     color: var(--#{$variable-prefix}disabled-color);
 

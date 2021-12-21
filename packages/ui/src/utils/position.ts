@@ -1,6 +1,6 @@
 import { isUndefined } from 'lodash';
 
-import { toPx } from './to-px';
+import { toPx } from './measure';
 
 function getParentPositioned(el: HTMLElement) {
   const loop = (_el: HTMLElement): HTMLElement => {

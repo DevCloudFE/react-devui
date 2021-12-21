@@ -6,4 +6,4 @@ export { mergeStyle } from './merge-style';
 export { getFillingStyle, getPopupPlacementStyle, getHorizontalSideStyle, getVerticalSideStyle } from './position';
 export { CustomScroll } from './scroll';
 export { toId } from './to-id';
-export { toPx } from './to-px';
+export { toPx, getNoTransformElSize } from './measure';

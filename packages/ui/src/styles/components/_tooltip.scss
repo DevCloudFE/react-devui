@@ -1,6 +1,6 @@
 @include b(tooltip) {
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: var(--#{$variable-prefix}border-radius-larger);
 
   color: var(--#{$variable-prefix}tooltip-text-color);
   white-space: pre;

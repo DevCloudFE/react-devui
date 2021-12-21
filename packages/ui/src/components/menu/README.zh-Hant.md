@@ -48,6 +48,7 @@ title: 导航菜单
 | dIcon | 设置子菜单图标 | React.ReactNode | - |
 | dTitle | 设置子菜单标题 | React.ReactNode | - |
 | dDisabled | 是否禁用 | boolean | false |
+| dPopupClassName | 向弹窗添加 className | string | - |
 <!-- prettier-ignore-end -->
 
 ### DMenuItemProps

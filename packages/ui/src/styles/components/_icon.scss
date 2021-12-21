@@ -1,5 +1,5 @@
 @include b(icon) {
-  vertical-align: -0.125em;
+  display: block;
 
   @include m(success) {
     color: var(--#{$variable-prefix}color-success);

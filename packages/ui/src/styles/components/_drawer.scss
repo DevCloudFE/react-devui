@@ -14,7 +14,7 @@
       left: 0;
 
       width: 100%;
-      border-radius: 0 0 2px 2px;
+      border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
     }
 
     @include m(bottom) {
@@ -22,7 +22,7 @@
       left: 0;
 
       width: 100%;
-      border-radius: 2px 2px 0 0;
+      border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
     }
 
     @include m(left) {
@@ -30,7 +30,7 @@
       left: 0;
 
       height: 100%;
-      border-radius: 0 2px 2px 0;
+      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
     }
 
     @include m(right) {
@@ -38,7 +38,7 @@
       right: 0;
 
       height: 100%;
-      border-radius: 2px 0 0 2px;
+      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
     }
   }
 

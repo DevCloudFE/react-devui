@@ -21,6 +21,7 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dIcon?: React.ReactNode;
   dTitle: React.ReactNode;
   dDisabled?: boolean;
+  dPopupClassName?: string;
   __level?: number;
 }
 
@@ -30,6 +31,7 @@ export function DMenuSub(props: DMenuSubProps) {
     dIcon,
     dTitle,
     dDisabled = false,
+    dPopupClassName,
     __level = 0,
     id,
     className,
@@ -282,7 +284,7 @@ export function DMenuSub(props: DMenuSubProps) {
               <>
                 {popupMode ? (
                   <DPopup
-                    className={`${dPrefix}menu-sub__popup`}
+                    className={getClassName(dPopupClassName, `${dPrefix}menu-sub-popup`)}
                     dVisible={popupVisible}
                     dPopupContent={menuNode({ ref: menuPopupRef })}
                     dTrigger={menuExpandTrigger}

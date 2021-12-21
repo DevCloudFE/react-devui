@@ -18,7 +18,7 @@ export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement>
   onValueChange?: (value: string) => void;
 }
 
-export const DInput = React.forwardRef<DInputRef, DInputProps>((props, ref) => {
+const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, ref) => {
   const {
     dFormControlName,
     dValue,
@@ -117,4 +117,6 @@ export const DInput = React.forwardRef<DInputRef, DInputProps>((props, ref) => {
       onBlur={handleBlur}
     />
   );
-});
+};
+
+export const DInput = React.forwardRef(Input);

@@ -34,7 +34,7 @@
   height: var(--#{$variable-prefix}size);
   padding: 0 var(--#{$variable-prefix}padding-size);
   border: 1px solid var(--#{$variable-prefix}border-color);
-  border-radius: 2px;
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
 

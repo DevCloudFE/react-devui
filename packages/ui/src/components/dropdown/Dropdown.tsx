@@ -35,6 +35,7 @@ export interface DDropdownProps extends React.HTMLAttributes<HTMLElement> {
   dDestroy?: boolean;
   dArrow?: boolean;
   dCloseOnItemClick?: boolean;
+  dPopupClassName?: string;
   onVisibleChange?: (visible: boolean) => void;
   onItemClick?: (id: string) => void;
 }
@@ -49,6 +50,7 @@ export function DDropdown(props: DDropdownProps) {
     dDestroy = false,
     dArrow = false,
     dCloseOnItemClick = true,
+    dPopupClassName,
     onVisibleChange,
     onItemClick,
     id,
@@ -181,7 +183,7 @@ export function DDropdown(props: DDropdownProps) {
   return (
     <DDropdownContext.Provider value={contextValue}>
       <DPopup
-        className={`${dPrefix}dropdown__popup`}
+        className={getClassName(dPopupClassName, `${dPrefix}dropdown-popup`)}
         dVisible={visible}
         dTrigger={dTrigger}
         dPopupContent={
