@@ -89,16 +89,28 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     [onSearch, setSearchValue]
   );
 
-  const handleSearchBlur = useCallback(() => {
-    if (dExpanded) {
-      asyncCapture.requestAnimationFrame(() => searchEl?.focus({ preventScroll: true }));
-    }
-  }, [asyncCapture, dExpanded, searchEl]);
-
   useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
     if (dSearchable && dExpanded) {
-      asyncCapture.requestAnimationFrame(() => searchEl?.focus({ preventScroll: true }));
+      asyncGroup.requestAnimationFrame(() => searchEl?.focus({ preventScroll: true }));
+      asyncGroup.fromEvent<MouseEvent>(window, 'mousedown').subscribe({
+        next: (e) => {
+          if (e.button === 0) {
+            e.preventDefault();
+          }
+        },
+      });
+      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
+        next: (e) => {
+          e.preventDefault();
+        },
+      });
     }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
   }, [asyncCapture, dExpanded, dSearchable, searchEl]);
 
   return (
@@ -123,7 +135,6 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
           type="search"
           autoComplete="off"
           value={searchValue}
-          onBlur={handleSearchBlur}
           onChange={handleSearchChange}
         ></input>
       ) : (
