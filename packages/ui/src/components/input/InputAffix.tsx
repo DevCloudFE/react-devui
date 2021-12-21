@@ -98,6 +98,7 @@ export function DInputAffix(props: DInputAffixProps) {
   const handleNumberChange = useCallback(
     (isIncrease = true) => {
       const handleFunc = () => {
+        /* istanbul ignore next */
         if (inputEl) {
           const step = getNumberAttribute(inputEl.step, 1);
           const max = getNumberAttribute(inputEl.max, Infinity);
@@ -160,6 +161,7 @@ export function DInputAffix(props: DInputAffixProps) {
 
   const handleMouseUp = useCallback(
     (e) => {
+      /* istanbul ignore next */
       if (document.activeElement === inputEl) {
         e.preventDefault();
       }

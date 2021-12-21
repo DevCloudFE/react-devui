@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
 import { PREFIX } from '../../tests';
-import { DCompose } from '../compose';
 import { DIcon } from '../icon';
 import { DButtonGroup, DButton } from './index';
 
@@ -139,33 +138,5 @@ describe('ButtonGroup', () => {
     expect(buttons[0]).toBeDisabled();
     expect(buttons[1]).toBeDisabled();
     expect(buttons[2]).toBeDisabled();
-  });
-});
-
-describe('DCompose', () => {
-  const expectBtnClass = (className: string) => {
-    const Buttons = screen.getAllByRole('button');
-    for (const iterator of Buttons) {
-      expect(iterator.classList.contains(className)).toBeTruthy();
-    }
-  };
-
-  it('should `dSize` work', () => {
-    const size = 'smaller';
-    render(
-      <DCompose dSize={size}>
-        <DButton></DButton>
-      </DCompose>
-    );
-    expectBtnClass(`${PREFIX}button--${size}`);
-  });
-
-  it('should `dDisabled` work', () => {
-    const { getByRole } = render(
-      <DCompose dDisabled>
-        <DButton></DButton>
-      </DCompose>
-    );
-    expect(getByRole('button')).toBeDisabled();
   });
 });

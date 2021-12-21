@@ -30,6 +30,6 @@ describe('DHeader', () => {
     const mockCallBack = jest.fn();
     render(<DHeader onClose={mockCallBack} />);
     fireEvent.click(screen.getByRole('button'));
-    expect(mockCallBack.mock.calls.length).toBe(1);
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
   });
 });

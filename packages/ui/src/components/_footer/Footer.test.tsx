@@ -47,7 +47,7 @@ describe('DFooter', () => {
     render(<DFooter onOkClick={mockCallBack} />);
     fireEvent.click(okButton());
 
-    expect(mockCallBack.mock.calls.length).toBe(1);
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
   });
 
   it('should `onCancelClick` work', () => {
@@ -55,6 +55,6 @@ describe('DFooter', () => {
     render(<DFooter onCancelClick={mockCallBack} />);
     fireEvent.click(cancelButton());
 
-    expect(mockCallBack.mock.calls.length).toBe(1);
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
   });
 });
