@@ -75,18 +75,18 @@ export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dExpanded' |
 }
 
 export interface DSelectSingleProps<T> extends DSelectBaseProps<T> {
-  dSelect?: [T | null, Updater<T | null>?];
+  dModel?: [T | null, Updater<T | null>?];
   dMultiple?: false;
   dCustomSelected?: (select: DSelectBaseOption<T>) => string;
-  onSelectChange?: (select: T | null) => void;
+  onModelChange?: (select: T | null) => void;
 }
 
 export interface DSelectMultipleProps<T> extends DSelectBaseProps<T> {
-  dSelect?: [T[], Updater<T[]>?];
+  dModel?: [T[], Updater<T[]>?];
   dMultiple: true;
   dMaxSelectNum?: number;
   dCustomSelected?: (selects: Array<DSelectBaseOption<T>>) => string[];
-  onSelectChange?: (selects: T[]) => void;
+  onModelChange?: (selects: T[]) => void;
   onExceed?: () => void;
 }
 
@@ -98,19 +98,19 @@ export function DSelect<T>(props: DSelectSingleProps<T>): React.ReactElement;
 export function DSelect<T>(props: DSelectMultipleProps<T>): React.ReactElement;
 export function DSelect<T>(
   props: DSelectBaseProps<T> & {
-    dSelect?: [T | null | T[], Updater<T | null | T[]>?];
+    dModel?: [T | null | T[], Updater<T | null | T[]>?];
     dMultiple?: boolean;
     dMaxSelectNum?: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dCustomSelected?: (select: any) => string | string[];
-    onSelectChange?: (select: T | null | T[]) => void;
+    onModelChange?: (select: T | null | T[]) => void;
     onExceed?: () => void;
   }
 ) {
   const {
     dFormControlName,
     dVisible,
-    dSelect,
+    dModel,
     dOptions,
     dOptionRender = DEFAULT_PROPS.dOptionRender,
     dCustomSelected,
@@ -124,7 +124,7 @@ export function DSelect<T>(
     dPopupClassName,
     dSize,
     onVisibleChange,
-    onSelectChange,
+    onModelChange,
     onScrollBottom,
     onCreateOption,
     onSearch,
@@ -167,7 +167,7 @@ export function DSelect<T>(
   const [createOptions, setCreateOptions] = useImmer<Array<DSelectBaseOption<T>>>([]);
 
   const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
-  const [select, changeSelect] = useTwoWayBinding(dMultiple ? [] : null, dSelect, onSelectChange, {
+  const [select, changeSelect] = useTwoWayBinding(dMultiple ? [] : null, dModel, onModelChange, {
     name: dFormControlName,
   });
 

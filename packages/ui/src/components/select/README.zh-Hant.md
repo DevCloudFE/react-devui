@@ -17,10 +17,10 @@ title: 选择框
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dSelect | 手动控制选择项 | [T \| null, Updater\<T \| null\>?] | - |
+| dModel | 手动控制选择项 | [T \| null, Updater\<T \| null\>?] | - |
 | dMultiple | 是否多选 | false | false |
 | dCustomSelected | 自定义已选项 | `(select: DSelectBaseOption<T>) => string`  | - |
-| onSelectChange | 选中改变的回调 | `(select: T \| null) => void` | - |
+| onModelChange | 选中改变的回调 | `(select: T \| null) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DSelectMultipleProps\<T\>
@@ -30,11 +30,11 @@ title: 选择框
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dSelect | 手动控制选择项 | [T[], Updater\<T[]\>?] | - |
+| dModel | 手动控制选择项 | [T[], Updater\<T[]\>?] | - |
 | dMultiple | 是否多选 | true | false |
 | dMaxSelectNum | 最大选择数 | number | - |
 | dCustomSelected | 自定义已选项 | `(selects: Array<DSelectBaseOption<T>>) => string[]`  | - |
-| onSelectChange | 选中改变的回调 | `(selects: T[]) => void` | - |
+| onModelChange | 选中改变的回调 | `(selects: T[]) => void` | - |
 | onExceed | 选择数超出限制的回调 | `() => void` | - |
 <!-- prettier-ignore-end -->
 

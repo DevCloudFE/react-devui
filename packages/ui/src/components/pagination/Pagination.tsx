@@ -195,11 +195,11 @@ export function DPagination(props: DPaginationProps) {
           [`${dPrefix}pagination__size-select--mini`]: dMini,
         })}
         dOptions={options}
-        dSelect={[pageSize]}
+        dModel={[pageSize]}
         dCustomSelected={(select) => `${select.dLabel} ${t(' / Page')}`}
         dOptionRender={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.dValue) : option.dLabel)}
         dDisabled={dDisabled}
-        onSelectChange={(select) => {
+        onModelChange={(select) => {
           changePageSize(select as number);
         }}
       ></DSelect>
@@ -217,7 +217,7 @@ export function DPagination(props: DPaginationProps) {
           max={lastPage}
           step={1}
           disabled={dDisabled}
-          dValue={[jumpValue, setJumpValue]}
+          dModel={[jumpValue, setJumpValue]}
           onKeyDown={(e) => {
             if (e.code === 'Enter') {
               e.preventDefault();

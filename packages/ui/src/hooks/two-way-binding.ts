@@ -19,7 +19,7 @@ export function useTwoWayBinding<T>(
     name?: string;
   }
 ): [T, IUpdater<T>] {
-  const [{ value: formControlValue, onValueChange: onFormControlValueChange }, formItemContext] = useCustomContext(DFormItemContext);
+  const [{ dModel, onModelChange }, formItemContext] = useCustomContext(DFormItemContext);
   const formControlEnable = formControlOptions && (formControlOptions.enable ?? true) && formItemContext !== null;
   const formControlName = formControlOptions?.name;
 
@@ -28,7 +28,7 @@ export function useTwoWayBinding<T>(
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const value = isUndefined(input?.[0]) ? autoValue : input![0];
 
-  const currentValue = formControlEnable ? (formControlValue as T) : value;
+  const currentValue = formControlEnable ? (dModel as T) : value;
 
   const changeValue = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +38,7 @@ export function useTwoWayBinding<T>(
       if (formControlEnable) {
         if (formControlName) {
           if (!Object.is(val, currentValue)) {
-            onFormControlValueChange?.(val, formControlName);
+            onModelChange?.(val, formControlName);
           }
         } else {
           console.warn('Please add `dFormControlName` to component that in `DFormControl`');
@@ -51,7 +51,7 @@ export function useTwoWayBinding<T>(
         }
       }
     },
-    [currentValue, formControlEnable, formControlName, onFormControlValueChange, onValueChange, setAutoValue, setValue]
+    [currentValue, formControlEnable, formControlName, onModelChange, onValueChange, setValue]
   );
 
   return [currentValue, changeValue];

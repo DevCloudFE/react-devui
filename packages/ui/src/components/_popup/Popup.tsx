@@ -242,11 +242,11 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         }
         dataRef.current.transitionState = {
           'enter-from': { transform: 'scale(0.3)', opacity: '0' },
-          'enter-to': { transition: 'transform 83ms ease-out, opacity 83ms ease-out', transformOrigin },
+          'enter-to': { transition: 'transform 86ms ease-out, opacity 86ms ease-out', transformOrigin },
           'leave-to': {
             transform: 'scale(0.3)',
             opacity: '0',
-            transition: 'transform 83ms ease-in, opacity 83ms ease-in',
+            transition: 'transform 116ms ease-in, opacity 116ms ease-in',
             transformOrigin,
           },
         };

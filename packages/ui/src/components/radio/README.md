@@ -18,10 +18,10 @@ Extend `React.HTMLAttributes<HTMLElement>, DFormControl`, [DFormControl](/compon
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dChecked | Manual control is selected | [boolean, Updater\<boolean\>?] | - |
+| dModel | Manual control is selected | [boolean, Updater\<boolean\>?] | - |
 | dDisabled | Whether to disable | boolean | false |
 | dValue | Pass as an identifier in radio group | DValue  | - |
-| onCheckedChange | Selected change callback | `(checked: boolean) => void` | - |
+| onModelChange | Selected change callback | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DRadioRef
@@ -37,13 +37,13 @@ Extend `React.HTMLAttributes<HTMLDivElement>, DFormControl`, [DFormControl](/com
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dValue | Manual control selection | [DValue, Updater\<DValue\>?] | - |
+| dModel | Manual control selection | [DValue, Updater\<DValue\>?] | - |
 | dName | Single option `name` attribute | string | - |
 | dDisabled | Whether to disable | boolean | false |
 | dType | Radio group style | 'outline' \| 'fill' | - |
 | dSize | Radio button size | 'smaller' \| 'larger' | - |
 | dVertical | Radio group arranged vertically | boolean | false |
-| onValueChange | Callback when the selected item is changed | `(checked: DValue) => void` | - |
+| onModelChange | Callback when the selected item is changed | `(checked: DValue) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DValue

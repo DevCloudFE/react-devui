@@ -17,10 +17,10 @@ title: 单选组
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dChecked | 手动控制是否选中 | [boolean, Updater\<boolean\>?] | - |
+| dModel | 手动控制是否选中 | [boolean, Updater\<boolean\>?] | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dValue | 单选组中作为标识传递 | DValue  | - |
-| onCheckedChange | 选中改变的回调 | `(checked: boolean) => void` | - |
+| onModelChange | 选中改变的回调 | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DRadioRef
@@ -36,13 +36,13 @@ export type DRadioRef = HTMLInputElement;
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dValue | 手动控制选择 | [DValue, Updater\<DValue\>?] | - |
+| dModel | 手动控制选择 | [DValue, Updater\<DValue\>?] | - |
 | dName | 单选项的 `name` 属性 | string | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dType | 单选组样式 | 'outline' \| 'fill' | - |
 | dSize | 单选组按钮尺寸 | 'smaller' \| 'larger' | - |
 | dVertical | 单选组垂直排布 | boolean | false |
-| onValueChange | 选中项改变的回调 | `(checked: DValue) => void` | - |
+| onModelChange | 选中项改变的回调 | `(checked: DValue) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DValue

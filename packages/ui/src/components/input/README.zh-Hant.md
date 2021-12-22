@@ -17,9 +17,9 @@ title: 输入框
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dValue | 绑定值 | [string, Updater\<string\>?] | - |
+| dModel | 绑定值 | [string, Updater\<string\>?] | - |
 | dSize | 设置输入框尺寸 | 'smaller' \| 'larger' | - |
-| onValueChange | 绑定值改变的回调 | `(value: string) => void` | - |
+| onModelChange | 绑定值改变的回调 | `(value: string) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DInputRef

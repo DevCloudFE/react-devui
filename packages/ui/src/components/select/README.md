@@ -18,10 +18,10 @@ Extend `DSelectBaseProps<T>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dSelect | Manual control options | [T \| null, Updater\<T \| null\>?] | - |
+| dModel | Manual control options | [T \| null, Updater\<T \| null\>?] | - |
 | dMultiple | Whether to select multiple | false | false |
 | dCustomSelected | Customize selected options | `(select: DSelectBaseOption<T>) => string`  | - |
-| onSelectChange | Selected change callback | `(select: T \| null) => void` | - |
+| onModelChange | Selected change callback | `(select: T \| null) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DSelectMultipleProps\<T\>
@@ -31,11 +31,11 @@ Extend `DSelectBaseProps<T>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dSelect | Manual control options | [T[], Updater\<T[]\>?] | - |
+| dModel | Manual control options | [T[], Updater\<T[]\>?] | - |
 | dMultiple | Whether to select multiple | true | false |
 | dMaxSelectNum | Maximum number of choices | number | - |
 | dCustomSelected | Customize selected options | `(selects: Array<DSelectBaseOption<T>>) => string[]`  | - |
-| onSelectChange | Selected change callback | `(selects: T[]) => void` | - |
+| onModelChange | Selected change callback | `(selects: T[]) => void` | - |
 | onExceed | Callbacks when the number of selections exceeds the limit | `() => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -57,3 +57,26 @@ Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>, DFormControl`, [DSele
 | onScrollBottom | Callback when the window scrolls to the bottom | `() => void` | - |
 | onCreateOption | Search for callbacks to create new options | `(value: string) => DSelectBaseOption<T> \| null` | - |
 <!-- prettier-ignore-end -->
+
+### DSelectBaseOption\<T\>
+
+```tsx
+export interface DSelectBaseOption<T> {
+  dLabel: string;
+  dValue: T;
+  dDisabled?: boolean;
+  [index: string | symbol]: unknown;
+}
+```
+
+### DSelectOption\<T\>
+
+```tsx
+export interface DSelectOption<T> {
+  dLabel: string;
+  dValue?: T;
+  dDisabled?: boolean;
+  dOptions?: Array<DSelectBaseOption<T>>;
+  [index: string | symbol]: unknown;
+}
+```
