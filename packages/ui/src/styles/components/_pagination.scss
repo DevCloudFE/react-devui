@@ -1,0 +1,147 @@
+@include b(pagination) {
+  --#{$variable-prefix}pagination-item-size: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+
+  outline: none;
+
+  @include font-size(0.95rem);
+
+  &:not(.is-disabled) {
+    .#{$variable-prefix}pagination__item--button:not(.is-disabled) {
+      &:hover,
+      &:focus {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+        color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+
+      @include when(active) {
+        border-color: var(--#{$variable-prefix}color-primary);
+
+        color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+  }
+
+  @include when(disabled) {
+    cursor: not-allowed;
+
+    .#{$variable-prefix}pagination__item--button {
+      color: var(--#{$variable-prefix}disabled-color);
+
+      background-color: var(--#{$variable-prefix}disabled-background-color);
+
+      pointer-events: none;
+
+      @include when(active) {
+        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
+
+        background-color: var(--#{$variable-prefix}color-step-100);
+      }
+    }
+  }
+
+  @include when(change) {
+    .#{$variable-prefix}pagination__item--button {
+      transition: none;
+    }
+  }
+
+  @include m(mini) {
+    --#{$variable-prefix}pagination-item-size: 24px;
+
+    gap: 4px 8px;
+
+    @include font-size(0.8rem);
+
+    .#{$variable-prefix}pagination__list {
+      gap: 4px 2px;
+    }
+    .#{$variable-prefix}pagination__item--button:not(.is-active) {
+      border: none;
+    }
+  }
+
+  @include e(list) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  @include e(item) {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    vertical-align: top;
+
+    @include m(button) {
+      justify-content: center;
+      min-width: var(--#{$variable-prefix}pagination-item-size);
+      height: var(--#{$variable-prefix}pagination-item-size);
+      border-radius: var(--#{$variable-prefix}border-radius);
+
+      outline: none;
+      cursor: pointer;
+
+      transition: border-color 0.2s linear, color 0.2s linear;
+
+      user-select: none;
+
+      @include utils-disabled;
+    }
+
+    @include m(border) {
+      border: 1px solid var(--#{$variable-prefix}border-color);
+    }
+
+    @include m(jump5) {
+      .#{$variable-prefix}icon {
+        color: var(--#{$variable-prefix}color-primary);
+
+        opacity: 0;
+
+        transition: opacity 133ms linear;
+      }
+
+      &:hover,
+      &:focus {
+        .#{$variable-prefix}icon {
+          opacity: 1;
+        }
+        .#{$variable-prefix}pagination__ellipsis {
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+  @include e(ellipsis) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--#{$variable-prefix}color-step-200);
+    font-size: 0.85em;
+
+    letter-spacing: 1.5px;
+
+    transition: opacity 133ms linear;
+  }
+}

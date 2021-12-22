@@ -31,6 +31,9 @@ export { DInput, DInputAffix } from './input';
 export type { DMenuProps, DMenuGroupProps, DMenuItemProps, DMenuSubProps } from './menu';
 export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 
+export type { DPaginationProps } from './pagination';
+export { DPagination } from './pagination';
+
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
 

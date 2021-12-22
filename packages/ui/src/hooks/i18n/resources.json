@@ -52,5 +52,43 @@
       "en-US": "Decrease number",
       "zh-Hant": "数字减"
     }
+  },
+  "DPagination": {
+    "Total": {
+      "en-US": "Total",
+      "zh-Hant": "共"
+    },
+    "items": {
+      "en-US": "items",
+      "zh-Hant": "项"
+    },
+    "Go": {
+      "en-US": "Go",
+      "zh-Hant": "至"
+    },
+    "Page": {
+      "en-US": "Page",
+      "zh-Hant": "页"
+    },
+    "5 pages forward": {
+      "en-US": "5 pages forward",
+      "zh-Hant": "向前 5 页"
+    },
+    "5 pages backward": {
+      "en-US": "5 pages backward",
+      "zh-Hant": "向后 5 页"
+    },
+    "Previous page": {
+      "en-US": "Previous page",
+      "zh-Hant": "上一页"
+    },
+    "Next page": {
+      "en-US": "Next page",
+      "zh-Hant": "下一页"
+    },
+    " / Page": {
+      "en-US": " / Page",
+      "zh-Hant": "条/页"
+    }
   }
 }
