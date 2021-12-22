@@ -5,4 +5,12 @@
     padding: 20px;
     overflow: auto;
   }
+
+  @include e(content) {
+    position: relative;
+
+    top: 100px;
+
+    margin: 0 auto;
+  }
 }

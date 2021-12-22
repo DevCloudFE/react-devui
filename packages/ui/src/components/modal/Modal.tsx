@@ -48,6 +48,8 @@ export function DModal(props: DModalProps) {
     __zIndex,
     children,
     dChildModal,
+    className,
+    ...restProps
   } = useComponentConfig(DModal.name, props);
 
   //#region Context
@@ -118,9 +120,6 @@ export function DModal(props: DModalProps) {
       className: getClassName(`${dPrefix}modal__content`),
       style: {
         width: dWidth,
-        margin: '0 auto',
-        position: 'relative',
-        top: '100px',
       },
     }),
     [dPrefix, dWidth]
@@ -134,7 +133,9 @@ export function DModal(props: DModalProps) {
   const modalNode = (
     <>
       <DDialog
+        {...restProps}
         ref={dialogRef}
+        className={getClassName(className, `${dPrefix}modal`)}
         dMask={dMask}
         dVisible={visible}
         onClose={closeModal}
@@ -142,11 +143,9 @@ export function DModal(props: DModalProps) {
         dContentProps={contentProps}
         dMaskClosable={dMaskClosable}
       >
-        <div className={`${dPrefix}modal__content`}>
-          {dHeader}
-          <div className={`${dPrefix}modal__body`}>{children}</div>
-          {dFooter}
-        </div>
+        {dHeader}
+        <div className={`${dPrefix}modal__body`}>{children}</div>
+        {dFooter}
       </DDialog>
       {childModal}
     </>
