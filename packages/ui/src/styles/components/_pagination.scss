@@ -1,5 +1,6 @@
 @include b(pagination) {
   --#{$variable-prefix}pagination-item-size: 32px;
+
   display: flex;
   flex-wrap: wrap;
   gap: 8px 16px;
@@ -28,6 +29,12 @@
     }
   }
 
+  @include when(change) {
+    .#{$variable-prefix}pagination__item--button {
+      transition: none;
+    }
+  }
+
   @include when(disabled) {
     cursor: not-allowed;
 
@@ -46,12 +53,6 @@
     }
   }
 
-  @include when(change) {
-    .#{$variable-prefix}pagination__item--button {
-      transition: none;
-    }
-  }
-
   @include m(mini) {
     --#{$variable-prefix}pagination-item-size: 24px;
 
@@ -62,6 +63,7 @@
     .#{$variable-prefix}pagination__list {
       gap: 4px 2px;
     }
+
     .#{$variable-prefix}pagination__item--button:not(.is-active) {
       border: none;
     }
@@ -143,5 +145,25 @@
     letter-spacing: 1.5px;
 
     transition: opacity 133ms linear;
+  }
+
+  @include e(size-select, true) {
+    width: auto;
+
+    font-size: inherit;
+
+    @include m(mini) {
+      height: 26px;
+      padding: 0 6px;
+    }
+  }
+
+  @include e(jump-input, true) {
+    width: 1.5em;
+
+    @include m(mini) {
+      width: 3em;
+      height: 26px;
+    }
   }
 }

@@ -9,6 +9,7 @@
   height: var(--#{$variable-prefix}size);
   padding: 0 var(--#{$variable-prefix}select-box-space);
   border: 1px solid var(--#{$variable-prefix}border-color);
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
   font-family: inherit;

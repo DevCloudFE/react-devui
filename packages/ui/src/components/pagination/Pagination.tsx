@@ -191,7 +191,9 @@ export function DPagination(props: DPaginationProps) {
     return (
       <DSelect
         key="size"
-        style={{ width: 'auto', fontSize: 'inherit', padding: dMini ? '0 6px' : undefined, height: dMini ? 26 : undefined }}
+        className={getClassName(`${dPrefix}pagination__size-select`, {
+          [`${dPrefix}pagination__size-select--mini`]: dMini,
+        })}
         dOptions={options}
         dSelect={[pageSize]}
         dCustomSelected={(select) => `${select.dLabel} ${t(' / Page')}`}
@@ -202,13 +204,15 @@ export function DPagination(props: DPaginationProps) {
         }}
       ></DSelect>
     );
-  }, [changePageSize, dCustomRender, dDisabled, dMini, dPageSizeOptions, pageSize, t]);
+  }, [changePageSize, dCustomRender, dDisabled, dMini, dPageSizeOptions, dPrefix, pageSize, t]);
 
   const jumpNode = useMemo(() => {
     if (dCompose.includes('jump')) {
       const inputNode = (
         <DInput
-          style={{ width: dMini ? '3em' : '1.5em', height: dMini ? 26 : undefined }}
+          className={getClassName(`${dPrefix}pagination__jump-input`, {
+            [`${dPrefix}pagination__jump-input--mini`]: dMini,
+          })}
           min={1}
           max={lastPage}
           step={1}
@@ -245,7 +249,7 @@ export function DPagination(props: DPaginationProps) {
       }
     }
     return null;
-  }, [changeActive, dCompose, dCustomRender, dDisabled, dMini, jumpValue, lastPage, t]);
+  }, [changeActive, dCompose, dCustomRender, dDisabled, dMini, dPrefix, jumpValue, lastPage, t]);
 
   return (
     <nav
