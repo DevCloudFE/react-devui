@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useStateBackflow } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DAnchorContext } from './Anchor';
 
@@ -14,12 +14,14 @@ export function DAnchorLink(props: DAnchorLinkProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ anchorActiveHref, onLinkRendered, onLinkClick }] = useCustomContext(DAnchorContext);
+  const [{ anchorActiveHref, onLinkClick }] = useCustomContext(DAnchorContext);
   //#endregion
 
   //#region Ref
   const [linkEl, linkRef] = useRefCallback<HTMLLIElement>();
   //#endregion
+
+  useStateBackflow(href, linkEl);
 
   const handleClick = useCallback(
     (e) => {
@@ -32,17 +34,6 @@ export function DAnchorLink(props: DAnchorLinkProps) {
     },
     [href, onClick, onLinkClick]
   );
-
-  //#region DidUpdate
-  useEffect(() => {
-    if (linkEl && href) {
-      onLinkRendered?.(href, linkEl);
-      return () => {
-        onLinkRendered?.(href);
-      };
-    }
-  }, [href, linkEl, onLinkRendered]);
-  //#endregion
 
   return (
     <li {...restProps} ref={linkRef} className={getClassName(className, `${dPrefix}anchor-link`)} onClick={handleClick}>

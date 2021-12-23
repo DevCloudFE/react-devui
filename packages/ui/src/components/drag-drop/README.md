@@ -41,7 +41,7 @@ Need to dynamically adjust the component position.
 ### DDropRef
 
 ```tsx
-export type DDropRef = string[];
+type DDropRef = string[];
 ```
 
 ### DDragPlaceholderProps

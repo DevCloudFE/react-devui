@@ -1,9 +1,16 @@
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DFormControl } from '../form';
 
 import React, { useCallback, useId } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useCustomContext,
+  useTwoWayBinding,
+  useWave,
+  useRefCallback,
+  useGeneralState,
+} from '../../hooks';
 import { getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
@@ -11,8 +18,9 @@ export type DRadioRef = HTMLInputElement;
 
 export type DValue = React.InputHTMLAttributes<HTMLInputElement>['value'];
 
-export interface DRadioProps extends React.HTMLAttributes<HTMLElement>, DFormControl {
+export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
+  dFormControlName?: string;
   dDisabled?: boolean;
   dValue?: DValue;
   onModelChange?: (checked: boolean) => void;
@@ -20,8 +28,8 @@ export interface DRadioProps extends React.HTMLAttributes<HTMLElement>, DFormCon
 
 const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, ref) => {
   const {
-    dFormControlName,
     dModel,
+    dFormControlName,
     dDisabled = false,
     dValue,
     onModelChange,
@@ -34,7 +42,8 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ radioGroupValue, radioGroupName, radioGroupType, radioGroupDisabled, onModelChange: _onModelChange }, radioGroupContext] =
+  const { gDisabled } = useGeneralState();
+  const [{ radioGroupValue, radioGroupName, radioGroupType, radioGroupDisabled, onCheckedChange }, radioGroupContext] =
     useCustomContext(DRadioGroupContext);
   //#endregion
 
@@ -49,27 +58,31 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   const inGroup = radioGroupContext !== null;
 
-  const disabled = radioGroupDisabled || dDisabled;
+  const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+    false,
+    inGroup ? [radioGroupValue === dValue] : dModel,
+    onModelChange,
+    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+  );
 
-  const [checked, changeChecked] = useTwoWayBinding(false, dModel, onModelChange, {
-    enable: !inGroup,
-    name: dFormControlName,
-  });
-  const _checked = inGroup ? radioGroupValue === dValue : checked;
+  const disabled = dDisabled || radioGroupDisabled || gDisabled || controlDisabled;
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e);
 
       if (!disabled) {
-        changeChecked(true);
-        _onModelChange?.(dValue);
+        if (inGroup) {
+          onCheckedChange?.(dValue);
+        } else {
+          changeChecked(true);
+        }
         if (radioEl && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
           wave(radioEl, `var(--${dPrefix}color-primary)`);
         }
       }
     },
-    [onChange, disabled, changeChecked, _onModelChange, dValue, radioEl, radioGroupType, wave, dPrefix]
+    [onChange, disabled, inGroup, radioEl, radioGroupType, onCheckedChange, dValue, changeChecked, wave, dPrefix]
   );
 
   return (
@@ -77,22 +90,23 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
       {...restProps}
       ref={radioRef}
       className={getClassName(className, `${dPrefix}radio`, {
-        'is-checked': _checked,
+        'is-checked': checked,
         'is-disabled': disabled,
       })}
     >
       <div className={`${dPrefix}radio__input-wrapper`}>
         <input
+          {...ariaAttribute}
           ref={ref}
           id={_id}
-          className={`${dPrefix}radio__input`}
-          checked={_checked}
+          className={getClassName(`${dPrefix}radio__input`, validateClassName)}
+          checked={checked}
           type="radio"
           value={dValue}
           name={radioGroupName}
           disabled={disabled}
           aria-labelledby={`${dPrefix}radio-label-${uniqueId}`}
-          aria-checked={_checked}
+          aria-checked={checked}
           onChange={handleChange}
         />
       </div>

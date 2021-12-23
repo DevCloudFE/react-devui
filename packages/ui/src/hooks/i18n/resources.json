@@ -90,5 +90,11 @@
       "en-US": " / Page",
       "zh-Hant": "条/页"
     }
+  },
+  "DForm": {
+    "Optional": {
+      "en-US": "(optional)",
+      "zh-Hant": "(可选)"
+    }
   }
 }

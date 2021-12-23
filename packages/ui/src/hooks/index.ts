@@ -1,12 +1,17 @@
-export { useTranslation } from './i18n';
 export { useAsync } from './async';
+export { useTranslation } from './i18n';
+export { useDTransition, useDCollapseTransition } from './transition';
 export { useCustomContext } from './context';
 export { usePrefixConfig, useRootContentConfig, useComponentConfig } from './d-config';
 export { useRefSelector } from './element-ref';
+export { useGeneralState, DGeneralStateContext } from './general-state';
 export { useImmer, useImmerReducer } from './immer';
 export { useLockScroll } from './lock-scroll';
+export { useMaxIndex } from './max-index';
+export { useNotification } from './notification';
 export { useThrottle, useDebounce } from './throttle-and-debounce';
 export { useRefCallback } from './ref';
+export { useStateBackflow, DStateBackflowContext } from './state-backflow';
 export { useTwoWayBinding } from './two-way-binding';
 export { useValueChange } from './value-change';
 export { useWave } from './wave';

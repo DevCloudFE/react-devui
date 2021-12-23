@@ -1,6 +1,5 @@
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralState } from '../../hooks';
 import { getClassName } from '../../utils';
-import { useCompose } from './utils';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dGray?: boolean;
@@ -11,16 +10,16 @@ export function DComposeItem(props: DComposeItemProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { composeSize, composeDisabled } = useCompose();
+  const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
   return (
     <div
       {...restProps}
       className={getClassName(className, `${dPrefix}compose-item`, {
-        [`${dPrefix}compose-item--${composeSize}`]: composeSize,
+        [`${dPrefix}compose-item--${gSize}`]: gSize,
         [`${dPrefix}compose-item--gray`]: dGray,
-        'is-disabled': composeDisabled,
+        'is-disabled': gDisabled,
       })}
     >
       {children}

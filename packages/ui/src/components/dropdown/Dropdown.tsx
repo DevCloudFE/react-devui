@@ -1,7 +1,7 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownItemProps } from './DropdownItem';
 
-import React, { useId, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useId, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useAsync, useTranslation } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
@@ -57,11 +57,6 @@ export function DDropdown(props: DDropdownProps) {
   //#region Ref
   const [navEl, navRef] = useRefCallback();
   //#endregion
-
-  const dataRef = useRef<{ navIds: Set<string>; ids: Map<string, Set<string>> }>({
-    navIds: new Set(),
-    ids: new Map(),
-  });
 
   const [t] = useTranslation('Common');
 
@@ -135,28 +130,7 @@ export function DDropdown(props: DDropdownProps) {
   );
 
   const childs = useMemo(() => {
-    dataRef.current.navIds.clear();
-    dataRef.current.ids.clear();
-
-    const getAllIds = (child: React.ReactElement) => {
-      if (child.props?.dId) {
-        const nodes = (React.Children.toArray(child.props?.children) as React.ReactElement[]).filter((node) => node.props?.dId);
-        const ids = nodes.map((node) => node.props?.dId);
-        dataRef.current.ids.set(child.props?.dId, new Set(ids));
-
-        nodes.forEach((node) => {
-          getAllIds(node);
-        });
-      }
-    };
-
-    React.Children.toArray(children).forEach((node) => {
-      getAllIds(node as React.ReactElement);
-    });
-
     return React.Children.map(children as Array<React.ReactElement<DDropdownItemProps>>, (child, index) => {
-      child.props.dId && dataRef.current.navIds.add(child.props.dId);
-
       let tabIndex = child.props.tabIndex;
       if (index === 0) {
         tabIndex = 0;

@@ -27,7 +27,7 @@ title: 固钉
 ### DAffixRef
 
 ```tsx
-export interface DAffixRef {
+interface DAffixRef {
   el: HTMLDivElement | null;
   updatePosition: () => void;
 }

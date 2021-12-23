@@ -28,7 +28,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 ### DAffixRef
 
 ```tsx
-export interface DAffixRef {
+interface DAffixRef {
   el: HTMLDivElement | null;
   updatePosition: () => void;
 }

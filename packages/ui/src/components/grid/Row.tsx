@@ -1,5 +1,6 @@
-import type { DColBaseProps, DColProps, DSpanValue } from './Col';
+import type { DColProps } from './Col';
 
+import { freeze } from 'immer';
 import { isArray, isEqual, isNumber, isObject, isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
@@ -29,7 +30,7 @@ const DEFAULT_PROPS = {
     ['xxl', 1400],
   ]),
 };
-const MEDIA_QUERY_LIST = Array.from(DEFAULT_PROPS.dBreakpoints.keys());
+export const MEDIA_QUERY_LIST = freeze(Array.from(DEFAULT_PROPS.dBreakpoints.keys()));
 export function DRow(props: DRowProps) {
   const {
     dColNum = 12,
@@ -175,9 +176,10 @@ export function DRow(props: DRowProps) {
     React.Children.forEach(_children, (col) => {
       let colSpan = col.props.dSpan;
       let colProps = col.props;
-      const breakpoint = getMaxBreakpoint(Object.keys(col.props));
+      const breakpoint = col.props.dResponsiveProps ? getMaxBreakpoint(Object.keys(col.props.dResponsiveProps)) : null;
       if (breakpoint) {
-        const breakpointProps = col.props[breakpoint] as DSpanValue | DColBaseProps;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const breakpointProps = col.props.dResponsiveProps![breakpoint];
 
         if (isObject(breakpointProps)) {
           if (!isUndefined(breakpointProps.dSpan)) {

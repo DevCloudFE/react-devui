@@ -2,12 +2,13 @@ import type { Updater } from '../../hooks/two-way-binding';
 import type { DMenuItemProps } from './MenuItem';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useDCollapseTransition } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
+import { DMenuItem } from './MenuItem';
+import { DMenuSub } from './MenuSub';
 
 type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
@@ -17,10 +18,6 @@ export interface DMenuContextData {
   menuActiveId: string | null;
   menuExpandIds: Set<string>;
   menuFocusId: [string, string] | null;
-  menuCurrentData: {
-    navIds: Set<string>;
-    ids: Map<string, Set<string>>;
-  };
   onActiveChange: (id: string) => void;
   onExpandChange: (id: string, expand: boolean) => void;
   onFocus: (dId: string, id: string) => void;
@@ -65,11 +62,6 @@ export function DMenu(props: DMenuProps) {
   const [navEl, navRef] = useRefCallback();
   //#endregion
 
-  const dataRef = useRef<DMenuContextData['menuCurrentData']>({
-    navIds: new Set(),
-    ids: new Map(),
-  });
-
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
@@ -108,7 +100,6 @@ export function DMenu(props: DMenuProps) {
       menuActiveId: activeId,
       menuExpandIds: expandIds,
       menuFocusId: focusId,
-      menuCurrentData: dataRef.current,
       onActiveChange: (id) => {
         changeActiveId(id);
       },
@@ -116,8 +107,19 @@ export function DMenu(props: DMenuProps) {
         changeExpandIds((draft) => {
           if (expand) {
             if (dExpandOne) {
-              for (const ids of [...Array.from(dataRef.current.ids.values()), dataRef.current.navIds]) {
-                if (ids.has(id)) {
+              const idsArr: string[][] = [];
+              const getAllIds = (childs: React.ReactNode) => {
+                const nodes = React.Children.toArray(childs).filter((node) => node?.['props']?.dId);
+                idsArr.push(nodes.map((node) => node['props'].dId));
+                nodes.forEach((node) => {
+                  if (node?.['props']?.children) {
+                    getAllIds(node['props'].children);
+                  }
+                });
+              };
+              getAllIds(children);
+              for (const ids of idsArr) {
+                if (ids.includes(id)) {
                   for (const sameLevelId of ids) {
                     draft.delete(sameLevelId);
                   }
@@ -138,85 +140,65 @@ export function DMenu(props: DMenuProps) {
         setFocusId(null);
       },
     }),
-    [activeId, changeActiveId, changeExpandIds, dExpandOne, dMode, expandIds, expandTrigger, focusId, setFocusId]
+    [activeId, changeActiveId, changeExpandIds, children, dExpandOne, dMode, expandIds, expandTrigger, focusId, setFocusId]
   );
 
   const childs = useMemo(() => {
-    dataRef.current.navIds.clear();
-    dataRef.current.ids.clear();
-
-    const getAllIds = (child: React.ReactElement) => {
-      if (child.props?.dId) {
-        const nodes = (React.Children.toArray(child.props?.children) as React.ReactElement[]).filter((node) => node.props?.dId);
-        const ids = nodes.map((node) => node.props?.dId);
-        dataRef.current.ids.set(child.props?.dId, new Set(ids));
-
-        nodes.forEach((node) => {
-          getAllIds(node);
-        });
-      }
-    };
-
-    React.Children.toArray(children).forEach((node) => {
-      getAllIds(node as React.ReactElement);
-    });
-
     return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) => {
-      child.props.dId && dataRef.current.navIds.add(child.props.dId);
+      const props = Object.assign({}, child.props);
 
-      let tabIndex = child.props.tabIndex;
-      if (index === 0) {
-        tabIndex = 0;
+      if ('type' in child && (child.type === DMenuSub || child.type === DMenuItem)) {
+        props.__inNav = true;
       }
 
-      return React.cloneElement(child, {
-        ...child.props,
-        tabIndex,
-      });
+      if (index === 0) {
+        props.tabIndex = 0;
+      }
+
+      return React.cloneElement(child, props);
     });
   }, [children]);
 
+  useDCollapseTransition({
+    dEl: navEl,
+    dVisible: dMode !== 'icon',
+    dDirection: 'horizontal',
+    dDuring: 200,
+    dSpace: 80,
+  });
+
   return (
     <DMenuContext.Provider value={contextValue}>
-      <DCollapseTransition
-        dEl={navEl}
-        dVisible={dMode !== 'icon'}
-        dDirection="horizontal"
-        dDuring={200}
-        dSpace={80}
-        dRender={() => (
-          <DTrigger
-            dTrigger="hover"
-            dRender={(triggerRenderProps) => (
-              <nav
-                {...restProps}
-                ref={navRef}
-                className={getClassName(className, `${dPrefix}menu`, {
-                  [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-                })}
-                tabIndex={-1}
-                role="menubar"
-                aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-                aria-activedescendant={activedescendant}
-                onMouseEnter={(e) => {
-                  onMouseEnter?.(e);
-                  triggerRenderProps.onMouseEnter?.(e);
-                }}
-                onMouseLeave={(e) => {
-                  onMouseLeave?.(e);
-                  triggerRenderProps.onMouseLeave?.(e);
-                }}
-                onClick={(e) => {
-                  onClick?.(e);
-                  triggerRenderProps.onClick?.(e);
-                }}
-              >
-                {childs}
-              </nav>
-            )}
-            onTrigger={handleTrigger}
-          />
+      <DTrigger
+        dTrigger="hover"
+        dRender={(triggerRenderProps) => (
+          <nav
+            {...restProps}
+            ref={navRef}
+            className={getClassName(className, `${dPrefix}menu`, {
+              [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+            })}
+            tabIndex={-1}
+            role="menubar"
+            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+            aria-activedescendant={activedescendant}
+            onMouseEnter={(e) => {
+              onMouseEnter?.(e);
+              triggerRenderProps.onMouseEnter?.(e);
+            }}
+            onMouseLeave={(e) => {
+              onMouseLeave?.(e);
+              triggerRenderProps.onMouseLeave?.(e);
+            }}
+            onClick={(e) => {
+              onClick?.(e);
+              triggerRenderProps.onClick?.(e);
+            }}
+          >
+            {childs}
+          </nav>
         )}
+        onTrigger={handleTrigger}
       />
     </DMenuContext.Provider>
   );

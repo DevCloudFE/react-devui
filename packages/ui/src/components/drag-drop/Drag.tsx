@@ -3,7 +3,16 @@ import React, { useId, useEffect, useMemo, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { merge } from 'rxjs';
 
-import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useCustomContext, useImmer } from '../../hooks';
+import {
+  useComponentConfig,
+  useRefSelector,
+  useThrottle,
+  useAsync,
+  usePrefixConfig,
+  useCustomContext,
+  useImmer,
+  useStateBackflow,
+} from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -20,11 +29,13 @@ export function DDrag(props: DDragProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ dropOuter, dropCurrentData, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
+  const [{ dropOuter, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
     useCustomContext(DDropContext);
   //#endregion
 
-  const dataRef = useRef<{ dragEl: HTMLElement | null }>({ dragEl: null });
+  const dataRef = useRef<{ dragEl: HTMLElement | null }>({
+    dragEl: null,
+  });
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
@@ -48,6 +59,8 @@ export function DDrag(props: DDragProps) {
     }
     return el;
   });
+
+  useStateBackflow(dId, `[data-${dPrefix}drag="${uniqueId}"]`, `[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
 
   //#region DidUpdate
   useEffect(() => {
@@ -199,17 +212,6 @@ export function DDrag(props: DDragProps) {
     onDragEnd,
     dId,
   ]);
-
-  useEffect(() => {
-    if (dId) {
-      dropCurrentData?.drags.set(dId, `[data-${dPrefix}drag="${uniqueId}"]`);
-      dropCurrentData?.placeholders.set(dId, `[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
-      return () => {
-        dropCurrentData?.drags.delete(dId);
-        dropCurrentData?.placeholders.delete(dId);
-      };
-    }
-  }, [dId, dPrefix, dropCurrentData, uniqueId]);
   //#endregion
 
   const child = useMemo(() => {

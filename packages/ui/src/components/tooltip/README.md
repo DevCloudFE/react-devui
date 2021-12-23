@@ -27,5 +27,5 @@ Please refer to [DPopupProps](/components/Interface#DPopupProps).
 ### DTooltipRef
 
 ```tsx
-export type DTooltipRef = DPopupRef;
+type DTooltipRef = DPopupRef;
 ```

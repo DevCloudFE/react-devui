@@ -45,6 +45,8 @@
   }
 
   &:not(:disabled) {
+    @include form-validate;
+
     &:hover {
       z-index: var(--#{$variable-prefix}hover-z-index);
 
@@ -112,6 +114,8 @@
   }
 
   &:not(.is-disabled) {
+    @include form-validate;
+
     &:hover {
       z-index: var(--#{$variable-prefix}hover-z-index);
 

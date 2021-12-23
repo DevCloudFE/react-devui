@@ -40,7 +40,7 @@ title: 选择框
 
 ### DSelectBaseProps\<T\>
 
-继承 `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>, DFormControl`，[DSelectBoxProps](/components/Interface#DSelectBoxProps)，[DFormControl](/components/Form#DFormControl)。
+继承 `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>`。
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
@@ -60,7 +60,7 @@ title: 选择框
 ### DSelectBaseOption\<T\>
 
 ```tsx
-export interface DSelectBaseOption<T> {
+interface DSelectBaseOption<T> {
   dLabel: string;
   dValue: T;
   dDisabled?: boolean;
@@ -71,7 +71,7 @@ export interface DSelectBaseOption<T> {
 ### DSelectOption\<T\>
 
 ```tsx
-export interface DSelectOption<T> {
+interface DSelectOption<T> {
   dLabel: string;
   dValue?: T;
   dDisabled?: boolean;

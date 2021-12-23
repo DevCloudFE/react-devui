@@ -14,8 +14,6 @@
 }
 
 @include b(button) {
-  @include compose-item(':not([disabled]):not(.is-loading)');
-
   $selector: &;
 
   position: relative;

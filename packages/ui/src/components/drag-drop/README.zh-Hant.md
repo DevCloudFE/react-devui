@@ -40,7 +40,7 @@ title: 拖放
 ### DDropRef
 
 ```tsx
-export type DDropRef = string[];
+type DDropRef = string[];
 ```
 
 ### DDragPlaceholderProps

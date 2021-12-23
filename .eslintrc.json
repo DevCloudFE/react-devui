@@ -9,7 +9,7 @@
       "processor": "markdown/markdown"
     },
     {
-      "files": ["*.md", "*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -47,7 +47,7 @@
       }
     },
     {
-      "files": ["*.md", "*.ts", "*.tsx"],
+      "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
         "no-unreachable": "error",
@@ -116,9 +116,17 @@
       }
     },
     {
-      "files": ["*.md", "*.js", "*.jsx"],
+      "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
+    },
+    {
+      "files": ["**/*.md/*.ts", "**/*.md/*.tsx"],
+      "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
     }
   ]
 }

@@ -19,6 +19,9 @@ export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps, DDropdownGroupProps } from './dropdown';
 export { DDropdown, DDropdownItem, DDropdownSub, DDropdownGroup } from './dropdown';
 
+export type { DFormProps, DFormItemProps } from './form';
+export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validators } from './form';
+
 export type { DRowProps, DColProps } from './grid';
 export { DRow, DCol } from './grid';
 

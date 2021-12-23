@@ -1,7 +1,8 @@
 import type { DElementSelector } from '../../hooks/element-ref';
+import type { DStateBackflowContextData } from '../../hooks/state-backflow';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   usePrefixConfig,
@@ -12,13 +13,13 @@ import {
   useRefCallback,
   useRootContentConfig,
   useValueChange,
+  DStateBackflowContext,
 } from '../../hooks';
 import { getClassName, CustomScroll } from '../../utils';
 
 export interface DAnchorContextData {
   anchorActiveHref: string | null;
   onLinkClick: (href: string) => void;
-  onLinkRendered: (href: string, el?: HTMLElement | null) => void;
 }
 export const DAnchorContext = React.createContext<DAnchorContextData | null>(null);
 
@@ -51,13 +52,10 @@ export function DAnchor(props: DAnchorProps) {
   const [anchorEl, anchorRef] = useRefCallback<HTMLUListElement>();
   //#endregion
 
-  const dataRef = useRef({
-    links: new Map<string, HTMLElement | null>(),
-  });
-
   const asyncCapture = useAsync();
   const [customScroll] = useState(() => new CustomScroll());
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
+  const [links, setLinks] = useImmer(new Map<string, { href: string; el: HTMLLIElement | null }>());
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
   const pageRef = useRefSelector(dPage ?? null);
@@ -75,7 +73,7 @@ export function DAnchor(props: DAnchorProps) {
     }
 
     let nearestEl: [string, number] | null = null;
-    for (const [href] of dataRef.current.links.entries()) {
+    for (const { href } of links.values()) {
       if (href) {
         const el = document.getElementById(href.slice(1));
         if (el) {
@@ -97,15 +95,20 @@ export function DAnchor(props: DAnchorProps) {
     setDotStyle((draft) => {
       draft.opacity = nearestEl ? 1 : 0;
       if (newHref) {
-        const rect = dataRef.current.links.get(newHref)?.getBoundingClientRect();
-        if (rect && anchorEl) {
-          draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
+        for (const { href, el } of links.values()) {
+          if (href === newHref) {
+            const rect = el?.getBoundingClientRect();
+            if (rect && anchorEl) {
+              draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
+            }
+            break;
+          }
         }
       }
 
       return draft;
     });
-  }, [anchorEl, dDistance, dPage, pageRef, setActiveHref, setDotStyle]);
+  }, [anchorEl, dDistance, dPage, links, pageRef, setDotStyle]);
 
   const onLinkClick = useCallback(
     (href: string) => {
@@ -158,31 +161,47 @@ export function DAnchor(props: DAnchorProps) {
     () => ({
       anchorActiveHref: activeHref,
       onLinkClick,
-      onLinkRendered: (href, el) => {
-        if (isUndefined(el)) {
-          dataRef.current.links.delete(href);
-        } else {
-          dataRef.current.links.set(href, el);
-        }
-      },
     }),
     [activeHref, onLinkClick]
   );
 
+  const stateBackflowContextValue = useMemo<DStateBackflowContextData>(
+    () => ({
+      addState: (identity, href, el) => {
+        setLinks((draft) => {
+          draft.set(identity, { href, el });
+        });
+      },
+      updateState: (identity, href, el) => {
+        setLinks((draft) => {
+          draft.set(identity, { href, el });
+        });
+      },
+      removeState: (identity) => {
+        setLinks((draft) => {
+          draft.delete(identity);
+        });
+      },
+    }),
+    [setLinks]
+  );
+
   return (
-    <DAnchorContext.Provider value={contextValue}>
-      <ul {...restProps} ref={anchorRef} className={getClassName(className, `${dPrefix}anchor`)}>
-        <div className={`${dPrefix}anchor__indicator`}>
-          {dIndicator === 'dot' ? (
-            <span className={`${dPrefix}anchor__dot-indicator`} style={dotStyle}></span>
-          ) : dIndicator === 'line' ? (
-            <span className={`${dPrefix}anchor__line-indicator`} style={dotStyle}></span>
-          ) : (
-            dIndicator
-          )}
-        </div>
-        {children}
-      </ul>
-    </DAnchorContext.Provider>
+    <DStateBackflowContext.Provider value={stateBackflowContextValue}>
+      <DAnchorContext.Provider value={contextValue}>
+        <ul {...restProps} ref={anchorRef} className={getClassName(className, `${dPrefix}anchor`)}>
+          <div className={`${dPrefix}anchor__indicator`}>
+            {dIndicator === 'dot' ? (
+              <span className={`${dPrefix}anchor__dot-indicator`} style={dotStyle}></span>
+            ) : dIndicator === 'line' ? (
+              <span className={`${dPrefix}anchor__line-indicator`} style={dotStyle}></span>
+            ) : (
+              dIndicator
+            )}
+          </div>
+          {children}
+        </ul>
+      </DAnchorContext.Provider>
+    </DStateBackflowContext.Provider>
   );
 }

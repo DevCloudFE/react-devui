@@ -30,7 +30,7 @@ title: 虚拟滚动
 ### DListRenderProps
 
 ```tsx
-export interface DListRenderProps {
+interface DListRenderProps {
   [key: `data-${string}virtual-scroll`]: string;
   onScroll: React.UIEventHandler<HTMLElement>;
   children: React.ReactNode;
@@ -40,7 +40,7 @@ export interface DListRenderProps {
 ### DListRenderProps
 
 ```tsx
-export interface DItemRenderProps {
+interface DItemRenderProps {
   [key: `data-${string}virtual-scroll-reference`]: string;
 }
 ```

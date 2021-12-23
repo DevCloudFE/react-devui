@@ -33,3 +33,9 @@ export function getAllIds(id: string, data?: Map<string, string[]>): string[] {
   }
   return arr;
 }
+
+export interface DMenuCommonContextData {
+  expandIds: Set<string>;
+  onExpandChange: (id: string, expand: boolean) => void;
+}
+export const DMenuCommonContext = React.createContext<DMenuCommonContextData | null>(null);

@@ -2,8 +2,7 @@ import { isString, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 
 import { DIcon, DAnchor, DAnchorLink, DRow } from '@react-devui/ui';
-import { DTransition } from '@react-devui/ui/components/_transition';
-import { useImmer, useRefCallback } from '@react-devui/ui/hooks';
+import { useImmer, useDTransition, useRefCallback } from '@react-devui/ui/hooks';
 
 import './RouteArticle.scss';
 import marked, { toString } from './utils';
@@ -79,6 +78,15 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
     }
   }, [html]);
 
+  const hidden = useDTransition({
+    dEl: el,
+    dVisible: menuOpen,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
+  });
+
   return (
     <DRow
       dAsListener
@@ -95,28 +103,17 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
           )}
           {!matchs.includes('md') && (
             <>
-              <DTransition
-                dEl={el}
-                dVisible={menuOpen}
-                dCallbackList={{
-                  beforeEnter: () => transitionState,
-                  beforeLeave: () => transitionState,
-                }}
-                dRender={(hidden) =>
-                  links.length > 0 && (
-                    <div ref={ref} className="app-route-article__anchor-conatiner" style={{ visibility: hidden ? 'hidden' : undefined }}>
-                      <DAnchor dPage=".app-main" dIndicator="line">
-                        {links.map((link) => (
-                          <DAnchorLink key={link.href} href={link.href} title={link.title} onClick={() => setMenuOpen(false)}>
-                            {link.title}
-                          </DAnchorLink>
-                        ))}
-                      </DAnchor>
-                    </div>
-                  )
-                }
-              ></DTransition>
-
+              {links.length > 0 && (
+                <div ref={ref} className="app-route-article__anchor-conatiner" style={{ visibility: hidden ? 'hidden' : undefined }}>
+                  <DAnchor dPage=".app-main" dIndicator="line">
+                    {links.map((link) => (
+                      <DAnchorLink key={link.href} href={link.href} title={link.title} onClick={() => setMenuOpen(false)}>
+                        {link.title}
+                      </DAnchorLink>
+                    ))}
+                  </DAnchor>
+                </div>
+              )}
               <div className="app-route-article__anchor-button" role="button" tabIndex={0} onClick={() => setMenuOpen(!menuOpen)}>
                 {icon(true)}
                 {icon(false)}

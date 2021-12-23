@@ -1,13 +1,9 @@
+import type { DGeneralStateContextData } from '../../hooks/general-state';
+
 import React, { useMemo } from 'react';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { getClassName } from '../../utils';
-
-export interface DComposeContextData {
-  composeSize: DComposeProps['dSize'];
-  composeDisabled: boolean;
-}
-export const DComposeContext = React.createContext<DComposeContextData | null>(null);
 
 export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
   dSize?: 'smaller' | 'larger';
@@ -19,21 +15,25 @@ export function DCompose(props: DComposeProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
-  const contextValue = useMemo<DComposeContextData>(
+  const size = dSize ?? gSize;
+  const disabled = dDisabled || gDisabled;
+
+  const generalStateContextValue = useMemo<DGeneralStateContextData>(
     () => ({
-      composeSize: dSize,
-      composeDisabled: dDisabled,
+      gSize: size,
+      gDisabled: disabled,
     }),
-    [dSize, dDisabled]
+    [disabled, size]
   );
 
   return (
-    <DComposeContext.Provider value={contextValue}>
+    <DGeneralStateContext.Provider value={generalStateContextValue}>
       <div {...restProps} className={getClassName(className, `${dPrefix}compose`)}>
         {children}
       </div>
-    </DComposeContext.Provider>
+    </DGeneralStateContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { isFunction, isNumber, isString } from 'lodash';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useAsync, useImmer } from '../../hooks';
@@ -31,13 +31,12 @@ export interface DTransitionProps {
   dCallbackList?: DTransitionCallbackList;
   dEndStyle?: { enter?: Partial<CSSStyleDeclaration>; leave?: Partial<CSSStyleDeclaration> };
   dSkipFirst?: boolean;
-  dRender: (hidden: boolean) => React.ReactNode;
   afterEnter?: () => void;
   afterLeave?: () => void;
 }
 
-export function DTransition(props: DTransitionProps) {
-  const { dEl, dVisible = false, dCallbackList, dEndStyle, dSkipFirst = true, dRender, afterEnter, afterLeave } = props;
+export function useDTransition(props: DTransitionProps) {
+  const { dEl, dVisible = false, dCallbackList, dEndStyle, dSkipFirst = true, afterEnter, afterLeave } = props;
 
   const dataRef = useRef({
     hasfirstRun: false,
@@ -145,7 +144,7 @@ export function DTransition(props: DTransitionProps) {
   }, [dEl, hidden]);
   //#endregion
 
-  return <>{dRender(hidden)}</>;
+  return hidden;
 }
 
 export interface DCollapseTransitionProps extends DTransitionProps {
@@ -155,8 +154,8 @@ export interface DCollapseTransitionProps extends DTransitionProps {
   dSpace?: number | string;
 }
 
-export function DCollapseTransition(props: DCollapseTransitionProps) {
-  const { dEl, dCallbackList, dDirection = 'vertical', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
+export function useDCollapseTransition(props: DCollapseTransitionProps) {
+  const { dCallbackList, dDirection = 'vertical', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
 
   const enterTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.enter) : 'linear';
   const leaveTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.leave) : 'linear';
@@ -194,16 +193,13 @@ export function DCollapseTransition(props: DCollapseTransitionProps) {
     };
   };
 
-  return (
-    <DTransition
-      {...restProps}
-      dEl={dEl}
-      dCallbackList={{
-        ...dCallbackList,
-        beforeEnter: (el) => dCallbackList?.beforeEnter(el) ?? getTransitionState(el),
-        beforeLeave: (el) => dCallbackList?.beforeLeave(el) ?? getTransitionState(el),
-      }}
-      dEndStyle={shouldHidden ? undefined : { leave: { [attribute]: space } }}
-    />
-  );
+  return useDTransition({
+    ...restProps,
+    dCallbackList: {
+      ...dCallbackList,
+      beforeEnter: (el) => dCallbackList?.beforeEnter(el) ?? getTransitionState(el),
+      beforeLeave: (el) => dCallbackList?.beforeLeave(el) ?? getTransitionState(el),
+    },
+    dEndStyle: shouldHidden ? undefined : { leave: { [attribute]: space } },
+  });
 }

@@ -1,6 +1,5 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DSelectBoxProps } from '../_select-box';
-import type { DFormControl } from '../form';
 import type { Draft } from 'immer';
 
 import { isArray, isNull, isNumber, isString, isUndefined } from 'lodash';
@@ -8,11 +7,19 @@ import React, { useCallback, useRef, useEffect, useMemo, useState, useId } from 
 import { flushSync } from 'react-dom';
 import { filter } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useAsync, useImmer, useTranslation, useRefCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useTwoWayBinding,
+  useAsync,
+  useImmer,
+  useTranslation,
+  useRefCallback,
+  useGeneralState,
+} from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DSelectBox } from '../_select-box';
-import { useCompose } from '../compose';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 import { DTag } from '../tag';
@@ -49,7 +56,8 @@ export interface DSelectOption<T> {
   [index: string | symbol]: unknown;
 }
 
-export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>, DFormControl {
+export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'> {
+  dFormControlName?: string;
   dVisible?: [boolean, Updater<boolean>?];
   dOptions: Array<DSelectOption<T>>;
   dOptionRender?: (option: DSelectBaseOption<T>, index: number) => React.ReactNode;
@@ -99,9 +107,9 @@ export function DSelect<T>(
   }
 ) {
   const {
+    dModel,
     dFormControlName,
     dVisible,
-    dModel,
     dOptions,
     dOptionRender = DEFAULT_PROPS.dOptionRender,
     dCustomSelected,
@@ -120,6 +128,7 @@ export function DSelect<T>(
     onCreateOption,
     onSearch,
     onExceed,
+    id,
     className,
     children,
     onChange,
@@ -130,7 +139,7 @@ export function DSelect<T>(
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { composeSize, composeDisabled } = useCompose();
+  const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
   //#region Ref
@@ -152,18 +161,22 @@ export function DSelect<T>(
   const asyncCapture = useAsync();
 
   const uniqueId = useId();
+  const _id = id ?? `${dPrefix}select-${uniqueId}`;
 
   const [focusId, setfocusId] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [createOptions, setCreateOptions] = useImmer<Array<DSelectBaseOption<T>>>([]);
 
   const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
-  const [select, changeSelect] = useTwoWayBinding(dMultiple ? [] : null, dModel, onModelChange, {
-    name: dFormControlName,
-  });
+  const [select, changeSelect, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+    dMultiple ? [] : null,
+    dModel,
+    onModelChange,
+    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+  );
 
-  const size = composeSize ?? dSize;
-  const disabled = composeDisabled || dDisabled;
+  const size = dSize ?? gSize;
+  const disabled = dDisabled || gDisabled || controlDisabled;
 
   const hasSearchChar = searchValue.length > 0;
 
@@ -442,6 +455,7 @@ export function DSelect<T>(
     };
   }, []);
 
+  //#region DidUpdate
   useEffect(() => {
     if (hasSearchChar) {
       if (selectListEl) {
@@ -721,6 +735,7 @@ export function DSelect<T>(
     select,
     size,
   ]);
+  //#endregion
 
   const hasSelect = isArray(select) ? select.length > 0 : !isNull(select);
 
@@ -844,7 +859,8 @@ export function DSelect<T>(
           {...restProps}
           {...renderProps}
           ref={selectBoxRef}
-          className={getClassName(className, `${dPrefix}select`, {
+          id={_id}
+          className={getClassName(className, `${dPrefix}select`, validateClassName, {
             [`${dPrefix}select--multiple`]: dMultiple,
           })}
           dSuffix={suffixNode}
@@ -853,6 +869,7 @@ export function DSelect<T>(
           dLoading={dLoading}
           dDisabled={disabled}
           dSize={size}
+          dAriaAttribute={ariaAttribute}
           onClear={handleClear}
           onClick={handleClick}
           onKeyDown={handleKeyDown}

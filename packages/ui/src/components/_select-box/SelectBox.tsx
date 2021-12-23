@@ -2,9 +2,8 @@ import { isUndefined } from 'lodash';
 import React, { startTransition, useCallback, useState } from 'react';
 import { useEffect } from 'react';
 
-import { useAsync, usePrefixConfig, useRefCallback, useTranslation } from '../../hooks';
+import { useAsync, usePrefixConfig, useRefCallback, useGeneralState, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
-import { useCompose } from '../compose';
 import { DIcon } from '../icon';
 
 export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -17,6 +16,7 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dPlaceholder?: string;
   dDisabled?: boolean;
   dLoading?: boolean;
+  dAriaAttribute?: React.HTMLAttributes<HTMLElement>;
   onClear?: () => void;
   onSearch?: (value: string) => void;
 }
@@ -32,6 +32,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     dPlaceholder,
     dDisabled = false,
     dLoading = false,
+    dAriaAttribute,
     onClear,
     onSearch,
     className,
@@ -43,7 +44,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { composeSize, composeDisabled } = useCompose();
+  const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
   //#region Ref
@@ -55,8 +56,8 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
 
   const [searchValue, setSearchValue] = useState('');
 
-  const size = composeSize ?? dSize;
-  const disabled = composeDisabled || dDisabled;
+  const size = dSize ?? gSize;
+  const disabled = dDisabled || gDisabled;
 
   const iconSize = size === 'smaller' ? 12 : size === 'larger' ? 16 : 14;
 
@@ -130,6 +131,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     >
       {dSearchable && dExpanded ? (
         <input
+          {...dAriaAttribute}
           ref={searchRef}
           className={`${dPrefix}select-box__search`}
           type="search"
@@ -158,7 +160,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
           onClickCapture={handleClearClick}
         >
           {isUndefined(dClearIcon) ? (
-            <DIcon viewBox="64 64 896 896" dSize={size === 'smaller' ? 10 : size === 'larger' ? 14 : 12}>
+            <DIcon viewBox="64 64 896 896" dSize="0.8em">
               <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path>
             </DIcon>
           ) : (

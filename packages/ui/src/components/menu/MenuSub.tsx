@@ -1,20 +1,27 @@
+import type { DStateBackflowContextData } from '../../hooks/state-backflow';
 import type { DMenuItemProps } from './MenuItem';
 
-import { isUndefined } from 'lodash';
+import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useCustomContext,
+  useRefCallback,
+  useTranslation,
+  useDCollapseTransition,
+  useImmer,
+  useStateBackflow,
+  DStateBackflowContext,
+} from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle } from '../../utils';
 import { DPopup } from '../_popup';
-import { DCollapseTransition } from '../_transition';
 import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
 import { DMenuContext } from './Menu';
 
-export interface DMenuSubContextData {
-  onPopupTrigger: (visible: boolean) => void;
-}
-export const DMenuSubContext = React.createContext<DMenuSubContextData | null>(null);
+type DIds = Map<string, string | DIds>;
 
 export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
@@ -23,6 +30,7 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dDisabled?: boolean;
   dPopupClassName?: string;
   __level?: number;
+  __inNav?: boolean;
 }
 
 export function DMenuSub(props: DMenuSubProps) {
@@ -33,6 +41,7 @@ export function DMenuSub(props: DMenuSubProps) {
     dDisabled = false,
     dPopupClassName,
     __level = 0,
+    __inNav = false,
     id,
     className,
     style,
@@ -45,21 +54,8 @@ export function DMenuSub(props: DMenuSubProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [
-    {
-      menuMode,
-      menuExpandTrigger,
-      menuActiveId,
-      menuExpandIds,
-      menuFocusId,
-      menuCurrentData,
-      onExpandChange,
-      onFocus: _onFocus,
-      onBlur: _onBlur,
-    },
-  ] = useCustomContext(DMenuContext);
-  const [{ onPopupTrigger }] = useCustomContext(DMenuSubContext);
-
+  const [{ menuMode, menuExpandTrigger, menuActiveId, menuExpandIds, menuFocusId, onExpandChange, onFocus: _onFocus, onBlur: _onBlur }] =
+    useCustomContext(DMenuContext);
   //#endregion
 
   //#region Ref
@@ -74,29 +70,50 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const expand = menuExpandIds?.has(dId) ?? false;
   const popupMode = menuMode !== 'vertical';
+
+  const [childrenIds, setChildrenIds] = useImmer<DIds>(new Map());
+
   const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
-  const [childrenPopupVisiable, setChildrenPopupVisiable] = useState(false);
-  const popupVisible = currentPopupVisible || childrenPopupVisiable;
-  const inNav = menuCurrentData?.navIds.has(dId) ?? false;
-  const inHorizontalNav = menuMode === 'horizontal' && inNav;
+  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(new Map<string, boolean>());
+  const popupVisible = useMemo(() => {
+    let visible = currentPopupVisible;
+    for (const childrenVisiable of childrenPopupVisiable.values()) {
+      if (childrenVisiable) {
+        visible = childrenVisiable;
+        break;
+      }
+    }
+    return visible;
+  }, [childrenPopupVisiable, currentPopupVisible]);
+
+  useStateBackflow(popupVisible, childrenIds);
+
+  const inHorizontalNav = menuMode === 'horizontal' && __inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
   const isActive = useMemo(() => {
-    if (popupMode ? !popupVisible : !expand) {
-      const ids: string[] = [];
-      const getAllIds = (id: string) => {
-        ids.push(id);
-        const childIds = menuCurrentData?.ids.get(id);
-        if (childIds) {
-          for (const childId of childIds.values()) {
-            getAllIds(childId);
+    if (isString(menuActiveId)) {
+      if (popupMode ? !popupVisible : !expand) {
+        const checkActive = (idMap: DIds): boolean | undefined => {
+          for (const id of idMap.values()) {
+            if (isString(id)) {
+              if (id === menuActiveId) {
+                return true;
+              }
+            } else {
+              const res = checkActive(id);
+              if (res) {
+                return res;
+              }
+            }
           }
-        }
-      };
-      getAllIds(dId);
-      return menuActiveId ? ids.includes(menuActiveId) : false;
+        };
+        return checkActive(childrenIds) ?? false;
+      }
     }
+
     return false;
-  }, [dId, expand, menuActiveId, menuCurrentData?.ids, popupMode, popupVisible]);
+  }, [childrenIds, expand, menuActiveId, popupMode, popupVisible]);
+
   const iconRotate = useMemo(() => {
     if (inHorizontalNav && popupVisible) {
       return 180;
@@ -114,7 +131,7 @@ export function DMenuSub(props: DMenuSubProps) {
     (popupEl: HTMLElement, targetEl: HTMLElement) => {
       const { top, left, transformOrigin } = inHorizontalNav
         ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
-        : getHorizontalSideStyle(popupEl, targetEl, 'right', inNav ? 10 : 14);
+        : getHorizontalSideStyle(popupEl, targetEl, 'right', __inNav ? 10 : 14);
       if (inHorizontalNav) {
         popupEl.style.width = targetEl.getBoundingClientRect().width - 32 + 'px';
       }
@@ -129,7 +146,7 @@ export function DMenuSub(props: DMenuSubProps) {
         },
       };
     },
-    [inHorizontalNav, inNav]
+    [inHorizontalNav, __inNav]
   );
 
   const handleExpandTrigger = useCallback(
@@ -185,10 +202,6 @@ export function DMenuSub(props: DMenuSubProps) {
       setCurrentPopupVisible(false);
     }
   }, [popupMode, setCurrentPopupVisible]);
-
-  useEffect(() => {
-    onPopupTrigger?.(popupVisible);
-  }, [onPopupTrigger, popupVisible]);
   //#endregion
 
   const childs = useMemo(() => {
@@ -230,81 +243,99 @@ export function DMenuSub(props: DMenuSubProps) {
     </ul>
   );
 
-  const contextValue = useMemo<DMenuSubContextData>(
+  const stateBackflowContextValue = useMemo<DStateBackflowContextData>(
     () => ({
-      onPopupTrigger: (visible) => {
-        setChildrenPopupVisiable(visible);
+      addState: (identity, visible, id) => {
+        setChildrenPopupVisiable((draft) => {
+          draft.set(identity, visible);
+        });
+        setChildrenIds((draft) => {
+          draft.set(identity, id);
+        });
+      },
+      updateState: (identity, visible, id) => {
+        setChildrenPopupVisiable((draft) => {
+          draft.set(identity, visible);
+        });
+        setChildrenIds((draft) => {
+          draft.set(identity, id);
+        });
+      },
+      removeState: (identity) => {
+        setChildrenPopupVisiable((draft) => {
+          draft.delete(identity);
+        });
+        setChildrenIds((draft) => {
+          draft.delete(identity);
+        });
       },
     }),
-    [setChildrenPopupVisiable]
+    [setChildrenIds, setChildrenPopupVisiable]
   );
 
+  const hidden = useDCollapseTransition({
+    dEl: menuCollapseEl,
+    dVisible: popupMode ? false : expand,
+    dDuring: 200,
+  });
+
   return (
-    <DMenuSubContext.Provider value={contextValue}>
-      <DCollapseTransition
-        dEl={menuCollapseEl}
-        dVisible={popupMode ? false : expand}
-        dDuring={200}
-        dRender={(hidden) => (
-          <>
-            <li
-              {...restProps}
-              ref={liRef}
-              id={_id}
-              className={getClassName(className, `${dPrefix}menu-sub`, {
-                [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
-                [`${dPrefix}menu-sub--icon`]: menuMode === 'icon' && inNav,
-                'is-active': isActive,
-                'is-expand': popupMode ? popupVisible : expand,
-                'is-disabled': dDisabled,
+    <DStateBackflowContext.Provider value={stateBackflowContextValue}>
+      <li
+        {...restProps}
+        ref={liRef}
+        id={_id}
+        className={getClassName(className, `${dPrefix}menu-sub`, {
+          [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
+          [`${dPrefix}menu-sub--icon`]: menuMode === 'icon' && __inNav,
+          'is-active': isActive,
+          'is-expand': popupMode ? popupVisible : expand,
+          'is-disabled': dDisabled,
+        })}
+        style={mergeStyle(style, {
+          paddingLeft: 16 + __level * 20,
+        })}
+        role="menuitem"
+        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
+        aria-haspopup={true}
+        aria-expanded={popupMode ? popupVisible : expand}
+        aria-disabled={dDisabled}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      >
+        <div className={`${dPrefix}menu-sub__indicator`}>
+          <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
+        </div>
+        {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
+        <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
+        <DIcon className={`${dPrefix}menu-sub__arrow`} viewBox="0 0 1024 1024" dSize={14} dRotate={iconRotate}>
+          <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
+        </DIcon>
+      </li>
+      {!dDisabled && (
+        <>
+          {popupMode ? (
+            <DPopup
+              className={getClassName(dPopupClassName, `${dPrefix}menu-sub-popup`)}
+              dVisible={popupVisible}
+              dPopupContent={menuNode({ ref: menuPopupRef })}
+              dTrigger={menuExpandTrigger}
+              dArrow={false}
+              dCustomPopup={customTransition}
+              dTriggerEl={liEl}
+              onVisibleChange={handlePopupVisibleChange}
+            />
+          ) : (
+            <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
+          )}
+          {popupMode && hidden
+            ? null
+            : menuNode({
+                ref: menuCollapseRef,
+                style: { display: hidden ? 'none' : undefined },
               })}
-              style={mergeStyle(style, {
-                paddingLeft: 16 + __level * 20,
-              })}
-              role="menuitem"
-              tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-              aria-haspopup={true}
-              aria-expanded={popupMode ? popupVisible : expand}
-              aria-disabled={dDisabled}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            >
-              <div className={`${dPrefix}menu-sub__indicator`}>
-                <div style={{ backgroundColor: __level === 0 ? 'transparent' : undefined }}></div>
-              </div>
-              {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
-              <div className={`${dPrefix}menu-sub__title`}>{dTitle}</div>
-              <DIcon className={`${dPrefix}menu-sub__arrow`} viewBox="0 0 1024 1024" dSize={14} dRotate={iconRotate}>
-                <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-              </DIcon>
-            </li>
-            {!dDisabled && (
-              <>
-                {popupMode ? (
-                  <DPopup
-                    className={getClassName(dPopupClassName, `${dPrefix}menu-sub-popup`)}
-                    dVisible={popupVisible}
-                    dPopupContent={menuNode({ ref: menuPopupRef })}
-                    dTrigger={menuExpandTrigger}
-                    dArrow={false}
-                    dCustomPopup={customTransition}
-                    dTriggerEl={liEl}
-                    onVisibleChange={handlePopupVisibleChange}
-                  />
-                ) : (
-                  <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
-                )}
-                {popupMode && hidden
-                  ? null
-                  : menuNode({
-                      ref: menuCollapseRef,
-                      style: { display: hidden ? 'none' : undefined },
-                    })}
-              </>
-            )}
-          </>
-        )}
-      />
-    </DMenuSubContext.Provider>
+        </>
+      )}
+    </DStateBackflowContext.Provider>
   );
 }

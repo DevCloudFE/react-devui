@@ -60,7 +60,7 @@ export function DPagination(props: DPaginationProps) {
   const [jumpValue, setJumpValue] = useState('');
 
   const [active, _changeActive] = useTwoWayBinding<number>(1, dActive, onActiveChange);
-  const [pageSize, changePageSize] = useTwoWayBinding<number>(10, dPageSize, onPageSizeChange);
+  const [pageSize, changePageSize] = useTwoWayBinding<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
 
   const changeActive = useCallback(
     (active: number) => {
@@ -73,7 +73,7 @@ export function DPagination(props: DPaginationProps) {
   );
 
   const lastPage = Math.max(Math.ceil(dTotal / pageSize), 1);
-  const iconSize = 14;
+  const iconSize = '0.9em';
 
   if (lastPage < active) {
     _changeActive(lastPage);

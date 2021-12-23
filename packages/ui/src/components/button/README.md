@@ -31,7 +31,7 @@ Extend `React.ButtonHTMLAttributes<HTMLButtonElement>`.
 ### DButtonRef
 
 ```tsx
-export type DButtonRef = HTMLButtonElement;
+type DButtonRef = HTMLButtonElement;
 ```
 
 ### DButtonGroupProps

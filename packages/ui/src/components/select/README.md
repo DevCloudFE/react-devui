@@ -41,7 +41,7 @@ Extend `DSelectBaseProps<T>`.
 
 ### DSelectBaseProps\<T\>
 
-Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>, DFormControl`, [DSelectBoxProps](/components/Interface#DSelectBoxProps), [DFormControl](/components/Form#DFormControl).
+Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>`.
 
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
@@ -61,7 +61,7 @@ Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>, DFormControl`, [DSele
 ### DSelectBaseOption\<T\>
 
 ```tsx
-export interface DSelectBaseOption<T> {
+interface DSelectBaseOption<T> {
   dLabel: string;
   dValue: T;
   dDisabled?: boolean;
@@ -72,7 +72,7 @@ export interface DSelectBaseOption<T> {
 ### DSelectOption\<T\>
 
 ```tsx
-export interface DSelectOption<T> {
+interface DSelectOption<T> {
   dLabel: string;
   dValue?: T;
   dDisabled?: boolean;

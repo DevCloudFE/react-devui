@@ -54,17 +54,17 @@ title: 栅格
 ### DBreakpoints
 
 ```tsx
-export type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 ```
 
 ### DGutterValue
 
 ```tsx
-export type DGutterValue = number | string | [number | string, number | string];
+type DGutterValue = number | string | [number | string, number | string];
 ```
 
 ### DSpanValue
 
 ```tsx
-export type DSpanValue = number | true;
+type DSpanValue = number | true;
 ```

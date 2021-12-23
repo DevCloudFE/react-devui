@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState } from '../../hooks';
 import { getClassName, pSBC } from '../../utils';
 import { DIcon } from '../icon';
 
@@ -29,7 +29,10 @@ export function DTag(props: DTagProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { gDisabled } = useGeneralState();
   //#endregion
+
+  const size = dSize ?? gDisabled;
 
   const [t] = useTranslation('Common');
 
@@ -44,7 +47,7 @@ export function DTag(props: DTagProps) {
     <div
       {...restProps}
       className={getClassName(className, `${dPrefix}tag`, `${dPrefix}tag--${dType}`, {
-        [`${dPrefix}tag--${dSize}`]: dSize,
+        [`${dPrefix}tag--${size}`]: size,
         [`t-${dTheme}`]: dTheme,
       })}
       style={

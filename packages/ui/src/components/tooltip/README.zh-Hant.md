@@ -26,5 +26,5 @@ title: 文字提示
 ### DTooltipRef
 
 ```tsx
-export type DTooltipRef = DPopupRef;
+type DTooltipRef = DPopupRef;
 ```

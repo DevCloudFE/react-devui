@@ -1,10 +1,9 @@
-import type { DTransitionProps } from '../_transition';
+import type { DTransitionProps } from '../../hooks/transition';
 
 import React, { useCallback } from 'react';
 
-import { usePrefixConfig, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useDTransition, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DTransition } from '../_transition';
 
 export interface DMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
@@ -37,26 +36,25 @@ export function DMask(props: DMaskProps) {
     'enter-to': { transition: 'opacity 0.1s linear' },
     'leave-to': { opacity: '0', transition: 'opacity 0.1s linear' },
   };
+  const hidden = useDTransition({
+    dEl: el,
+    dVisible,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
+    dSkipFirst: false,
+    afterEnter: () => {
+      afterVisibleChange?.(true);
+    },
+    afterLeave: () => {
+      afterVisibleChange?.(false);
+    },
+    ...dTransitionProps,
+  });
 
   return (
-    <DTransition
-      dEl={el}
-      dVisible={dVisible}
-      dCallbackList={{
-        beforeEnter: () => transitionState,
-        beforeLeave: () => transitionState,
-      }}
-      dRender={(hidden) =>
-        !hidden && <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>
-      }
-      dSkipFirst={false}
-      afterEnter={() => {
-        afterVisibleChange?.(true);
-      }}
-      afterLeave={() => {
-        afterVisibleChange?.(false);
-      }}
-      {...dTransitionProps}
-    />
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{!hidden && <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>}</>
   );
 }

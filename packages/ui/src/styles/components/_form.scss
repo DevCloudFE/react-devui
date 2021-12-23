@@ -1,0 +1,291 @@
+@keyframes form-pending-top {
+  0% {
+    left: -100%;
+  }
+
+  50%,
+  100% {
+    left: 100%;
+  }
+}
+@keyframes form-pending-right {
+  0% {
+    top: -100%;
+  }
+
+  50%,
+  100% {
+    top: 100%;
+  }
+}
+@keyframes form-pending-bottom {
+  0% {
+    right: -100%;
+  }
+
+  50%,
+  100% {
+    right: 100%;
+  }
+}
+@keyframes form-pending-left {
+  0% {
+    bottom: -100%;
+  }
+
+  50%,
+  100% {
+    bottom: 100%;
+  }
+}
+
+@include b(form) {
+  display: flex;
+  flex-flow: row wrap;
+
+  font-size: var(--#{$variable-prefix}font);
+
+  @include m(smaller) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
+  }
+}
+
+@include b(form-item) {
+  overflow: hidden;
+
+  @include m(vertical) {
+    @include e(container) {
+      flex-direction: column;
+      align-items: unset;
+    }
+
+    @include e(label) {
+      margin-bottom: var(--#{$variable-prefix}margin-size);
+
+      text-align: left;
+    }
+  }
+
+  @include e(container) {
+    display: flex;
+    align-items: center;
+  }
+
+  @include e(label) {
+    flex-shrink: 0;
+    padding-right: var(--#{$variable-prefix}margin-size);
+
+    text-align: right;
+
+    @include utils-ellipsis;
+
+    @include m(required) {
+      &::before {
+        display: inline-block;
+        margin-right: 4px;
+
+        color: var(--#{$variable-prefix}color-danger);
+        font-size: 1em;
+
+        content: '*';
+      }
+    }
+
+    @include m(colon) {
+      &::after {
+        position: relative;
+
+        margin-left: 2px;
+
+        content: ':';
+      }
+    }
+  }
+
+  @include e(extra) {
+    display: inline-flex;
+    gap: 0 4px;
+    align-items: center;
+    margin-left: 4px;
+
+    color: var(--#{$variable-prefix}color-step-400);
+    font-size: 0.9em;
+    line-height: 0;
+
+    .#{$variable-prefix}icon {
+      cursor: help;
+    }
+  }
+
+  @include e(content) {
+    position: relative;
+
+    flex-grow: 1;
+  }
+
+  @include e(pending) {
+    position: absolute;
+
+    display: block;
+    overflow: hidden;
+
+    &::after {
+      position: absolute;
+
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    &:nth-of-type(1) {
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 1px;
+
+      &::after {
+        left: 0;
+
+        background: linear-gradient(90deg, transparent, var(--#{$variable-prefix}color-primary));
+
+        animation: form-pending-top 1s linear infinite;
+        animation-fill-mode: both;
+
+        content: '';
+      }
+    }
+
+    &:nth-of-type(2) {
+      top: 0;
+      right: 0;
+
+      width: 1px;
+      height: 100%;
+
+      &::after {
+        top: -100%;
+
+        background: linear-gradient(180deg, transparent, var(--#{$variable-prefix}color-primary));
+
+        animation: form-pending-right 1s linear infinite;
+        animation-delay: 0.25s;
+        animation-fill-mode: both;
+
+        content: '';
+      }
+    }
+
+    &:nth-of-type(3) {
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+      height: 1px;
+
+      &::after {
+        right: 0;
+
+        background: linear-gradient(270deg, transparent, var(--#{$variable-prefix}color-primary));
+
+        animation: form-pending-bottom 1s linear infinite;
+        animation-delay: 0.5s;
+        animation-fill-mode: both;
+
+        content: '';
+      }
+    }
+
+    &:nth-of-type(4) {
+      top: 0;
+      left: 0;
+
+      width: 1px;
+      height: 100%;
+
+      &::after {
+        bottom: -100%;
+
+        background: linear-gradient(360deg, transparent, var(--#{$variable-prefix}color-primary));
+
+        animation: form-pending-left 1s linear infinite;
+        animation-delay: 0.75s;
+        animation-fill-mode: both;
+
+        content: '';
+      }
+    }
+  }
+
+  @include e(feedback-icon) {
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    width: 2em;
+
+    font-size: 1.1em;
+
+    @include when(pending) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+    @include when(error) {
+      color: var(--#{$variable-prefix}color-danger);
+    }
+    @include when(warning) {
+      color: var(--#{$variable-prefix}color-warning);
+    }
+    @include when(success) {
+      color: var(--#{$variable-prefix}color-success);
+    }
+  }
+
+  @include e(errors) {
+    position: absolute;
+    right: 0;
+    left: 0;
+
+    font-size: 0.9em;
+  }
+
+  @include e(errors-height) {
+    width: 0;
+    min-height: calc(1.5em + 5px);
+    overflow: hidden;
+
+    font-size: 0.9em;
+
+    visibility: hidden;
+  }
+}
+
+@include b(form-error) {
+  padding: 2px 0;
+
+  @include utils-ellipsis;
+
+  @include m(error) {
+    color: var(--#{$variable-prefix}color-danger);
+  }
+
+  @include m(warning) {
+    color: var(--#{$variable-prefix}color-warning);
+  }
+}
+
+@include b(form-group) {
+  width: 100%;
+  margin-bottom: 20px;
+  padding-bottom: var(--#{$variable-prefix}margin-size);
+  border-bottom: 1px solid var(--#{$variable-prefix}border-color);
+
+  color: var(--#{$variable-prefix}color-step-600);
+
+  font-weight: 600;
+  font-size: 1.1em;
+}

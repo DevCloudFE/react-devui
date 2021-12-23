@@ -3,7 +3,7 @@
 ## DElementSelector
 
 ```tsx
-export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
+type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 ```
 
 ## DPopupProps
@@ -36,7 +36,7 @@ export type DElementSelector = HTMLElement | null | string | (() => HTMLElement 
 ## DPopupRef
 
 ```tsx
-export interface DPopupRef {
+interface DPopupRef {
   el: HTMLDivElement | null;
   triggerEl: HTMLElement | null;
   updatePosition: () => void;
@@ -46,7 +46,7 @@ export interface DPopupRef {
 ## DTriggerRenderProps
 
 ```tsx
-export interface DTriggerRenderProps {
+interface DTriggerRenderProps {
   [key: `data-${string}popup-trigger`]: string;
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
@@ -59,7 +59,7 @@ export interface DTriggerRenderProps {
 ## DTransitionStateList
 
 ```tsx
-export interface DTransitionStateList {
+interface DTransitionStateList {
   'enter-from'?: Partial<CSSStyleDeclaration>;
   'enter-active'?: Partial<CSSStyleDeclaration>;
   'enter-to'?: Partial<CSSStyleDeclaration>;

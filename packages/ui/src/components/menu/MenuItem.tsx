@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useStateBackflow } from '../../hooks';
 import { getClassName, toId, mergeStyle } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -11,6 +11,7 @@ export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dIcon?: React.ReactNode;
   dDisabled?: boolean;
   __level?: number;
+  __inNav?: boolean;
 }
 
 export function DMenuItem(props: DMenuItemProps) {
@@ -19,6 +20,7 @@ export function DMenuItem(props: DMenuItemProps) {
     dIcon,
     dDisabled = false,
     __level = 0,
+    __inNav = false,
     id,
     className,
     style,
@@ -32,15 +34,16 @@ export function DMenuItem(props: DMenuItemProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ menuMode, menuActiveId, menuCurrentData, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
+  const [{ menuMode, menuActiveId, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 
   //#region Ref
   const [liEl, liRef] = useRefCallback<HTMLLIElement>();
   //#endregion
 
-  const inNav = menuCurrentData?.navIds.has(dId) ?? false;
   const _id = id ?? `${dPrefix}menu-item-${toId(dId)}`;
+
+  useStateBackflow(false, dId);
 
   const handleClick = useCallback(
     (e) => {
@@ -75,8 +78,8 @@ export function DMenuItem(props: DMenuItemProps) {
         ref={liRef}
         id={_id}
         className={getClassName(className, `${dPrefix}menu-item`, {
-          [`${dPrefix}menu-item--horizontal`]: menuMode === 'horizontal' && inNav,
-          [`${dPrefix}menu-item--icon`]: menuMode === 'icon' && inNav,
+          [`${dPrefix}menu-item--horizontal`]: menuMode === 'horizontal' && __inNav,
+          [`${dPrefix}menu-item--icon`]: menuMode === 'icon' && __inNav,
           'is-active': menuActiveId === dId,
           'is-disabled': dDisabled,
         })}
@@ -96,7 +99,7 @@ export function DMenuItem(props: DMenuItemProps) {
         {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
         <div className={`${dPrefix}menu-item__title`}>{children}</div>
       </li>
-      {inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerEl={liEl} dPlacement="right" />}
+      {__inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerEl={liEl} dPlacement="right" />}
     </>
   );
 }

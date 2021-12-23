@@ -1,29 +1,28 @@
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DFormControl } from '../form';
 
-import { isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle } from 'react';
+import React, { useEffect, useId, useImperativeHandle } from 'react';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useCustomContext, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useCustomContext, useRefCallback, useGeneralState } from '../../hooks';
 import { getClassName } from '../../utils';
-import { useCompose } from '../compose';
 import { DInputAffixContext } from './InputAffix';
 
 export type DInputRef = HTMLInputElement;
 
-export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement>, DFormControl {
+export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   dModel?: [string, Updater<string>?];
+  dFormControlName?: string;
   dSize?: 'smaller' | 'larger';
   onModelChange?: (value: string) => void;
 }
 
 const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, ref) => {
   const {
-    dFormControlName,
     dModel,
+    dFormControlName,
     dSize,
     onModelChange,
+    id,
     className,
     type = 'text',
     disabled,
@@ -36,32 +35,39 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { gSize, gDisabled } = useGeneralState();
   const [
     {
       inputAffixPassword,
       inputAffixNumber,
       inputAffixDisabled,
-      inputAffixSize,
+      inputAffixSetInputEl,
+      inputAffixSetClearable,
+      inputAffixSetValidateClassName,
+      inputAffixNotificationCallback,
       onFocus: _onFocus,
       onBlur: _onBlur,
-      onClearableChange,
-      onInputRendered,
     },
   ] = useCustomContext(DInputAffixContext);
-  const { composeSize, composeDisabled } = useCompose();
   //#endregion
 
   //#region Ref
   const [inputEl, inputRef] = useRefCallback<HTMLInputElement>();
   //#endregion
 
-  const size = isUndefined(composeSize) ? inputAffixSize ?? dSize : composeSize;
+  const uniqueId = useId();
+  const _id = id ?? `${dPrefix}input-${uniqueId}`;
 
-  const [value, changeValue] = useTwoWayBinding('', dModel, onModelChange, {
-    name: dFormControlName,
-  });
+  const size = dSize ?? gSize;
 
-  const _disabled = composeDisabled || inputAffixDisabled || disabled;
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+    '',
+    dModel,
+    onModelChange,
+    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+  );
+
+  const _disabled = disabled || inputAffixDisabled || gDisabled || controlDisabled;
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -87,25 +93,34 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     [_onBlur, onBlur]
   );
 
-  //#region DidUpdate
   useEffect(() => {
-    if (inputEl) {
-      onInputRendered?.(changeValue, inputEl);
-    }
-  }, [changeValue, inputEl, onInputRendered]);
+    inputAffixNotificationCallback?.bind(changeValue);
+    return () => {
+      inputAffixNotificationCallback?.removeBind(changeValue);
+    };
+  }, [changeValue, inputAffixNotificationCallback]);
 
   useEffect(() => {
-    onClearableChange?.(value.length > 0);
-  }, [value, onClearableChange]);
-  //#endregion
+    inputAffixSetInputEl?.(inputEl);
+  }, [inputAffixSetInputEl, inputEl]);
+
+  useEffect(() => {
+    inputAffixSetClearable?.(value.length > 0);
+  }, [inputAffixSetClearable, value.length]);
+
+  useEffect(() => {
+    inputAffixSetValidateClassName?.(validateClassName);
+  }, [inputAffixSetValidateClassName, validateClassName]);
 
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(ref, () => inputEl, [inputEl]);
 
   return (
     <input
       {...restProps}
+      {...ariaAttribute}
       ref={inputRef}
-      className={getClassName(className, `${dPrefix}input`, {
+      id={_id}
+      className={getClassName(className, `${dPrefix}input`, validateClassName, {
         [`${dPrefix}input--${size}`]: size,
       })}
       value={value}

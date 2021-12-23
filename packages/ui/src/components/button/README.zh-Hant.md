@@ -30,7 +30,7 @@ title: 按钮
 ### DButtonRef
 
 ```tsx
-export type DButtonRef = HTMLButtonElement;
+type DButtonRef = HTMLButtonElement;
 ```
 
 ### DButtonGroupProps

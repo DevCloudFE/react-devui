@@ -1,8 +1,7 @@
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useEffect, useId, useImperativeHandle, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback } from '../../hooks';
@@ -10,8 +9,9 @@ import { getClassName, mergeStyle } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
-export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement>, DFormControl {
+export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   dModel?: [string, Updater<string>?];
+  dFormControlName?: string;
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
   dShowCount?: boolean | ((num: number) => React.ReactNode);
@@ -20,12 +20,13 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
 
 const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
   const {
-    dFormControlName,
     dModel,
+    dFormControlName,
     dRows,
     dResizable = true,
     dShowCount = false,
     onModelChange,
+    id,
     className,
     style,
     maxLength,
@@ -45,9 +46,17 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   const [textareaEl, textareaRef] = useRefCallback<HTMLTextAreaElement>();
   //#endregion
 
-  const [value, changeValue] = useTwoWayBinding('', dModel, onModelChange, {
-    name: dFormControlName,
-  });
+  const uniqueId = useId();
+  const _id = id ?? `${dPrefix}input-${uniqueId}`;
+
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+    '',
+    dModel,
+    onModelChange,
+    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+  );
+
+  const _disabled = disabled || controlDisabled;
 
   const [rowNum, setRowNum] = useState(1);
 
@@ -110,16 +119,18 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     <>
       <textarea
         {...restProps}
+        {...ariaAttribute}
         ref={textareaRef}
-        className={getClassName(className, `${dPrefix}textarea`)}
+        id={_id}
+        className={getClassName(className, `${dPrefix}textarea`, validateClassName)}
         style={mergeStyle(style, {
           resize: resizable ? undefined : 'none',
           ...heightStyle,
         })}
         maxLength={maxLength}
         value={value}
-        disabled={disabled}
-        aria-disabled={disabled}
+        disabled={_disabled}
+        aria-disabled={_disabled}
         onChange={handleChange}
       />
       {dShowCount !== false && (
