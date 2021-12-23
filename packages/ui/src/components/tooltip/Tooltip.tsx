@@ -1,9 +1,9 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DPopupProps, DPopupRef, DTriggerRenderProps } from '../_popup';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useId } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useId, useTwoWayBinding } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 

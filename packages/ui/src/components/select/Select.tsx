@@ -4,20 +4,11 @@ import type { DFormControl } from '../form';
 import type { Draft } from 'immer';
 
 import { isArray, isNull, isNumber, isString, isUndefined } from 'lodash';
-import React, { useCallback, useRef, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useRef, useEffect, useMemo, useState, useId } from 'react';
 import { flushSync } from 'react-dom';
 import { filter } from 'rxjs';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTwoWayBinding,
-  useId,
-  useAsync,
-  useImmer,
-  useTranslation,
-  useRefCallback,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useAsync, useImmer, useTranslation, useRefCallback } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DSelectBox } from '../_select-box';

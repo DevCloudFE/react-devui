@@ -1,18 +1,9 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownItemProps } from './DropdownItem';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useId, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useImmer,
-  useRefCallback,
-  useTwoWayBinding,
-  useId,
-  useAsync,
-  useTranslation,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useAsync, useTranslation } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 

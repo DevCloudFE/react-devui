@@ -1,9 +1,9 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useId } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useId, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 

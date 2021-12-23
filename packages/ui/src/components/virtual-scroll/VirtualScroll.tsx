@@ -1,9 +1,9 @@
 import { isNumber, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useId } from 'react';
 import { useRef } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useComponentConfig, useRefSelector, useId, useAsync, usePrefixConfig, useImmer } from '../../hooks';
+import { useComponentConfig, useRefSelector, useAsync, usePrefixConfig, useImmer } from '../../hooks';
 import { getNoTransformElSize, toPx } from '../../utils';
 
 export interface DListRenderProps {
@@ -178,7 +178,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       return dItemRender(dList[0], 0, {
         'aria-setsize': dList.length,
         'aria-posinset': 1,
-        [`data-${dPrefix}virtual-scroll-reference`]: String(uniqueId),
+        [`data-${dPrefix}virtual-scroll-reference`]: uniqueId,
       } as DItemRenderProps);
     }
   }, [autoCalculate, dItemRender, dList, dPrefix, uniqueId]);
@@ -212,7 +212,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const listRenderProps = useMemo(
     () =>
       ({
-        [`data-${dPrefix}virtual-scroll`]: String(uniqueId),
+        [`data-${dPrefix}virtual-scroll`]: uniqueId,
         onScroll: () => {
           flushSync(() => updateList());
           asyncCapture.requestAnimationFrame(() => {

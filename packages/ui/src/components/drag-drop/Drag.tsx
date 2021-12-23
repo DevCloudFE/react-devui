@@ -1,9 +1,9 @@
 import { isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useId, useEffect, useMemo, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { merge } from 'rxjs';
 
-import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useId, useCustomContext, useImmer } from '../../hooks';
+import { useComponentConfig, useRefSelector, useThrottle, useAsync, usePrefixConfig, useCustomContext, useImmer } from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -225,7 +225,7 @@ export function DDrag(props: DDragProps) {
 
       draggable: true,
 
-      [`data-${dPrefix}drag`]: String(uniqueId),
+      [`data-${dPrefix}drag`]: uniqueId,
 
       onDragStart: (e) => {
         e.preventDefault();
@@ -297,7 +297,7 @@ export function DDrag(props: DDragProps) {
           width: dragSize.width,
           height: dragSize.height,
         },
-        [`data-${dPrefix}drag-placeholder`]: String(uniqueId),
+        [`data-${dPrefix}drag-placeholder`]: uniqueId,
       });
     }
 

@@ -1,14 +1,14 @@
 import type { DTransitionProps } from '../_transition';
 
-import React, { useEffect, useCallback, useRef, useImperativeHandle } from 'react';
+import React, { useId, useEffect, useCallback, useRef, useImperativeHandle } from 'react';
 
-import { usePrefixConfig, useId, useAsync, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useAsync, useRefCallback } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 import { DTransition } from '../_transition';
 import { DMask } from './Mask';
 
 export interface DDialogRef {
-  uniqueId: number;
+  uniqueId: string;
   el: HTMLDivElement | null;
   contentEl: HTMLDivElement | null;
 }

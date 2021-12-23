@@ -11,7 +11,7 @@ import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 
 export interface DDrawerContextData {
-  drawerId?: number;
+  drawerId?: string;
   closeDrawer?: () => void;
 }
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);

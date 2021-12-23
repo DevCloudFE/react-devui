@@ -3,7 +3,6 @@ export { useAsync } from './async';
 export { useCustomContext } from './context';
 export { usePrefixConfig, useRootContentConfig, useComponentConfig } from './d-config';
 export { useRefSelector } from './element-ref';
-export { useId } from './id';
 export { useImmer, useImmerReducer } from './immer';
 export { useLockScroll } from './lock-scroll';
 export { useThrottle, useDebounce } from './throttle-and-debounce';

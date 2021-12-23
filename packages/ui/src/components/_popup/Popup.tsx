@@ -3,11 +3,11 @@ import type { DPlacement } from '../../utils/position';
 import type { DTransitionStateList } from '../_transition';
 
 import { isUndefined, toNumber } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useImperativeHandle, useRef, useState } from 'react';
+import React, { useId, useCallback, useEffect, useMemo, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM, { flushSync } from 'react-dom';
 import { filter } from 'rxjs';
 
-import { usePrefixConfig, useAsync, useRefSelector, useId, useImmer, useRefCallback, useRootContentConfig } from '../../hooks';
+import { usePrefixConfig, useAsync, useRefSelector, useImmer, useRefCallback, useRootContentConfig } from '../../hooks';
 import { getClassName, getPopupPlacementStyle, mergeStyle, MAX_INDEX_MANAGER } from '../../utils';
 import { DTransition } from '../_transition';
 import { checkOutEl } from './utils';
@@ -498,7 +498,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   );
 
   const triggerRenderProps = useMemo<DTriggerRenderProps>(() => {
-    const _triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: String(uniqueId) };
+    const _triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: uniqueId };
     if (dTrigger === 'hover') {
       _triggerRenderProps.onMouseEnter = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
