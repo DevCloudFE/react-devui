@@ -3,14 +3,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { DDialog } from './Dialog';
 
 describe('DDialog', () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   const mask = () => screen.queryAllByRole('dialog')[0].firstChild;
 
   it('should `dVisible` work', () => {
@@ -22,24 +14,23 @@ describe('DDialog', () => {
 
   it('should `dMask` work', () => {
     render(<DDialog dVisible={true} />);
-    setTimeout(() => {
-      expect(mask()).toBeVisible();
-    }, 1000);
+    jest.advanceTimersByTime(1000);
+
+    expect(mask()).not.toBeVisible();
 
     render(<DDialog dVisible={true} dMask={false} />);
-    setTimeout(() => {
-      expect(mask()).not.toBeVisible();
-    }, 1000);
+    jest.advanceTimersByTime(1000);
+
+    expect(mask()).not.toBeVisible();
   });
 
   describe('dMaskClosable', () => {
     it('should `dMaskClosable` work, default is true', () => {
       render(<DDialog dVisible={true} />);
-      setTimeout(() => {
-        expect(mask()).toBeVisible();
-        fireEvent.click(mask()!);
-        expect(mask()).not.toBeVisible();
-      }, 1000);
+      jest.advanceTimersByTime(1000);
+      expect(mask()).toBeVisible();
+      fireEvent.click(mask()!);
+      expect(mask()).not.toBeVisible();
     });
   });
 
@@ -60,11 +51,11 @@ describe('DDialog', () => {
           <input data-testid="dialog-test" />
         </DDialog>
       );
-      // question: why without setTimeout cannot work?
-      setTimeout(() => {
-        fireEvent.click(mask()!);
-        expect(screen.queryAllByTestId('dialog-test').length).toBe(0);
-      }, 1000);
+
+      fireEvent.click(mask()!);
+      jest.advanceTimersByTime(1000);
+
+      expect(screen.queryAllByTestId('dialog-test').length).toBe(0);
     });
   });
 
@@ -75,14 +66,34 @@ describe('DDialog', () => {
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 
+  // describe('should `afterVisibleChange` work', () => {
+  it('work when dVisible from true to false', () => {
+    const mockCallBack = jest.fn();
+    const { rerender } = render(<DDialog dVisible={true} afterVisibleChange={mockCallBack} />);
+    rerender(<DDialog dVisible={false} afterVisibleChange={mockCallBack} />);
+    // the difference between `onClose` and `afterVisibleChange` is whether the callback will be called immediately
+    expect(mockCallBack).not.toBeCalled();
+    jest.advanceTimersByTime(1000);
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
+  });
+
   it('should `afterVisibleChange` work', () => {
     const mockCallBack = jest.fn();
-    render(<DDialog dVisible={true} afterVisibleChange={mockCallBack} />);
-    fireEvent.click(mask()!);
-    // the difference between `onClose` and `afterVisibleChange` is whether the callback will be called immediately
-    setTimeout(() => {
-      expect(mockCallBack.mock.calls.length).toBe(1);
-    }, 1000);
+    const { rerender } = render(<DDialog dVisible={false} afterVisibleChange={mockCallBack} />);
+    expect(mockCallBack).not.toBeCalled();
+    rerender(<DDialog dVisible={true} afterVisibleChange={mockCallBack} />);
+    jest.advanceTimersByTime(1000);
+    expect(mockCallBack).toBeCalled();
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('work when dVisible from false to true', () => {
+    const mockCallBack = jest.fn();
+    const { rerender } = render(<DDialog dVisible={false} afterVisibleChange={mockCallBack} />);
+    rerender(<DDialog dVisible={true} afterVisibleChange={mockCallBack} />);
+    jest.advanceTimersByTime(1000);
+    expect(mockCallBack).toHaveBeenCalledTimes(1);
+    expect(mockCallBack.mock.calls.length).toBe(1);
   });
 
   it('should custom `className` work', () => {
