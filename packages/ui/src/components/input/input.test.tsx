@@ -1,8 +1,11 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render, act, fireEvent } from '@testing-library/react';
 
 import { PREFIX } from '../../tests';
+import { DCompose } from '../compose';
 import { DIcon } from '../icon';
 import { DInput, DInputAffix } from './index';
+
+jest.useFakeTimers();
 
 const icon = (
   <DIcon data-testid="custom-icon" viewBox="64 64 896 896">
@@ -27,6 +30,24 @@ describe('DInput', () => {
     const mockCallBack = jest.fn();
     const { getByRole } = render(<DInput onValueChange={mockCallBack} />);
     fireEvent.change(getByRole('textbox'), { target: { value: '42' } });
+    expect(mockCallBack.mock.calls.length).toBe(1);
+  });
+  it('should `onChange` work', () => {
+    const mockCallBack = jest.fn();
+    const { getByRole } = render(<DInput onChange={mockCallBack} />);
+    fireEvent.change(getByRole('textbox'), { target: { value: '42' } });
+    expect(mockCallBack.mock.calls.length).toBe(1);
+  });
+  it('should `onFocus` work', () => {
+    const mockCallBack = jest.fn();
+    const { getByRole } = render(<DInput onFocus={mockCallBack} />);
+    fireEvent.focus(getByRole('textbox'));
+    expect(mockCallBack.mock.calls.length).toBe(1);
+  });
+  it('should `onBlur` work', () => {
+    const mockCallBack = jest.fn();
+    const { getByRole } = render(<DInput onBlur={mockCallBack} />);
+    fireEvent.blur(getByRole('textbox'));
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
 });
@@ -67,7 +88,11 @@ describe('DInputAffix', () => {
       </DInputAffix>
     );
     expect(getByDisplayValue(value).getAttribute('type')).toBe('password');
+    act(() => {
+      getByDisplayValue(value).focus();
+    });
     fireEvent.mouseDown(getByRole('button'));
+    fireEvent.mouseUp(getByRole('button'));
     expect(getByDisplayValue(value).getAttribute('type')).toBe('text');
   });
 
@@ -79,6 +104,7 @@ describe('DInputAffix', () => {
       </DInputAffix>
     );
     fireEvent.mouseDown(getByRole('button'));
+    fireEvent.mouseUp(getByRole('button'));
     expect(getByDisplayValue(value).getAttribute('type')).toBe('password');
   });
 
@@ -102,28 +128,79 @@ describe('DInputAffix', () => {
     expect(getByDisplayValue(value).getAttribute('type')).toBe('number');
   });
 
-  it('should `dNumber use button change value` work', () => {
+  it('should `dNumber use increase button change value` work', () => {
+    const mockCallBack = jest.fn();
     const { getByTestId, getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="numberInput" />
+        <DInput data-testid="increaseNumberInput" onValueChange={mockCallBack} />
       </DInputAffix>
     );
     const buttons = getAllByRole('button');
+    act(() => {
+      getByTestId('increaseNumberInput').focus();
+    });
     fireEvent.mouseDown(buttons[0]);
-    expect(getByTestId('numberInput').getAttribute('value')).toBe('1');
+    fireEvent.mouseUp(buttons[0]);
+    expect(mockCallBack.mock.calls.length).toBe(1);
+  });
 
+  it('should `dNumber use decrease button change value` work', () => {
+    const mockCallBack = jest.fn();
+    const { getByTestId, getAllByRole } = render(
+      <DInputAffix dNumber>
+        <DInput data-testid="decreaseNumberInput" onValueChange={mockCallBack} />
+      </DInputAffix>
+    );
+    const buttons = getAllByRole('button');
+    act(() => {
+      getByTestId('decreaseNumberInput').focus();
+    });
     fireEvent.mouseDown(buttons[1]);
-    expect(getByTestId('numberInput').getAttribute('value')).toBe('0');
+    fireEvent.mouseUp(buttons[1]);
+    expect(mockCallBack.mock.calls.length).toBe(1);
+  });
+  it('should `dNumber loop increase button change value` work', () => {
+    const mockCallBack = jest.fn();
+    const { getAllByRole } = render(
+      <DInputAffix dNumber>
+        <DInput data-testid="numberInput" onValueChange={mockCallBack} />
+      </DInputAffix>
+    );
+    const buttons = getAllByRole('button');
+
+    act(() => {
+      fireEvent.mouseDown(buttons[0]);
+      jest.runOnlyPendingTimers();
+    });
+    expect(mockCallBack.mock.calls.length).not.toBe(1);
+  });
+  it('should `dNumber loop decrease button change value` work', () => {
+    const mockCallBack = jest.fn();
+    const { getAllByRole } = render(
+      <DInputAffix dNumber>
+        <DInput data-testid="numberInput" onValueChange={mockCallBack} />
+      </DInputAffix>
+    );
+    const buttons = getAllByRole('button');
+
+    act(() => {
+      fireEvent.mouseDown(buttons[1]);
+      jest.runOnlyPendingTimers();
+    });
+    expect(mockCallBack.mock.calls.length).not.toBe(1);
   });
 
   it('should `dClearable` work', () => {
     const mockCallBack = jest.fn();
-    const value = 'This is number input';
+    const value = 'This is text input';
     const { getByRole } = render(
       <DInputAffix dClearable>
         <DInput dValue={[value]} onValueChange={mockCallBack} />
       </DInputAffix>
     );
+    act(() => {
+      getByRole('textbox').focus();
+    });
     fireEvent.mouseDown(getByRole('button'));
     expect(mockCallBack.mock.calls[0][0]).toBe('');
   });
@@ -145,6 +222,31 @@ describe('DInputAffix', () => {
       </DInputAffix>
     );
     expect(getByTestId('d-input-affix').classList.contains(`${PREFIX}input-affix--${size}`)).toBeTruthy();
+    expect(getByRole('textbox').classList.contains(`${PREFIX}input--${size}`)).toBeTruthy();
+  });
+
+  it('should `is-focus class` work', () => {
+    const { getByRole, getByTestId } = render(
+      <DInputAffix data-testid="d-input-affix">
+        <DInput />
+      </DInputAffix>
+    );
+    fireEvent.focus(getByRole('textbox'));
+    expect(getByTestId('d-input-affix').classList.contains(`is-focus`)).toBeTruthy();
+
+    fireEvent.blur(getByRole('textbox'));
+    expect(getByTestId('d-input-affix').classList.contains(`is-focus`)).toBeFalsy();
+  });
+
+  it('should `DCompose dSize` work', () => {
+    const size = 'smaller';
+    const { getByRole } = render(
+      <DCompose dSize={size}>
+        <DInputAffix>
+          <DInput />
+        </DInputAffix>
+      </DCompose>
+    );
     expect(getByRole('textbox').classList.contains(`${PREFIX}input--${size}`)).toBeTruthy();
   });
 });
