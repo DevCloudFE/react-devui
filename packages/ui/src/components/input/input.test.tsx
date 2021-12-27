@@ -14,9 +14,9 @@ const icon = (
 );
 
 describe('DInput', () => {
-  it('should `dValue` work', () => {
+  it('should `dModel` work', () => {
     const value = '123';
-    const { getByRole } = render(<DInput dValue={[value]} />);
+    const { getByRole } = render(<DInput dModel={[value]} />);
     expect(getByRole('textbox').getAttribute('value')).toBe('123');
   });
 
@@ -26,9 +26,9 @@ describe('DInput', () => {
     expect(getByRole('textbox').classList.contains(`${PREFIX}input--${size}`)).toBeTruthy();
   });
 
-  it('should `onValueChange` work', () => {
+  it('should `onModelChange` work', () => {
     const mockCallBack = jest.fn();
-    const { getByRole } = render(<DInput onValueChange={mockCallBack} />);
+    const { getByRole } = render(<DInput onModelChange={mockCallBack} />);
     fireEvent.change(getByRole('textbox'), { target: { value: '42' } });
     expect(mockCallBack.mock.calls.length).toBe(1);
   });
@@ -84,7 +84,7 @@ describe('DInputAffix', () => {
     const value = 'This is password input';
     const { getByRole, getByDisplayValue } = render(
       <DInputAffix dPassword>
-        <DInput dValue={[value]} />
+        <DInput dModel={[value]} />
       </DInputAffix>
     );
     expect(getByDisplayValue(value).getAttribute('type')).toBe('password');
@@ -100,7 +100,7 @@ describe('DInputAffix', () => {
     const value = 'This is password input';
     const { getByRole, getByDisplayValue } = render(
       <DInputAffix dPassword dPasswordToggle={false}>
-        <DInput dValue={[value]} />
+        <DInput dModel={[value]} />
       </DInputAffix>
     );
     fireEvent.mouseDown(getByRole('button'));
@@ -122,7 +122,7 @@ describe('DInputAffix', () => {
     const value = '100';
     const { getByDisplayValue } = render(
       <DInputAffix dNumber>
-        <DInput dValue={[value]} />
+        <DInput dModel={[value]} />
       </DInputAffix>
     );
     expect(getByDisplayValue(value).getAttribute('type')).toBe('number');
@@ -132,7 +132,7 @@ describe('DInputAffix', () => {
     const mockCallBack = jest.fn();
     const { getByTestId, getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="increaseNumberInput" onValueChange={mockCallBack} />
+        <DInput data-testid="increaseNumberInput" onModelChange={mockCallBack} />
       </DInputAffix>
     );
     const buttons = getAllByRole('button');
@@ -148,7 +148,7 @@ describe('DInputAffix', () => {
     const mockCallBack = jest.fn();
     const { getByTestId, getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="decreaseNumberInput" onValueChange={mockCallBack} />
+        <DInput data-testid="decreaseNumberInput" onModelChange={mockCallBack} />
       </DInputAffix>
     );
     const buttons = getAllByRole('button');
@@ -163,7 +163,7 @@ describe('DInputAffix', () => {
     const mockCallBack = jest.fn();
     const { getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="numberInput" onValueChange={mockCallBack} />
+        <DInput data-testid="numberInput" onModelChange={mockCallBack} />
       </DInputAffix>
     );
     const buttons = getAllByRole('button');
@@ -178,7 +178,7 @@ describe('DInputAffix', () => {
     const mockCallBack = jest.fn();
     const { getAllByRole } = render(
       <DInputAffix dNumber>
-        <DInput data-testid="numberInput" onValueChange={mockCallBack} />
+        <DInput data-testid="numberInput" onModelChange={mockCallBack} />
       </DInputAffix>
     );
     const buttons = getAllByRole('button');
@@ -195,7 +195,7 @@ describe('DInputAffix', () => {
     const value = 'This is text input';
     const { getByRole } = render(
       <DInputAffix dClearable>
-        <DInput dValue={[value]} onValueChange={mockCallBack} />
+        <DInput dModel={[value]} onModelChange={mockCallBack} />
       </DInputAffix>
     );
     act(() => {
