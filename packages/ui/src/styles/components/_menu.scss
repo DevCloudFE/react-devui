@@ -34,7 +34,7 @@ $menu-item-height: 40px;
   list-style: none;
   cursor: pointer;
 
-  transition: color 0.2s ease-out, background-color 0.2s ease-out;
+  transition: color 0.2s linear, background-color 0.2s linear;
 
   &:not(.is-disabled) {
     &:focus,
@@ -321,7 +321,7 @@ $menu-item-height: 40px;
 
     color: var(--#{$variable-prefix}color-step-450);
 
-    transition: color 0.2s ease-out, transform 0.2s linear;
+    transition: color 0.2s linear, transform 0.2s linear;
   }
 }
 

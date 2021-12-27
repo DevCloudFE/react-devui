@@ -1,0 +1,140 @@
+$select-option-height: 32px;
+
+@include b(select) {
+  @include m(multiple) {
+    .#{$variable-prefix}select-box__content {
+      display: inline-flex;
+      gap: 0 8px;
+    }
+  }
+
+  @include when(disabled) {
+    .#{$variable-prefix}tag {
+      &.#{$variable-prefix}select__multiple-count {
+        background-color: var(--#{$variable-prefix}color-step-100);
+        cursor: pointer;
+      }
+
+      &:not(.#{$variable-prefix}select__multiple-count) {
+        color: var(--#{$variable-prefix}disabled-color);
+
+        background-color: var(--#{$variable-prefix}color-step-70);
+      }
+    }
+
+    .#{$variable-prefix}tag__close {
+      cursor: unset;
+    }
+  }
+
+  @include e(list) {
+    position: relative;
+
+    max-height: 264px;
+    margin: 0;
+
+    padding: 4px 0;
+    overflow: hidden auto;
+
+    list-style: none;
+    outline: none;
+  }
+
+  @include e(option) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: $select-option-height;
+    padding: 0 12px;
+
+    outline: none;
+    cursor: pointer;
+
+    transition: background-color 0.2s linear;
+
+    @include utils-disabled;
+
+    &:not(.#{$variable-prefix}select__option--empty):not(.#{$variable-prefix}select__option--group):not(.#{$variable-prefix}select__option--loading):not(.is-disabled) {
+      &:focus,
+      &.is-focus {
+        color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+
+      &:not(.is-selected):hover {
+        background-color: var(--#{$variable-prefix}color-step-50);
+      }
+    }
+
+    @include when(selected) {
+      font-weight: 600;
+
+      background-color: var(--#{$variable-prefix}color-primary-background);
+    }
+
+    @include m(group) {
+      color: var(--#{$variable-prefix}color-step-400);
+
+      @include font-size(0.85rem);
+    }
+
+    @include m(empty) {
+      padding-left: 24px;
+
+      color: var(--#{$variable-prefix}color-step-400);
+    }
+
+    @include m(group-item) {
+      padding-left: 24px;
+    }
+  }
+
+  @include e(option-add) {
+    flex-shrink: 0;
+    margin-right: 4px;
+  }
+
+  @include e(option-content) {
+    flex-grow: 1;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(empty) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+
+    color: var(--#{$variable-prefix}color-step-400);
+  }
+
+  @include e(loading) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+
+    color: var(--#{$variable-prefix}color-primary);
+
+    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+
+    @include m(left) {
+      justify-content: flex-start;
+    }
+  }
+}
+
+@include b(select-popup) {
+  min-height: 40px;
+  border-radius: var(--#{$variable-prefix}border-radius);
+
+  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+}

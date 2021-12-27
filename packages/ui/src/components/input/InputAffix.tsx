@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useImmer, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useAsync } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 import { useCompose } from '../compose';
@@ -16,7 +16,7 @@ export interface DInputAffixContextData {
   onFocus: () => void;
   onBlur: () => void;
   onClearableChange: (clearable: boolean) => void;
-  onInputRendered: (changeBindValue: (value: string) => void, inputEl: HTMLInputElement) => void;
+  onInputRendered: (changeValue: (value: string) => void, inputEl: HTMLInputElement) => void;
 }
 export const DInputAffixContext = React.createContext<DInputAffixContextData | null>(null);
 
@@ -54,7 +54,7 @@ export function DInputAffix(props: DInputAffixProps) {
   //#endregion
 
   const dataRef = useRef<{
-    changeBindValue?: (value: string) => void;
+    changeValue?: (value: string) => void;
     inputEl?: HTMLInputElement;
     clearLoop?: () => void;
     clearTid?: () => void;
@@ -63,9 +63,9 @@ export function DInputAffix(props: DInputAffixProps) {
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
-  const [isFocus, setIsFocus] = useImmer(false);
-  const [clearable, setClearable] = useImmer(false);
-  const [password, setPassword] = useImmer(true);
+  const [isFocus, setIsFocus] = useState(false);
+  const [clearable, setClearable] = useState(false);
+  const [password, setPassword] = useState(true);
 
   const size = composeSize ?? dSize;
   const disabled = composeDisabled || dDisabled;
@@ -75,20 +75,20 @@ export function DInputAffix(props: DInputAffixProps) {
       if (document.activeElement === dataRef.current.inputEl) {
         e.preventDefault();
       }
-      dataRef.current.changeBindValue?.('');
+      dataRef.current.changeValue?.('');
     }
   }, []);
 
   const handleNumberChange = useCallback(
     (isIncrease = true) => {
       const handleFunc = () => {
-        if (dataRef.current.inputEl && dataRef.current.changeBindValue) {
+        if (dataRef.current.inputEl && dataRef.current.changeValue) {
           const step = getNumberAttribute(dataRef.current.inputEl.step, 1);
           const max = getNumberAttribute(dataRef.current.inputEl.max, Infinity);
           const min = getNumberAttribute(dataRef.current.inputEl.min, -Infinity);
           const value = getNumberAttribute(dataRef.current.inputEl.value, 0);
           const newValue = isIncrease ? value + step : value - step;
-          dataRef.current.changeBindValue(Math.max(min, Math.min(max, newValue)).toFixed(step.toString().split('.')[1]?.length ?? 0));
+          dataRef.current.changeValue(Math.max(min, Math.min(max, newValue)).toFixed(step.toString().split('.')[1]?.length ?? 0));
         }
       };
 
@@ -166,8 +166,8 @@ export function DInputAffix(props: DInputAffixProps) {
       onClearableChange: (clearable) => {
         setClearable(clearable);
       },
-      onInputRendered: (changeBindValue, inputEl) => {
-        dataRef.current.changeBindValue = changeBindValue;
+      onInputRendered: (changeValue, inputEl) => {
+        dataRef.current.changeValue = changeValue;
         dataRef.current.inputEl = inputEl;
       },
     }),

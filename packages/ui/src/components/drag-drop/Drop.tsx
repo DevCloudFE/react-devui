@@ -49,8 +49,8 @@ const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) 
     placeholders: new Map(),
   });
 
-  const [isOuter, setIsOuter] = useImmer(false);
-  const [dragEnd, setDragEnd] = useImmer(false);
+  const [isOuter, setIsOuter] = useState(false);
+  const [dragEnd, setDragEnd] = useState(false);
 
   const [orderIds, setOrderIds] = useState<string[]>([]);
   const [orderChildren, setOrderChildren] = useImmer<React.ReactElement[]>([]);

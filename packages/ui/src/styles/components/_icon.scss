@@ -1,15 +1,9 @@
 @include b(icon) {
   display: block;
 
-  @include m(success) {
-    color: var(--#{$variable-prefix}color-success);
-  }
-
-  @include m(warning) {
-    color: var(--#{$variable-prefix}color-warning);
-  }
-
-  @include m(danger) {
-    color: var(--#{$variable-prefix}color-danger);
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      color: var(--#{$variable-prefix}color-#{$theme});
+    }
   }
 }

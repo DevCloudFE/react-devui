@@ -1,11 +1,9 @@
 import type { DMenuItemProps } from './MenuItem';
 
-import { isUndefined } from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useTranslation } from '../../hooks';
-import { getClassName, toId, mergeStyle } from '../../utils';
-import { DMenuContext } from './Menu';
+import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
+import { getClassName, mergeStyle } from '../../utils';
 
 export interface DMenuGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
@@ -14,44 +12,13 @@ export interface DMenuGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
 }
 
 export function DMenuGroup(props: DMenuGroupProps) {
-  const {
-    dId,
-    dTitle,
-    __level = 0,
-    id,
-    className,
-    style,
-    tabIndex,
-    children,
-    onFocus,
-    onBlur,
-    ...restProps
-  } = useComponentConfig(DMenuGroup.name, props);
+  const { dId, dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(DMenuGroup.name, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
   //#endregion
 
   const [t] = useTranslation('Common');
-
-  const _id = id ?? `${dPrefix}menu-group-${toId(dId)}`;
-
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
-      _onFocus?.(dId, _id);
-    },
-    [_id, _onFocus, dId, onFocus]
-  );
-
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
-      _onBlur?.();
-    },
-    [_onBlur, onBlur]
-  );
 
   const childs = useMemo(() => {
     const length = React.Children.count(children);
@@ -72,16 +39,12 @@ export function DMenuGroup(props: DMenuGroupProps) {
     <>
       <li
         {...restProps}
-        id={_id}
         className={getClassName(className, `${dPrefix}menu-group`)}
         style={mergeStyle(style, {
           paddingLeft: 16 + __level * 20,
         })}
-        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         role="separator"
         aria-orientation="horizontal"
-        onFocus={handleFocus}
-        onBlur={handleBlur}
       >
         {dTitle}
       </li>

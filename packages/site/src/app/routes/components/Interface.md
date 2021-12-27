@@ -95,3 +95,23 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | onOkClick | The callback of clicking the OK button | `() => void` | - |
 | onCancelClick | The callback of clicking the cancel button | `() => void` | - |
 <!-- prettier-ignore-end -->
+
+## DSelectBoxProps
+
+Extend `React.HTMLAttributes<HTMLDivElement>`.
+
+<!-- prettier-ignore-start -->
+| Property | Description | Type | Default | 
+| --- | --- | --- | --- | 
+| dSuffix | Select box suffix | React.ReactNode | - |
+| dExpanded | Whether to expand | boolean | false |
+| dShowClear | Whether to show the clear button | boolean | false |
+| dSearchable | Searchable | boolean | false |
+| dClearIcon | Custom clear button | React.ReactNode | - |
+| dSize | Select box size | 'smaller' \| 'larger' | - |
+| dPlaceholder | Placeholder content | string | - |
+| dDisabled | Whether to disable | boolean | false |
+| dLoading | Whether it is loading | boolean | false |
+| onClear | Callback for clicking the clear button | `() => void` | - |
+| onSearch | Search callback | `(value: string) => void` | - |
+<!-- prettier-ignore-end -->

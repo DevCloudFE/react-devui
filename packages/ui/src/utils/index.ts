@@ -1,4 +1,5 @@
 export { getClassName } from './class-name';
+export { pSBC } from './color';
 export { copy } from './copy';
 export { getFragmentChildren } from './fragment-children';
 export { getMaxIndex, MAX_INDEX_MANAGER } from './max-index';

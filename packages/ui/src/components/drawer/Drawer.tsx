@@ -1,9 +1,9 @@
 import type { DElementSelector } from '../../hooks/element-ref';
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DDialogRef } from '../_dialog';
 
 import { isUndefined, toNumber } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useRefCallback, useLockScroll } from '../../hooks';
@@ -11,7 +11,7 @@ import { getClassName, MAX_INDEX_MANAGER, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 
 export interface DDrawerContextData {
-  drawerId?: number;
+  drawerId?: string;
   closeDrawer?: () => void;
 }
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
@@ -67,7 +67,7 @@ export function DDrawer(props: DDrawerProps) {
   const [dialogRefContent, dialogRef] = useRefCallback<DDialogRef>();
   //#endregion
 
-  const [zIndex, setZIndex] = useImmer(1000);
+  const [zIndex, setZIndex] = useState(1000);
 
   const [visible, setVisible] = dVisible;
 
@@ -143,10 +143,10 @@ export function DDrawer(props: DDrawerProps) {
 
   const contextValue = useMemo<DDrawerContextData>(
     () => ({
-      drawerId: dialogRefContent?.id,
+      drawerId: dialogRefContent?.uniqueId,
       closeDrawer,
     }),
-    [closeDrawer, dialogRefContent?.id]
+    [closeDrawer, dialogRefContent?.uniqueId]
   );
 
   const contentProps = useMemo<React.HTMLAttributes<HTMLDivElement>>(
@@ -195,7 +195,7 @@ export function DDrawer(props: DDrawerProps) {
               : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
           zIndex,
         })}
-        aria-labelledby={dHeader ? `${dPrefix}drawer-header-${dialogRefContent?.id}` : undefined}
+        aria-labelledby={dHeader ? `${dPrefix}drawer-header-${dialogRefContent?.uniqueId}` : undefined}
         dVisible={visible}
         dCallbackList={{
           beforeEnter: (el) => {
@@ -210,9 +210,6 @@ export function DDrawer(props: DDrawerProps) {
 
             return transitionState;
           },
-          afterEnter: () => {
-            afterVisibleChange?.(true);
-          },
           beforeLeave: () => {
             __onVisibleChange?.({
               ...distance,
@@ -221,15 +218,13 @@ export function DDrawer(props: DDrawerProps) {
 
             return transitionState;
           },
-          afterLeave: () => {
-            afterVisibleChange?.(false);
-          },
         }}
         dContentProps={contentProps}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
         dDestroy={dDestroy}
         onClose={closeDrawer}
+        afterVisibleChange={afterVisibleChange}
       >
         <DDrawerContext.Provider value={contextValue}>
           {dHeader}

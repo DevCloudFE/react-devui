@@ -12,7 +12,7 @@ export type DButtonRef = HTMLButtonElement;
 
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';
-  dColor?: 'primary' | 'success' | 'warning' | 'danger';
+  dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dLoading?: boolean;
   dBlock?: boolean;
   dShape?: 'circle' | 'round';
@@ -24,7 +24,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props, ref) => {
   const {
     dType = 'primary',
-    dColor = 'primary',
+    dTheme = 'primary',
     dLoading = false,
     dBlock = false,
     dShape,
@@ -40,7 +40,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ buttonGroupType, buttonGroupColor, buttonGroupSize, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
+  const [{ buttonGroupType, buttonGroupTheme, buttonGroupSize, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
   const { composeSize, composeDisabled } = useCompose();
   //#endregion
 
@@ -51,7 +51,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   const wave = useWave();
 
   const type = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
-  const color = isUndefined(props.dColor) ? buttonGroupColor ?? dColor : dColor;
+  const theme = isUndefined(props.dTheme) ? buttonGroupTheme ?? dTheme : dTheme;
   const size = isUndefined(composeSize) ? (isUndefined(props.dSize) ? buttonGroupSize ?? dSize : dSize) : composeSize;
 
   const handleClick = useCallback(
@@ -59,10 +59,10 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
       onClick?.(e);
 
       if (!dLoading && (type === 'primary' || type === 'secondary' || type === 'outline' || type === 'dashed')) {
-        wave(e.currentTarget, `var(--${dPrefix}color-${color})`);
+        wave(e.currentTarget, `var(--${dPrefix}color-${theme})`);
       }
     },
-    [color, dLoading, dPrefix, onClick, type, wave]
+    [theme, dLoading, dPrefix, onClick, type, wave]
   );
 
   const loadingIcon = (
@@ -91,7 +91,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
         <button
           {...restProps}
           ref={ref}
-          className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${type}`, `t-${color}`, {
+          className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${type}`, `t-${theme}`, {
             [`${dPrefix}button--${dShape}`]: dShape,
             [`${dPrefix}button--${size}`]: size,
             [`${dPrefix}button--block`]: dBlock,

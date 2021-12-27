@@ -1,31 +1,31 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useMemo } from 'react';
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useImmer, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
 export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement>, DFormControl {
-  dValue?: [string, Updater<string>?];
+  dModel?: [string, Updater<string>?];
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
   dShowCount?: boolean | ((num: number) => React.ReactNode);
-  onValueChange?: (value: string) => void;
+  onModelChange?: (value: string) => void;
 }
 
 const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
   const {
     dFormControlName,
-    dValue,
+    dModel,
     dRows,
     dResizable = true,
     dShowCount = false,
-    onValueChange,
+    onModelChange,
     className,
     style,
     maxLength,
@@ -45,11 +45,11 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   const [textareaEl, textareaRef] = useRefCallback<HTMLTextAreaElement>();
   //#endregion
 
-  const [bindValue, changeBindValue] = useTwoWayBinding('', dValue, onValueChange, {
+  const [value, changeValue] = useTwoWayBinding('', dModel, onModelChange, {
     name: dFormControlName,
   });
 
-  const [rowNum, setRowNum] = useImmer(1);
+  const [rowNum, setRowNum] = useState(1);
 
   const resizable = dResizable && isUndefined(dRows);
   const heightStyle = useMemo(() => {
@@ -79,7 +79,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   const handleChange = useCallback<React.ChangeEventHandler<HTMLTextAreaElement>>(
     (e) => {
       onChange?.(e);
-      changeBindValue(e.currentTarget.value);
+      changeValue(e.currentTarget.value);
 
       const el = e.currentTarget;
       const overflow = el.style.overflow;
@@ -93,7 +93,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
       el.style.height = height;
       el.style.minHeight = minHeight;
     },
-    [changeBindValue, onChange, setRowNum]
+    [changeValue, onChange, setRowNum]
   );
 
   //#region DidUpdate
@@ -117,18 +117,14 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
           ...heightStyle,
         })}
         maxLength={maxLength}
-        value={bindValue}
+        value={value}
         disabled={disabled}
         aria-disabled={disabled}
         onChange={handleChange}
       />
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
-          {isFunction(dShowCount)
-            ? dShowCount(bindValue.length)
-            : isUndefined(maxLength)
-            ? bindValue.length
-            : `${bindValue.length} / ${maxLength}`}
+          {isFunction(dShowCount) ? dShowCount(value.length) : isUndefined(maxLength) ? value.length : `${value.length} / ${maxLength}`}
         </div>
       )}
     </>

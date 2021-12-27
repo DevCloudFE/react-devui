@@ -1,41 +1,52 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DTooltip, DIcon, DTabs, DTab } from '@react-devui/ui';
-import { useAsync, useImmer } from '@react-devui/ui/hooks';
+import { useAsync } from '@react-devui/ui/hooks';
 import { copy, getClassName } from '@react-devui/ui/utils';
 
+import marked, { toString } from '../utils';
 import './DemoBox.scss';
-import { toString } from './utils';
 
 export interface AppDemoBoxProps {
   id: string;
   renderer: React.ReactNode;
   title: string;
   description: number[];
-  tsx: number[];
-  scss?: string;
   tsxSource: number[];
-  scssSource?: string;
+  scssSource: number[];
 }
 
 export function AppDemoBox(props: AppDemoBoxProps) {
-  const { id, renderer, title, scss, scssSource } = props;
+  const { id, renderer, title } = props;
 
-  const description = toString(props.description);
-  const tsx = toString(props.tsx);
+  const description = marked(toString(props.description));
   const tsxSource = toString(props.tsxSource);
+  const scssSource = props.scssSource.length > 0 ? toString(props.scssSource) : undefined;
+
+  const tsx = marked(String.raw`
+${'```tsx'}
+${tsxSource}
+${'```'}
+`);
+  const scss = scssSource
+    ? marked(String.raw`
+${'```scss'}
+${scssSource}
+${'```'}
+`)
+    : undefined;
 
   const asyncCapture = useAsync();
 
-  const [tab, setTab] = useImmer<string | null>('tsx');
+  const [tab, setTab] = useState<string | null>('tsx');
 
-  const [openCode, setOpencode] = useImmer(false);
+  const [openCode, setOpencode] = useState(false);
   const handleOpenClick = useCallback(() => {
     setOpencode((draft) => !draft);
   }, [setOpencode]);
 
-  const [copyCode, setCopycode] = useImmer(false);
+  const [copyCode, setCopycode] = useState(false);
   const handleCopyClick = useCallback(() => {
     copy(tab === 'tsx' ? tsxSource : (scssSource as string));
     setCopycode(true);
@@ -52,7 +63,7 @@ export function AppDemoBox(props: AppDemoBoxProps) {
 
   const { t } = useTranslation();
 
-  const [active, setActive] = useImmer(false);
+  const [active, setActive] = useState(false);
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 

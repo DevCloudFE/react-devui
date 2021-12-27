@@ -1,9 +1,9 @@
 import type { DMenuItemProps } from './MenuItem';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -70,13 +70,12 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const [t] = useTranslation('Common');
 
-  const [menuWidth, setMenuWidth] = useImmer<number | undefined>(undefined);
-  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
+  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
   const expand = menuExpandIds?.has(dId) ?? false;
   const popupMode = menuMode !== 'vertical';
-  const [currentPopupVisible, setCurrentPopupVisible] = useImmer(false);
-  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(false);
+  const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
+  const [childrenPopupVisiable, setChildrenPopupVisiable] = useState(false);
   const popupVisible = currentPopupVisible || childrenPopupVisiable;
   const inNav = menuCurrentData?.navIds.has(dId) ?? false;
   const inHorizontalNav = menuMode === 'horizontal' && inNav;
@@ -112,12 +111,12 @@ export function DMenuSub(props: DMenuSubProps) {
   }, [expand, inHorizontalNav, menuMode, popupMode, popupVisible]);
 
   const customTransition = useCallback(
-    (popupEl, targetEl) => {
+    (popupEl: HTMLElement, targetEl: HTMLElement) => {
       const { top, left, transformOrigin } = inHorizontalNav
         ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
         : getHorizontalSideStyle(popupEl, targetEl, 'right', inNav ? 10 : 14);
       if (inHorizontalNav) {
-        setMenuWidth(targetEl.getBoundingClientRect().width - 32);
+        popupEl.style.width = targetEl.getBoundingClientRect().width - 32 + 'px';
       }
       return {
         top,
@@ -130,7 +129,7 @@ export function DMenuSub(props: DMenuSubProps) {
         },
       };
     },
-    [inHorizontalNav, inNav, setMenuWidth]
+    [inHorizontalNav, inNav]
   );
 
   const handleExpandTrigger = useCallback(
@@ -213,7 +212,6 @@ export function DMenuSub(props: DMenuSubProps) {
       className={getClassName(_props.className, `${dPrefix}menu-sub__list`)}
       style={{
         ..._props.style,
-        width: inHorizontalNav ? menuWidth : undefined,
         minWidth: inHorizontalNav ? undefined : 160,
       }}
       role="menu"

@@ -1,6 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
-
-import { useImmer } from './immer';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export class ThrottleByAnimationFrame {
   private skip = false;
@@ -58,7 +56,7 @@ export class ThrottleByAnimationFrame {
 }
 
 export function useThrottle() {
-  const [throttleByAnimationFrame] = useImmer(() => new ThrottleByAnimationFrame());
+  const [throttleByAnimationFrame] = useState(() => new ThrottleByAnimationFrame());
 
   const throttle = useMemo(
     () => ({

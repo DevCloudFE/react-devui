@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 
 import { isUndefined } from 'lodash';
@@ -13,17 +13,17 @@ import { DInputAffixContext } from './InputAffix';
 export type DInputRef = HTMLInputElement;
 
 export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement>, DFormControl {
-  dValue?: [string, Updater<string>?];
+  dModel?: [string, Updater<string>?];
   dSize?: 'smaller' | 'larger';
-  onValueChange?: (value: string) => void;
+  onModelChange?: (value: string) => void;
 }
 
 const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, ref) => {
   const {
     dFormControlName,
-    dValue,
+    dModel,
     dSize,
-    onValueChange,
+    onModelChange,
     className,
     type = 'text',
     disabled,
@@ -57,7 +57,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
 
   const size = isUndefined(composeSize) ? inputAffixSize ?? dSize : composeSize;
 
-  const [bindValue, changeBindValue] = useTwoWayBinding('', dValue, onValueChange, {
+  const [value, changeValue] = useTwoWayBinding('', dModel, onModelChange, {
     name: dFormControlName,
   });
 
@@ -66,9 +66,9 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e);
-      changeBindValue(e.currentTarget.value);
+      changeValue(e.currentTarget.value);
     },
-    [changeBindValue, onChange]
+    [changeValue, onChange]
   );
 
   const handleFocus = useCallback<React.FocusEventHandler<HTMLInputElement>>(
@@ -90,13 +90,13 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   //#region DidUpdate
   useEffect(() => {
     if (inputEl) {
-      onInputRendered?.(changeBindValue, inputEl);
+      onInputRendered?.(changeValue, inputEl);
     }
-  }, [changeBindValue, inputEl, onInputRendered]);
+  }, [changeValue, inputEl, onInputRendered]);
 
   useEffect(() => {
-    onClearableChange?.(bindValue.length > 0);
-  }, [bindValue, onClearableChange]);
+    onClearableChange?.(value.length > 0);
+  }, [value, onClearableChange]);
   //#endregion
 
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(ref, () => inputEl, [inputEl]);
@@ -108,7 +108,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
       className={getClassName(className, `${dPrefix}input`, {
         [`${dPrefix}input--${size}`]: size,
       })}
-      value={bindValue}
+      value={value}
       type={inputAffixNumber ? 'number' : inputAffixPassword ? 'password' : type}
       disabled={_disabled}
       aria-disabled={_disabled}

@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DConfigRoot } from '@react-devui/ui';
-import { useAsync, useImmer } from '@react-devui/ui/hooks';
+import { useAsync } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppHeader, AppSidebar } from './components';
@@ -21,10 +21,10 @@ export function App() {
   const { i18n } = useTranslation();
   const asyncCapture = useAsync();
 
-  const [menuOpen, setMenuOpen] = useImmer(false);
-  const [pageMounted, setPageMounted] = useImmer(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [pageMounted, setPageMounted] = useState(false);
 
-  const [mainEl, setMainEl] = useImmer<HTMLElement | null>(null);
+  const [mainEl, setMainEl] = useState<HTMLElement | null>(null);
   const mainRef = useCallback(
     (node) => {
       if (node !== null) {

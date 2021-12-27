@@ -44,18 +44,18 @@ export function DMask(props: DMaskProps) {
       dVisible={dVisible}
       dCallbackList={{
         beforeEnter: () => transitionState,
-        afterEnter: () => {
-          afterVisibleChange?.(true);
-        },
         beforeLeave: () => transitionState,
-        afterLeave: () => {
-          afterVisibleChange?.(false);
-        },
       }}
       dRender={(hidden) =>
         !hidden && <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>
       }
       dSkipFirst={false}
+      afterEnter={() => {
+        afterVisibleChange?.(true);
+      }}
+      afterLeave={() => {
+        afterVisibleChange?.(false);
+      }}
       {...dTransitionProps}
     />
   );

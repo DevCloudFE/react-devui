@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DFormControl } from '../form';
 import type { DValue } from './Radio';
 
@@ -12,30 +12,30 @@ export interface DRadioGroupContextData {
   radioGroupValue: DValue;
   radioGroupDisabled: boolean;
   radioGroupType: DRadioGroupProps['dType'];
-  onValueChange: (checked: DValue) => void;
+  onModelChange: (checked: DValue) => void;
 }
 export const DRadioGroupContext = React.createContext<DRadioGroupContextData | null>(null);
 
 export interface DRadioGroupProps extends React.HTMLAttributes<HTMLDivElement>, DFormControl {
-  dValue?: [DValue, Updater<DValue>?];
+  dModel?: [DValue, Updater<DValue>?];
   dName?: string;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
   dSize?: 'smaller' | 'larger';
   dVertical?: boolean;
-  onValueChange?: (checked: DValue) => void;
+  onModelChange?: (checked: DValue) => void;
 }
 
 export function DRadioGroup(props: DRadioGroupProps) {
   const {
     dFormControlName,
-    dValue,
+    dModel,
     dName,
     dDisabled = false,
     dType,
     dSize,
     dVertical = false,
-    onValueChange,
+    onModelChange,
     className,
     children,
     ...restProps
@@ -45,7 +45,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [value, changeValue] = useTwoWayBinding(undefined, dValue, onValueChange, { name: dFormControlName });
+  const [value, changeValue] = useTwoWayBinding(undefined, dModel, onModelChange, { name: dFormControlName });
 
   const contextValue = useMemo<DRadioGroupContextData>(
     () => ({
@@ -53,7 +53,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
       radioGroupValue: value,
       radioGroupType: dType,
       radioGroupDisabled: dDisabled,
-      onValueChange: (value) => {
+      onModelChange: (value) => {
         changeValue(value);
       },
     }),

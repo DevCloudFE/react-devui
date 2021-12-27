@@ -9,7 +9,7 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dName?: string;
   dType?: string;
   dSize?: string | number;
-  dColor?: 'success' | 'warning' | 'danger';
+  dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dRotate?: number;
   dSpin?: boolean;
   dSpinSpeed?: string | number;
@@ -21,7 +21,7 @@ export function DIcon(props: DIconProps) {
     dName,
     dType,
     dSize = '1em',
-    dColor,
+    dTheme,
     dRotate,
     dSpin,
     dSpinSpeed = 1,
@@ -38,15 +38,15 @@ export function DIcon(props: DIconProps) {
   const [_viewBox, paths] = useMemo(() => {
     if (!children && isArray(iconContext)) {
       if (isUndefined(dName)) {
-        throw new Error('Missing "dName" prop');
+        throw new Error('Missing `dName` prop');
       }
       const list = iconContext.find((icon) => icon.name === dName)?.list;
       if (isUndefined(list)) {
-        throw new Error(`name "${dName}" dont exist`);
+        throw new Error(`name '${dName}' dont exist`);
       } else {
         const icon = list.find((icon) => icon.type === dType);
         if (isUndefined(icon)) {
-          throw new Error(`type "${dType}" dont exist in "${dName}"`);
+          throw new Error(`type '${dType}' dont exist in '${dName}'`);
         } else {
           return [icon.viewBox, icon.paths.map((path) => <path key={path} d={path}></path>)] as const;
         }
@@ -67,9 +67,7 @@ export function DIcon(props: DIconProps) {
       height={dSize}
       width={dSize}
       className={getClassName(className, `${dPrefix}icon`, {
-        [`${dPrefix}icon--success`]: dColor === 'success',
-        [`${dPrefix}icon--warning`]: dColor === 'warning',
-        [`${dPrefix}icon--danger`]: dColor === 'danger',
+        [`t-${dTheme}`]: dTheme,
       })}
       style={mergeStyle(style, {
         transform: !isUndefined(dRotate) ? `rotate(${dRotate}deg)` : undefined,

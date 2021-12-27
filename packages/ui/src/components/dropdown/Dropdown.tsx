@@ -1,18 +1,9 @@
-import type { Updater } from '../../hooks/immer';
+import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownItemProps } from './DropdownItem';
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useId, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useImmer,
-  useRefCallback,
-  useTwoWayBinding,
-  useId,
-  useAsync,
-  useTranslation,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useAsync, useTranslation } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 
@@ -77,16 +68,16 @@ export function DDropdown(props: DDropdownProps) {
   const asyncCapture = useAsync();
 
   const [focusId, setFocusId] = useImmer<DDropdownContextData['dropdownFocusId']>(null);
-  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
+  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
   const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
 
-  const _id = useId();
-  const __id = id ?? `${dPrefix}dropdown-${_id}`;
+  const uniqueId = useId();
+  const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
 
   const customTransition = useCallback(
     (popupEl, targetEl) => {
-      const { top, left, transformOrigin, arrowPosition } = getVerticalSideStyle(popupEl, targetEl, dPlacement, 12);
+      const { top, left, transformOrigin, arrowPosition } = getVerticalSideStyle(popupEl, targetEl, dPlacement, 8);
 
       return {
         top,
@@ -207,7 +198,7 @@ export function DDropdown(props: DDropdownProps) {
             role: 'button',
             'aria-haspopup': 'menu',
             'aria-expanded': visible ? true : undefined,
-            'aria-controls': __id,
+            'aria-controls': _id,
           })
         }
         dDestroy={dDestroy}

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { DTooltip, DIcon } from '@react-devui/ui';
 
 import { AppRouteArticle } from '../RouteArticle';
+import marked, { toString } from '../utils';
 import './ComponentRouteArticle.scss';
-import { toString } from './utils';
 
 export interface AppComponentRouteArticleProps {
   title: string;
@@ -19,8 +19,8 @@ export interface AppComponentRouteArticleProps {
 export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
   const { title, subtitle, demos, links } = props;
 
-  const description = toString(props.description);
-  const api = toString(props.api);
+  const description = marked(toString(props.description));
+  const api = marked(toString(props.api));
 
   const { t, i18n } = useTranslation();
 

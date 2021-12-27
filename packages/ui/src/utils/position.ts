@@ -367,9 +367,9 @@ export function getVerticalSideStyle(
   const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
 
   if ((placement.includes('top') && top === 10) || (placement.includes('bottom') && top === window.innerHeight - height - 10)) {
-    if (popupEl.dataset['dVerticalSidePosition']) {
-      const [top, left, transformOrigin] = popupEl.dataset['dVerticalSidePosition'].split(',');
-      delete popupEl.dataset['dVerticalSidePosition'];
+    if (popupEl.dataset['verticalSidePosition']) {
+      const [top, left, transformOrigin] = popupEl.dataset['verticalSidePosition'].split(',');
+      delete popupEl.dataset['verticalSidePosition'];
       return {
         top: Number(top),
         left: Number(left),
@@ -377,17 +377,18 @@ export function getVerticalSideStyle(
         arrowPosition,
       };
     } else {
-      popupEl.dataset['dVerticalSidePosition'] = [top, left, transformOrigin].join();
+      popupEl.dataset['verticalSidePosition'] = [top, left, transformOrigin].join();
       return getVerticalSideStyle(
         popupEl,
         targetEl,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (placement.includes('top') ? placement.replace('top', 'bottom') : placement.replace('bottom', 'top')) as any
+        (placement.includes('top') ? placement.replace('top', 'bottom') : placement.replace('bottom', 'top')) as any,
+        offset
       );
     }
   }
 
-  delete popupEl.dataset['dVerticalSidePosition'];
+  delete popupEl.dataset['verticalSidePosition'];
   return {
     top,
     left,

@@ -4,28 +4,10 @@ var tslib_1 = require("tslib");
 var crypto_1 = require("crypto");
 var path_1 = (0, tslib_1.__importDefault)(require("path"));
 var fs_extra_1 = require("fs-extra");
-var highlight_js_1 = (0, tslib_1.__importDefault)(require("highlight.js"));
-var marked_1 = (0, tslib_1.__importStar)(require("marked"));
 var rxjs_1 = require("rxjs");
 var rxjs_for_await_1 = require("rxjs-for-await");
 var operators_1 = require("rxjs/operators");
 var yamlFront = require('yaml-front-matter');
-var renderer = new marked_1.Renderer();
-renderer.heading = function (text, level) {
-    var link = "<a href=\"#".concat(text, "\" class=\"anchor\">#</a>");
-    var head = "\n<h".concat(level, " id=\"").concat(text, "\">\n  <span>").concat(text, "</span>\n  ").concat(link, "\n</h").concat(level, ">\n");
-    return head;
-};
-renderer.table = function (header, body) {
-    return "\n<div class=\"app-table-container\">\n <table>\n   <thead>".concat(header, "</thead>\n   <tbody>").concat(body, "</tbody>\n </table>\n</div>\n");
-};
-marked_1.default.setOptions({
-    renderer: renderer,
-    highlight: function (code, lang) {
-        return highlight_js_1.default.highlight(code, { language: lang }).value;
-    },
-    langPrefix: 'hljs ',
-});
 var COMPONENT_DIR = String.raw(templateObject_1 || (templateObject_1 = (0, tslib_1.__makeTemplateObject)(["packages/ui/src/components"], ["packages/ui/src/components"])));
 var ROUTE_DIR = [String.raw(templateObject_2 || (templateObject_2 = (0, tslib_1.__makeTemplateObject)(["packages/site/src/app/routes/components"], ["packages/site/src/app/routes/components"])))];
 var OUTPUT_DIR = String.raw(templateObject_3 || (templateObject_3 = (0, tslib_1.__makeTemplateObject)(["packages/site/src/app"], ["packages/site/src/app"])));
@@ -140,7 +122,7 @@ var GenerateSite = /** @class */ (function () {
                     var descriptionRegExp = new RegExp(String.raw(templateObject_8 || (templateObject_8 = (0, tslib_1.__makeTemplateObject)(["(?<=# ", ")[sS]*", ""], ["(?<=# ", ")[\\s\\S]*", ""])), lang, index === langs.length - 1 ? '(?=```tsx)' : "(?=# ".concat(langs[index + 1], ")")), 'g');
                     var description = (_a = meta.__content.match(descriptionRegExp)) === null || _a === void 0 ? void 0 : _a[0];
                     if (description) {
-                        obj.description = (0, marked_1.default)(description);
+                        obj.description = description;
                     }
                     obj.importStatement = String.raw(templateObject_9 || (templateObject_9 = (0, tslib_1.__makeTemplateObject)(["import ", "Demo from './demos/", "';\n"], ["import ", "Demo from './demos/", "';\n"])), fileName, fileName);
                     obj.tsx = meta.__content.match(/```tsx[\s\S]*?```/g)[0];
@@ -231,21 +213,18 @@ var GenerateSite = /** @class */ (function () {
                     var linksStr = '';
                     demoList_1.forEach(function (demo) {
                         if (demo) {
-                            var demoStr = String.raw(templateObject_14 || (templateObject_14 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsx={[__tsx__]}\n  __scss__\n  tsxSource={[__tsxSource__]}\n  __scssSource__\n/>\n"])));
+                            var demoStr = String.raw(templateObject_14 || (templateObject_14 = (0, tslib_1.__makeTemplateObject)(["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsxSource={[__tsxSource__]}\n  scssSource={[__scssSource__]}\n/>\n"], ["\n<AppDemoBox\n  id=\"__id__\"\n  renderer={<__renderer__Demo />}\n  title=\"__title__\"\n  description={[__description__]}\n  tsxSource={[__tsxSource__]}\n  scssSource={[__scssSource__]}\n/>\n"])));
                             demoStr = demoStr.replace(/__id__/g, demo.get(lang).id);
                             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang).name);
                             demoStr = demoStr.replace(/__title__/g, demo.get(lang).title);
                             demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang).description).join());
-                            demoStr = demoStr.replace(/__tsx__/g, new TextEncoder().encode((0, marked_1.default)(demo.get(lang).tsx)).join());
-                            demoStr = demoStr.replace(/__scss__/g, demo.get(lang).scss ? String.raw(templateObject_15 || (templateObject_15 = (0, tslib_1.__makeTemplateObject)(["scss={String.raw", "", "", "}"], ["scss={String.raw", "", "", "}"])), '`', (0, marked_1.default)(demo.get(lang).scss), '`') : '');
                             demoStr = demoStr.replace(/__tsxSource__/g, new TextEncoder().encode(demo.get(lang).tsx.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)[0]).join());
-                            demoStr = demoStr.replace(/__scssSource__/g, demo.get(lang).scss
-                                ? String.raw(templateObject_16 || (templateObject_16 = (0, tslib_1.__makeTemplateObject)(["scssSource={String.raw", "", "", "}"], ["scssSource={String.raw", "", "", "}"])), '`', demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0], '`') : '');
+                            demoStr = demoStr.replace(/__scssSource__/g, demo.get(lang).scss ? new TextEncoder().encode(demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0]).join() : '');
                             demosStr += demoStr;
-                            linksStr += String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["{ href: '#", "', title: '", "' }, "], ["{ href: '#", "', title: '", "' }, "])), demo.get(lang).id, demo.get(lang).title);
+                            linksStr += String.raw(templateObject_15 || (templateObject_15 = (0, tslib_1.__makeTemplateObject)(["{ href: '#", "', title: '", "' }, "], ["{ href: '#", "', title: '", "' }, "])), demo.get(lang).id, demo.get(lang).title);
                         }
                     });
-                    var routeArticleProps = String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), demosStr);
+                    var routeArticleProps = String.raw(templateObject_16 || (templateObject_16 = (0, tslib_1.__makeTemplateObject)(["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"], ["\n{\n  title: '__title__',\n  subtitle: '__subtitle__',\n  description: [__description__],\n  api: [__api__],\n  demos: (\n    <>\n      ", "\n    </>\n  ),\n  links: [__links__],\n}\n"])), demosStr);
                     routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
                     routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
                     routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
@@ -253,10 +232,10 @@ var GenerateSite = /** @class */ (function () {
                     var description = (_a = article.match(/^[\s\S]*(?=## API)/g)) === null || _a === void 0 ? void 0 : _a[0];
                     var api = (_b = article.match(/## API[\s\S]*$/g)) === null || _b === void 0 ? void 0 : _b[0];
                     if (description && api) {
-                        routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode((0, marked_1.default)(description)).join());
-                        routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode((0, marked_1.default)(api)).join());
+                        routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode(description).join());
+                        routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode(api).join());
                     }
-                    var langRegExp = new RegExp(String.raw(templateObject_19 || (templateObject_19 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
+                    var langRegExp = new RegExp(String.raw(templateObject_17 || (templateObject_17 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
                     componentRouteTmp_1 = componentRouteTmp_1.replace(langRegExp, routeArticleProps);
                 });
                 this.outputFile(path_1.default.join(outDir, "".concat(meta.title['en-US'], ".tsx")), componentRouteTmp_1);
@@ -271,9 +250,9 @@ var GenerateSite = /** @class */ (function () {
             var routeTmp = this.routeTmp;
             routeTmp = routeTmp.replace(/__Route__/g, routeName);
             ['en-US', 'zh-Hant'].forEach(function (lang) {
-                var langRegExp = new RegExp(String.raw(templateObject_20 || (templateObject_20 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
+                var langRegExp = new RegExp(String.raw(templateObject_18 || (templateObject_18 = (0, tslib_1.__makeTemplateObject)(["__", "__"], ["__", "__"])), lang), 'g');
                 routeTmp = routeTmp.replace(langRegExp, new TextEncoder()
-                    .encode((0, marked_1.default)((0, fs_extra_1.readFileSync)(path_1.default.join(dirPath, routeName + (lang === 'en-US' ? '' : ".".concat(lang))) + '.md').toString()))
+                    .encode((0, fs_extra_1.readFileSync)(path_1.default.join(dirPath, routeName + (lang === 'en-US' ? '' : ".".concat(lang))) + '.md').toString())
                     .join());
             });
             this.outputFile(path_1.default.join(dirPath, routeName, "".concat(routeName, ".tsx")), routeTmp);
@@ -292,8 +271,8 @@ var GenerateSite = /** @class */ (function () {
             try {
                 for (var _b = (0, tslib_1.__values)(this.routeConfig.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var _d = (0, tslib_1.__read)(_c.value, 2), key = _d[0], value = _d[1];
-                    importStr += String.raw(templateObject_21 || (templateObject_21 = (0, tslib_1.__makeTemplateObject)(["const ", "Route = lazy(() => import('", "'));\n"], ["const ", "Route = lazy(() => import('", "'));\n"])), key, value.import);
-                    routeStr += String.raw(templateObject_22 || (templateObject_22 = (0, tslib_1.__makeTemplateObject)(["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"], ["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"])), value.path, key);
+                    importStr += String.raw(templateObject_19 || (templateObject_19 = (0, tslib_1.__makeTemplateObject)(["const ", "Route = lazy(() => import('", "'));\n"], ["const ", "Route = lazy(() => import('", "'));\n"])), key, value.import);
+                    routeStr += String.raw(templateObject_20 || (templateObject_20 = (0, tslib_1.__makeTemplateObject)(["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"], ["\n{\n  path: '", "',\n  component: ", "Route,\n},\n"])), value.path, key);
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -620,4 +599,4 @@ function siteBuildExecutor(options, context) {
     });
 }
 exports.default = siteBuildExecutor;
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20;

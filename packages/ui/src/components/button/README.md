@@ -19,7 +19,7 @@ Extend `React.ButtonHTMLAttributes<HTMLButtonElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dType | Set button type | 'primary' \| 'secondary' \| 'outline' \| 'dashed' \| 'text' \| 'link' | 'primary' |
-| dColor | Set button color | 'primary' \| 'success' \| 'warning' \| 'danger' | 'primary' |
+| dTheme | Set button theme | 'primary' \| 'success' \| 'warning' \| 'danger' | 'primary' |
 | dLoading | Set button loading state | boolean | false |
 | dBlock | Adjust the button width to its parent width | boolean | false |
 | dShape | Set the button shape | 'circle' \| 'round' | - |
@@ -42,7 +42,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dType | Set the shape of the buttons in the button group | Reference DButtonProps['dType'] | 'secondary' |
-| dColor | Set the color of the buttons in the button group | Reference DButtonProps['dColor'] | 'primary' |
+| dTheme | Set the theme of the buttons in the button group | Reference DButtonProps['dTheme'] | 'primary' |
 | dSize | Set the size of the buttons in the button group | Reference DButtonProps['dSize'] | - |
 | dDisabled | Disable the buttons in the button group | boolean | false |
 <!-- prettier-ignore-end -->

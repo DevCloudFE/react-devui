@@ -5,42 +5,11 @@ import { createHash } from 'crypto';
 import path from 'path';
 
 import { readdirSync, statSync, readJsonSync, readFileSync, outputJsonSync, outputFileSync, watch } from 'fs-extra';
-import hljs from 'highlight.js';
-import marked, { Renderer } from 'marked';
 import { Subject } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { debounceTime, tap, mapTo } from 'rxjs/operators';
 
 const yamlFront = require('yaml-front-matter');
-
-const renderer = new Renderer();
-renderer.heading = function (text, level) {
-  const link = `<a href="#${text}" class="anchor">#</a>`;
-  const head = `
-<h${level} id="${text}">
-  <span>${text}</span>
-  ${link}
-</h${level}>
-`;
-  return head;
-};
-renderer.table = function (header: string, body: string) {
-  return `
-<div class="app-table-container">
- <table>
-   <thead>${header}</thead>
-   <tbody>${body}</tbody>
- </table>
-</div>
-`;
-};
-marked.setOptions({
-  renderer,
-  highlight: function (code, lang) {
-    return hljs.highlight(code, { language: lang }).value;
-  },
-  langPrefix: 'hljs ',
-});
 
 const COMPONENT_DIR = String.raw`packages/ui/src/components`;
 const ROUTE_DIR = [String.raw`packages/site/src/app/routes/components`];
@@ -171,7 +140,7 @@ class GenerateSite {
         );
         const description = meta.__content.match(descriptionRegExp)?.[0];
         if (description) {
-          obj.description = marked(description);
+          obj.description = description;
         }
         obj.importStatement = String.raw`import ${fileName}Demo from './demos/${fileName}';
 `;
@@ -257,30 +226,21 @@ class GenerateSite {
   renderer={<__renderer__Demo />}
   title="__title__"
   description={[__description__]}
-  tsx={[__tsx__]}
-  __scss__
   tsxSource={[__tsxSource__]}
-  __scssSource__
+  scssSource={[__scssSource__]}
 />
 `;
             demoStr = demoStr.replace(/__id__/g, demo.get(lang)!.id!);
             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang)!.name!);
             demoStr = demoStr.replace(/__title__/g, demo.get(lang)!.title!);
             demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang)!.description!).join());
-            demoStr = demoStr.replace(/__tsx__/g, new TextEncoder().encode(marked(demo.get(lang)!.tsx!)).join());
-            demoStr = demoStr.replace(
-              /__scss__/g,
-              demo.get(lang)!.scss ? String.raw`scss={String.raw${'`'}${marked(demo.get(lang)!.scss!)}${'`'}}` : ''
-            );
             demoStr = demoStr.replace(
               /__tsxSource__/g,
               new TextEncoder().encode(demo.get(lang)!.tsx!.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)![0]).join()
             );
             demoStr = demoStr.replace(
               /__scssSource__/g,
-              demo.get(lang)!.scss
-                ? String.raw`scssSource={String.raw${'`'}${demo.get(lang)!.scss!.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)![0]}${'`'}}`
-                : ''
+              demo.get(lang)!.scss ? new TextEncoder().encode(demo.get(lang)!.scss!.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)![0]).join() : ''
             );
 
             demosStr += demoStr;
@@ -311,8 +271,8 @@ class GenerateSite {
         const description = article.match(/^[\s\S]*(?=## API)/g)?.[0];
         const api = article.match(/## API[\s\S]*$/g)?.[0];
         if (description && api) {
-          routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode(marked(description)).join());
-          routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode(marked(api)).join());
+          routeArticleProps = routeArticleProps.replace(/__description__/g, new TextEncoder().encode(description).join());
+          routeArticleProps = routeArticleProps.replace(/__api__/g, new TextEncoder().encode(api).join());
         }
         const langRegExp = new RegExp(String.raw`__${lang}__`, 'g');
         componentRouteTmp = componentRouteTmp.replace(langRegExp, routeArticleProps);
@@ -330,7 +290,7 @@ class GenerateSite {
       routeTmp = routeTmp.replace(
         langRegExp,
         new TextEncoder()
-          .encode(marked(readFileSync(path.join(dirPath, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString()))
+          .encode(readFileSync(path.join(dirPath, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString())
           .join()
       );
     });

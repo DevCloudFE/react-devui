@@ -31,7 +31,6 @@
 
   font-size: var(--#{$variable-prefix}font);
   font-family: inherit;
-  line-height: inherit;
   white-space: nowrap;
   text-align: unset;
   text-transform: none;
@@ -43,10 +42,6 @@
   transition: border-color 0.2s linear, color 0.2s linear, background-color 0.2s linear;
 
   appearance: none;
-
-  & + & {
-    margin-left: var(--#{$variable-prefix}margin-size);
-  }
 
   &:disabled {
     cursor: not-allowed;
@@ -222,14 +217,12 @@
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
     --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
-    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-smaller);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
     --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
-    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
   }
 
   @include m(block) {
@@ -278,10 +271,6 @@
   align-items: center;
 
   vertical-align: top;
-
-  & + & {
-    margin-left: 10px;
-  }
 
   $button-selector: '.#{$variable-prefix}button';
   #{$button-selector} {

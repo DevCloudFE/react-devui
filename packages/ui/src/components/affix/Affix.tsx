@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useImperativeHandle } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react';
 
 import {
   usePrefixConfig,
@@ -52,7 +52,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
   //#endregion
 
   const asyncCapture = useAsync();
-  const [fixed, setFixed] = useImmer(false);
+  const [fixed, setFixed] = useState(false);
   const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
   const [referenceStyle, setReferenceStyle] = useImmer<React.CSSProperties>({});
 

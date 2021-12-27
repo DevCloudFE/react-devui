@@ -11,7 +11,7 @@ $dropdown-item-height: 32px;
   list-style: none;
   cursor: pointer;
 
-  transition: background-color 0.2s ease-out;
+  transition: background-color 0.2s linear;
 
   &:not(.is-disabled) {
     &:focus,
@@ -54,6 +54,7 @@ $dropdown-item-height: 32px;
   position: relative;
 
   min-width: 120px;
+  max-height: calc(8px + #{$dropdown-item-height} * 6);
 
   padding: 4px 0;
   overflow-x: hidden;

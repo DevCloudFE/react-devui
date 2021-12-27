@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useRefCallback, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
@@ -53,10 +53,10 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   const [t] = useTranslation('Common');
 
-  const [activedescendant, setActiveDescendant] = useImmer<string | undefined>(undefined);
+  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
-  const [currentPopupVisible, setCurrentPopupVisible] = useImmer(false);
-  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(false);
+  const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
+  const [childrenPopupVisiable, setChildrenPopupVisiable] = useState(false);
   const popupVisible = currentPopupVisible || childrenPopupVisiable;
 
   const _id = id ?? `${dPrefix}dropdown-sub-${toId(dId)}`;

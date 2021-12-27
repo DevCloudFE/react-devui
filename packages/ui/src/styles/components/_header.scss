@@ -11,12 +11,14 @@
     align-items: center;
 
     font-weight: 500;
-    line-height: 22px;
 
     @include font-size(1.15rem);
   }
 
   @include e(buttons) {
+    display: inline-flex;
+    gap: 0 var(--#{$variable-prefix}margin-size);
+    align-items: center;
     margin-left: auto;
   }
 }
