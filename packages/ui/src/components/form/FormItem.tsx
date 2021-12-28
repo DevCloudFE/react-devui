@@ -178,6 +178,26 @@ export function DFormItem(props: DFormItemProps) {
     return [_errors, hasError, errorStyle, status];
   }, [dErrors, formItems, getControl]);
 
+  const errorsNode = useMemo(
+    () =>
+      errors.map((errors) => (
+        <div key={errors.identity} id={errors.identity}>
+          {errors.errors.map((error) => (
+            <DError
+              key={error.key}
+              dVisible={!error.hidden}
+              dMessage={error.message}
+              dStatus={error.status}
+              onHidden={() => {
+                dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
+              }}
+            ></DError>
+          ))}
+        </div>
+      )),
+    [errors]
+  );
+
   const feedbackIcon = useMemo(() => {
     if (isUndefined(status)) {
       return null;
@@ -309,7 +329,7 @@ export function DFormItem(props: DFormItemProps) {
                   [`${dPrefix}form-item__label--required`]: formCustomLabel === 'required' && dLabel && required,
                   [`${dPrefix}form-item__label--colon`]: dLabel && formLabelColon,
                 })}
-                style={{ width: labelWidth }}
+                style={{ width: formLayout === 'vertical' ? undefined : labelWidth }}
               >
                 <label htmlFor={id}>
                   {dLabel}
@@ -324,7 +344,10 @@ export function DFormItem(props: DFormItemProps) {
             ) : (
               <div style={{ width: labelWidth }}></div>
             ))}
-          <div className={`${dPrefix}form-item__content`}>
+          <div
+            className={`${dPrefix}form-item__content`}
+            style={{ width: formLayout === 'vertical' ? '100%' : `calc(100% - ${isNumber(labelWidth) ? labelWidth + 'px' : labelWidth})` }}
+          >
             {status === 'pending' && (
               <>
                 <span className={`${dPrefix}form-item__pending`}></span>
@@ -334,23 +357,6 @@ export function DFormItem(props: DFormItemProps) {
               </>
             )}
             {children}
-            <div className={`${dPrefix}form-item__errors`}>
-              {errors.map((errors) => (
-                <div key={errors.identity} id={errors.identity}>
-                  {errors.errors.map((error) => (
-                    <DError
-                      key={error.key}
-                      dVisible={!error.hidden}
-                      dMessage={error.message}
-                      dStatus={error.status}
-                      onHidden={() => {
-                        dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
-                      }}
-                    ></DError>
-                  ))}
-                </div>
-              ))}
-            </div>
           </div>
           {formFeedbackIcon && (
             <div
@@ -362,22 +368,11 @@ export function DFormItem(props: DFormItemProps) {
             </div>
           )}
         </div>
+        <div className={`${dPrefix}form-item__errors`} style={{ left: labelWidth }}>
+          {errorsNode}
+        </div>
         <div className={`${dPrefix}form-item__errors-height`} aria-hidden={true}>
-          {errors.map((errors) => (
-            <div key={errors.identity}>
-              {errors.errors.map((error) => (
-                <DError
-                  key={error.key}
-                  dVisible={!error.hidden}
-                  dMessage={error.message}
-                  dStatus={error.status}
-                  onHidden={() => {
-                    dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
-                  }}
-                ></DError>
-              ))}
-            </div>
-          ))}
+          {errorsNode}
         </div>
       </div>
     </DStateBackflowContext.Provider>

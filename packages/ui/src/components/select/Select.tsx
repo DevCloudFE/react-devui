@@ -442,7 +442,7 @@ export function DSelect<T>(
 
   const customTransition = useCallback((popupEl: HTMLElement, targetEl: HTMLElement) => {
     const { top, left, transformOrigin } = getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 8);
-    popupEl.style.width = targetEl.getBoundingClientRect().width + 'px';
+    popupEl.style.width = Math.min(window.innerWidth - 20, targetEl.getBoundingClientRect().width) + 'px';
     return {
       top,
       left,

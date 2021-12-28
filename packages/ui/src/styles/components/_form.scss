@@ -57,6 +57,8 @@
 }
 
 @include b(form-item) {
+  position: relative;
+
   overflow: hidden;
 
   @include m(vertical) {
@@ -125,8 +127,6 @@
 
   @include e(content) {
     position: relative;
-
-    flex-grow: 1;
   }
 
   @include e(pending) {
