@@ -39,6 +39,14 @@ export function DButtonGroup(props: DButtonGroupProps) {
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled;
 
+  const generalStateContextValue = useMemo<DGeneralStateContextData>(
+    () => ({
+      gSize: size,
+      gDisabled: disabled,
+    }),
+    [disabled, size]
+  );
+
   const contextValue = useMemo<DButtonGroupContextData>(
     () => ({
       buttonGroupType: dType,
@@ -46,14 +54,6 @@ export function DButtonGroup(props: DButtonGroupProps) {
       buttonGroupDisabled: dDisabled,
     }),
     [dType, dTheme, dDisabled]
-  );
-
-  const generalStateContextValue = useMemo<DGeneralStateContextData>(
-    () => ({
-      gSize: size,
-      gDisabled: disabled,
-    }),
-    [disabled, size]
   );
 
   return (

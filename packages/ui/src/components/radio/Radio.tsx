@@ -16,13 +16,13 @@ import { DRadioGroupContext } from './RadioGroup';
 
 export type DRadioRef = HTMLInputElement;
 
-export type DValue = React.InputHTMLAttributes<HTMLInputElement>['value'];
-
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
+  dSize?: 'smaller' | 'larger';
   dDisabled?: boolean;
-  dValue?: DValue;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dValue?: any;
   onModelChange?: (checked: boolean) => void;
 }
 
@@ -30,6 +30,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
   const {
     dModel,
     dFormControlName,
+    dSize,
     dDisabled = false,
     dValue,
     onModelChange,
@@ -42,9 +43,8 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
-  const [{ radioGroupValue, radioGroupName, radioGroupType, radioGroupDisabled, onCheckedChange }, radioGroupContext] =
-    useCustomContext(DRadioGroupContext);
+  const { gSize, gDisabled } = useGeneralState();
+  const [{ radioGroupValue, radioGroupName, radioGroupType, onCheckedChange }, radioGroupContext] = useCustomContext(DRadioGroupContext);
   //#endregion
 
   //#region Ref
@@ -65,7 +65,8 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
 
-  const disabled = dDisabled || radioGroupDisabled || gDisabled || controlDisabled;
+  const size = dSize ?? gSize;
+  const disabled = dDisabled || gDisabled || controlDisabled;
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -90,6 +91,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
       {...restProps}
       ref={radioRef}
       className={getClassName(className, `${dPrefix}radio`, {
+        [`${dPrefix}radio--${size}`]: size,
         'is-checked': checked,
         'is-disabled': disabled,
       })}
@@ -100,9 +102,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
           ref={ref}
           id={_id}
           className={getClassName(`${dPrefix}radio__input`, validateClassName)}
-          checked={checked}
           type="radio"
-          value={dValue}
           name={radioGroupName}
           disabled={disabled}
           aria-labelledby={`${dPrefix}radio-label-${uniqueId}`}

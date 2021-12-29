@@ -14,14 +14,14 @@ export function DAnchorLink(props: DAnchorLinkProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ anchorActiveHref, onLinkClick }] = useCustomContext(DAnchorContext);
+  const [{ updateLinks, removeLinks, anchorActiveHref, onLinkClick }] = useCustomContext(DAnchorContext);
   //#endregion
 
   //#region Ref
   const [linkEl, linkRef] = useRefCallback<HTMLLIElement>();
   //#endregion
 
-  useStateBackflow(href, linkEl);
+  useStateBackflow(updateLinks, removeLinks, href, linkEl);
 
   const handleClick = useCallback(
     (e) => {

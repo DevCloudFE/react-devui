@@ -20,7 +20,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | --- | --- | --- | --- | 
 | dModel | Manual control is selected | [boolean, Updater\<boolean\>?] | - |
 | dDisabled | Whether to disable | boolean | false |
-| dValue | Pass as an identifier in radio group | DValue  | - |
+| dValue | Pass as an identifier in radio group | any  | - |
 | onModelChange | Selected change callback | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
 
@@ -37,17 +37,11 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dModel | Manual control selection | [DValue, Updater\<DValue\>?] | - |
+| dModel | Manual control selection | [any, Updater\<any\>?] | - |
 | dName | Single option `name` attribute | string | - |
 | dDisabled | Whether to disable | boolean | false |
 | dType | Radio group style | 'outline' \| 'fill' | - |
 | dSize | Radio button size | 'smaller' \| 'larger' | - |
 | dVertical | Radio group arranged vertically | boolean | false |
-| onModelChange | Callback when the selected item is changed | `(checked: DValue) => void` | - |
+| onModelChange | Callback when the selected item is changed | `(value: any) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DValue
-
-```tsx
-type DValue = React.InputHTMLAttributes<HTMLInputElement>['value'];
-```

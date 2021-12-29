@@ -29,8 +29,10 @@ export function DDrag(props: DDragProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ dropOuter, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd }, dropContext] =
-    useCustomContext(DDropContext);
+  const [
+    { updateSelectors, removeSelectors, dropOuter, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd },
+    dropContext,
+  ] = useCustomContext(DDropContext);
   //#endregion
 
   const dataRef = useRef<{ dragEl: HTMLElement | null }>({
@@ -60,7 +62,13 @@ export function DDrag(props: DDragProps) {
     return el;
   });
 
-  useStateBackflow(dId, `[data-${dPrefix}drag="${uniqueId}"]`, `[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
+  useStateBackflow(
+    updateSelectors,
+    removeSelectors,
+    dId as string,
+    `[data-${dPrefix}drag="${uniqueId}"]`,
+    `[data-${dPrefix}drag-placeholder="${uniqueId}"]`
+  );
 
   //#region DidUpdate
   useEffect(() => {

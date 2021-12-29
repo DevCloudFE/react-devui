@@ -1,47 +1,21 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useContext, useEffect, useId, useRef } from 'react';
+import { useEffect, useId } from 'react';
 
-export interface DStateBackflowContextData {
-  addState: (identity: string, ...state: any[]) => void;
-  updateState: (identity: string, ...state: any[]) => void;
-  removeState: (identity: string) => void;
-}
-export const DStateBackflowContext = React.createContext<DStateBackflowContextData>({
-  addState: () => {},
-  updateState: () => {},
-  removeState: () => {},
-});
-
-export function useStateBackflow(...state: any[]) {
-  const stateBackflow = useContext(DStateBackflowContext);
-
+export function useStateBackflow<S extends any[]>(
+  update?: (identity: string, ...states: S) => void,
+  remove?: (identity: string) => void,
+  ...states: S
+) {
   const identity = useId();
 
-  const dataRef = useRef<{ preState: any[] | null }>({
-    preState: null,
-  });
-
   useEffect(() => {
-    if (dataRef.current.preState === null) {
-      dataRef.current.preState = state;
-    }
-    for (const [index, s] of state.entries()) {
-      if (!Object.is(s, dataRef.current.preState[index])) {
-        stateBackflow.updateState(identity, ...state);
-        dataRef.current.preState = state;
-      }
-    }
-  });
-
-  useEffect(() => {
-    stateBackflow.addState(identity, ...state);
+    update?.(identity, ...states);
     return () => {
-      stateBackflow.removeState(identity);
+      remove?.(identity);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [identity, update, remove, ...states]);
 
   return identity;
 }

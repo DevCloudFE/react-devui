@@ -172,6 +172,14 @@ export function DInputAffix(props: DInputAffixProps) {
     [inputEl]
   );
 
+  const generalStateContextValue = useMemo<DGeneralStateContextData>(
+    () => ({
+      gSize: size,
+      gDisabled: disabled,
+    }),
+    [disabled, size]
+  );
+
   const contextValue = useMemo<DInputAffixContextData>(
     () => ({
       inputAffixDisabled: disabled,
@@ -189,14 +197,6 @@ export function DInputAffix(props: DInputAffixProps) {
       },
     }),
     [dNumber, dPassword, disabled, notificationCallback, password]
-  );
-
-  const generalStateContextValue = useMemo<DGeneralStateContextData>(
-    () => ({
-      gSize: size,
-      gDisabled: disabled,
-    }),
-    [disabled, size]
   );
 
   return (

@@ -1,4 +1,3 @@
-import type { DStateBackflowContextData } from '../../hooks/state-backflow';
 import type { DBreakpoints } from '../grid';
 import type { DFormContextData } from './Form';
 import type { AbstractControl, FormControlStatus } from './form';
@@ -6,7 +5,7 @@ import type { AbstractControl, FormControlStatus } from './form';
 import { isArray, isBoolean, isNull, isNumber, isString, isUndefined } from 'lodash';
 import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, DStateBackflowContext, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { MEDIA_QUERY_LIST } from '../grid';
 import { DIcon } from '../icon';
@@ -24,6 +23,12 @@ export type DErrorInfo =
   | string
   | { message: string; status: 'warning' | 'error' }
   | { [index: string]: string | { message: string; status: 'warning' | 'error' } };
+
+export interface DFormItemContextData {
+  updateFormItems: (identity: string, formControlName: string | undefined, id: string | undefined) => void;
+  removeFormItems: (identity: string) => void;
+}
+export const DFormItemContext = React.createContext<DFormItemContextData | null>(null);
 
 export interface DFormItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dLabel?: React.ReactNode;
@@ -273,25 +278,16 @@ export function DFormItem(props: DFormItemProps) {
     }
   }, [dLabelExtra]);
 
-  const stateBackflowContextValue = useMemo<DStateBackflowContextData>(
+  const stateBackflow = useMemo<Pick<DFormItemContextData, 'updateFormItems' | 'removeFormItems'>>(
     () => ({
-      addState: (identity, formControlName, id) => {
-        if (isString(formControlName)) {
+      updateFormItems: (identity, formControlName, id) => {
+        if (isString(formControlName) && isString(id)) {
           setFormItems((draft) => {
             draft.set(identity, { formControlName, id });
           });
         }
       },
-      updateState: (identity, formControlName, id) => {
-        setFormItems((draft) => {
-          if (isString(formControlName)) {
-            draft.set(identity, { formControlName, id });
-          } else {
-            draft.delete(identity);
-          }
-        });
-      },
-      removeState: (identity) => {
+      removeFormItems: (identity) => {
         setFormItems((draft) => {
           draft.delete(identity);
         });
@@ -299,8 +295,15 @@ export function DFormItem(props: DFormItemProps) {
     }),
     [setFormItems]
   );
+  const contextValue = useMemo<DFormItemContextData>(
+    () => ({
+      ...stateBackflow,
+    }),
+    [stateBackflow]
+  );
+
   return (
-    <DStateBackflowContext.Provider value={stateBackflowContextValue}>
+    <DFormItemContext.Provider value={contextValue}>
       <div
         {...restProps}
         className={getClassName(
@@ -375,6 +378,6 @@ export function DFormItem(props: DFormItemProps) {
           {errorsNode}
         </div>
       </div>
-    </DStateBackflowContext.Provider>
+    </DFormItemContext.Provider>
   );
 }

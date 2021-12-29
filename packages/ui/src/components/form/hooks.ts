@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 export interface DFormInstance {
   form: FormGroup;
-  resetForm: () => void;
+  initForm: () => void;
   updateForm: () => void;
 }
 
@@ -16,7 +16,7 @@ export function useForm(initData: () => FormGroup): DFormInstance {
     setFormChange((n) => n + 1);
   }, []);
 
-  const resetForm = useCallback(() => {
+  const initForm = useCallback(() => {
     const data = initData();
     setForm(data);
   }, [initData]);
@@ -24,7 +24,7 @@ export function useForm(initData: () => FormGroup): DFormInstance {
   const formInstance = useMemo(
     () => ({
       form,
-      resetForm,
+      initForm,
       updateForm,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

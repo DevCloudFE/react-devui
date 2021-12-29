@@ -22,7 +22,7 @@ title: 按钮
 | dLoading | 设置按钮载入状态 | boolean | false |
 | dBlock | 将按钮宽度调整为其父宽度 | boolean | false |
 | dShape | 设置按钮形状 | 'circle' \| 'round' | - |
-| dSize | 设置按钮尺寸 | 'smaller' \| 'larger' | - |
+| dSize | 设置尺寸 | 'smaller' \| 'larger' | - |
 | dIcon | 设置按钮的图标 | React.ReactNode | - |
 | dIconRight | 设置图标在右侧 | boolean | false |
 <!-- prettier-ignore-end -->

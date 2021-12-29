@@ -1,0 +1,232 @@
+@keyframes checkbox-tick {
+  0% {
+    transform: scale(0.7);
+  }
+
+  90% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@include b(checkbox) {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  font-size: var(--#{$variable-prefix}font);
+
+  cursor: pointer;
+
+  @include utils-disabled;
+
+  &:not(.is-disabled) {
+    &:hover {
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+    }
+
+    @include when(checked) {
+      @include e(input-wrapper) {
+        &::before {
+          animation: radio-wave 0.36s ease-in-out;
+          animation-fill-mode: backwards;
+        }
+      }
+
+      @include e(tick) {
+        animation: checkbox-tick 133ms ease-in-out;
+        animation-fill-mode: backwards;
+      }
+
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+
+    @include when(indeterminate) {
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+
+    @include e(input) {
+      @include utils-outline;
+
+      &:focus {
+        border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / 12%);
+      }
+    }
+  }
+
+  @include when(disabled) {
+    @include e(input-wrapper) {
+      background-color: var(--#{$variable-prefix}disabled-background-color);
+
+      &::after {
+        background-color: var(--#{$variable-prefix}disabled-color);
+      }
+    }
+
+    @include e(tick) {
+      &::after {
+        border-color: var(--#{$variable-prefix}disabled-color);
+      }
+    }
+  }
+
+  @include when(checked) {
+    @include e(input-wrapper) {
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+
+  @include when(indeterminate) {
+    @include e(input-wrapper) {
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+  }
+
+  @include e(input-wrapper) {
+    position: relative;
+
+    width: 16px;
+    height: 16px;
+    border-radius: var(--#{$variable-prefix}border-radius);
+
+    &::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      border: 1px solid var(--#{$variable-prefix}color-primary);
+      border-radius: var(--#{$variable-prefix}border-radius);
+
+      opacity: 0;
+
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: -1;
+
+      border-radius: var(--#{$variable-prefix}border-radius);
+
+      background-color: var(--#{$variable-prefix}color-primary);
+      opacity: 0;
+
+      transition: transform 133ms linear, opacity 133ms linear;
+
+      content: '';
+    }
+  }
+
+  @include e(tick) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    border-radius: var(--#{$variable-prefix}border-radius);
+
+    overflow: hidden;
+
+    &::after {
+      position: absolute;
+      top: calc(5px - 1.7677px);
+      left: 3.5px;
+
+      display: block;
+      width: 9px;
+      height: 6px;
+      border-bottom: 2px solid #fff;
+      border-left: 2px solid #fff;
+
+      transform: rotate(-45deg);
+
+      content: '';
+    }
+  }
+
+  @include e(indeterminate) {
+    position: absolute;
+    top: 7px;
+    left: 4px;
+
+    width: 8px;
+    height: 2px;
+
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    background-color: #fff;
+  }
+
+  @include e(input) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 1px solid var(--#{$variable-prefix}border-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+
+    outline: none;
+
+    cursor: inherit;
+
+    transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
+
+    appearance: none;
+  }
+
+  @include e(label) {
+    padding-left: 8px;
+
+    cursor: inherit;
+
+    transition: color 133ms linear;
+  }
+}
+
+@include b(checkbox-group) {
+  position: relative;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+
+  @include m(vertical) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

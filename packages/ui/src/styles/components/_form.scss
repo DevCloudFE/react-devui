@@ -156,7 +156,7 @@
         background: linear-gradient(90deg, transparent, var(--#{$variable-prefix}color-primary));
 
         animation: form-pending-top 1s linear infinite;
-        animation-fill-mode: both;
+        animation-fill-mode: backwards;
 
         content: '';
       }
@@ -176,7 +176,7 @@
 
         animation: form-pending-right 1s linear infinite;
         animation-delay: 0.25s;
-        animation-fill-mode: both;
+        animation-fill-mode: backwards;
 
         content: '';
       }
@@ -196,7 +196,7 @@
 
         animation: form-pending-bottom 1s linear infinite;
         animation-delay: 0.5s;
-        animation-fill-mode: both;
+        animation-fill-mode: backwards;
 
         content: '';
       }
@@ -216,7 +216,7 @@
 
         animation: form-pending-left 1s linear infinite;
         animation-delay: 0.75s;
-        animation-fill-mode: both;
+        animation-fill-mode: backwards;
 
         content: '';
       }

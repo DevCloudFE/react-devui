@@ -90,7 +90,7 @@
       @include e(input-wrapper) {
         &::before {
           animation: radio-wave 0.36s ease-in-out;
-          animation-fill-mode: both;
+          animation-fill-mode: backwards;
         }
       }
 
@@ -129,11 +129,19 @@
     }
   }
 
+  @include m(smaller) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+  }
+
   @include e(input-wrapper) {
     position: relative;
 
-    width: 1.2em;
-    height: 1.2em;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
 
     &::before {
@@ -253,13 +261,16 @@
     flex-direction: column;
     align-items: flex-start;
 
-    #{$radio-selector} {
-      &:first-of-type {
-        border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
-      }
+    &.#{$variable-prefix}radio-group--outline,
+    &.#{$variable-prefix}radio-group--fill {
+      #{$radio-selector} {
+        &:first-of-type {
+          border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
+        }
 
-      &:last-of-type {
-        border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
+        &:last-of-type {
+          border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
+        }
       }
     }
   }

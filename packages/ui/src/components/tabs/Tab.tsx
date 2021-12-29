@@ -33,6 +33,7 @@ export function DTab(props: DTabProps) {
   //#region Context
   const dPrefix = usePrefixConfig();
   const [{ tabsActiveId, getDotStyle, onActiveChange, onClose }] = useCustomContext(DTabsContext);
+  const [{ updateTabEls, removeTabEls }] = useCustomContext(DTabsContext);
   //#endregion
 
   //#region Ref
@@ -45,7 +46,7 @@ export function DTab(props: DTabProps) {
 
   const panelId = `${dPrefix}tabpanel-${toId(dId)}`;
 
-  useStateBackflow(dId, tabEl);
+  useStateBackflow(updateTabEls, removeTabEls, dId, tabEl);
 
   const handleClick = useCallback(
     (e) => {

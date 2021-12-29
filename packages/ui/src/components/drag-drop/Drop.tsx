@@ -1,14 +1,15 @@
 import type { DElementSelector } from '../../hooks/element-ref';
-import type { DStateBackflowContextData } from '../../hooks/state-backflow';
 import type { DDragProps } from './Drag';
 
 import { cloneDeep, isEqual, isUndefined } from 'lodash';
 import React, { useImperativeHandle, useState } from 'react';
 import { useEffect, useMemo } from 'react';
 
-import { useComponentConfig, useRefSelector, useImmer, DStateBackflowContext } from '../../hooks';
+import { useComponentConfig, useRefSelector, useImmer } from '../../hooks';
 
 export interface DDropContextData {
+  updateSelectors: (identity: string, id: string, drag: string, placeholder: string) => void;
+  removeSelectors: (identity: string) => void;
   dropDirection: 'horizontal' | 'vertical';
   dropOuter: boolean;
   dropPlaceholder: React.ReactNode;
@@ -84,8 +85,30 @@ const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) 
   }, [children, setOrderChildren, orderIds, setOrderIds]);
   //#endregion
 
+  const stateBackflow = useMemo<Pick<DDropContextData, 'updateSelectors' | 'removeSelectors'>>(
+    () => ({
+      updateSelectors: (identity, id, drag, placeholder) => {
+        setDrags((draft) => {
+          draft.set(identity, { id, selector: drag });
+        });
+        setPlaceholders((draft) => {
+          draft.set(identity, { id, selector: placeholder });
+        });
+      },
+      removeSelectors: (identity) => {
+        setDrags((draft) => {
+          draft.delete(identity);
+        });
+        setPlaceholders((draft) => {
+          draft.delete(identity);
+        });
+      },
+    }),
+    [setDrags, setPlaceholders]
+  );
   const contextValue = useMemo<DDropContextData>(
     () => ({
+      ...stateBackflow,
       dropDirection: dDirection,
       dropOuter: isOuter,
       dropPlaceholder: dPlaceholder,
@@ -202,46 +225,12 @@ const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) 
         onDragEnd?.(id);
       },
     }),
-    [containerRef, dDirection, dPlaceholder, drags, isOuter, onDragEnd, onDragStart, orderIds, placeholders]
+    [containerRef, dDirection, dPlaceholder, drags, isOuter, onDragEnd, onDragStart, orderIds, placeholders, stateBackflow]
   );
 
   useImperativeHandle(ref, () => orderIds, [orderIds]);
 
-  const stateBackflowContextValue = useMemo<DStateBackflowContextData>(
-    () => ({
-      addState: (identity, id, drag, placeholder) => {
-        setDrags((draft) => {
-          draft.set(identity, { id, selector: drag });
-        });
-        setPlaceholders((draft) => {
-          draft.set(identity, { id, selector: placeholder });
-        });
-      },
-      updateState: (identity, id, drag, placeholder) => {
-        setDrags((draft) => {
-          draft.set(identity, { id, selector: drag });
-        });
-        setPlaceholders((draft) => {
-          draft.set(identity, { id, selector: placeholder });
-        });
-      },
-      removeState: (identity) => {
-        setDrags((draft) => {
-          draft.delete(identity);
-        });
-        setPlaceholders((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
-    [setDrags, setPlaceholders]
-  );
-
-  return (
-    <DStateBackflowContext.Provider value={stateBackflowContextValue}>
-      <DDropContext.Provider value={contextValue}>{orderChildren}</DDropContext.Provider>
-    </DStateBackflowContext.Provider>
-  );
+  return <DDropContext.Provider value={contextValue}>{orderChildren}</DDropContext.Provider>;
 };
 
 export const DDrop = React.forwardRef(Drop);

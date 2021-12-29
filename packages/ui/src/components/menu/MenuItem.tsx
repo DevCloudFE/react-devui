@@ -5,6 +5,7 @@ import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, 
 import { getClassName, toId, mergeStyle } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
+import { DMenuSubContext } from './MenuSub';
 
 export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
@@ -35,6 +36,7 @@ export function DMenuItem(props: DMenuItemProps) {
   //#region Context
   const dPrefix = usePrefixConfig();
   const [{ menuMode, menuActiveId, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
+  const [{ updateChildren, removeChildren }] = useCustomContext(DMenuSubContext);
   //#endregion
 
   //#region Ref
@@ -43,7 +45,7 @@ export function DMenuItem(props: DMenuItemProps) {
 
   const _id = id ?? `${dPrefix}menu-item-${toId(dId)}`;
 
-  useStateBackflow(false, dId);
+  useStateBackflow(updateChildren, removeChildren, dId, false);
 
   const handleClick = useCallback(
     (e) => {

@@ -6,7 +6,7 @@ import { freeze, produce } from 'immer';
 import { isFunction, isNull, isUndefined } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DFormContext, DFormGroupContext } from '../components/form';
+import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
 import { useCustomContext } from './context';
 import { useStateBackflow } from './state-backflow';
 
@@ -23,9 +23,10 @@ export function useTwoWayBinding<T>(
 ) {
   const [{ formInstance }] = useCustomContext(DFormContext);
   const [{ formGroupPath }] = useCustomContext(DFormGroupContext);
+  const [{ updateFormItems, removeFormItems }] = useCustomContext(DFormItemContext);
   const formControlName = opt?.formControlName;
 
-  const identity = useStateBackflow(formControlName, opt?.id);
+  const identity = useStateBackflow(updateFormItems, removeFormItems, formControlName, opt?.id);
 
   const formControl = useMemo(() => {
     if (formControlName && formInstance) {

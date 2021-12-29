@@ -1,26 +1,19 @@
-import type { DStateBackflowContextData } from '../../hooks/state-backflow';
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
 import type { DTabProps } from './Tab';
+import type { Draft } from 'immer';
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useImmer,
-  useTwoWayBinding,
-  useRefCallback,
-  useAsync,
-  useTranslation,
-  DStateBackflowContext,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
 import { DDrag, DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 
 export interface DTabsContextData {
+  updateTabEls: (identity: string, id: string, el: HTMLElement | null) => void;
+  removeTabEls: (identity: string) => void;
   tabsActiveId: string | null;
   getDotStyle: () => void;
   onActiveChange: (id: string) => void;
@@ -83,7 +76,7 @@ export function DTabs(props: DTabsProps) {
   const [listOverflow, setListOverflow] = useState(true);
   const [dropdownList, setDropdownList] = useImmer<Array<React.ReactElement<DTabProps>>>([]);
   const [scrollEnd, setScrollEnd] = useState(false);
-  const [tabEls, setTabEls] = useImmer(new Map<string, { id: string; el: HTMLElement | null }>());
+  const [tabEls, setTabEls] = useImmer(new Map<string, { id: string; el: HTMLElement }>());
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
@@ -112,16 +105,14 @@ export function DTabs(props: DTabsProps) {
         React.Children.forEach(children as Array<React.ReactElement<DTabProps>>, (child) => {
           for (const { id, el } of tabEls.values()) {
             if (id === child.props.dId) {
-              if (el) {
-                const elRect = el.getBoundingClientRect();
-                if (isHorizontal) {
-                  if (elRect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || elRect.left < tablistWrapperRect.left) {
-                    dropdownList.push(child);
-                  }
-                } else {
-                  if (elRect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || elRect.top < tablistWrapperRect.top) {
-                    dropdownList.push(child);
-                  }
+              const elRect = el.getBoundingClientRect();
+              if (isHorizontal) {
+                if (elRect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || elRect.left < tablistWrapperRect.left) {
+                  dropdownList.push(child);
+                }
+              } else {
+                if (elRect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || elRect.top < tablistWrapperRect.top) {
+                  dropdownList.push(child);
                 }
               }
               break;
@@ -244,8 +235,26 @@ export function DTabs(props: DTabsProps) {
     return [_childs, _tabpanels] as const;
   }, [children, dDraggable, dPrefix]);
 
+  const stateBackflow = useMemo<Pick<DTabsContextData, 'updateTabEls' | 'removeTabEls'>>(
+    () => ({
+      updateTabEls: (identity, id, el) => {
+        if (el) {
+          setTabEls((draft) => {
+            draft.set(identity, { id, el: el as Draft<HTMLElement> });
+          });
+        }
+      },
+      removeTabEls: (identity) => {
+        setTabEls((draft) => {
+          draft.delete(identity);
+        });
+      },
+    }),
+    [setTabEls]
+  );
   const contextValue = useMemo<DTabsContextData>(
     () => ({
+      ...stateBackflow,
       tabsActiveId: activeId,
       getDotStyle,
       onActiveChange: (id) => {
@@ -258,137 +267,114 @@ export function DTabs(props: DTabsProps) {
         onClose?.(id);
       },
     }),
-    [activeId, changeActiveId, getDotStyle, onClose]
-  );
-
-  const stateBackflowContextValue = useMemo<DStateBackflowContextData>(
-    () => ({
-      addState: (identity, dId, tabEl) => {
-        setTabEls((draft) => {
-          draft.set(identity, { id: dId, el: tabEl });
-        });
-      },
-      updateState: (identity, dId, tabEl) => {
-        setTabEls((draft) => {
-          draft.set(identity, { id: dId, el: tabEl });
-        });
-      },
-      removeState: (identity) => {
-        setTabEls((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
-    [setTabEls]
+    [activeId, changeActiveId, getDotStyle, onClose, stateBackflow]
   );
 
   return (
-    <DStateBackflowContext.Provider value={stateBackflowContextValue}>
-      <DTabsContext.Provider value={contextValue}>
-        <div
-          {...restProps}
-          className={getClassName(className, `${dPrefix}tabs`, `${dPrefix}tabs--${dPlacement}`, {
-            [`${dPrefix}tabs--${dType}`]: dType,
-            [`${dPrefix}tabs--${dSize}`]: dSize,
-            [`${dPrefix}tabs--center`]: dCenter,
-          })}
-        >
-          <div ref={tablistWrapperRef} className={`${dPrefix}tabs__tablist-wrapper`} onScroll={handleScroll}>
-            <div
-              ref={tablistRef}
-              className={`${dPrefix}tabs__tablist`}
-              role="tablist"
-              aria-label={dTabAriaLabel}
-              aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
-            >
-              {dDraggable ? (
-                <DDrop
-                  dContainer={tablistWrapperEl}
-                  dDirection={isHorizontal ? 'horizontal' : 'vertical'}
-                  dPlaceholder={<DDragPlaceholder />}
-                  onOrderChange={handleOrderChange}
-                  onDragStart={handleDragStart}
-                >
-                  {childs}
-                </DDrop>
-              ) : (
-                childs
-              )}
-              {(listOverflow || onAddClick) && (
-                <div className={`${dPrefix}tabs__button-container`}>
-                  {listOverflow && (
-                    <DDropdown
-                      dTriggerNode={
-                        <div
-                          className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--more`, {
-                            'is-end': scrollEnd,
-                          })}
-                          style={{
-                            right: isHorizontal && onAddClick ? 52 : undefined,
-                            bottom: !isHorizontal && onAddClick ? 36 : undefined,
-                          }}
-                          tabIndex={-1}
-                          aria-label={t('More')}
-                        >
-                          <DIcon viewBox="64 64 896 896" dSize={18}>
-                            <path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
-                          </DIcon>
-                        </div>
-                      }
-                      dCloseOnItemClick={false}
-                      dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
-                      {...dDropdownProps}
-                    >
-                      {dropdownList.map((item) => (
-                        <DDropdownItem key={item.props.dId} dId={item.props.dId}>
-                          {React.cloneElement(item, {
-                            ...item.props,
-                            __dropdown: true,
-                          })}
-                        </DDropdownItem>
-                      ))}
-                    </DDropdown>
-                  )}
-                  {onAddClick && (
-                    <div
-                      className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--add`)}
-                      role="button"
-                      tabIndex={-1}
-                      aria-label={t('Add')}
-                      onClick={handleAddClick}
-                    >
-                      <DIcon viewBox="64 64 896 896" dSize={18}>
-                        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-                        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
-                      </DIcon>
-                    </div>
-                  )}
-                </div>
-              )}
-              {activeId === null ? null : dType === 'wrap' ? (
-                <div className={`${dPrefix}tabs__wrap-indicator`} style={dotStyle}></div>
-              ) : dType === 'slider' ? (
-                <div className={`${dPrefix}tabs__slider-indicator`} style={dotStyle}></div>
-              ) : (
-                <div className={`${dPrefix}tabs__indicator`} style={dotStyle}></div>
-              )}
-            </div>
+    <DTabsContext.Provider value={contextValue}>
+      <div
+        {...restProps}
+        className={getClassName(className, `${dPrefix}tabs`, `${dPrefix}tabs--${dPlacement}`, {
+          [`${dPrefix}tabs--${dType}`]: dType,
+          [`${dPrefix}tabs--${dSize}`]: dSize,
+          [`${dPrefix}tabs--center`]: dCenter,
+        })}
+      >
+        <div ref={tablistWrapperRef} className={`${dPrefix}tabs__tablist-wrapper`} onScroll={handleScroll}>
+          <div
+            ref={tablistRef}
+            className={`${dPrefix}tabs__tablist`}
+            role="tablist"
+            aria-label={dTabAriaLabel}
+            aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
+          >
+            {dDraggable ? (
+              <DDrop
+                dContainer={tablistWrapperEl}
+                dDirection={isHorizontal ? 'horizontal' : 'vertical'}
+                dPlaceholder={<DDragPlaceholder />}
+                onOrderChange={handleOrderChange}
+                onDragStart={handleDragStart}
+              >
+                {childs}
+              </DDrop>
+            ) : (
+              childs
+            )}
+            {(listOverflow || onAddClick) && (
+              <div className={`${dPrefix}tabs__button-container`}>
+                {listOverflow && (
+                  <DDropdown
+                    dTriggerNode={
+                      <div
+                        className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--more`, {
+                          'is-end': scrollEnd,
+                        })}
+                        style={{
+                          right: isHorizontal && onAddClick ? 52 : undefined,
+                          bottom: !isHorizontal && onAddClick ? 36 : undefined,
+                        }}
+                        tabIndex={-1}
+                        aria-label={t('More')}
+                      >
+                        <DIcon viewBox="64 64 896 896" dSize={18}>
+                          <path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
+                        </DIcon>
+                      </div>
+                    }
+                    dCloseOnItemClick={false}
+                    dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
+                    {...dDropdownProps}
+                  >
+                    {dropdownList.map((item) => (
+                      <DDropdownItem key={item.props.dId} dId={item.props.dId}>
+                        {React.cloneElement(item, {
+                          ...item.props,
+                          __dropdown: true,
+                        })}
+                      </DDropdownItem>
+                    ))}
+                  </DDropdown>
+                )}
+                {onAddClick && (
+                  <div
+                    className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--add`)}
+                    role="button"
+                    tabIndex={-1}
+                    aria-label={t('Add')}
+                    onClick={handleAddClick}
+                  >
+                    <DIcon viewBox="64 64 896 896" dSize={18}>
+                      <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                      <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                    </DIcon>
+                  </div>
+                )}
+              </div>
+            )}
+            {activeId === null ? null : dType === 'wrap' ? (
+              <div className={`${dPrefix}tabs__wrap-indicator`} style={dotStyle}></div>
+            ) : dType === 'slider' ? (
+              <div className={`${dPrefix}tabs__slider-indicator`} style={dotStyle}></div>
+            ) : (
+              <div className={`${dPrefix}tabs__indicator`} style={dotStyle}></div>
+            )}
           </div>
-          {tabpanels.map((tabpanel) => (
-            <div
-              className={`${dPrefix}tabs__tabpanel`}
-              key={tabpanel.dId}
-              id={tabpanel.id}
-              tabIndex={0}
-              role="tabpanel"
-              hidden={tabpanel.dId !== activeId}
-              aria-labelledby={tabpanel.labelledby}
-            >
-              {tabpanel.node}
-            </div>
-          ))}
         </div>
-      </DTabsContext.Provider>
-    </DStateBackflowContext.Provider>
+        {tabpanels.map((tabpanel) => (
+          <div
+            className={`${dPrefix}tabs__tabpanel`}
+            key={tabpanel.dId}
+            id={tabpanel.id}
+            tabIndex={0}
+            role="tabpanel"
+            hidden={tabpanel.dId !== activeId}
+            aria-labelledby={tabpanel.labelledby}
+          >
+            {tabpanel.node}
+          </div>
+        ))}
+      </div>
+    </DTabsContext.Provider>
   );
 }

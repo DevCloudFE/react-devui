@@ -1,29 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { DGeneralStateContextData } from '../../hooks/general-state';
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DValue } from './Radio';
 
 import React, { useId, useMemo } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { getClassName } from '../../utils';
 
 export interface DRadioGroupContextData {
   radioGroupName?: string;
-  radioGroupValue: DValue;
-  radioGroupDisabled: boolean;
+  radioGroupValue: any;
   radioGroupType: DRadioGroupProps['dType'];
-  onCheckedChange: (checked: DValue) => void;
+  onCheckedChange: (value: any) => void;
 }
 export const DRadioGroupContext = React.createContext<DRadioGroupContextData | null>(null);
 
 export interface DRadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  dModel?: [DValue, Updater<DValue>?];
+  dModel?: [any, Updater<any>?];
   dFormControlName?: string;
   dName?: string;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
   dSize?: 'smaller' | 'larger';
   dVertical?: boolean;
-  onModelChange?: (checked: DValue) => void;
+  onModelChange?: (value: any) => void;
 }
 
 export function DRadioGroup(props: DRadioGroupProps) {
@@ -60,34 +60,43 @@ export function DRadioGroup(props: DRadioGroupProps) {
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || controlDisabled;
 
+  const generalStateContextValue = useMemo<DGeneralStateContextData>(
+    () => ({
+      gSize: size,
+      gDisabled: disabled,
+    }),
+    [disabled, size]
+  );
+
   const contextValue = useMemo<DRadioGroupContextData>(
     () => ({
       radioGroupName: dName,
       radioGroupValue: value,
       radioGroupType: dType,
-      radioGroupDisabled: disabled,
       onCheckedChange: (value) => {
         changeValue(value);
       },
     }),
-    [changeValue, dName, dType, disabled, value]
+    [changeValue, dName, dType, value]
   );
 
   return (
-    <DRadioGroupContext.Provider value={contextValue}>
-      <div
-        {...restProps}
-        {...ariaAttribute}
-        id={_id}
-        className={getClassName(className, `${dPrefix}radio-group`, {
-          [`${dPrefix}radio-group--${dType}`]: dType,
-          [`${dPrefix}radio-group--${size}`]: size,
-          [`${dPrefix}radio-group--vertical`]: dVertical,
-        })}
-        role="radiogroup"
-      >
-        {children}
-      </div>
-    </DRadioGroupContext.Provider>
+    <DGeneralStateContext.Provider value={generalStateContextValue}>
+      <DRadioGroupContext.Provider value={contextValue}>
+        <div
+          {...restProps}
+          {...ariaAttribute}
+          id={_id}
+          className={getClassName(className, `${dPrefix}radio-group`, {
+            [`${dPrefix}radio-group--${dType}`]: dType,
+            [`${dPrefix}radio-group--${size}`]: size,
+            [`${dPrefix}radio-group--vertical`]: dVertical,
+          })}
+          role="radiogroup"
+        >
+          {children}
+        </div>
+      </DRadioGroupContext.Provider>
+    </DGeneralStateContext.Provider>
   );
 }

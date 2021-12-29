@@ -71,7 +71,7 @@ function useForm(initData: () => FormGroup): DFormInstance;
 
 interface DFormInstance {
   form: FormGroup;
-  resetForm: () => void;
+  initForm: () => void;
   updateForm: () => void;
 }
 ```
