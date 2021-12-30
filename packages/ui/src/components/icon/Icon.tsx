@@ -8,7 +8,7 @@ import { getClassName, mergeStyle } from '../../utils';
 export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dName?: string;
   dType?: string;
-  dSize?: string | number;
+  dSize?: string | number | [string | number, string | number];
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dRotate?: number;
   dSpin?: boolean;
@@ -56,6 +56,9 @@ export function DIcon(props: DIconProps) {
     return [];
   }, [iconContext, dName, dType, children]);
 
+  const width = isArray(dSize) ? dSize[0] : dSize;
+  const height = isArray(dSize) ? dSize[1] : dSize;
+
   return (
     <svg
       {...restProps}
@@ -64,8 +67,8 @@ export function DIcon(props: DIconProps) {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox={_viewBox ?? viewBox}
       fill={fill}
-      height={dSize}
-      width={dSize}
+      width={width}
+      height={height}
       className={getClassName(className, `${dPrefix}icon`, {
         [`t-${dTheme}`]: dTheme,
       })}

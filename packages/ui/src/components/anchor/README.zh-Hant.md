@@ -20,7 +20,7 @@ title: 锚点
 | dDistance | 页面到锚点的距离 | number | 0 |
 | dPage | 设置滚动的页面，默认为 `window` 视图 | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dScrollBehavior | 自定义滚动行为 | 'instant' \| 'smooth' | 'instant' |
-| dIndicator | 自定义指示器，预定义了 `'dot'` 以及 `'line'` 形态的指示器 | React.ReactNode | 'dot' |
+| dIndicator | 自定义指示器，预定义了 `DOT` 以及 `LINE` 形态的指示器 | React.ReactNode \| symbol | DOT |
 | onHrefChange | 锚点改变的回调 | `(href: string \| null) => void` | - |
 <!-- prettier-ignore-end -->
 

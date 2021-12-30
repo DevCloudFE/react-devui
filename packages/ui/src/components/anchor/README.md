@@ -21,7 +21,7 @@ Extend `React.HTMLAttributes<HTMLUListElement>`.
 | dDistance | Distance from page to anchor | number | 0 |
 | dPage | Set scrolling page, default is `window` view | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dScrollBehavior | Custom scrolling behavior | 'instant' \| 'smooth' | 'instant' |
-| dIndicator | Custom indicator, pre-defined indicators of `'dot'` and `'line'` patterns | React.ReactNode | 'dot' |
+| dIndicator | Custom indicator, pre-defined indicators of `DOT` and `LINE` patterns | React.ReactNode \| symbol | DOT |
 | onHrefChange | Anchor point change callback | `(href: string \| null) => void` | - |
 <!-- prettier-ignore-end -->
 

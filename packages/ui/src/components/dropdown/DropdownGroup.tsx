@@ -46,7 +46,7 @@ export function DDropdownGroup(props: DDropdownGroupProps) {
         <span
           className={`${dPrefix}dropdown-group__empty`}
           style={{
-            paddingLeft: style?.paddingLeft,
+            paddingLeft: 12 + (__level + 1) * 16,
           }}
         >
           {t('No Data')}

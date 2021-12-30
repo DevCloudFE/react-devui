@@ -28,16 +28,19 @@ export interface DAnchorProps extends React.HTMLAttributes<HTMLUListElement> {
   dDistance?: number;
   dPage?: DElementSelector;
   dScrollBehavior?: 'instant' | 'smooth';
-  dIndicator?: React.ReactNode;
+  dIndicator?: React.ReactNode | symbol;
   onHrefChange?: (href: string | null) => void;
 }
 
-export function DAnchor(props: DAnchorProps) {
+const DOT_INDICATOR = Symbol('dot');
+const LINE_INDICATOR = Symbol('line');
+
+export const DAnchor = (props: DAnchorProps) => {
   const {
     dDistance = 0,
     dPage,
     dScrollBehavior = 'instant',
-    dIndicator = 'dot',
+    dIndicator = DOT_INDICATOR,
     onHrefChange,
     className,
     children,
@@ -188,9 +191,9 @@ export function DAnchor(props: DAnchorProps) {
     <DAnchorContext.Provider value={contextValue}>
       <ul {...restProps} ref={anchorRef} className={getClassName(className, `${dPrefix}anchor`)}>
         <div className={`${dPrefix}anchor__indicator`}>
-          {dIndicator === 'dot' ? (
+          {dIndicator === DOT_INDICATOR ? (
             <span className={`${dPrefix}anchor__dot-indicator`} style={dotStyle}></span>
-          ) : dIndicator === 'line' ? (
+          ) : dIndicator === LINE_INDICATOR ? (
             <span className={`${dPrefix}anchor__line-indicator`} style={dotStyle}></span>
           ) : (
             dIndicator
@@ -200,4 +203,6 @@ export function DAnchor(props: DAnchorProps) {
       </ul>
     </DAnchorContext.Provider>
   );
-}
+};
+DAnchor.DOT_INDICATOR = DOT_INDICATOR;
+DAnchor.LINE_INDICATOR = LINE_INDICATOR;

@@ -239,7 +239,7 @@ export function DMenuSub(props: DMenuSubProps) {
       aria-activedescendant={activedescendant}
     >
       {React.Children.count(childs) === 0 ? (
-        <span className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: 16 + (__level + 1) * 20 }}>
+        <span className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: 16 + (popupMode ? 0 : __level + 1) * 20 }}>
           {t('No Data')}
         </span>
       ) : (
