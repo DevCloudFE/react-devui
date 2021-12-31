@@ -39,6 +39,7 @@
   overflow: hidden;
 
   background-color: var(--#{$variable-prefix}background-color);
+  outline: none;
   box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
 
   @include e(icon) {

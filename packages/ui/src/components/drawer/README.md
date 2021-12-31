@@ -26,6 +26,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dZIndex | Manually control the value of `z-index` | number | - |
 | dMask | Whether to show the mask | boolean | true |
 | dMaskClosable | Click on the mask to close the drawer | boolean | true |
+| dEscClose | Whether to close by pressing Esc | boolean | true |
 | dHeader | Drawer header | React.ReactNode | - |
 | dFooter | Drawer footer | React.ReactNode | - |
 | dDestroy | Destroy the node after shutdown | boolean | false |

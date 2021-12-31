@@ -10,25 +10,13 @@ export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 export function DAlertDialog(props: DAlertDialogProps) {
-  const { dHidden, dDuration, dDialogRef, onClose, children, onKeyDown, onMouseEnter, onMouseLeave, ...restProps } = props;
+  const { dHidden, dDuration, dDialogRef, onClose, children, onMouseEnter, onMouseLeave, ...restProps } = props;
 
   const dataRef = useRef<{ clearTid: (() => void) | null }>({
     clearTid: null,
   });
 
   const asyncCapture = useAsync();
-
-  const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
-    (e) => {
-      onKeyDown?.(e);
-
-      if (e.code === 'Escape') {
-        dataRef.current.clearTid && dataRef.current.clearTid();
-        onClose?.();
-      }
-    },
-    [onClose, onKeyDown]
-  );
 
   const handleMouseEnter = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (e) => {
@@ -72,7 +60,6 @@ export function DAlertDialog(props: DAlertDialogProps) {
           ref={dDialogRef}
           role="alertdialog"
           aria-modal="true"
-          onKeyDown={handleKeyDown}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >

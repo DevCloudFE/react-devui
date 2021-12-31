@@ -9,6 +9,7 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dHidden: boolean;
   dMask?: boolean;
   dMaskClosable?: boolean;
+  dEscClose?: boolean;
   dDestroy?: boolean;
   dDialogRef?: React.LegacyRef<HTMLDivElement>;
   onClose?: () => void;
@@ -20,6 +21,7 @@ export function DDialog(props: DDialogProps) {
     dHidden,
     dMask = true,
     dMaskClosable = true,
+    dEscClose = true,
     dDestroy = false,
     dDialogRef,
     onClose,
@@ -44,13 +46,13 @@ export function DDialog(props: DDialogProps) {
   //#region DidUpdate
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible) {
+    if (dVisible && dEscClose) {
       asyncGroup.onEscKeydown(() => onClose?.());
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dVisible, onClose]);
+  }, [asyncCapture, dEscClose, dVisible, onClose]);
   //#endregion
 
   return (

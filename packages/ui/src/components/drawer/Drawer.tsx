@@ -33,6 +33,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dZIndex?: number;
   dMask?: boolean;
   dMaskClosable?: boolean;
+  dEscClose?: boolean;
   dHeader?: React.ReactNode;
   dFooter?: React.ReactNode;
   dDestroy?: boolean;
@@ -53,6 +54,7 @@ export function DDrawer(props: DDrawerProps) {
     dZIndex,
     dMask = true,
     dMaskClosable = true,
+    dEscClose = true,
     dHeader,
     dFooter,
     dDestroy = false,
@@ -230,6 +232,7 @@ export function DDrawer(props: DDrawerProps) {
         dHidden={hidden}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
+        dEscClose={dEscClose}
         dDestroy={dDestroy}
         dDialogRef={dialogRef}
         onClose={closeDrawer}
