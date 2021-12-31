@@ -90,9 +90,18 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
     </span>
   );
 
+  const transitionState = {
+    'enter-from': { width: '0' },
+    'enter-to': { transition: 'width 0.3s linear' },
+    'leave-to': { width: '0', transition: 'width 0.3s linear' },
+  };
   const hidden = useDCollapseTransition({
     dEl: loadingEl,
     dVisible: dLoading,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
     dDirection: 'horizontal',
   });
 

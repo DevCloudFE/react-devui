@@ -276,9 +276,18 @@ export function DMenuSub(props: DMenuSubProps) {
     [stateBackflow]
   );
 
+  const transitionState = {
+    'enter-from': { height: '0' },
+    'enter-to': { transition: 'height 0.2s linear' },
+    'leave-to': { height: '0', transition: 'height 0.2s linear' },
+  };
   const hidden = useDCollapseTransition({
     dEl: menuCollapseEl,
     dVisible: popupMode ? false : expand,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
     dDuring: 200,
   });
 

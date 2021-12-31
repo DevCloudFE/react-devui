@@ -10,8 +10,6 @@
 
   outline: none;
 
-  @include font-size(0.95rem);
-
   &:not(.is-disabled) {
     .#{$variable-prefix}pagination__item--button:not(.is-disabled) {
       &:hover,

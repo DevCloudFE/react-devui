@@ -6,6 +6,11 @@ import { DHeader } from './Header';
 const icon = <DIcon data-testid="custom-icon"></DIcon>;
 
 describe('DHeader', () => {
+  it('should `dClosable` work', () => {
+    render(<DHeader dClosable={false} />);
+    expect(screen.queryAllByRole('button').length).toBe(0);
+  });
+
   it('should `dCloseIcon` work', () => {
     render(<DHeader />);
     expect(screen.getAllByRole('button').length).toBe(1);
@@ -16,13 +21,8 @@ describe('DHeader', () => {
     expect(screen.getAllByTestId('custom-icon').length).toBe(1);
   });
 
-  it('should `dCloseIcon` null work', () => {
-    render(<DHeader dCloseIcon={null} />);
-    expect(screen.queryAllByRole('button').length).toBe(0);
-  });
-
   it('should `dExtraIcons` work', () => {
-    render(<DHeader dExtraIcons={[icon, icon]} dCloseIcon={null} />);
+    render(<DHeader dExtraIcons={[icon, icon]} dClosable={false} />);
     expect(screen.getAllByRole('button').length).toBe(2);
   });
 

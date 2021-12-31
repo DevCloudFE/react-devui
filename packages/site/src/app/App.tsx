@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
-import { DConfigRoot } from '@react-devui/ui';
+import { DRoot, NotificationService } from '@react-devui/ui';
 import { useAsync } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
@@ -55,6 +56,11 @@ export function App() {
     }
   }, [asyncCapture, mainEl]);
 
+  const location = useLocation();
+  useEffect(() => {
+    NotificationService.closeAll(false);
+  }, [location]);
+
   const contextValue = useMemo<AppContextData>(
     () => ({
       menuOpen,
@@ -79,15 +85,15 @@ export function App() {
   );
 
   return (
-    <AppContext.Provider value={contextValue}>
-      <DConfigRoot content="main .app-route-article" i18n={{ lang: i18n.language as 'en-US' | 'zh-Hant' }} icons={icons}>
+    <DRoot i18n={{ lang: i18n.language as 'en-US' | 'zh-Hant' }} icons={icons} contentSelector="main .app-route-article">
+      <AppContext.Provider value={contextValue}>
         <AppHeader />
         <AppSidebar />
         <main ref={mainRef} className="app-main">
           <AppRoutes />
         </main>
-      </DConfigRoot>
-    </AppContext.Provider>
+      </AppContext.Provider>
+    </DRoot>
   );
 }
 

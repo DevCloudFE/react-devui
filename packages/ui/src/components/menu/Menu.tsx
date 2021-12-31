@@ -5,7 +5,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useDCollapseTransition } from '../../hooks';
-import { getClassName } from '../../utils';
+import { getClassName, mergeStyle } from '../../utils';
 import { DTrigger } from '../_trigger';
 import { DMenuItem } from './MenuItem';
 import { DMenuSub } from './MenuSub';
@@ -45,6 +45,7 @@ export function DMenu(props: DMenuProps) {
     onActiveChange,
     onExpandsChange,
     className,
+    style,
     children,
     onMouseEnter,
     onMouseLeave,
@@ -159,12 +160,19 @@ export function DMenu(props: DMenuProps) {
     });
   }, [children]);
 
-  useDCollapseTransition({
+  const transitionState = {
+    'enter-from': { width: '80px' },
+    'enter-to': { transition: 'width 0.2s linear' },
+    'leave-to': { width: '80px', transition: 'width 0.2s linear' },
+  };
+  const hidden = useDCollapseTransition({
     dEl: navEl,
     dVisible: dMode !== 'icon',
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
     dDirection: 'horizontal',
-    dDuring: 200,
-    dSpace: 80,
   });
 
   return (
@@ -178,6 +186,7 @@ export function DMenu(props: DMenuProps) {
             className={getClassName(className, `${dPrefix}menu`, {
               [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
             })}
+            style={mergeStyle(style, { width: hidden ? 80 : undefined })}
             tabIndex={-1}
             role="menubar"
             aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}

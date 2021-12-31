@@ -10,7 +10,7 @@ import {
   useRefSelector,
   useImmer,
   useRefCallback,
-  useRootContentConfig,
+  useContentRefConfig,
   useValueChange,
 } from '../../hooks';
 import { getClassName, toPx, mergeStyle } from '../../utils';
@@ -43,7 +43,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useRootContentConfig();
+  const rootContentRef = useContentRefConfig();
   //#endregion
 
   //#region Ref

@@ -7,13 +7,14 @@ import { DButton } from '../button';
 import { DIcon } from '../icon';
 
 export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  dClosable?: boolean;
   dCloseIcon?: React.ReactNode;
   dExtraIcons?: React.ReactNode[];
   onClose?: () => void;
 }
 
 export function DHeader(props: DHeaderProps) {
-  const { dCloseIcon, dExtraIcons, onClose, className, children, ...restProps } = props;
+  const { dClosable = true, dCloseIcon, dExtraIcons, onClose, className, children, ...restProps } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -30,8 +31,9 @@ export function DHeader(props: DHeaderProps) {
       <div className={`${dPrefix}header__title`}>{children}</div>
       <div className={`${dPrefix}header__buttons`}>
         {dExtraIcons && dExtraIcons.map((icon, index) => <DButton key={index} dType="text" dIcon={icon}></DButton>)}
-        {dCloseIcon !== null && (
+        {dClosable && (
           <DButton
+            aria-label={t('Close')}
             dType="text"
             dIcon={
               isUndefined(dCloseIcon) ? (
@@ -42,7 +44,6 @@ export function DHeader(props: DHeaderProps) {
                 dCloseIcon
               )
             }
-            aria-label={t('Close')}
             onClick={handleCloseClick}
           ></DButton>
         )}

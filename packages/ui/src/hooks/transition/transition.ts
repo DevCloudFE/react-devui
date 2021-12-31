@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { isFunction, isNumber, isString } from 'lodash';
+import { isFunction } from 'lodash';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
@@ -29,14 +29,13 @@ export interface DTransitionProps {
   dEl: HTMLElement | null;
   dVisible?: boolean;
   dCallbackList?: DTransitionCallbackList;
-  dEndStyle?: { enter?: Partial<CSSStyleDeclaration>; leave?: Partial<CSSStyleDeclaration> };
   dSkipFirst?: boolean;
   afterEnter?: () => void;
   afterLeave?: () => void;
 }
 
 export function useDTransition(props: DTransitionProps) {
-  const { dEl, dVisible = false, dCallbackList, dEndStyle, dSkipFirst = true, afterEnter, afterLeave } = props;
+  const { dEl, dVisible = false, dCallbackList, dSkipFirst = true, afterEnter, afterLeave } = props;
 
   const dataRef = useRef({
     hasfirstRun: false,
@@ -80,7 +79,6 @@ export function useDTransition(props: DTransitionProps) {
 
           asyncCapture.setTimeout(() => {
             cssRecord.backCss(dEl);
-            cssRecord.setCss(dEl, (dVisible ? dEndStyle?.enter : dEndStyle?.leave) ?? {});
             callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl);
             dVisible ? afterEnter?.() : afterLeave?.();
             flushSync(() => {
@@ -150,20 +148,10 @@ export function useDTransition(props: DTransitionProps) {
 export interface DCollapseTransitionProps extends DTransitionProps {
   dDirection?: 'horizontal' | 'vertical';
   dDuring?: number;
-  dTimingFunction?: string | { enter: string; leave: string };
-  dSpace?: number | string;
 }
 
 export function useDCollapseTransition(props: DCollapseTransitionProps) {
-  const { dCallbackList, dDirection = 'vertical', dTimingFunction, dDuring = 300, dSpace = 0, ...restProps } = props;
-
-  const enterTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.enter) : 'linear';
-  const leaveTimeFunction = dTimingFunction ? (isString(dTimingFunction) ? dTimingFunction : dTimingFunction.leave) : 'linear';
-
-  const shouldHidden = dSpace === 0;
-
-  const space = isNumber(dSpace) ? dSpace + 'px' : dSpace;
-  const opacity = shouldHidden ? '0' : '1';
+  const { dVisible, dCallbackList, dDirection = 'vertical', ...restProps } = props;
 
   const attribute = dDirection === 'horizontal' ? 'width' : 'height';
 
@@ -175,31 +163,37 @@ export function useDCollapseTransition(props: DCollapseTransitionProps) {
     }
 
     const size = rect[attribute] + 'px';
+    const callbackList = dCallbackList ?? {};
+    const stateList = callbackList[dVisible ? 'beforeEnter' : 'beforeLeave'](el) ?? {};
 
     return {
-      'enter-from': { [attribute]: space, opacity },
-      'enter-active': { overflow: 'hidden' },
-      'enter-to': {
-        [attribute]: size,
-        transition: `${attribute} ${dDuring}ms ${enterTimeFunction}, opacity ${dDuring}ms ${enterTimeFunction}`,
+      ...stateList,
+      'enter-active': {
+        ...stateList['enter-active'],
+        overflow: 'hidden',
       },
-      'leave-from': { [attribute]: size },
-      'leave-active': { overflow: 'hidden' },
-      'leave-to': {
-        [attribute]: space,
-        opacity,
-        transition: `${attribute} ${dDuring}ms ${leaveTimeFunction}, opacity ${dDuring}ms ${leaveTimeFunction}`,
+      'enter-to': {
+        ...stateList['enter-to'],
+        [attribute]: size,
+      },
+      'leave-from': {
+        ...stateList['leave-from'],
+        [attribute]: size,
+      },
+      'leave-active': {
+        ...stateList['leave-active'],
+        overflow: 'hidden',
       },
     };
   };
 
   return useDTransition({
     ...restProps,
+    dVisible,
     dCallbackList: {
       ...dCallbackList,
-      beforeEnter: (el) => dCallbackList?.beforeEnter(el) ?? getTransitionState(el),
-      beforeLeave: (el) => dCallbackList?.beforeLeave(el) ?? getTransitionState(el),
+      beforeEnter: (el) => getTransitionState(el),
+      beforeLeave: (el) => getTransitionState(el),
     },
-    dEndStyle: shouldHidden ? undefined : { leave: { [attribute]: space } },
   });
 }

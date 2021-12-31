@@ -15,6 +15,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
+        "compiler": "babel",
         "deployUrl": "/",
         "outputPath": "dist/packages/site",
         "index": "packages/site/src/index.html",

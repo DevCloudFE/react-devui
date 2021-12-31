@@ -19,18 +19,18 @@ $themes: (
   --#{$variable-prefix}absolute-z-index: 100;
 
   /** size **/
-  --#{$variable-prefix}size: 32px;
-  --#{$variable-prefix}size-smaller: 28px;
-  --#{$variable-prefix}size-larger: 36px;
+  --#{$variable-prefix}size: 36px;
+  --#{$variable-prefix}size-smaller: 32px;
+  --#{$variable-prefix}size-larger: 40px;
   --#{$variable-prefix}padding-size: 15px;
   --#{$variable-prefix}padding-size-smaller: 11px;
   --#{$variable-prefix}padding-size-larger: 19px;
   --#{$variable-prefix}margin-size: 8px;
   --#{$variable-prefix}margin-size-smaller: 6px;
   --#{$variable-prefix}margin-size-larger: 10px;
-  @include rfs(0.9rem, --#{$variable-prefix}font);
-  @include rfs(0.75rem, --#{$variable-prefix}font-smaller);
-  @include rfs(1.05rem, --#{$variable-prefix}font-larger);
+  @include rfs(1rem, --#{$variable-prefix}font);
+  @include rfs(0.85rem, --#{$variable-prefix}font-smaller);
+  @include rfs(1.1rem, --#{$variable-prefix}font-larger);
 
   /** border-radius **/
   --#{$variable-prefix}border-radius: 2px;

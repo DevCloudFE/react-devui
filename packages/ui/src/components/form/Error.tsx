@@ -21,11 +21,19 @@ export function DError(props: DErrorProps) {
   const [el, ref] = useRefCallback<HTMLDivElement>();
   //#endregion
 
+  const transitionState = {
+    'enter-from': { height: '0', opacity: '0' },
+    'enter-to': { transition: 'height 133ms ease-out, opacity 133ms ease-out' },
+    'leave-to': { height: '0', opacity: '0', transition: 'height 133ms ease-in, opacity 133ms ease-in' },
+  };
   const hidden = useDCollapseTransition({
     dEl: el,
     dVisible,
     dSkipFirst: false,
-    dDuring: 133,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
     afterLeave: () => {
       onHidden?.();
     },

@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { getFragmentChildren } from '../utils';
 import { useRefSelector } from './element-ref';
@@ -9,9 +9,9 @@ interface Resources {
 }
 
 export interface DConfigContextData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  components?: { [index: string]: any };
   prefix?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  componentConfigs?: { [index: string]: any };
   i18n?: {
     lang?: 'en-US' | 'zh-Hant';
     resources?: Resources;
@@ -24,41 +24,18 @@ export interface DConfigContextData {
       type?: string;
     }>;
   }>;
-  content?: string;
+  contentSelector?: string;
 }
 export const DConfigContext = React.createContext<DConfigContextData>({});
-
-export function DConfigRoot(props: DConfigContextData & { children: React.ReactNode }) {
-  const { children, ...restProps } = props;
-
-  const lang = restProps.i18n?.lang ?? 'en-US';
-
-  useEffect(() => {
-    if (lang === 'en-US') {
-      document.body.classList.add('CJK');
-    } else {
-      document.body.classList.remove('CJK');
-    }
-  }, [lang]);
-
-  return <DConfigContext.Provider value={restProps}>{children}</DConfigContext.Provider>;
-}
 
 export function usePrefixConfig() {
   const prefix = useContext(DConfigContext).prefix ?? 'd-';
   return prefix;
 }
 
-export function useRootContentConfig() {
-  const content = useContext(DConfigContext).content ?? null;
-  const contentRef = useRefSelector(content);
-
-  return contentRef;
-}
-
 export function useComponentConfig<T>(component: string, props: T): T {
-  const components = useContext(DConfigContext).components ?? {};
-  const customConfig = components[component] ?? {};
+  const componentConfigs = useContext(DConfigContext).componentConfigs ?? {};
+  const customConfig = componentConfigs[component] ?? {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const noUndefinedProps: any = {};
   Object.keys(props).forEach((key) => {
@@ -75,4 +52,11 @@ export function useComponentConfig<T>(component: string, props: T): T {
     children = getFragmentChildren(noUndefinedProps.children);
   }
   return { ...customConfig, ...(noUndefinedProps as T), children };
+}
+
+export function useContentRefConfig() {
+  const contentSelector = useContext(DConfigContext).contentSelector ?? null;
+  const contentRef = useRefSelector(contentSelector);
+
+  return contentRef;
 }

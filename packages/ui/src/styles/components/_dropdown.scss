@@ -27,7 +27,7 @@ $dropdown-item-height: 32px;
     flex-shrink: 0;
     width: calc(1.05rem + 8px);
 
-    @include font-size(1.05rem);
+    font-size: 1.1em;
   }
 
   @include e(title) {
@@ -58,8 +58,6 @@ $dropdown-item-height: 32px;
 
   padding: 4px 0;
   overflow-x: hidden;
-
-  @include font-size(0.95rem);
 
   @include dropdown-empty;
 }
@@ -117,10 +115,9 @@ $dropdown-item-height: 32px;
   padding: 0 12px;
 
   color: var(--#{$variable-prefix}color-step-400);
+  font-size: 0.9em;
 
   list-style: none;
-
-  @include font-size(0.85rem);
 
   @include utils-outline;
   @include utils-ellipsis;

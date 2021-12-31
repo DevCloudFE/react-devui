@@ -118,7 +118,7 @@
 
     color: var(--#{$variable-prefix}color-step-400);
     font-size: 0.9em;
-    line-height: 0;
+    line-height: 1;
 
     .#{$variable-prefix}icon {
       cursor: help;

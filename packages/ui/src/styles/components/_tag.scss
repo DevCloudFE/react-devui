@@ -1,7 +1,7 @@
 @include b(tag) {
   --#{$variable-prefix}tag-padding-size: 8px;
-  --#{$variable-prefix}tag-size: 24px;
-  @include rfs(0.8rem, --#{$variable-prefix}tag-font);
+  --#{$variable-prefix}tag-size: 28px;
+  @include rfs(0.9rem, --#{$variable-prefix}tag-font);
 
   display: inline-flex;
   align-items: center;
@@ -44,14 +44,14 @@
 
   @include m(smaller) {
     --#{$variable-prefix}tag-padding-size: 6px;
-    --#{$variable-prefix}tag-size: 20px;
-    @include rfs(0.6rem, --#{$variable-prefix}tag-font);
+    --#{$variable-prefix}tag-size: 24px;
+    @include rfs(0.75rem, --#{$variable-prefix}tag-font);
   }
 
   @include m(larger) {
     --#{$variable-prefix}tag-padding-size: 10px;
-    --#{$variable-prefix}tag-size: 28px;
-    @include rfs(0.9rem, --#{$variable-prefix}tag-font);
+    --#{$variable-prefix}tag-size: 32px;
+    @include rfs(1rem, --#{$variable-prefix}tag-font);
   }
 
   @include e(close) {

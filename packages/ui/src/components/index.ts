@@ -40,11 +40,17 @@ export { DInput, DInputAffix } from './input';
 export type { DMenuProps, DMenuGroupProps, DMenuItemProps, DMenuSubProps } from './menu';
 export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
 
+export type { DNotificationProps } from './notification';
+export { NotificationService } from './notification';
+
 export type { DPaginationProps } from './pagination';
 export { DPagination } from './pagination';
 
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
+
+export type { DRootProps } from './root';
+export { DRoot } from './root';
 
 export type { DSelectSingleProps, DSelectMultipleProps } from './select';
 export { DSelect } from './select';

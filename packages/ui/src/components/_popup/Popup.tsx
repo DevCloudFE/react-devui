@@ -13,7 +13,7 @@ import {
   useRefSelector,
   useImmer,
   useRefCallback,
-  useRootContentConfig,
+  useContentRefConfig,
   useDTransition,
   useMaxIndex,
 } from '../../hooks';
@@ -91,7 +91,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useRootContentConfig();
+  const rootContentRef = useContentRefConfig();
   //#endregion
 
   //#region Ref

@@ -6,7 +6,7 @@
 
   list-style: none;
 
-  @include font-size(0.85rem);
+  @include font-size(0.95rem);
 
   @include e(indicator) {
     position: absolute;
@@ -53,8 +53,10 @@
   padding-left: 4px;
 
   @include e(link) {
-    display: block;
-    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 28px;
 
     color: var(--#{$variable-prefix}text-color);
     text-decoration: none;

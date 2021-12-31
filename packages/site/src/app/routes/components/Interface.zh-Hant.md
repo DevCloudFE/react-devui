@@ -76,7 +76,8 @@ interface DTransitionStateList {
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| dCloseIcon | 设置关闭按钮的图标， `null` 表示隐藏按钮 | React.ReactNode | - |
+| dClosable | 是否可关闭 | boolean | false |
+| dCloseIcon | 设置关闭按钮的图标 | React.ReactNode | - |
 | dExtraIcons | 添加一些额外的操作按钮 | React.ReactNode[] | - |
 | onClose | 点击关闭按钮的回调 | `() => void` | - |
 <!-- prettier-ignore-end -->

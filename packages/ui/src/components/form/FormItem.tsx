@@ -371,7 +371,7 @@ export function DFormItem(props: DFormItemProps) {
             </div>
           )}
         </div>
-        <div className={`${dPrefix}form-item__errors`} style={{ left: labelWidth }}>
+        <div className={`${dPrefix}form-item__errors`} style={{ left: formLayout === 'vertical' ? undefined : labelWidth }}>
           {errorsNode}
         </div>
         <div className={`${dPrefix}form-item__errors-height`} aria-hidden={true}>

@@ -76,7 +76,8 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dCloseIcon | Set the icon of the close button, `null` means hide the button | React.ReactNode | - |
+| dClosable | Can be closed | boolean | false |
+| dCloseIcon | Custom close icon | React.ReactNode | - |
 | dExtraIcons | Add some extra action buttons | React.ReactNode[] | - |
 | onClose | Callback when the close button is clicked | `() => void` | - |
 <!-- prettier-ignore-end -->

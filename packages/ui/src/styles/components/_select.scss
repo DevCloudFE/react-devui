@@ -73,8 +73,7 @@ $select-option-height: 32px;
 
     @include m(group) {
       color: var(--#{$variable-prefix}color-step-400);
-
-      @include font-size(0.85rem);
+      font-size: 0.9em;
     }
 
     @include m(empty) {

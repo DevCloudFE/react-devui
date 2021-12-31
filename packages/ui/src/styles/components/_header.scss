@@ -11,8 +11,7 @@
     align-items: center;
 
     font-weight: 500;
-
-    @include font-size(1.15rem);
+    font-size: 1.15em;
   }
 
   @include e(buttons) {

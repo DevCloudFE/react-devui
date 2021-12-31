@@ -1,6 +1,5 @@
 import type { DColProps } from './Col';
 
-import { freeze } from 'immer';
 import { isArray, isEqual, isNumber, isObject, isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
@@ -30,7 +29,7 @@ const DEFAULT_PROPS = {
     ['xxl', 1400],
   ]),
 };
-export const MEDIA_QUERY_LIST = freeze(Array.from(DEFAULT_PROPS.dBreakpoints.keys()));
+export const MEDIA_QUERY_LIST = Object.freeze(Array.from(DEFAULT_PROPS.dBreakpoints.keys()));
 export function DRow(props: DRowProps) {
   const {
     dColNum = 12,

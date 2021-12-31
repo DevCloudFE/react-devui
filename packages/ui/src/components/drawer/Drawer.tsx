@@ -206,17 +206,6 @@ export function DDrawer(props: DDrawerProps) {
     [closeDrawer, uniqueId]
   );
 
-  const contentProps = useMemo<React.HTMLAttributes<HTMLDivElement>>(
-    () => ({
-      className: getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`),
-      style: {
-        width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
-        height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
-      },
-    }),
-    [dHeight, dPlacement, dPrefix, dWidth]
-  );
-
   const drawerNode = (
     <>
       <DDialog
@@ -236,21 +225,30 @@ export function DDrawer(props: DDrawerProps) {
           zIndex,
         })}
         aria-labelledby={dHeader ? `${dPrefix}drawer-header-${uniqueId}` : undefined}
-        dId={uniqueId}
+        aria-describedby={`${dPrefix}dialog-content-${uniqueId}`}
         dVisible={visible}
         dHidden={hidden}
-        dContentProps={contentProps}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
         dDestroy={dDestroy}
         dDialogRef={dialogRef}
-        dDialogContentRef={dialogContentRef}
         onClose={closeDrawer}
       >
         <DDrawerContext.Provider value={contextValue}>
-          {dHeader}
-          <div className={`${dPrefix}drawer__body`}>{children}</div>
-          {dFooter}
+          <div
+            ref={dialogContentRef}
+            id={`${dPrefix}dialog-content-${uniqueId}`}
+            className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
+            style={{
+              width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
+              height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
+            }}
+            tabIndex={-1}
+          >
+            {dHeader}
+            <div className={`${dPrefix}drawer__body`}>{children}</div>
+            {dFooter}
+          </div>
         </DDrawerContext.Provider>
       </DDialog>
       {childDrawer}

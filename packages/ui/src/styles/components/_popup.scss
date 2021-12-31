@@ -12,8 +12,6 @@
 
   background-color: var(--#{$variable-prefix}background-color);
 
-  @include font-size(1rem);
-
   @include m(top) {
     @include popup-arrow {
       bottom: 0;

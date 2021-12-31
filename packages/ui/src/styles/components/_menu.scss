@@ -117,9 +117,9 @@ $menu-item-height: 40px;
     flex-shrink: 0;
     width: calc(1.05rem + 12px);
 
-    transition: height 0.2s linear;
+    font-size: 1.1em;
 
-    @include font-size(1.05rem);
+    transition: height 0.2s linear;
 
     & > .#{$variable-prefix}icon {
       transition: transform 0.2s linear, width 0.2s linear;
@@ -212,8 +212,6 @@ $menu-item-height: 40px;
 
   padding: 8px 0;
 
-  @include font-size(0.95rem);
-
   &:not(&--horizontal) {
     overflow-x: hidden;
   }
@@ -247,8 +245,7 @@ $menu-item-height: 40px;
   padding: 0 16px;
 
   color: var(--#{$variable-prefix}color-step-400);
-
-  @include font-size(0.85rem);
+  font-size: 0.9em;
 
   @include utils-outline;
   @include utils-ellipsis;

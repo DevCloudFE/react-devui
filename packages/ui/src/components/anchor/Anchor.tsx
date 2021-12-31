@@ -11,7 +11,7 @@ import {
   useImmer,
   useAsync,
   useRefCallback,
-  useRootContentConfig,
+  useContentRefConfig,
   useValueChange,
 } from '../../hooks';
 import { getClassName, CustomScroll } from '../../utils';
@@ -49,7 +49,7 @@ export const DAnchor = (props: DAnchorProps) => {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useRootContentConfig();
+  const rootContentRef = useContentRefConfig();
   //#endregion
 
   //#region Ref
