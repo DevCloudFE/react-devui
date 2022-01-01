@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { Updater as IUpdater } from './immer';
 
 import { freeze, produce } from 'immer';
@@ -12,10 +11,10 @@ import { useStateBackflow } from './state-backflow';
 
 export type Updater<S> = (value: S) => void;
 
-export function useTwoWayBinding<T>(
+export function useTwoWayBinding<T, S = T>(
   initialValue: T | (() => T),
-  input?: [T, Updater<T>?],
-  onValueChange?: (value: any) => void,
+  input?: [T, Updater<S>?],
+  onValueChange?: (value: S) => void,
   opt?: {
     id: string;
     formControlName: string;
@@ -57,7 +56,7 @@ export function useTwoWayBinding<T>(
 
   const setValue = input?.[1];
   const [autoValue, setAutoValue] = useState<T>(initialValue);
-  const value = isUndefined(input?.[0]) ? autoValue : input![0];
+  const value = isUndefined(input) ? autoValue : input[0];
 
   const currentValue = formControl ? formControl.value : value;
 
@@ -65,16 +64,15 @@ export function useTwoWayBinding<T>(
     (updater: any) => {
       const val = isFunction(updater) ? produce(currentValue, updater) : freeze(updater);
 
-      if (formControl) {
-        if (!Object.is(val, currentValue)) {
+      if (!Object.is(val, currentValue)) {
+        if (formControl) {
           formControl.markAsDirty(true);
           formControl.setValue(val);
-          formInstance!.updateForm();
-        }
-      } else {
-        setValue?.(val);
-        setAutoValue(val);
-        if (!Object.is(val, currentValue)) {
+          onValueChange?.(val);
+          formInstance?.updateForm();
+        } else {
+          setValue?.(val);
+          setAutoValue(val);
           onValueChange?.(val);
         }
       }
@@ -85,7 +83,7 @@ export function useTwoWayBinding<T>(
   const res = useMemo<
     [
       T,
-      IUpdater<T>,
+      IUpdater<S>,
       {
         validateClassName?: string;
         ariaAttribute?: React.HTMLAttributes<HTMLElement>;

@@ -51,9 +51,9 @@ const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (
 
   const inGroup = checkboxGroupContext !== null;
 
-  const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+  const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean | undefined, boolean>(
     false,
-    inGroup ? [checkboxGroupValue?.includes(dValue) ?? false] : dModel,
+    dModel ?? (dIndeterminate ? [undefined] : inGroup ? [checkboxGroupValue?.includes(dValue) ?? false] : undefined),
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
@@ -66,14 +66,13 @@ const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (
       onChange?.(e);
 
       if (!disabled) {
+        changeChecked(dIndeterminate ? true : !checked);
         if (inGroup) {
-          onCheckedChange?.(dValue, !checked);
-        } else {
-          changeChecked(!checked);
+          onCheckedChange?.(dValue, dIndeterminate ? true : !checked);
         }
       }
     },
-    [onChange, disabled, inGroup, onCheckedChange, dValue, checked, changeChecked]
+    [onChange, disabled, changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]
   );
 
   return (

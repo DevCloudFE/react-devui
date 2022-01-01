@@ -60,7 +60,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
     false,
-    inGroup ? [radioGroupValue === dValue] : dModel,
+    dModel ?? [radioGroupValue === dValue],
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
@@ -73,10 +73,9 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
       onChange?.(e);
 
       if (!disabled) {
+        changeChecked(true);
         if (inGroup) {
           onCheckedChange?.(dValue);
-        } else {
-          changeChecked(true);
         }
         if (radioEl && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
           wave(radioEl, `var(--${dPrefix}color-primary)`);
@@ -104,6 +103,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
           className={getClassName(`${dPrefix}radio__input`, validateClassName)}
           type="radio"
           name={radioGroupName}
+          checked={checked}
           disabled={disabled}
           aria-labelledby={`${dPrefix}radio-label-${uniqueId}`}
           aria-checked={checked}

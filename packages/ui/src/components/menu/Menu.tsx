@@ -66,7 +66,7 @@ export function DMenu(props: DMenuProps) {
   const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
-  const [activeId, changeActiveId] = useTwoWayBinding<string | null>(null, dActive, onActiveChange);
+  const [activeId, changeActiveId] = useTwoWayBinding<string | null, string>(null, dActive, onActiveChange);
   const [expandIds, changeExpandIds] = useTwoWayBinding(new Set<string>(), dExpands, onExpandsChange);
 
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
