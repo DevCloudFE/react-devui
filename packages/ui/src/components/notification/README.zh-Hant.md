@@ -25,7 +25,7 @@ title: 通知
 | dPlacement | 通知弹出方向 | 'left-top' \| 'right-top' \| 'left-bottom' \| 'right-bottom'  | 'right-top' |
 | dClosable | 是否可关闭 | boolean | true |
 | dCloseIcon | 自定义关闭图标 | React.ReactNode | - |
-| dEscClose | 按下Esc是否关闭 | boolean | true |
+| dEscClosable | 按下Esc是否关闭 | boolean | true |
 | onClose | 通知关闭时的回调 | `() => void` | - |
 | afterVisibleChange | 通知打开/关闭动画结束的回调 | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->

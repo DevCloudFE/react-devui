@@ -25,7 +25,7 @@ title: 抽屉
 | dZIndex | 手动控制 `z-index` 的值 | number | - |
 | dMask | 是否显示遮罩 | boolean | true |
 | dMaskClosable | 点击遮罩关闭抽屉 | boolean | true |
-| dEscClose | 按下Esc是否关闭 | boolean | true |
+| dEscClosable | 按下Esc是否关闭 | boolean | true |
 | dHeader | 抽屉的页头 | React.ReactNode | - |
 | dFooter | 抽屉的页脚 | React.ReactNode | - |
 | dDestroy | 关闭后销毁节点 | boolean | false |

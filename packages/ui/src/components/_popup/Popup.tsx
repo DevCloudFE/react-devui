@@ -50,7 +50,7 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dDestroy?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
-  dEscClose?: boolean;
+  dEscClosable?: boolean;
   dCustomPopup?: (
     popupEl: HTMLElement,
     triggerEl: HTMLElement
@@ -75,7 +75,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     dDestroy = false,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
-    dEscClose = true,
+    dEscClosable = true,
     dCustomPopup,
     onVisibleChange,
     afterVisibleChange,
@@ -487,7 +487,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (dVisible && dEscClose) {
+    if (dVisible && dEscClosable) {
       asyncGroup
         .fromEvent<KeyboardEvent>(window, 'keydown')
         .pipe(filter((e) => e.code === 'Escape'))
@@ -501,7 +501,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dEscClose, dVisible, changeVisible]);
+  }, [asyncCapture, dEscClosable, dVisible, changeVisible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

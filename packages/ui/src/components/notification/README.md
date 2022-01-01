@@ -26,7 +26,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dPlacement | Notification pop-up direction | 'left-top' \| 'right-top' \| 'left-bottom' \| 'right-bottom'  | 'right-top' |
 | dClosable | Can be closed | boolean | true |
 | dCloseIcon | Customize the close icon | React.ReactNode | - |
-| dEscClose | Whether to close by pressing Esc | boolean | true |
+| dEscClosable | Whether to close by pressing Esc | boolean | true |
 | onClose | Callback when the notification is closed | `() => void` | - |
 | afterVisibleChange | Callback to the end of the opening/closing animation | `(visible: boolean) => void` | - |
 <!-- prettier-ignore-end -->

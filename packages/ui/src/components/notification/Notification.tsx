@@ -17,7 +17,7 @@ export interface DNotificationProps extends React.HTMLAttributes<HTMLDivElement>
   dPlacement?: 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom';
   dClosable?: boolean;
   dCloseIcon?: React.ReactNode;
-  dEscClose?: boolean;
+  dEscClosable?: boolean;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
@@ -86,7 +86,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     dPlacement = 'right-top',
     dClosable = true,
     dCloseIcon,
-    dEscClose = true,
+    dEscClosable = true,
     onClose,
     afterVisibleChange,
     className,
@@ -146,11 +146,11 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     (e) => {
       onKeyDown?.(e);
 
-      if (dEscClose && e.code === 'Escape') {
+      if (dEscClosable && e.code === 'Escape') {
         onClose?.();
       }
     },
-    [dEscClose, onClose, onKeyDown]
+    [dEscClosable, onClose, onKeyDown]
   );
 
   return (
