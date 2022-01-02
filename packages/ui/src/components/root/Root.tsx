@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
+import { Toast } from './Toast';
 
 export interface DRootProps extends DConfigContextData {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ export function DRoot(props: DRootProps) {
     <DConfigContext.Provider value={restProps}>
       {children}
       <Notification></Notification>
+      <Toast></Toast>
     </DConfigContext.Provider>
   );
 }

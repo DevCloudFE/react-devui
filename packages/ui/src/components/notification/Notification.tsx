@@ -128,7 +128,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
           'leave-to': {
             height: '0',
             opacity: '0',
-            margin: '0',
+            marginBottom: '0',
             transition: 'height 166ms ease-in, opacity 166ms ease-in, margin 166ms ease-in',
           },
         };

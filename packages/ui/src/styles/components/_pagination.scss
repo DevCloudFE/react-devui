@@ -34,14 +34,12 @@
   }
 
   @include when(disabled) {
-    cursor: not-allowed;
-
     .#{$variable-prefix}pagination__item--button {
       color: var(--#{$variable-prefix}disabled-color);
 
       background-color: var(--#{$variable-prefix}disabled-background-color);
 
-      pointer-events: none;
+      cursor: not-allowed;
 
       @include when(active) {
         color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);

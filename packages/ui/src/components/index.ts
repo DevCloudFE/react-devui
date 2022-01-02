@@ -67,6 +67,9 @@ export { DTag } from './tag';
 export type { DTextareaProps } from './textarea';
 export { DTextarea } from './textarea';
 
+export type { DToastProps } from './toast';
+export { ToastService } from './toast';
+
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
 

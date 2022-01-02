@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-import { DRoot, NotificationService } from '@react-devui/ui';
+import { DRoot, NotificationService, ToastService } from '@react-devui/ui';
 import { useAsync } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
@@ -59,6 +59,7 @@ export function App() {
   const location = useLocation();
   useEffect(() => {
     NotificationService.closeAll(false);
+    ToastService.closeAll(false);
   }, [location]);
 
   const contextValue = useMemo<AppContextData>(

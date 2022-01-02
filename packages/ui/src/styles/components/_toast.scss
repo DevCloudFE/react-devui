@@ -1,0 +1,48 @@
+@mixin toast-root {
+  position: fixed;
+  right: 20px;
+  left: 20px;
+  z-index: 10000;
+
+  display: flex;
+  flex-direction: column;
+
+  pointer-events: none;
+}
+
+##{$variable-prefix}toast-t-root {
+  top: 20px;
+
+  @include toast-root;
+}
+
+##{$variable-prefix}toast-b-root {
+  bottom: 20px;
+
+  @include toast-root;
+}
+
+@include b(toast) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  max-width: calc(100vw - 40px);
+
+  margin: 0 auto 12px;
+  padding: 8px 16px;
+  border-radius: var(--#{$variable-prefix}border-radius);
+  overflow: hidden;
+
+  background-color: var(--#{$variable-prefix}background-color);
+  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+
+  pointer-events: all;
+
+  @include e(icon) {
+    flex-shrink: 0;
+    margin-right: 10px;
+
+    font-size: 1.25em;
+  }
+}

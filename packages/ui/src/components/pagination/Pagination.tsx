@@ -119,7 +119,7 @@ export function DPagination(props: DPaginationProps) {
             }
           )}
           role="button"
-          tabIndex={dDisabled ? undefined : 0}
+          tabIndex={0}
           title={t('Previous page')}
           aria-disabled={active === 1}
           onClick={() => {
@@ -152,7 +152,7 @@ export function DPagination(props: DPaginationProps) {
             [`${dPrefix}pagination__item--border`]: !(dCustomRender && dCustomRender.next),
           })}
           role="button"
-          tabIndex={dDisabled ? undefined : 0}
+          tabIndex={0}
           title={t('Next page')}
           aria-disabled={active === lastPage}
           onClick={() => {
@@ -180,7 +180,7 @@ export function DPagination(props: DPaginationProps) {
       },
       nextNode,
     ];
-  }, [active, changeActive, dCompose, dCustomRender, dDisabled, dPrefix, lastPage, t]);
+  }, [active, changeActive, dCompose, dCustomRender, dPrefix, lastPage, t]);
 
   const sizeNode = useMemo(() => {
     const options = dPageSizeOptions.map((size) => ({
@@ -251,6 +251,25 @@ export function DPagination(props: DPaginationProps) {
     return null;
   }, [changeActive, dCompose, dCustomRender, dDisabled, dMini, dPrefix, jumpValue, lastPage, t]);
 
+  const handleMouseDown = useCallback<React.MouseEventHandler<HTMLElement>>(
+    (e) => {
+      if (dDisabled) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    [dDisabled]
+  );
+  const handleClick = useCallback<React.MouseEventHandler<HTMLElement>>(
+    (e) => {
+      if (dDisabled) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    [dDisabled]
+  );
+
   return (
     <nav
       {...restProps}
@@ -259,7 +278,7 @@ export function DPagination(props: DPaginationProps) {
         'is-disabled': dDisabled,
         'is-change': isChange,
       })}
-      tabIndex={dDisabled ? undefined : -1}
+      tabIndex={-1}
       role="navigation"
       aria-label="Pagination Navigation"
     >
@@ -303,7 +322,7 @@ export function DPagination(props: DPaginationProps) {
           }
 
           return (
-            <ul key="pages" className={`${dPrefix}pagination__list`}>
+            <ul key="pages" className={`${dPrefix}pagination__list`} onMouseDownCapture={handleMouseDown} onClickCapture={handleClick}>
               {prevNode}
               {pages.map((n) => {
                 if (n === 'prev5') {
@@ -316,7 +335,7 @@ export function DPagination(props: DPaginationProps) {
                         `${dPrefix}pagination__item--jump5`
                       )}
                       role="button"
-                      tabIndex={dDisabled ? undefined : 0}
+                      tabIndex={0}
                       title={t('5 pages forward')}
                       onClick={() => {
                         changeActive(Math.max(active - 5, 1));
@@ -344,7 +363,7 @@ export function DPagination(props: DPaginationProps) {
                         `${dPrefix}pagination__item--jump5`
                       )}
                       role="button"
-                      tabIndex={dDisabled ? undefined : 0}
+                      tabIndex={0}
                       title={t('5 pages backward')}
                       onClick={() => {
                         changeActive(Math.min(active + 5, lastPage));
@@ -374,7 +393,7 @@ export function DPagination(props: DPaginationProps) {
                           'is-active': active === n,
                         }
                       )}
-                      tabIndex={dDisabled ? undefined : 0}
+                      tabIndex={0}
                       onClick={() => {
                         changeActive(n);
                       }}

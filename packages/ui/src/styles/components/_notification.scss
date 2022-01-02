@@ -1,29 +1,36 @@
-##{$variable-prefix}notification-lt-root {
+@mixin notification-root {
   position: fixed;
+  z-index: 10000;
+
+  pointer-events: none;
+}
+
+##{$variable-prefix}notification-lt-root {
   top: 20px;
   left: 20px;
-  z-index: 10000;
+
+  @include notification-root;
 }
 
 ##{$variable-prefix}notification-rt-root {
-  position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 10000;
+
+  @include notification-root;
 }
 
 ##{$variable-prefix}notification-lb-root {
-  position: fixed;
   bottom: 20px;
   left: 20px;
-  z-index: 10000;
+
+  @include notification-root;
 }
 
 ##{$variable-prefix}notification-rb-root {
-  position: fixed;
   right: 20px;
   bottom: 20px;
-  z-index: 10000;
+
+  @include notification-root;
 }
 
 @include b(notification) {
@@ -41,6 +48,8 @@
   background-color: var(--#{$variable-prefix}background-color);
   outline: none;
   box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+
+  pointer-events: all;
 
   @include e(icon) {
     flex-shrink: 0;
