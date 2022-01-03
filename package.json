@@ -43,7 +43,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.0.1",
     "@commitlint/config-conventional": "^16.0.0",
-    "@nrwl/cli": "^13.4.1",
+    "@nrwl/cli": "^13.4.2",
     "@nrwl/cypress": "^13.4.1",
     "@nrwl/eslint-plugin-nx": "^13.4.1",
     "@nrwl/jest": "^13.4.1",
