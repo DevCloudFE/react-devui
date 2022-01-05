@@ -53,7 +53,6 @@ const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) 
 
   const containerRef = useRefSelector(dContainer);
 
-  //#region DidUpdate
   useEffect(() => {
     if (dragEnd) {
       onOrderChange?.(orderIds);
@@ -83,7 +82,6 @@ const Drop: React.ForwardRefRenderFunction<DDropRef, DDropProps> = (props, ref) 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     setOrderChildren(newOrderIds.map((id) => _childs.find((child) => child.props.dId === id)!));
   }, [children, setOrderChildren, orderIds, setOrderIds]);
-  //#endregion
 
   const stateBackflow = useMemo<Pick<DDropContextData, 'updateSelectors' | 'removeSelectors'>>(
     () => ({

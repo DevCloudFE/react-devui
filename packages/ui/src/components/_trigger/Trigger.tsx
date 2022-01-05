@@ -33,7 +33,6 @@ export function DTrigger(props: DTriggerProps) {
 
   const asyncCapture = useAsync();
 
-  //#region DidUpdate
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -88,7 +87,6 @@ export function DTrigger(props: DTriggerProps) {
       };
     }
   }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, onTrigger]);
-  //#endregion
 
   const renderProps = useMemo<DRenderProps>(() => {
     const _renderProps: DRenderProps = {};

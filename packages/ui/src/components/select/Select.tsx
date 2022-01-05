@@ -20,26 +20,14 @@ import {
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DSelectBox } from '../_select-box';
+import { DVirtualScroll } from '../_virtual-scroll';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 import { DTag } from '../tag';
-import { DVirtualScroll } from '../virtual-scroll';
 
 const IS_GROUP = Symbol();
-const IS_GROUP_ITEM = Symbol();
 const IS_EMPTY = Symbol();
 const IS_CREATE = Symbol();
-
-function getCanSelectItem<T>(value: DSelectOption<T>): DSelectBaseOption<T> | null {
-  if (!value[IS_GROUP] && !value[IS_EMPTY] && !value.dDisabled) {
-    if (!('dValue' in value)) {
-      throw new Error('`dValue` is required if not a group option');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return value as any;
-  }
-  return null;
-}
 
 export interface DSelectBaseOption<T> {
   dLabel: string;
@@ -167,7 +155,7 @@ export function DSelect<T>(
   const [searchValue, setSearchValue] = useState('');
   const [createOptions, setCreateOptions] = useImmer<Array<DSelectBaseOption<T>>>([]);
 
-  const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
   const [select, changeSelect, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
     dMultiple ? [] : null,
     dModel,
@@ -180,7 +168,7 @@ export function DSelect<T>(
 
   const hasSearchChar = searchValue.length > 0;
 
-  const [options, allOptions] = useMemo(() => {
+  const [renderOptions, flatOptions, flatAllOptions] = useMemo(() => {
     const defaultFilterFn = (value: string, option: DSelectOption<T>) => {
       return option.dLabel.includes(value);
     };
@@ -190,129 +178,97 @@ export function DSelect<T>(
     if (createOption) {
       createOption = {
         ...createOption,
-        [IS_GROUP]: false,
-        [IS_GROUP_ITEM]: false,
-        [IS_EMPTY]: false,
         [IS_CREATE]: true,
       };
     }
 
-    const newOptions: Array<DSelectOption<T>> = [];
-    const allOptions: Array<DSelectBaseOption<T>> = [];
+    const flatAllOptions: Array<DSelectBaseOption<T>> = [];
+    let flatOptions: Array<DSelectOption<T>> = [];
+    let renderOptions: Array<DSelectOption<T>> = [];
+
     (createOptions as Array<DSelectOption<T>>).concat(dOptions).forEach((item: DSelectOption<T>) => {
       if (isUndefined(item.dOptions)) {
         if (createOption && dGetId(item.dValue as T) === dGetId(createOption.dValue)) {
           createOption = null;
         }
-        const _item = Object.assign(
-          {
-            [IS_GROUP]: false,
-            [IS_GROUP_ITEM]: false,
-            [IS_EMPTY]: false,
-          },
-          item
-        );
-        allOptions.push(_item as DSelectBaseOption<T>);
+        flatAllOptions.push(item as DSelectBaseOption<T>);
         if (!hasSearchChar || filterFn(searchValue, item as DSelectBaseOption<T>)) {
-          newOptions.push(_item);
+          flatOptions.push(item);
+          renderOptions.push(item);
         }
       } else {
-        if (!hasSearchChar) {
-          newOptions.push(
-            Object.assign(
-              {
-                [IS_GROUP]: true,
-                [IS_GROUP_ITEM]: false,
-                [IS_EMPTY]: false,
-              },
-              item
-            )
-          );
-        }
-
-        let pushCount = 0;
+        const groupOptions: Array<DSelectBaseOption<T>> = [];
         item.dOptions.forEach((groupItem) => {
           if (createOption && dGetId(groupItem.dValue) === dGetId(createOption.dValue)) {
             createOption = null;
           }
-          const _item = Object.assign(
-            {
-              [IS_GROUP]: false,
-              [IS_GROUP_ITEM]: item.dLabel,
-              [IS_EMPTY]: false,
-            },
-            groupItem
-          );
-          allOptions.push(_item);
+          flatAllOptions.push(groupItem);
           if (!hasSearchChar || filterFn(searchValue, groupItem)) {
-            newOptions.push(_item);
-            pushCount += 1;
+            groupOptions.push(groupItem);
           }
         });
-        if (pushCount === 0) {
-          if (!hasSearchChar) {
+
+        if (!hasSearchChar) {
+          flatOptions.push({
+            [IS_GROUP]: true,
+            dLabel: item.dLabel,
+          });
+
+          if (groupOptions.length === 0) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            newOptions.push({ [IS_GROUP]: false, [IS_GROUP_ITEM]: item.dLabel, [IS_EMPTY]: true } as any);
+            groupOptions.push({ [IS_EMPTY]: item.dLabel } as any);
           }
+          renderOptions.push({
+            [IS_GROUP]: true,
+            dLabel: item.dLabel,
+            dOptions: groupOptions,
+          });
+        } else {
+          renderOptions = renderOptions.concat(groupOptions);
         }
+        flatOptions = flatOptions.concat(groupOptions);
       }
     });
 
-    const sortFn = dCustomSearch?.sort;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sortFn = dCustomSearch?.sort as any;
     if (sortFn && hasSearchChar) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      newOptions.sort(sortFn as any);
+      renderOptions.sort(sortFn);
+      flatOptions.sort(sortFn);
     }
 
     if (createOption) {
-      allOptions.unshift(createOption);
-      newOptions.unshift(createOption);
+      flatAllOptions.unshift(createOption);
+      flatOptions.unshift(createOption);
+      renderOptions.unshift(createOption);
     }
 
-    return [newOptions, allOptions];
+    return [renderOptions, flatOptions, flatAllOptions];
   }, [createOptions, dCustomSearch, dGetId, dOptions, hasSearchChar, onCreateOption, searchValue]);
 
-  const findCanSelectItemIndex = useCallback(
-    (options: Array<DSelectOption<T>>, id?: string | null) => {
-      id = id ?? dataRef.current.focusId;
-      return options.findIndex((item) => {
-        const _item = getCanSelectItem(item);
-        if (_item) {
-          return dGetId(_item.dValue) === id;
-        }
-        return false;
-      });
-    },
-    [dGetId]
-  );
+  const canSelect = useCallback((option) => !option.dDisabled && !option[IS_EMPTY] && !option[IS_GROUP], []);
+  const canSelectItem = useCallback(
+    (id?: string) => {
+      let count = -1;
+      let option: DSelectBaseOption<T> | null = null;
+      for (const item of flatOptions) {
+        count += 1;
 
-  const changeVisible = useCallback(
-    (visible: boolean) => {
-      _changeVisible(visible);
-
-      if (visible) {
-        if (selectListEl) {
-          if (isNull(dataRef.current.focusId)) {
-            if (isNull(select) || (isArray(select) && select.length === 0)) {
-              for (const [index, item] of options.entries()) {
-                const _item = getCanSelectItem(item);
-                if (_item) {
-                  dataRef.current.focusId = dGetId(_item.dValue);
-                  selectListEl.scrollTop = index * 32;
-                  break;
-                }
-              }
-            } else {
-              dataRef.current.focusId = isArray(select) ? dGetId(select[0]) : dGetId(select);
-              const index = findCanSelectItemIndex(options);
-              asyncCapture.setTimeout(() => (selectListEl.scrollTop = index * 32), 20);
+        if (canSelect(item)) {
+          if (id) {
+            if (id === dGetId(item.dValue as T)) {
+              option = item as DSelectBaseOption<T>;
+              break;
             }
-            setfocusId(dataRef.current.focusId);
+          } else {
+            option = item as DSelectBaseOption<T>;
+            break;
           }
         }
       }
+      return [count, option] as [number, DSelectBaseOption<T> | null];
     },
-    [_changeVisible, asyncCapture, dGetId, findCanSelectItemIndex, options, select, selectListEl, setfocusId]
+    [canSelect, dGetId, flatOptions]
   );
 
   const handleOptionClick = useCallback(
@@ -322,9 +278,9 @@ export function DSelect<T>(
       const optionId = isUndefined(e.currentTarget) ? dataRef.current.focusId : (e.currentTarget.dataset['dOptionId'] as string);
       dataRef.current.focusId = optionId;
       setfocusId(optionId);
-      const option = allOptions[findCanSelectItemIndex(allOptions, optionId)];
+      const option = flatAllOptions.find((option) => !option.dDisabled && dGetId(option.dValue) === optionId);
 
-      if (option && !isUndefined(option.dValue)) {
+      if (option) {
         const createOption = () => {
           if (option[IS_CREATE]) {
             setCreateOptions((draft) => {
@@ -361,25 +317,14 @@ export function DSelect<T>(
 
       if (!dMultiple) {
         changeVisible(false);
-        asyncCapture.requestAnimationFrame(() => {
+        asyncCapture.setTimeout(() => {
           if (selectBoxRef.current) {
             selectBoxRef.current.focus({ preventScroll: true });
           }
         });
       }
     },
-    [
-      allOptions,
-      asyncCapture,
-      changeSelect,
-      changeVisible,
-      dGetId,
-      dMaxSelectNum,
-      dMultiple,
-      findCanSelectItemIndex,
-      onExceed,
-      setCreateOptions,
-    ]
+    [asyncCapture, changeSelect, changeVisible, dGetId, dMaxSelectNum, dMultiple, flatAllOptions, onExceed, setCreateOptions]
   );
 
   const handleClick = useCallback(
@@ -423,22 +368,43 @@ export function DSelect<T>(
   const handleSearch = useCallback(
     (value: string) => {
       onSearch?.(value);
-
-      if (value.length > 0) {
+      setSearchValue(value);
+      if (value.length > 0 && selectListEl) {
         if (isNull(dataRef.current.beforeSearch)) {
-          if (selectListEl) {
-            dataRef.current.beforeSearch = {
-              scrollTop: selectListEl.scrollTop,
-              focusId: dataRef.current.focusId,
-            };
-          }
+          dataRef.current.beforeSearch = {
+            focusId: dataRef.current.focusId,
+            scrollTop: selectListEl.scrollTop,
+          };
         }
       }
-
-      setSearchValue(value);
     },
-    [onSearch, selectListEl, setSearchValue]
+    [onSearch, selectListEl]
   );
+  useEffect(() => {
+    if (searchValue.length > 0 && selectListEl) {
+      selectListEl.scrollTop = 0;
+      const [, option] = canSelectItem();
+      if (option) {
+        dataRef.current.focusId = dGetId(option.dValue);
+        setfocusId(dataRef.current.focusId);
+      }
+    } else {
+      if (dataRef.current.beforeSearch && selectListEl) {
+        dataRef.current.focusId = dataRef.current.beforeSearch.focusId;
+        const scrollTop = dataRef.current.beforeSearch.scrollTop;
+        const loop = () => {
+          selectListEl.scrollTop = scrollTop;
+          if (selectListEl.scrollTop !== scrollTop) {
+            asyncCapture.setTimeout(() => loop());
+          }
+        };
+        loop();
+        setfocusId(dataRef.current.focusId);
+        dataRef.current.beforeSearch = null;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
 
   const customTransition = useCallback((popupEl: HTMLElement, targetEl: HTMLElement) => {
     const { top, left, transformOrigin } = getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 8);
@@ -455,42 +421,23 @@ export function DSelect<T>(
     };
   }, []);
 
-  //#region DidUpdate
-  useEffect(() => {
-    if (hasSearchChar) {
-      if (selectListEl) {
-        for (const [index, item] of options.entries()) {
-          const _item = getCanSelectItem(item);
-          if (_item) {
-            dataRef.current.focusId = dGetId(_item.dValue);
-            setfocusId(dataRef.current.focusId);
-
-            selectListEl.scrollTop = index * 32;
-            break;
+  const handleRendered = useCallback(() => {
+    if (selectListEl) {
+      if (isNull(dataRef.current.focusId)) {
+        if (isNull(select) || (isArray(select) && select.length === 0)) {
+          const [, option] = canSelectItem();
+          if (option) {
+            dataRef.current.focusId = dGetId(option.dValue);
           }
+        } else {
+          dataRef.current.focusId = isArray(select) ? dGetId(select[0]) : dGetId(select);
+          const [count] = canSelectItem(dataRef.current.focusId);
+          selectListEl.scrollTop = count * 32;
         }
+        setfocusId(dataRef.current.focusId);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasSearchChar]);
-
-  useEffect(() => {
-    if (!hasSearchChar && selectListEl && dataRef.current.beforeSearch) {
-      const handle = () => {
-        if (dataRef.current.beforeSearch) {
-          dataRef.current.focusId = dataRef.current.beforeSearch.focusId;
-          selectListEl.scrollTop = dataRef.current.beforeSearch.scrollTop;
-          setfocusId(dataRef.current.focusId);
-          dataRef.current.beforeSearch = null;
-        }
-      };
-      if (selectListEl.scrollHeight === 8) {
-        asyncCapture.requestAnimationFrame(() => asyncCapture.setTimeout(() => handle()));
-      } else {
-        handle();
-      }
-    }
-  }, [asyncCapture, hasSearchChar, selectListEl, setfocusId]);
+  }, [canSelectItem, dGetId, select, selectListEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -498,12 +445,13 @@ export function DSelect<T>(
     if (selectListEl && visible) {
       const changeFocusByKeydown = (down = true) => {
         if (!isNull(dataRef.current.focusId)) {
-          let index = findCanSelectItemIndex(options);
+          let [count] = canSelectItem(dataRef.current.focusId);
           let option: DSelectOption<T> | undefined;
           const getOption = () => {
-            const isEnd = (!down && index === 0) || (down && index === options.length - 1);
-            index = isEnd ? index : down ? index + 1 : index - 1;
-            const _option = (options[index] ? getCanSelectItem(options[index]) : null) as DSelectOption<T> | null;
+            const isEnd = (!down && count === 0) || (down && count === flatOptions.length - 1);
+            count = isEnd ? count : down ? count + 1 : count - 1;
+            let _option: DSelectOption<T> | null = flatOptions[count];
+            _option = _option && canSelect(_option) ? _option : null;
             if (_option) {
               option = _option;
             } else {
@@ -513,7 +461,7 @@ export function DSelect<T>(
           getOption();
           if (option && !isUndefined(option.dValue)) {
             dataRef.current.focusId = dGetId(option.dValue);
-            const elTop = [index * 32 + 4, (index + 1) * 32 + 4];
+            const elTop = [count * 32 + 4, (count + 1) * 32 + 4];
             if (selectListEl.scrollTop > elTop[1]) {
               selectListEl.scrollTop = elTop[0] - 4;
             } else if (elTop[0] > selectListEl.scrollTop + selectListEl.clientHeight) {
@@ -550,11 +498,10 @@ export function DSelect<T>(
 
             case 'Home':
               e.preventDefault();
-              for (const item of options) {
-                const _item = getCanSelectItem(item);
-                if (_item) {
+              for (const item of flatOptions) {
+                if (canSelect(item)) {
                   selectListEl.scrollTop = 0;
-                  dataRef.current.focusId = dGetId(_item.dValue);
+                  dataRef.current.focusId = dGetId(item.dValue as T);
                   setfocusId(dataRef.current.focusId);
                   break;
                 }
@@ -563,11 +510,10 @@ export function DSelect<T>(
 
             case 'End':
               e.preventDefault();
-              for (let index = options.length - 1; index >= 0; index--) {
-                const item = getCanSelectItem(options[index]);
-                if (item) {
+              for (let index = flatOptions.length - 1; index >= 0; index--) {
+                if (canSelect(flatOptions[index])) {
                   selectListEl.scrollTop = 32 * index;
-                  dataRef.current.focusId = dGetId(item.dValue);
+                  dataRef.current.focusId = dGetId(flatOptions[index].dValue as T);
                   setfocusId(dataRef.current.focusId);
                   break;
                 }
@@ -596,7 +542,7 @@ export function DSelect<T>(
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dGetId, dMultiple, findCanSelectItemIndex, handleOptionClick, options, selectListEl, setfocusId, visible]);
+  }, [asyncCapture, canSelect, canSelectItem, dGetId, dMultiple, flatOptions, handleOptionClick, selectListEl, setfocusId, visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -626,7 +572,7 @@ export function DSelect<T>(
         .subscribe({
           next: () => {
             flushSync(() => changeVisible(false));
-            asyncGroup.requestAnimationFrame(() => {
+            asyncGroup.setTimeout(() => {
               if (selectBoxRef.current) {
                 selectBoxRef.current.focus({ preventScroll: true });
               }
@@ -648,13 +594,12 @@ export function DSelect<T>(
         const optionsSelected: Array<DSelectBaseOption<T>> = [];
         let tags: Array<{ label: string; id: string }> = [];
         const selectIds = select.map((item) => dGetId(item));
-        allOptions.forEach((item) => {
-          const _item = getCanSelectItem(item);
-          if (_item) {
-            const id = dGetId(_item.dValue);
+        flatAllOptions.forEach((item) => {
+          if (!item.dDisabled) {
+            const id = dGetId(item.dValue);
             if (selectIds.includes(id)) {
-              optionsSelected.push(_item);
-              tags.push({ label: _item.dLabel, id });
+              optionsSelected.push(item);
+              tags.push({ label: item.dLabel, id });
             }
           }
         });
@@ -711,142 +656,137 @@ export function DSelect<T>(
       }
     } else {
       if (!isNull(select)) {
-        const optionSelected = allOptions[findCanSelectItemIndex(allOptions, dGetId(select as T))] as DSelectBaseOption<T> | undefined;
-        if (optionSelected) {
-          if (dCustomSelected) {
-            selectedNode = dCustomSelected(optionSelected);
-          } else {
-            selectedNode = optionSelected.dLabel;
+        const id = dGetId(select as T);
+        for (const option of flatAllOptions) {
+          if (!option.dDisabled && dGetId(option.dValue) === id) {
+            if (dCustomSelected) {
+              selectedNode = dCustomSelected(option);
+            } else {
+              selectedNode = option.dLabel;
+            }
+            break;
           }
         }
       }
     }
     return [selectedNode, suffixNode];
-  }, [
-    allOptions,
-    dCustomSelected,
-    dGetId,
-    dMaxSelectNum,
-    dMultiple,
-    dPrefix,
-    disabled,
-    findCanSelectItemIndex,
-    handleOptionClick,
-    select,
-    size,
-  ]);
-  //#endregion
+  }, [dCustomSelected, dGetId, dMaxSelectNum, dMultiple, dPrefix, disabled, flatAllOptions, handleOptionClick, select, size]);
 
   const hasSelect = isArray(select) ? select.length > 0 : !isNull(select);
+
+  const handleUlClick = useCallback(() => {
+    dataRef.current.clearTid && dataRef.current.clearTid();
+  }, []);
+
+  const itemRender = useCallback(
+    (item, index, renderProps) => {
+      if (item[IS_EMPTY]) {
+        return (
+          <li key={`${dPrefix}select-${uniqueId}-empty-${item[IS_EMPTY]}`} className={`${dPrefix}select__option-empty`}>
+            <span className={`${dPrefix}select__option-content`}>{t('No Data')}</span>
+          </li>
+        );
+      }
+      if (item.dOptions) {
+        return (
+          <ul
+            key={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+            className={getClassName(`${dPrefix}select__option-group`)}
+            role="group"
+            aria-labelledby={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+          >
+            <li
+              key={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+              id={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+              role="presentation"
+            >
+              <span className={`${dPrefix}select__option-content`}>{item.dLabel}</span>
+            </li>
+            {renderProps.children}
+          </ul>
+        );
+      }
+
+      const _item = item as DSelectBaseOption<T>;
+      const optionId = dGetId(_item.dValue);
+
+      let isSelected = false;
+      if (isArray(select)) {
+        isSelected = select.findIndex((item) => dGetId(item) === optionId) !== -1;
+      } else if (isNull(select)) {
+        isSelected = false;
+      } else {
+        isSelected = dGetId(select) === optionId;
+      }
+
+      return (
+        <li
+          {...renderProps}
+          key={optionId}
+          id={`${dPrefix}select-${uniqueId}-option-${optionId}`}
+          className={getClassName(`${dPrefix}select__option`, {
+            'is-selected': isSelected,
+            'is-focus': focusId === optionId,
+            'is-disabled': _item.dDisabled,
+          })}
+          tabIndex={-1}
+          role="option"
+          title={_item.dLabel}
+          aria-selected={isSelected}
+          aria-disabled={_item.dDisabled}
+          data-d-option-id={optionId}
+          onClick={_item.dDisabled ? undefined : handleOptionClick}
+        >
+          {_item[IS_CREATE] && (
+            <span className={`${dPrefix}select__option-add`}>
+              <DIcon viewBox="64 64 896 896" dTheme="primary">
+                <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+              </DIcon>
+            </span>
+          )}
+          <span className={`${dPrefix}select__option-content`}>{dOptionRender(_item, index)}</span>
+        </li>
+      );
+    },
+    [dGetId, dOptionRender, dPrefix, focusId, handleOptionClick, select, t, uniqueId]
+  );
 
   return (
     <DPopup
       className={getClassName(dPopupClassName, `${dPrefix}select-popup`)}
       dVisible={visible}
       dPopupContent={
-        options.length === 0 && !dLoading ? (
+        flatOptions.length === 0 && !dLoading ? (
           <span className={`${dPrefix}select__empty`}>{t('No Data')}</span>
         ) : (
           <>
             {dLoading && (
               <span
                 className={getClassName(`${dPrefix}select__loading`, {
-                  [`${dPrefix}select__loading--left`]: options.length === 0,
+                  [`${dPrefix}select__loading--left`]: flatOptions.length === 0,
                 })}
               >
-                <DIcon viewBox="0 0 1024 1024" dSize={options.length === 0 ? 18 : 24} dSpin>
+                <DIcon viewBox="0 0 1024 1024" dSize={flatOptions.length === 0 ? 18 : 24} dSpin>
                   <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
                 </DIcon>
               </span>
             )}
             <DVirtualScroll
-              dListRender={(renderProps) => (
-                <ul
-                  {...renderProps}
-                  ref={selectListRef}
-                  id={`${dPrefix}select-${uniqueId}`}
-                  className={`${dPrefix}select__list`}
-                  tabIndex={-1}
-                  role="listbox"
-                  aria-multiselectable={dMultiple}
-                  aria-activedescendant={isString(focusId) ? `${dPrefix}select-${uniqueId}-option-${focusId}` : undefined}
-                  onClick={() => {
-                    dataRef.current.clearTid && dataRef.current.clearTid();
-                  }}
-                ></ul>
-              )}
-              dList={options}
-              dItemRender={(item, index, renderProps) => {
-                if (item[IS_EMPTY]) {
-                  return (
-                    <li
-                      {...renderProps}
-                      key={`${dPrefix}select-${uniqueId}-empty-${item[IS_GROUP_ITEM]}`}
-                      className={getClassName(`${dPrefix}select__option`, `${dPrefix}select__option--empty`)}
-                    >
-                      <span className={`${dPrefix}select__option-content`}>{t('No Data')}</span>
-                    </li>
-                  );
-                }
-                if (item[IS_GROUP]) {
-                  return (
-                    <li
-                      {...renderProps}
-                      key={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
-                      className={getClassName(`${dPrefix}select__option`, `${dPrefix}select__option--group`)}
-                      role="separator"
-                      aria-orientation="horizontal"
-                    >
-                      <span className={`${dPrefix}select__option-content`}>{item.dLabel}</span>
-                    </li>
-                  );
-                }
-
-                const _item = item as DSelectBaseOption<T>;
-                const optionId = dGetId(_item.dValue);
-                let isSelected = false;
-                if (isArray(select)) {
-                  isSelected = select.findIndex((item) => dGetId(item) === optionId) !== -1;
-                } else if (isNull(select)) {
-                  isSelected = false;
-                } else {
-                  isSelected = dGetId(select) === optionId;
-                }
-
-                return (
-                  <li
-                    {...renderProps}
-                    key={optionId}
-                    id={`${dPrefix}select-${uniqueId}-option-${optionId}`}
-                    className={getClassName(`${dPrefix}select__option`, {
-                      [`${dPrefix}select__option--group-item`]: !hasSearchChar && _item[IS_GROUP_ITEM],
-                      'is-selected': isSelected,
-                      'is-focus': focusId === optionId,
-                      'is-disabled': _item.dDisabled,
-                    })}
-                    tabIndex={-1}
-                    role="option"
-                    title={_item.dLabel}
-                    aria-selected={isSelected}
-                    aria-disabled={_item.dDisabled}
-                    data-d-option-id={optionId}
-                    onClick={_item.dDisabled ? undefined : handleOptionClick}
-                  >
-                    {_item[IS_CREATE] && (
-                      <span className={`${dPrefix}select__option-add`}>
-                        <DIcon viewBox="64 64 896 896" dTheme="primary">
-                          <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-                          <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
-                        </DIcon>
-                      </span>
-                    )}
-                    <span className={`${dPrefix}select__option-content`}>{dOptionRender(_item, index)}</span>
-                  </li>
-                );
-              }}
-              dHeight={264}
-              dItemHeight={32}
+              id={`${dPrefix}select-${uniqueId}`}
+              className={`${dPrefix}select__list`}
+              tabIndex={-1}
+              role="listbox"
+              aria-multiselectable={dMultiple}
+              aria-activedescendant={isString(focusId) ? `${dPrefix}select-${uniqueId}-option-${focusId}` : undefined}
+              dListRef={selectListRef}
+              dList={renderOptions}
+              dItemRender={itemRender}
+              dNestedKey="dOptions"
+              dSize={264}
+              dItemSize={32}
               onScrollEnd={onScrollBottom}
+              onClick={handleUlClick}
             />
           </>
         )
@@ -878,6 +818,7 @@ export function DSelect<T>(
           {hasSelect && selectedNode}
         </DSelectBox>
       )}
+      onRendered={handleRendered}
     />
   );
 }

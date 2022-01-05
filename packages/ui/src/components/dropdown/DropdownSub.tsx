@@ -119,7 +119,6 @@ export function DDropdownSub(props: DDropdownSubProps) {
     [_onBlur, onBlur]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     let isFocus = false;
     if (dropdownFocusId) {
@@ -137,7 +136,6 @@ export function DDropdownSub(props: DDropdownSubProps) {
       setCurrentPopupVisible(false);
     }
   }, [dropdownVisible, setCurrentPopupVisible]);
-  //#endregion
 
   const stateBackflow = useMemo<Pick<DDropdownSubContextData, 'updateChildren' | 'removeChildren'>>(
     () => ({

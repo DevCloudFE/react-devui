@@ -89,7 +89,6 @@ export function DDropdown(props: DDropdownProps) {
     [dPlacement]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     let isFocus = false;
     if (focusId) {
@@ -101,7 +100,6 @@ export function DDropdown(props: DDropdownProps) {
     }
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
   }, [focusId, navEl?.childNodes, setActiveDescendant]);
-  //#endregion
 
   const contextValue = useMemo<DDropdownContextData>(
     () => ({

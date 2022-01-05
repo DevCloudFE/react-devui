@@ -189,7 +189,6 @@ export function DMenuSub(props: DMenuSubProps) {
     [_onBlur, onBlur]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     let isFocus = false;
     if (menuFocusId) {
@@ -207,7 +206,6 @@ export function DMenuSub(props: DMenuSubProps) {
       setCurrentPopupVisible(false);
     }
   }, [popupMode, setCurrentPopupVisible]);
-  //#endregion
 
   const childs = useMemo(() => {
     const length = React.Children.count(children);

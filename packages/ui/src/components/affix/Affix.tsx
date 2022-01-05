@@ -103,9 +103,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
       }
     }
   }, [dTarget, targetRef, affixEl, referenceEl, fixed, top, props.dBottom, bottom, setFixedStyle, dZIndex, setReferenceStyle, setFixed]);
-  //#endregion
 
-  //#region DidUpdate
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (fixed && referenceEl) {
@@ -130,7 +128,6 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
   useEffect(() => {
     updatePosition();
   }, [updatePosition]);
-  //#endregion
 
   useImperativeHandle(
     ref,

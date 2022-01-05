@@ -64,17 +64,15 @@ export function useTwoWayBinding<T, S = T>(
     (updater: any) => {
       const val = isFunction(updater) ? produce(currentValue, updater) : freeze(updater);
 
-      if (!Object.is(val, currentValue)) {
-        if (formControl) {
-          formControl.markAsDirty(true);
-          formControl.setValue(val);
-          onValueChange?.(val);
-          formInstance?.updateForm();
-        } else {
-          setValue?.(val);
-          setAutoValue(val);
-          onValueChange?.(val);
-        }
+      if (formControl) {
+        formControl.markAsDirty(true);
+        formControl.setValue(val);
+        onValueChange?.(val);
+        formInstance?.updateForm();
+      } else {
+        setValue?.(val);
+        setAutoValue(val);
+        onValueChange?.(val);
       }
     },
     [currentValue, formControl, formInstance, onValueChange, setValue]

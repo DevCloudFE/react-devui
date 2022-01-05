@@ -43,7 +43,6 @@ export function DDialog(props: DDialogProps) {
     }
   }, [dMaskClosable, onClose]);
 
-  //#region DidUpdate
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (dVisible && dEscClosable) {
@@ -53,7 +52,6 @@ export function DDialog(props: DDialogProps) {
       asyncCapture.deleteGroup(asyncId);
     };
   }, [asyncCapture, dEscClosable, dVisible, onClose]);
-  //#endregion
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

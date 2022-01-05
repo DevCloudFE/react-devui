@@ -60,7 +60,7 @@ const Radio: React.ForwardRefRenderFunction<DRadioRef, DRadioProps> = (props, re
 
   const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
     false,
-    dModel ?? [radioGroupValue === dValue],
+    dModel ?? (inGroup ? [radioGroupValue === dValue] : undefined),
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
