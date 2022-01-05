@@ -70,7 +70,6 @@ export function DDrag(props: DDragProps) {
     `[data-${dPrefix}drag-placeholder="${uniqueId}"]`
   );
 
-  //#region DidUpdate
   useEffect(() => {
     if (isDragging && isNumber(fixedStyle.top) && isNumber(fixedStyle.left)) {
       if (dId) {
@@ -220,7 +219,6 @@ export function DDrag(props: DDragProps) {
     onDragEnd,
     dId,
   ]);
-  //#endregion
 
   const child = useMemo(() => {
     const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;

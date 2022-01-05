@@ -54,7 +54,7 @@ $select-option-height: 32px;
 
     @include utils-disabled;
 
-    &:not(.#{$variable-prefix}select__option--empty):not(.#{$variable-prefix}select__option--group):not(.#{$variable-prefix}select__option--loading):not(.is-disabled) {
+    &:not(.#{$variable-prefix}select__option--loading):not(.is-disabled) {
       &:focus,
       &.is-focus {
         color: var(--#{$variable-prefix}color-primary-lighter);
@@ -70,21 +70,36 @@ $select-option-height: 32px;
 
       background-color: var(--#{$variable-prefix}color-primary-background);
     }
+  }
 
-    @include m(group) {
+  @include e(option-group) {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    & > li {
+      padding-left: 24px;
+    }
+
+    & > li[role='presentation'] {
+      display: flex;
+      align-items: center;
+      height: $select-option-height;
+      padding: 0 12px;
+
       color: var(--#{$variable-prefix}color-step-400);
       font-size: 0.9em;
     }
+  }
 
-    @include m(empty) {
-      padding-left: 24px;
+  @include e(option-empty) {
+    display: flex;
+    align-items: center;
+    height: $select-option-height;
+    padding: 0 12px;
 
-      color: var(--#{$variable-prefix}color-step-400);
-    }
-
-    @include m(group-item) {
-      padding-left: 24px;
-    }
+    color: var(--#{$variable-prefix}color-step-400);
   }
 
   @include e(option-add) {

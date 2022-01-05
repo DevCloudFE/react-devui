@@ -108,7 +108,6 @@ export function useDTransition(props: DTransitionProps) {
     }
   };
 
-  //#region DidUpdate
   useLayoutEffect(() => {
     transition();
   }, [startEnterTransition]);
@@ -140,7 +139,6 @@ export function useDTransition(props: DTransitionProps) {
       transition();
     }
   }, [dEl, hidden]);
-  //#endregion
 
   return hidden;
 }

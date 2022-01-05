@@ -94,7 +94,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (dSearchable && dExpanded) {
-      asyncCapture.requestAnimationFrame(() => searchEl?.focus({ preventScroll: true }));
+      asyncCapture.setTimeout(() => searchEl?.focus({ preventScroll: true }));
       asyncGroup.fromEvent<MouseEvent>(window, 'mousedown').subscribe({
         next: (e) => {
           if (e.button === 0) {

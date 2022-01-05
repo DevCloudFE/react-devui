@@ -56,6 +56,7 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
     triggerEl: HTMLElement
   ) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties };
   onVisibleChange?: (visible: boolean) => void;
+  onRendered?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -78,6 +79,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     dEscClosable = true,
     dCustomPopup,
     onVisibleChange,
+    onRendered,
     afterVisibleChange,
     className,
     style,
@@ -287,6 +289,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       beforeEnter: () => {
         dataRef.current.hasCancelLeave = false;
         updatePosition();
+        onRendered?.();
 
         return dataRef.current.transitionState;
       },
@@ -406,7 +409,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     [onClick, dTrigger, changeVisible]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -522,7 +524,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       asyncCapture.deleteGroup(asyncId);
     };
   }, [afterEnter, asyncCapture, dVisible, isFixed, popupEl, rootContentRef, triggerRef, updatePosition]);
-  //#endregion
 
   useImperativeHandle(
     ref,

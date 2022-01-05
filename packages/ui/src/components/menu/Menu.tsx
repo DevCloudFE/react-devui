@@ -80,7 +80,6 @@ export function DMenu(props: DMenuProps) {
     [dMode, expandTrigger, changeExpandIds]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     let isFocus = false;
     if (focusId) {
@@ -92,7 +91,6 @@ export function DMenu(props: DMenuProps) {
     }
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
   }, [focusId, navEl?.childNodes, setActiveDescendant]);
-  //#endregion
 
   const contextValue = useMemo<DMenuContextData>(
     () => ({

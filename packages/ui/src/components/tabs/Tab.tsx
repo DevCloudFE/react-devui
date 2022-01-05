@@ -67,13 +67,11 @@ export function DTab(props: DTabProps) {
     [dId, onClose]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     if (!__dropdown && tabsActiveId === dId) {
       getDotStyle?.();
     }
   }, [__dropdown, dId, getDotStyle, tabsActiveId]);
-  //#endregion
 
   return (
     <div

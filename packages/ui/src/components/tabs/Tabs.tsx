@@ -182,7 +182,6 @@ export function DTabs(props: DTabsProps) {
     }, 300);
   }, [asyncCapture, checkScrollEnd, updateDropdown]);
 
-  //#region DidUpdate
   useLayoutEffect(() => {
     setDotStyle({ transition: 'none' });
   }, [dPlacement, dType, dSize, setDotStyle]);
@@ -207,7 +206,6 @@ export function DTabs(props: DTabsProps) {
       asyncCapture.deleteGroup(asyncId);
     };
   }, [asyncCapture, checkScrollEnd, tablistEl, tablistWrapperEl, updateDropdown]);
-  //#endregion
 
   const [childs, tabpanels] = useMemo(() => {
     const _tabpanels: Array<{ dId: string; id: string; labelledby: string; node: React.ReactNode }> = [];

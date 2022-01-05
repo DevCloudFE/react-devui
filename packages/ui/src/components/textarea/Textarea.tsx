@@ -105,13 +105,11 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     [changeValue, onChange, setRowNum]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     if (textareaEl) {
       setRowNum(Math.round((textareaEl.scrollHeight - 6) / 24));
     }
   }, [setRowNum, textareaEl]);
-  //#endregion
 
   useImperativeHandle<HTMLTextAreaElement | null, HTMLTextAreaElement | null>(ref, () => textareaEl, [textareaEl]);
 

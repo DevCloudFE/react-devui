@@ -144,7 +144,6 @@ export const DAnchor = (props: DAnchorProps) => {
     [dPage, dScrollBehavior, dDistance, customScroll, pageRef]
   );
 
-  //#region DidUpdate
   useEffect(() => {
     updateAnchor();
   }, [updateAnchor]);
@@ -159,7 +158,6 @@ export const DAnchor = (props: DAnchorProps) => {
       asyncCapture.deleteGroup(asyncId);
     };
   }, [asyncCapture, rootContentRef, updateAnchor]);
-  //#endregion
 
   const stateBackflow = useMemo<Pick<DAnchorContextData, 'updateLinks' | 'removeLinks'>>(
     () => ({

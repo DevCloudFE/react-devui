@@ -67,7 +67,7 @@ export function DPagination(props: DPaginationProps) {
       _changeActive(active);
 
       setIsChange(true);
-      asyncCapture.requestAnimationFrame(() => asyncCapture.setTimeout(() => setIsChange(false)));
+      asyncCapture.setTimeout(() => setIsChange(false));
     },
     [_changeActive, asyncCapture]
   );
