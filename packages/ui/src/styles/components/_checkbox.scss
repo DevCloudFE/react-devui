@@ -18,8 +18,6 @@
   display: inline-flex;
   align-items: center;
 
-  font-size: var(--#{$variable-prefix}font);
-
   cursor: pointer;
 
   @include utils-disabled;
@@ -96,14 +94,6 @@
         opacity: 1;
       }
     }
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
   }
 
   @include e(input-wrapper) {

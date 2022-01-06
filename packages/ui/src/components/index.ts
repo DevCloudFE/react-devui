@@ -58,6 +58,9 @@ export { DSelect } from './select';
 export type { DSeparatorProps } from './separator';
 export { DSeparator } from './separator';
 
+export type { DSwitchProps } from './switch';
+export { DSwitch } from './switch';
+
 export type { DTabProps, DTabsProps } from './tabs';
 export { DTab, DTabs } from './tabs';
 

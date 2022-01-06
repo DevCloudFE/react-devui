@@ -2,7 +2,7 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useId, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -36,7 +36,6 @@ export function DRadioGroup(props: DRadioGroupProps) {
     dSize,
     dVertical = false,
     onModelChange,
-    id,
     className,
     children,
     ...restProps
@@ -47,14 +46,11 @@ export function DRadioGroup(props: DRadioGroupProps) {
   const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
-  const uniqueId = useId();
-  const _id = id ?? `${dPrefix}radio-group-${uniqueId}`;
-
   const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding(
     undefined,
     dModel,
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    dFormControlName ? { formControlName: dFormControlName } : undefined
   );
 
   const size = dSize ?? gSize;
@@ -62,10 +58,9 @@ export function DRadioGroup(props: DRadioGroupProps) {
 
   const generalStateContextValue = useMemo<DGeneralStateContextData>(
     () => ({
-      gSize: size,
       gDisabled: disabled,
     }),
-    [disabled, size]
+    [disabled]
   );
 
   const contextValue = useMemo<DRadioGroupContextData>(
@@ -86,7 +81,6 @@ export function DRadioGroup(props: DRadioGroupProps) {
         <div
           {...restProps}
           {...ariaAttribute}
-          id={_id}
           className={getClassName(className, `${dPrefix}radio-group`, {
             [`${dPrefix}radio-group--${dType}`]: dType,
             [`${dPrefix}radio-group--${size}`]: size,

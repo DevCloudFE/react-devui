@@ -448,14 +448,21 @@ export function DSelect<T>(
           let [count] = canSelectItem(dataRef.current.focusId);
           let option: DSelectOption<T> | undefined;
           const getOption = () => {
-            const isEnd = (!down && count === 0) || (down && count === flatOptions.length - 1);
-            count = isEnd ? count : down ? count + 1 : count - 1;
+            if (!down && count === 0) {
+              selectListEl.scrollTop = 0;
+              return;
+            }
+            if (down && count === flatOptions.length - 1) {
+              selectListEl.scrollTop = selectListEl.scrollHeight;
+              return;
+            }
+            count = down ? count + 1 : count - 1;
             let _option: DSelectOption<T> | null = flatOptions[count];
             _option = _option && canSelect(_option) ? _option : null;
             if (_option) {
               option = _option;
             } else {
-              !isEnd && getOption();
+              getOption();
             }
           };
           getOption();

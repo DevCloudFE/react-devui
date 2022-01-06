@@ -8,7 +8,6 @@
   border-radius: var(--#{$variable-prefix}border-radius);
 
   font: inherit;
-  font-size: var(--#{$variable-prefix}font);
   line-height: 24px;
   letter-spacing: inherit;
 
@@ -50,7 +49,6 @@
 
   @include e(count) {
     color: var(--#{$variable-prefix}color-step-400);
-    font-size: var(--#{$variable-prefix}font);
     line-height: 28px;
     text-align: right;
     font-variant-numeric: tabular-nums;

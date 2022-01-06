@@ -19,18 +19,12 @@ title: 多选组
 | --- | --- | --- | --- | 
 | dModel | 手动控制是否选中 | [boolean, Updater\<boolean\>?] | - |
 | dIndeterminate | 是否为部分选中 | boolean | false |
-| dAriaControls | [aria-controls](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls) | string | - |
-| dSize | 设置尺寸 | 'smaller' \| 'larger' | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dValue | 多选组中作为标识传递 | any  | - |
+| dInputProps | 应用于 `input` 元素的属性 | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
+| dInputRef | 将 `ref` 传递给 `input` 元素 | React.LegacyRef\<HTMLInputElement\>  | - |
 | onModelChange | 选中改变的回调 | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DCheckboxRef
-
-```tsx
-type DCheckboxRef = HTMLInputElement;
-```
 
 ### DCheckboxGroupProps
 
@@ -40,7 +34,6 @@ type DCheckboxRef = HTMLInputElement;
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
 | dModel | 手动控制选择 | [any[], Updater\<any[]\>?] | - |
-| dSize | 多选组尺寸 | 'smaller' \| 'larger' | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dVertical | 多选组垂直排布 | boolean | false |
 | dIndeterminateLabel | 部分选中的标签内容 | `(checked: boolean \| 'mixed') => React.ReactNode` | - |

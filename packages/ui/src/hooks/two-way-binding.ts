@@ -16,7 +16,7 @@ export function useTwoWayBinding<T, S = T>(
   input?: [T, Updater<S>?],
   onValueChange?: (value: S) => void,
   opt?: {
-    id: string;
+    id?: string;
     formControlName: string;
   }
 ) {

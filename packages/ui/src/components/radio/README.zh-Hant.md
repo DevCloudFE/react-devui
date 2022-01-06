@@ -20,14 +20,10 @@ title: 单选组
 | dModel | 手动控制是否选中 | [boolean, Updater\<boolean\>?] | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dValue | 单选组中作为标识传递 | any  | - |
+| dInputProps | 应用于 `input` 元素的属性 | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
+| dInputRef | 将 `ref` 传递给 `input` 元素 | React.LegacyRef\<HTMLInputElement\>  | - |
 | onModelChange | 选中改变的回调 | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DRadioRef
-
-```tsx
-type DRadioRef = HTMLInputElement;
-```
 
 ### DRadioGroupProps
 

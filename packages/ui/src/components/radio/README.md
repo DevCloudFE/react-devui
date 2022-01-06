@@ -21,14 +21,10 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | dModel | Manual control is selected | [boolean, Updater\<boolean\>?] | - |
 | dDisabled | Whether to disable | boolean | false |
 | dValue | Pass as an identifier in radio group | any  | - |
+| dInputProps | Attributes applied to the `input` element | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
+| dInputRef | Pass a `ref` to the `input` element | React.LegacyRef\<HTMLInputElement\>  | - |
 | onModelChange | Selected change callback | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DRadioRef
-
-```tsx
-type DRadioRef = HTMLInputElement;
-```
 
 ### DRadioGroupProps
 

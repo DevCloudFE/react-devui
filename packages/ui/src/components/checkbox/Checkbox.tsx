@@ -6,31 +6,28 @@ import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding
 import { getClassName } from '../../utils';
 import { DCheckboxGroupContext } from './CheckboxGroup';
 
-export type DCheckboxRef = HTMLInputElement;
-
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
   dIndeterminate?: boolean;
-  dAriaControls?: string;
-  dSize?: 'smaller' | 'larger';
   dDisabled?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dValue?: any;
+  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  dInputRef?: React.LegacyRef<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
-const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (props, ref) => {
+export function DCheckbox(props: DCheckboxProps) {
   const {
     dModel,
     dFormControlName,
     dIndeterminate = false,
-    dAriaControls,
-    dSize,
     dDisabled = false,
     dValue,
+    dInputProps,
+    dInputRef,
     onModelChange,
-    id,
     className,
     children,
     onChange,
@@ -39,47 +36,43 @@ const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralState();
   const [{ updateCheckboxs, removeCheckboxs, checkboxGroupValue, onCheckedChange }, checkboxGroupContext] =
     useCustomContext(DCheckboxGroupContext);
   //#endregion
 
   const uniqueId = useId();
-  const _id = id ?? `${dPrefix}checkbox-${uniqueId}`;
+  const _id = dInputProps?.id ?? `${dPrefix}checkbox-input-${uniqueId}`;
 
   useStateBackflow(updateCheckboxs, removeCheckboxs, _id, dValue);
 
   const inGroup = checkboxGroupContext !== null;
 
-  const [checked, changeChecked, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean | undefined, boolean>(
+  const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean | undefined, boolean>(
     false,
     dModel ?? (dIndeterminate ? [undefined] : inGroup ? [checkboxGroupValue?.includes(dValue) ?? false] : undefined),
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
 
-  const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || controlDisabled;
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e);
 
-      if (!disabled) {
-        changeChecked(dIndeterminate ? true : !checked);
-        if (inGroup) {
-          onCheckedChange?.(dValue, dIndeterminate ? true : !checked);
-        }
+      changeChecked(dIndeterminate ? true : !checked);
+      if (inGroup) {
+        onCheckedChange?.(dValue, dIndeterminate ? true : !checked);
       }
     },
-    [onChange, disabled, changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]
+    [onChange, changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]
   );
 
   return (
     <div
       {...restProps}
       className={getClassName(className, `${dPrefix}checkbox`, {
-        [`${dPrefix}checkbox--${size}`]: size,
         'is-indeterminate': dIndeterminate,
         'is-checked': !dIndeterminate && checked,
         'is-disabled': disabled,
@@ -87,15 +80,15 @@ const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (
     >
       <div className={`${dPrefix}checkbox__input-wrapper`}>
         <input
+          {...dInputProps}
           {...ariaAttribute}
-          ref={ref}
+          ref={dInputRef}
           id={_id}
-          className={getClassName(`${dPrefix}checkbox__input`, validateClassName)}
+          className={getClassName(dInputProps?.className, `${dPrefix}checkbox__input`)}
           type="checkbox"
           disabled={disabled}
           aria-labelledby={`${dPrefix}checkbox-label-${uniqueId}`}
           aria-checked={dIndeterminate ? 'mixed' : checked}
-          aria-controls={dAriaControls}
           onChange={handleChange}
         />
         {!dIndeterminate && checked && <div className={`${dPrefix}checkbox__tick`}></div>}
@@ -106,6 +99,4 @@ const Checkbox: React.ForwardRefRenderFunction<DCheckboxRef, DCheckboxProps> = (
       </label>
     </div>
   );
-};
-
-export const DCheckbox = React.forwardRef(Checkbox);
+}

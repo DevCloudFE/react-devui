@@ -59,8 +59,6 @@
 @include b(form-item) {
   position: relative;
 
-  overflow: hidden;
-
   @include m(vertical) {
     @include e(container) {
       flex-direction: column;
@@ -77,6 +75,7 @@
   @include e(container) {
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
   @include e(label) {
@@ -101,8 +100,6 @@
 
     @include m(colon) {
       &::after {
-        position: relative;
-
         margin-left: 2px;
 
         content: ':';
@@ -127,10 +124,14 @@
 
   @include e(content) {
     position: relative;
+
+    display: inline-flex;
+    align-items: center;
   }
 
   @include e(pending) {
     position: absolute;
+    z-index: 100;
 
     display: block;
     overflow: hidden;

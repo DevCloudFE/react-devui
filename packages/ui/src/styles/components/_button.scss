@@ -46,7 +46,8 @@
   }
 
   @include when(loading) {
-    cursor: not-allowed;
+    cursor: wait;
+    filter: opacity(50%);
   }
 
   @include m(primary) {
@@ -59,15 +60,8 @@
 
     background-color: var(--#{$variable-prefix}button-color);
 
-    &:disabled {
-      /* stylelint-disable-next-line scss/no-global-function-names */
+    &:disabled:not(.is-loading) {
       filter: saturate(50%) opacity(50%);
-    }
-
-    @include when(loading) {
-      border-color: var(--#{$variable-prefix}button-color-lighter);
-
-      background-color: var(--#{$variable-prefix}button-color-lighter);
     }
 
     @include button-hover {
@@ -90,7 +84,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(true, ':disabled');
+    @include utils-disabled(true, ':disabled:not(.is-loading)');
 
     @include button-hover {
       border-color: var(--#{$variable-prefix}button-color-lighter);
@@ -114,7 +108,7 @@
 
     background-color: transparent;
 
-    &:disabled {
+    &:disabled:not(.is-loading) {
       border-color: var(--#{$variable-prefix}border-color);
 
       color: var(--#{$variable-prefix}disabled-color);
@@ -142,7 +136,7 @@
 
     background-color: transparent;
 
-    &:disabled {
+    &:disabled:not(.is-loading) {
       border-color: var(--#{$variable-prefix}border-color);
 
       color: var(--#{$variable-prefix}disabled-color);
@@ -168,7 +162,7 @@
 
     background-color: transparent;
 
-    @include utils-disabled(true, ':disabled');
+    @include utils-disabled(true, ':disabled:not(.is-loading)');
 
     @include button-hover {
       color: var(--#{$variable-prefix}button-color-lighter);
@@ -190,7 +184,7 @@
 
     background-color: transparent;
 
-    &:disabled {
+    &:disabled:not(.is-loading) {
       color: var(--#{$variable-prefix}disabled-color);
     }
 

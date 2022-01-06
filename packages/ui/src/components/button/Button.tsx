@@ -60,17 +60,17 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   const buttonType = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
   const theme = isUndefined(props.dTheme) ? buttonGroupTheme ?? dTheme : dTheme;
   const size = dSize ?? gSize;
-  const _disabled = disabled || buttonGroupDisabled || gDisabled;
+  const _disabled = disabled || dLoading || buttonGroupDisabled || gDisabled;
 
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
 
-      if (!dLoading && (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed')) {
+      if (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed') {
         wave(e.currentTarget, `var(--${dPrefix}color-${theme})`);
       }
     },
-    [theme, dLoading, dPrefix, onClick, buttonType, wave]
+    [theme, dPrefix, onClick, buttonType, wave]
   );
 
   const buttonIcon = (loading: boolean, ref?: React.LegacyRef<HTMLSpanElement>) => (

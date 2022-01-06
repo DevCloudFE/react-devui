@@ -336,6 +336,8 @@
 
     display: inline-flex;
 
+    @include font-size(1rem);
+
     &::after {
       position: absolute;
 

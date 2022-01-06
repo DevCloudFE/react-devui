@@ -89,7 +89,7 @@ export function DFormItem(props: DFormItemProps) {
     return _props;
   })();
 
-  const [formItems, setFormItems] = useImmer(new Map<string, { formControlName: string; id: string }>());
+  const [formItems, setFormItems] = useImmer(new Map<string, { formControlName: string; id?: string }>());
 
   const getControl = useCallback(
     (formControlName: string) => {
@@ -278,10 +278,22 @@ export function DFormItem(props: DFormItemProps) {
     }
   }, [dLabelExtra]);
 
+  const handleLabelClick = useCallback<React.MouseEventHandler<HTMLLabelElement>>((e) => {
+    const id = e.currentTarget.getAttribute('for');
+    if (id) {
+      const el = document.getElementById(id);
+      if (el && el.tagName !== 'INPUT') {
+        e.preventDefault();
+        el.focus({ preventScroll: true });
+        el.click();
+      }
+    }
+  }, []);
+
   const stateBackflow = useMemo<Pick<DFormItemContextData, 'updateFormItems' | 'removeFormItems'>>(
     () => ({
       updateFormItems: (identity, formControlName, id) => {
-        if (isString(formControlName) && isString(id)) {
+        if (isString(formControlName)) {
           setFormItems((draft) => {
             draft.set(identity, { formControlName, id });
           });
@@ -321,7 +333,8 @@ export function DFormItem(props: DFormItemProps) {
           }
         )}
         style={{
-          flex: span === true ? '1 0 auto' : `0 0 ${isNumber(span) ? `calc((100% / 12) * ${span})` : span}`,
+          flexGrow: span === true ? 1 : undefined,
+          width: span === true ? undefined : isNumber(span) ? `calc((100% / 12) * ${span})` : span,
         }}
       >
         <div className={`${dPrefix}form-item__container`}>
@@ -334,7 +347,7 @@ export function DFormItem(props: DFormItemProps) {
                 })}
                 style={{ width: formLayout === 'vertical' ? undefined : labelWidth }}
               >
-                <label htmlFor={id}>
+                <label htmlFor={id} onClick={handleLabelClick}>
                   {dLabel}
                   {(extraNode || formCustomLabel === 'optional') && (
                     <div className={`${dPrefix}form-item__extra`}>

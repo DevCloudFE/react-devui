@@ -18,6 +18,8 @@
     height: var(--#{$variable-prefix}size);
     border: 1px solid var(--#{$variable-prefix}border-color);
 
+    font-size: var(--#{$variable-prefix}font);
+
     transition: border-color 116ms linear, background-color 116ms linear;
 
     &:first-of-type {
@@ -73,8 +75,6 @@
   display: inline-flex;
   align-items: center;
 
-  font-size: var(--#{$variable-prefix}font);
-
   cursor: pointer;
 
   @include utils-disabled;
@@ -127,14 +127,6 @@
         opacity: 1;
       }
     }
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
   }
 
   @include e(input-wrapper) {

@@ -1,7 +1,6 @@
 @include b(tag) {
   --#{$variable-prefix}tag-padding-size: 8px;
   --#{$variable-prefix}tag-size: 28px;
-  @include rfs(0.9rem, --#{$variable-prefix}tag-font);
 
   display: inline-flex;
   align-items: center;
@@ -9,9 +8,9 @@
   padding: 0 var(--#{$variable-prefix}tag-padding-size);
   border-radius: var(--#{$variable-prefix}border-radius);
 
-  font-size: var(--#{$variable-prefix}tag-font);
-
   vertical-align: top;
+
+  @include font-size(0.9rem);
 
   @include m(primary) {
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
@@ -45,13 +44,15 @@
   @include m(smaller) {
     --#{$variable-prefix}tag-padding-size: 6px;
     --#{$variable-prefix}tag-size: 24px;
-    @include rfs(0.75rem, --#{$variable-prefix}tag-font);
+
+    @include font-size(0.75rem);
   }
 
   @include m(larger) {
     --#{$variable-prefix}tag-padding-size: 10px;
     --#{$variable-prefix}tag-size: 32px;
-    @include rfs(1rem, --#{$variable-prefix}tag-font);
+
+    @include font-size(1rem);
   }
 
   @include e(close) {

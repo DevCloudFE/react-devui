@@ -123,6 +123,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
         'is-expanded': dExpanded,
         'is-disabled': disabled,
       })}
+      role="button"
       tabIndex={disabled ? undefined : tabIndex}
       aria-disabled={disabled}
       aria-haspopup="listbox"
