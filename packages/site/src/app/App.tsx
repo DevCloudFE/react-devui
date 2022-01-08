@@ -1,3 +1,5 @@
+import type { DLang, DTheme } from '@react-devui/ui/hooks/d-config';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -13,6 +15,8 @@ import { AppRoutes } from './routes/Routes';
 export interface AppContextData {
   menuOpen: boolean;
   pageMounted: boolean;
+  theme: DTheme;
+  changeTheme: (theme: DTheme) => void;
   onMount: () => void;
   onMenuOpenChange: (open: boolean) => void;
 }
@@ -24,6 +28,7 @@ export function App() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [pageMounted, setPageMounted] = useState(false);
+  const [theme, setTheme] = useState<DTheme>(() => (localStorage.getItem('theme') as DTheme) ?? 'light');
 
   const [mainEl, setMainEl] = useState<HTMLElement | null>(null);
   const mainRef = useCallback(
@@ -56,6 +61,14 @@ export function App() {
     }
   }, [asyncCapture, mainEl]);
 
+  useEffect(() => {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'position: absolute;top: -999px;left: -999px;overflow: scroll;width: 100px;height: 100px;');
+    document.body.appendChild(el);
+    document.body.classList.toggle('scrollbar-dark', theme === 'dark' && el.clientHeight < 100);
+    document.body.removeChild(el);
+  }, [theme]);
+
   const location = useLocation();
   useEffect(() => {
     NotificationService.closeAll(false);
@@ -66,6 +79,11 @@ export function App() {
     () => ({
       menuOpen,
       pageMounted,
+      theme,
+      changeTheme: (theme) => {
+        setTheme(theme);
+        localStorage.setItem('theme', theme);
+      },
       onMount: () => {
         setPageMounted(true);
         if (mainEl) {
@@ -82,11 +100,11 @@ export function App() {
         setMenuOpen(open);
       },
     }),
-    [mainEl, menuOpen, pageMounted, setMenuOpen, setPageMounted]
+    [mainEl, menuOpen, pageMounted, theme]
   );
 
   return (
-    <DRoot i18n={{ lang: i18n.language as 'en-US' | 'zh-Hant' }} icons={icons} contentSelector="main .app-route-article">
+    <DRoot theme={theme} i18n={{ lang: i18n.language as DLang }} icons={icons} contentSelector="main .app-route-article">
       <AppContext.Provider value={contextValue}>
         <AppHeader />
         <AppSidebar />

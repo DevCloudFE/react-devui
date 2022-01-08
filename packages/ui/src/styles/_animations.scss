@@ -10,13 +10,7 @@
   }
 }
 
-@keyframes wave-fade {
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes radio-wave {
+@keyframes wave-spread {
   0% {
     transform: scale(1);
     opacity: 0.5;
@@ -24,6 +18,12 @@
 
   100% {
     transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  100% {
     opacity: 0;
   }
 }

@@ -32,22 +32,37 @@
     @include when(checked) {
       @include e(input-wrapper) {
         &::before {
-          animation: radio-wave 0.36s ease-in-out;
+          animation: wave-spread 0.36s ease-in-out;
           animation-fill-mode: backwards;
         }
+
+        &::after {
+          opacity: 1;
+        }
+      }
+
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
       }
 
       @include e(tick) {
         animation: checkbox-tick 133ms ease-in-out;
         animation-fill-mode: backwards;
       }
-
-      @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
-      }
     }
 
     @include when(indeterminate) {
+      @include e(input-wrapper) {
+        &::before {
+          animation: wave-spread 0.36s ease-in-out;
+          animation-fill-mode: backwards;
+        }
+
+        &::after {
+          opacity: 1;
+        }
+      }
+
       @include e(input) {
         border-color: var(--#{$variable-prefix}color-primary);
       }
@@ -67,31 +82,11 @@
   @include when(disabled) {
     @include e(input-wrapper) {
       background-color: var(--#{$variable-prefix}disabled-background-color);
-
-      &::after {
-        background-color: var(--#{$variable-prefix}disabled-color);
-      }
     }
 
     @include e(tick) {
       &::after {
         border-color: var(--#{$variable-prefix}disabled-color);
-      }
-    }
-  }
-
-  @include when(checked) {
-    @include e(input-wrapper) {
-      &::after {
-        opacity: 1;
-      }
-    }
-  }
-
-  @include when(indeterminate) {
-    @include e(input-wrapper) {
-      &::after {
-        opacity: 1;
       }
     }
   }
@@ -102,6 +97,8 @@
     width: 16px;
     height: 16px;
     border-radius: var(--#{$variable-prefix}border-radius);
+
+    background-color: var(--#{$variable-prefix}input-background-color);
 
     &::before {
       position: absolute;
@@ -124,7 +121,6 @@
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: -1;
 
       border-radius: var(--#{$variable-prefix}border-radius);
 
@@ -143,6 +139,7 @@
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 1;
 
     border-radius: var(--#{$variable-prefix}border-radius);
 
@@ -169,6 +166,7 @@
     position: absolute;
     top: 7px;
     left: 4px;
+    z-index: 1;
 
     width: 8px;
     height: 2px;
@@ -181,7 +179,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 5;
 
     width: 100%;
     height: 100%;

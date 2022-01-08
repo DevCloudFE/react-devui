@@ -9,9 +9,12 @@
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 
+  color: var(--#{$variable-prefix}text-color);
   font: inherit;
   font-size: var(--#{$variable-prefix}font);
   letter-spacing: inherit;
+
+  background-color: var(--#{$variable-prefix}input-background-color);
 
   outline: none;
 
@@ -61,13 +64,13 @@
   }
 
   &::placeholder {
-    color: var(--#{$variable-prefix}color-step-400);
+    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
 
     transform: translateX(1px);
   }
 
   &:disabled::placeholder {
-    color: var(--#{$variable-prefix}color-step-100);
+    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
   }
 
   @include m(smaller) {
@@ -94,6 +97,8 @@
   border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
+
+  background-color: var(--#{$variable-prefix}input-background-color);
 
   transition: border-color 0.2s linear;
 

@@ -18,7 +18,7 @@
   text-transform: none;
   vertical-align: top;
 
-  background-color: var(--#{$variable-prefix}background-color);
+  background-color: var(--#{$variable-prefix}input-background-color);
 
   outline: none;
   cursor: pointer;
@@ -65,7 +65,7 @@
       color: var(--#{$variable-prefix}disabled-color);
     }
     .#{$variable-prefix}select-box__placeholder {
-      color: var(--#{$variable-prefix}color-step-100);
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
     }
   }
 
@@ -103,12 +103,17 @@
     padding: 0;
     border: none;
 
+    color: var(--#{$variable-prefix}text-color);
+
     font: inherit;
     letter-spacing: inherit;
+
+    background-color: transparent;
 
     outline: none;
 
     appearance: none;
+    caret-color: var(--#{$variable-prefix}color-primary);
 
     &::-webkit-search-cancel-button {
       display: none;
@@ -127,7 +132,7 @@
     display: flex;
     align-items: center;
 
-    color: var(--#{$variable-prefix}color-step-400);
+    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
 
     & > span {
       @include utils-ellipsis;

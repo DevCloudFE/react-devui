@@ -1,5 +1,5 @@
 export { getClassName } from './class-name';
-export { pSBC } from './color';
+export { pSBC, convertHex } from './color';
 export { copy } from './copy';
 export { getFragmentChildren } from './fragment-children';
 export { mergeStyle } from './merge-style';

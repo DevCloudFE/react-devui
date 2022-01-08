@@ -11,14 +11,11 @@ $select-option-height: 32px;
   @include when(disabled) {
     .#{$variable-prefix}tag {
       &.#{$variable-prefix}select__multiple-count {
-        background-color: var(--#{$variable-prefix}color-step-100);
         cursor: pointer;
       }
 
       &:not(.#{$variable-prefix}select__multiple-count) {
         color: var(--#{$variable-prefix}disabled-color);
-
-        background-color: var(--#{$variable-prefix}color-step-70);
       }
     }
 
@@ -61,7 +58,7 @@ $select-option-height: 32px;
       }
 
       &:not(.is-selected):hover {
-        background-color: var(--#{$variable-prefix}color-step-50);
+        background-color: var(--#{$variable-prefix}hover-background-color);
       }
     }
 

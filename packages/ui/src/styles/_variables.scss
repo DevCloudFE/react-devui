@@ -37,8 +37,9 @@ $themes: (
   --#{$variable-prefix}border-radius-larger: 4px;
 
   /** basic **/
-  --#{$variable-prefix}text-color: #212529;
-  --#{$variable-prefix}background-color: #fff;
+  --#{$variable-prefix}text-color: rgb(33 37 41);
+  --#{$variable-prefix}text-color-rgb: 33 37 41;
+  --#{$variable-prefix}background-color: rgb(255 255 255);
   --#{$variable-prefix}background-color-rgb: 255 255 255;
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}divider-color: #eee;
@@ -46,6 +47,8 @@ $themes: (
   --#{$variable-prefix}indicator-background-color: #dfe1e6;
   --#{$variable-prefix}disabled-background-color: #f5f5f5;
   --#{$variable-prefix}disabled-color: #d5d5d5;
+  --#{$variable-prefix}hover-background-color: rgb(0 0 0 / 4%);
+  --#{$variable-prefix}input-background-color: #fff;
 
   /** step **/
   --#{$variable-prefix}color-step-10: hsl(0deg 0% 99%);
@@ -90,16 +93,16 @@ $themes: (
     --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
 
     /** background **/
-    --#{$variable-prefix}color-#{$theme}-background: #{color.scale(rgb($rgb), $lightness: 90%)};
-    --#{$variable-prefix}color-#{$theme}-background-1: #{color.scale(rgb($rgb), $lightness: 91%)};
-    --#{$variable-prefix}color-#{$theme}-background-2: #{color.scale(rgb($rgb), $lightness: 92%)};
-    --#{$variable-prefix}color-#{$theme}-background-3: #{color.scale(rgb($rgb), $lightness: 93%)};
-    --#{$variable-prefix}color-#{$theme}-background-4: #{color.scale(rgb($rgb), $lightness: 94%)};
-    --#{$variable-prefix}color-#{$theme}-background-5: #{color.scale(rgb($rgb), $lightness: 95%)};
-    --#{$variable-prefix}color-#{$theme}-background-6: #{color.scale(rgb($rgb), $lightness: 96%)};
-    --#{$variable-prefix}color-#{$theme}-background-7: #{color.scale(rgb($rgb), $lightness: 97%)};
-    --#{$variable-prefix}color-#{$theme}-background-8: #{color.scale(rgb($rgb), $lightness: 98%)};
-    --#{$variable-prefix}color-#{$theme}-background-9: #{color.scale(rgb($rgb), $lightness: 99%)};
+    --#{$variable-prefix}color-#{$theme}-background: #{color.scale(rgb($rgb), $alpha: -90%)};
+    --#{$variable-prefix}color-#{$theme}-background-1: #{color.scale(rgb($rgb), $alpha: -91%)};
+    --#{$variable-prefix}color-#{$theme}-background-2: #{color.scale(rgb($rgb), $alpha: -92%)};
+    --#{$variable-prefix}color-#{$theme}-background-3: #{color.scale(rgb($rgb), $alpha: -93%)};
+    --#{$variable-prefix}color-#{$theme}-background-4: #{color.scale(rgb($rgb), $alpha: -94%)};
+    --#{$variable-prefix}color-#{$theme}-background-5: #{color.scale(rgb($rgb), $alpha: -95%)};
+    --#{$variable-prefix}color-#{$theme}-background-6: #{color.scale(rgb($rgb), $alpha: -96%)};
+    --#{$variable-prefix}color-#{$theme}-background-7: #{color.scale(rgb($rgb), $alpha: -97%)};
+    --#{$variable-prefix}color-#{$theme}-background-8: #{color.scale(rgb($rgb), $alpha: -98%)};
+    --#{$variable-prefix}color-#{$theme}-background-9: #{color.scale(rgb($rgb), $alpha: -99%)};
   }
 
   /** component **/
@@ -107,4 +110,6 @@ $themes: (
   --#{$variable-prefix}tooltip-background-color: #464d6e;
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}empty-color: #a8afbc;
+  --#{$variable-prefix}switch-background-color: #d4d6d9;
+  --#{$variable-prefix}tag-background-color: rgb(0 0 0 / 6%);
 }

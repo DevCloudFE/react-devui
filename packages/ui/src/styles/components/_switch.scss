@@ -25,7 +25,17 @@
   }
 
   @include when(disabled) {
-    filter: saturate(50%) opacity(50%);
+    color: var(--#{$variable-prefix}disabled-color);
+
+    filter: brightness(110%) grayscale(50%);
+
+    @include when(checked) {
+      filter: saturate(50%) grayscale(50%);
+    }
+
+    @include e(state-dot) {
+      filter: opacity(50%);
+    }
 
     @include e(input) {
       cursor: not-allowed;
@@ -33,7 +43,21 @@
   }
 
   @include when(loading) {
-    filter: opacity(50%);
+    @include e(state-container) {
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        border-radius: inherit;
+
+        background-color: rgb(255 255 255 / 30%);
+
+        content: '';
+      }
+    }
 
     @include e(input) {
       cursor: wait;
@@ -79,7 +103,7 @@
     padding: 0 6px;
     border-radius: 11px;
 
-    background-color: var(--#{$variable-prefix}color-step-100);
+    background-color: var(--#{$variable-prefix}switch-background-color);
 
     transition: background-color 0.1s ease-out;
   }

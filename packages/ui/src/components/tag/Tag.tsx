@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState } from '../../hooks';
-import { getClassName, pSBC } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState, useThemeConfig } from '../../hooks';
+import { convertHex, getClassName, pSBC } from '../../utils';
 import { DIcon } from '../icon';
 
 export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -29,6 +29,7 @@ export function DTag(props: DTagProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const theme = useThemeConfig();
   const { gDisabled } = useGeneralState();
   //#endregion
 
@@ -55,7 +56,7 @@ export function DTag(props: DTagProps) {
           ? {
               [`--${dPrefix}tag-color`]: dColor,
               [`--${dPrefix}tag-border-color`]: pSBC(0.3, dColor),
-              [`--${dPrefix}tag-background-color`]: pSBC(0.92, dColor),
+              [`--${dPrefix}tag-background-color`]: convertHex(dColor, theme === 'light' ? 0.08 : 0.12),
             }
           : undefined
       }

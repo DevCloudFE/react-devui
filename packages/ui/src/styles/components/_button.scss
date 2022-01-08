@@ -47,7 +47,21 @@
 
   @include when(loading) {
     cursor: wait;
-    filter: opacity(50%);
+
+    &::after {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      left: -1px;
+
+      border-radius: inherit;
+
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      background-color: rgb(255 255 255 / 30%);
+
+      content: '';
+    }
   }
 
   @include m(primary) {
@@ -61,7 +75,7 @@
     background-color: var(--#{$variable-prefix}button-color);
 
     &:disabled:not(.is-loading) {
-      filter: saturate(50%) opacity(50%);
+      filter: saturate(50%) grayscale(50%);
     }
 
     @include button-hover {

@@ -1,0 +1,89 @@
+/* stylelint-disable scss/operator-no-unspaced */
+/* stylelint-disable declaration-property-value-allowed-list */
+@use 'sass:color';
+
+$dark-themes: (
+  'primary': 94 124 224,
+  'success': 47 223 117,
+  'warning': 255 213 52,
+  'danger': 255 73 97,
+) !default;
+
+body.dark {
+  /** basic **/
+  --#{$variable-prefix}text-color: rgb(205 205 205);
+  --#{$variable-prefix}text-color-rgb: 205 205 205;
+  --#{$variable-prefix}background-color: rgb(31 31 31);
+  --#{$variable-prefix}background-color-rgb: 31 31 31;
+  --#{$variable-prefix}shadow-color: rgb(0 0 0 / 48%);
+  --#{$variable-prefix}divider-color: #303030;
+  --#{$variable-prefix}border-color: #434343;
+  --#{$variable-prefix}indicator-background-color: #3d3e40;
+  --#{$variable-prefix}disabled-background-color: #2c2c2c;
+  --#{$variable-prefix}disabled-color: #4e4e50;
+  --#{$variable-prefix}hover-background-color: rgb(255 255 255 / 6%);
+  --#{$variable-prefix}input-background-color: #121212;
+
+  /** step **/
+  --#{$variable-prefix}color-step-10: hsl(0deg 0% 1%);
+  --#{$variable-prefix}color-step-20: hsl(0deg 0% 2%);
+  --#{$variable-prefix}color-step-30: hsl(0deg 0% 3%);
+  --#{$variable-prefix}color-step-40: hsl(0deg 0% 4%);
+  --#{$variable-prefix}color-step-50: hsl(0deg 0% 5%);
+  --#{$variable-prefix}color-step-60: hsl(0deg 0% 6%);
+  --#{$variable-prefix}color-step-70: hsl(0deg 0% 7%);
+  --#{$variable-prefix}color-step-80: hsl(0deg 0% 8%);
+  --#{$variable-prefix}color-step-90: hsl(0deg 0% 9%);
+  --#{$variable-prefix}color-step-100: hsl(0deg 0% 10%);
+  --#{$variable-prefix}color-step-150: hsl(0deg 0% 15%);
+  --#{$variable-prefix}color-step-200: hsl(0deg 0% 20%);
+  --#{$variable-prefix}color-step-250: hsl(0deg 0% 25%);
+  --#{$variable-prefix}color-step-300: hsl(0deg 0% 30%);
+  --#{$variable-prefix}color-step-350: hsl(0deg 0% 35%);
+  --#{$variable-prefix}color-step-400: hsl(0deg 0% 40%);
+  --#{$variable-prefix}color-step-450: hsl(0deg 0% 45%);
+  --#{$variable-prefix}color-step-500: hsl(0deg 0% 50%);
+  --#{$variable-prefix}color-step-550: hsl(0deg 0% 55%);
+  --#{$variable-prefix}color-step-600: hsl(0deg 0% 60%);
+  --#{$variable-prefix}color-step-650: hsl(0deg 0% 65%);
+  --#{$variable-prefix}color-step-700: hsl(0deg 0% 70%);
+  --#{$variable-prefix}color-step-750: hsl(0deg 0% 75%);
+  --#{$variable-prefix}color-step-800: hsl(0deg 0% 80%);
+  --#{$variable-prefix}color-step-850: hsl(0deg 0% 85%);
+  --#{$variable-prefix}color-step-900: hsl(0deg 0% 90%);
+  --#{$variable-prefix}color-step-950: hsl(0deg 0% 95%);
+
+  @each $theme, $rgb in $dark-themes {
+    /** rgb **/
+    --#{$variable-prefix}color-#{$theme}-rgb: #{$rgb};
+
+    /** theme **/
+    --#{$variable-prefix}color-#{$theme}: rgb(#{$rgb});
+
+    /** lighter **/
+    --#{$variable-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
+
+    /** darker **/
+    --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+
+    /** background **/
+    --#{$variable-prefix}color-#{$theme}-background: #{color.scale(rgb($rgb), $alpha: -85%)};
+    --#{$variable-prefix}color-#{$theme}-background-1: #{color.scale(rgb($rgb), $alpha: -86%)};
+    --#{$variable-prefix}color-#{$theme}-background-2: #{color.scale(rgb($rgb), $alpha: -87%)};
+    --#{$variable-prefix}color-#{$theme}-background-3: #{color.scale(rgb($rgb), $alpha: -88%)};
+    --#{$variable-prefix}color-#{$theme}-background-4: #{color.scale(rgb($rgb), $alpha: -89%)};
+    --#{$variable-prefix}color-#{$theme}-background-5: #{color.scale(rgb($rgb), $alpha: -90%)};
+    --#{$variable-prefix}color-#{$theme}-background-6: #{color.scale(rgb($rgb), $alpha: -91%)};
+    --#{$variable-prefix}color-#{$theme}-background-7: #{color.scale(rgb($rgb), $alpha: -92%)};
+    --#{$variable-prefix}color-#{$theme}-background-8: #{color.scale(rgb($rgb), $alpha: -93%)};
+    --#{$variable-prefix}color-#{$theme}-background-9: #{color.scale(rgb($rgb), $alpha: -94%)};
+  }
+
+  /** component **/
+  --#{$variable-prefix}tooltip-text-color: #d0d2d7;
+  --#{$variable-prefix}tooltip-background-color: #686a72;
+  --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 40%);
+  --#{$variable-prefix}empty-color: #868a93;
+  --#{$variable-prefix}switch-background-color: #5f6164;
+  --#{$variable-prefix}tag-background-color: rgb(255 255 255 / 10%);
+}

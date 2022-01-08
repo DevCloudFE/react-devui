@@ -8,12 +8,15 @@ interface Resources {
   [index: string]: string | Resources;
 }
 
+export type DTheme = 'light' | 'dark';
+export type DLang = 'en-US' | 'zh-Hant';
 export interface DConfigContextData {
   prefix?: string;
+  theme?: DTheme;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   componentConfigs?: { [index: string]: any };
   i18n?: {
-    lang?: 'en-US' | 'zh-Hant';
+    lang?: DLang;
     resources?: Resources;
   };
   icons?: Array<{
@@ -31,6 +34,11 @@ export const DConfigContext = React.createContext<DConfigContextData>({});
 export function usePrefixConfig() {
   const prefix = useContext(DConfigContext).prefix ?? 'd-';
   return prefix;
+}
+
+export function useThemeConfig() {
+  const theme = useContext(DConfigContext).theme ?? 'light';
+  return theme;
 }
 
 export function useComponentConfig<T>(component: string, props: T): T {

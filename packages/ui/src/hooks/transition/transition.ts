@@ -4,7 +4,8 @@ import { isFunction } from 'lodash';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useAsync, useImmer } from '../../hooks';
+import { useAsync } from '../async';
+import { useImmer } from '../immer';
 import { CssRecord, getMaxTime } from './utils';
 
 export interface DTransitionStateList {

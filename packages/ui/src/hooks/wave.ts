@@ -33,7 +33,7 @@ export function useWave() {
       waveEl.style.boxShadow = `0px 0px 0px 0px ${color}`;
       waveEl.style.opacity = '0.2';
       waveEl.style.setProperty(`--${dPrefix}wave-color`, color);
-      waveEl.style.animation = animation ?? 'wave 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), wave-fade 2s cubic-bezier(0.08, 0.82, 0.17, 1)';
+      waveEl.style.animation = animation ?? 'wave 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), fade-out 2s cubic-bezier(0.08, 0.82, 0.17, 1)';
       waveEl.style.animationFillMode = 'forwards';
 
       el.appendChild(waveEl);

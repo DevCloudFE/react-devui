@@ -27,3 +27,22 @@ export const pSBC=(p,c0,c1?:any,l?:any)=>{
 	if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
 	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 }
+
+export function convertHex(hexCode, opacity = 1){
+    var hex = hexCode.replace('#', '');
+
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+
+    var r = parseInt(hex.substring(0,2), 16),
+        g = parseInt(hex.substring(2,4), 16),
+        b = parseInt(hex.substring(4,6), 16);
+
+    /* Backward compatibility for whole number based opacity values. */
+    if (opacity > 1 && opacity <= 100) {
+        opacity = opacity / 100;   
+    }
+    
+    return 'rgba('+r+','+g+','+b+','+opacity+')';
+}

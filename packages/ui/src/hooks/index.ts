@@ -2,7 +2,7 @@ export { useAsync } from './async';
 export { useTranslation } from './i18n';
 export { useDTransition, useDCollapseTransition } from './transition';
 export { useCustomContext } from './context';
-export { usePrefixConfig, useContentRefConfig, useComponentConfig } from './d-config';
+export { usePrefixConfig, useThemeConfig, useContentRefConfig, useComponentConfig } from './d-config';
 export { useRefSelector } from './element-ref';
 export { useGeneralState, DGeneralStateContext } from './general-state';
 export { useImmer, useImmerReducer } from './immer';

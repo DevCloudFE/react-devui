@@ -3,6 +3,8 @@
 .app-demo-box {
   border: 1px solid var(--d-divider-color);
 
+  background-color: var(--app-demo-box-background-color);
+
   &.is-active {
     border-color: var(--d-color-primary);
   }
@@ -35,7 +37,7 @@
 
   padding: 1px 8px;
 
-  background-color: var(--d-background-color);
+  background-color: var(--app-demo-box-background-color);
 }
 
 .app-demo-box__description {

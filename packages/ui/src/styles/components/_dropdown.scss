@@ -16,7 +16,7 @@ $dropdown-item-height: 32px;
   &:not(.is-disabled) {
     &:focus,
     &:hover {
-      background-color: var(--#{$variable-prefix}color-step-50);
+      background-color: var(--#{$variable-prefix}hover-background-color);
     }
   }
 

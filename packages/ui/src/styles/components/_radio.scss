@@ -89,7 +89,7 @@
     @include when(checked) {
       @include e(input-wrapper) {
         &::before {
-          animation: radio-wave 0.36s ease-in-out;
+          animation: wave-spread 0.36s ease-in-out;
           animation-fill-mode: backwards;
         }
       }
@@ -135,6 +135,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
+
+    background-color: var(--#{$variable-prefix}input-background-color);
 
     &::before {
       position: absolute;

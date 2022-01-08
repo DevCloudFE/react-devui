@@ -1,4 +1,4 @@
-/* stylelint-disable selector-id-pattern */
+/* stylelint-disable declaration-property-value-allowed-list */
 *,
 *::before,
 *::after {
@@ -15,10 +15,8 @@ body {
   line-height: 1.5;
   text-align: null;
 
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
-  background-color: white; // 2
+  background-color: #fff; // 2
   text-size-adjust: 100%; // 3
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   -webkit-tap-highlight-color: rgb(0 0 0 / 0%); // 4
 
   @include font-size(1rem);
@@ -100,7 +98,6 @@ pre code.hljs {
 code:not(pre > code) {
   margin: 0 1px;
   padding: 4px 6px;
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   border-radius: 2px;
 
   font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
@@ -235,7 +232,6 @@ h3 {
   width: 160px;
   height: 40px;
 
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   color: #fff;
 
   background-color: var(--d-color-primary);
@@ -271,7 +267,6 @@ h3 {
   justify-content: center;
   height: 48px;
 
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   color: #fff;
 
   background-color: var(--d-color-primary);

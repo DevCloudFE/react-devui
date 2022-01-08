@@ -9,9 +9,8 @@
     height: 100%;
 
     background-color: var(--#{$variable-prefix}background-color);
+    outline: none;
     box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
-
-    @include utils-outline;
 
     @include m(top) {
       top: 0;
