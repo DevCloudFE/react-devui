@@ -41,27 +41,12 @@
 
   appearance: none;
 
-  &:disabled {
+  &:disabled:not(.is-loading) {
     cursor: not-allowed;
   }
 
   @include when(loading) {
     cursor: wait;
-
-    &::after {
-      position: absolute;
-      top: -1px;
-      right: -1px;
-      bottom: -1px;
-      left: -1px;
-
-      border-radius: inherit;
-
-      /* stylelint-disable-next-line declaration-property-value-allowed-list */
-      background-color: rgb(255 255 255 / 30%);
-
-      content: '';
-    }
   }
 
   @include m(primary) {
@@ -76,6 +61,10 @@
 
     &:disabled:not(.is-loading) {
       filter: saturate(50%) grayscale(50%);
+    }
+
+    @include when(loading) {
+      @include utils-loading('1px');
     }
 
     @include button-hover {
@@ -233,11 +222,6 @@
 
   @include m(block) {
     width: 100%;
-
-    & + & {
-      margin-top: 10px;
-      margin-left: 0;
-    }
   }
 
   @include m(icon) {

@@ -209,9 +209,5 @@
     height: unset;
 
     color: var(--d-color-step-400);
-
-    & + & {
-      margin: 0;
-    }
   }
 }
