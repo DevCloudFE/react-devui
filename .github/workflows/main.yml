@@ -14,9 +14,9 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn lint:affected
       - run: yarn lint:style
   test:
@@ -28,11 +28,12 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn test:affected
   build-site:
+    needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -40,9 +41,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production
       - uses: garygrossgarten/github-action-scp@release
         with:
