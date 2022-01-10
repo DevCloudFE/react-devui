@@ -15,9 +15,9 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn lint:affected
       - run: yarn lint:style
   test:
@@ -30,13 +30,16 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn test:affected
       - uses: codecov/codecov-action@v2
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,9 +48,9 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: ${{ matrix.node }}
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn build:affected
   pr-preview:
     runs-on: ubuntu-latest
@@ -80,11 +83,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '16.13'
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production
       - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
       - uses: dswistowski/surge-sh-action@v1

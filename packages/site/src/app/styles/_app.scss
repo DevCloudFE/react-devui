@@ -91,18 +91,18 @@ pre > code {
   font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 }
 
-pre code.hljs {
-  background-color: var(--app-code-background-color);
+pre > code.hljs {
+  background-color: var(--app-code-background-color) !important;
 }
 
-code:not(pre > code) {
+code:not(.hljs) {
   margin: 0 1px;
   padding: 4px 6px;
   border-radius: 2px;
 
   font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 
-  background-color: var(--app-code-background-color);
+  background-color: var(--app-code-background-color) !important;
 }
 
 h1 {

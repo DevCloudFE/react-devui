@@ -83,7 +83,9 @@
     margin: 0;
   }
 
-  pre code.hljs {
+  pre > code.hljs {
     padding: 24px;
+
+    background-color: transparent !important;
   }
 }
