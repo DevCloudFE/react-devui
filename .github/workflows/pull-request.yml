@@ -5,8 +5,11 @@ on:
     types: [assigned, opened, synchronize, reopened]
 
 jobs:
-  lint:
+  setup:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -15,41 +18,28 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: ${{ matrix.node }}
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
       - run: yarn lint:affected
       - run: yarn lint:style
   test:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          cache: 'yarn'
-      - run: yarn install
       - run: yarn test:affected
       - uses: codecov/codecov-action@v2
   build:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          cache: 'yarn'
-      - run: yarn install
       - run: yarn build:affected
   pr-preview:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Find Comment
@@ -77,14 +67,6 @@ jobs:
             <!-- pr-preview-comment -->
             After the build is complete, you can preview the website here. :coffee: :coffee: :coffee:
           edit-mode: replace
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          cache: 'yarn'
-      - run: yarn install
       - run: yarn nx build site --configuration=production
       - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
       - uses: dswistowski/surge-sh-action@v1
