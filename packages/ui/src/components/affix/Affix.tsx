@@ -24,7 +24,7 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
   dTop?: string | number;
   dBottom?: string | number;
-  dZIndex?: number;
+  dZIndex?: string | number;
   onFixedChange?: (fixed: boolean) => void;
 }
 
@@ -33,7 +33,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     dTarget,
     dTop = 0,
     dBottom = 0,
-    dZIndex = 900,
+    dZIndex,
     onFixedChange,
     className,
     style,
@@ -86,7 +86,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
       if (fixedCondition) {
         setFixedStyle({
           position: 'fixed',
-          zIndex: dZIndex,
+          zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
           width: offsetRect.width,
           height: offsetRect.height,
           left: offsetRect.left,

@@ -1,6 +1,6 @@
 @mixin notification-root {
   position: fixed;
-  z-index: 10000;
+  z-index: var(--#{$variable-prefix}zindex-max);
 
   pointer-events: none;
 }

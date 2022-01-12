@@ -18,14 +18,14 @@ import { DDropContext } from './Drop';
 export interface DDragProps {
   dId?: string;
   dPlaceholder?: React.ReactNode;
-  dZIndex?: number;
+  dZIndex?: string | number;
   children: React.ReactNode;
   onDragStart?: () => void;
   onDragEnd?: () => void;
 }
 
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex = 1000, children, onDragStart, onDragEnd } = useComponentConfig(DDrag.name, props);
+  const { dId, dPlaceholder, dZIndex, children, onDragStart, onDragEnd } = useComponentConfig(DDrag.name, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -257,7 +257,7 @@ export function DDrag(props: DDragProps) {
         setFixedStyle({
           position: 'fixed',
           margin: 0,
-          zIndex: dZIndex,
+          zIndex: dZIndex ?? `var(--${dPrefix}zindex-fixed)`,
           top: rect.top,
           left: rect.left,
           width: rect.width,

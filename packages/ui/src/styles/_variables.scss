@@ -13,10 +13,12 @@ $themes: (
 
 :root {
   /** z-index **/
-  --#{$variable-prefix}disabled-z-index: 10;
-  --#{$variable-prefix}active-z-index: 20;
-  --#{$variable-prefix}hover-z-index: 21;
-  --#{$variable-prefix}absolute-z-index: 100;
+  --#{$variable-prefix}zindex-active: 20;
+  --#{$variable-prefix}zindex-hover: 30;
+  --#{$variable-prefix}zindex-absolute: 100;
+  --#{$variable-prefix}zindex-sticky: 900;
+  --#{$variable-prefix}zindex-fixed: 1000;
+  --#{$variable-prefix}zindex-max: 10000;
 
   /** size **/
   --#{$variable-prefix}size: 36px;

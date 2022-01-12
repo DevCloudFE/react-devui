@@ -2,7 +2,7 @@
   position: fixed;
   right: 20px;
   left: 20px;
-  z-index: 10000;
+  z-index: var(--#{$variable-prefix}zindex-max);
 
   display: flex;
   flex-direction: column;

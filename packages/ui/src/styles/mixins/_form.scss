@@ -6,7 +6,7 @@
     #{$form-item-selector} {
       @include when(pending) {
         #{$selector}.is-pending {
-          z-index: var(--#{$variable-prefix}active-z-index) !important;
+          z-index: var(--#{$variable-prefix}zindex-active) !important;
 
           border-color: var(--#{$variable-prefix}border-color) !important;
         }
@@ -14,7 +14,7 @@
 
       @include when(error) {
         #{$selector}.is-invalid {
-          z-index: var(--#{$variable-prefix}active-z-index) !important;
+          z-index: var(--#{$variable-prefix}zindex-active) !important;
 
           border-color: var(--#{$variable-prefix}color-danger) !important;
           caret-color: var(--#{$variable-prefix}color-danger) !important;
@@ -22,7 +22,7 @@
       }
       @include when(warning) {
         #{$selector}.is-invalid {
-          z-index: var(--#{$variable-prefix}active-z-index) !important;
+          z-index: var(--#{$variable-prefix}zindex-active) !important;
 
           border-color: var(--#{$variable-prefix}color-warning) !important;
           caret-color: var(--#{$variable-prefix}color-warning) !important;

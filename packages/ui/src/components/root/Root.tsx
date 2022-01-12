@@ -21,6 +21,13 @@ export function DRoot(props: DRootProps) {
 
   useLayoutEffect(() => {
     document.body.classList.toggle('dark', theme === 'dark');
+    if (theme === 'dark') {
+      const colorScheme = document.documentElement.style.colorScheme;
+      document.documentElement.style.colorScheme = 'dark';
+      return () => {
+        document.documentElement.style.colorScheme = colorScheme;
+      };
+    }
   }, [theme]);
 
   const context = useMemo<DConfigContextData>(

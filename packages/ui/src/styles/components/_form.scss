@@ -131,7 +131,7 @@
 
   @include e(pending) {
     position: absolute;
-    z-index: 100;
+    z-index: calc(var(--#{$variable-prefix}zindex-active) + 1);
 
     display: block;
     overflow: hidden;

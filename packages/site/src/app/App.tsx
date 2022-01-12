@@ -45,14 +45,6 @@ export function App() {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  useLayoutEffect(() => {
-    const el = document.createElement('div');
-    el.setAttribute('style', 'position: absolute;top: -999px;left: -999px;overflow: scroll;width: 100px;height: 100px;');
-    document.body.appendChild(el);
-    document.body.classList.toggle('scrollbar-dark', theme === 'dark' && el.clientHeight < 100);
-    document.body.removeChild(el);
-  }, [theme]);
-
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (mainEl) {

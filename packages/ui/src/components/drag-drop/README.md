@@ -18,7 +18,7 @@ Need to dynamically adjust the component position.
 | --- | --- | --- | --- | 
 | dId | Uniquely identifies | string | - |
 | dPlaceholder | Placeholder node | React.ReactNode | - |
-| dZIndex | Manually set `zIndex` | number | 1000 |
+| dZIndex | Manually set `zIndex` | number | - |
 | children | Drag node | React.ReactNode | - |
 | onDragStart | Callback for the start of the drag | `() => void` | - |
 | onDragEnd | Callback for the end of the drag | `() => void` | - |
@@ -34,7 +34,7 @@ Need to dynamically adjust the component position.
 | dGetId | get unique id | `(item: T) => string` | - |
 | dContainer | The container where the node is placed | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dDirection | The direction of the container to place the node | 'horizontal' \| 'vertical' | 'vertical' |
-| dPlaceholder | Placeholder node | React.ReactNode | 1000 |
+| dPlaceholder | Placeholder node | React.ReactNode | - |
 | onListChange | Callback for list order change | `(list: T[]) => void` | - |
 | onDragStart | Callback for the start of the drag | `(id: string) => void` | - |
 | onDragEnd | Callback for the end of the drag | `(id: string) => void` | - |

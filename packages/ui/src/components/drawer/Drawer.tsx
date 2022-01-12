@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 import type { Updater } from '../../hooks/two-way-binding';
 
-import { isUndefined, toNumber } from 'lodash';
+import { isUndefined } from 'lodash';
 import React, { useCallback, useId, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -41,7 +41,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
-  __zIndex?: number;
+  __zIndex?: string | number;
 }
 
 export function DDrawer(props: DDrawerProps) {
@@ -147,7 +147,7 @@ export function DDrawer(props: DDrawerProps) {
         if (isFixed) {
           return maxZIndex;
         } else {
-          return toNumber(getComputedStyle(document.body).getPropertyValue(`--${dPrefix}absolute-z-index`));
+          return `var(--${dPrefix}zindex-absolute)`;
         }
       } else {
         return __zIndex;
@@ -194,7 +194,7 @@ export function DDrawer(props: DDrawerProps) {
         __onVisibleChange: (distance) => {
           setDistance(distance);
         },
-        __zIndex: isUndefined(zIndex) ? zIndex : zIndex + 1,
+        __zIndex: isUndefined(zIndex) ? zIndex : `calc(${zIndex} + 1)`,
       });
     }
     return null;

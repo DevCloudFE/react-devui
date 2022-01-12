@@ -40,20 +40,20 @@
     @include form-validate;
 
     &:hover {
-      z-index: var(--#{$variable-prefix}hover-z-index);
+      z-index: var(--#{$variable-prefix}zindex-hover);
 
       border-color: var(--#{$variable-prefix}color-primary-lighter);
     }
 
     &:focus {
-      z-index: var(--#{$variable-prefix}hover-z-index);
+      z-index: var(--#{$variable-prefix}zindex-hover);
 
       border-color: var(--#{$variable-prefix}color-primary);
     }
   }
 
   @include when(expanded) {
-    z-index: var(--#{$variable-prefix}hover-z-index);
+    z-index: var(--#{$variable-prefix}zindex-hover);
 
     border-color: var(--#{$variable-prefix}color-primary);
   }

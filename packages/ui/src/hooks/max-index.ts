@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import { usePrefixConfig } from './d-config';
+
 const MAX_INDEX_MANAGER = {
   record: new Map<symbol, number>(),
 
   getMaxIndex(): [symbol, number] {
     const key = Symbol();
-    let maxZIndex = 1000;
+    let maxZIndex = 0;
     for (const num of this.record.values()) {
       maxZIndex = Math.max(maxZIndex, num);
     }
@@ -20,17 +22,18 @@ const MAX_INDEX_MANAGER = {
 };
 
 export function useMaxIndex(getIndex: boolean) {
-  const [zIndex, setZIndex] = useState(1000);
+  const dPrefix = usePrefixConfig();
+  const [zIndex, setZIndex] = useState(`var(--${dPrefix}zindex-fixed)`);
 
   useEffect(() => {
     if (getIndex) {
       const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
-      setZIndex(maxZIndex);
+      setZIndex(`calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`);
       return () => {
         MAX_INDEX_MANAGER.deleteRecord(key);
       };
     }
-  }, [getIndex]);
+  }, [dPrefix, getIndex]);
 
   return zIndex;
 }

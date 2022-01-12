@@ -2,7 +2,7 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import type { DTransitionStateList } from '../../hooks/transition';
 import type { DPlacement } from '../../utils/position';
 
-import { isUndefined, toNumber } from 'lodash';
+import { isUndefined } from 'lodash';
 import React, { useId, useCallback, useEffect, useMemo, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM, { flushSync } from 'react-dom';
 import { filter } from 'rxjs';
@@ -320,7 +320,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         if (isFixed) {
           return maxZIndex;
         } else {
-          return toNumber(getComputedStyle(document.body).getPropertyValue(`--${dPrefix}absolute-z-index`));
+          return `var(--${dPrefix}zindex-absolute)`;
         }
       } else {
         return dZIndex;

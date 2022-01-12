@@ -1,14 +1,14 @@
 @mixin button-hover {
   &:not([disabled]):not(.is-loading):hover,
   &:not([disabled]):not(.is-loading):focus {
-    z-index: var(--#{$variable-prefix}hover-z-index);
+    z-index: var(--#{$variable-prefix}zindex-hover);
     @content;
   }
 }
 
 @mixin button-active {
   &:not([disabled]):not(.is-loading):active {
-    z-index: var(--#{$variable-prefix}active-z-index);
+    z-index: var(--#{$variable-prefix}zindex-active);
     @content;
   }
 }
@@ -49,8 +49,6 @@
   }
 
   @include m(primary) {
-    z-index: 1;
-
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px solid var(--#{$variable-prefix}button-color);
 
@@ -104,8 +102,6 @@
   }
 
   @include m(outline) {
-    z-index: 1;
-
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px solid var(--#{$variable-prefix}button-color);
 
@@ -133,8 +129,6 @@
   }
 
   @include m(dashed) {
-    z-index: 1;
-
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px dashed var(--#{$variable-prefix}button-color);
 
