@@ -1,4 +1,5 @@
 import type { Updater } from '../../hooks/two-way-binding';
+import type { DTriggerRenderProps } from '../_popup';
 import type { DDropdownItemProps } from './DropdownItem';
 
 import React, { useId, useCallback, useEffect, useMemo, useState } from 'react';
@@ -141,7 +142,52 @@ export function DDropdown(props: DDropdownProps) {
     });
   }, [children]);
 
-  const triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+  const renderTrigger = useCallback(
+    ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {
+      if (dTriggerNode) {
+        const triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+        const _renderProps: DTriggerRenderProps = renderProps;
+        if (onMouseEnter) {
+          _renderProps.onMouseEnter = (e) => {
+            triggerNode.props.onMouseEnter?.(e);
+            onMouseEnter?.(e);
+          };
+          _renderProps.onMouseLeave = (e) => {
+            triggerNode.props.onMouseLeave?.(e);
+            onMouseLeave?.(e);
+          };
+        }
+        if (onFocus) {
+          _renderProps.onFocus = (e) => {
+            triggerNode.props.onFocus?.(e);
+            onFocus?.(e);
+          };
+          _renderProps.onBlur = (e) => {
+            triggerNode.props.onBlur?.(e);
+            onBlur?.(e);
+          };
+        }
+        if (onClick) {
+          _renderProps.onClick = (e) => {
+            triggerNode.props.onClick?.(e);
+            onClick?.(e);
+          };
+        }
+
+        return React.cloneElement(triggerNode, {
+          ...triggerNode.props,
+          ..._renderProps,
+          role: 'button',
+          'aria-haspopup': 'menu',
+          'aria-expanded': visible ? true : undefined,
+          'aria-controls': _id,
+        });
+      }
+
+      return null;
+    },
+    [_id, dTriggerNode, visible]
+  );
 
   return (
     <DDropdownContext.Provider value={contextValue}>
@@ -163,16 +209,7 @@ export function DDropdown(props: DDropdownProps) {
           </nav>
         }
         dCustomPopup={customTransition}
-        dTriggerRender={(renderProps) =>
-          React.cloneElement(triggerNode, {
-            ...triggerNode.props,
-            ...renderProps,
-            role: 'button',
-            'aria-haspopup': 'menu',
-            'aria-expanded': visible ? true : undefined,
-            'aria-controls': _id,
-          })
-        }
+        dTriggerRender={renderTrigger}
         dDestroy={dDestroy}
         dArrow={dArrow}
         onVisibleChange={changeVisible}

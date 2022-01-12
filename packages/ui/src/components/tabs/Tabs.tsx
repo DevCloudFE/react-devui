@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 
 import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { getClassName, toId } from '../../utils';
-import { DDrag, DDragPlaceholder, DDrop } from '../drag-drop';
+import { DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 
@@ -158,17 +158,18 @@ export function DTabs(props: DTabsProps) {
     }, 20);
   }, [asyncCapture, dPrefix, isHorizontal, setDotStyle, tablistEl]);
 
-  const handleOrderChange = useCallback(
-    (order) => {
-      onOrderChange?.(order);
-      getDotStyle();
+  const handleListChange = useCallback(
+    (list: Array<{ id: string }>) => {
+      onOrderChange?.(list.map((item) => item.id));
     },
-    [getDotStyle, onOrderChange]
+    [onOrderChange]
   );
-
   const handleDragStart = useCallback(() => {
     setDotStyle({});
   }, [setDotStyle]);
+  const handleDragEnd = useCallback(() => {
+    getDotStyle();
+  }, [getDotStyle]);
 
   const handleAddClick = useCallback(() => {
     onAddClick?.();
@@ -227,7 +228,7 @@ export function DTabs(props: DTabsProps) {
         tabIndex,
       });
 
-      return dDraggable ? <DDrag dId={child.props.dId}>{node}</DDrag> : node;
+      return dDraggable ? { id: child.props.dId, node } : node;
     });
 
     return [_childs, _tabpanels] as const;
@@ -291,11 +292,18 @@ export function DTabs(props: DTabsProps) {
                 dContainer={tablistWrapperEl}
                 dDirection={isHorizontal ? 'horizontal' : 'vertical'}
                 dPlaceholder={<DDragPlaceholder />}
-                onOrderChange={handleOrderChange}
+                dList={[
+                  childs as Array<{
+                    id: string;
+                    node: React.ReactElement;
+                  }>,
+                ]}
+                dItemRender={(item) => item.node}
+                dGetId={(item) => item.id}
+                onListChange={handleListChange}
                 onDragStart={handleDragStart}
-              >
-                {childs}
-              </DDrop>
+                onDragEnd={handleDragEnd}
+              ></DDrop>
             ) : (
               childs
             )}

@@ -49,12 +49,13 @@ title: 选择框
 | dOptions | 选择项 | Array\<DSelectOption\<T\>\> | - |
 | dOptionRender | 自定义选择项 | `(option: DSelectBaseOption<T>, index: number) => React.ReactNode` | - |
 | dGetId | 获取唯一标识 | `(value: T) => string` | `(value: unknown) => String(value)` |
+| dCreateOption | 允许创建选项 | `(value: string) => DSelectBaseOption<T> \| null` | - |
 | dClearable | 是否可清除 | boolean | false |
 | dCustomSearch | 自定义搜索 | `{ filter?: (value: string, option: DSelectBaseOption<T>) => boolean; sort?: (a: DSelectBaseOption<T>, b: DSelectBaseOption<T>) => number; }` | - |
 | dPopupClassName | 向弹窗添加 className | string | - |
 | onVisibleChange | 窗口显示/隐藏的回调 | `(visible: boolean) => void` | - |
 | onScrollBottom | 窗口滚动到底部的回调 | `() => void` | - |
-| onCreateOption | 搜索创建新选项的回调 | `(value: string) => DSelectBaseOption<T> \| null` | - |
+| onCreateOption | 搜索创建新选项的回调 | `(option: DSelectBaseOption<T>) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DSelectBaseOption\<T\>

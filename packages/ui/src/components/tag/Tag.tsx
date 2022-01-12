@@ -23,7 +23,6 @@ export function DTag(props: DTagProps) {
     onClose,
     className,
     children,
-    onClick,
     ...restProps
   } = useComponentConfig(DTag.name, props);
 

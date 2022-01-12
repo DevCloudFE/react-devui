@@ -23,25 +23,21 @@ title: 拖放
 | onDragEnd | 拖动结束的回调 | `() => void` | - |
 <!-- prettier-ignore-end -->
 
-### DDropProps
+### DDropProps\<T\>
 
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
+| dList | 列表数据 | [T[], Updater\<T[]\>?] | - |
+| dItemRender | 数据渲染 | `(item: T, index: number) => React.ReactNode` | - |
+| dGetId | 获取唯一标识 | `(item: T) => string` | - |
 | dContainer | 放置节点的容器 | [DElementSelector](/components/Interface#DElementSelector) | - |
 | dDirection | 容器放置节点的方向 | 'horizontal' \| 'vertical' | 'vertical' |
 | dPlaceholder | 占位节点 | React.ReactNode | 1000 |
-| children | 拖拽节点 | React.ReactNode | - |
-| onOrderChange | 子节点顺序改变的回调 | `(order: string[]) => void` | - |
+| onListChange | 列表顺序改变的回调 | `(list: T[]) => void` | - |
 | onDragStart | 拖动开始的回调 | `(id: string) => void` | - |
 | onDragEnd | 拖动结束的回调 | `(id: string) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DDropRef
-
-```tsx
-type DDropRef = string[];
-```
 
 ### DDragPlaceholderProps
 

@@ -5,7 +5,7 @@
   width: 100%;
   height: var(--#{$variable-prefix}size);
   margin: 0;
-  padding: 3px 9px;
+  padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 
@@ -76,23 +76,23 @@
   @include m(smaller) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
   }
 }
 
 @include b(input-affix) {
-  --#{$variable-prefix}input-affix-space: 11px;
-
   $selector: &;
 
   display: inline-flex;
   align-items: center;
   width: 100%;
-  padding: 0 var(--#{$variable-prefix}input-affix-space);
+  padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 
@@ -150,19 +150,19 @@
     &:not(.is-disabled) {
       padding-right: 0;
       .#{$variable-prefix}input-affix__suffix {
-        margin-right: var(--#{$variable-prefix}input-affix-space);
+        margin-right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
       }
     }
   }
 
   @include m(smaller) {
-    --#{$variable-prefix}input-affix-space: 7px;
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
   }
 
   @include m(larger) {
-    --#{$variable-prefix}input-affix-space: 15px;
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
   }
 
   @include e(prefix) {

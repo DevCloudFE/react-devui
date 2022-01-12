@@ -24,7 +24,6 @@
   min-width: var(--#{$variable-prefix}size);
   height: var(--#{$variable-prefix}size);
   margin: 0;
-  padding: 0 var(--#{$variable-prefix}padding-size);
   border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
@@ -52,6 +51,7 @@
   @include m(primary) {
     z-index: 1;
 
+    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px solid var(--#{$variable-prefix}button-color);
 
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
@@ -81,6 +81,7 @@
   }
 
   @include m(secondary) {
+    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px solid var(--#{$variable-prefix}border-color);
 
     color: var(--#{$variable-prefix}text-color);
@@ -105,6 +106,7 @@
   @include m(outline) {
     z-index: 1;
 
+    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px solid var(--#{$variable-prefix}button-color);
 
     color: var(--#{$variable-prefix}button-color);
@@ -133,6 +135,7 @@
   @include m(dashed) {
     z-index: 1;
 
+    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     border: 1px dashed var(--#{$variable-prefix}button-color);
 
     color: var(--#{$variable-prefix}button-color);
@@ -159,6 +162,7 @@
   }
 
   @include m(text) {
+    padding: 0 var(--#{$variable-prefix}padding-size);
     border: none;
 
     color: var(--#{$variable-prefix}text-color);
@@ -181,6 +185,7 @@
   }
 
   @include m(link) {
+    padding: 0 var(--#{$variable-prefix}padding-size);
     border: none;
 
     color: var(--#{$variable-prefix}button-color);

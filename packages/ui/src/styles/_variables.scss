@@ -22,9 +22,12 @@ $themes: (
   --#{$variable-prefix}size: 36px;
   --#{$variable-prefix}size-smaller: 32px;
   --#{$variable-prefix}size-larger: 40px;
-  --#{$variable-prefix}padding-size: 15px;
-  --#{$variable-prefix}padding-size-smaller: 11px;
-  --#{$variable-prefix}padding-size-larger: 19px;
+  --#{$variable-prefix}padding-size: 16px;
+  --#{$variable-prefix}padding-size-smaller: 12px;
+  --#{$variable-prefix}padding-size-larger: 20px;
+  --#{$variable-prefix}horizontal-space-size: 12px;
+  --#{$variable-prefix}horizontal-space-size-smaller: 10px;
+  --#{$variable-prefix}horizontal-space-size-larger: 14px;
   --#{$variable-prefix}margin-size: 8px;
   --#{$variable-prefix}margin-size-smaller: 6px;
   --#{$variable-prefix}margin-size-larger: 10px;

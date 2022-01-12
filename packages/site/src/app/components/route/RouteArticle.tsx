@@ -1,5 +1,5 @@
 import { isString, isUndefined } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { DIcon, DAnchor, DAnchorLink, DRow } from '@react-devui/ui';
 import { useImmer, useDTransition, useRefCallback } from '@react-devui/ui/hooks';
@@ -52,7 +52,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
     'leave-to': { opacity: '0', transform: 'translateY(120px)', transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isUndefined(props.links)) {
       const arr: Array<{ href: string; title: string }> = [];
       document.querySelectorAll('.app-route-article h2').forEach((el) => {
@@ -67,7 +67,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
     }
   }, [props.links, setLinks]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isString(html)) {
       const el = document.querySelector(`.app-route-article > h1:first-child`);
       const _title = document.title;

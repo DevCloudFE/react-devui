@@ -18,8 +18,6 @@
   display: inline-flex;
   align-items: center;
 
-  cursor: pointer;
-
   @include utils-disabled;
 
   &:not(.is-disabled) {
@@ -99,6 +97,7 @@
     border-radius: var(--#{$variable-prefix}border-radius);
 
     background-color: var(--#{$variable-prefix}input-background-color);
+    cursor: pointer;
 
     &::before {
       position: absolute;
@@ -197,7 +196,7 @@
   }
 
   @include e(label) {
-    padding-left: 8px;
+    margin-left: 8px;
 
     cursor: inherit;
 

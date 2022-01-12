@@ -1,8 +1,8 @@
 import { isArray } from 'lodash';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useAsync, useImmer } from '../../hooks';
+import { useImmer } from '../../hooks';
 import { toPx } from '../../utils';
 
 export interface DItemRenderProps {
@@ -19,11 +19,24 @@ export interface DVirtualScrollProps<T> extends React.HTMLAttributes<HTMLElement
   dList: T[];
   dItemRender: (item: T, index: number, props: DItemRenderProps) => React.ReactNode;
   dNestedKey?: string;
+  dStopUpdate?: boolean;
   onScrollEnd?: () => void;
 }
 
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
-  const { dListRef, dScrollY = true, dSize, dItemSize, dList, dItemRender, dNestedKey, onScrollEnd, onScroll, ...restProps } = props;
+  const {
+    dListRef,
+    dScrollY = true,
+    dSize,
+    dItemSize,
+    dList,
+    dItemRender,
+    dNestedKey,
+    dStopUpdate = false,
+    onScrollEnd,
+    onScroll,
+    ...restProps
+  } = props;
 
   //#region Ref
   const [listEl, setListEl] = useState<HTMLUListElement | null>(null);
@@ -37,12 +50,19 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   );
   //#endregion
 
-  const asyncCapture = useAsync();
+  const dataRef = useRef<{
+    isFirst: boolean;
+  }>({
+    isFirst: true,
+  });
+
   const [list, setList] = useImmer<React.ReactNode[]>([]);
   const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
 
   const updateList = useCallback(() => {
     if (listEl) {
+      dataRef.current.isFirst = false;
+
       const {
         paddingTop: _paddingTop,
         paddingRight: _paddingRight,
@@ -136,18 +156,18 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   );
 
   useLayoutEffect(() => {
-    updateList();
-  }, [updateList]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (listEl) {
-      asyncGroup.onResize(listEl, updateList, false);
+    if (!dataRef.current.isFirst) {
+      if (!dStopUpdate) {
+        updateList();
+      }
     }
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, listEl, updateList]);
+  }, [dStopUpdate, updateList]);
+
+  useLayoutEffect(() => {
+    if (dataRef.current.isFirst) {
+      updateList();
+    }
+  }, [updateList]);
 
   return (
     <ul {...restProps} ref={listRef} onScroll={handleScroll}>

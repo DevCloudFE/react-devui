@@ -12,7 +12,6 @@ import {
   useComponentConfig,
   useTwoWayBinding,
   useAsync,
-  useImmer,
   useTranslation,
   useRefCallback,
   useGeneralState,
@@ -44,12 +43,13 @@ export interface DSelectOption<T> {
   [index: string | symbol]: unknown;
 }
 
-export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'> {
+export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dSuffix' | 'dExpanded' | 'dShowClear'> {
   dFormControlName?: string;
   dVisible?: [boolean, Updater<boolean>?];
   dOptions: Array<DSelectOption<T>>;
   dOptionRender?: (option: DSelectBaseOption<T>, index: number) => React.ReactNode;
   dGetId?: (value: T) => string;
+  dCreateOption?: (value: string) => DSelectBaseOption<T> | null;
   dClearable?: boolean;
   dCustomSearch?: {
     filter?: (value: string, option: DSelectBaseOption<T>) => boolean;
@@ -58,7 +58,7 @@ export interface DSelectBaseProps<T> extends Omit<DSelectBoxProps, 'dExpanded' |
   dPopupClassName?: string;
   onVisibleChange?: (visible: boolean) => void;
   onScrollBottom?: () => void;
-  onCreateOption?: (value: string) => DSelectBaseOption<T> | null;
+  onCreateOption?: (option: DSelectBaseOption<T>) => void;
 }
 
 export interface DSelectSingleProps<T> extends DSelectBaseProps<T> {
@@ -102,6 +102,7 @@ export function DSelect<T>(
     dOptionRender = DEFAULT_PROPS.dOptionRender,
     dCustomSelected,
     dGetId = DEFAULT_PROPS.dGetId,
+    dCreateOption,
     dClearable = false,
     dCustomSearch,
     dLoading = false,
@@ -137,12 +138,14 @@ export function DSelect<T>(
 
   const dataRef = useRef<{
     beforeSearch: { scrollTop: number; focusId: string | null } | null;
-    clearTid: (() => void) | null;
-    focusId: string | null;
+    clearCloseTid: (() => void) | null;
+    clearVisibleTid: (() => void) | null;
+    isFirst: boolean;
   }>({
     beforeSearch: null,
-    clearTid: null,
-    focusId: null,
+    clearCloseTid: null,
+    clearVisibleTid: null,
+    isFirst: true,
   });
 
   const [t] = useTranslation('Common');
@@ -153,14 +156,22 @@ export function DSelect<T>(
 
   const [focusId, setfocusId] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState('');
-  const [createOptions, setCreateOptions] = useImmer<Array<DSelectBaseOption<T>>>([]);
 
-  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
-  const [select, changeSelect, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+  const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [select, changeSelect, { validateClassName, controlDisabled }] = useTwoWayBinding(
     dMultiple ? [] : null,
     dModel,
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+  );
+  const [stopUpdate, setStopUpdate] = useState(!visible);
+
+  const changeVisible = useCallback(
+    (visible) => {
+      _changeVisible(visible);
+      setStopUpdate(true);
+    },
+    [_changeVisible]
   );
 
   const size = dSize ?? gSize;
@@ -174,7 +185,7 @@ export function DSelect<T>(
     };
     const filterFn = isUndefined(dCustomSearch) ? defaultFilterFn : dCustomSearch.filter ?? defaultFilterFn;
 
-    let createOption = hasSearchChar ? onCreateOption?.(searchValue) ?? null : null;
+    let createOption = hasSearchChar ? dCreateOption?.(searchValue) ?? null : null;
     if (createOption) {
       createOption = {
         ...createOption,
@@ -186,7 +197,7 @@ export function DSelect<T>(
     let flatOptions: Array<DSelectOption<T>> = [];
     let renderOptions: Array<DSelectOption<T>> = [];
 
-    (createOptions as Array<DSelectOption<T>>).concat(dOptions).forEach((item: DSelectOption<T>) => {
+    dOptions.forEach((item: DSelectOption<T>) => {
       if (isUndefined(item.dOptions)) {
         if (createOption && dGetId(item.dValue as T) === dGetId(createOption.dValue)) {
           createOption = null;
@@ -244,126 +255,118 @@ export function DSelect<T>(
     }
 
     return [renderOptions, flatOptions, flatAllOptions];
-  }, [createOptions, dCustomSearch, dGetId, dOptions, hasSearchChar, onCreateOption, searchValue]);
+  }, [dCreateOption, dCustomSearch, dGetId, dOptions, hasSearchChar, searchValue]);
 
   const canSelect = useCallback((option) => !option.dDisabled && !option[IS_EMPTY] && !option[IS_GROUP], []);
-  const canSelectItem = useCallback(
-    (id?: string) => {
+  const getCanSelectItem = useCallback(() => {
+    let option: DSelectBaseOption<T> | null = null;
+    for (const item of flatOptions) {
+      if (canSelect(item)) {
+        option = item as DSelectBaseOption<T>;
+        break;
+      }
+    }
+    return option as DSelectBaseOption<T> | null;
+  }, [canSelect, flatOptions]);
+  const getSelectItem = useCallback(
+    (id: string) => {
       let count = -1;
-      let option: DSelectBaseOption<T> | null = null;
       for (const item of flatOptions) {
         count += 1;
 
-        if (canSelect(item)) {
-          if (id) {
-            if (id === dGetId(item.dValue as T)) {
-              option = item as DSelectBaseOption<T>;
-              break;
-            }
-          } else {
-            option = item as DSelectBaseOption<T>;
-            break;
-          }
+        if (id === dGetId(item.dValue as T)) {
+          break;
         }
       }
-      return [count, option] as [number, DSelectBaseOption<T> | null];
+      return count;
     },
-    [canSelect, dGetId, flatOptions]
+    [dGetId, flatOptions]
   );
 
   const handleOptionClick = useCallback(
-    (e: { currentTarget?: HTMLElement; __dSwitch?: boolean }) => {
-      dataRef.current.clearTid && dataRef.current.clearTid();
+    (optionId: string | null, isSwitch?: boolean) => {
+      if (optionId) {
+        const option = flatAllOptions.find((option) => !option.dDisabled && dGetId(option.dValue) === optionId);
 
-      const optionId = isUndefined(e.currentTarget) ? dataRef.current.focusId : (e.currentTarget.dataset['dOptionId'] as string);
-      dataRef.current.focusId = optionId;
-      setfocusId(optionId);
-      const option = flatAllOptions.find((option) => !option.dDisabled && dGetId(option.dValue) === optionId);
+        if (option) {
+          if (dMultiple) {
+            isSwitch = isSwitch ?? true;
 
-      if (option) {
-        const createOption = () => {
-          if (option[IS_CREATE]) {
-            setCreateOptions((draft) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              draft.unshift({ ...option, [IS_CREATE]: false } as any);
-            });
-          }
-        };
-        if (dMultiple) {
-          const __dSwitch = e.__dSwitch ?? true;
-
-          changeSelect((draft) => {
-            if (isArray(draft)) {
-              const index = draft.findIndex((item) => dGetId(item as T) === optionId);
-              if (index !== -1) {
-                __dSwitch && draft.splice(index, 1);
-              } else {
-                if (isNumber(dMaxSelectNum) && draft.length === dMaxSelectNum) {
-                  onExceed?.();
+            changeSelect((draft) => {
+              if (isArray(draft)) {
+                const index = draft.findIndex((item) => dGetId(item as T) === optionId);
+                if (index !== -1) {
+                  isSwitch && draft.splice(index, 1);
                 } else {
-                  createOption();
-                  draft.push(option.dValue as Draft<T>);
+                  if (isNumber(dMaxSelectNum) && draft.length === dMaxSelectNum) {
+                    onExceed?.();
+                  } else {
+                    draft.push(option.dValue as Draft<T>);
+                  }
                 }
+              } else {
+                throw new Error("Please pass Array when `dMultiple` is 'true'");
               }
-            } else {
-              throw new Error("Please pass Array when `dMultiple` is 'true'");
+            });
+          } else {
+            changeSelect(option.dValue);
+          }
+        }
+
+        if (!dMultiple) {
+          changeVisible(false);
+          asyncCapture.setTimeout(() => {
+            if (selectBoxRef.current) {
+              selectBoxRef.current.focus({ preventScroll: true });
             }
           });
-        } else {
-          createOption();
-          changeSelect(option.dValue);
         }
       }
-
-      if (!dMultiple) {
-        changeVisible(false);
-        asyncCapture.setTimeout(() => {
-          if (selectBoxRef.current) {
-            selectBoxRef.current.focus({ preventScroll: true });
-          }
-        });
-      }
     },
-    [asyncCapture, changeSelect, changeVisible, dGetId, dMaxSelectNum, dMultiple, flatAllOptions, onExceed, setCreateOptions]
+    [asyncCapture, changeSelect, changeVisible, dGetId, dMaxSelectNum, dMultiple, flatAllOptions, onExceed]
   );
 
-  const handleClick = useCallback(
+  const handleClickCapture = useCallback(
     (e) => {
       onClick?.(e);
 
-      dataRef.current.clearTid && dataRef.current.clearTid();
-      changeVisible(!visible);
+      dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+      if (!disabled) {
+        dataRef.current.clearVisibleTid = asyncCapture.setTimeout(() => {
+          changeVisible(!visible);
+          dataRef.current.clearVisibleTid = null;
+        }, 20);
+      }
     },
-    [changeVisible, onClick, visible]
+    [asyncCapture, changeVisible, disabled, onClick, visible]
   );
 
   const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
     (e) => {
       onKeyDown?.(e);
 
-      if (e.code === 'Space' || e.code === 'Enter') {
-        if (!visible) {
-          e.preventDefault();
-          e.stopPropagation();
-          changeVisible(true);
+      if (!disabled) {
+        if (e.code === 'Space' || e.code === 'Enter') {
+          if (!visible) {
+            e.preventDefault();
+            e.stopPropagation();
+            changeVisible(true);
+          }
         }
       }
     },
-    [changeVisible, onKeyDown, visible]
+    [changeVisible, disabled, onKeyDown, visible]
   );
 
   const handleClear = useCallback(() => {
-    if (visible) {
-      dataRef.current.clearTid && dataRef.current.clearTid();
-      changeVisible(true);
-    }
+    dataRef.current.clearVisibleTid && dataRef.current.clearVisibleTid();
 
     if (dMultiple) {
       changeSelect([]);
     } else {
       changeSelect(null);
     }
-  }, [visible, dMultiple, changeVisible, changeSelect]);
+  }, [dMultiple, changeSelect]);
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -372,25 +375,23 @@ export function DSelect<T>(
       if (value.length > 0 && selectListEl) {
         if (isNull(dataRef.current.beforeSearch)) {
           dataRef.current.beforeSearch = {
-            focusId: dataRef.current.focusId,
+            focusId,
             scrollTop: selectListEl.scrollTop,
           };
         }
       }
     },
-    [onSearch, selectListEl]
+    [focusId, onSearch, selectListEl]
   );
   useEffect(() => {
     if (searchValue.length > 0 && selectListEl) {
       selectListEl.scrollTop = 0;
-      const [, option] = canSelectItem();
+      const option = getCanSelectItem();
       if (option) {
-        dataRef.current.focusId = dGetId(option.dValue);
-        setfocusId(dataRef.current.focusId);
+        setfocusId(dGetId(option.dValue));
       }
     } else {
       if (dataRef.current.beforeSearch && selectListEl) {
-        dataRef.current.focusId = dataRef.current.beforeSearch.focusId;
         const scrollTop = dataRef.current.beforeSearch.scrollTop;
         const loop = () => {
           selectListEl.scrollTop = scrollTop;
@@ -399,7 +400,7 @@ export function DSelect<T>(
           }
         };
         loop();
-        setfocusId(dataRef.current.focusId);
+        setfocusId(dataRef.current.beforeSearch.focusId);
         dataRef.current.beforeSearch = null;
       }
     }
@@ -421,31 +422,39 @@ export function DSelect<T>(
     };
   }, []);
 
+  const handlePopupClick = useCallback(() => {
+    dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+  }, []);
+
   const handleRendered = useCallback(() => {
-    if (selectListEl) {
-      if (isNull(dataRef.current.focusId)) {
-        if (isNull(select) || (isArray(select) && select.length === 0)) {
-          const [, option] = canSelectItem();
-          if (option) {
-            dataRef.current.focusId = dGetId(option.dValue);
-          }
-        } else {
-          dataRef.current.focusId = isArray(select) ? dGetId(select[0]) : dGetId(select);
-          const [count] = canSelectItem(dataRef.current.focusId);
+    setStopUpdate(false);
+
+    if (dataRef.current.isFirst && selectListEl) {
+      dataRef.current.isFirst = false;
+      let _focusId: string | null = null;
+      if (isNull(select) || (isArray(select) && select.length === 0)) {
+        const option = getCanSelectItem();
+        if (option) {
+          _focusId = dGetId(option.dValue);
+        }
+      } else {
+        _focusId = isArray(select) ? dGetId(select[0]) : dGetId(select);
+        if (_focusId) {
+          const count = getSelectItem(_focusId);
           selectListEl.scrollTop = count * 32;
         }
-        setfocusId(dataRef.current.focusId);
       }
+      setfocusId(_focusId);
     }
-  }, [canSelectItem, dGetId, select, selectListEl]);
+  }, [dGetId, getCanSelectItem, getSelectItem, select, selectListEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (selectListEl && visible) {
       const changeFocusByKeydown = (down = true) => {
-        if (!isNull(dataRef.current.focusId)) {
-          let [count] = canSelectItem(dataRef.current.focusId);
+        if (!isNull(focusId)) {
+          let count = getSelectItem(focusId);
           let option: DSelectOption<T> | undefined;
           const getOption = () => {
             if (!down && count === 0) {
@@ -467,7 +476,6 @@ export function DSelect<T>(
           };
           getOption();
           if (option && !isUndefined(option.dValue)) {
-            dataRef.current.focusId = dGetId(option.dValue);
             const elTop = [count * 32 + 4, (count + 1) * 32 + 4];
             if (selectListEl.scrollTop > elTop[1]) {
               selectListEl.scrollTop = elTop[0] - 4;
@@ -485,7 +493,7 @@ export function DSelect<T>(
               }
             }
 
-            setfocusId(dataRef.current.focusId);
+            setfocusId(dGetId(option.dValue));
           }
         }
       };
@@ -505,11 +513,11 @@ export function DSelect<T>(
 
             case 'Home':
               e.preventDefault();
+
+              selectListEl.scrollTop = 0;
               for (const item of flatOptions) {
                 if (canSelect(item)) {
-                  selectListEl.scrollTop = 0;
-                  dataRef.current.focusId = dGetId(item.dValue as T);
-                  setfocusId(dataRef.current.focusId);
+                  setfocusId(dGetId(item.dValue as T));
                   break;
                 }
               }
@@ -517,11 +525,11 @@ export function DSelect<T>(
 
             case 'End':
               e.preventDefault();
+
+              selectListEl.scrollTop = selectListEl.scrollHeight;
               for (let index = flatOptions.length - 1; index >= 0; index--) {
                 if (canSelect(flatOptions[index])) {
-                  selectListEl.scrollTop = 32 * index;
-                  dataRef.current.focusId = dGetId(flatOptions[index].dValue as T);
-                  setfocusId(dataRef.current.focusId);
+                  setfocusId(dGetId(flatOptions[index].dValue as T));
                   break;
                 }
               }
@@ -529,13 +537,13 @@ export function DSelect<T>(
 
             case 'Enter':
               e.preventDefault();
-              handleOptionClick({ __dSwitch: false });
+              handleOptionClick(focusId, false);
               break;
 
             case 'Space':
               if (dMultiple) {
                 e.preventDefault();
-                handleOptionClick({ __dSwitch: true });
+                handleOptionClick(focusId, true);
               }
               break;
 
@@ -549,7 +557,19 @@ export function DSelect<T>(
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, canSelect, canSelectItem, dGetId, dMultiple, flatOptions, handleOptionClick, selectListEl, setfocusId, visible]);
+  }, [
+    asyncCapture,
+    canSelect,
+    dGetId,
+    dMultiple,
+    flatOptions,
+    focusId,
+    getSelectItem,
+    handleOptionClick,
+    selectListEl,
+    setfocusId,
+    visible,
+  ]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -557,7 +577,7 @@ export function DSelect<T>(
     if (visible) {
       asyncGroup.fromEvent(window, 'click', { capture: true }).subscribe({
         next: () => {
-          dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+          dataRef.current.clearCloseTid = asyncCapture.setTimeout(() => {
             flushSync(() => changeVisible(false));
           }, 20);
         },
@@ -599,19 +619,21 @@ export function DSelect<T>(
     if (dMultiple) {
       if (isArray(select)) {
         const optionsSelected: Array<DSelectBaseOption<T>> = [];
-        let tags: Array<{ label: string; id: string }> = [];
+        let tags: Array<{ label: string; id: string; disabled?: boolean }> = [];
         const selectIds = select.map((item) => dGetId(item));
         flatAllOptions.forEach((item) => {
-          if (!item.dDisabled) {
-            const id = dGetId(item.dValue);
-            if (selectIds.includes(id)) {
-              optionsSelected.push(item);
-              tags.push({ label: item.dLabel, id });
-            }
+          const id = dGetId(item.dValue);
+          if (selectIds.includes(id)) {
+            optionsSelected.push(item);
+            tags.push({ label: item.dLabel, id, disabled: item.dDisabled });
           }
         });
         if (dCustomSelected) {
-          tags = (dCustomSelected(optionsSelected) as string[]).map((item, index) => ({ label: item, id: tags[index].id }));
+          tags = (dCustomSelected(optionsSelected) as string[]).map((item, index) => ({
+            label: item,
+            id: tags[index].id,
+            disabled: tags[index].disabled,
+          }));
         }
 
         suffixNode = (
@@ -621,21 +643,27 @@ export function DSelect<T>(
                 className={`${dPrefix}select__multiple-count`}
                 dSize={size}
                 dTheme={isNumber(dMaxSelectNum) && dMaxSelectNum === select.length ? 'danger' : undefined}
+                onClick={() => {
+                  dataRef.current.clearVisibleTid && dataRef.current.clearVisibleTid();
+                }}
               >
                 {(select as T[]).length} ...
               </DTag>
             }
             dCloseOnItemClick={false}
+            onClick={() => {
+              dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+              dataRef.current.clearVisibleTid && dataRef.current.clearVisibleTid();
+            }}
           >
             {tags.map((item) => (
               <DDropdownItem
                 key={item.id}
                 dId={item.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!disabled) {
-                    dataRef.current.focusId = item.id;
-                    handleOptionClick({});
+                dDisabled={item.disabled}
+                onClick={() => {
+                  if (!disabled && !item.disabled) {
+                    handleOptionClick(item.id);
                   }
                 }}
               >
@@ -648,12 +676,12 @@ export function DSelect<T>(
           <DTag
             key={item.id}
             dSize={size}
-            dClosable
-            onClose={(e) => {
-              e.stopPropagation();
-              if (!disabled) {
-                dataRef.current.focusId = item.id;
-                handleOptionClick({});
+            dClosable={!item.disabled}
+            onClose={() => {
+              dataRef.current.clearVisibleTid && dataRef.current.clearVisibleTid();
+
+              if (!disabled && !item.disabled) {
+                handleOptionClick(item.id);
               }
             }}
           >
@@ -665,7 +693,7 @@ export function DSelect<T>(
       if (!isNull(select)) {
         const id = dGetId(select as T);
         for (const option of flatAllOptions) {
-          if (!option.dDisabled && dGetId(option.dValue) === id) {
+          if (dGetId(option.dValue) === id) {
             if (dCustomSelected) {
               selectedNode = dCustomSelected(option);
             } else {
@@ -680,10 +708,6 @@ export function DSelect<T>(
   }, [dCustomSelected, dGetId, dMaxSelectNum, dMultiple, dPrefix, disabled, flatAllOptions, handleOptionClick, select, size]);
 
   const hasSelect = isArray(select) ? select.length > 0 : !isNull(select);
-
-  const handleUlClick = useCallback(() => {
-    dataRef.current.clearTid && dataRef.current.clearTid();
-  }, []);
 
   const itemRender = useCallback(
     (item, index, renderProps) => {
@@ -738,11 +762,22 @@ export function DSelect<T>(
           })}
           tabIndex={-1}
           role="option"
-          title={_item.dLabel}
+          title={(_item[IS_CREATE] ? t('Create') + ' ' : '') + _item.dLabel}
           aria-selected={isSelected}
           aria-disabled={_item.dDisabled}
-          data-d-option-id={optionId}
-          onClick={_item.dDisabled ? undefined : handleOptionClick}
+          onClick={
+            _item.dDisabled
+              ? undefined
+              : () => {
+                  if (_item[IS_CREATE]) {
+                    const option = { ..._item };
+                    delete option[IS_CREATE];
+                    onCreateOption?.(option);
+                  }
+                  setfocusId(optionId);
+                  handleOptionClick(optionId);
+                }
+          }
         >
           {_item[IS_CREATE] && (
             <span className={`${dPrefix}select__option-add`}>
@@ -756,7 +791,7 @@ export function DSelect<T>(
         </li>
       );
     },
-    [dGetId, dOptionRender, dPrefix, focusId, handleOptionClick, select, t, uniqueId]
+    [dGetId, dOptionRender, dPrefix, focusId, handleOptionClick, onCreateOption, select, t, uniqueId]
   );
 
   return (
@@ -790,10 +825,10 @@ export function DSelect<T>(
               dList={renderOptions}
               dItemRender={itemRender}
               dNestedKey="dOptions"
+              dStopUpdate={stopUpdate}
               dSize={264}
               dItemSize={32}
               onScrollEnd={onScrollBottom}
-              onClick={handleUlClick}
             />
           </>
         )
@@ -816,16 +851,16 @@ export function DSelect<T>(
           dLoading={dLoading}
           dDisabled={disabled}
           dSize={size}
-          dAriaAttribute={ariaAttribute}
           onClear={handleClear}
-          onClick={handleClick}
-          onKeyDown={handleKeyDown}
           onSearch={handleSearch}
+          onClickCapture={handleClickCapture}
+          onKeyDown={handleKeyDown}
         >
           {hasSelect && selectedNode}
         </DSelectBox>
       )}
       onRendered={handleRendered}
+      onClick={handlePopupClick}
     />
   );
 }

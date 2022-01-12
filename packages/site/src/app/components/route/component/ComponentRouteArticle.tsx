@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DTooltip, DIcon } from '@react-devui/ui';
@@ -24,7 +24,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
 
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const _title = document.title;
     document.title = title + (i18n.language !== 'en-US' ? ` ${subtitle}` : '') + ' - React DevUI';
     return () => {
@@ -32,7 +32,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
     };
   }, [i18n.language, subtitle, title]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const descriptionEl = document.querySelector(`meta[name="description"]`);
     const _description = descriptionEl?.getAttribute('content') ?? '';
     descriptionEl?.setAttribute(

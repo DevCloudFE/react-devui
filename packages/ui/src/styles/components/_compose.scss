@@ -33,7 +33,7 @@
   justify-content: center;
   min-width: var(--#{$variable-prefix}size);
   height: var(--#{$variable-prefix}size);
-  padding: 0 var(--#{$variable-prefix}padding-size);
+  padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 

@@ -20,6 +20,8 @@
 
     font-size: var(--#{$variable-prefix}font);
 
+    cursor: pointer;
+
     transition: border-color 116ms linear, background-color 116ms linear;
 
     &:first-of-type {
@@ -53,19 +55,20 @@
         color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
       }
     }
+  }
 
-    #{$radio-selector}__input-wrapper {
-      width: 0;
-      height: 0;
-      overflow: hidden;
-    }
+  #{$radio-selector}__input-wrapper {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
 
-    #{$radio-selector}__label {
-      display: inline-flex;
-      align-items: center;
-      height: 100%;
-      padding: 0 var(--#{$variable-prefix}padding-size);
-    }
+  #{$radio-selector}__label {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    margin-left: 0;
+    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
   }
 }
 
@@ -74,8 +77,6 @@
 
   display: inline-flex;
   align-items: center;
-
-  cursor: pointer;
 
   @include utils-disabled;
 
@@ -137,6 +138,7 @@
     border-radius: 50%;
 
     background-color: var(--#{$variable-prefix}input-background-color);
+    cursor: pointer;
 
     &::before {
       position: absolute;
@@ -194,7 +196,7 @@
   }
 
   @include e(label) {
-    padding-left: 8px;
+    margin-left: 8px;
 
     cursor: inherit;
 

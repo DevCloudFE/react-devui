@@ -1,6 +1,6 @@
 import type { DLang, DTheme } from '@react-devui/ui/hooks/d-config';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -40,10 +40,18 @@ export function App() {
     [setMainEl]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     localStorage.setItem('language', i18n.language);
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
+
+  useLayoutEffect(() => {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'position: absolute;top: -999px;left: -999px;overflow: scroll;width: 100px;height: 100px;');
+    document.body.appendChild(el);
+    document.body.classList.toggle('scrollbar-dark', theme === 'dark' && el.clientHeight < 100);
+    document.body.removeChild(el);
+  }, [theme]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -60,14 +68,6 @@ export function App() {
       };
     }
   }, [asyncCapture, mainEl]);
-
-  useEffect(() => {
-    const el = document.createElement('div');
-    el.setAttribute('style', 'position: absolute;top: -999px;left: -999px;overflow: scroll;width: 100px;height: 100px;');
-    document.body.appendChild(el);
-    document.body.classList.toggle('scrollbar-dark', theme === 'dark' && el.clientHeight < 100);
-    document.body.removeChild(el);
-  }, [theme]);
 
   const location = useLocation();
   useEffect(() => {

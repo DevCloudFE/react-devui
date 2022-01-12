@@ -16,7 +16,6 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dPlaceholder?: string;
   dDisabled?: boolean;
   dLoading?: boolean;
-  dAriaAttribute?: React.HTMLAttributes<HTMLElement>;
   onClear?: () => void;
   onSearch?: (value: string) => void;
 }
@@ -32,13 +31,11 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     dPlaceholder,
     dDisabled = false,
     dLoading = false,
-    dAriaAttribute,
     onClear,
     onSearch,
     className,
     tabIndex = 0,
     children,
-    onClick,
     ...restProps
   } = props;
 
@@ -128,11 +125,9 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
       aria-disabled={disabled}
       aria-haspopup="listbox"
       aria-expanded={dExpanded}
-      onClick={disabled ? undefined : onClick}
     >
       {dSearchable && dExpanded ? (
         <input
-          {...dAriaAttribute}
           ref={searchRef}
           className={`${dPrefix}select-box__search`}
           type="search"

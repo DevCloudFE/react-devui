@@ -12,6 +12,10 @@
       "en-US": "Close",
       "zh-Hant": "关闭"
     },
+    "Create": {
+      "en-US": "Create",
+      "zh-Hant": "创建"
+    },
     "Clear": {
       "en-US": "Clear",
       "zh-Hant": "清除"

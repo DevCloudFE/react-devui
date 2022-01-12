@@ -1,6 +1,6 @@
 import type { DConfigContextData } from '../../hooks/d-config';
 
-import { useEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 
 import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
@@ -15,11 +15,11 @@ export function DRoot(props: DRootProps) {
 
   const lang = i18n?.lang ?? 'en-US';
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.classList.toggle('CJK', lang === 'zh-Hant');
   }, [lang]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 

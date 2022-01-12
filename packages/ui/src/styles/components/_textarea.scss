@@ -1,15 +1,18 @@
 @include b(textarea) {
+  --#{$variable-prefix}textarea-line-height: 24px;
+
   display: block;
   width: 100%;
-  min-height: 32px;
+  min-height: calc(var(--#{$variable-prefix}textarea-line-height) + 8px);
   margin: 0;
-  padding: 3px 9px;
+  padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 
   color: var(--#{$variable-prefix}text-color);
   font: inherit;
-  line-height: 24px;
+  font-size: var(--#{$variable-prefix}font);
+  line-height: var(--#{$variable-prefix}textarea-line-height);
   letter-spacing: inherit;
 
   background-color: var(--#{$variable-prefix}input-background-color);
@@ -48,6 +51,18 @@
 
   &:disabled::placeholder {
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}textarea-line-height: 20px;
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}textarea-line-height: 28px;
+    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
   }
 
   @include e(count) {

@@ -1,13 +1,11 @@
 @include b(select-box) {
-  --#{$variable-prefix}select-box-space: 11px;
-
   position: relative;
 
   display: inline-flex;
   align-items: center;
   width: 100%;
   height: var(--#{$variable-prefix}size);
-  padding: 0 var(--#{$variable-prefix}select-box-space);
+  padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   border: 1px solid var(--#{$variable-prefix}border-color);
   border-radius: var(--#{$variable-prefix}border-radius);
 
@@ -70,15 +68,15 @@
   }
 
   @include m(smaller) {
-    --#{$variable-prefix}select-box-space: 7px;
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
   }
 
   @include m(larger) {
-    --#{$variable-prefix}select-box-space: 15px;
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
     --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
   }
 
   @include e(content) {
@@ -125,9 +123,9 @@
   @include e(placeholder) {
     position: absolute;
     top: 0;
-    right: var(--#{$variable-prefix}select-box-space);
+    right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
     bottom: 0;
-    left: var(--#{$variable-prefix}select-box-space);
+    left: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
 
     display: flex;
     align-items: center;
@@ -141,7 +139,7 @@
 
   @include e(clear) {
     position: absolute;
-    right: var(--#{$variable-prefix}select-box-space);
+    right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
     z-index: 5;
 
     display: inline-flex;

@@ -4,7 +4,7 @@ import { isFunction, isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useId, useImperativeHandle, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback, useGeneralState } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
@@ -40,6 +40,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { gSize } = useGeneralState();
   //#endregion
 
   //#region Ref
@@ -48,6 +49,8 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}input-${uniqueId}`;
+
+  const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
   const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
     '',
@@ -69,13 +72,13 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
 
     if (!isUndefined(dRows)) {
       overflow = 'hidden';
-      height = rowNum * 24 + 8;
+      height = rowNum * lineHeight + 8;
       if (dRows !== 'auto') {
         if (isNumber(dRows.minRows)) {
-          minHeight = dRows.minRows * 24 + 8;
+          minHeight = dRows.minRows * lineHeight + 8;
         }
         if (isNumber(dRows.maxRows)) {
-          maxHeight = dRows.maxRows * 24 + 8;
+          maxHeight = dRows.maxRows * lineHeight + 8;
           if (maxHeight < height) {
             overflow = undefined;
           }
@@ -83,7 +86,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
       }
     }
     return { overflow, height, minHeight, maxHeight };
-  }, [dRows, rowNum]);
+  }, [dRows, lineHeight, rowNum]);
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLTextAreaElement>>(
     (e) => {
@@ -97,19 +100,19 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
       el.style.overflow = 'hidden';
       el.style.height = '32px';
       el.style.minHeight = '';
-      setRowNum(Math.round((el.scrollHeight - 6) / 24));
+      setRowNum(Math.round((el.scrollHeight - 6) / lineHeight));
       el.style.overflow = overflow;
       el.style.height = height;
       el.style.minHeight = minHeight;
     },
-    [changeValue, onChange, setRowNum]
+    [changeValue, lineHeight, onChange]
   );
 
   useEffect(() => {
     if (textareaEl) {
-      setRowNum(Math.round((textareaEl.scrollHeight - 6) / 24));
+      setRowNum(Math.round((textareaEl.scrollHeight - 6) / lineHeight));
     }
-  }, [setRowNum, textareaEl]);
+  }, [lineHeight, setRowNum, textareaEl]);
 
   useImperativeHandle<HTMLTextAreaElement | null, HTMLTextAreaElement | null>(ref, () => textareaEl, [textareaEl]);
 
@@ -120,7 +123,9 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
         {...ariaAttribute}
         ref={textareaRef}
         id={_id}
-        className={getClassName(className, `${dPrefix}textarea`, validateClassName)}
+        className={getClassName(className, `${dPrefix}textarea`, validateClassName, {
+          [`${dPrefix}textarea--${gSize}`]: gSize,
+        })}
         style={mergeStyle(style, {
           resize: resizable ? undefined : 'none',
           ...heightStyle,

@@ -50,12 +50,13 @@ Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>`.
 | dOptions | Options | Array\<DSelectOption\<T\>\> | - |
 | dOptionRender | Custom selection | `(option: DSelectBaseOption<T>, index: number) => React.ReactNode` | - |
 | dGetId | Get unique ID | `(value: T) => string` | `(value: unknown) => String(value)` |
+| dCreateOption | Allow creation of options | `(value: string) => DSelectBaseOption<T> \| null` | - |
 | dClearable | Can it be cleared | boolean | false |
 | dCustomSearch | Custom search | `{ filter?: (value: string, option: DSelectBaseOption<T>) => boolean; sort?: (a: DSelectBaseOption<T>, b: DSelectBaseOption<T>) => number; }` | - |
 | dPopupClassName | Add className to the popup | string | - |
 | onVisibleChange | Window display/hide callback | `(visible: boolean) => void` | - |
 | onScrollBottom | Callback when the window scrolls to the bottom | `() => void` | - |
-| onCreateOption | Search for callbacks to create new options | `(value: string) => DSelectBaseOption<T> \| null` | - |
+| onCreateOption | Search for callbacks to create new options | `(option: DSelectBaseOption<T>) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DSelectBaseOption\<T\>
