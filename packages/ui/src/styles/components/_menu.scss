@@ -103,7 +103,6 @@ $menu-item-height: 40px;
 
   @include when(active) {
     color: var(--#{$variable-prefix}color-primary);
-    font-weight: 500;
 
     &:not(#{$selector}--horizontal) {
       @include e(indicator) {

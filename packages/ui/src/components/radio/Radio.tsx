@@ -97,9 +97,11 @@ export function DRadio(props: DRadioProps) {
           onChange={handleChange}
         />
       </div>
-      <label id={`${dPrefix}radio-label-${uniqueId}`} className={`${dPrefix}radio__label`} htmlFor={_id}>
-        {children}
-      </label>
+      {children && (
+        <label id={`${dPrefix}radio-label-${uniqueId}`} className={`${dPrefix}radio__label`} htmlFor={_id}>
+          {children}
+        </label>
+      )}
       {waveNode}
     </div>
   );

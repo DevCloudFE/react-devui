@@ -108,21 +108,21 @@ code:not(.hljs) {
 h1 {
   margin: 8px 0 20px;
 
-  font-weight: 500;
+  font-weight: 400;
   @include font-size(2rem);
 }
 
 h2 {
   margin: 38px 0 20px;
 
-  font-weight: 500;
+  font-weight: 400;
   @include font-size(1.5rem);
 }
 
 h3 {
   margin: 28px 0 12px;
 
-  font-weight: 500;
+  font-weight: 400;
   @include font-size(1.25rem);
 }
 
@@ -145,7 +145,7 @@ h3 {
     empty-cells: show;
 
     th {
-      font-weight: 500;
+      font-weight: 400;
       white-space: nowrap;
 
       background: var(--app-th-background-color);

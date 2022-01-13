@@ -39,6 +39,7 @@ $select-option-height: 32px;
 
   @include e(option) {
     display: flex;
+    gap: 0 8px;
     align-items: center;
     width: 100%;
     height: $select-option-height;
@@ -63,8 +64,6 @@ $select-option-height: 32px;
     }
 
     @include when(selected) {
-      font-weight: 600;
-
       background-color: var(--#{$variable-prefix}background-color-primary);
     }
   }
@@ -97,11 +96,6 @@ $select-option-height: 32px;
     padding: 0 12px;
 
     color: var(--#{$variable-prefix}color-step-400);
-  }
-
-  @include e(option-add) {
-    flex-shrink: 0;
-    margin-right: 4px;
   }
 
   @include e(option-content) {

@@ -59,6 +59,9 @@
   }
 
   @include when(disabled) {
+    .#{$variable-prefix}select-box__content {
+      pointer-events: none;
+    }
     .#{$variable-prefix}select-box__icon {
       color: var(--#{$variable-prefix}color-disabled);
     }

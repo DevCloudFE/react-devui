@@ -5,7 +5,6 @@ import type { Draft } from 'immer';
 import { isArray, isNull, isNumber, isString, isUndefined } from 'lodash';
 import React, { useCallback, useRef, useEffect, useMemo, useState, useId } from 'react';
 import { flushSync } from 'react-dom';
-import { filter } from 'rxjs';
 
 import {
   usePrefixConfig,
@@ -20,6 +19,7 @@ import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DSelectBox } from '../_select-box';
 import { DVirtualScroll } from '../_virtual-scroll';
+import { DCheckbox } from '../checkbox';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 import { DTag } from '../tag';
@@ -540,8 +540,9 @@ export function DSelect<T>(
               break;
 
             case 'Space':
+              e.preventDefault();
+
               if (dMultiple) {
-                e.preventDefault();
                 handleOptionClick(focusId, true);
               }
               break;
@@ -592,19 +593,20 @@ export function DSelect<T>(
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (visible) {
-      asyncGroup
-        .fromEvent<KeyboardEvent>(window, 'keydown')
-        .pipe(filter((e) => e.code === 'Escape'))
-        .subscribe({
-          next: () => {
+      asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
+        next: (e) => {
+          if (e.code === 'Escape') {
             flushSync(() => changeVisible(false));
             asyncGroup.setTimeout(() => {
               if (selectBoxRef.current) {
                 selectBoxRef.current.focus({ preventScroll: true });
               }
             });
-          },
-        });
+          } else if (e.code === 'Tab') {
+            e.preventDefault();
+          }
+        },
+      });
     }
 
     return () => {
@@ -755,7 +757,7 @@ export function DSelect<T>(
           key={optionId}
           id={`${dPrefix}select-${uniqueId}-option-${optionId}`}
           className={getClassName(`${dPrefix}select__option`, {
-            'is-selected': isSelected,
+            'is-selected': !dMultiple && isSelected,
             'is-focus': focusId === optionId,
             'is-disabled': _item.dDisabled,
           })}
@@ -778,19 +780,19 @@ export function DSelect<T>(
                 }
           }
         >
-          {_item[IS_CREATE] && (
-            <span className={`${dPrefix}select__option-add`}>
-              <DIcon viewBox="64 64 896 896" dTheme="primary">
-                <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-                <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
-              </DIcon>
-            </span>
-          )}
+          {_item[IS_CREATE] ? (
+            <DIcon viewBox="64 64 896 896" dTheme="primary">
+              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+            </DIcon>
+          ) : dMultiple ? (
+            <DCheckbox dModel={[isSelected]} dDisabled={_item.dDisabled}></DCheckbox>
+          ) : null}
           <span className={`${dPrefix}select__option-content`}>{dOptionRender(_item, index)}</span>
         </li>
       );
     },
-    [dGetId, dOptionRender, dPrefix, focusId, handleOptionClick, onCreateOption, select, t, uniqueId]
+    [dGetId, dMultiple, dOptionRender, dPrefix, focusId, handleOptionClick, onCreateOption, select, t, uniqueId]
   );
 
   return (

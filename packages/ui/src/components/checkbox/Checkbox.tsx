@@ -88,9 +88,11 @@ export function DCheckbox(props: DCheckboxProps) {
         {!dIndeterminate && checked && <div className={`${dPrefix}checkbox__tick`}></div>}
         {dIndeterminate && <div className={`${dPrefix}checkbox__indeterminate`}></div>}
       </div>
-      <label id={`${dPrefix}checkbox-label-${uniqueId}`} className={`${dPrefix}checkbox__label`} htmlFor={_id}>
-        {children}
-      </label>
+      {children && (
+        <label id={`${dPrefix}checkbox-label-${uniqueId}`} className={`${dPrefix}checkbox__label`} htmlFor={_id}>
+          {children}
+        </label>
+      )}
     </div>
   );
 }
