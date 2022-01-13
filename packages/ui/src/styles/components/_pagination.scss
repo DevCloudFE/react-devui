@@ -25,6 +25,18 @@
         color: var(--#{$variable-prefix}color-primary);
       }
     }
+
+    .#{$variable-prefix}pagination__item--jump5 {
+      &:hover,
+      &:focus {
+        .#{$variable-prefix}icon {
+          opacity: 1;
+        }
+        .#{$variable-prefix}pagination__ellipsis {
+          opacity: 0;
+        }
+      }
+    }
   }
 
   @include when(change) {
@@ -110,16 +122,6 @@
         opacity: 0;
 
         transition: opacity 133ms linear;
-      }
-
-      &:hover,
-      &:focus {
-        .#{$variable-prefix}icon {
-          opacity: 1;
-        }
-        .#{$variable-prefix}pagination__ellipsis {
-          opacity: 0;
-        }
       }
     }
   }

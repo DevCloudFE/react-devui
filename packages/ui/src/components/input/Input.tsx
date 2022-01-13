@@ -26,7 +26,6 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     className,
     type = 'text',
     disabled,
-    onClick,
     onFocus,
     onBlur,
     onChange,
@@ -73,6 +72,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       onChange?.(e);
+
       changeValue(e.currentTarget.value);
     },
     [changeValue, onChange]
@@ -81,6 +81,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   const handleFocus = useCallback<React.FocusEventHandler<HTMLInputElement>>(
     (e) => {
       onFocus?.(e);
+
       _onFocus?.();
     },
     [_onFocus, onFocus]
@@ -89,6 +90,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
+
       _onBlur?.();
     },
     [_onBlur, onBlur]

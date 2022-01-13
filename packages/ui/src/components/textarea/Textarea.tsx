@@ -31,9 +31,6 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     style,
     maxLength,
     disabled,
-    onClick,
-    onFocus,
-    onBlur,
     onChange,
     ...restProps
   } = useComponentConfig(DTextarea.name, props);

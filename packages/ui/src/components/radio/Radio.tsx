@@ -2,15 +2,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 
 import React, { useCallback, useId } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useCustomContext,
-  useTwoWayBinding,
-  useWave,
-  useRefCallback,
-  useGeneralState,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useGeneralState } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
@@ -36,7 +28,7 @@ export function DRadio(props: DRadioProps) {
     onModelChange,
     className,
     children,
-    onChange,
+    onClick,
     ...restProps
   } = useComponentConfig(DRadio.name, props);
 
@@ -46,11 +38,7 @@ export function DRadio(props: DRadioProps) {
   const [{ radioGroupValue, radioGroupName, radioGroupType, onCheckedChange }, radioGroupContext] = useCustomContext(DRadioGroupContext);
   //#endregion
 
-  //#region Ref
-  const [radioEl, radioRef] = useRefCallback();
-  //#endregion
-
-  const wave = useWave();
+  const [waveNode, wave] = useWave();
 
   const uniqueId = useId();
   const _id = dInputProps?.id ?? `${dPrefix}radio-input-${uniqueId}`;
@@ -66,29 +54,32 @@ export function DRadio(props: DRadioProps) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      onChange?.(e);
+  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
+    changeChecked(true);
+    if (inGroup) {
+      onCheckedChange?.(dValue);
+    }
+  }, [inGroup, onCheckedChange, dValue, changeChecked]);
 
-      changeChecked(true);
-      if (inGroup) {
-        onCheckedChange?.(dValue);
-      }
-      if (radioEl && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
-        wave(radioEl, `var(--${dPrefix}color-primary)`);
+  const handleClick = useCallback(
+    (e) => {
+      onClick?.(e);
+
+      if (!disabled && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
+        wave(`var(--${dPrefix}color-primary)`);
       }
     },
-    [onChange, inGroup, radioEl, radioGroupType, onCheckedChange, dValue, changeChecked, wave, dPrefix]
+    [dPrefix, disabled, onClick, radioGroupType, wave]
   );
 
   return (
     <div
       {...restProps}
-      ref={radioRef}
       className={getClassName(className, `${dPrefix}radio`, {
         'is-checked': checked,
         'is-disabled': disabled,
       })}
+      onClick={handleClick}
     >
       <div className={`${dPrefix}radio__input-wrapper`}>
         <input
@@ -109,6 +100,7 @@ export function DRadio(props: DRadioProps) {
       <label id={`${dPrefix}radio-label-${uniqueId}`} className={`${dPrefix}radio__label`} htmlFor={_id}>
         {children}
       </label>
+      {waveNode}
     </div>
   );
 }

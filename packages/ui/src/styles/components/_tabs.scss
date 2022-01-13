@@ -354,6 +354,8 @@
 
     background-color: var(--#{$variable-prefix}color-primary);
     opacity: 0;
+
+    pointer-events: none;
   }
 
   @include e(button-container) {
@@ -407,6 +409,8 @@
 
     opacity: 0;
 
+    pointer-events: none;
+
     &::after {
       position: absolute;
       top: 3px;
@@ -432,6 +436,8 @@
     background-color: var(--#{$variable-prefix}background-color-primary);
 
     opacity: 0;
+
+    pointer-events: none;
   }
 }
 

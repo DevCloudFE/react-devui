@@ -49,8 +49,6 @@ export function DMenu(props: DMenuProps) {
     children,
     onMouseEnter,
     onMouseLeave,
-    onFocus,
-    onBlur,
     onClick,
     ...restProps
   } = useComponentConfig(DMenu.name, props);
@@ -191,14 +189,17 @@ export function DMenu(props: DMenuProps) {
             aria-activedescendant={activedescendant}
             onMouseEnter={(e) => {
               onMouseEnter?.(e);
+
               triggerRenderProps.onMouseEnter?.(e);
             }}
             onMouseLeave={(e) => {
               onMouseLeave?.(e);
+
               triggerRenderProps.onMouseLeave?.(e);
             }}
             onClick={(e) => {
               onClick?.(e);
+
               triggerRenderProps.onClick?.(e);
             }}
           >

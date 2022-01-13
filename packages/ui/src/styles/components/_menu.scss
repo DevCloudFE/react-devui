@@ -64,6 +64,7 @@ $menu-item-height: 40px;
       right: 16px;
       bottom: -5px;
       left: 16px;
+      z-index: 1;
 
       height: 2px;
 
@@ -77,7 +78,7 @@ $menu-item-height: 40px;
 
     @include when(active) {
       &::after {
-        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        background-color: var(--#{$variable-prefix}color-primary);
         transform: scaleX(1);
       }
     }
@@ -196,7 +197,7 @@ $menu-item-height: 40px;
         width: 2px;
         height: calc(100% - 16px);
 
-        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        background-color: var(--#{$variable-prefix}color-primary);
         transform: scaleY(0);
 
         transition: transform 0.2s linear;
@@ -224,13 +225,13 @@ $menu-item-height: 40px;
       right: 4px;
       bottom: 10px;
       left: 4px;
-      z-index: -1;
 
       height: 1px;
 
       background-color: var(--#{$variable-prefix}background-color-indicator);
 
       content: '';
+      pointer-events: none;
     }
   }
 }
@@ -275,7 +276,7 @@ $menu-item-height: 40px;
   @include m(horizontal) {
     @include when(expand) {
       &::after {
-        background-color: var(--#{$variable-prefix}color-primary-lighter);
+        background-color: var(--#{$variable-prefix}color-primary);
         transform: scaleX(1);
       }
     }
@@ -289,7 +290,7 @@ $menu-item-height: 40px;
 
   @include when(active) {
     @include e(arrow) {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$variable-prefix}color-primary);
     }
   }
 
@@ -297,7 +298,7 @@ $menu-item-height: 40px;
     color: var(--#{$variable-prefix}color-primary);
 
     @include e(arrow) {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$variable-prefix}color-primary);
     }
   }
 
@@ -333,7 +334,7 @@ $menu-item-height: 40px;
       &:focus,
       &:hover {
         &::after {
-          background-color: var(--#{$variable-prefix}color-primary-lighter);
+          background-color: var(--#{$variable-prefix}color-primary);
           transform: scaleX(1);
         }
       }

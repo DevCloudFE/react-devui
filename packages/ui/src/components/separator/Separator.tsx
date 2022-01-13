@@ -18,7 +18,6 @@ export function DSeparator(props: DSeparatorProps) {
     dVertical = false,
     className,
     children,
-    onClick,
     ...restProps
   } = useComponentConfig(DSeparator.name, props);
 

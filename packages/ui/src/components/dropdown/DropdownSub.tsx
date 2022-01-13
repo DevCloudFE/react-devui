@@ -114,6 +114,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
+
       _onBlur?.();
     },
     [_onBlur, onBlur]

@@ -55,7 +55,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   const [loadingEl, loadingRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const wave = useWave();
+  const [waveNode, wave] = useWave();
 
   const buttonType = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
   const theme = isUndefined(props.dTheme) ? buttonGroupTheme ?? dTheme : dTheme;
@@ -67,7 +67,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
       onClick?.(e);
 
       if (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed') {
-        wave(e.currentTarget, `var(--${dPrefix}color-${theme})`);
+        wave(`var(--${dPrefix}color-${theme})`);
       }
     },
     [theme, dPrefix, onClick, buttonType, wave]
@@ -124,6 +124,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
       {dIconRight && children}
       {dIcon ? buttonIcon(dLoading) : !hidden && buttonIcon(true, loadingRef)}
       {!dIconRight && children}
+      {waveNode}
     </button>
   );
 };

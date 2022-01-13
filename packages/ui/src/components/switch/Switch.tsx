@@ -32,7 +32,6 @@ export function DSwitch(props: DSwitchProps) {
     id,
     className,
     children,
-    onChange,
     ...restProps
   } = useComponentConfig(DSwitch.name, props);
 
@@ -59,14 +58,9 @@ export function DSwitch(props: DSwitchProps) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      onChange?.(e);
-
-      changeChecked(!checked);
-    },
-    [onChange, changeChecked, checked]
-  );
+  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
+    changeChecked(!checked);
+  }, [changeChecked, checked]);
 
   const handleFocus = useCallback(
     (e) => {

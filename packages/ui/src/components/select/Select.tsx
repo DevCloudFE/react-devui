@@ -120,8 +120,7 @@ export function DSelect<T>(
     id,
     className,
     children,
-    onChange,
-    onClick,
+    onClickCapture,
     onKeyDown,
     ...restProps
   } = useComponentConfig(DSelect.name, props);
@@ -328,7 +327,7 @@ export function DSelect<T>(
 
   const handleClickCapture = useCallback(
     (e) => {
-      onClick?.(e);
+      onClickCapture?.(e);
 
       dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
       if (!disabled) {
@@ -338,7 +337,7 @@ export function DSelect<T>(
         }, 20);
       }
     },
-    [asyncCapture, changeVisible, disabled, onClick, visible]
+    [asyncCapture, changeVisible, disabled, onClickCapture, visible]
   );
 
   const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(

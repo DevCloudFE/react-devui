@@ -68,6 +68,7 @@ export function DMenuItem(props: DMenuItemProps) {
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
+
       _onBlur?.();
     },
     [_onBlur, onBlur]

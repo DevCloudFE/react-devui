@@ -30,7 +30,6 @@ export function DCheckbox(props: DCheckboxProps) {
     onModelChange,
     className,
     children,
-    onChange,
     ...restProps
   } = useComponentConfig(DCheckbox.name, props);
 
@@ -57,17 +56,12 @@ export function DCheckbox(props: DCheckboxProps) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      onChange?.(e);
-
-      changeChecked(dIndeterminate ? true : !checked);
-      if (inGroup) {
-        onCheckedChange?.(dValue, dIndeterminate ? true : !checked);
-      }
-    },
-    [onChange, changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]
-  );
+  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
+    changeChecked(dIndeterminate ? true : !checked);
+    if (inGroup) {
+      onCheckedChange?.(dValue, dIndeterminate ? true : !checked);
+    }
+  }, [changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]);
 
   return (
     <div

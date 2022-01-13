@@ -65,9 +65,10 @@ export function DForm(props: DFormProps) {
 
   const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
     (e) => {
+      onSubmit?.(e);
+
       e.preventDefault();
       e.stopPropagation();
-      onSubmit?.(e);
     },
     [onSubmit]
   );

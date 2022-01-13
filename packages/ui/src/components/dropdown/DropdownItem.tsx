@@ -57,6 +57,7 @@ export function DDropdownItem(props: DDropdownItemProps) {
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
+
       _onBlur?.();
     },
     [_onBlur, onBlur]

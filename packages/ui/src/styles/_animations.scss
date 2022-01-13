@@ -4,12 +4,6 @@
   }
 }
 
-@keyframes wave {
-  100% {
-    box-shadow: 0 0 0 6px var(--#{$variable-prefix}wave-color);
-  }
-}
-
 @keyframes wave-spread {
   0% {
     transform: scale(1);
@@ -18,12 +12,6 @@
 
   100% {
     transform: scale(1.6);
-    opacity: 0;
-  }
-}
-
-@keyframes fade-out {
-  100% {
     opacity: 0;
   }
 }

@@ -26,6 +26,7 @@ export function DMask(props: DMaskProps) {
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
+
       onClose?.();
     },
     [onClick, onClose]

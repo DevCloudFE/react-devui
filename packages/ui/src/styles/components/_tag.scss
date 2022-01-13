@@ -59,5 +59,12 @@
     margin-left: 4px;
 
     cursor: pointer;
+
+    transition: color 0.1s linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
   }
 }

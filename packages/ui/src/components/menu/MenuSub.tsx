@@ -184,6 +184,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
+
       _onBlur?.();
     },
     [_onBlur, onBlur]

@@ -122,11 +122,12 @@
 
   @include e(arrow) {
     position: absolute;
-    z-index: -1;
 
     width: 6px;
     height: 6px;
 
     background-color: inherit;
+
+    pointer-events: none;
   }
 }
