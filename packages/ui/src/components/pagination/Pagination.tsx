@@ -23,7 +23,6 @@ export interface DPaginationProps extends React.HTMLAttributes<HTMLElement> {
     jump?: (input: React.ReactNode) => React.ReactNode;
   };
   dMini?: boolean;
-  dDisabled?: boolean;
   onActiveChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
 }
@@ -41,7 +40,6 @@ export function DPagination(props: DPaginationProps) {
     dCompose = DEFAULT_PROPS.dCompose,
     dCustomRender,
     dMini = false,
-    dDisabled = false,
     onActiveChange,
     onPageSizeChange,
     className,
@@ -198,13 +196,12 @@ export function DPagination(props: DPaginationProps) {
         dModel={[pageSize]}
         dCustomSelected={(select) => `${select.dLabel} ${t(' / Page')}`}
         dOptionRender={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.dValue) : option.dLabel)}
-        dDisabled={dDisabled}
         onModelChange={(select) => {
           changePageSize(select as number);
         }}
       ></DSelect>
     );
-  }, [changePageSize, dCustomRender, dDisabled, dMini, dPageSizeOptions, dPrefix, pageSize, t]);
+  }, [changePageSize, dCustomRender, dMini, dPageSizeOptions, dPrefix, pageSize, t]);
 
   const jumpNode = useMemo(() => {
     if (dCompose.includes('jump')) {
@@ -216,7 +213,6 @@ export function DPagination(props: DPaginationProps) {
           min={1}
           max={lastPage}
           step={1}
-          disabled={dDisabled}
           dModel={[jumpValue, setJumpValue]}
           onKeyDown={(e) => {
             if (e.code === 'Enter') {
@@ -230,13 +226,7 @@ export function DPagination(props: DPaginationProps) {
           }}
         />
       );
-      const jumpInput = dMini ? (
-        inputNode
-      ) : (
-        <DInputAffix dDisabled={dDisabled} dNumber>
-          {inputNode}
-        </DInputAffix>
-      );
+      const jumpInput = dMini ? inputNode : <DInputAffix dNumber>{inputNode}</DInputAffix>;
 
       if (dCustomRender && dCustomRender.jump) {
         return dCustomRender.jump(jumpInput);
@@ -249,33 +239,13 @@ export function DPagination(props: DPaginationProps) {
       }
     }
     return null;
-  }, [changeActive, dCompose, dCustomRender, dDisabled, dMini, dPrefix, jumpValue, lastPage, t]);
-
-  const handleMouseDown = useCallback<React.MouseEventHandler<HTMLElement>>(
-    (e) => {
-      if (dDisabled) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    },
-    [dDisabled]
-  );
-  const handleClick = useCallback<React.MouseEventHandler<HTMLElement>>(
-    (e) => {
-      if (dDisabled) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    },
-    [dDisabled]
-  );
+  }, [changeActive, dCompose, dCustomRender, dMini, dPrefix, jumpValue, lastPage, t]);
 
   return (
     <nav
       {...restProps}
       className={getClassName(className, `${dPrefix}pagination`, {
         [`${dPrefix}pagination--mini`]: dMini,
-        'is-disabled': dDisabled,
         'is-change': isChange,
       })}
       tabIndex={-1}
@@ -322,7 +292,7 @@ export function DPagination(props: DPaginationProps) {
           }
 
           return (
-            <ul key="pages" className={`${dPrefix}pagination__list`} onMouseDownCapture={handleMouseDown} onClickCapture={handleClick}>
+            <ul key="pages" className={`${dPrefix}pagination__list`}>
               {prevNode}
               {pages.map((n) => {
                 if (n === 'prev5') {

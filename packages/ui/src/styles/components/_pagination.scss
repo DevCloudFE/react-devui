@@ -10,54 +10,9 @@
 
   outline: none;
 
-  &:not(.is-disabled) {
-    .#{$variable-prefix}pagination__item--button:not(.is-disabled) {
-      &:hover,
-      &:focus {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-
-        color: var(--#{$variable-prefix}color-primary-lighter);
-      }
-
-      @include when(active) {
-        border-color: var(--#{$variable-prefix}color-primary);
-
-        color: var(--#{$variable-prefix}color-primary);
-      }
-    }
-
-    .#{$variable-prefix}pagination__item--jump5 {
-      &:hover,
-      &:focus {
-        .#{$variable-prefix}icon {
-          opacity: 1;
-        }
-        .#{$variable-prefix}pagination__ellipsis {
-          opacity: 0;
-        }
-      }
-    }
-  }
-
   @include when(change) {
     .#{$variable-prefix}pagination__item--button {
       transition: none;
-    }
-  }
-
-  @include when(disabled) {
-    .#{$variable-prefix}pagination__item--button {
-      color: var(--#{$variable-prefix}color-disabled);
-
-      background-color: var(--#{$variable-prefix}background-color-disabled);
-
-      cursor: not-allowed;
-
-      @include when(active) {
-        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
-
-        background-color: var(--#{$variable-prefix}color-step-100);
-      }
     }
   }
 
@@ -109,6 +64,21 @@
       user-select: none;
 
       @include utils-disabled;
+
+      &:not(.is-disabled) {
+        &:hover,
+        &:focus {
+          border-color: var(--#{$variable-prefix}color-primary-lighter);
+
+          color: var(--#{$variable-prefix}color-primary-lighter);
+        }
+
+        @include when(active) {
+          border-color: var(--#{$variable-prefix}color-primary);
+
+          color: var(--#{$variable-prefix}color-primary);
+        }
+      }
     }
 
     @include m(border) {
@@ -122,6 +92,16 @@
         opacity: 0;
 
         transition: opacity 133ms linear;
+      }
+
+      &:hover,
+      &:focus {
+        .#{$variable-prefix}icon {
+          opacity: 1;
+        }
+        .#{$variable-prefix}pagination__ellipsis {
+          opacity: 0;
+        }
       }
     }
   }

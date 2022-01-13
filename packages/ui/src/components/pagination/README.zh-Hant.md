@@ -24,7 +24,6 @@ title: 分页
 | dCompose | 自由组合配置 | `Array<'total' \| 'pages' \| 'size' \| 'jump'>` | ['pages'] |
 | dCustomRender | 自定义配置 | `{ total?: (range: [number, number]) => React.ReactNode; prev?: React.ReactNode; page?: (page: number) => React.ReactNode; next?: React.ReactNode; sizeOption?: (size: number) => React.ReactNode; jump?: (input: React.ReactNode) => React.ReactNode; }` | - |
 | dMini | 迷你形态 | boolean | false |
-| dDisabled | 是否禁用 | boolean | false |
 | onActiveChange | 活动页数改变的回调 | `(page: number) => void` | - |
 | onPageSizeChange | 每页条目数改变的回调 | `(size: number) => void` | - |
 <!-- prettier-ignore-end -->
