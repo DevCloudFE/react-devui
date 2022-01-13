@@ -73,7 +73,7 @@ export function DRadio(props: DRadioProps) {
   );
 
   return (
-    <div
+    <label
       {...restProps}
       className={getClassName(className, `${dPrefix}radio`, {
         'is-checked': checked,
@@ -92,17 +92,12 @@ export function DRadio(props: DRadioProps) {
           name={radioGroupName}
           checked={checked}
           disabled={disabled}
-          aria-labelledby={`${dPrefix}radio-label-${uniqueId}`}
           aria-checked={checked}
           onChange={handleChange}
         />
       </div>
-      {children && (
-        <label id={`${dPrefix}radio-label-${uniqueId}`} className={`${dPrefix}radio__label`} htmlFor={_id}>
-          {children}
-        </label>
-      )}
+      {children && <span className={`${dPrefix}radio__label`}>{children}</span>}
       {waveNode}
-    </div>
+    </label>
   );
 }

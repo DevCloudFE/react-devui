@@ -15,7 +15,7 @@
 
   @include e(buttons) {
     display: inline-flex;
-    gap: 0 var(--#{$variable-prefix}margin-size);
+    gap: 0 8px;
     align-items: center;
     margin-left: auto;
   }

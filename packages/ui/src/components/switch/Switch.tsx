@@ -124,7 +124,6 @@ export function DSwitch(props: DSwitchProps) {
           type="checkbox"
           role="switch"
           disabled={disabled || dLoading}
-          aria-labelledby={children ? `${dPrefix}switch-label-${uniqueId}` : undefined}
           aria-checked={checked}
           onChange={handleChange}
           onFocus={handleFocus}
@@ -147,11 +146,7 @@ export function DSwitch(props: DSwitchProps) {
           )}
         </div>
       </div>
-      {children && (
-        <span id={`${dPrefix}switch-label-${uniqueId}`} className={`${dPrefix}switch__label`}>
-          {children}
-        </span>
-      )}
+      {children && <span className={`${dPrefix}switch__label`}>{children}</span>}
     </label>
   );
 }

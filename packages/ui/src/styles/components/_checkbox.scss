@@ -16,6 +16,7 @@
   position: relative;
 
   display: inline-flex;
+  gap: 0 8px;
   align-items: center;
 
   @include utils-disabled;
@@ -28,7 +29,7 @@
     }
 
     @include when(checked) {
-      @include e(input-wrapper) {
+      @include e(state-container) {
         &::before {
           animation: wave-spread 0.36s ease-in-out;
           animation-fill-mode: backwards;
@@ -50,7 +51,7 @@
     }
 
     @include when(indeterminate) {
-      @include e(input-wrapper) {
+      @include e(state-container) {
         &::before {
           animation: wave-spread 0.36s ease-in-out;
           animation-fill-mode: backwards;
@@ -78,7 +79,7 @@
   }
 
   @include when(disabled) {
-    @include e(input-wrapper) {
+    @include e(state-container) {
       background-color: var(--#{$variable-prefix}background-color-disabled);
     }
 
@@ -89,7 +90,7 @@
     }
   }
 
-  @include e(input-wrapper) {
+  @include e(state-container) {
     position: relative;
 
     width: 16px;
@@ -193,14 +194,6 @@
     transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
 
     appearance: none;
-  }
-
-  @include e(label) {
-    margin-left: 8px;
-
-    cursor: inherit;
-
-    transition: color 133ms linear;
   }
 }
 

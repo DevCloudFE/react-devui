@@ -15,6 +15,7 @@
   }
 
   #{$radio-selector} {
+    gap: 0;
     height: var(--#{$variable-prefix}size);
     border: 1px solid var(--#{$variable-prefix}color-border);
 
@@ -67,8 +68,9 @@
     display: inline-flex;
     align-items: center;
     height: 100%;
-    margin-left: 0;
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
+
+    transition: color 133ms linear;
   }
 }
 
@@ -76,6 +78,7 @@
   position: relative;
 
   display: inline-flex;
+  gap: 0 8px;
   align-items: center;
 
   @include utils-disabled;
@@ -193,14 +196,6 @@
     transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
 
     appearance: none;
-  }
-
-  @include e(label) {
-    margin-left: 8px;
-
-    cursor: inherit;
-
-    transition: color 133ms linear;
   }
 }
 

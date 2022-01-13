@@ -64,7 +64,7 @@ export function DCheckbox(props: DCheckboxProps) {
   }, [changeChecked, dIndeterminate, checked, inGroup, onCheckedChange, dValue]);
 
   return (
-    <div
+    <label
       {...restProps}
       className={getClassName(className, `${dPrefix}checkbox`, {
         'is-indeterminate': dIndeterminate,
@@ -72,7 +72,7 @@ export function DCheckbox(props: DCheckboxProps) {
         'is-disabled': disabled,
       })}
     >
-      <div className={`${dPrefix}checkbox__input-wrapper`}>
+      <div className={`${dPrefix}checkbox__state-container`}>
         <input
           {...dInputProps}
           {...ariaAttribute}
@@ -81,18 +81,13 @@ export function DCheckbox(props: DCheckboxProps) {
           className={getClassName(dInputProps?.className, `${dPrefix}checkbox__input`)}
           type="checkbox"
           disabled={disabled}
-          aria-labelledby={`${dPrefix}checkbox-label-${uniqueId}`}
           aria-checked={dIndeterminate ? 'mixed' : checked}
           onChange={handleChange}
         />
         {!dIndeterminate && checked && <div className={`${dPrefix}checkbox__tick`}></div>}
         {dIndeterminate && <div className={`${dPrefix}checkbox__indeterminate`}></div>}
       </div>
-      {children && (
-        <label id={`${dPrefix}checkbox-label-${uniqueId}`} className={`${dPrefix}checkbox__label`} htmlFor={_id}>
-          {children}
-        </label>
-      )}
-    </div>
+      {children && <span className={`${dPrefix}checkbox__label`}>{children}</span>}
+    </label>
   );
 }
