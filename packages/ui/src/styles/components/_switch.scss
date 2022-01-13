@@ -25,7 +25,7 @@
   }
 
   @include when(disabled) {
-    color: var(--#{$variable-prefix}disabled-color);
+    color: var(--#{$variable-prefix}color-disabled);
 
     filter: brightness(110%) grayscale(50%);
 

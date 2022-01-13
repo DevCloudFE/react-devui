@@ -15,7 +15,7 @@
 
     width: 2px;
 
-    background-color: var(--#{$variable-prefix}indicator-background-color);
+    background-color: var(--#{$variable-prefix}background-color-indicator);
   }
 
   @include e(dot-indicator) {

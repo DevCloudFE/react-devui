@@ -134,7 +134,7 @@ h3 {
     width: 100%;
     min-width: 1200px;
     margin: 8px 0 16px;
-    border: 1px solid var(--d-border-color);
+    border: 1px solid var(--d-color-border);
     border-collapse: collapse;
     border-spacing: 0;
 
@@ -154,7 +154,7 @@ h3 {
     th,
     td {
       padding: 16px 24px;
-      border: 1px solid var(--d-divider-color);
+      border: 1px solid var(--d-color-divider);
 
       text-align: left;
     }
@@ -215,7 +215,7 @@ h3 {
   .d-menu:not(.d-menu--horizontal) {
     width: 320px;
     max-width: 100%;
-    border-right: 1px solid var(--d-divider-color);
+    border-right: 1px solid var(--d-color-divider);
   }
 
   .d-row + .d-row {
@@ -246,7 +246,7 @@ h3 {
 .app-demo-drop {
   display: inline-block;
   padding: 12px;
-  border: 1px dashed var(--#{$variable-prefix}border-color);
+  border: 1px dashed var(--#{$variable-prefix}color-border);
 
   &.app-demo-drop--horizontal {
     display: inline-flex;

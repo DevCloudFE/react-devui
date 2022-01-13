@@ -7,12 +7,12 @@
 
 @mixin utils-disabled($background: false, $disabled: '.is-disabled') {
   &#{$disabled} {
-    color: var(--#{$variable-prefix}disabled-color);
+    color: var(--#{$variable-prefix}color-disabled);
 
     cursor: not-allowed;
 
     @if $background {
-      background-color: var(--#{$variable-prefix}disabled-background-color);
+      background-color: var(--#{$variable-prefix}background-color-disabled);
     }
   }
 }

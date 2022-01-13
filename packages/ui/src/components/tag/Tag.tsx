@@ -55,7 +55,7 @@ export function DTag(props: DTagProps) {
           ? {
               [`--${dPrefix}tag-color`]: dColor,
               [`--${dPrefix}tag-border-color`]: pSBC(0.3, dColor),
-              [`--${dPrefix}tag-background-color`]: convertHex(dColor, theme === 'light' ? 0.08 : 0.12),
+              [`--${dPrefix}tag-background-color`]: convertHex(dColor, theme === 'light' ? 0.1 : 0.16),
             }
           : undefined
       }

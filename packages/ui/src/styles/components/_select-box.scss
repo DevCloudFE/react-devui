@@ -6,7 +6,7 @@
   width: 100%;
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
-  border: 1px solid var(--#{$variable-prefix}border-color);
+  border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
@@ -16,7 +16,7 @@
   text-transform: none;
   vertical-align: top;
 
-  background-color: var(--#{$variable-prefix}input-background-color);
+  background-color: var(--#{$variable-prefix}background-color-input);
 
   outline: none;
   cursor: pointer;
@@ -60,7 +60,7 @@
 
   @include when(disabled) {
     .#{$variable-prefix}select-box__icon {
-      color: var(--#{$variable-prefix}disabled-color);
+      color: var(--#{$variable-prefix}color-disabled);
     }
     .#{$variable-prefix}select-box__placeholder {
       color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);

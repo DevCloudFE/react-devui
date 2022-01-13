@@ -15,7 +15,7 @@ $select-option-height: 32px;
       }
 
       &:not(.#{$variable-prefix}select__multiple-count) {
-        color: var(--#{$variable-prefix}disabled-color);
+        color: var(--#{$variable-prefix}color-disabled);
       }
     }
 
@@ -58,14 +58,14 @@ $select-option-height: 32px;
       }
 
       &:not(.is-selected):hover {
-        background-color: var(--#{$variable-prefix}hover-background-color);
+        background-color: var(--#{$variable-prefix}background-color-hover);
       }
     }
 
     @include when(selected) {
       font-weight: 600;
 
-      background-color: var(--#{$variable-prefix}color-primary-background);
+      background-color: var(--#{$variable-prefix}background-color-primary);
     }
   }
 
@@ -147,5 +147,5 @@ $select-option-height: 32px;
   min-height: 40px;
   border-radius: var(--#{$variable-prefix}border-radius);
 
-  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+  box-shadow: var(--#{$variable-prefix}shadow-popup);
 }

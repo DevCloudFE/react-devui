@@ -10,19 +10,23 @@ $dark-themes: (
 ) !default;
 
 body.dark {
+  /** shadow **/
+  --#{$variable-prefix}shadow-color: rgb(0 0 0 / 48%);
+  --#{$variable-prefix}shadow-popup: rgb(0 0 0 / 24%) 0 0 20px 2px, rgb(0 0 0 / 32%) 0 4px 10px 0;
+  --#{$variable-prefix}shadow-dialog: rgb(0 0 0 / 24%) 0 0 32px 2px, rgb(0 0 0 / 32%) 0 4px 12px 0;
+
   /** basic **/
   --#{$variable-prefix}text-color: rgb(205 205 205);
   --#{$variable-prefix}text-color-rgb: 205 205 205;
   --#{$variable-prefix}background-color: rgb(31 31 31);
   --#{$variable-prefix}background-color-rgb: 31 31 31;
-  --#{$variable-prefix}shadow-color: rgb(0 0 0 / 48%);
-  --#{$variable-prefix}divider-color: #303030;
-  --#{$variable-prefix}border-color: #434343;
-  --#{$variable-prefix}indicator-background-color: #3d3e40;
-  --#{$variable-prefix}disabled-background-color: #2c2c2c;
-  --#{$variable-prefix}disabled-color: #4e4e50;
-  --#{$variable-prefix}hover-background-color: rgb(255 255 255 / 6%);
-  --#{$variable-prefix}input-background-color: #121212;
+  --#{$variable-prefix}background-color-hover: rgb(255 255 255 / 6%);
+  --#{$variable-prefix}background-color-input: #121212;
+  --#{$variable-prefix}background-color-indicator: #3d3e40;
+  --#{$variable-prefix}background-color-disabled: #2c2c2c;
+  --#{$variable-prefix}color-divider: #303030;
+  --#{$variable-prefix}color-border: #434343;
+  --#{$variable-prefix}color-disabled: #4e4e50;
 
   /** step **/
   --#{$variable-prefix}color-step-10: hsl(0deg 0% 1%);
@@ -67,16 +71,8 @@ body.dark {
     --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
 
     /** background **/
-    --#{$variable-prefix}color-#{$theme}-background: #{color.scale(rgb($rgb), $alpha: -85%)};
-    --#{$variable-prefix}color-#{$theme}-background-1: #{color.scale(rgb($rgb), $alpha: -86%)};
-    --#{$variable-prefix}color-#{$theme}-background-2: #{color.scale(rgb($rgb), $alpha: -87%)};
-    --#{$variable-prefix}color-#{$theme}-background-3: #{color.scale(rgb($rgb), $alpha: -88%)};
-    --#{$variable-prefix}color-#{$theme}-background-4: #{color.scale(rgb($rgb), $alpha: -89%)};
-    --#{$variable-prefix}color-#{$theme}-background-5: #{color.scale(rgb($rgb), $alpha: -90%)};
-    --#{$variable-prefix}color-#{$theme}-background-6: #{color.scale(rgb($rgb), $alpha: -91%)};
-    --#{$variable-prefix}color-#{$theme}-background-7: #{color.scale(rgb($rgb), $alpha: -92%)};
-    --#{$variable-prefix}color-#{$theme}-background-8: #{color.scale(rgb($rgb), $alpha: -93%)};
-    --#{$variable-prefix}color-#{$theme}-background-9: #{color.scale(rgb($rgb), $alpha: -94%)};
+    --#{$variable-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -84%)};
+    --#{$variable-prefix}background-color-hover-#{$theme}: #{color.scale(rgb($rgb), $alpha: -90%)};
   }
 
   /** component **/

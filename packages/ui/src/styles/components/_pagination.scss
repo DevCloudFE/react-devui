@@ -35,9 +35,9 @@
 
   @include when(disabled) {
     .#{$variable-prefix}pagination__item--button {
-      color: var(--#{$variable-prefix}disabled-color);
+      color: var(--#{$variable-prefix}color-disabled);
 
-      background-color: var(--#{$variable-prefix}disabled-background-color);
+      background-color: var(--#{$variable-prefix}background-color-disabled);
 
       cursor: not-allowed;
 
@@ -100,7 +100,7 @@
     }
 
     @include m(border) {
-      border: 1px solid var(--#{$variable-prefix}border-color);
+      border: 1px solid var(--#{$variable-prefix}color-border);
     }
 
     @include m(jump5) {

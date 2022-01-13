@@ -34,7 +34,7 @@
   min-width: var(--#{$variable-prefix}size);
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
-  border: 1px solid var(--#{$variable-prefix}border-color);
+  border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 
   font-size: var(--#{$variable-prefix}font);
@@ -45,7 +45,7 @@
     background-color: var(--#{$variable-prefix}color-step-20);
 
     @include when(disabled) {
-      background-color: var(--#{$variable-prefix}disabled-background-color);
+      background-color: var(--#{$variable-prefix}background-color-disabled);
     }
   }
 

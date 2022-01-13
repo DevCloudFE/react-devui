@@ -34,7 +34,7 @@
   border-radius: var(--#{$variable-prefix}border-radius);
 
   background-color: var(--#{$variable-prefix}background-color);
-  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+  box-shadow: var(--#{$variable-prefix}shadow-dialog);
 
   pointer-events: all;
 

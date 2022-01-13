@@ -8,7 +8,7 @@
         #{$selector}.is-pending {
           z-index: var(--#{$variable-prefix}zindex-active) !important;
 
-          border-color: var(--#{$variable-prefix}border-color) !important;
+          border-color: var(--#{$variable-prefix}color-border) !important;
         }
       }
 

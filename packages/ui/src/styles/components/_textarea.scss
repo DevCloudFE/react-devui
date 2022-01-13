@@ -6,7 +6,7 @@
   min-height: calc(var(--#{$variable-prefix}textarea-line-height) + 8px);
   margin: 0;
   padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
-  border: 1px solid var(--#{$variable-prefix}border-color);
+  border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 
   color: var(--#{$variable-prefix}text-color);
@@ -15,7 +15,7 @@
   line-height: var(--#{$variable-prefix}textarea-line-height);
   letter-spacing: inherit;
 
-  background-color: var(--#{$variable-prefix}input-background-color);
+  background-color: var(--#{$variable-prefix}background-color-input);
 
   outline: none;
 

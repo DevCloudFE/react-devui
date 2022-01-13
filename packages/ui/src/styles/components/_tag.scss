@@ -28,7 +28,7 @@
   @include m(outline) {
     padding: 0 calc(var(--#{$variable-prefix}tag-padding-size) - 1px);
 
-    border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}border-color));
+    border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}color-border));
 
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-step-600));
   }
@@ -37,7 +37,7 @@
     @include theme(#{$theme}) {
       --#{$variable-prefix}tag-color: var(--#{$variable-prefix}color-#{$theme});
       --#{$variable-prefix}tag-border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
-      --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}color-#{$theme}-background-2);
+      --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}background-color-#{$theme});
     }
   }
 

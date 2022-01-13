@@ -80,7 +80,7 @@
 
   @include m(secondary) {
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
-    border: 1px solid var(--#{$variable-prefix}border-color);
+    border: 1px solid var(--#{$variable-prefix}color-border);
 
     color: var(--#{$variable-prefix}text-color);
 
@@ -110,9 +110,9 @@
     background-color: transparent;
 
     &:disabled:not(.is-loading) {
-      border-color: var(--#{$variable-prefix}border-color);
+      border-color: var(--#{$variable-prefix}color-border);
 
-      color: var(--#{$variable-prefix}disabled-color);
+      color: var(--#{$variable-prefix}color-disabled);
     }
 
     @include button-hover {
@@ -137,9 +137,9 @@
     background-color: transparent;
 
     &:disabled:not(.is-loading) {
-      border-color: var(--#{$variable-prefix}border-color);
+      border-color: var(--#{$variable-prefix}color-border);
 
-      color: var(--#{$variable-prefix}disabled-color);
+      color: var(--#{$variable-prefix}color-disabled);
     }
 
     @include button-hover {
@@ -187,7 +187,7 @@
     background-color: transparent;
 
     &:disabled:not(.is-loading) {
-      color: var(--#{$variable-prefix}disabled-color);
+      color: var(--#{$variable-prefix}color-disabled);
     }
 
     @include button-hover {
@@ -240,8 +240,8 @@
       --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
       --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
       --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
-      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}color-#{$theme}-background-6);
-      --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}color-#{$theme}-background);
+      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-hover-#{$theme});
+      --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
     }
   }
 

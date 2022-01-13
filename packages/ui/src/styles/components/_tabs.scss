@@ -99,7 +99,7 @@
     @include m(more) {
       box-shadow: -3px 0 8px -2px var(--#{$variable-prefix}shadow-color);
       @include when(end) {
-        border-left-color: var(--#{$variable-prefix}indicator-background-color);
+        border-left-color: var(--#{$variable-prefix}background-color-indicator);
       }
     }
   }
@@ -222,7 +222,7 @@
     @include m(more) {
       box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
       @include when(end) {
-        border-top-color: var(--#{$variable-prefix}indicator-background-color);
+        border-top-color: var(--#{$variable-prefix}background-color-indicator);
       }
     }
   }
@@ -302,7 +302,7 @@
     @include e(tablist-wrapper) {
       padding: 0;
 
-      background-color: var(--#{$variable-prefix}color-primary-background);
+      background-color: var(--#{$variable-prefix}background-color-primary);
     }
 
     @include e(tablist) {
@@ -341,7 +341,7 @@
     &::after {
       position: absolute;
 
-      background-color: var(--#{$variable-prefix}indicator-background-color);
+      background-color: var(--#{$variable-prefix}background-color-indicator);
 
       content: '';
     }
@@ -387,7 +387,7 @@
     @include utils-disabled;
 
     @include m(add) {
-      border: 1px solid var(--#{$variable-prefix}indicator-background-color);
+      border: 1px solid var(--#{$variable-prefix}background-color-indicator);
     }
 
     @include m(more) {
@@ -427,9 +427,9 @@
     position: absolute;
     z-index: 1;
 
-    border: 1px solid var(--#{$variable-prefix}indicator-background-color);
+    border: 1px solid var(--#{$variable-prefix}background-color-indicator);
 
-    background-color: var(--#{$variable-prefix}color-primary-background);
+    background-color: var(--#{$variable-prefix}background-color-primary);
 
     opacity: 0;
   }

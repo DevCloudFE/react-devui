@@ -8,7 +8,7 @@
   &::before {
     height: 1px;
 
-    background-color: var(--#{$variable-prefix}divider-color);
+    background-color: var(--#{$variable-prefix}color-divider);
 
     content: '';
   }
@@ -16,7 +16,7 @@
   &::after {
     height: 1px;
 
-    background-color: var(--#{$variable-prefix}divider-color);
+    background-color: var(--#{$variable-prefix}color-divider);
 
     content: '';
   }
@@ -50,7 +50,7 @@
 
   list-style: none;
 
-  background-color: var(--#{$variable-prefix}divider-color);
+  background-color: var(--#{$variable-prefix}color-divider);
 
   @include m(text-left) {
     @include separator-text;
@@ -98,7 +98,7 @@
     &::before {
       flex: 1 0 0;
 
-      background-color: var(--#{$variable-prefix}divider-color);
+      background-color: var(--#{$variable-prefix}color-divider);
 
       content: '';
     }

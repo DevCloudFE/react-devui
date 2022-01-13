@@ -41,7 +41,7 @@ $menu-item-height: 40px;
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
 
-      background-color: var(--#{$variable-prefix}color-primary-background-5);
+      background-color: var(--#{$variable-prefix}background-color-hover-primary);
     }
   }
 
@@ -184,7 +184,7 @@ $menu-item-height: 40px;
       width: 2px;
       height: 100%;
 
-      background-color: var(--#{$variable-prefix}indicator-background-color);
+      background-color: var(--#{$variable-prefix}background-color-indicator);
 
       &::before {
         position: absolute;
@@ -228,7 +228,7 @@ $menu-item-height: 40px;
 
       height: 1px;
 
-      background-color: var(--#{$variable-prefix}indicator-background-color);
+      background-color: var(--#{$variable-prefix}background-color-indicator);
 
       content: '';
     }
@@ -344,7 +344,7 @@ $menu-item-height: 40px;
 @include b(menu-sub-popup) {
   border-radius: var(--#{$variable-prefix}border-radius);
 
-  box-shadow: 0 4px 20px 0 var(--#{$variable-prefix}shadow-color);
+  box-shadow: var(--#{$variable-prefix}shadow-popup);
 
   .#{$variable-prefix}menu-sub__arrow {
     right: 6px;
