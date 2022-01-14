@@ -5,7 +5,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import React, { useCallback, useLayoutEffect, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext, useImmer } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DCheckbox } from './Checkbox';
 
 export interface DCheckboxGroupContextData {
@@ -26,6 +26,7 @@ export interface DCheckboxGroupProps extends React.HTMLAttributes<HTMLDivElement
   onModelChange?: (values: any[]) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DCheckboxGroup');
 export function DCheckboxGroup(props: DCheckboxGroupProps) {
   const {
     dModel,
@@ -38,7 +39,7 @@ export function DCheckboxGroup(props: DCheckboxGroupProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DCheckboxGroup.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

@@ -13,7 +13,7 @@ import {
   useImmer,
   useStateBackflow,
 } from '../../hooks';
-import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle } from '../../utils';
+import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTrigger } from '../_trigger';
 import { DIcon } from '../icon';
@@ -37,6 +37,7 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   __inNav?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DMenuSub');
 export function DMenuSub(props: DMenuSubProps) {
   const {
     dId,
@@ -54,7 +55,7 @@ export function DMenuSub(props: DMenuSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useComponentConfig(DMenuSub.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

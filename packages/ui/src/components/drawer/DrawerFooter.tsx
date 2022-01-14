@@ -4,7 +4,7 @@ import { isBoolean } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DFooter } from '../_footer';
 import { DDrawerContext } from './Drawer';
 
@@ -13,9 +13,10 @@ export interface DDrawerFooterProps extends DFooterProps {
   onCancelClick?: () => void | boolean | Promise<void | boolean>;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDrawerFooter');
 export function DDrawerFooter(props: DDrawerFooterProps) {
   const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useComponentConfig(
-    DDrawerFooter.name,
+    COMPONENT_NAME,
     props
   );
 

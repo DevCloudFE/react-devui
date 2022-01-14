@@ -15,7 +15,7 @@ import {
   useDTransition,
   useMaxIndex,
 } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 
 export interface DDrawerContextData {
@@ -44,6 +44,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   __zIndex?: number | string;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDrawer');
 export function DDrawer(props: DDrawerProps) {
   const {
     dVisible,
@@ -67,7 +68,7 @@ export function DDrawer(props: DDrawerProps) {
     style,
     children,
     ...restProps
-  } = useComponentConfig(DDrawer.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

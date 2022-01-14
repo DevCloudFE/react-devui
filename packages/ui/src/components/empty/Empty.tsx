@@ -2,15 +2,16 @@ import { isUndefined } from 'lodash';
 import { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useThemeConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
 
 export interface DEmptyProps extends React.HTMLAttributes<HTMLDivElement> {
   dIcon?: React.ReactNode;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DEmpty');
 export function DEmpty(props: DEmptyProps) {
-  const { dIcon, className, children, ...restProps } = useComponentConfig(DEmpty.name, props);
+  const { dIcon, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

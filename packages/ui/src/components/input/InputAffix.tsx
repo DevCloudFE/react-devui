@@ -13,7 +13,7 @@ import {
   DGeneralStateContext,
   useNotification,
 } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
 import { getNumberAttribute } from './utils';
@@ -43,6 +43,7 @@ export interface DInputAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dSize?: 'smaller' | 'larger';
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DInputAffix');
 export function DInputAffix(props: DInputAffixProps) {
   const {
     dPrefix: _dPrefix,
@@ -57,7 +58,7 @@ export function DInputAffix(props: DInputAffixProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DInputAffix.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

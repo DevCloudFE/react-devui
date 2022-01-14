@@ -3,7 +3,7 @@ import React, { useId } from 'react';
 import { Subject } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useRefCallback, useDTransition } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DAlertDialog } from '../_alert-dialog';
 import { DIcon } from '../icon';
 
@@ -44,7 +44,7 @@ let TOASTS: Toast[] = [];
 let UNIQUEID = 1;
 export class ToastService {
   static get toasts() {
-    return [...TOASTS];
+    return TOASTS;
   }
 
   static open(props: DToastProps) {
@@ -70,6 +70,7 @@ export class ToastService {
   }
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DToast');
 export function DToast(props: DToastProps & { dVisible: boolean }) {
   const {
     dVisible,
@@ -82,7 +83,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }) {
     afterVisibleChange,
     className,
     ...restProps
-  } = useComponentConfig(DToast.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

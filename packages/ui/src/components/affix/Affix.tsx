@@ -13,7 +13,7 @@ import {
   useContentRefConfig,
   useValueChange,
 } from '../../hooks';
-import { getClassName, toPx, mergeStyle } from '../../utils';
+import { getClassName, toPx, mergeStyle, generateComponentMate } from '../../utils';
 
 export interface DAffixRef {
   el: HTMLDivElement | null;
@@ -28,6 +28,7 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   onFixedChange?: (fixed: boolean) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DAffix');
 const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, ref) => {
   const {
     dTarget,
@@ -39,7 +40,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     style,
     children,
     ...restProps
-  } = useComponentConfig(DAffix.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

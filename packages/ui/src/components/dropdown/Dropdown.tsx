@@ -5,7 +5,7 @@ import type { DDropdownItemProps } from './DropdownItem';
 import React, { useId, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useAsync, useTranslation } from '../../hooks';
-import { getClassName, getVerticalSideStyle } from '../../utils';
+import { generateComponentMate, getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 
 export interface DDropdownContextData {
@@ -32,6 +32,7 @@ export interface DDropdownProps extends React.HTMLAttributes<HTMLElement> {
   onItemClick?: (id: string) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDropdown');
 export function DDropdown(props: DDropdownProps) {
   const {
     dTriggerNode,
@@ -49,7 +50,7 @@ export function DDropdown(props: DDropdownProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DDropdown.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

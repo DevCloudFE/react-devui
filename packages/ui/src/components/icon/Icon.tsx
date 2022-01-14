@@ -3,7 +3,7 @@ import React, { useMemo, useContext } from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { DConfigContext } from '../../hooks/d-config';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 
 export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dName?: string;
@@ -15,6 +15,7 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dSpinSpeed?: number | string;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DIcon');
 export function DIcon(props: DIconProps) {
   const dPrefix = usePrefixConfig();
   const {
@@ -31,7 +32,7 @@ export function DIcon(props: DIconProps) {
     fill = 'currentColor',
     children,
     ...restProps
-  } = useComponentConfig(DIcon.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   const iconContext = useContext(DConfigContext).icons;
 

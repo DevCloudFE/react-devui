@@ -5,7 +5,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useDCollapseTransition } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DTrigger } from '../_trigger';
 import { DMenuItem } from './MenuItem';
 import { DMenuSub } from './MenuSub';
@@ -35,6 +35,7 @@ export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
   onExpandsChange?: (ids: Set<string>) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DMenu');
 export function DMenu(props: DMenuProps) {
   const {
     dActive,
@@ -51,7 +52,7 @@ export function DMenu(props: DMenuProps) {
     onMouseLeave,
     onClick,
     ...restProps
-  } = useComponentConfig(DMenu.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

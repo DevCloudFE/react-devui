@@ -15,7 +15,7 @@ import {
   useRefCallback,
   useGeneralState,
 } from '../../hooks';
-import { getClassName, getVerticalSideStyle } from '../../utils';
+import { generateComponentMate, getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DSelectBox } from '../_select-box';
 import { DVirtualScroll } from '../_virtual-scroll';
@@ -77,6 +77,7 @@ export interface DSelectMultipleProps<T> extends DSelectBaseProps<T> {
   onExceed?: () => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DSelect');
 const DEFAULT_PROPS = {
   dOptionRender: (option: DSelectBaseOption<unknown>) => option.dLabel,
   dGetId: (value: unknown) => String(value),
@@ -122,7 +123,7 @@ export function DSelect<T>(
     onClickCapture,
     onKeyDown,
     ...restProps
-  } = useComponentConfig(DSelect.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

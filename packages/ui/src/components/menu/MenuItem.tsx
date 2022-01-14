@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useStateBackflow } from '../../hooks';
-import { getClassName, toId, mergeStyle } from '../../utils';
+import { getClassName, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
 import { DMenuSubContext } from './MenuSub';
@@ -15,6 +15,7 @@ export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
   __inNav?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DMenuItem');
 export function DMenuItem(props: DMenuItemProps) {
   const {
     dId,
@@ -31,7 +32,7 @@ export function DMenuItem(props: DMenuItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useComponentConfig(DMenuItem.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

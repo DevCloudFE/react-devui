@@ -3,7 +3,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import React, { useCallback, useId } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useGeneralState } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
@@ -17,6 +17,7 @@ export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   onModelChange?: (checked: boolean) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DRadio');
 export function DRadio(props: DRadioProps) {
   const {
     dModel,
@@ -30,7 +31,7 @@ export function DRadio(props: DRadioProps) {
     children,
     onClick,
     ...restProps
-  } = useComponentConfig(DRadio.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

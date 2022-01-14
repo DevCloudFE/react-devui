@@ -6,7 +6,7 @@ import { isArray, isBoolean, isNull, isNumber, isString, isUndefined } from 'lod
 import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation, useGridConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
 import { DTooltip } from '../tooltip';
 import { DError } from './Error';
@@ -39,9 +39,10 @@ export interface DFormItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemProps, 'dLabelWidth' | 'dSpan'>>;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DFormItem');
 export function DFormItem(props: DFormItemProps) {
   const { dLabel, dLabelWidth, dLabelExtra, dShowRequired, dErrors, dSpan, dResponsiveProps, className, children, ...restProps } =
-    useComponentConfig(DFormItem.name, props);
+    useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

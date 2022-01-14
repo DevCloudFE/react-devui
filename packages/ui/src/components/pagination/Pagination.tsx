@@ -3,7 +3,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useAsync } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
 import { DInput, DInputAffix } from '../input';
 import { DSelect } from '../select';
@@ -27,6 +27,7 @@ export interface DPaginationProps extends React.HTMLAttributes<HTMLElement> {
   onPageSizeChange?: (size: number) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DPagination');
 const DEFAULT_PROPS = {
   dCompose: ['pages'],
   dPageSizeOptions: [10, 20, 50, 100],
@@ -44,7 +45,7 @@ export function DPagination(props: DPaginationProps) {
     onPageSizeChange,
     className,
     ...restProps
-  } = useComponentConfig(DPagination.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

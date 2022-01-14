@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation, useStateBackflow } from '../../hooks';
-import { getClassName, toId } from '../../utils';
+import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
 import { DTabsContext } from './Tabs';
@@ -16,6 +16,7 @@ export interface DTabProps extends React.HTMLAttributes<HTMLDivElement> {
   __dropdown?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DTab');
 export function DTab(props: DTabProps) {
   const {
     dId,
@@ -28,7 +29,7 @@ export function DTab(props: DTabProps) {
     className,
     onClick,
     ...restProps
-  } = useComponentConfig(DTab.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

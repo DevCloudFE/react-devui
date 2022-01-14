@@ -3,15 +3,16 @@ import type { DGeneralStateContextData } from '../../hooks/general-state';
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralState, DGeneralStateContext } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
   dSize?: 'smaller' | 'larger';
   dDisabled?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DCompose');
 export function DCompose(props: DComposeProps) {
-  const { dSize, dDisabled = false, className, children, ...restProps } = useComponentConfig(DCompose.name, props);
+  const { dSize, dDisabled = false, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

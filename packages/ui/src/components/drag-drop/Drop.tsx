@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useMemo } from 'react';
 
 import { useComponentConfig, useRefSelector, useImmer, useTwoWayBinding } from '../../hooks';
+import { generateComponentMate } from '../../utils';
 import { DDrag } from './Drag';
 
 export interface DDropContextData {
@@ -32,6 +33,7 @@ export interface DDropProps<T> {
   onDragEnd?: (id: string) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDrop');
 export function DDrop<T>(props: DDropProps<T>) {
   const {
     dList,
@@ -43,7 +45,7 @@ export function DDrop<T>(props: DDropProps<T>) {
     onListChange,
     onDragStart,
     onDragEnd,
-  } = useComponentConfig(DDrop.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   const [isOuter, setIsOuter] = useState(false);
 

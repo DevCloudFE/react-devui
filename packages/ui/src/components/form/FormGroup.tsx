@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DFormGroupContextData {
   formGroupPath: string[];
@@ -13,8 +13,9 @@ export interface DFormGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   dTitle?: React.ReactNode;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DFormGroup');
 export function DFormGroup(props: DFormGroupProps) {
-  const { dFormGroupName, dTitle, className, children, ...restProps } = useComponentConfig(DFormGroup.name, props);
+  const { dFormGroupName, dTitle, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

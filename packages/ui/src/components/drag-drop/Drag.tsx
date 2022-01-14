@@ -13,6 +13,7 @@ import {
   useImmer,
   useStateBackflow,
 } from '../../hooks';
+import { generateComponentMate } from '../../utils';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -24,8 +25,9 @@ export interface DDragProps {
   onDragEnd?: () => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDrag');
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex, children, onDragStart, onDragEnd } = useComponentConfig(DDrag.name, props);
+  const { dId, dPlaceholder, dZIndex, children, onDragStart, onDragEnd } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

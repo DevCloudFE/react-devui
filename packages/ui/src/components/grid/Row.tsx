@@ -2,7 +2,7 @@ import { isArray, isNumber } from 'lodash';
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { useMediaMatch } from './hooks';
 
 export interface DRowContextData {
@@ -20,8 +20,17 @@ export interface DRowProps extends React.HTMLAttributes<HTMLDivElement> {
   onMediaChange?: (match: DBreakpoints[]) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DRow');
 export function DRow(props: DRowProps) {
-  const { dGutter = 0, dResponsiveGutter, onMediaChange, className, style, children, ...restProps } = useComponentConfig(DRow.name, props);
+  const {
+    dGutter = 0,
+    dResponsiveGutter,
+    onMediaChange,
+    className,
+    style,
+    children,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

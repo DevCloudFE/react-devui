@@ -5,7 +5,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DRadioGroupContextData {
   radioGroupName?: string;
@@ -26,6 +26,7 @@ export interface DRadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   onModelChange?: (value: any) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DRadioGroup');
 export function DRadioGroup(props: DRadioGroupProps) {
   const {
     dModel,
@@ -39,7 +40,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DRadioGroup.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

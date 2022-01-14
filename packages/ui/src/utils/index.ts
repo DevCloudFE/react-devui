@@ -1,5 +1,6 @@
 export { getClassName } from './class-name';
 export { pSBC, convertHex } from './color';
+export { generateComponentMate } from './component-mate';
 export { copy } from './copy';
 export { getFragmentChildren } from './fragment-children';
 export { mergeStyle } from './merge-style';

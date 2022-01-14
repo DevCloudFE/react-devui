@@ -5,7 +5,7 @@ import React, { useEffect, useId, useImperativeHandle, useMemo, useState } from 
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback, useGeneralState } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
@@ -18,6 +18,7 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
   onModelChange?: (value: string) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DTextarea');
 const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
   const {
     dModel,
@@ -33,7 +34,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     disabled,
     onChange,
     ...restProps
-  } = useComponentConfig(DTextarea.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

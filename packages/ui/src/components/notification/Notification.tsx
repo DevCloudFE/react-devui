@@ -3,7 +3,7 @@ import React, { useCallback, useId } from 'react';
 import { Subject } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useRefCallback, useDTransition, useTranslation } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DAlertDialog } from '../_alert-dialog';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -49,7 +49,7 @@ let NOTIFICATIONS: Notification[] = [];
 let UNIQUEID = 1;
 export class NotificationService {
   static get notifications() {
-    return [...NOTIFICATIONS];
+    return NOTIFICATIONS;
   }
 
   static open(props: DNotificationProps) {
@@ -75,6 +75,7 @@ export class NotificationService {
   }
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DNotification');
 export function DNotification(props: DNotificationProps & { dVisible: boolean }) {
   const {
     dVisible,
@@ -93,7 +94,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     tabIndex = -1,
     onKeyDown,
     ...restProps
-  } = useComponentConfig(DNotification.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

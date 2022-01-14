@@ -6,7 +6,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, DGeneralStateContext } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { useMediaMatch } from '../grid';
 
 export interface DFormContextData {
@@ -40,6 +40,7 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dCustomLabel' | 'dLayout' | 'dInlineSpan'>>;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DForm');
 export function DForm(props: DFormProps) {
   const {
     dForm,
@@ -56,7 +57,7 @@ export function DForm(props: DFormProps) {
     children,
     onSubmit,
     ...restProps
-  } = useComponentConfig(DForm.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

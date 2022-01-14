@@ -3,15 +3,16 @@ import type { DDropdownItemProps } from './DropdownItem';
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 
 export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dTitle: React.ReactNode;
   __level?: number;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDropdownGroup');
 export function DDropdownGroup(props: DDropdownGroupProps) {
-  const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(DDropdownGroup.name, props);
+  const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

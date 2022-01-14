@@ -1,12 +1,13 @@
 import { usePrefixConfig, useComponentConfig, useGeneralState } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dGray?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DComposeItem');
 export function DComposeItem(props: DComposeItemProps) {
-  const { dGray = false, className, children, ...restProps } = useComponentConfig(DComposeItem.name, props);
+  const { dGray = false, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

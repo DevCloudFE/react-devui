@@ -6,7 +6,7 @@ import type { Draft } from 'immer';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
-import { getClassName, toId } from '../../utils';
+import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
@@ -36,6 +36,7 @@ export interface DTabsProps extends React.HTMLAttributes<HTMLDivElement> {
   onOrderChange?: (order: string[]) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DTabs');
 export function DTabs(props: DTabsProps) {
   const {
     dActive,
@@ -53,7 +54,7 @@ export function DTabs(props: DTabsProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DTabs.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

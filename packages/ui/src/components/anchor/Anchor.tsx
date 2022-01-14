@@ -14,7 +14,7 @@ import {
   useContentRefConfig,
   useValueChange,
 } from '../../hooks';
-import { getClassName, CustomScroll } from '../../utils';
+import { getClassName, CustomScroll, generateComponentMate } from '../../utils';
 
 export interface DAnchorContextData {
   updateLinks: (identity: string, href: string | undefined, el: HTMLLIElement | null) => void;
@@ -35,6 +35,7 @@ export interface DAnchorProps extends React.HTMLAttributes<HTMLUListElement> {
 const DOT_INDICATOR = Symbol('dot');
 const LINE_INDICATOR = Symbol('line');
 
+const { COMPONENT_NAME } = generateComponentMate('DAnchor');
 export const DAnchor = (props: DAnchorProps) => {
   const {
     dDistance = 0,
@@ -45,7 +46,7 @@ export const DAnchor = (props: DAnchorProps) => {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DAnchor.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

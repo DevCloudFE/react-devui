@@ -10,7 +10,7 @@ import {
   useDCollapseTransition,
   useRefCallback,
 } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
 import { DButtonGroupContext } from './ButtonGroup';
 
@@ -27,6 +27,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconRight?: boolean;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DButton');
 const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props, ref) => {
   const {
     dType = 'primary',
@@ -43,7 +44,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
     children,
     onClick,
     ...restProps
-  } = useComponentConfig(DButton.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState, useThemeConfig } from '../../hooks';
-import { convertHex, getClassName, pSBC } from '../../utils';
+import { convertHex, generateComponentMate, getClassName, pSBC } from '../../utils';
 import { DIcon } from '../icon';
 
 export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -13,6 +13,7 @@ export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DTag');
 export function DTag(props: DTagProps) {
   const {
     dType = 'primary',
@@ -24,7 +25,7 @@ export function DTag(props: DTagProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DTag.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

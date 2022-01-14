@@ -4,7 +4,7 @@ import React, { useCallback, useId, useState } from 'react';
 
 import { DIcon } from '..';
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useRefCallback, useDTransition } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
@@ -18,6 +18,7 @@ export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
   onModelChange?: (checked: boolean) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DSwitch');
 export function DSwitch(props: DSwitchProps) {
   const {
     dModel,
@@ -32,7 +33,7 @@ export function DSwitch(props: DSwitchProps) {
     className,
     children,
     ...restProps
-  } = useComponentConfig(DSwitch.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

@@ -4,7 +4,7 @@ import { isNumber, isObject } from 'lodash';
 import { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useGridConfig } from '../../hooks';
-import { getClassName, mergeStyle } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DRowContext } from './Row';
 
 export type DSpanValue = number | true;
@@ -16,8 +16,9 @@ export interface DColProps extends DColBaseProps {
   dResponsiveProps?: Record<DBreakpoints, DSpanValue | DColBaseProps>;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DCol');
 export function DCol(props: DColProps) {
-  const { dSpan, dResponsiveProps, className, style, children, ...restProps } = useComponentConfig(DCol.name, props);
+  const { dSpan, dResponsiveProps, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

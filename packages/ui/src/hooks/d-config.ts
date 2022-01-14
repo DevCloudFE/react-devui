@@ -83,12 +83,12 @@ export function useComponentConfig<T>(component: string, props: T): T {
   });
 
   let children: React.ReactNode = undefined;
-  if ('children' in customConfig) {
-    children = getFragmentChildren(customConfig.children);
-  }
   if ('children' in noUndefinedProps) {
     children = getFragmentChildren(noUndefinedProps.children);
+  } else if ('children' in customConfig) {
+    children = getFragmentChildren(customConfig.children);
   }
+
   return { ...customConfig, ...(noUndefinedProps as T), children };
 }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useId, useImperativeHandle } from 'react';
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useCustomContext, useRefCallback, useGeneralState } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DInputAffixContext } from './InputAffix';
 
 export type DInputRef = HTMLInputElement;
@@ -16,6 +16,7 @@ export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement>
   onModelChange?: (value: string) => void;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DInput');
 const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, ref) => {
   const {
     dModel,
@@ -30,7 +31,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     onBlur,
     onChange,
     ...restProps
-  } = useComponentConfig(DInput.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

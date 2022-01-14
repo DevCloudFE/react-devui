@@ -10,7 +10,7 @@ import {
   useStateBackflow,
   useImmer,
 } from '../../hooks';
-import { getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
+import { generateComponentMate, getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
 import { DDropdownContext } from './Dropdown';
@@ -30,6 +30,7 @@ export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement>
   __level?: number;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDropdownSub');
 export function DDropdownSub(props: DDropdownSubProps) {
   const {
     dId,
@@ -46,7 +47,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useComponentConfig(DDropdownSub.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

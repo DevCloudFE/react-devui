@@ -4,7 +4,7 @@ import type { DPopupProps, DPopupRef, DTriggerRenderProps } from '../_popup';
 import React, { useCallback, useId } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 
 export type DTooltipRef = DPopupRef;
@@ -14,8 +14,9 @@ export interface DTooltipProps extends Omit<DPopupProps, 'dVisible' | 'dPopupCon
   dTitle: React.ReactNode;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DTooltip');
 const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (props, ref) => {
-  const { dVisible, dTitle, onVisibleChange, id, className, children, ...restProps } = useComponentConfig(DTooltip.name, props);
+  const { dVisible, dTitle, onVisibleChange, id, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

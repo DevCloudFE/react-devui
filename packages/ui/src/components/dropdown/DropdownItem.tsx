@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
-import { getClassName, mergeStyle, toId } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle, toId } from '../../utils';
 import { DDropdownContext } from './Dropdown';
 
 export interface DDropdownItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
@@ -12,6 +12,7 @@ export interface DDropdownItemProps extends React.LiHTMLAttributes<HTMLLIElement
   __level?: number;
 }
 
+const { COMPONENT_NAME } = generateComponentMate('DDropdownItem');
 export function DDropdownItem(props: DDropdownItemProps) {
   const {
     dId,
@@ -27,7 +28,7 @@ export function DDropdownItem(props: DDropdownItemProps) {
     onFocus,
     onBlur,
     ...restProps
-  } = useComponentConfig(DDropdownItem.name, props);
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

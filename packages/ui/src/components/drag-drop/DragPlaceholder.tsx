@@ -1,11 +1,12 @@
 import { useCustomContext, useComponentConfig, usePrefixConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { generateComponentMate, getClassName } from '../../utils';
 import { DDropContext } from './Drop';
 
 export type DDragPlaceholderProps = React.HTMLAttributes<HTMLDivElement>;
 
+const { COMPONENT_NAME } = generateComponentMate('DDragPlaceholder');
 export function DDragPlaceholder(props: DDragPlaceholderProps) {
-  const { className, ...restProps } = useComponentConfig(DDragPlaceholder.name, props);
+  const { className, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
