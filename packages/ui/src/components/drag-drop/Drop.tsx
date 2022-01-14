@@ -21,7 +21,7 @@ export interface DDropContextData {
 }
 export const DDropContext = React.createContext<DDropContextData | null>(null);
 
-export interface DDropProps<T> {
+export interface DDropProps<T = unknown> {
   dList: [T[], Updater<T[]>?];
   dItemRender: (item: T, index: number) => React.ReactNode;
   dGetId: (item: T) => string;

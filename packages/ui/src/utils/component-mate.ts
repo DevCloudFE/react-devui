@@ -2,7 +2,7 @@ const COMPONENT_MATES: Array<{ name: string }> = [];
 
 const COMPONENT_NAME_REG = /^D[A-Z][a-zA-Z]+$/;
 
-export function generateComponentMate(name: string) {
+export function generateComponentMate<N extends string>(name: N) {
   if (COMPONENT_MATES.findIndex((mate) => mate.name === name) !== -1) {
     throw new Error(`'${name}' already exists`);
   } else {

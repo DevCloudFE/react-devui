@@ -25,7 +25,7 @@ export { DDropdown, DDropdownItem, DDropdownSub, DDropdownGroup } from './dropdo
 export type { DEmptyProps } from './empty';
 export { DEmpty } from './empty';
 
-export type { DFormProps, DFormItemProps } from './form';
+export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
 export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validators } from './form';
 
 export type { DRowProps, DColProps } from './grid';
@@ -52,7 +52,7 @@ export { DRadio, DRadioGroup } from './radio';
 export type { DRootProps } from './root';
 export { DRoot } from './root';
 
-export type { DSelectSingleProps, DSelectMultipleProps } from './select';
+export type { DSelectProps } from './select';
 export { DSelect } from './select';
 
 export type { DSeparatorProps } from './separator';

@@ -21,6 +21,7 @@
     "build:ui": "nx build ui",
     "build:site": "nx build site",
     "build:executors": "tsc --project tools/tsconfig.json",
+    "build:helper": "node ./tools/ui-helper.js",
     "release": "standard-version",
     "prepare": "husky install && chmod ug+x .husky/*",
     "prepublishOnly": "nx build ui",

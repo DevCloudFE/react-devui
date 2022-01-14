@@ -1,3 +1,50 @@
+import type {
+  DAffixProps,
+  DAnchorProps,
+  DAnchorLinkProps,
+  DButtonProps,
+  DButtonGroupProps,
+  DCheckboxProps,
+  DCheckboxGroupProps,
+  DComposeProps,
+  DComposeItemProps,
+  DDragProps,
+  DDropProps,
+  DDragPlaceholderProps,
+  DDrawerProps,
+  DDrawerHeaderProps,
+  DDrawerFooterProps,
+  DDropdownProps,
+  DDropdownItemProps,
+  DDropdownSubProps,
+  DDropdownGroupProps,
+  DEmptyProps,
+  DFormProps,
+  DFormItemProps,
+  DFormGroupProps,
+  DRowProps,
+  DColProps,
+  DIconProps,
+  DInputProps,
+  DInputAffixProps,
+  DMenuProps,
+  DMenuGroupProps,
+  DMenuItemProps,
+  DMenuSubProps,
+  DNotificationProps,
+  DPaginationProps,
+  DRadioProps,
+  DRadioGroupProps,
+  DSelectProps,
+  DSeparatorProps,
+  DSwitchProps,
+  DTabProps,
+  DTabsProps,
+  DTagProps,
+  DTextareaProps,
+  DToastProps,
+  DTooltipProps,
+} from '../components';
 import type { DBreakpoints } from '../components/grid';
 
 import { isUndefined } from 'lodash';
@@ -12,6 +59,53 @@ interface Resources {
 
 export type DTheme = 'light' | 'dark';
 export type DLang = 'en-US' | 'zh-Hant';
+export interface DComponentConfig {
+  DAffix: DAffixProps;
+  DAnchor: DAnchorProps;
+  DAnchorLink: DAnchorLinkProps;
+  DButton: DButtonProps;
+  DButtonGroup: DButtonGroupProps;
+  DCheckbox: DCheckboxProps;
+  DCheckboxGroup: DCheckboxGroupProps;
+  DCompose: DComposeProps;
+  DComposeItem: DComposeItemProps;
+  DDrag: DDragProps;
+  DDrop: DDropProps;
+  DDragPlaceholder: DDragPlaceholderProps;
+  DDrawer: DDrawerProps;
+  DDrawerHeader: DDrawerHeaderProps;
+  DDrawerFooter: DDrawerFooterProps;
+  DDropdown: DDropdownProps;
+  DDropdownItem: DDropdownItemProps;
+  DDropdownSub: DDropdownSubProps;
+  DDropdownGroup: DDropdownGroupProps;
+  DEmpty: DEmptyProps;
+  DForm: DFormProps;
+  DFormItem: DFormItemProps;
+  DFormGroup: DFormGroupProps;
+  DRow: DRowProps;
+  DCol: DColProps;
+  DIcon: DIconProps;
+  DInput: DInputProps;
+  DInputAffix: DInputAffixProps;
+  DMenu: DMenuProps;
+  DMenuGroup: DMenuGroupProps;
+  DMenuItem: DMenuItemProps;
+  DMenuSub: DMenuSubProps;
+  DNotification: DNotificationProps;
+  DPagination: DPaginationProps;
+  DRadio: DRadioProps;
+  DRadioGroup: DRadioGroupProps;
+  DSelect: DSelectProps;
+  DSeparator: DSeparatorProps;
+  DSwitch: DSwitchProps;
+  DTab: DTabProps;
+  DTabs: DTabsProps;
+  DTag: DTagProps;
+  DTextarea: DTextareaProps;
+  DToast: DToastProps;
+  DTooltip: DTooltipProps;
+}
 export interface DConfigContextData {
   prefix?: string;
   theme?: DTheme;
@@ -19,8 +113,7 @@ export interface DConfigContextData {
     breakpoints?: Map<DBreakpoints, number>;
     colNum?: number;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  componentConfigs?: { [index: string]: any };
+  componentConfigs?: Partial<DComponentConfig>;
   i18n?: {
     lang?: DLang;
     resources?: Resources;
@@ -71,7 +164,7 @@ export function useThemeConfig() {
   return theme;
 }
 
-export function useComponentConfig<T>(component: string, props: T): T {
+export function useComponentConfig<T>(component: keyof DComponentConfig, props: T): T {
   const componentConfigs = useContext(DConfigContext).componentConfigs ?? {};
   const customConfig = componentConfigs[component] ?? {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

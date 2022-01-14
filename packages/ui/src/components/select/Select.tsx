@@ -77,6 +77,16 @@ export interface DSelectMultipleProps<T> extends DSelectBaseProps<T> {
   onExceed?: () => void;
 }
 
+export type DSelectProps<T = unknown> = DSelectBaseProps<T> & {
+  dModel?: [T | null | T[], Updater<T | null | T[]>?];
+  dMultiple?: boolean;
+  dMaxSelectNum?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dCustomSelected?: (select: any) => string | string[];
+  onModelChange?: (select: T | null | T[]) => void;
+  onExceed?: () => void;
+};
+
 const { COMPONENT_NAME } = generateComponentMate('DSelect');
 const DEFAULT_PROPS = {
   dOptionRender: (option: DSelectBaseOption<unknown>) => option.dLabel,
@@ -84,17 +94,7 @@ const DEFAULT_PROPS = {
 };
 export function DSelect<T>(props: DSelectSingleProps<T>): React.ReactElement;
 export function DSelect<T>(props: DSelectMultipleProps<T>): React.ReactElement;
-export function DSelect<T>(
-  props: DSelectBaseProps<T> & {
-    dModel?: [T | null | T[], Updater<T | null | T[]>?];
-    dMultiple?: boolean;
-    dMaxSelectNum?: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dCustomSelected?: (select: any) => string | string[];
-    onModelChange?: (select: T | null | T[]) => void;
-    onExceed?: () => void;
-  }
-) {
+export function DSelect<T>(props: DSelectProps<T>) {
   const {
     dModel,
     dFormControlName,
