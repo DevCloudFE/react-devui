@@ -2,7 +2,7 @@ import { isNumber } from 'lodash';
 
 export function toId(id: number): number;
 export function toId(id: string): string;
-export function toId(id: string | number) {
+export function toId(id: number | string) {
   if (isNumber(id)) {
     return id;
   }

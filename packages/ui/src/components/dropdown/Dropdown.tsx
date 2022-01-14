@@ -146,29 +146,29 @@ export function DDropdown(props: DDropdownProps) {
     ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {
       if (dTriggerNode) {
         const triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-        const _renderProps: DTriggerRenderProps = renderProps;
+        const props: DTriggerRenderProps = renderProps;
         if (onMouseEnter) {
-          _renderProps.onMouseEnter = (e) => {
+          props.onMouseEnter = (e) => {
             triggerNode.props.onMouseEnter?.(e);
             onMouseEnter?.(e);
           };
-          _renderProps.onMouseLeave = (e) => {
+          props.onMouseLeave = (e) => {
             triggerNode.props.onMouseLeave?.(e);
             onMouseLeave?.(e);
           };
         }
         if (onFocus) {
-          _renderProps.onFocus = (e) => {
+          props.onFocus = (e) => {
             triggerNode.props.onFocus?.(e);
             onFocus?.(e);
           };
-          _renderProps.onBlur = (e) => {
+          props.onBlur = (e) => {
             triggerNode.props.onBlur?.(e);
             onBlur?.(e);
           };
         }
         if (onClick) {
-          _renderProps.onClick = (e) => {
+          props.onClick = (e) => {
             triggerNode.props.onClick?.(e);
             onClick?.(e);
           };
@@ -176,7 +176,7 @@ export function DDropdown(props: DDropdownProps) {
 
         return React.cloneElement(triggerNode, {
           ...triggerNode.props,
-          ..._renderProps,
+          ...props,
           role: 'button',
           'aria-haspopup': 'menu',
           'aria-expanded': visible ? true : undefined,

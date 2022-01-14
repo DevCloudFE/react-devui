@@ -536,16 +536,16 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   );
 
   const triggerRenderProps = useMemo<DTriggerRenderProps>(() => {
-    const _triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: uniqueId };
+    const triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: uniqueId };
     if (dTrigger === 'hover') {
-      _triggerRenderProps.onMouseEnter = () => {
+      triggerRenderProps.onMouseEnter = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
           dataRef.current.clearTid = null;
           changeVisible(true);
         }, dMouseEnterDelay);
       };
-      _triggerRenderProps.onMouseLeave = () => {
+      triggerRenderProps.onMouseLeave = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
           dataRef.current.clearTid = null;
@@ -558,22 +558,22 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       };
     }
     if (dTrigger === 'focus') {
-      _triggerRenderProps.onFocus = () => {
+      triggerRenderProps.onFocus = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
         changeVisible(true);
       };
-      _triggerRenderProps.onBlur = () => {
+      triggerRenderProps.onBlur = () => {
         dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(false), 20);
       };
     }
     if (dTrigger === 'click') {
-      _triggerRenderProps.onClick = () => {
+      triggerRenderProps.onClick = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
         changeVisible();
       };
     }
 
-    return _triggerRenderProps;
+    return triggerRenderProps;
   }, [asyncCapture, checkMouseLeave, dMouseEnterDelay, dMouseLeaveDelay, dPrefix, dTrigger, uniqueId, changeVisible]);
 
   return (

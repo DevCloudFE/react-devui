@@ -9,6 +9,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/ui",
+        "format": ["esm"],
         "tsConfig": "packages/ui/tsconfig.lib.json",
         "project": "packages/ui/package.json",
         "entryFile": "packages/ui/src/index.ts",

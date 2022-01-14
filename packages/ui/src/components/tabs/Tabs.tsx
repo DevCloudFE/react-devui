@@ -209,9 +209,9 @@ export function DTabs(props: DTabsProps) {
   }, [asyncCapture, checkScrollEnd, tablistEl, tablistWrapperEl, updateDropdown]);
 
   const [childs, tabpanels] = useMemo(() => {
-    const _tabpanels: Array<{ dId: string; id: string; labelledby: string; node: React.ReactNode }> = [];
-    const _childs = React.Children.map(children as Array<React.ReactElement<DTabProps>>, (child, index) => {
-      _tabpanels.push({
+    const tabpanels: Array<{ dId: string; id: string; labelledby: string; node: React.ReactNode }> = [];
+    const childs = React.Children.map(children as Array<React.ReactElement<DTabProps>>, (child, index) => {
+      tabpanels.push({
         dId: child.props.dId,
         id: `${dPrefix}tabpanel-${toId(child.props.dId)}`,
         labelledby: child.props.id ?? `${dPrefix}tab-${toId(child.props.dId)}`,
@@ -231,7 +231,7 @@ export function DTabs(props: DTabsProps) {
       return dDraggable ? { id: child.props.dId, node } : node;
     });
 
-    return [_childs, _tabpanels] as const;
+    return [childs, tabpanels] as const;
   }, [children, dDraggable, dPrefix]);
 
   const stateBackflow = useMemo<Pick<DTabsContextData, 'updateTabEls' | 'removeTabEls'>>(

@@ -34,13 +34,13 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
 
   useLayoutEffect(() => {
     const descriptionEl = document.querySelector(`meta[name="description"]`);
-    const _description = descriptionEl?.getAttribute('content') ?? '';
+    const description = descriptionEl?.getAttribute('content') ?? '';
     descriptionEl?.setAttribute(
       'content',
-      document.querySelector('.app-component-route-article__description > p:first-child')?.textContent ?? _description
+      document.querySelector('.app-component-route-article__description > p:first-child')?.textContent ?? description
     );
     return () => {
-      descriptionEl?.setAttribute('content', _description);
+      descriptionEl?.setAttribute('content', description);
     };
   }, [i18n.language]);
 

@@ -29,7 +29,7 @@ export type { DFormProps, DFormItemProps } from './form';
 export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validators } from './form';
 
 export type { DRowProps, DColProps } from './grid';
-export { DRow, DCol } from './grid';
+export { DRow, DCol, useMediaMatch } from './grid';
 
 export type { DIconProps } from './icon';
 export { DIcon } from './icon';

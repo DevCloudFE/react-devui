@@ -30,7 +30,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dWidth?: number | string;
   dHeight?: number | string;
-  dZIndex?: number;
+  dZIndex?: number | string;
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
@@ -41,7 +41,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
-  __zIndex?: string | number;
+  __zIndex?: number | string;
 }
 
 export function DDrawer(props: DDrawerProps) {
@@ -121,7 +121,7 @@ export function DDrawer(props: DDrawerProps) {
         dataRef.current.preActiveEl = document.activeElement as HTMLElement | null;
         el.focus({ preventScroll: true });
       },
-      beforeLeave: (el) => {
+      beforeLeave: () => {
         dataRef.current.preActiveEl?.focus({ preventScroll: true });
         __onVisibleChange?.({
           ...distance,
@@ -143,6 +143,9 @@ export function DDrawer(props: DDrawerProps) {
   const maxZIndex = useMaxIndex(!hidden);
   const zIndex = useMemo(() => {
     if (!hidden) {
+      if (!isUndefined(dZIndex)) {
+        return dZIndex;
+      }
       if (isUndefined(__zIndex)) {
         if (isFixed) {
           return maxZIndex;
@@ -153,7 +156,7 @@ export function DDrawer(props: DDrawerProps) {
         return __zIndex;
       }
     }
-  }, [__zIndex, dPrefix, hidden, isFixed, maxZIndex]);
+  }, [__zIndex, dPrefix, dZIndex, hidden, isFixed, maxZIndex]);
 
   const handleContainer = useCallback(() => {
     if (isFixed) {
@@ -188,9 +191,9 @@ export function DDrawer(props: DDrawerProps) {
 
   const childDrawer = useMemo(() => {
     if (dChildDrawer) {
-      const _childDrawer = React.Children.only(dChildDrawer) as React.ReactElement<DDrawerProps>;
-      return React.cloneElement<DDrawerProps>(_childDrawer, {
-        ..._childDrawer.props,
+      const childDrawer = React.Children.only(dChildDrawer) as React.ReactElement<DDrawerProps>;
+      return React.cloneElement<DDrawerProps>(childDrawer, {
+        ...childDrawer.props,
         __onVisibleChange: (distance) => {
           setDistance(distance);
         },

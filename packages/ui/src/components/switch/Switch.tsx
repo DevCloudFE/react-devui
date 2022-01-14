@@ -29,7 +29,6 @@ export function DSwitch(props: DSwitchProps) {
     dInputProps,
     dInputRef,
     onModelChange,
-    id,
     className,
     children,
     ...restProps

@@ -1,5 +1,5 @@
 import hljs from 'highlight.js';
-import marked, { Renderer } from 'marked';
+import { marked, Renderer } from 'marked';
 
 const renderer = new Renderer();
 renderer.heading = function (text, level) {
@@ -34,4 +34,4 @@ export function toString(arr: number[]) {
   return new TextDecoder().decode(Uint8Array.from(arr));
 }
 
-export default marked;
+export default marked.parse;

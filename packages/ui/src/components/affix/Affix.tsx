@@ -22,9 +22,9 @@ export interface DAffixRef {
 
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
-  dTop?: string | number;
-  dBottom?: string | number;
-  dZIndex?: string | number;
+  dTop?: number | string;
+  dBottom?: number | string;
+  dZIndex?: number | string;
   onFixedChange?: (fixed: boolean) => void;
 }
 
@@ -102,7 +102,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
         setFixed(false);
       }
     }
-  }, [dTarget, targetRef, affixEl, referenceEl, fixed, top, props.dBottom, bottom, setFixedStyle, dZIndex, setReferenceStyle, setFixed]);
+  }, [dTarget, targetRef, affixEl, referenceEl, fixed, top, props.dBottom, bottom, setFixedStyle, dZIndex, dPrefix, setReferenceStyle]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

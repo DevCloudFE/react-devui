@@ -18,7 +18,7 @@ import { DDropContext } from './Drop';
 export interface DDragProps {
   dId?: string;
   dPlaceholder?: React.ReactNode;
-  dZIndex?: string | number;
+  dZIndex?: number | string;
   children: React.ReactNode;
   onDragStart?: () => void;
   onDragEnd?: () => void;
@@ -221,13 +221,13 @@ export function DDrag(props: DDragProps) {
   ]);
 
   const child = useMemo(() => {
-    const _child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+    const child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
 
-    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_child, {
-      ..._child.props,
+    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(child, {
+      ...child.props,
 
       style: {
-        ..._child.props.style,
+        ...child.props.style,
         ...(fixedDrag ? fixedStyle : undefined),
       },
 
@@ -237,7 +237,7 @@ export function DDrag(props: DDragProps) {
 
       onDragStart: (e) => {
         e.preventDefault();
-        _child.props.onDragStart?.(e);
+        child.props.onDragStart?.(e);
 
         onDragStart?.();
         if (dId) {
@@ -295,13 +295,13 @@ export function DDrag(props: DDragProps) {
   ]);
 
   const placeholder = useMemo(() => {
-    const _placeholder = (dropPlaceholder ?? dPlaceholder) as React.ReactElement<React.HTMLAttributes<HTMLElement>> | undefined;
+    const placeholder = (dropPlaceholder ?? dPlaceholder) as React.ReactElement<React.HTMLAttributes<HTMLElement>> | undefined;
 
-    if (_placeholder) {
-      return React.cloneElement<React.HTMLAttributes<HTMLElement>>(_placeholder, {
-        ..._placeholder.props,
+    if (placeholder) {
+      return React.cloneElement<React.HTMLAttributes<HTMLElement>>(placeholder, {
+        ...placeholder.props,
         style: {
-          ..._placeholder.props.style,
+          ...placeholder.props.style,
           width: dragSize.width,
           height: dragSize.height,
         },

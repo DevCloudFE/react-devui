@@ -19,8 +19,8 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dTarget | Set the node that needs to listen to its scroll event, compare the `window` view by default | [DElementSelector](/components/Interface#DElementSelector) | - |
-| dTop | Trigger after reaching the specified offset from the top | string \| number | 0 |
-| dBottom | Trigger after reaching the specified offset from the bottom | string \| number | 0 |
+| dTop | Trigger after reaching the specified offset from the top | number \| string | 0 |
+| dBottom | Trigger after reaching the specified offset from the bottom | number \| string | 0 |
 | dZIndex | Manually control the value of `z-index` | number | - |
 | onFixedChange | The callback function triggered when the fixed state changes | `(fixed: boolean) => void` | - | 
 <!-- prettier-ignore-end -->

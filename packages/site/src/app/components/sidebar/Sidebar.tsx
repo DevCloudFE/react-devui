@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, DRow } from '@react-devui/ui';
+import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, useMediaMatch } from '@react-devui/ui';
 import { useCustomContext } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../App';
@@ -36,7 +36,7 @@ export function AppSidebar() {
   const menuNode = (
     <DMenu dActive={[activeId, setActiveId]} onActiveChange={() => onMenuOpenChange?.(false)}>
       {menu.map((group) => (
-        <DMenuGroup key={group.title} dId={group.title} dTitle={t(`menu-group.${group.title}`)}>
+        <DMenuGroup key={group.title} dTitle={t(`menu-group.${group.title}`)}>
           {group.title === 'Other' ? (
             <DMenuItem key="Interface" dId="Interface" onClick={() => navigate('/components/Interface', { replace: true })}>
               Interface
@@ -55,29 +55,24 @@ export function AppSidebar() {
     </DMenu>
   );
 
-  return (
-    <DRow
-      dAsListener
-      dRender={(match, matchs) =>
-        matchs.includes('md') ? (
-          <nav className="app-sidebar">{menuNode}</nav>
-        ) : (
-          <DDrawer
-            className="app-sidebar__drawer"
-            dVisible={[menuOpen]}
-            dHeader={
-              <DDrawerHeader>
-                <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
-                <span className="app-sidebar__title">DevUI</span>
-              </DDrawerHeader>
-            }
-            dWidth={280}
-            onClose={() => onMenuOpenChange?.(false)}
-          >
-            {menuNode}
-          </DDrawer>
-        )
+  const mediaMatch = useMediaMatch();
+
+  return mediaMatch.includes('md') ? (
+    <nav className="app-sidebar">{menuNode}</nav>
+  ) : (
+    <DDrawer
+      className="app-sidebar__drawer"
+      dVisible={[menuOpen]}
+      dHeader={
+        <DDrawerHeader>
+          <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
+          <span className="app-sidebar__title">DevUI</span>
+        </DDrawerHeader>
       }
-    ></DRow>
+      dWidth={280}
+      onClose={() => onMenuOpenChange?.(false)}
+    >
+      {menuNode}
+    </DDrawer>
   );
 }

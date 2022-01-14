@@ -119,7 +119,6 @@ export function DSelect<T>(
     onExceed,
     id,
     className,
-    children,
     onClickCapture,
     onKeyDown,
     ...restProps
@@ -739,8 +738,7 @@ export function DSelect<T>(
         );
       }
 
-      const _item = item as DSelectBaseOption<T>;
-      const optionId = dGetId(_item.dValue);
+      const optionId = dGetId(item.dValue);
 
       let isSelected = false;
       if (isArray(select)) {
@@ -759,19 +757,19 @@ export function DSelect<T>(
           className={getClassName(`${dPrefix}select__option`, {
             'is-selected': !dMultiple && isSelected,
             'is-focus': focusId === optionId,
-            'is-disabled': _item.dDisabled,
+            'is-disabled': item.dDisabled,
           })}
           tabIndex={-1}
           role="option"
-          title={(_item[IS_CREATE] ? t('Create') + ' ' : '') + _item.dLabel}
+          title={(item[IS_CREATE] ? t('Create') + ' ' : '') + item.dLabel}
           aria-selected={isSelected}
-          aria-disabled={_item.dDisabled}
+          aria-disabled={item.dDisabled}
           onClick={
-            _item.dDisabled
+            item.dDisabled
               ? undefined
               : () => {
-                  if (_item[IS_CREATE]) {
-                    const option = { ..._item };
+                  if (item[IS_CREATE]) {
+                    const option = { ...item };
                     delete option[IS_CREATE];
                     onCreateOption?.(option);
                   }
@@ -780,15 +778,15 @@ export function DSelect<T>(
                 }
           }
         >
-          {_item[IS_CREATE] ? (
+          {item[IS_CREATE] ? (
             <DIcon viewBox="64 64 896 896" dTheme="primary">
               <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
               <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
             </DIcon>
           ) : dMultiple ? (
-            <DCheckbox dModel={[isSelected]} dDisabled={_item.dDisabled}></DCheckbox>
+            <DCheckbox dModel={[isSelected]} dDisabled={item.dDisabled}></DCheckbox>
           ) : null}
-          <span className={`${dPrefix}select__option-content`}>{dOptionRender(_item, index)}</span>
+          <span className={`${dPrefix}select__option-content`}>{dOptionRender(item, index)}</span>
         </li>
       );
     },

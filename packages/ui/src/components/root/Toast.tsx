@@ -103,13 +103,13 @@ export function Toast() {
     <>
       {ReactDOM.createPortal(
         Array.from(toasts.entries())
-          .filter(([uniqueId, toastProps]) => (toastProps.dPlacement ?? 'top') === 'top')
+          .filter(([, toastProps]) => (toastProps.dPlacement ?? 'top') === 'top')
           .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
         toastTRoot
       )}
       {ReactDOM.createPortal(
         Array.from(toasts.entries())
-          .filter(([uniqueId, toastProps]) => toastProps.dPlacement === 'bottom')
+          .filter(([, toastProps]) => toastProps.dPlacement === 'bottom')
           .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
         toastBRoot
       )}

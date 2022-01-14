@@ -7,13 +7,12 @@ import React, { useCallback, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, DGeneralStateContext } from '../../hooks';
 import { getClassName } from '../../utils';
-import { MEDIA_QUERY_LIST } from '../grid';
-import { DRow } from '../grid';
+import { useMediaMatch } from '../grid';
 
 export interface DFormContextData {
   formInstance: DFormInstance;
   formBreakpointMatchs: DBreakpoints[];
-  formLabelWidth: string | number;
+  formLabelWidth: number | string;
   formLabelColon: boolean;
   formCustomLabel: NonNullable<DFormProps['dCustomLabel']>;
   formLayout: NonNullable<DFormProps['dLayout']>;
@@ -24,7 +23,7 @@ export const DFormContext = React.createContext<DFormContextData | null>(null);
 
 export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   dForm: DFormInstance;
-  dLabelWidth?: string | number;
+  dLabelWidth?: number | string;
   dLabelColon?: boolean;
   dCustomLabel?: 'required' | 'optional' | 'hidden';
   dLayout?: 'horizontal' | 'vertical' | 'inline';
@@ -81,58 +80,56 @@ export function DForm(props: DFormProps) {
     [dSize]
   );
 
+  const mediaMatch = useMediaMatch();
+
+  const contextValue = useMemo(() => {
+    const contextValue = {
+      formInstance: dForm,
+      formBreakpointMatchs: mediaMatch,
+      formLabelWidth: dLabelWidth ?? 150,
+      formLabelColon: dLabelColon ?? true,
+      formCustomLabel: dCustomLabel,
+      formLayout: dLayout,
+      formInlineSpan: dInlineSpan,
+      formFeedbackIcon: dFeedbackIcon,
+    };
+    if (dResponsiveProps) {
+      const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
+        const value = dResponsiveProps[point][sourceKey];
+        if (!isUndefined(value)) {
+          contextValue[targetKey] = value;
+        }
+      };
+      for (const breakpoint of mediaMatch) {
+        if (breakpoint in dResponsiveProps) {
+          mergeProps(breakpoint, 'formLabelWidth', 'dLabelWidth');
+          mergeProps(breakpoint, 'formCustomLabel', 'dCustomLabel');
+          mergeProps(breakpoint, 'formLayout', 'dLayout');
+          mergeProps(breakpoint, 'formInlineSpan', 'dInlineSpan');
+          break;
+        }
+      }
+    }
+    contextValue.formLabelWidth = dLabelWidth ?? (contextValue.formLayout === 'vertical' ? '100%' : 150);
+    contextValue.formLabelColon = dLabelColon ?? (contextValue.formLayout === 'vertical' ? false : true);
+
+    return contextValue;
+  }, [dCustomLabel, dFeedbackIcon, dForm, dInlineSpan, dLabelColon, dLabelWidth, dLayout, dResponsiveProps, mediaMatch]);
+
   return (
     <DGeneralStateContext.Provider value={generalStateContextValue}>
-      <DRow
-        dAsListener
-        dRender={(match, matchs) => {
-          const contextValue = {
-            formInstance: dForm,
-            formBreakpointMatchs: matchs,
-            formLabelWidth: dLabelWidth ?? 150,
-            formLabelColon: dLabelColon ?? true,
-            formCustomLabel: dCustomLabel,
-            formLayout: dLayout,
-            formInlineSpan: dInlineSpan,
-            formFeedbackIcon: dFeedbackIcon,
-          };
-          if (dResponsiveProps) {
-            const keys = Object.keys(dResponsiveProps);
-            const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
-              const value = dResponsiveProps[point][sourceKey];
-              if (!isUndefined(value)) {
-                contextValue[targetKey] = value;
-              }
-            };
-            for (const point of [...MEDIA_QUERY_LIST].reverse()) {
-              if (keys.includes(point) && matchs.includes(point)) {
-                mergeProps(point, 'formLabelWidth', 'dLabelWidth');
-                mergeProps(point, 'formCustomLabel', 'dCustomLabel');
-                mergeProps(point, 'formLayout', 'dLayout');
-                mergeProps(point, 'formInlineSpan', 'dInlineSpan');
-                break;
-              }
-            }
-          }
-          contextValue.formLabelWidth = dLabelWidth ?? (contextValue.formLayout === 'vertical' ? '100%' : 150);
-          contextValue.formLabelColon = dLabelColon ?? (contextValue.formLayout === 'vertical' ? false : true);
-
-          return (
-            <DFormContext.Provider value={contextValue}>
-              <form
-                {...restProps}
-                className={getClassName(className, `${dPrefix}form`, {
-                  [`${dPrefix}form--${dSize}`]: dSize,
-                })}
-                autoComplete={autoComplete}
-                onSubmit={handleSubmit}
-              >
-                {children}
-              </form>
-            </DFormContext.Provider>
-          );
-        }}
-      ></DRow>
+      <DFormContext.Provider value={contextValue}>
+        <form
+          {...restProps}
+          className={getClassName(className, `${dPrefix}form`, {
+            [`${dPrefix}form--${dSize}`]: dSize,
+          })}
+          autoComplete={autoComplete}
+          onSubmit={handleSubmit}
+        >
+          {children}
+        </form>
+      </DFormContext.Provider>
     </DGeneralStateContext.Provider>
   );
 }

@@ -17,12 +17,8 @@ title: 栅格
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dColNum | 栅格列数 | number | 12 |
-| dBreakpoints | 断点 | Map\<DBreakpoints, number\> | `['xs', 0]`, `['sm', 576]`, `['md', 768]`, `['lg', 992]`, `['xl', 1200]`, `['xxl', 1400]` |
 | dGutter | 栅格间隔，写成数组形式表示 `[垂直间距, 水平间距]` | DGutterValue | 0 |
 | dResponsiveGutter | 栅格间隔支持响应式布局 | Record\<DBreakpoints, DGutterValue\> | - |
-| dAsListener | 仅用作媒体查询，为 `true` 时不会渲染包裹元素 | boolean | false |
-| dRender | 使用渲染函数的方式能够获取当前断点 | `(match: DBreakpoints \| null, matchs: DBreakpoints[]) => React.ReactNode` | - |
 | onMediaChange | 断点改变时的回调 | `(match: DBreakpoints \| null, matchs: DBreakpoints[]) => void` | - | 
 <!-- prettier-ignore-end -->
 
@@ -33,7 +29,7 @@ title: 栅格
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| xs | 断点设置，当屏幕宽度大于等于 `dBreakpoints` 中的 `xs` 时生效，默认即为 `>= 0`，设置为 `true` 表示自适应宽度，可以传递 `DColBaseProps` | DSpanValue \| DColBaseProps | - |
+| xs | 断点设置，当屏幕宽度大于等于 `xs` 对应的断点时生效，默认即为 `>= 0`，设置为 `true` 表示自适应宽度，可以传递 `DColBaseProps` | DSpanValue \| DColBaseProps | - |
 | sm | 参考 `xs` | DSpanValue \| DColBaseProps | - |
 | md | 参考 `xs` | DSpanValue \| DColBaseProps | - |
 | lg | 参考 `xs` | DSpanValue \| DColBaseProps | - |
@@ -54,6 +50,17 @@ title: 栅格
 ### DBreakpoints
 
 ```tsx
+/**
+ * 默认设置.
+ *
+ * * **xs**: 0
+ * * **sm**: 576
+ * * **md**: 768
+ * * **lg**: 992
+ * * **xl**: 1200
+ * * **xxl**: 1400
+ *
+ */
 type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 ```
 

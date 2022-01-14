@@ -8,11 +8,11 @@ import { getClassName, mergeStyle } from '../../utils';
 export interface DIconProps extends React.SVGAttributes<SVGElement> {
   dName?: string;
   dType?: string;
-  dSize?: string | number | [string | number, string | number];
+  dSize?: number | string | [number | string, number | string];
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dRotate?: number;
   dSpin?: boolean;
-  dSpinSpeed?: string | number;
+  dSpinSpeed?: number | string;
 }
 
 export function DIcon(props: DIconProps) {

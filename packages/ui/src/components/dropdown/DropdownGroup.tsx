@@ -6,13 +6,12 @@ import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks
 import { getClassName, mergeStyle } from '../../utils';
 
 export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
-  dId: string;
   dTitle: React.ReactNode;
   __level?: number;
 }
 
 export function DDropdownGroup(props: DDropdownGroupProps) {
-  const { dId, dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(DDropdownGroup.name, props);
+  const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(DDropdownGroup.name, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

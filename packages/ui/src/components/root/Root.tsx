@@ -1,6 +1,6 @@
 import type { DConfigContextData } from '../../hooks/d-config';
 
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
@@ -11,7 +11,7 @@ export interface DRootProps extends DConfigContextData {
 }
 
 export function DRoot(props: DRootProps) {
-  const { prefix, theme, componentConfigs, i18n, icons, contentSelector, children } = props;
+  const { theme, i18n, children, ...restProps } = props;
 
   const lang = i18n?.lang ?? 'en-US';
 
@@ -30,20 +30,14 @@ export function DRoot(props: DRootProps) {
     }
   }, [theme]);
 
-  const context = useMemo<DConfigContextData>(
-    () => ({
-      prefix,
-      theme,
-      componentConfigs,
-      i18n,
-      icons,
-      contentSelector,
-    }),
-    [componentConfigs, contentSelector, i18n, icons, prefix, theme]
-  );
-
   return (
-    <DConfigContext.Provider value={context}>
+    <DConfigContext.Provider
+      value={{
+        theme,
+        i18n,
+        ...restProps,
+      }}
+    >
       {children}
       <Notification></Notification>
       <Toast></Toast>

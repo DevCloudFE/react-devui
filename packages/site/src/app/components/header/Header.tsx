@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { DButton, DIcon, DRow } from '@react-devui/ui';
+import { DButton, DIcon, useMediaMatch } from '@react-devui/ui';
 import { useCustomContext } from '@react-devui/ui/hooks';
 import { getClassName } from '@react-devui/ui/utils';
 
@@ -21,31 +21,28 @@ export function AppHeader() {
     _changeTheme?.(theme === 'light' ? 'dark' : 'light');
   }, [_changeTheme, theme]);
 
+  const mediaMatch = useMediaMatch();
+
   return (
     <header className="app-header is-shadow">
-      <DRow
-        dAsListener
-        dRender={(match, matchs) =>
-          matchs.includes('md') ? (
-            <div className="app-header__logo-container">
-              <img className="app-header__logo" src="/assets/logo.svg" alt="Logo" width="36" height="36" />
-              <span className="app-header__title">DevUI</span>
-            </div>
-          ) : (
-            <DButton className="app-header__menu-button" dType="text" onClick={() => onMenuOpenChange?.(!menuOpen)}>
-              <div
-                className={getClassName('hamburger', {
-                  'is-active': menuOpen,
-                })}
-              >
-                <span className="line"></span>
-                <span className="line"></span>
-                <span className="line"></span>
-              </div>
-            </DButton>
-          )
-        }
-      ></DRow>
+      {mediaMatch.includes('md') ? (
+        <div className="app-header__logo-container">
+          <img className="app-header__logo" src="/assets/logo.svg" alt="Logo" width="36" height="36" />
+          <span className="app-header__title">DevUI</span>
+        </div>
+      ) : (
+        <DButton className="app-header__menu-button" dType="text" onClick={() => onMenuOpenChange?.(!menuOpen)}>
+          <div
+            className={getClassName('hamburger', {
+              'is-active': menuOpen,
+            })}
+          >
+            <span className="line"></span>
+            <span className="line"></span>
+            <span className="line"></span>
+          </div>
+        </DButton>
+      )}
 
       <DButton className="app-header__language" dType="secondary" onClick={changeLanguage}>
         {i18n.language === 'en-US' ? '中 文' : 'English'}

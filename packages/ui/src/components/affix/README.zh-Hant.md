@@ -18,8 +18,8 @@ title: 固钉
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
 | dTarget | 设置需要监听其滚动事件的节点，默认比较 `window` 视图 | [DElementSelector](/components/Interface#DElementSelector) | - |
-| dTop | 距离顶部达到指定偏移量后触发 | string \| number | 0 |
-| dBottom | 距离底部达到指定偏移量后触发 | string \| number | 0 |
+| dTop | 距离顶部达到指定偏移量后触发 | number \| string | 0 |
+| dBottom | 距离底部达到指定偏移量后触发 | number \| string | 0 |
 | dZIndex | 手动控制 `z-index` 的值 | number | - |
 | onFixedChange | 固定状态改变时触发的回调函数 | `(fixed: boolean) => void` | - | 
 <!-- prettier-ignore-end -->

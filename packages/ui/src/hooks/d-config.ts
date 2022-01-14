@@ -1,5 +1,7 @@
+import type { DBreakpoints } from '../components/grid';
+
 import { isUndefined } from 'lodash';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { getFragmentChildren } from '../utils';
 import { useRefSelector } from './element-ref';
@@ -13,6 +15,10 @@ export type DLang = 'en-US' | 'zh-Hant';
 export interface DConfigContextData {
   prefix?: string;
   theme?: DTheme;
+  grid?: {
+    breakpoints?: Map<DBreakpoints, number>;
+    colNum?: number;
+  };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   componentConfigs?: { [index: string]: any };
   i18n?: {
@@ -34,6 +40,30 @@ export const DConfigContext = React.createContext<DConfigContextData>({});
 export function usePrefixConfig() {
   const prefix = useContext(DConfigContext).prefix ?? 'd-';
   return prefix;
+}
+
+const BREAKPOINTS = new Map<DBreakpoints, number>([
+  ['xs', 0],
+  ['sm', 576],
+  ['md', 768],
+  ['lg', 992],
+  ['xl', 1200],
+  ['xxl', 1400],
+]);
+export function useGridConfig() {
+  const grid = useContext(DConfigContext).grid;
+  const breakpoints = grid?.breakpoints ?? BREAKPOINTS;
+  const colNum = grid?.colNum ?? 12;
+
+  const res = useMemo(
+    () => ({
+      breakpoints,
+      colNum,
+    }),
+    [breakpoints, colNum]
+  );
+
+  return res;
 }
 
 export function useThemeConfig() {

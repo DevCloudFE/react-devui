@@ -23,7 +23,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dPlacement | Drawer pop-up direction | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | Drawer width | number \| string | 400 |
 | dHeight | Drawer height | number \| string | 280 |
-| dZIndex | Manually control the value of `z-index` | number | - |
+| dZIndex | Manually control the value of `z-index` | number \| string | - |
 | dMask | Whether to show the mask | boolean | true |
 | dMaskClosable | Click on the mask to close the drawer | boolean | true |
 | dEscClosable | Whether to close by pressing Esc | boolean | true |

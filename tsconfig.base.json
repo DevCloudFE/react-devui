@@ -8,7 +8,6 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
     "importHelpers": true,
     "newLine": "LF",
     "sourceMap": true,

@@ -18,7 +18,7 @@ title: 表单
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
 | dForm | 绑定 [useForm](#useForm) 返回的实例 | DFormInstance | - |
-| dLabelWidth | 标签长度 | string \| number | - |
+| dLabelWidth | 标签长度 | number \| string | - |
 | dLabelColon | 标签是否显示冒号 | boolean | - |
 | dCustomLabel | 自定义标签 | 'required' \| 'optional' \| 'hidden' | 'required' |
 | dLayout | 表单布局 | 'horizontal' \| 'vertical' \| 'inline' | 'horizontal' |

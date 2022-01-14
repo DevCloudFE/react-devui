@@ -108,25 +108,25 @@ export function Notification() {
     <>
       {ReactDOM.createPortal(
         Array.from(notifications.entries())
-          .filter(([uniqueId, notificationProps]) => notificationProps.dPlacement === 'left-top')
+          .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-top')
           .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
         notificationLTRoot
       )}
       {ReactDOM.createPortal(
         Array.from(notifications.entries())
-          .filter(([uniqueId, notificationProps]) => (notificationProps.dPlacement ?? 'right-top') === 'right-top')
+          .filter(([, notificationProps]) => (notificationProps.dPlacement ?? 'right-top') === 'right-top')
           .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
         notificationRTRoot
       )}
       {ReactDOM.createPortal(
         Array.from(notifications.entries())
-          .filter(([uniqueId, notificationProps]) => notificationProps.dPlacement === 'left-bottom')
+          .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-bottom')
           .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
         notificationLBRoot
       )}
       {ReactDOM.createPortal(
         Array.from(notifications.entries())
-          .filter(([uniqueId, notificationProps]) => notificationProps.dPlacement === 'right-bottom')
+          .filter(([, notificationProps]) => notificationProps.dPlacement === 'right-bottom')
           .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
         notificationRBRoot
       )}

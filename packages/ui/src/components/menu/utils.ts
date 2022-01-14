@@ -3,21 +3,20 @@ import React from 'react';
 import { getClassName } from '../../utils';
 
 export function generateChildren(children: React.ReactNode, adjustIndicator = false) {
-  const _children = React.Children.toArray(children) as React.ReactElement[];
-  return _children.map((child, index) => {
-    const _child = child;
+  const length = React.Children.count(children);
+  return React.Children.map(children as React.ReactElement[], (child, index) => {
     let className = '';
-    if (_children.length > 1) {
+    if (length > 1) {
       if (index === 0) {
         className = 'is-first';
       }
-      if (index === _children.length - 1) {
+      if (index === length - 1) {
         className = 'is-last';
       }
     }
-    return React.cloneElement(_child, {
-      ..._child.props,
-      className: getClassName(_child.props.className, { [className]: adjustIndicator }),
+    return React.cloneElement(child, {
+      ...child.props,
+      className: getClassName(child.props.className, { [className]: adjustIndicator }),
     });
   });
 }

@@ -43,7 +43,6 @@ export function DPagination(props: DPaginationProps) {
     onActiveChange,
     onPageSizeChange,
     className,
-    children,
     ...restProps
   } = useComponentConfig(DPagination.name, props);
 

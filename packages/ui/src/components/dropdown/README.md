@@ -38,7 +38,6 @@ Extend `React.LiHTMLAttributes<HTMLLIElement>`.
 <!-- prettier-ignore-start -->
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
-| dId | Uniquely identifies | string | - |
 | dTitle | The title of the menu group | React.ReactNode | - |
 <!-- prettier-ignore-end -->
 

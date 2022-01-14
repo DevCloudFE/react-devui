@@ -19,7 +19,7 @@ Extend `React.FormHTMLAttributes<HTMLFormElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dForm | Bind the instance returned by [useForm](#useForm) | DFormInstance | - |
-| dLabelWidth | Label length | string \| number | - |
+| dLabelWidth | Label length | number \| string | - |
 | dLabelColon | Whether the label shows a colon | boolean | - |
 | dCustomLabel | Custom label | 'required' \| 'optional' \| 'hidden' | 'required' |
 | dLayout | Form layout | 'horizontal' \| 'vertical' \| 'inline' | 'horizontal' |

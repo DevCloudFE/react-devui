@@ -33,7 +33,6 @@ title: 导航菜单
 <!-- prettier-ignore-start -->
 | 参数 | 说明 | 类型 | 默认值 | 
 | --- | --- | --- | --- | 
-| dId | 唯一标识 | string | - |
 | dTitle | 菜单分组的标题 | React.ReactNode | - |
 <!-- prettier-ignore-end -->
 

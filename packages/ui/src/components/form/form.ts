@@ -457,9 +457,9 @@ export class FormControl extends AbstractControl {
 
   protected override _updateValue() {}
 
-  protected override _forEachChild(cb: (c: AbstractControl) => void): void {}
+  protected override _forEachChild(): void {}
 
-  protected override _anyControls(condition: (c: AbstractControl) => boolean): boolean {
+  protected override _anyControls(): boolean {
     return false;
   }
 

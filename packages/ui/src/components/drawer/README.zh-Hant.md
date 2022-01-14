@@ -22,7 +22,7 @@ title: 抽屉
 | dPlacement | 抽屉弹出方向 | 'top' \| 'right' \| 'bottom' \| 'left'  | 'right' |
 | dWidth | 抽屉宽度 | number \| string | 400 |
 | dHeight | 抽屉高度 | number \| string | 280 |
-| dZIndex | 手动控制 `z-index` 的值 | number | - |
+| dZIndex | 手动控制 `z-index` 的值 | number \| string | - |
 | dMask | 是否显示遮罩 | boolean | true |
 | dMaskClosable | 点击遮罩关闭抽屉 | boolean | true |
 | dEscClosable | 按下Esc是否关闭 | boolean | true |

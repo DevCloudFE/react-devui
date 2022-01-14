@@ -5,9 +5,8 @@ import type { AbstractControl, FormControlStatus } from './form';
 import { isArray, isBoolean, isNull, isNumber, isString, isUndefined } from 'lodash';
 import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation, useGridConfig } from '../../hooks';
 import { getClassName } from '../../utils';
-import { MEDIA_QUERY_LIST } from '../grid';
 import { DIcon } from '../icon';
 import { DTooltip } from '../tooltip';
 import { DError } from './Error';
@@ -46,6 +45,7 @@ export function DFormItem(props: DFormItemProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { colNum } = useGridConfig();
   const {
     formBreakpointMatchs,
     formLabelWidth,
@@ -66,27 +66,27 @@ export function DFormItem(props: DFormItemProps) {
   });
 
   const { span, labelWidth } = (() => {
-    const _props = {
-      span: dSpan ?? (formLayout === 'inline' ? formInlineSpan : 12),
+    const props = {
+      span: dSpan ?? (formLayout === 'inline' ? formInlineSpan : colNum),
       labelWidth: dLabelWidth ?? formLabelWidth,
     };
 
     if (dResponsiveProps) {
-      const keys = Object.keys(dResponsiveProps);
       const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
         const value = dResponsiveProps[point][sourceKey];
         if (!isUndefined(value)) {
-          _props[targetKey] = value;
+          props[targetKey] = value;
         }
       };
-      for (const point of [...MEDIA_QUERY_LIST].reverse()) {
-        if (keys.includes(point) && formBreakpointMatchs.includes(point)) {
-          mergeProps(point, 'span', 'dSpan');
-          mergeProps(point, 'labelWidth', 'dLabelWidth');
+      for (const breakpoint of formBreakpointMatchs) {
+        if (breakpoint in dResponsiveProps) {
+          mergeProps(breakpoint, 'span', 'dSpan');
+          mergeProps(breakpoint, 'labelWidth', 'dLabelWidth');
+          break;
         }
       }
     }
-    return _props;
+    return props;
   })();
 
   const [formItems, setFormItems] = useImmer(new Map<string, { formControlName: string; id?: string }>());
@@ -334,7 +334,7 @@ export function DFormItem(props: DFormItemProps) {
         )}
         style={{
           flexGrow: span === true ? 1 : undefined,
-          width: span === true ? undefined : isNumber(span) ? `calc((100% / 12) * ${span})` : span,
+          width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,
         }}
       >
         <div className={`${dPrefix}form-item__container`}>
