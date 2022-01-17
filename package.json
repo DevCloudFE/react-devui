@@ -53,7 +53,7 @@
     "@nrwl/linter": "^13.4.4",
     "@nrwl/nx-cloud": "13.0.2",
     "@nrwl/react": "^13.4.4",
-    "@nrwl/tao": "^13.4.4",
+    "@nrwl/tao": "^13.4.5",
     "@nrwl/web": "^13.4.4",
     "@nrwl/workspace": "^13.4.4",
     "@testing-library/jest-dom": "^5.16.1",
