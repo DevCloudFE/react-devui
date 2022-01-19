@@ -22,13 +22,11 @@ title: 页签面板
 | dCenter | 页签居中 | boolean | false |
 | dType | 页签样式 | 'wrap' \| 'slider' | - |
 | dSize | 页签尺寸 | 'smaller' \| 'larger' | - |
-| dDraggable | 是否可拖拽 | boolean | false |
 | dDropdownProps | 自定义下拉菜单 | [DDropdownProps](/components/Dropdown#DDropdownProps) | - |
 | dTabAriaLabel | 提供 tablist 的 `aria-label` 属性 | string | - |
 | onActiveChange | 活动页签项改变的回调 | `(id: string) => void` | - |
 | onAddClick | 添加页签的回调，提供该值启用添加页签的功能 | `() => void` | - |
 | onClose | 页签关闭的回调 | `(id: string) => void` | - |
-| onOrderChange | 启用拖拽时，页签顺序改变的回调 | `(order: string[]) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DTabProps

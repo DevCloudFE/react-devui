@@ -7,7 +7,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 
 import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
-import { DDragPlaceholder, DDrop } from '../drag-drop';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 
@@ -27,13 +26,11 @@ export interface DTabsProps extends React.HTMLAttributes<HTMLDivElement> {
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
   dSize?: 'smaller' | 'larger';
-  dDraggable?: boolean;
   dDropdownProps?: DDropdownProps;
   dTabAriaLabel?: string;
   onActiveChange?: (id: string | null) => void;
   onAddClick?: () => void;
   onClose?: (id: string) => void;
-  onOrderChange?: (order: string[]) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DTabs');
@@ -44,13 +41,11 @@ export function DTabs(props: DTabsProps) {
     dCenter = false,
     dType,
     dSize,
-    dDraggable = false,
     dDropdownProps,
     dTabAriaLabel,
     onActiveChange,
     onAddClick,
     onClose,
-    onOrderChange,
     className,
     children,
     ...restProps
@@ -159,19 +154,6 @@ export function DTabs(props: DTabsProps) {
     }, 20);
   }, [asyncCapture, dPrefix, isHorizontal, setDotStyle, tablistEl]);
 
-  const handleListChange = useCallback(
-    (list: Array<{ id: string }>) => {
-      onOrderChange?.(list.map((item) => item.id));
-    },
-    [onOrderChange]
-  );
-  const handleDragStart = useCallback(() => {
-    setDotStyle({});
-  }, [setDotStyle]);
-  const handleDragEnd = useCallback(() => {
-    getDotStyle();
-  }, [getDotStyle]);
-
   const handleAddClick = useCallback(() => {
     onAddClick?.();
   }, [onAddClick]);
@@ -229,11 +211,11 @@ export function DTabs(props: DTabsProps) {
         tabIndex,
       });
 
-      return dDraggable ? { id: child.props.dId, node } : node;
+      return node;
     });
 
     return [childs, tabpanels] as const;
-  }, [children, dDraggable, dPrefix]);
+  }, [children, dPrefix]);
 
   const stateBackflow = useMemo<Pick<DTabsContextData, 'updateTabEls' | 'removeTabEls'>>(
     () => ({
@@ -288,26 +270,7 @@ export function DTabs(props: DTabsProps) {
             aria-label={dTabAriaLabel}
             aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
           >
-            {dDraggable ? (
-              <DDrop
-                dContainer={tablistWrapperEl}
-                dDirection={isHorizontal ? 'horizontal' : 'vertical'}
-                dPlaceholder={<DDragPlaceholder />}
-                dList={[
-                  childs as Array<{
-                    id: string;
-                    node: React.ReactElement;
-                  }>,
-                ]}
-                dItemRender={(item) => item.node}
-                dGetId={(item) => item.id}
-                onListChange={handleListChange}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              ></DDrop>
-            ) : (
-              childs
-            )}
+            {childs}
             {(listOverflow || onAddClick) && (
               <div className={`${dPrefix}tabs__button-container`}>
                 {listOverflow && (

@@ -23,13 +23,11 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dCenter | Tab centered | boolean | false |
 | dType | Tab style | 'wrap' \| 'slider' | - |
 | dSize | Tab size | 'smaller' \| 'larger' | - |
-| dDraggable | Whether it can be dragged | boolean | false |
 | dDropdownProps | Custom drop-down menu | [DDropdownProps](/components/Dropdown#DDropdownProps) | - |
 | dTabAriaLabel | Provide the `aria-label` attribute of tablist | string | - |
 | onActiveChange | Callback when the active tab item is changed | `(id: string) => void` | - |
 | onAddClick | Add tab callback, provide this value to enable the function of adding tabs | `() => void` | - |
 | onClose | Callback when the tab is closed | `(id: string) => void` | - |
-| onOrderChange | Callback when the order of tabs changes when dragging is enabled | `(order: string[]) => void` | - |
 <!-- prettier-ignore-end -->
 
 ### DTabProps
