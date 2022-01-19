@@ -14,6 +14,7 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dClearIcon?: React.ReactNode;
   dSize?: 'smaller' | 'larger';
   dPlaceholder?: string;
+  dContentTitle?: string;
   dDisabled?: boolean;
   dLoading?: boolean;
   onClear?: () => void;
@@ -29,6 +30,7 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     dClearIcon,
     dSize,
     dPlaceholder,
+    dContentTitle,
     dDisabled = false,
     dLoading = false,
     onClear,
@@ -136,7 +138,9 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
           onChange={handleSearchChange}
         ></input>
       ) : (
-        <div className={`${dPrefix}select-box__content`}>{children}</div>
+        <div className={`${dPrefix}select-box__content`} title={dContentTitle}>
+          {children}
+        </div>
       )}
       <div className={`${dPrefix}select-box__suffix`}>{dSuffix}</div>
       {!(dSearchable && dExpanded) && !children && dPlaceholder && (

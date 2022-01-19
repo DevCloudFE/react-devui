@@ -76,7 +76,7 @@ interface DSelectOption<T> {
   dLabel: string;
   dValue?: T;
   dDisabled?: boolean;
-  dOptions?: Array<DSelectBaseOption<T>>;
+  dChildren?: Array<DSelectBaseOption<T>>;
   [index: string | symbol]: unknown;
 }
 ```

@@ -425,7 +425,7 @@ export abstract class AbstractControl {
 
 export class FormControl extends AbstractControl {
   protected _value: any;
-  protected _status: FormControlStatus = 'VALID';
+  protected _status: FormControlStatus = VALID;
 
   constructor(
     formState: any = null,
@@ -479,7 +479,7 @@ export class FormControl extends AbstractControl {
 
 export class FormGroup extends AbstractControl {
   protected _value: any;
-  protected _status: FormControlStatus = 'VALID';
+  protected _status: FormControlStatus = VALID;
 
   constructor(
     public controls: { [key: string]: AbstractControl },

@@ -25,7 +25,7 @@ function outComponentConfigs() {
 
     const componentPath = path.join(COMPONENT_DIR, component);
 
-    if (!component.startsWith('_') && statSync(componentPath).isDirectory()) {
+    if (!component.startsWith('_') && statSync(componentPath).isDirectory() && readdirSync(componentPath).includes('index.ts')) {
       const content = readFileSync(path.join(componentPath, 'index.ts')).toString();
       const names = content.match(/(?<='\.\/)[A-Z][a-zA-Z]+(?=')/g);
       names.forEach((name) => {

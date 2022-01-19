@@ -2,11 +2,11 @@
   "types": [
     { "type": "feat", "section": "Features" },
     { "type": "fix", "section": "Bug Fixes" },
-    { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "docs", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "style", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "refactor", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "perf", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "test", "section": "Miscellaneous Chores", "hidden": false }
+    { "type": "chore", "hidden": true },
+    { "type": "docs", "hidden": true },
+    { "type": "style", "hidden": true },
+    { "type": "refactor", "hidden": true },
+    { "type": "perf", "hidden": true },
+    { "type": "test", "hidden": true }
   ]
 }
