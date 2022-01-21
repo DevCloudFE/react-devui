@@ -88,6 +88,10 @@
         border-color: var(--#{$variable-prefix}color-disabled);
       }
     }
+
+    @include e(indeterminate) {
+      background-color: var(--#{$variable-prefix}color-disabled);
+    }
   }
 
   @include e(state-container) {

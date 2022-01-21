@@ -48,7 +48,7 @@ Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>`.
 | --- | --- | --- | --- | 
 | dVisible | Whether to pop up a window | [boolean, Updater\<boolean\>?] | - |
 | dOptions | Options | Array\<DSelectOption\<T\>\> | - |
-| dOptionRender | Custom selection | `(option: DSelectBaseOption<T>, index: number) => React.ReactNode` | - |
+| dOptionRender | Custom selection | `(option: DSelectBaseOption<T>) => React.ReactNode` | - |
 | dGetId | Get unique ID | `(value: T) => string` | `(value: unknown) => String(value)` |
 | dCreateOption | Allow creation of options | `(value: string) => DSelectBaseOption<T> \| null` | - |
 | dClearable | Can it be cleared | boolean | false |

@@ -10,7 +10,5 @@ updates:
     schedule:
       interval: 'weekly'
       day: 'monday'
-    labels:
-      - 'dependencies'
     ignore:
-      - dependency-name: 'typescript'
+      - dependency-name: '@nrwl*'

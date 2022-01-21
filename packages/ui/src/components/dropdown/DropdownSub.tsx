@@ -170,9 +170,12 @@ export function DDropdownSub(props: DDropdownSubProps) {
         className={getClassName(className, `${dPrefix}dropdown-sub`, {
           'is-disabled': dDisabled,
         })}
-        style={mergeStyle(style, {
-          paddingLeft: 12 + __level * 16,
-        })}
+        style={mergeStyle(
+          {
+            paddingLeft: 12 + __level * 16,
+          },
+          style
+        )}
         role="menuitem"
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         aria-haspopup={true}

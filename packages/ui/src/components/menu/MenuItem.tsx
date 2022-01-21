@@ -87,9 +87,12 @@ export function DMenuItem(props: DMenuItemProps) {
           'is-active': menuActiveId === dId,
           'is-disabled': dDisabled,
         })}
-        style={mergeStyle(style, {
-          paddingLeft: 16 + __level * 20,
-        })}
+        style={mergeStyle(
+          {
+            paddingLeft: 16 + __level * 20,
+          },
+          style
+        )}
         role="menuitem"
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         aria-disabled={dDisabled}

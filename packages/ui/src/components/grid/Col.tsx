@@ -53,12 +53,16 @@ export function DCol(props: DColProps) {
       {...restProps}
       {...responsiveProps}
       className={getClassName(className, responsiveProps?.className, `${dPrefix}col`)}
-      style={mergeStyle(style, responsiveProps?.style, {
-        width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
-        flexGrow: span === true ? 1 : undefined,
-        paddingLeft: rowSpace,
-        paddingRight: rowSpace,
-      })}
+      style={mergeStyle(
+        {
+          width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
+          flexGrow: span === true ? 1 : undefined,
+          paddingLeft: rowSpace,
+          paddingRight: rowSpace,
+        },
+        style,
+        responsiveProps?.style
+      )}
     >
       {children}
     </div>

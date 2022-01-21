@@ -73,10 +73,13 @@ export function DIcon(props: DIconProps) {
       className={getClassName(className, `${dPrefix}icon`, {
         [`t-${dTheme}`]: dTheme,
       })}
-      style={mergeStyle(style, {
-        transform: !isUndefined(dRotate) ? `rotate(${dRotate}deg)` : undefined,
-        animation: dSpin === true ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
-      })}
+      style={mergeStyle(
+        {
+          transform: !isUndefined(dRotate) ? `rotate(${dRotate}deg)` : undefined,
+          animation: dSpin === true ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
+        },
+        style
+      )}
     >
       {paths ?? children}
     </svg>

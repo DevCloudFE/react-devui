@@ -145,9 +145,12 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
         {...restProps}
         ref={affixRef}
         className={getClassName(className, `${dPrefix}affix`)}
-        style={mergeStyle(style, {
-          ...(fixed ? fixedStyle : {}),
-        })}
+        style={mergeStyle(
+          {
+            ...(fixed ? fixedStyle : {}),
+          },
+          style
+        )}
       >
         {children}
       </div>

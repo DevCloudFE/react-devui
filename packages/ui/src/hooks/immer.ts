@@ -5,14 +5,14 @@ import { enableMapSet } from 'immer';
 enableMapSet();
 
 // https://github.com/immerjs/use-immer
-import produce, { Draft, nothing, freeze } from "immer";
+import produce, { nothing, freeze } from "immer";
 import { useState, useReducer, useCallback, useMemo, Dispatch } from "react";
 
 export type Reducer<S = any, A = any> = (
-  draftState: Draft<S>,
+  draftState: S,
   action: A
 ) => void | (S extends undefined ? typeof nothing : S);
-export type DraftFunction<S> = (draft: Draft<S>) => void;
+export type DraftFunction<S> = (draft: S) => void;
 export type Updater<S> = (arg: S | DraftFunction<S>) => void;
 export type ImmerHook<S> = [S, Updater<S>];
 export function useImmer<S = any>(initialValue: S | (() => S)): ImmerHook<S>;

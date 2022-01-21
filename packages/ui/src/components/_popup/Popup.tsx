@@ -587,11 +587,14 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             {...restProps}
             ref={popupRef}
             className={getClassName(className, `${dPrefix}popup`, `${dPrefix}popup--` + placement)}
-            style={mergeStyle(style, {
-              ...popupPositionStyle,
-              display: hidden ? 'none' : undefined,
-              zIndex,
-            })}
+            style={mergeStyle(
+              {
+                ...popupPositionStyle,
+                display: hidden ? 'none' : undefined,
+                zIndex,
+              },
+              style
+            )}
             tabIndex={-1}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

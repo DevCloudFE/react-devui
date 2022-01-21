@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState, useThemeConfig } from '../../hooks';
-import { convertHex, generateComponentMate, getClassName, pSBC } from '../../utils';
+import { convertHex, generateComponentMate, getClassName, mergeStyle, pSBC } from '../../utils';
 import { DIcon } from '../icon';
 
 export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -23,6 +23,7 @@ export function DTag(props: DTagProps) {
     dClosable = false,
     onClose,
     className,
+    style,
     children,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -39,6 +40,8 @@ export function DTag(props: DTagProps) {
 
   const handleCloseClick = useCallback(
     (e) => {
+      e.stopPropagation();
+
       onClose?.(e);
     },
     [onClose]
@@ -51,15 +54,16 @@ export function DTag(props: DTagProps) {
         [`${dPrefix}tag--${size}`]: size,
         [`t-${dTheme}`]: dTheme,
       })}
-      style={
+      style={mergeStyle(
         dColor
           ? {
               [`--${dPrefix}tag-color`]: dColor,
               [`--${dPrefix}tag-border-color`]: pSBC(0.3, dColor),
               [`--${dPrefix}tag-background-color`]: convertHex(dColor, theme === 'light' ? 0.1 : 0.16),
             }
-          : undefined
-      }
+          : {},
+        style
+      )}
     >
       {children}
       {dClosable && (

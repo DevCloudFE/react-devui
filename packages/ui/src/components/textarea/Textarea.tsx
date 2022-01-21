@@ -124,10 +124,13 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
         className={getClassName(className, `${dPrefix}textarea`, validateClassName, {
           [`${dPrefix}textarea--${gSize}`]: gSize,
         })}
-        style={mergeStyle(style, {
-          resize: resizable ? undefined : 'none',
-          ...heightStyle,
-        })}
+        style={mergeStyle(
+          {
+            resize: resizable ? undefined : 'none',
+            ...heightStyle,
+          },
+          style
+        )}
         maxLength={maxLength}
         value={value}
         disabled={_disabled}

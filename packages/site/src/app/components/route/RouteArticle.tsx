@@ -23,7 +23,7 @@ export function AppRouteArticle(props: AppRouteArticleProps) {
   const icon = (top: boolean) => (
     <DIcon
       style={{
-        transform: menuOpen ? (top ? 'translateY(12px)' : 'translateY(-12px)') : undefined,
+        transform: menuOpen ? 'translateY(-12px)' : undefined,
         transition: 'transform 0.2s ease',
       }}
       viewBox="0 0 926.23699 573.74994"

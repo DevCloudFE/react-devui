@@ -1,6 +1,6 @@
 import { isString, isUndefined } from 'lodash';
 
-export function mergeStyle(...styles: Array<React.CSSProperties | undefined>) {
+export function mergeStyle(target: React.CSSProperties, ...styles: Array<React.CSSProperties | undefined>) {
   const mergeStyles: React.CSSProperties = {};
 
   styles.forEach((style) => {
@@ -10,24 +10,27 @@ export function mergeStyle(...styles: Array<React.CSSProperties | undefined>) {
           continue;
         }
 
-        if (key in mergeStyles && isString(mergeStyles[key]) && isString(value)) {
-          let newValue = [mergeStyles[key], value].join();
-          if (CSS.supports(key, newValue)) {
-            mergeStyles[key] = newValue;
-            continue;
-          }
+        if (!isUndefined(target[key])) {
+          if (isString(target[key]) && isString(value)) {
+            let newValue = [target[key], value].join();
 
-          newValue = [mergeStyles[key], value].join(' ');
-          if (CSS.supports(key, newValue)) {
-            mergeStyles[key] = newValue;
-            continue;
+            if (CSS.supports(key, newValue)) {
+              mergeStyles[key] = newValue;
+              continue;
+            }
+
+            newValue = [target[key], value].join(' ');
+            if (CSS.supports(key, newValue)) {
+              mergeStyles[key] = newValue;
+              continue;
+            }
           }
+        } else {
+          mergeStyles[key] = value;
         }
-
-        mergeStyles[key] = value;
       }
     }
   });
 
-  return mergeStyles;
+  return Object.assign(target, mergeStyles);
 }

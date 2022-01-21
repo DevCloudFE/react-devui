@@ -1,5 +1,4 @@
 import type { DElementSelector } from '../../hooks/element-ref';
-import type { Draft } from 'immer';
 
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -165,7 +164,7 @@ export const DAnchor = (props: DAnchorProps) => {
       updateLinks: (identity, href, el) => {
         if (href && el) {
           setLinks((draft) => {
-            draft.set(identity, { href, el: el as Draft<HTMLLIElement> });
+            draft.set(identity, { href, el });
           });
         }
       },
