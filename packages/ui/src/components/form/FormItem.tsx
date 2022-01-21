@@ -6,7 +6,7 @@ import { isArray, isBoolean, isNull, isNumber, isString, isUndefined } from 'lod
 import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation, useGridConfig } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DIcon } from '../icon';
 import { DTooltip } from '../tooltip';
 import { DError } from './Error';
@@ -41,7 +41,7 @@ export interface DFormItemProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const { COMPONENT_NAME } = generateComponentMate('DFormItem');
 export function DFormItem(props: DFormItemProps) {
-  const { dLabel, dLabelWidth, dLabelExtra, dShowRequired, dErrors, dSpan, dResponsiveProps, className, children, ...restProps } =
+  const { dLabel, dLabelWidth, dLabelExtra, dShowRequired, dErrors, dSpan, dResponsiveProps, className, style, children, ...restProps } =
     useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
@@ -333,10 +333,13 @@ export function DFormItem(props: DFormItemProps) {
             [`${dPrefix}form-item--vertical`]: formLayout === 'vertical',
           }
         )}
-        style={{
-          flexGrow: span === true ? 1 : undefined,
-          width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,
-        }}
+        style={mergeStyle(
+          {
+            flexGrow: span === true ? 1 : undefined,
+            width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,
+          },
+          style
+        )}
       >
         <div className={`${dPrefix}form-item__container`}>
           {labelWidth !== 0 &&

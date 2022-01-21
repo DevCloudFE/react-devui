@@ -74,11 +74,14 @@ export function DRow(props: DRowProps) {
       <div
         {...restProps}
         className={getClassName(className, `${dPrefix}row`)}
-        style={mergeStyle(style, {
-          rowGap: gap[0],
-          marginLeft: isNumber(space) ? -space : `calc(${space} * -1)`,
-          marginRight: isNumber(space) ? -space : `calc(${space} * -1)`,
-        })}
+        style={mergeStyle(
+          {
+            rowGap: gap[0],
+            marginLeft: isNumber(space) ? -space : `calc(${space} * -1)`,
+            marginRight: isNumber(space) ? -space : `calc(${space} * -1)`,
+          },
+          style
+        )}
       >
         {children}
       </div>

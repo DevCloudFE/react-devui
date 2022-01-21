@@ -28,18 +28,11 @@ export function getFillingStyle(
   width: number;
   height: number;
 } {
-  const {
-    borderTopWidth: _borderTopWidth,
-    borderRightWidth: _borderRightWidth,
-    borderBottomWidth: _borderBottomWidth,
-    borderLeftWidth: _borderLeftWidth,
-  } = getComputedStyle(container);
+  const { borderTopWidth: _borderTopWidth, borderLeftWidth: _borderLeftWidth } = getComputedStyle(container);
   const borderTopWidth = toPx(_borderTopWidth, true);
-  const borderRightWidth = toPx(_borderRightWidth, true);
-  const borderBottomWidth = toPx(_borderBottomWidth, true);
   const borderLeftWidth = toPx(_borderLeftWidth, true);
 
-  const targetRect = container.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
 
   let offsetTop = 0;
   let offsetLeft = 0;
@@ -51,10 +44,10 @@ export function getFillingStyle(
   }
 
   return {
-    top: targetRect.top + borderTopWidth + offsetTop,
-    left: targetRect.left + borderLeftWidth + offsetLeft,
-    width: targetRect.width - (borderLeftWidth + borderRightWidth),
-    height: targetRect.height - (borderTopWidth + borderBottomWidth),
+    top: containerRect.top + borderTopWidth + offsetTop,
+    left: containerRect.left + borderLeftWidth + offsetLeft,
+    width: container.clientWidth,
+    height: container.clientHeight,
   };
 }
 
@@ -356,13 +349,12 @@ export function getVerticalSideStyle(
       : targetRect.top + targetRect.height + offset;
   top = Math.min(Math.max(top, 10), window.innerHeight - height - 10);
 
-  let left =
+  const left =
     placement === 'top' || placement === 'bottom'
       ? targetRect.left + (targetRect.width - width) / 2
       : placement === 'top-left' || placement === 'bottom-left'
       ? targetRect.left
       : targetRect.left + targetRect.width - width;
-  left = Math.min(Math.max(left, 10), window.innerWidth - width - 10);
 
   const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
 

@@ -4,6 +4,7 @@ import type {
   DAnchorLinkProps,
   DButtonProps,
   DButtonGroupProps,
+  DCascaderProps,
   DCheckboxProps,
   DCheckboxGroupProps,
   DComposeProps,
@@ -65,6 +66,7 @@ export interface DComponentConfig {
   DAnchorLink: DAnchorLinkProps;
   DButton: DButtonProps;
   DButtonGroup: DButtonGroupProps;
+  DCascader: DCascaderProps;
   DCheckbox: DCheckboxProps;
   DCheckboxGroup: DCheckboxGroupProps;
   DCompose: DComposeProps;

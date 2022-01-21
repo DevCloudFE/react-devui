@@ -98,9 +98,12 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   );
 
   useEffect(() => {
-    inputAffixNotificationCallback?.bind(changeValue);
+    const fn = (v: string) => {
+      changeValue(v);
+    };
+    inputAffixNotificationCallback?.bind(fn);
     return () => {
-      inputAffixNotificationCallback?.removeBind(changeValue);
+      inputAffixNotificationCallback?.removeBind(fn);
     };
   }, [changeValue, inputAffixNotificationCallback]);
 

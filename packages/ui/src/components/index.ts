@@ -7,6 +7,9 @@ export { DAnchor, DAnchorLink } from './anchor';
 export type { DButtonProps, DButtonGroupProps } from './button';
 export { DButton, DButtonGroup } from './button';
 
+export type { DCascaderProps } from './cascader';
+export { DCascader } from './cascader';
+
 export type { DCheckboxProps, DCheckboxGroupProps } from './checkbox';
 export { DCheckbox, DCheckboxGroup } from './checkbox';
 

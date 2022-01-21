@@ -1,14 +1,19 @@
+import type { NotificationCallback } from '../../hooks/notification';
+
 import { isUndefined } from 'lodash';
-import React, { startTransition, useCallback, useState } from 'react';
+import React, { startTransition, useCallback, useRef, useState } from 'react';
 import { useEffect } from 'react';
+import { flushSync } from 'react-dom';
 
 import { useAsync, usePrefixConfig, useRefCallback, useGeneralState, useTranslation } from '../../hooks';
-import { getClassName } from '../../utils';
+import { getClassName, getVerticalSideStyle } from '../../utils';
+import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
 
 export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
+  dPopupContent: React.ReactNode;
   dSuffix?: React.ReactNode;
-  dExpanded?: boolean;
+  dVisible?: boolean;
   dShowClear?: boolean;
   dSearchable?: boolean;
   dClearIcon?: React.ReactNode;
@@ -17,14 +22,21 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dContentTitle?: string;
   dDisabled?: boolean;
   dLoading?: boolean;
+  dClearTidCallback?: NotificationCallback<void>;
+  dPopupClassName?: string;
+  dCustomWidth?: boolean;
+  dAutoMaxWidth?: boolean;
   onClear?: () => void;
   onSearch?: (value: string) => void;
+  onVisibleChange?: (expanded: boolean) => void;
+  onRendered?: () => void;
 }
 
-const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps> = (props, ref) => {
+export function DSelectBox(props: DSelectBoxProps) {
   const {
+    dPopupContent,
     dSuffix,
-    dExpanded = false,
+    dVisible = false,
     dShowClear = false,
     dSearchable = false,
     dClearIcon,
@@ -33,10 +45,18 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     dContentTitle,
     dDisabled = false,
     dLoading = false,
+    dClearTidCallback,
+    dPopupClassName,
+    dCustomWidth = false,
+    dAutoMaxWidth = false,
     onClear,
     onSearch,
+    onVisibleChange,
+    onRendered,
     className,
     tabIndex = 0,
+    onKeyDown,
+    onClickCapture,
     children,
     ...restProps
   } = props;
@@ -47,8 +67,17 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
   //#endregion
 
   //#region Ref
+  const [boxEl, boxRef] = useRefCallback();
   const [searchEl, searchRef] = useRefCallback();
   //#endregion
+
+  const dataRef = useRef<{
+    clearCloseTid: (() => void) | null;
+    clearClickTid: (() => void) | null;
+  }>({
+    clearCloseTid: null,
+    clearClickTid: null,
+  });
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
@@ -67,13 +96,16 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
   }, []);
 
   const handleMouseUp = useCallback((e) => {
-    e.preventDefault();
+    if (e.button === 0) {
+      e.preventDefault();
+    }
   }, []);
 
   const handleClearClick = useCallback(
     (e) => {
       e.stopPropagation();
 
+      dataRef.current.clearClickTid && dataRef.current.clearClickTid();
       onClear?.();
     },
     [onClear]
@@ -89,11 +121,85 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     [onSearch, setSearchValue]
   );
 
+  const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
+    (e) => {
+      onKeyDown?.(e);
+
+      if (!disabled && !dVisible) {
+        if (e.code === 'Space' || e.code === 'Enter') {
+          e.preventDefault();
+          onVisibleChange?.(true);
+        }
+      }
+    },
+    [dVisible, disabled, onVisibleChange, onKeyDown]
+  );
+
+  const handleClick = useCallback(
+    (e) => {
+      onClickCapture?.(e);
+
+      if (!disabled) {
+        dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+        dataRef.current.clearClickTid = asyncCapture.setTimeout(() => {
+          flushSync(() => onVisibleChange?.(!dVisible));
+        }, 20);
+      }
+    },
+    [asyncCapture, dVisible, disabled, onClickCapture, onVisibleChange]
+  );
+
+  const handlePopupClick = useCallback(() => {
+    dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+    dataRef.current.clearClickTid && dataRef.current.clearClickTid();
+  }, []);
+
+  const customTransition = useCallback(
+    (popupEl: HTMLElement, targetEl: HTMLElement) => {
+      if (!dCustomWidth) {
+        popupEl.style.width = targetEl.getBoundingClientRect().width + 'px';
+      }
+      const { top, left, transformOrigin } = getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 8);
+      if (dAutoMaxWidth) {
+        popupEl.style.maxWidth = window.innerWidth - left - 20 + 'px';
+      }
+      return {
+        top,
+        left,
+        stateList: {
+          'enter-from': { transform: 'scaleY(0.7)', opacity: '0' },
+          'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
+          'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
+          'leave-to': { transform: 'scaleY(0.7)', opacity: '0' },
+        },
+      };
+    },
+    [dAutoMaxWidth, dCustomWidth]
+  );
+
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (dSearchable && dExpanded) {
-      asyncCapture.setTimeout(() => searchEl?.focus({ preventScroll: true }));
+    if (dVisible) {
+      asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
+        next: (e) => {
+          switch (e.code) {
+            case 'Tab':
+              e.preventDefault();
+              break;
+
+            case 'Escape':
+              flushSync(() => onVisibleChange?.(false));
+              break;
+
+            default:
+              break;
+          }
+          if (e.code === 'Tab') {
+            e.preventDefault();
+          }
+        },
+      });
       asyncGroup.fromEvent<MouseEvent>(window, 'mousedown').subscribe({
         next: (e) => {
           if (e.button === 0) {
@@ -103,7 +209,16 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
       });
       asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
         next: (e) => {
-          e.preventDefault();
+          if (e.button === 0) {
+            e.preventDefault();
+          }
+        },
+      });
+      asyncGroup.fromEvent(window, 'click', { capture: true }).subscribe({
+        next: () => {
+          dataRef.current.clearCloseTid = asyncCapture.setTimeout(() => {
+            flushSync(() => onVisibleChange?.(false));
+          }, 20);
         },
       });
     }
@@ -111,81 +226,116 @@ const SelectBox: React.ForwardRefRenderFunction<HTMLDivElement, DSelectBoxProps>
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dExpanded, dSearchable, searchEl]);
+  }, [asyncCapture, dVisible, onVisibleChange]);
+
+  useEffect(() => {
+    if (dSearchable && dVisible && searchEl) {
+      searchEl.focus({ preventScroll: true });
+      return () => {
+        if (document.activeElement === null || document.activeElement === document.body) {
+          boxEl?.focus({ preventScroll: true });
+        }
+      };
+    }
+  }, [boxEl, dVisible, dSearchable, searchEl]);
+
+  useEffect(() => {
+    const clearTid = () => {
+      dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
+      dataRef.current.clearClickTid && dataRef.current.clearClickTid();
+    };
+    dClearTidCallback?.bind(clearTid);
+    return () => {
+      dClearTidCallback?.removeBind(clearTid);
+    };
+  }, [dClearTidCallback]);
 
   return (
-    <div
-      {...restProps}
-      ref={ref}
-      className={getClassName(className, `${dPrefix}select-box`, {
-        [`${dPrefix}select-box--${size}`]: size,
-        'is-expanded': dExpanded,
-        'is-disabled': disabled,
-      })}
-      role="button"
-      tabIndex={disabled ? undefined : tabIndex}
-      aria-disabled={disabled}
-      aria-haspopup="listbox"
-      aria-expanded={dExpanded}
-    >
-      {dSearchable && dExpanded ? (
-        <input
-          ref={searchRef}
-          className={`${dPrefix}select-box__search`}
-          type="search"
-          autoComplete="off"
-          value={searchValue}
-          onChange={handleSearchChange}
-        ></input>
-      ) : (
-        <div className={`${dPrefix}select-box__content`} title={dContentTitle}>
-          {children}
-        </div>
-      )}
-      <div className={`${dPrefix}select-box__suffix`}>{dSuffix}</div>
-      {!(dSearchable && dExpanded) && !children && dPlaceholder && (
-        <div className={`${dPrefix}select-box__placeholder`}>
-          <span>{dPlaceholder}</span>
-        </div>
-      )}
-      {!dExpanded && !dLoading && !disabled && dShowClear && (
+    <DPopup
+      className={dPopupClassName}
+      dVisible={dVisible}
+      dPopupContent={dPopupContent}
+      dTrigger={null}
+      dArrow={false}
+      dCustomPopup={customTransition}
+      dTriggerRender={(renderProps) => (
         <div
-          className={`${dPrefix}select-box__clear`}
-          style={{ width: iconSize, height: iconSize }}
+          {...restProps}
+          {...renderProps}
+          ref={boxRef}
+          className={getClassName(className, `${dPrefix}select-box`, {
+            [`${dPrefix}select-box--${size}`]: size,
+            'is-expanded': dVisible,
+            'is-disabled': disabled,
+          })}
           role="button"
-          tabIndex={-1}
-          aria-label={t('Common', 'Clear')}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onClickCapture={handleClearClick}
+          tabIndex={disabled ? undefined : tabIndex}
+          aria-disabled={disabled}
+          aria-haspopup="listbox"
+          aria-expanded={dVisible}
+          onKeyDown={handleKeyDown}
+          onClickCapture={handleClick}
         >
-          {isUndefined(dClearIcon) ? (
-            <DIcon viewBox="64 64 896 896" dSize="0.8em">
-              <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path>
-            </DIcon>
+          {dSearchable && dVisible ? (
+            <input
+              ref={searchRef}
+              className={`${dPrefix}select-box__search`}
+              type="search"
+              autoComplete="off"
+              value={searchValue}
+              onChange={handleSearchChange}
+            ></input>
           ) : (
-            dClearIcon
+            <div className={`${dPrefix}select-box__content`} title={dContentTitle}>
+              {children}
+            </div>
           )}
+          <div className={`${dPrefix}select-box__suffix`}>{dSuffix}</div>
+          {!(dSearchable && dVisible) && !children && dPlaceholder && (
+            <div className={`${dPrefix}select-box__placeholder`}>
+              <span>{dPlaceholder}</span>
+            </div>
+          )}
+          {!dVisible && !dLoading && !disabled && dShowClear && (
+            <div
+              className={`${dPrefix}select-box__clear`}
+              style={{ width: iconSize, height: iconSize }}
+              role="button"
+              tabIndex={-1}
+              aria-label={t('Common', 'Clear')}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onClick={handleClearClick}
+            >
+              {isUndefined(dClearIcon) ? (
+                <DIcon viewBox="64 64 896 896" dSize="0.8em">
+                  <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path>
+                </DIcon>
+              ) : (
+                dClearIcon
+              )}
+            </div>
+          )}
+          <DIcon
+            className={getClassName(`${dPrefix}select-box__icon`, {
+              'is-expand': !dLoading && !dSearchable && dVisible,
+            })}
+            viewBox={dLoading ? '0 0 1024 1024' : '64 64 896 896'}
+            dSize={iconSize}
+            dSpin={dLoading}
+          >
+            {dLoading ? (
+              <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
+            ) : dSearchable && dVisible ? (
+              <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
+            ) : (
+              <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+            )}
+          </DIcon>
         </div>
       )}
-      <DIcon
-        className={getClassName(`${dPrefix}select-box__icon`, {
-          'is-expand': !dLoading && !dSearchable && dExpanded,
-        })}
-        viewBox={dLoading ? '0 0 1024 1024' : '64 64 896 896'}
-        dSize={iconSize}
-        dSpin={dLoading}
-      >
-        {dLoading ? (
-          <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
-        ) : dSearchable && dExpanded ? (
-          <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
-        ) : (
-          <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
-        )}
-      </DIcon>
-    </div>
+      onRendered={onRendered}
+      onClick={handlePopupClick}
+    />
   );
-};
-
-export const DSelectBox = React.forwardRef(SelectBox);
+}

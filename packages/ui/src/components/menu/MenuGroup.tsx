@@ -40,9 +40,12 @@ export function DMenuGroup(props: DMenuGroupProps) {
       <li
         {...restProps}
         className={getClassName(className, `${dPrefix}menu-group`)}
-        style={mergeStyle(style, {
-          paddingLeft: 16 + __level * 20,
-        })}
+        style={mergeStyle(
+          {
+            paddingLeft: 16 + __level * 20,
+          },
+          style
+        )}
         role="separator"
         aria-orientation="horizontal"
       >

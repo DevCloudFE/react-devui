@@ -71,9 +71,12 @@ export function DDropdownItem(props: DDropdownItemProps) {
       className={getClassName(className, `${dPrefix}dropdown-item`, {
         'is-disabled': dDisabled,
       })}
-      style={mergeStyle(style, {
-        paddingLeft: 12 + __level * 16,
-      })}
+      style={mergeStyle(
+        {
+          paddingLeft: 12 + __level * 16,
+        },
+        style
+      )}
       role="menuitem"
       tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
       aria-disabled={dDisabled}

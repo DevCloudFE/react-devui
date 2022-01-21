@@ -1,0 +1,26 @@
+$cascader-option-height: 32px;
+
+@include b(cascader-list) {
+  display: inline-block;
+
+  vertical-align: top;
+
+  & + & {
+    border-left: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(icon) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 24px;
+
+    font-size: 0.8em;
+  }
+}
+
+@include b(cascader-popup) {
+  overflow-x: auto;
+
+  white-space: nowrap;
+}

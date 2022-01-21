@@ -135,12 +135,12 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const customTransition = useCallback(
     (popupEl: HTMLElement, targetEl: HTMLElement) => {
-      const { top, left, transformOrigin } = inHorizontalNav
-        ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
-        : getHorizontalSideStyle(popupEl, targetEl, 'right', __inNav ? 10 : 14);
       if (inHorizontalNav) {
         popupEl.style.width = targetEl.getBoundingClientRect().width - 32 + 'px';
       }
+      const { top, left, transformOrigin } = inHorizontalNav
+        ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
+        : getHorizontalSideStyle(popupEl, targetEl, 'right', __inNav ? 10 : 14);
       return {
         top,
         left: inHorizontalNav ? left + 16 : left,
@@ -304,9 +304,12 @@ export function DMenuSub(props: DMenuSubProps) {
           'is-expand': popupMode ? popupVisible : expand,
           'is-disabled': dDisabled,
         })}
-        style={mergeStyle(style, {
-          paddingLeft: 16 + __level * 20,
-        })}
+        style={mergeStyle(
+          {
+            paddingLeft: 16 + __level * 20,
+          },
+          style
+        )}
         role="menuitem"
         tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
         aria-haspopup={true}

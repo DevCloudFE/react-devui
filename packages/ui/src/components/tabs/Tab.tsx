@@ -63,6 +63,7 @@ export function DTab(props: DTabProps) {
   const handleCloseClick = useCallback<React.MouseEventHandler>(
     (e) => {
       e.stopPropagation();
+
       onClose?.(dId);
     },
     [dId, onClose]

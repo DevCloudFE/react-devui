@@ -217,19 +217,22 @@ export function DDrawer(props: DDrawerProps) {
       <DDialog
         {...restProps}
         className={getClassName(className, `${dPrefix}drawer`)}
-        style={mergeStyle(style, {
-          position: isFixed ? undefined : 'absolute',
-          transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
-          transform:
-            dPlacement === 'top'
-              ? `translateY(${(distance[dPlacement] / 3) * 2}px)`
-              : dPlacement === 'right'
-              ? `translateX(${-(distance[dPlacement] / 3) * 2}px)`
-              : dPlacement === 'bottom'
-              ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
-              : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
-          zIndex,
-        })}
+        style={mergeStyle(
+          {
+            position: isFixed ? undefined : 'absolute',
+            transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
+            transform:
+              dPlacement === 'top'
+                ? `translateY(${(distance[dPlacement] / 3) * 2}px)`
+                : dPlacement === 'right'
+                ? `translateX(${-(distance[dPlacement] / 3) * 2}px)`
+                : dPlacement === 'bottom'
+                ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
+                : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
+            zIndex,
+          },
+          style
+        )}
         aria-labelledby={dHeader ? `${dPrefix}drawer-header-${uniqueId}` : undefined}
         aria-describedby={`${dPrefix}dialog-content-${uniqueId}`}
         dVisible={visible}

@@ -1,7 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
 import type { DTabProps } from './Tab';
-import type { Draft } from 'immer';
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -222,7 +221,7 @@ export function DTabs(props: DTabsProps) {
       updateTabEls: (identity, id, el) => {
         if (el) {
           setTabEls((draft) => {
-            draft.set(identity, { id, el: el as Draft<HTMLElement> });
+            draft.set(identity, { id, el });
           });
         }
       },

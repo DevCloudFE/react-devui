@@ -1,10 +1,8 @@
-import type { Updater } from '../../hooks/two-way-binding';
-
 import { isArray } from 'lodash';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useAsync, useImmer, useTwoWayBinding } from '../../hooks';
+import { useAsync, useImmer, useRefCallback } from '../../hooks';
 
 export interface DItemRenderProps {
   'aria-setsize'?: number;
@@ -12,21 +10,19 @@ export interface DItemRenderProps {
   children?: React.ReactNode;
 }
 
-const NESTED_KEY = 'dChildren';
-
 export interface DVirtualScrollProps<T> extends React.HTMLAttributes<HTMLElement> {
-  dFocusOption: [T | null, Updater<T | null>?];
-  dHasInitFocus?: boolean;
+  dFocusOption: T | null;
+  dHasSelected?: boolean;
   dRendered?: boolean;
-  dListRef?: (node: HTMLUListElement | null) => void;
   dScrollY?: boolean;
   dSize: number;
   dItemSize: number;
   dPaddingSize?: number;
   dList: T[];
+  dNestedKey?: string;
   dCanSelectOption: (option: T) => boolean;
   dCompareOption: (a: T, b: T) => boolean;
-  dItemRender: (item: T, index: number, props: DItemRenderProps) => React.ReactNode;
+  dItemRender: (item: T, props: DItemRenderProps) => React.ReactNode;
   dEmpty?: React.ReactNode;
   onScrollEnd?: () => void;
   onFocusChange?: (option: T | null) => void;
@@ -35,14 +31,14 @@ export interface DVirtualScrollProps<T> extends React.HTMLAttributes<HTMLElement
 export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const {
     dFocusOption,
-    dHasInitFocus = false,
+    dHasSelected = false,
     dRendered = true,
-    dListRef,
     dScrollY = true,
     dSize,
     dItemSize,
     dPaddingSize = 0,
     dList,
+    dNestedKey,
     dCanSelectOption,
     dCompareOption,
     dItemRender,
@@ -54,15 +50,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   } = props;
 
   //#region Ref
-  const [listEl, setListEl] = useState<HTMLUListElement | null>(null);
-
-  const listRef = useCallback(
-    (node: HTMLUListElement | null) => {
-      setListEl(node);
-      dListRef?.(node);
-    },
-    [dListRef]
-  );
+  const [listEl, listRef] = useRefCallback<HTMLUListElement>();
   //#endregion
 
   const dataRef = useRef<{
@@ -70,12 +58,10 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     hasInitFocus: boolean;
   }>({
     isFirst: true,
-    hasInitFocus: dHasInitFocus,
+    hasInitFocus: dHasSelected,
   });
 
   const asyncCapture = useAsync();
-
-  const [focusOption, changeFocusOption] = useTwoWayBinding(null, dFocusOption, onFocusChange);
 
   const [list, setList] = useImmer<React.ReactNode[]>([]);
   const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
@@ -100,12 +86,12 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           if (!hasFind) {
             focusIndex += 1;
           }
-          if (focusOption && dCompareOption(focusOption, item)) {
+          if (dFocusOption && dCompareOption(dFocusOption, item)) {
             hasFind = true;
           }
 
-          if (isArray(item[NESTED_KEY])) {
-            reduceList(item[NESTED_KEY] as T[]);
+          if (dNestedKey && isArray(item[dNestedKey])) {
+            reduceList(item[dNestedKey] as T[]);
           }
         });
       }
@@ -113,7 +99,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     reduceList(dList);
 
     return [flatOptions, hasFind ? focusIndex : -1];
-  }, [dCompareOption, dEmpty, dList, focusOption]);
+  }, [dCompareOption, dEmpty, dList, dNestedKey, dFocusOption]);
 
   const updateList = useCallback(() => {
     if (listEl) {
@@ -151,11 +137,11 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
               return list;
             }
             const shouldRender = count > startCount;
-            if (isArray(arr[index][NESTED_KEY])) {
-              const children = loop(arr[index][NESTED_KEY] as T[]);
+            if (dNestedKey && isArray(arr[index][dNestedKey])) {
+              const children = loop(arr[index][dNestedKey] as T[]);
               if (shouldRender || children.length > 0) {
                 renderCount += 1;
-                list.push(dItemRender(arr[index], index, { children }));
+                list.push(dItemRender(arr[index], { children }));
               } else {
                 skipCount += 1;
               }
@@ -163,7 +149,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
               if (shouldRender) {
                 renderCount += 1;
                 list.push(
-                  dItemRender(arr[index], index, {
+                  dItemRender(arr[index], {
                     'aria-setsize': arr.length,
                     'aria-posinset': index + 1,
                   })
@@ -184,7 +170,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         { [dScrollY ? 'height' : 'width']: dItemSize * (flatOptions.length - skipCount - renderCount) },
       ]);
     }
-  }, [dEmpty, dItemRender, dItemSize, dList, dPaddingSize, dScrollY, dSize, flatOptions.length, listEl, setFillSize, setList]);
+  }, [dEmpty, dItemRender, dItemSize, dList, dNestedKey, dPaddingSize, dScrollY, dSize, flatOptions.length, listEl, setFillSize, setList]);
 
   const handleScroll = useCallback(
     (e) => {
@@ -271,7 +257,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
             }
           }
 
-          changeFocusOption(option);
+          onFocusChange?.(option);
         }
       };
 
@@ -311,7 +297,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
               listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = 0;
               for (const item of flatOptions) {
                 if (item && dCanSelectOption(item)) {
-                  changeFocusOption(item);
+                  onFocusChange?.(item);
                   break;
                 }
               }
@@ -323,7 +309,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
               for (let index = flatOptions.length - 1; index >= 0; index--) {
                 const item = flatOptions[index];
                 if (item && dCanSelectOption(item)) {
-                  changeFocusOption(item);
+                  onFocusChange?.(item);
                   break;
                 }
               }
@@ -339,7 +325,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, changeFocusOption, dCanSelectOption, dItemSize, dPaddingSize, dRendered, dScrollY, flatOptions, focusIndex, listEl]);
+  }, [asyncCapture, dCanSelectOption, dItemSize, dPaddingSize, dRendered, dScrollY, flatOptions, focusIndex, listEl, onFocusChange]);
 
   return (
     <ul {...restProps} ref={listRef} onScroll={handleScroll}>

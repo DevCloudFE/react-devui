@@ -33,9 +33,12 @@ export function DDropdownGroup(props: DDropdownGroupProps) {
     <>
       <li
         {...restProps}
-        style={mergeStyle(style, {
-          paddingLeft: 12 + __level * 16,
-        })}
+        style={mergeStyle(
+          {
+            paddingLeft: 12 + __level * 16,
+          },
+          style
+        )}
         className={getClassName(className, `${dPrefix}dropdown-group`)}
         role="separator"
         aria-orientation="horizontal"

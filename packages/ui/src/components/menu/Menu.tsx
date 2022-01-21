@@ -183,7 +183,12 @@ export function DMenu(props: DMenuProps) {
             className={getClassName(className, `${dPrefix}menu`, {
               [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
             })}
-            style={mergeStyle(style, { width: hidden ? 80 : undefined })}
+            style={mergeStyle(
+              {
+                width: hidden ? 80 : undefined,
+              },
+              style
+            )}
             tabIndex={-1}
             role="menubar"
             aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}

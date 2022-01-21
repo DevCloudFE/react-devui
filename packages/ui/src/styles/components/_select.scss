@@ -89,19 +89,19 @@ $select-option-height: 32px;
     }
   }
 
-  @include e(option-empty) {
+  @include e(option-content) {
+    flex-grow: 1;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(empty) {
     display: flex;
     align-items: center;
     height: $select-option-height;
     padding: 0 12px;
 
     color: var(--#{$variable-prefix}color-step-400);
-  }
-
-  @include e(option-content) {
-    flex-grow: 1;
-
-    @include utils-ellipsis;
   }
 
   @include e(loading) {

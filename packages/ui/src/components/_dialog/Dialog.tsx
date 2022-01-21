@@ -61,7 +61,7 @@ export function DDialog(props: DDialogProps) {
           {...restProps}
           ref={dDialogRef}
           className={getClassName(className, `${dPrefix}dialog`)}
-          style={mergeStyle(style, { display: dHidden ? 'none' : undefined })}
+          style={mergeStyle({ display: dHidden ? 'none' : undefined }, style)}
           role="dialog"
           aria-modal="true"
         >

@@ -47,7 +47,7 @@ title: 选择框
 | --- | --- | --- | --- | 
 | dVisible | 是否弹出窗口 | [boolean, Updater\<boolean\>?] | - |
 | dOptions | 选择项 | Array\<DSelectOption\<T\>\> | - |
-| dOptionRender | 自定义选择项 | `(option: DSelectBaseOption<T>, index: number) => React.ReactNode` | - |
+| dOptionRender | 自定义选择项 | `(option: DSelectBaseOption<T>) => React.ReactNode` | - |
 | dGetId | 获取唯一标识 | `(value: T) => string` | `(value: unknown) => String(value)` |
 | dCreateOption | 允许创建选项 | `(value: string) => DSelectBaseOption<T> \| null` | - |
 | dClearable | 是否可清除 | boolean | false |
