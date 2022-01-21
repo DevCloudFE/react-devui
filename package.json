@@ -70,7 +70,7 @@
     "@typescript-eslint/parser": "^5.9.1",
     "babel-jest": "^27.4.6",
     "cypress": "^9.2.1",
-    "dotenv": "^11.0.0",
+    "dotenv": "^14.2.0",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-cypress": "^2.12.1",
