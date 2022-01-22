@@ -5,6 +5,7 @@ import type { DSelectBoxProps } from '../_select-box';
 import { isArray, isNull, isNumber, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState, useId } from 'react';
 import { useLayoutEffect } from 'react';
+import { filter } from 'rxjs';
 
 import {
   usePrefixConfig,
@@ -271,7 +272,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
     },
     [renderOptions]
   );
-  const getFocusOption = () => {
+  const getFocusOption = useCallback(() => {
     let option: DSelectOption<T> | null = null;
 
     if (!hasSearch) {
@@ -301,7 +302,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
     }
 
     return option;
-  };
+  }, [_select, canSelectOption, dGetId, dMultiple, findOption, hasSearch]);
 
   const [searchFocusOption, setSearchFocusOption] = useState(() => getFocusOption());
   const [noSearchFocusOption, setNoSearchFocusOption] = useState(() => getFocusOption());
@@ -371,33 +372,48 @@ export function DSelect<T>(props: DSelectProps<T>) {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (listRendered && focusOption) {
-      asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
-        next: (e) => {
-          switch (e.code) {
-            case 'Enter':
-              e.preventDefault();
-              handleOptionClick(focusOption, false);
-              break;
+    if (listRendered) {
+      if (focusOption) {
+        asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
+          next: (e) => {
+            switch (e.code) {
+              case 'Enter':
+                e.preventDefault();
+                handleOptionClick(focusOption, false);
+                break;
 
-            case 'Space':
+              case 'Space':
+                e.preventDefault();
+                if (dMultiple) {
+                  handleOptionClick(focusOption, true);
+                }
+                break;
+
+              default:
+                break;
+            }
+          },
+        });
+      } else {
+        asyncGroup
+          .fromEvent<KeyboardEvent>(window, 'keydown')
+          .pipe(filter((e) => e.code === 'ArrowDown'))
+          .subscribe({
+            next: (e) => {
               e.preventDefault();
-              if (dMultiple) {
-                handleOptionClick(focusOption, true);
+              const option = getFocusOption();
+              if (option) {
+                hasSearch ? setSearchFocusOption(option) : setNoSearchFocusOption(option);
               }
-              break;
-
-            default:
-              break;
-          }
-        },
-      });
+            },
+          });
+      }
     }
 
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dMultiple, focusOption, handleOptionClick, listRendered]);
+  }, [asyncCapture, dMultiple, focusOption, getFocusOption, handleOptionClick, hasSearch, listRendered]);
 
   const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
     let selectedNode: React.ReactNode = null;
@@ -410,13 +426,21 @@ export function DSelect<T>(props: DSelectProps<T>) {
       const customSelected = Symbol();
       const selectIds = select.map((item) => dGetId(item));
       const reduceArr = (arr: Array<DSelectOption<T>>) => {
-        arr.forEach((item) => {
+        for (const item of arr) {
+          if (selectIds.length === 0) {
+            break;
+          }
           if (item.dChildren) {
             reduceArr(item.dChildren);
-          } else if (item.dValue && selectIds.includes(dGetId(item.dValue))) {
-            optionsSelected.push(item as DSelectBaseOption<T>);
+          } else if (item.dValue) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const index = selectIds.findIndex((id) => id === dGetId(item.dValue!));
+            if (index !== -1) {
+              optionsSelected.push(item as DSelectBaseOption<T>);
+              selectIds.splice(index, 1);
+            }
           }
-        });
+        }
       };
       reduceArr(dOptions);
 

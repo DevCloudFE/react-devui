@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import type { AbstractTreeNode, MultipleTreeNode } from '../tree/tree';
+import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
 
 import { useCallback, useEffect, useMemo, useContext } from 'react';
 
@@ -9,6 +9,7 @@ import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
 import { DIcon } from '../icon';
 import { DCascaderContext } from './Cascader';
+import { ID_SEPARATOR } from './utils';
 
 export interface DListProps {
   dList: AbstractTreeNode[];
@@ -20,6 +21,7 @@ export function DList(props: DListProps) {
   //#region Context
   const dPrefix = usePrefixConfig();
   const {
+    cascaderSelecteds,
     cascaderFocusValues,
     cascaderUniqueId,
     cascaderRendered,
@@ -38,9 +40,9 @@ export function DList(props: DListProps) {
   const [t] = useTranslation('Common');
   const asyncCapture = useAsync();
 
-  const canSelectOption = useCallback((option: AbstractTreeNode) => option.enabled && !option.node['dLoading'], []);
+  const canSelectOption = useCallback((option: AbstractTreeNode) => option.enabled, []);
   const compareOption = useCallback((a: AbstractTreeNode, b: AbstractTreeNode) => {
-    return a.id.every((id, index) => id === b.id[index]);
+    return a.id.join(ID_SEPARATOR) === b.id.join(ID_SEPARATOR);
   }, []);
 
   const [focusOption, focusIndex] = useMemo(() => {
@@ -60,15 +62,20 @@ export function DList(props: DListProps) {
         if (cascaderMultiple) {
           isSwitch = isSwitch ?? true;
 
-          const checkeds = (option as MultipleTreeNode).changeStatus(isSwitch ? (option.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED');
+          const checkeds = (option as MultipleTreeNode).changeStatus(
+            isSwitch ? (option.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED',
+            cascaderSelecteds as unknown[][]
+          );
           onModelChange(checkeds);
         } else {
           if (cascaderOnlyLeafSelectable) {
             if (option.isLeaf) {
-              onModelChange(option.value);
+              const checkeds = (option as SingleTreeNode).setChecked();
+              onModelChange(checkeds);
             }
           } else {
-            onModelChange(option.value);
+            const checkeds = (option as SingleTreeNode).setChecked();
+            onModelChange(checkeds);
           }
           if (option.isLeaf) {
             onClose();
@@ -76,7 +83,7 @@ export function DList(props: DListProps) {
         }
       }
     },
-    [canSelectOption, cascaderMultiple, cascaderOnlyLeafSelectable, onClose, onModelChange]
+    [canSelectOption, cascaderMultiple, cascaderOnlyLeafSelectable, cascaderSelecteds, onClose, onModelChange]
   );
 
   const changeFocus = useCallback(
@@ -138,7 +145,7 @@ export function DList(props: DListProps) {
   const itemRender = useCallback(
     (item: AbstractTreeNode, renderProps) => {
       const optionIds = item.id;
-      const id = optionIds.join('$$');
+      const id = optionIds.join(ID_SEPARATOR);
       let isFocus = false;
       if (cascaderFocusValues.length > 0) {
         isFocus = optionIds.every((id, index) => cascaderFocusValues[index] && id === cascaderGetId(cascaderFocusValues[index]));
@@ -225,7 +232,7 @@ export function DList(props: DListProps) {
         className={getClassName(`${dPrefix}select__list`, `${dPrefix}cascader-list`)}
         role="listbox"
         aria-multiselectable={cascaderMultiple}
-        aria-activedescendant={focusIds ? `${dPrefix}cascader-${cascaderUniqueId}-option-${focusIds.join('$$')}` : undefined}
+        aria-activedescendant={focusIds ? `${dPrefix}cascader-${cascaderUniqueId}-option-${focusIds.join(ID_SEPARATOR)}` : undefined}
         dFocusOption={focusOption}
         dHasSelected={!!focusOption}
         dRendered={cascaderRendered}

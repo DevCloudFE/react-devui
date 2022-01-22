@@ -64,8 +64,20 @@ export abstract class AbstractTreeNode {
     return !this._disabled;
   }
 
-  protected setParent(parent: AbstractTreeNode): void {
+  updateStatus(checkeds: any, onlySelf = false): void {
+    this._calculateStatus(checkeds);
+
+    this._updateAncestors(checkeds, onlySelf);
+  }
+
+  protected _setParent(parent: AbstractTreeNode): void {
     this._parent = parent;
+  }
+
+  protected _updateAncestors(checkeds: any, onlySelf: boolean) {
+    if (this._parent && !onlySelf) {
+      this._parent.updateStatus(checkeds, onlySelf);
+    }
   }
 
   abstract children: AbstractTreeNode[] | null;
@@ -75,12 +87,12 @@ export abstract class AbstractTreeNode {
 
   protected abstract _status: TreeNodeStatus;
   protected abstract _disabled: boolean;
+
+  protected abstract _calculateStatus(checkeds: any): void;
 }
 
 export class SingleTreeNode extends AbstractTreeNode {
   children: SingleTreeNode[] | null = null;
-
-  private _checkedIds: string[];
 
   protected _value: any[];
   protected _id: string[];
@@ -88,22 +100,51 @@ export class SingleTreeNode extends AbstractTreeNode {
   protected _disabled: boolean;
 
   constructor(
-    public node: TreeOption,
+    node: TreeOption,
     private opts: {
+      checkedRef: React.MutableRefObject<SingleTreeNode | null>;
       checkeds: any[];
-      checkedIds?: string[];
       getId: (value: any) => string;
       parent?: { value: any[]; id: string[]; disabled: boolean };
     }
   ) {
     super(node);
-    this._checkedIds = this.opts.checkedIds ? this.opts.checkedIds : this.opts.checkeds.map((v) => this.opts.getId(v));
-    this._value = (this.opts.parent?.value ?? []).concat([this.node.dValue]);
-    this._id = (this.opts.parent?.id ?? []).concat([this.opts.getId(this.node.dValue)]);
-    this._disabled = (this.opts.parent?.disabled || this.node.dDisabled) ?? false;
+    if (opts.parent) {
+      this._value = opts.parent.value.concat([node.dValue]);
+      this._id = opts.parent.id.concat([opts.getId(node.dValue)]);
+      this._disabled = !!(opts.parent.disabled || node.dDisabled);
+    } else {
+      this._value = [node.dValue];
+      this._id = [opts.getId(node.dValue)];
+      this._disabled = !!node.dDisabled;
+    }
 
     this._setUpChildren();
-    this._updateStatus();
+    this.updateStatus(opts.checkeds, true);
+  }
+
+  setChecked(): any[] {
+    if (this.opts.checkedRef.current) {
+      let node = this.opts.checkedRef.current;
+      node._status = UNCHECKED;
+
+      while (node.parent) {
+        node = node.parent as SingleTreeNode;
+        node._status = UNCHECKED;
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let node: SingleTreeNode = this;
+    this.opts.checkedRef.current = node;
+    node._status = CHECKED;
+
+    while (node.parent) {
+      node = node.parent as SingleTreeNode;
+      node._status = CHECKED;
+    }
+
+    return this.value;
   }
 
   private _setUpChildren(): void {
@@ -112,7 +153,6 @@ export class SingleTreeNode extends AbstractTreeNode {
         const node = new SingleTreeNode(
           v,
           Object.assign(this.opts, {
-            checkedIds: this._checkedIds,
             parent: {
               value: this._value,
               id: this._id,
@@ -120,21 +160,29 @@ export class SingleTreeNode extends AbstractTreeNode {
             },
           })
         );
-        node.setParent(this);
+        node._setParent(this);
         return node;
       });
     }
   }
 
-  private _updateStatus(): void {
-    this._status = this.value.every((v, i) => this._checkedIds[i] && this._checkedIds[i] === this.opts.getId(v)) ? CHECKED : UNCHECKED;
+  protected override _calculateStatus(checkeds: any[]): void {
+    const checkedIds = checkeds.map((v) => this.opts.getId(v));
+    this._status = this.id.every((id, index) => checkedIds[index] && checkedIds[index] === id) ? CHECKED : UNCHECKED;
+    if (this._status === CHECKED) {
+      if (this.opts.checkedRef.current) {
+        if (this.opts.checkedRef.current.value.length < this.value.length) {
+          this.opts.checkedRef.current = this;
+        }
+      } else {
+        this.opts.checkedRef.current = this;
+      }
+    }
   }
 }
 
 export class MultipleTreeNode extends AbstractTreeNode {
   children: MultipleTreeNode[] | null = null;
-
-  private _checkedIds: string[][];
 
   protected _value: any[];
   protected _id: string[];
@@ -142,74 +190,40 @@ export class MultipleTreeNode extends AbstractTreeNode {
   protected _disabled: boolean;
 
   constructor(
-    public node: TreeOption,
-    public opts: {
+    node: TreeOption,
+    private opts: {
       checkeds: any[][];
-      checkedIds?: string[][];
       getId: (value: any) => string;
       parent?: { value: any[]; id: string[]; disabled: boolean };
     }
   ) {
     super(node);
-    this._checkedIds = this.opts.checkedIds ? this.opts.checkedIds : this.opts.checkeds.map((vs) => vs.map((v) => this.opts.getId(v)));
-    if (this.opts.parent) {
-      this._value = this.opts.parent.value.concat([this.node.dValue]);
-      this._id = this.opts.parent.id.concat([this.opts.getId(this.node.dValue)]);
-      this._disabled = !!(this.opts.parent.disabled || this.node.dDisabled);
+    if (opts.parent) {
+      this._value = opts.parent.value.concat([node.dValue]);
+      this._id = opts.parent.id.concat([opts.getId(node.dValue)]);
+      this._disabled = !!(opts.parent.disabled || node.dDisabled);
     } else {
-      this._value = [this.node.dValue];
-      this._id = [this.opts.getId(this.node.dValue)];
-      this._disabled = !!this.node.dDisabled;
+      this._value = [node.dValue];
+      this._id = [opts.getId(node.dValue)];
+      this._disabled = !!node.dDisabled;
     }
 
     this._setUpChildren();
-    this._updateStatus();
+    this.updateStatus(opts.checkeds, true);
   }
 
-  changeStatus(status: TreeNodeStatus, initValue?: any[][]): any[][] {
-    let res = initValue ?? [...this.opts.checkeds];
-    if (this.enabled && this._status !== status) {
-      this._status = status;
-      if (this.isLeaf) {
-        if (status === CHECKED) {
-          res.push(this.value);
-        } else {
-          const valueIds = this.value.map((v) => this.opts.getId(v));
-          res = res.filter((checkeds) => !valueIds.every((v, i) => checkeds[i] && this.opts.getId(checkeds[i]) === v));
-        }
-      } else {
-        this.children!.forEach((child) => {
-          res = child.changeStatus(status, res);
-        });
-      }
-    }
+  changeStatus(status: TreeNodeStatus, checkeds: any[][]): any[][] {
+    const newCheckeds = this._changeStatus(status, checkeds);
 
-    return res;
+    this._updateAncestors(newCheckeds, false);
+
+    return newCheckeds;
   }
 
-  private _setUpChildren(): void {
-    if (this.node.dChildren) {
-      this.children = this.node.dChildren.map((v) => {
-        const node = new MultipleTreeNode(
-          v,
-          Object.assign(this.opts, {
-            checkedIds: this._checkedIds,
-            parent: {
-              value: this._value,
-              id: this._id,
-              disabled: this._disabled,
-            },
-          })
-        );
-        node.setParent(this);
-        return node;
-      });
-    }
-  }
-
-  private _updateStatus(): void {
+  protected override _calculateStatus(checkeds: any[][]): void {
     if (this.isLeaf) {
-      const index = this._checkedIds.findIndex((checkeds) => this._id.every((id, index) => checkeds[index] && checkeds[index] === id));
+      const checkedIds = checkeds.map((vs) => vs.map((v) => this.opts.getId(v)));
+      const index = checkedIds.findIndex((checkeds) => this._id.every((id, index) => checkeds[index] && checkeds[index] === id));
       this._status = index === -1 ? UNCHECKED : CHECKED;
     } else {
       let checkedNum = 0;
@@ -229,6 +243,45 @@ export class MultipleTreeNode extends AbstractTreeNode {
         : checkedNum === this.children!.filter((item) => item.enabled).length
         ? CHECKED
         : INDETERMINATE;
+    }
+  }
+
+  protected _changeStatus(status: TreeNodeStatus, initValue: any[][]): any[][] {
+    let res = [...initValue];
+    if (this.enabled && this._status !== status) {
+      this._status = status;
+      if (this.isLeaf) {
+        if (status === CHECKED) {
+          res.push(this.value);
+        } else {
+          res = res.filter((checkeds) => !this.id.every((id, index) => checkeds[index] && this.opts.getId(checkeds[index]) === id));
+        }
+      } else {
+        this.children!.forEach((child) => {
+          res = child._changeStatus(status, res);
+        });
+      }
+    }
+
+    return res;
+  }
+
+  private _setUpChildren(): void {
+    if (this.node.dChildren) {
+      this.children = this.node.dChildren.map((v) => {
+        const node = new MultipleTreeNode(
+          v,
+          Object.assign(this.opts, {
+            parent: {
+              value: this._value,
+              id: this._id,
+              disabled: this._disabled,
+            },
+          })
+        );
+        node._setParent(this);
+        return node;
+      });
     }
   }
 }
