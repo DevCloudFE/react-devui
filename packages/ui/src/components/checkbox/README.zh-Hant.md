@@ -36,7 +36,14 @@ title: 多选组
 | dModel | 手动控制选择 | [any[], Updater\<any[]\>?] | - |
 | dDisabled | 是否禁用 | boolean | false |
 | dVertical | 多选组垂直排布 | boolean | false |
-| dIndeterminateLabel | 部分选中的标签内容 | `(checked: boolean \| 'mixed') => React.ReactNode` | - |
-| dIndeterminateRef | 部分选中的节点 | `(node: React.ReactNode) => void` | - |
 | onModelChange | 选中项改变的回调 | `(values: any[]) => void` | - |
 <!-- prettier-ignore-end -->
+
+### DCheckboxGroupRef
+
+```tsx
+interface DCheckboxGroupRef {
+  indeterminateProps: DCheckboxProps;
+  indeterminateChecked: 'mixed' | boolean;
+}
+```

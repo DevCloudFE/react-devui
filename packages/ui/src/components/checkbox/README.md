@@ -37,7 +37,14 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dModel | Manual control selection | [any[], Updater\<any[]\>?] | - |
 | dDisabled | Whether to disable | boolean | false |
 | dVertical | Vertical arrangement of checkbox group | boolean | false |
-| dIndeterminateLabel | Partially checked label content | `(checked: boolean \| 'mixed') => React.ReactNode` | - |
-| dIndeterminateRef | Partially checked node | `(node: React.ReactNode) => void` | - |
 | onModelChange | Callback when the checked item is changed | `(values: any[]) => void` | - |
 <!-- prettier-ignore-end -->
+
+### DCheckboxGroupRef
+
+```tsx
+interface DCheckboxGroupRef {
+  indeterminateProps: DCheckboxProps;
+  indeterminateChecked: 'mixed' | boolean;
+}
+```
