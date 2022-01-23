@@ -212,6 +212,12 @@ h3 {
     }
   }
 
+  section[id^='Affix'] {
+    .d-affix {
+      display: inline-block;
+    }
+  }
+
   .d-menu:not(.d-menu--horizontal) {
     width: 320px;
     max-width: 100%;
