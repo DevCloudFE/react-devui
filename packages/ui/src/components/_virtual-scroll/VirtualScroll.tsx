@@ -1,8 +1,8 @@
 import { isArray } from 'lodash';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useAsync, useImmer, useRefCallback } from '../../hooks';
+import { useAsync, useRefCallback } from '../../hooks';
 
 export interface DItemRenderProps {
   'aria-setsize'?: number;
@@ -54,17 +54,14 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   //#endregion
 
   const dataRef = useRef<{
-    isFirst: boolean;
+    hasScrollChange: boolean;
     hasInitFocus: boolean;
   }>({
-    isFirst: true,
+    hasScrollChange: false,
     hasInitFocus: dHasSelected,
   });
 
   const asyncCapture = useAsync();
-
-  const [list, setList] = useImmer<React.ReactNode[]>([]);
-  const [fillSize, setFillSize] = useImmer<[React.CSSProperties, React.CSSProperties]>([{}, {}]);
 
   const [flatOptions, focusIndex] = useMemo(() => {
     const flatOptions: Array<T | undefined> = [];
@@ -101,76 +98,77 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     return [flatOptions, hasFind ? focusIndex : -1];
   }, [dCompareOption, dEmpty, dList, dNestedKey, dFocusOption]);
 
-  const updateList = useCallback(() => {
-    if (listEl) {
-      dataRef.current.isFirst = false;
+  const getStates = useCallback(() => {
+    const maxScrollSize = dItemSize * flatOptions.length + dPaddingSize * 2 - dSize;
+    const scrollSize = Math.min(maxScrollSize, dScrollY ? listEl?.scrollTop ?? 0 : listEl?.scrollLeft ?? 0);
 
-      const maxScrollSize = dItemSize * flatOptions.length + dPaddingSize * 2 - dSize;
-      const scrollSize = Math.min(maxScrollSize, dScrollY ? listEl.scrollTop : listEl.scrollLeft);
+    const startCount = Math.floor((scrollSize - dPaddingSize) / dItemSize) - 2;
+    const endCount = Math.ceil((scrollSize - dPaddingSize + dSize) / dItemSize) + 2;
 
-      const startCount = Math.floor((scrollSize - dPaddingSize) / dItemSize) - 2;
-      const endCount = Math.ceil((scrollSize - dPaddingSize + dSize) / dItemSize) + 2;
-
-      let count = 0;
-      let skipCount = 0;
-      let renderCount = 0;
-      const loop = (arr: T[]) => {
-        const list: React.ReactNode[] = [];
-        if (arr.length === 0) {
-          if (dEmpty) {
-            count += 1;
-            if (count > endCount) {
-              return list;
+    let count = 0;
+    let skipCount = 0;
+    let renderCount = 0;
+    const loop = (arr: T[]) => {
+      const list: React.ReactNode[] = [];
+      if (arr.length === 0) {
+        if (dEmpty) {
+          count += 1;
+          if (count > endCount) {
+            return list;
+          }
+          const shouldRender = count > startCount;
+          if (shouldRender) {
+            renderCount += 1;
+            list.push(dEmpty);
+          } else {
+            skipCount += 1;
+          }
+        }
+      } else {
+        for (let index = 0; index < arr.length; index++) {
+          count += 1;
+          if (count > endCount) {
+            return list;
+          }
+          const shouldRender = count > startCount;
+          if (dNestedKey && isArray(arr[index][dNestedKey])) {
+            const children = loop(arr[index][dNestedKey] as T[]);
+            if (shouldRender || children.length > 0) {
+              renderCount += 1;
+              list.push(dItemRender(arr[index], { children }));
+            } else {
+              skipCount += 1;
             }
-            const shouldRender = count > startCount;
+          } else {
             if (shouldRender) {
               renderCount += 1;
-              list.push(dEmpty);
+              list.push(
+                dItemRender(arr[index], {
+                  'aria-setsize': arr.length,
+                  'aria-posinset': index + 1,
+                })
+              );
             } else {
               skipCount += 1;
             }
           }
-        } else {
-          for (let index = 0; index < arr.length; index++) {
-            count += 1;
-            if (count > endCount) {
-              return list;
-            }
-            const shouldRender = count > startCount;
-            if (dNestedKey && isArray(arr[index][dNestedKey])) {
-              const children = loop(arr[index][dNestedKey] as T[]);
-              if (shouldRender || children.length > 0) {
-                renderCount += 1;
-                list.push(dItemRender(arr[index], { children }));
-              } else {
-                skipCount += 1;
-              }
-            } else {
-              if (shouldRender) {
-                renderCount += 1;
-                list.push(
-                  dItemRender(arr[index], {
-                    'aria-setsize': arr.length,
-                    'aria-posinset': index + 1,
-                  })
-                );
-              } else {
-                skipCount += 1;
-              }
-            }
-          }
         }
-        return list;
-      };
+      }
+      return list;
+    };
 
-      setList(loop(dList));
-
-      setFillSize([
+    return {
+      list: loop(dList),
+      fillSize: [
         { [dScrollY ? 'height' : 'width']: dItemSize * skipCount },
         { [dScrollY ? 'height' : 'width']: dItemSize * (flatOptions.length - skipCount - renderCount) },
-      ]);
-    }
-  }, [dEmpty, dItemRender, dItemSize, dList, dNestedKey, dPaddingSize, dScrollY, dSize, flatOptions.length, listEl, setFillSize, setList]);
+      ],
+    };
+  }, [dEmpty, dItemRender, dItemSize, dList, dNestedKey, dPaddingSize, dScrollY, dSize, flatOptions.length, listEl]);
+  const [{ list, fillSize }, _updateList] = useState(() => getStates());
+  const updateList = useCallback(() => {
+    _updateList(getStates());
+  }, [getStates]);
 
   const handleScroll = useCallback(
     (e) => {
@@ -186,44 +184,47 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
       }
 
       flushSync(() => updateList());
+      dataRef.current.hasScrollChange = false;
     },
     [dScrollY, listEl, onScroll, onScrollEnd, updateList]
   );
 
-  useLayoutEffect(() => {
-    if (!dataRef.current.isFirst) {
-      if (dRendered) {
-        if (dataRef.current.hasInitFocus && listEl) {
-          dataRef.current.hasInitFocus = false;
-          listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = focusIndex * dItemSize;
-        } else {
+  useEffect(() => {
+    if (dRendered) {
+      if (dataRef.current.hasInitFocus && listEl) {
+        dataRef.current.hasInitFocus = false;
+        listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = focusIndex * dItemSize;
+      } else {
+        if (!dataRef.current.hasScrollChange) {
           updateList();
         }
+        dataRef.current.hasScrollChange = false;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dRendered, updateList]);
 
-  useLayoutEffect(() => {
-    if (dataRef.current.isFirst) {
-      updateList();
-    }
-  }, [updateList]);
-
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (listEl && dRendered && focusIndex !== -1) {
+      const changeScroll = (num: number) => {
+        const pre = listEl[dScrollY ? 'scrollTop' : 'scrollLeft'];
+        listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = num;
+        const now = listEl[dScrollY ? 'scrollTop' : 'scrollLeft'];
+        dataRef.current.hasScrollChange = pre !== now;
+      };
+
       const changeFocusByKeydown = (next = true) => {
         let index = focusIndex;
         let option: T | undefined;
         const getOption = () => {
           if (!next && index === 0) {
-            listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = 0;
+            changeScroll(0);
             return;
           }
           if (next && index === flatOptions.length - 1) {
-            listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = listEl[dScrollY ? 'scrollHeight' : 'scrollWidth'];
+            changeScroll(listEl[dScrollY ? 'scrollHeight' : 'scrollWidth']);
             return;
           }
           index = next ? index + 1 : index - 1;
@@ -242,17 +243,17 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           const listElClientSize = listEl[dScrollY ? 'clientHeight' : 'clientWidth'];
 
           if (listElScrollSize > elOffset[1]) {
-            listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = elOffset[0] - dPaddingSize;
+            changeScroll(elOffset[0] - dPaddingSize);
           } else if (elOffset[0] > listElScrollSize + listElClientSize) {
-            listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = elOffset[1] - listElClientSize + dPaddingSize;
+            changeScroll(elOffset[1] - listElClientSize + dPaddingSize);
           } else {
             if (next) {
               if (elOffset[1] > listElScrollSize + listElClientSize) {
-                listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = elOffset[1] - listElClientSize + dPaddingSize;
+                changeScroll(elOffset[1] - listElClientSize + dPaddingSize);
               }
             } else {
               if (listElScrollSize > elOffset[0]) {
-                listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = elOffset[0] - dPaddingSize;
+                changeScroll(elOffset[0] - dPaddingSize);
               }
             }
           }
@@ -263,6 +264,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
       asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
         next: (e) => {
+          let option: T | undefined;
+
           switch (e.code) {
             case 'ArrowUp':
               e.preventDefault();
@@ -294,25 +297,27 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
 
             case 'Home':
               e.preventDefault();
-              listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = 0;
+              changeScroll(0);
               for (const item of flatOptions) {
                 if (item && dCanSelectOption(item)) {
-                  onFocusChange?.(item);
+                  option = item;
                   break;
                 }
               }
+              onFocusChange?.(option ?? null);
               break;
 
             case 'End':
               e.preventDefault();
-              listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = listEl[dScrollY ? 'scrollHeight' : 'scrollWidth'];
+              changeScroll(listEl[dScrollY ? 'scrollHeight' : 'scrollWidth']);
               for (let index = flatOptions.length - 1; index >= 0; index--) {
                 const item = flatOptions[index];
                 if (item && dCanSelectOption(item)) {
-                  onFocusChange?.(item);
+                  option = item;
                   break;
                 }
               }
+              onFocusChange?.(option ?? null);
               break;
 
             default:
