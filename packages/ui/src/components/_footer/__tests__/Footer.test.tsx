@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { PREFIX } from '../../tests';
-import { DButton } from '../button';
-import { DFooter } from './Footer';
+import { PREFIX } from '../../../tests';
+import { DButton } from '../../button';
+import { DFooter } from '../Footer';
 
 describe('DFooter', () => {
   const okButton = () => {

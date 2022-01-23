@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
-import { PREFIX } from '../../tests';
-import { DIcon } from '../icon';
-import { DButtonGroup, DButton } from './index';
+import { PREFIX } from '../../../tests';
+import { DIcon } from '../../icon';
+import { DButton } from '../Button';
+import { DButtonGroup } from '../ButtonGroup';
 
 const icon = <DIcon data-testid="custom-icon"></DIcon>;
 

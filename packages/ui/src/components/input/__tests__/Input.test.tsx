@@ -1,12 +1,13 @@
-import type { DInputProps } from './Input';
-import type { DInputAffixProps } from './InputAffix';
+import type { DInputProps } from '../Input';
+import type { DInputAffixProps } from '../InputAffix';
 import type { RenderResult } from '@testing-library/react';
 
 import { render, act, fireEvent } from '@testing-library/react';
 
-import { PREFIX } from '../../tests';
-import { DIcon } from '../icon';
-import { DInput, DInputAffix } from './index';
+import { PREFIX } from '../../../tests';
+import { DIcon } from '../../icon';
+import { DInput } from '../Input';
+import { DInputAffix } from '../InputAffix';
 
 jest.useFakeTimers();
 

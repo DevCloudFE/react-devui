@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { DIcon } from '../icon';
-import { DHeader } from './Header';
+import { DIcon } from '../../icon';
+import { DHeader } from '../Header';
 
 const icon = <DIcon data-testid="custom-icon"></DIcon>;
 

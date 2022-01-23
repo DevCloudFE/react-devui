@@ -98,7 +98,6 @@ export function DInputAffix(props: DInputAffixProps) {
   const handleNumberChange = useCallback(
     (isIncrease = true) => {
       const handleFunc = () => {
-        /* istanbul ignore next */
         if (inputEl) {
           const step = getNumberAttribute(inputEl.step, 1);
           const max = getNumberAttribute(inputEl.max, Infinity);

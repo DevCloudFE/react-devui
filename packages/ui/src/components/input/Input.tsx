@@ -64,7 +64,6 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     '',
     dModel,
     onModelChange,
-    /* istanbul ignore next */
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
 
