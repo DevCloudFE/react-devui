@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element-ref';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback, useContentRefConfig } from '../../hooks';
@@ -43,6 +43,10 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
   const [affixEl, affixRef] = useRefCallback<HTMLDivElement>();
   const [referenceEl, referenceRef] = useRefCallback<HTMLDivElement>();
   //#endregion
+
+  const dataRef = useRef<{
+    rect?: { top: number; left: number };
+  }>({});
 
   const asyncCapture = useAsync();
 
@@ -148,11 +152,22 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     if (rootContentRef.current) {
       asyncGroup.onResize(rootContentRef.current, updatePosition);
     }
-    asyncGroup.onGlobalScroll(updatePosition);
+    asyncGroup.onGlobalScroll(updatePosition, () => {
+      const el = fixed ? referenceEl : affixEl;
+      if (el) {
+        const { top, left } = el.getBoundingClientRect();
+
+        const skip = dataRef.current.rect?.top === top && dataRef.current.rect?.left === left;
+        dataRef.current.rect = { top, left };
+        return skip;
+      }
+
+      return false;
+    });
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, rootContentRef, updatePosition]);
+  }, [affixEl, asyncCapture, fixed, referenceEl, rootContentRef, updatePosition]);
 
   useEffect(() => {
     updatePosition();

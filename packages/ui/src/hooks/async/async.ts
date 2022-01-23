@@ -65,9 +65,13 @@ class BaseAsyncCapture {
     return clear;
   }
 
-  onGlobalScroll(cb: (e: UIEvent) => void) {
+  onGlobalScroll(cb: (e: UIEvent) => void, skip: () => boolean) {
     const observer = fromEvent<UIEvent>(window, 'scroll', { capture: true, passive: true }).subscribe({
-      next: (e) => cb(e),
+      next: (e) => {
+        if (!skip()) {
+          cb(e);
+        }
+      },
     });
     const tid = Symbol();
     const clear = () => {

@@ -104,6 +104,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     clearTid: (() => void) | null;
     hasCancelLeave: boolean;
     transitionState?: DTransitionStateList;
+    triggerRect?: { top: number; left: number };
   }>({
     clearTid: null,
     hasCancelLeave: false,
@@ -519,7 +520,17 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         asyncGroup.onResize(rootContentRef.current, updatePosition);
       }
 
-      asyncGroup.onGlobalScroll(updatePosition);
+      asyncGroup.onGlobalScroll(updatePosition, () => {
+        if (triggerRef.current) {
+          const { top, left } = triggerRef.current.getBoundingClientRect();
+
+          const skip = dataRef.current.triggerRect?.top === top && dataRef.current.triggerRect?.left === left;
+          dataRef.current.triggerRect = { top, left };
+          return skip;
+        }
+
+        return false;
+      });
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
