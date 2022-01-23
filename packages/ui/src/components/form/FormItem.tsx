@@ -51,7 +51,7 @@ export function DFormItem(props: DFormItemProps) {
     formBreakpointMatchs,
     formLabelWidth,
     formLabelColon,
-    formCustomLabel,
+    formRequiredType,
     formInstance,
     formLayout,
     formInlineSpan,
@@ -346,17 +346,17 @@ export function DFormItem(props: DFormItemProps) {
             (dLabel ? (
               <div
                 className={getClassName(`${dPrefix}form-item__label`, {
-                  [`${dPrefix}form-item__label--required`]: formCustomLabel === 'required' && dLabel && required,
-                  [`${dPrefix}form-item__label--colon`]: dLabel && formLabelColon,
+                  [`${dPrefix}form-item__label--required`]: formRequiredType === 'required' && required,
+                  [`${dPrefix}form-item__label--colon`]: formLabelColon,
                 })}
                 style={{ width: formLayout === 'vertical' ? undefined : labelWidth }}
               >
                 <label htmlFor={id} onClick={handleLabelClick}>
                   {dLabel}
-                  {(extraNode || formCustomLabel === 'optional') && (
+                  {(extraNode || (formRequiredType === 'optional' && !required)) && (
                     <div className={`${dPrefix}form-item__extra`}>
                       {extraNode}
-                      {formCustomLabel === 'optional' && <span>{t('Optional')}</span>}
+                      {formRequiredType === 'optional' && !required && <span>{t('Optional')}</span>}
                     </div>
                   )}
                 </label>

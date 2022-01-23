@@ -14,7 +14,7 @@ export interface DFormContextData {
   formBreakpointMatchs: DBreakpoints[];
   formLabelWidth: number | string;
   formLabelColon: boolean;
-  formCustomLabel: NonNullable<DFormProps['dCustomLabel']>;
+  formRequiredType: NonNullable<DFormProps['dRequiredType']>;
   formLayout: NonNullable<DFormProps['dLayout']>;
   formInlineSpan: number | true;
   formFeedbackIcon: NonNullable<DFormProps['dFeedbackIcon']>;
@@ -25,7 +25,7 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   dForm: DFormInstance;
   dLabelWidth?: number | string;
   dLabelColon?: boolean;
-  dCustomLabel?: 'required' | 'optional' | 'hidden';
+  dRequiredType?: 'required' | 'optional' | 'hidden';
   dLayout?: 'horizontal' | 'vertical' | 'inline';
   dInlineSpan?: number | true;
   dFeedbackIcon?:
@@ -37,7 +37,7 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
         pending?: React.ReactNode;
       };
   dSize?: 'smaller' | 'larger';
-  dResponsiveProps?: Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dCustomLabel' | 'dLayout' | 'dInlineSpan'>>;
+  dResponsiveProps?: Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dRequiredType' | 'dLayout' | 'dInlineSpan'>>;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DForm');
@@ -46,7 +46,7 @@ export function DForm(props: DFormProps) {
     dForm,
     dLabelWidth,
     dLabelColon,
-    dCustomLabel = 'required',
+    dRequiredType = 'required',
     dLayout = 'horizontal',
     dInlineSpan = 6,
     dFeedbackIcon = false,
@@ -89,7 +89,7 @@ export function DForm(props: DFormProps) {
       formBreakpointMatchs: mediaMatch,
       formLabelWidth: dLabelWidth ?? 150,
       formLabelColon: dLabelColon ?? true,
-      formCustomLabel: dCustomLabel,
+      formRequiredType: dRequiredType,
       formLayout: dLayout,
       formInlineSpan: dInlineSpan,
       formFeedbackIcon: dFeedbackIcon,
@@ -104,7 +104,7 @@ export function DForm(props: DFormProps) {
       for (const breakpoint of mediaMatch) {
         if (breakpoint in dResponsiveProps) {
           mergeProps(breakpoint, 'formLabelWidth', 'dLabelWidth');
-          mergeProps(breakpoint, 'formCustomLabel', 'dCustomLabel');
+          mergeProps(breakpoint, 'formRequiredType', 'dRequiredType');
           mergeProps(breakpoint, 'formLayout', 'dLayout');
           mergeProps(breakpoint, 'formInlineSpan', 'dInlineSpan');
           break;
@@ -115,7 +115,7 @@ export function DForm(props: DFormProps) {
     contextValue.formLabelColon = dLabelColon ?? (contextValue.formLayout === 'vertical' ? false : true);
 
     return contextValue;
-  }, [dCustomLabel, dFeedbackIcon, dForm, dInlineSpan, dLabelColon, dLabelWidth, dLayout, dResponsiveProps, mediaMatch]);
+  }, [dRequiredType, dFeedbackIcon, dForm, dInlineSpan, dLabelColon, dLabelWidth, dLayout, dResponsiveProps, mediaMatch]);
 
   return (
     <DGeneralStateContext.Provider value={generalStateContextValue}>

@@ -21,12 +21,12 @@ Extend `React.FormHTMLAttributes<HTMLFormElement>`.
 | dForm | Bind the instance returned by [useForm](#useForm) | DFormInstance | - |
 | dLabelWidth | Label length | number \| string | - |
 | dLabelColon | Whether the label shows a colon | boolean | - |
-| dCustomLabel | Custom label | 'required' \| 'optional' \| 'hidden' | 'required' |
+| dRequiredType | Required style | 'required' \| 'optional' \| 'hidden' | 'required' |
 | dLayout | Form layout | 'horizontal' \| 'vertical' \| 'inline' | 'horizontal' |
 | dInlineSpan | Set the number of grids occupied by each form item in the row layout, a total of 12 grids | number \| true | 6 |
 | dFeedbackIcon | Set the verification result feedback icon | boolean \| `{ success?: React.ReactNode; warning?: React.ReactNode; error?: React.ReactNode; pending?: React.ReactNode; }` | false |
 | dSize | Set form size | 'smaller' \| 'larger' | - |
-| dResponsiveProps | Responsive layout | `Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' \| 'dCustomLabel' \| 'dLayout' \| 'dInlineSpan'>>` | - |
+| dResponsiveProps | Responsive layout | `Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' \| 'dRequiredType' \| 'dLayout' \| 'dInlineSpan'>>` | - |
 <!-- prettier-ignore-end -->
 
 ### DFormGroupProps
