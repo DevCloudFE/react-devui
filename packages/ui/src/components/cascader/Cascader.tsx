@@ -141,34 +141,31 @@ export function DCascader<T>(props: DCascaderProps<T>) {
 
   const [searchValue, setSearchValue] = useState('');
 
-  const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
   const [_select, changeSelect, { validateClassName, controlDisabled }] = useTwoWayBinding<T[] | null | T[][]>(
     dMultiple ? [] : null,
     dModel,
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
-  const [listRendered, setListRendered] = useState(visible);
-  const handleRendered = useCallback(() => {
-    setListRendered(true);
-  }, []);
 
-  const changeVisible = useCallback(
-    (visible) => {
-      _changeVisible(visible);
-      if (!visible) {
-        setListRendered(false);
-      }
-    },
-    [_changeVisible]
-  );
+  const [rendered, setRendered] = useState(visible);
+  const handleRendered = useCallback(() => {
+    setRendered(true);
+  }, []);
+  useEffect(() => {
+    if (!visible) {
+      setRendered(false);
+    }
+  }, [visible]);
+  const listRendered = visible && rendered;
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || controlDisabled;
 
   const hasSearch = searchValue.length > 0;
 
-  const checkedRef = useRef(null);
+  const checkedRef = useRef({});
   const getRenderOptions = useCallback(
     (select: T[] | null | T[][]) => {
       let renderOptions: SingleTreeNode[] | MultipleTreeNode[] = [];
@@ -324,22 +321,14 @@ export function DCascader<T>(props: DCascaderProps<T>) {
 
       let optionsSelecteds: Array<Array<DCascaderOption<T>>> = [];
       const customSelected = Symbol();
-      const selectId = selects.map((item) => item.map((v) => dGetId(v)).join(ID_SEPARATOR));
       const reduceArr = (arr: AbstractTreeNode[], parent: Array<DCascaderOption<T>>) => {
         for (const item of arr) {
-          if (selectId.length === 0) {
-            break;
-          }
           const list = parent.concat([Object.assign(item.node, { [TREE_NODE_KEY]: item })]);
           if (!item.isLeaf) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             reduceArr(item.children!, list);
-          }
-
-          const index = selectId.findIndex((id) => id === item.id.join(ID_SEPARATOR));
-          if (index !== -1) {
+          } else if (item.checked) {
             optionsSelecteds.push(list);
-            selectId.splice(index, 1);
           }
         }
       };
@@ -380,7 +369,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
                 dDisabled={node.disabled}
                 onClick={() => {
                   if (!disabled && node.enabled) {
-                    const checkeds = node.changeStatus('UNCHECKED', _select as unknown[][]);
+                    const checkeds = node.changeStatus('UNCHECKED', selects);
                     changeSelectByCache(checkeds);
                   }
                 }}
@@ -404,7 +393,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
               clearTidNotification.next();
 
               if (!disabled && node.enabled) {
-                const checkeds = node.changeStatus('UNCHECKED', _select as unknown[][]);
+                const checkeds = node.changeStatus('UNCHECKED', selects);
                 changeSelectByCache(checkeds);
               }
             }}

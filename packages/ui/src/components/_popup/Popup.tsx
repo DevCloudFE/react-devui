@@ -115,7 +115,14 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   const uniqueId = useId();
 
   const [autoPlacement, setAutoPlacement] = useState<DPlacement>(dPlacement);
-  const [afterEnter, setAfterEnter] = useState(false);
+
+  const [rendered, setRendered] = useState(dVisible);
+  useEffect(() => {
+    if (!dVisible) {
+      setRendered(false);
+    }
+  }, [dVisible]);
+  const popupRendered = dVisible && rendered;
 
   const triggerRef = useRefSelector(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${uniqueId}"]` : dTriggerEl);
 
@@ -289,18 +296,12 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       beforeEnter: () => {
         dataRef.current.hasCancelLeave = false;
         updatePosition();
+        setRendered(true);
         onRendered?.();
 
         return dataRef.current.transitionState;
       },
-      afterEnter: () => {
-        updatePosition();
-        setAfterEnter(true);
-      },
       beforeLeave: () => dataRef.current.transitionState,
-      afterLeave: () => {
-        setAfterEnter(false);
-      },
     },
     afterEnter: () => {
       if (dataRef.current.hasCancelLeave && checkMouseLeave()) {
@@ -507,7 +508,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible && afterEnter) {
+    if (popupRendered) {
       if (popupEl) {
         asyncGroup.onResize(popupEl, updatePosition);
       }
@@ -523,7 +524,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [afterEnter, asyncCapture, dVisible, isFixed, popupEl, rootContentRef, triggerRef, updatePosition]);
+  }, [asyncCapture, isFixed, popupEl, popupRendered, rootContentRef, triggerRef, updatePosition]);
 
   useImperativeHandle(
     ref,

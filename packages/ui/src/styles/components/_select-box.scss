@@ -135,6 +135,8 @@
 
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
 
+    user-select: none;
+
     & > span {
       @include utils-ellipsis;
     }

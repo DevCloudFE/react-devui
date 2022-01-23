@@ -3,16 +3,7 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useRefSelector,
-  useImmer,
-  useAsync,
-  useRefCallback,
-  useContentRefConfig,
-  useValueChange,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useAsync, useRefCallback, useContentRefConfig } from '../../hooks';
 import { getClassName, CustomScroll, generateComponentMate } from '../../utils';
 
 export interface DAnchorContextData {
@@ -60,11 +51,19 @@ export const DAnchor = (props: DAnchorProps) => {
   const [customScroll] = useState(() => new CustomScroll());
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
   const [links, setLinks] = useImmer(new Map<string, { href: string; el: HTMLLIElement }>());
+
   const [activeHref, setActiveHref] = useState<string | null>(null);
+  const changeActiveHref = useCallback(
+    (value) => {
+      if (value !== activeHref) {
+        setActiveHref(value);
+        onHrefChange?.(value);
+      }
+    },
+    [activeHref, onHrefChange]
+  );
 
   const pageRef = useRefSelector(dPage ?? null);
-
-  useValueChange(activeHref, onHrefChange);
 
   const updateAnchor = useCallback(() => {
     let pageTop = 0;
@@ -95,7 +94,7 @@ export const DAnchor = (props: DAnchorProps) => {
     }
 
     const newHref = nearestEl ? nearestEl[0] : null;
-    setActiveHref(newHref);
+    changeActiveHref(newHref);
     setDotStyle((draft) => {
       draft.opacity = nearestEl ? 1 : 0;
       if (newHref) {
@@ -112,7 +111,7 @@ export const DAnchor = (props: DAnchorProps) => {
 
       return draft;
     });
-  }, [anchorEl, dDistance, dPage, links, pageRef, setDotStyle]);
+  }, [anchorEl, changeActiveHref, dDistance, dPage, links, pageRef, setDotStyle]);
 
   const onLinkClick = useCallback(
     (href: string) => {

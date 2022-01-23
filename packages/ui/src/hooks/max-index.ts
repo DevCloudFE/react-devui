@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { usePrefixConfig } from './d-config';
 
@@ -16,24 +16,34 @@ const MAX_INDEX_MANAGER = {
     return [key, maxZIndex];
   },
 
-  deleteRecord(key: symbol | null) {
+  deleteRecord(key?: symbol) {
     key && this.record.delete(key);
   },
 };
 
 export function useMaxIndex(getIndex: boolean) {
   const dPrefix = usePrefixConfig();
-  const [zIndex, setZIndex] = useState(`var(--${dPrefix}zindex-fixed)`);
 
-  useEffect(() => {
+  const dataRef = useRef<{ key?: symbol }>({});
+
+  const zIndex = useMemo(() => {
+    MAX_INDEX_MANAGER.deleteRecord(dataRef.current.key);
+
     if (getIndex) {
       const [key, maxZIndex] = MAX_INDEX_MANAGER.getMaxIndex();
-      setZIndex(`calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`);
-      return () => {
-        MAX_INDEX_MANAGER.deleteRecord(key);
-      };
+      dataRef.current.key = key;
+      return `calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`;
     }
+
+    return `var(--${dPrefix}zindex-fixed)`;
   }, [dPrefix, getIndex]);
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      MAX_INDEX_MANAGER.deleteRecord(dataRef.current.key);
+    };
+  }, []);
 
   return zIndex;
 }

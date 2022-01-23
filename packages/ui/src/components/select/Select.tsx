@@ -150,27 +150,24 @@ export function DSelect<T>(props: DSelectProps<T>) {
 
   const [searchValue, setSearchValue] = useState('');
 
-  const [visible, _changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
   const [_select, changeSelect, { validateClassName, controlDisabled }] = useTwoWayBinding<T | null | T[]>(
     dMultiple ? [] : null,
     dModel,
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
   );
-  const [listRendered, setListRendered] = useState(visible);
-  const handleRendered = useCallback(() => {
-    setListRendered(true);
-  }, []);
 
-  const changeVisible = useCallback(
-    (visible) => {
-      _changeVisible(visible);
-      if (!visible) {
-        setListRendered(false);
-      }
-    },
-    [_changeVisible]
-  );
+  const [rendered, setRendered] = useState(visible);
+  const handleRendered = useCallback(() => {
+    setRendered(true);
+  }, []);
+  useEffect(() => {
+    if (!visible) {
+      setRendered(false);
+    }
+  }, [visible]);
+  const listRendered = visible && rendered;
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || controlDisabled;

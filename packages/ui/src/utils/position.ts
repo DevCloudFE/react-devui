@@ -1,6 +1,6 @@
 import { isUndefined } from 'lodash';
 
-import { toPx } from './measure';
+import { getNoTransformElSize, toPx } from './measure';
 
 function getParentPositioned(el: HTMLElement) {
   const loop = (_el: HTMLElement): HTMLElement => {
@@ -88,7 +88,7 @@ export function getPopupPlacementStyle(
   fixed = true,
   space?: [number, number, number, number]
 ): { top: number; left: number; placement?: DPlacement } | undefined {
-  const { width, height } = popupEl.getBoundingClientRect();
+  const { width, height } = getNoTransformElSize(popupEl);
 
   const targetRect = targetEl.getBoundingClientRect();
 
@@ -278,7 +278,7 @@ export function getVerticalSideStyle(
   transformOrigin: string;
   arrowPosition: React.CSSProperties;
 } {
-  const { width, height } = popupEl.getBoundingClientRect();
+  const { width, height } = getNoTransformElSize(popupEl);
 
   const targetRect = targetEl.getBoundingClientRect();
 
@@ -399,7 +399,7 @@ export function getHorizontalSideStyle(
   left: number;
   transformOrigin: string;
 } {
-  const { width, height } = popupEl.getBoundingClientRect();
+  const { width, height } = getNoTransformElSize(popupEl);
 
   const targetRect = targetEl.getBoundingClientRect();
 

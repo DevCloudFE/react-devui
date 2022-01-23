@@ -137,7 +137,8 @@ export function useAsync(): Omit<AsyncCapture, 'fromEvent'> & CaptureMethod {
     return () => {
       asyncCapture.clearAll();
     };
-  }, [asyncCapture]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return asyncCapture;
 }

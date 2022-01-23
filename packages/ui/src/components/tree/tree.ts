@@ -102,7 +102,7 @@ export class SingleTreeNode extends AbstractTreeNode {
   constructor(
     node: TreeOption,
     private opts: {
-      checkedRef: React.MutableRefObject<SingleTreeNode | null>;
+      checkedRef: React.MutableRefObject<{ node?: SingleTreeNode }>;
       checkeds: any[];
       getId: (value: any) => string;
       parent?: { value: any[]; id: string[]; disabled: boolean };
@@ -124,8 +124,8 @@ export class SingleTreeNode extends AbstractTreeNode {
   }
 
   setChecked(): any[] {
-    if (this.opts.checkedRef.current) {
-      let node = this.opts.checkedRef.current;
+    if (this.opts.checkedRef.current.node) {
+      let node = this.opts.checkedRef.current.node;
       node._status = UNCHECKED;
 
       while (node.parent) {
@@ -136,7 +136,7 @@ export class SingleTreeNode extends AbstractTreeNode {
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let node: SingleTreeNode = this;
-    this.opts.checkedRef.current = node;
+    this.opts.checkedRef.current.node = node;
     node._status = CHECKED;
 
     while (node.parent) {
@@ -170,12 +170,12 @@ export class SingleTreeNode extends AbstractTreeNode {
     const checkedIds = checkeds.map((v) => this.opts.getId(v));
     this._status = this.id.every((id, index) => checkedIds[index] && checkedIds[index] === id) ? CHECKED : UNCHECKED;
     if (this._status === CHECKED) {
-      if (this.opts.checkedRef.current) {
-        if (this.opts.checkedRef.current.value.length < this.value.length) {
-          this.opts.checkedRef.current = this;
+      if (this.opts.checkedRef.current.node) {
+        if (this.opts.checkedRef.current.node.value.length < this.value.length) {
+          this.opts.checkedRef.current.node = this;
         }
       } else {
-        this.opts.checkedRef.current = this;
+        this.opts.checkedRef.current.node = this;
       }
     }
   }

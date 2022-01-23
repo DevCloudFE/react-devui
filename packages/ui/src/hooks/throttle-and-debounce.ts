@@ -69,7 +69,8 @@ export function useThrottle() {
     return () => {
       throttleByAnimationFrame.clearTids();
     };
-  }, [throttleByAnimationFrame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return throttle;
 }

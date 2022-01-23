@@ -13,5 +13,4 @@ export { useThrottle, useDebounce } from './throttle-and-debounce';
 export { useRefCallback } from './ref';
 export { useStateBackflow } from './state-backflow';
 export { useTwoWayBinding } from './two-way-binding';
-export { useValueChange } from './value-change';
 export { useWave } from './wave';
