@@ -1,9 +1,7 @@
-import type { NotificationCallback } from '../../hooks/notification';
-
 import { isUndefined } from 'lodash';
 import React, { startTransition, useCallback, useRef, useState } from 'react';
 import { useEffect } from 'react';
-import { flushSync } from 'react-dom';
+import { filter } from 'rxjs';
 
 import { useAsync, usePrefixConfig, useRefCallback, useGeneralState, useTranslation } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
@@ -22,7 +20,6 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dContentTitle?: string;
   dDisabled?: boolean;
   dLoading?: boolean;
-  dClearTidCallback?: NotificationCallback<void>;
   dPopupClassName?: string;
   dCustomWidth?: boolean;
   dAutoMaxWidth?: boolean;
@@ -45,7 +42,6 @@ export function DSelectBox(props: DSelectBoxProps) {
     dContentTitle,
     dDisabled = false,
     dLoading = false,
-    dClearTidCallback,
     dPopupClassName,
     dCustomWidth = false,
     dAutoMaxWidth = false,
@@ -56,7 +52,9 @@ export function DSelectBox(props: DSelectBoxProps) {
     className,
     tabIndex = 0,
     onKeyDown,
-    onClickCapture,
+    onMouseDown,
+    onMouseUp,
+    onClick,
     children,
     ...restProps
   } = props;
@@ -71,13 +69,7 @@ export function DSelectBox(props: DSelectBoxProps) {
   const [searchEl, searchRef] = useRefCallback();
   //#endregion
 
-  const dataRef = useRef<{
-    clearCloseTid: (() => void) | null;
-    clearClickTid: (() => void) | null;
-  }>({
-    clearCloseTid: null,
-    clearClickTid: null,
-  });
+  const dataRef = useRef({ visible: dVisible });
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
@@ -89,23 +81,23 @@ export function DSelectBox(props: DSelectBoxProps) {
 
   const iconSize = size === 'smaller' ? 12 : size === 'larger' ? 16 : 14;
 
-  const handleMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>((e) => {
-    if (e.button === 0) {
-      e.preventDefault();
-    }
-  }, []);
+  const preventBlur = useCallback(
+    (e) => {
+      if (dVisible && e.button === 0) {
+        e.preventDefault();
+      }
+    },
+    [dVisible]
+  );
 
-  const handleMouseUp = useCallback((e) => {
-    if (e.button === 0) {
-      e.preventDefault();
-    }
+  const handleSuffixClick = useCallback((e) => {
+    e.stopPropagation();
   }, []);
 
   const handleClearClick = useCallback(
     (e) => {
       e.stopPropagation();
 
-      dataRef.current.clearClickTid && dataRef.current.clearClickTid();
       onClear?.();
     },
     [onClear]
@@ -134,25 +126,34 @@ export function DSelectBox(props: DSelectBoxProps) {
     },
     [dVisible, disabled, onVisibleChange, onKeyDown]
   );
-
-  const handleClick = useCallback(
+  const handleMouseDown = useCallback(
     (e) => {
-      onClickCapture?.(e);
+      onMouseDown?.(e);
 
-      if (!disabled) {
-        dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
-        dataRef.current.clearClickTid = asyncCapture.setTimeout(() => {
-          flushSync(() => onVisibleChange?.(!dVisible));
-        }, 20);
+      if (e.button === 0) {
+        e.preventDefault();
       }
     },
-    [asyncCapture, dVisible, disabled, onClickCapture, onVisibleChange]
+    [onMouseDown]
   );
+  const handleMouseUp = useCallback(
+    (e) => {
+      onMouseUp?.(e);
 
-  const handlePopupClick = useCallback(() => {
-    dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
-    dataRef.current.clearClickTid && dataRef.current.clearClickTid();
-  }, []);
+      if (e.button === 0) {
+        e.preventDefault();
+      }
+    },
+    [onMouseUp]
+  );
+  const handleClick = useCallback(
+    (e) => {
+      onClick?.(e);
+
+      onVisibleChange?.(!dVisible);
+    },
+    [dVisible, onClick, onVisibleChange]
+  );
 
   const customTransition = useCallback(
     (popupEl: HTMLElement, targetEl: HTMLElement) => {
@@ -181,46 +182,14 @@ export function DSelectBox(props: DSelectBoxProps) {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     if (dVisible) {
-      asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
-        next: (e) => {
-          switch (e.code) {
-            case 'Tab':
-              e.preventDefault();
-              break;
-
-            case 'Escape':
-              flushSync(() => onVisibleChange?.(false));
-              break;
-
-            default:
-              break;
-          }
-          if (e.code === 'Tab') {
-            e.preventDefault();
-          }
-        },
-      });
-      asyncGroup.fromEvent<MouseEvent>(window, 'mousedown').subscribe({
-        next: (e) => {
-          if (e.button === 0) {
-            e.preventDefault();
-          }
-        },
-      });
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
-        next: (e) => {
-          if (e.button === 0) {
-            e.preventDefault();
-          }
-        },
-      });
-      asyncGroup.fromEvent(window, 'click', { capture: true }).subscribe({
-        next: () => {
-          dataRef.current.clearCloseTid = asyncCapture.setTimeout(() => {
-            flushSync(() => onVisibleChange?.(false));
-          }, 20);
-        },
-      });
+      asyncGroup
+        .fromEvent<KeyboardEvent>(window, 'keydown')
+        .pipe(filter((e) => e.code === 'Escape'))
+        .subscribe({
+          next: () => {
+            onVisibleChange?.(false);
+          },
+        });
     }
 
     return () => {
@@ -229,30 +198,49 @@ export function DSelectBox(props: DSelectBoxProps) {
   }, [asyncCapture, dVisible, onVisibleChange]);
 
   useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
     if (dVisible && boxEl) {
       if (dSearchable && searchEl) {
         searchEl.focus({ preventScroll: true });
+        asyncGroup.fromEvent(searchEl, 'blur').subscribe({
+          next: () => {
+            onVisibleChange?.(false);
+          },
+        });
       } else {
         boxEl.focus({ preventScroll: true });
+        asyncGroup.fromEvent(boxEl, 'blur').subscribe({
+          next: () => {
+            onVisibleChange?.(false);
+          },
+        });
       }
-      return () => {
-        if (document.activeElement === null || document.activeElement === document.body) {
-          boxEl.focus({ preventScroll: true });
-        }
-      };
     }
-  }, [boxEl, dVisible, dSearchable, searchEl]);
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, boxEl, dSearchable, dVisible, onVisibleChange, searchEl]);
 
   useEffect(() => {
-    const clearTid = () => {
-      dataRef.current.clearCloseTid && dataRef.current.clearCloseTid();
-      dataRef.current.clearClickTid && dataRef.current.clearClickTid();
-    };
-    dClearTidCallback?.bind(clearTid);
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    if (!dVisible && dVisible !== dataRef.current.visible) {
+      asyncGroup.setTimeout(() => {
+        if (document.activeElement === null || document.activeElement === document.body) {
+          boxEl?.focus({ preventScroll: true });
+        }
+      }, 20);
+    }
+
+    dataRef.current.visible = dVisible;
+
     return () => {
-      dClearTidCallback?.removeBind(clearTid);
+      asyncCapture.deleteGroup(asyncId);
     };
-  }, [dClearTidCallback]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dVisible]);
 
   return (
     <DPopup
@@ -278,7 +266,9 @@ export function DSelectBox(props: DSelectBoxProps) {
           aria-haspopup="listbox"
           aria-expanded={dVisible}
           onKeyDown={handleKeyDown}
-          onClickCapture={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onClick={handleClick}
         >
           {dSearchable && dVisible ? (
             <input
@@ -294,7 +284,9 @@ export function DSelectBox(props: DSelectBoxProps) {
               {children}
             </div>
           )}
-          <div className={`${dPrefix}select-box__suffix`}>{dSuffix}</div>
+          <div className={`${dPrefix}select-box__suffix`} onClick={handleSuffixClick}>
+            {dSuffix}
+          </div>
           {!(dSearchable && dVisible) && !children && dPlaceholder && (
             <div className={`${dPrefix}select-box__placeholder`}>
               <span>{dPlaceholder}</span>
@@ -307,8 +299,6 @@ export function DSelectBox(props: DSelectBoxProps) {
               role="button"
               tabIndex={-1}
               aria-label={t('Common', 'Clear')}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
               onClick={handleClearClick}
             >
               {isUndefined(dClearIcon) ? (
@@ -339,7 +329,8 @@ export function DSelectBox(props: DSelectBoxProps) {
         </div>
       )}
       onRendered={onRendered}
-      onClick={handlePopupClick}
+      onMouseDown={preventBlur}
+      onMouseUp={preventBlur}
     />
   );
 }

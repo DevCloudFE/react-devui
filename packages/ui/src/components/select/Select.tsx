@@ -7,15 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState, useId } from 'react';
 import { useLayoutEffect } from 'react';
 import { filter } from 'rxjs';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTwoWayBinding,
-  useAsync,
-  useTranslation,
-  useGeneralState,
-  useNotification,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useAsync, useTranslation, useGeneralState } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DSelectBox } from '../_select-box';
 import { DVirtualScroll } from '../_virtual-scroll';
@@ -143,7 +135,6 @@ export function DSelect<T>(props: DSelectProps<T>) {
 
   const [t] = useTranslation('Common');
   const asyncCapture = useAsync();
-  const [clearTidNotification, clearTidNotificationCallback] = useNotification<void>();
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}select-${uniqueId}`;
@@ -454,17 +445,11 @@ export function DSelect<T>(props: DSelectProps<T>) {
               className={`${dPrefix}select__multiple-count`}
               dSize={size}
               dTheme={isNumber(dMaxSelectNum) && dMaxSelectNum === select.length ? 'danger' : undefined}
-              onClick={() => {
-                clearTidNotification.next();
-              }}
             >
               {select.length} ...
             </DTag>
           }
           dCloseOnItemClick={false}
-          onClick={() => {
-            clearTidNotification.next();
-          }}
         >
           {optionsSelected.map((item) => {
             const id = dGetId(item.dValue);
@@ -495,8 +480,6 @@ export function DSelect<T>(props: DSelectProps<T>) {
             dSize={size}
             dClosable={!item.dDisabled}
             onClose={() => {
-              clearTidNotification.next();
-
               if (!disabled) {
                 handleOptionClick(item);
               }
@@ -523,20 +506,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [
-    dMultiple,
-    _select,
-    dOptions,
-    dCustomSelected,
-    dPrefix,
-    size,
-    dMaxSelectNum,
-    dGetId,
-    clearTidNotification,
-    disabled,
-    handleOptionClick,
-    findOption,
-  ]);
+  }, [dMultiple, _select, dOptions, dCustomSelected, dPrefix, size, dMaxSelectNum, dGetId, disabled, handleOptionClick, findOption]);
 
   const hasSelected = dMultiple ? (_select as T[]).length > 0 : !isNull(_select);
 
@@ -672,7 +642,6 @@ export function DSelect<T>(props: DSelectProps<T>) {
       dLoading={dLoading}
       dDisabled={disabled}
       dSize={size}
-      dClearTidCallback={clearTidNotificationCallback}
       dPopupClassName={getClassName(dPopupClassName, `${dPrefix}select-popup`)}
       onClear={handleClear}
       onSearch={handleSearch}

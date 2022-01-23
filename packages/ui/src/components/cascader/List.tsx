@@ -27,7 +27,6 @@ export function DList(props: DListProps) {
     cascaderRendered,
     cascaderMultiple,
     cascaderOnlyLeafSelectable,
-    cascaderClearTidNotification,
     cascaderOptionRender,
     cascaderGetId,
     onModelChange,
@@ -188,7 +187,6 @@ export function DList(props: DListProps) {
               dDisabled={item.disabled}
               onClick={(e) => {
                 e.stopPropagation();
-                cascaderClearTidNotification.next();
                 changeFocus(item);
                 handleOptionClick(item);
               }}
@@ -211,17 +209,7 @@ export function DList(props: DListProps) {
         </li>
       );
     },
-    [
-      cascaderClearTidNotification,
-      cascaderFocusValues,
-      cascaderGetId,
-      cascaderMultiple,
-      cascaderOptionRender,
-      cascaderUniqueId,
-      changeFocus,
-      dPrefix,
-      handleOptionClick,
-    ]
+    [cascaderFocusValues, cascaderGetId, cascaderMultiple, cascaderOptionRender, cascaderUniqueId, changeFocus, dPrefix, handleOptionClick]
   );
 
   const showChildren = focusIndex !== -1 && !dList[focusIndex].isLeaf && !dList[focusIndex].node['dLoading'];

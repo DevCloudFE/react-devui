@@ -3,13 +3,12 @@ import type { Updater } from '../../hooks/two-way-binding';
 import type { DSelectBoxProps } from '../_select-box';
 import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, TreeOption } from '../tree';
-import type { Subject } from 'rxjs';
 
 import { isNull, isUndefined } from 'lodash';
 import React, { useCallback, useMemo, useState, useId, useEffect, useRef } from 'react';
 import { filter } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useNotification, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useAsync } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DSelectBox } from '../_select-box';
 import { DDropdown, DDropdownItem } from '../dropdown';
@@ -34,7 +33,6 @@ export interface DCascaderContextData {
   cascaderRendered: boolean;
   cascaderMultiple: boolean;
   cascaderOnlyLeafSelectable: boolean;
-  cascaderClearTidNotification: Subject<void>;
   cascaderOptionRender: NonNullable<DCascaderBaseProps<any>['dOptionRender']>;
   cascaderGetId: NonNullable<DCascaderBaseProps<any>['dGetId']>;
   onModelChange: (value: any[] | null | any[][]) => void;
@@ -134,7 +132,6 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   //#endregion
 
   const asyncCapture = useAsync();
-  const [clearTidNotification, clearTidNotificationCallback] = useNotification<void>();
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}cascader-${uniqueId}`;
@@ -343,20 +340,11 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       suffixNode = (
         <DDropdown
           dTriggerNode={
-            <DTag
-              className={`${dPrefix}select__multiple-count`}
-              dSize={size}
-              onClick={() => {
-                clearTidNotification.next();
-              }}
-            >
+            <DTag className={`${dPrefix}select__multiple-count`} dSize={size}>
               {selects.length} ...
             </DTag>
           }
           dCloseOnItemClick={false}
-          onClick={() => {
-            clearTidNotification.next();
-          }}
         >
           {optionsSelecteds.map((item) => {
             const node = item[item.length - 1][TREE_NODE_KEY] as MultipleTreeNode;
@@ -390,8 +378,6 @@ export function DCascader<T>(props: DCascaderProps<T>) {
             dSize={size}
             dClosable={node.enabled}
             onClose={() => {
-              clearTidNotification.next();
-
               if (!disabled && node.enabled) {
                 const checkeds = node.changeStatus('UNCHECKED', selects);
                 changeSelectByCache(checkeds);
@@ -436,19 +422,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [
-    dMultiple,
-    _select,
-    renderOptions,
-    dCustomSelected,
-    dPrefix,
-    size,
-    dGetId,
-    clearTidNotification,
-    disabled,
-    changeSelectByCache,
-    dOptions,
-  ]);
+  }, [dMultiple, _select, renderOptions, dCustomSelected, dPrefix, size, dGetId, disabled, changeSelectByCache, dOptions]);
 
   const contextValue = useMemo<DCascaderContextData>(
     () => ({
@@ -458,7 +432,6 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       cascaderRendered: listRendered,
       cascaderMultiple: dMultiple,
       cascaderOnlyLeafSelectable: dOnlyLeafSelectable,
-      cascaderClearTidNotification: clearTidNotification,
       cascaderOptionRender: dOptionRender,
       cascaderGetId: dGetId,
       onModelChange: (select) => {
@@ -476,7 +449,6 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       _select,
       changeSelectByCache,
       changeVisible,
-      clearTidNotification,
       dGetId,
       dMultiple,
       dOnlyLeafSelectable,
@@ -523,7 +495,6 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         dLoading={dLoading}
         dDisabled={disabled}
         dSize={size}
-        dClearTidCallback={clearTidNotificationCallback}
         dPopupClassName={getClassName(dPopupClassName, `${dPrefix}select-popup`, `${dPrefix}cascader-popup`)}
         dCustomWidth
         dAutoMaxWidth={dAutoMaxWidth}
