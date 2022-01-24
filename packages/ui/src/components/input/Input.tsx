@@ -60,7 +60,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
 
   const size = dSize ?? gSize;
 
-  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>(
     '',
     dModel,
     onModelChange,

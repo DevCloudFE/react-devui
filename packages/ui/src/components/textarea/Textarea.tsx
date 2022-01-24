@@ -50,7 +50,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
 
   const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
-  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding(
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>(
     '',
     dModel,
     onModelChange,

@@ -6,20 +6,19 @@ import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding
 import { generateComponentMate, getClassName } from '../../utils';
 import { DCheckboxGroupContext } from './CheckboxGroup';
 
-export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
+export interface DCheckboxProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
   dIndeterminate?: boolean;
   dDisabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dValue?: any;
+  dValue?: T;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.LegacyRef<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCheckbox');
-export function DCheckbox(props: DCheckboxProps) {
+export function DCheckbox<T>(props: DCheckboxProps<T>) {
   const {
     dModel,
     dFormControlName,

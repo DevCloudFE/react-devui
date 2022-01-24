@@ -14,7 +14,7 @@ import { DFormContext } from './Form';
 import { DFormGroupContext } from './FormGroup';
 import { Validators } from './form';
 
-type DErrors = Array<{ identity: string; key: string; message: string; status: 'warning' | 'error'; hidden?: true }>;
+type DErrors = { identity: string; key: string; message: string; status: 'warning' | 'error'; hidden?: true }[];
 
 export type DValidateStatus = 'success' | 'warning' | 'error' | 'pending';
 
@@ -32,9 +32,9 @@ export const DFormItemContext = React.createContext<DFormItemContextData | null>
 export interface DFormItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dLabel?: React.ReactNode;
   dLabelWidth?: number | string;
-  dLabelExtra?: Array<{ title: string; icon?: React.ReactNode } | string>;
+  dLabelExtra?: ({ title: string; icon?: React.ReactNode } | string)[];
   dShowRequired?: boolean;
-  dErrors?: DErrorInfo | Array<[string, DErrorInfo]>;
+  dErrors?: DErrorInfo | [string, DErrorInfo][];
   dSpan?: number | string | true;
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemProps, 'dLabelWidth' | 'dSpan'>>;
 }
@@ -104,7 +104,7 @@ export function DFormItem(props: DFormItemProps) {
   );
 
   const [errors, hasError, errorStyle, status] = useMemo<
-    [Array<{ identity: string; errors: DErrors }>, boolean, 'error' | 'warning', DValidateStatus | undefined]
+    [{ identity: string; errors: DErrors }[], boolean, 'error' | 'warning', DValidateStatus | undefined]
   >(() => {
     const errors: DErrors = [];
     let hasError = false;
@@ -126,11 +126,16 @@ export function DFormItem(props: DFormItemProps) {
         if (isString(errorInfo)) {
           errors.push({ identity, key: identity, message: errorInfo, status: 'error' });
         } else if (Object.keys(errorInfo).length === 2 && 'message' in errorInfo && 'status' in errorInfo) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          errors.push({ identity, key: identity, ...errorInfo } as any);
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          for (const key of Object.keys(formControl.errors!)) {
+          errors.push({
+            identity,
+            key: identity,
+            ...(errorInfo as {
+              message: string;
+              status: 'warning' | 'error';
+            }),
+          });
+        } else if (formControl.errors) {
+          for (const key of Object.keys(formControl.errors)) {
             if (key in errorInfo) {
               if (isString(errorInfo[key])) {
                 errors.push({ identity, key: `${identity}-${key}`, message: errorInfo[key], status: 'error' });
@@ -176,7 +181,7 @@ export function DFormItem(props: DFormItemProps) {
     });
 
     const identitys = new Set(errors.map((item) => item.identity));
-    const _errors: Array<{ identity: string; errors: DErrors }> = [];
+    const _errors: { identity: string; errors: DErrors }[] = [];
     identitys.forEach((identity) => {
       _errors.push({ identity, errors: errors.filter((item) => item.identity === identity) });
     });

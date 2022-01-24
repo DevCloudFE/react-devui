@@ -67,7 +67,7 @@ export function DDropdown(props: DDropdownProps) {
   const [focusId, setFocusId] = useImmer<DDropdownContextData['dropdownFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
-  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
@@ -130,7 +130,7 @@ export function DDropdown(props: DDropdownProps) {
   );
 
   const childs = useMemo(() => {
-    return React.Children.map(children as Array<React.ReactElement<DDropdownItemProps>>, (child, index) => {
+    return React.Children.map(children as React.ReactElement<DDropdownItemProps>[], (child, index) => {
       let tabIndex = child.props.tabIndex;
       if (index === 0) {
         tabIndex = 0;

@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useEffect, useId } from 'react';
 
-export function useStateBackflow<S extends any[]>(
+export function useStateBackflow<S extends unknown[]>(
   update?: (identity: string, ...states: S) => void,
   remove?: (identity: string) => void,
   ...states: S

@@ -1,6 +1,6 @@
 import { isString, isUndefined } from 'lodash';
 
-export function mergeStyle(target: React.CSSProperties, ...styles: Array<React.CSSProperties | undefined>) {
+export function mergeStyle(target: React.CSSProperties, ...styles: (React.CSSProperties | undefined)[]) {
   const mergeStyles: React.CSSProperties = {};
 
   styles.forEach((style) => {

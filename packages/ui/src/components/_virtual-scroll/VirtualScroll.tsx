@@ -64,7 +64,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
   const asyncCapture = useAsync();
 
   const [flatOptions, focusIndex] = useMemo(() => {
-    const flatOptions: Array<T | undefined> = [];
+    const flatOptions: (T | undefined)[] = [];
     let focusIndex = -1;
     let hasFind = false;
     const reduceList = (arr: T[]) => {

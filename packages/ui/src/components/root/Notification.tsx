@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { DNotificationProps } from '../notification';
 import type { Subscription } from 'rxjs';
 
 import { useEffect, useMemo } from 'react';
@@ -12,11 +12,11 @@ export function Notification() {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [notifications, setNotifications] = useImmer(new Map<number, any>());
+  const [notifications, setNotifications] = useImmer(new Map<number, DNotificationProps & { dVisible: boolean }>());
 
   useEffect(() => {
     const obs: Subscription[] = [];
-    const mergeProps = (uniqueId: number, props: any) => {
+    const mergeProps = (uniqueId: number, props: DNotificationProps) => {
       return {
         onClose: () => {
           props.onClose?.();

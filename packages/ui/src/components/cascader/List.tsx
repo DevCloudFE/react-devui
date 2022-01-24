@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
+import type { DCascaderContextData, DCascaderOption } from './Cascader';
 
 import { useCallback, useEffect, useMemo, useContext } from 'react';
 
@@ -11,11 +11,11 @@ import { DIcon } from '../icon';
 import { DCascaderContext } from './Cascader';
 import { ID_SEPARATOR } from './utils';
 
-export interface DListProps {
-  dList: AbstractTreeNode[];
+export interface DListProps<T> {
+  dList: AbstractTreeNode<T, DCascaderOption<T>>[];
 }
 
-export function DList(props: DListProps) {
+export function DList<T>(props: DListProps<T>) {
   const { dList } = props;
 
   //#region Context
@@ -32,20 +32,19 @@ export function DList(props: DListProps) {
     onModelChange,
     onFocusValuesChange,
     onClose,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  } = useContext(DCascaderContext)!;
+  } = useContext(DCascaderContext) as DCascaderContextData<T>;
   //#endregion
 
   const [t] = useTranslation('Common');
   const asyncCapture = useAsync();
 
-  const canSelectOption = useCallback((option: AbstractTreeNode) => option.enabled, []);
-  const compareOption = useCallback((a: AbstractTreeNode, b: AbstractTreeNode) => {
+  const canSelectOption = useCallback((option: AbstractTreeNode<T, DCascaderOption<T>>) => option.enabled, []);
+  const compareOption = useCallback((a: AbstractTreeNode<T, DCascaderOption<T>>, b: AbstractTreeNode<T, DCascaderOption<T>>) => {
     return a.id.join(ID_SEPARATOR) === b.id.join(ID_SEPARATOR);
   }, []);
 
   const [focusOption, focusIndex] = useMemo(() => {
-    let focusOption: AbstractTreeNode | null = null;
+    let focusOption: AbstractTreeNode<T, DCascaderOption<T>> | null = null;
     const ids = cascaderFocusValues.map((v) => cascaderGetId(v));
     const focusIndex = dList.findIndex((item) => item.id.every((id, index) => id === ids[index]));
     if (focusIndex !== -1 && dList[0].value.length === cascaderFocusValues.length) {
@@ -56,24 +55,24 @@ export function DList(props: DListProps) {
   const focusIds = focusOption ? focusOption.id : null;
 
   const handleOptionClick = useCallback(
-    (option: AbstractTreeNode, isSwitch?: boolean) => {
+    (option: AbstractTreeNode<T, DCascaderOption<T>>, isSwitch?: boolean) => {
       if (canSelectOption(option)) {
         if (cascaderMultiple) {
           isSwitch = isSwitch ?? true;
 
-          const checkeds = (option as MultipleTreeNode).changeStatus(
+          const checkeds = (option as MultipleTreeNode<T, DCascaderOption<T>>).changeStatus(
             isSwitch ? (option.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED',
-            cascaderSelecteds as unknown[][]
+            cascaderSelecteds as T[][]
           );
           onModelChange(checkeds);
         } else {
           if (cascaderOnlyLeafSelectable) {
             if (option.isLeaf) {
-              const checkeds = (option as SingleTreeNode).setChecked();
+              const checkeds = (option as SingleTreeNode<T, DCascaderOption<T>>).setChecked();
               onModelChange(checkeds);
             }
           } else {
-            const checkeds = (option as SingleTreeNode).setChecked();
+            const checkeds = (option as SingleTreeNode<T, DCascaderOption<T>>).setChecked();
             onModelChange(checkeds);
           }
           if (option.isLeaf) {
@@ -86,7 +85,7 @@ export function DList(props: DListProps) {
   );
 
   const changeFocus = useCallback(
-    (option: AbstractTreeNode | null) => {
+    (option: AbstractTreeNode<T, DCascaderOption<T>> | null) => {
       if (option) {
         onFocusValuesChange(option.value);
       } else {
@@ -112,8 +111,8 @@ export function DList(props: DListProps) {
 
             case 'ArrowRight':
               e.preventDefault();
-              if (!focusOption.isLeaf && focusOption.children![0]) {
-                onFocusValuesChange(focusOption.children![0].value);
+              if (focusOption.children && focusOption.children[0]) {
+                onFocusValuesChange(focusOption.children[0].value);
               }
               break;
 
@@ -142,7 +141,7 @@ export function DList(props: DListProps) {
   }, [asyncCapture, cascaderFocusValues, cascaderMultiple, cascaderRendered, focusOption, handleOptionClick, onFocusValuesChange]);
 
   const itemRender = useCallback(
-    (item: AbstractTreeNode, renderProps) => {
+    (item: AbstractTreeNode<T, DCascaderOption<T>>, renderProps) => {
       const optionIds = item.id;
       const id = optionIds.join(ID_SEPARATOR);
       let isFocus = false;
@@ -212,7 +211,14 @@ export function DList(props: DListProps) {
     [cascaderFocusValues, cascaderGetId, cascaderMultiple, cascaderOptionRender, cascaderUniqueId, changeFocus, dPrefix, handleOptionClick]
   );
 
-  const showChildren = focusIndex !== -1 && !dList[focusIndex].isLeaf && !dList[focusIndex].node['dLoading'];
+  const childrenList = useMemo(() => {
+    if (focusIndex !== -1) {
+      const node = dList[focusIndex];
+      if (!node.node['dLoading'] && node.children) {
+        return <DList dList={node.children}></DList>;
+      }
+    }
+  }, [dList, focusIndex]);
 
   return (
     <>
@@ -238,7 +244,7 @@ export function DList(props: DListProps) {
         dPaddingSize={4}
         onFocusChange={changeFocus}
       ></DVirtualScroll>
-      {showChildren && <DList dList={dList[focusIndex].children!}></DList>}
+      {childrenList}
     </>
   );
 }

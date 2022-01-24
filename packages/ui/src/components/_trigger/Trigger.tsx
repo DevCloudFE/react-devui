@@ -125,6 +125,5 @@ export function DTrigger(props: DTriggerProps) {
     return renderProps;
   }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger]);
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{dRender?.(renderProps)}</>;
+  return (dRender?.(renderProps) as React.ReactElement) ?? null;
 }

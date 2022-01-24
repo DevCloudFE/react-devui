@@ -8,6 +8,20 @@ import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
 
+export type DExtendsSelectBoxProps = Pick<
+  DSelectBoxProps,
+  | 'dSearchable'
+  | 'dClearIcon'
+  | 'dSize'
+  | 'dPlaceholder'
+  | 'dDisabled'
+  | 'dLoading'
+  | 'dPopupClassName'
+  | 'onClear'
+  | 'onSearch'
+  | 'onVisibleChange'
+>;
+
 export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dPopupContent: React.ReactNode;
   dSuffix?: React.ReactNode;
@@ -25,7 +39,7 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   dAutoMaxWidth?: boolean;
   onClear?: () => void;
   onSearch?: (value: string) => void;
-  onVisibleChange?: (expanded: boolean) => void;
+  onVisibleChange?: (visible: boolean) => void;
   onRendered?: () => void;
 }
 

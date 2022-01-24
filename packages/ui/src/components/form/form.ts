@@ -42,7 +42,7 @@ function find(control: AbstractControl, path: string[] | string, delimiter: stri
   return controlToFind;
 }
 
-function mergeErrors(arrayOfErrors: Array<ValidationErrors | null>): ValidationErrors | null {
+function mergeErrors(arrayOfErrors: (ValidationErrors | null)[]): ValidationErrors | null {
   const res: { [key: string]: any } = {};
 
   arrayOfErrors.forEach((errors: ValidationErrors | null) => {
@@ -54,7 +54,7 @@ function mergeErrors(arrayOfErrors: Array<ValidationErrors | null>): ValidationE
   return Object.keys(res).length === 0 ? null : res;
 }
 
-function composeValidators(validators: Array<ValidatorFn | null>): ValidatorFn | null {
+function composeValidators(validators: (ValidatorFn | null)[]): ValidatorFn | null {
   const presentValidators = validators.filter((validator) => validator !== null) as ValidatorFn[];
   if (presentValidators.length === 0) {
     return null;
@@ -64,7 +64,7 @@ function composeValidators(validators: Array<ValidatorFn | null>): ValidatorFn |
     return mergeErrors(presentValidators.map((fn) => fn(control)));
   };
 }
-function composeAsyncValidators(validators: Array<AsyncValidatorFn | null>): AsyncValidatorFn | null {
+function composeAsyncValidators(validators: (AsyncValidatorFn | null)[]): AsyncValidatorFn | null {
   const presentValidators = validators.filter((validator) => validator !== null) as AsyncValidatorFn[];
   if (presentValidators.length === 0) {
     return null;

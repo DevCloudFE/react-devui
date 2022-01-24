@@ -51,21 +51,16 @@ export function DAlertDialog(props: DAlertDialogProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {!dHidden && (
-        <div
-          {...restProps}
-          ref={dDialogRef}
-          role="alertdialog"
-          aria-modal="true"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {children}
-        </div>
-      )}
-    </>
+  return dHidden ? null : (
+    <div
+      {...restProps}
+      ref={dDialogRef}
+      role="alertdialog"
+      aria-modal="true"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {children}
+    </div>
   );
 }

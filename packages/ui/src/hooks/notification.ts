@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Subject } from 'rxjs';
 
-export interface NotificationCallback<T = any> {
+export interface NotificationCallback<T> {
   bind: (cb: (data: T) => void) => void;
   removeBind: (cb: (data: T) => void) => void;
 }
 
-export function useNotification<T = any>() {
+export function useNotification<T>() {
   const [notification] = useState(() => new Subject<T>());
 
   const dataRef = useRef({

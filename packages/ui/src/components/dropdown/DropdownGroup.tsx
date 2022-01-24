@@ -21,7 +21,7 @@ export function DDropdownGroup(props: DDropdownGroupProps) {
   const [t] = useTranslation('Common');
 
   const childs = useMemo(() => {
-    return React.Children.map(children as Array<React.ReactElement<DDropdownItemProps>>, (child) =>
+    return React.Children.map(children as React.ReactElement<DDropdownItemProps>[], (child) =>
       React.cloneElement(child, {
         ...child.props,
         __level: __level + 1,

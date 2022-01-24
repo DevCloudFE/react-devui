@@ -120,14 +120,14 @@ export interface DConfigContextData {
     lang?: DLang;
     resources?: Resources;
   };
-  icons?: Array<{
+  icons?: {
     name: string;
-    list: Array<{
+    list: {
       viewBox: string;
       paths: string[];
       type?: string;
-    }>;
-  }>;
+    }[];
+  }[];
   contentSelector?: string;
 }
 export const DConfigContext = React.createContext<DConfigContextData>({});

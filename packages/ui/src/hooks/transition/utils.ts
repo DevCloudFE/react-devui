@@ -1,4 +1,4 @@
-export function getMaxTime(strs: Array<string | undefined>) {
+export function getMaxTime(strs: (string | undefined)[]) {
   const milliseconds: number[] = [];
   strs.forEach((str) => {
     if (str) {

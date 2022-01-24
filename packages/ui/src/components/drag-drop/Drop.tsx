@@ -54,7 +54,7 @@ export function DDrop<T>(props: DDropProps<T>) {
 
   const containerRef = useRefSelector(dContainer);
 
-  const [list, changeList] = useTwoWayBinding([], dList, onListChange);
+  const [list, changeList] = useTwoWayBinding<T[]>([], dList, onListChange);
   const orderIds = useMemo(() => list.map((item) => dGetId(item)), [dGetId, list]);
 
   const stateBackflow = useMemo<Pick<DDropContextData, 'updateSelectors' | 'removeSelectors'>>(
@@ -178,8 +178,7 @@ export function DDrop<T>(props: DDropProps<T>) {
           newOrderIds.splice(
             newOrderIds.findIndex((id) => id === dragId),
             1,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            undefined as any
+            ''
           );
 
           newOrderIds.splice(replaceIndex, 0, dragId as string);

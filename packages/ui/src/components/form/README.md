@@ -84,13 +84,13 @@ interface DFormInstance {
  * A form can have several different statuses. Each
  * possible status is returned as a string literal.
  *
- * * **VALID**: Reports that a FormControl is valid, meaning that no errors exist in the input
+ * **VALID**: Reports that a FormControl is valid, meaning that no errors exist in the input
  * value.
- * * **INVALID**: Reports that a FormControl is invalid, meaning that an error exists in the input
+ * **INVALID**: Reports that a FormControl is invalid, meaning that an error exists in the input
  * value.
- * * **PENDING**: Reports that a FormControl is pending, meaning that that async validation is
+ * **PENDING**: Reports that a FormControl is pending, meaning that that async validation is
  * occurring and errors are not yet available for the input value.
- * * **DISABLED**: Reports that a FormControl is
+ * **DISABLED**: Reports that a FormControl is
  * disabled, meaning that the control is exempt from ancestor calculations of validity or value.
  *
  */

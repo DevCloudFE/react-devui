@@ -18,17 +18,18 @@ export function AppSidebar() {
 
   useEffect(() => {
     if (pageMounted && window.location.href.includes(String.raw`/components/`)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const to = window.location.href.match(/\/components\/[a-zA-Z]+/)![0];
-      menu.forEach((group) => {
-        const child = group.children.find((child) => child.to === to);
-        if (child) {
-          setActiveId(child.title);
-        }
-      });
+      const to = window.location.href.match(/\/components\/[a-zA-Z]+/)?.[0];
+      if (to) {
+        menu.forEach((group) => {
+          const child = group.children.find((child) => child.to === to);
+          if (child) {
+            setActiveId(child.title);
+          }
+        });
 
-      if (to === '/components/Interface') {
-        setActiveId('Interface');
+        if (to === '/components/Interface') {
+          setActiveId('Interface');
+        }
       }
     }
   }, [pageMounted, setActiveId]);

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { isFunction } from 'lodash';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -111,6 +109,7 @@ export function useDTransition(props: DTransitionProps) {
 
   useLayoutEffect(() => {
     transition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startEnterTransition]);
 
   useEffect(() => {
@@ -126,12 +125,14 @@ export function useDTransition(props: DTransitionProps) {
         callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl]);
 
   useEffect(() => {
     if (dVisible !== dataRef.current.preVisible) {
       prepareTransition();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dVisible]);
 
   useLayoutEffect(() => {
@@ -139,6 +140,7 @@ export function useDTransition(props: DTransitionProps) {
       dataRef.current.elRendered = true;
       transition();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, hidden]);
 
   return hidden;

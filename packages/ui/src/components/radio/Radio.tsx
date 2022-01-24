@@ -6,19 +6,18 @@ import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding
 import { generateComponentMate, getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
-export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
+export interface DRadioProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
   dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
   dDisabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dValue?: any;
+  dValue?: T;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.LegacyRef<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRadio');
-export function DRadio(props: DRadioProps) {
+export function DRadio<T>(props: DRadioProps<T>) {
   const {
     dModel,
     dFormControlName,
@@ -46,7 +45,7 @@ export function DRadio(props: DRadioProps) {
 
   const inGroup = radioGroupContext !== null;
 
-  const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding(
+  const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean>(
     false,
     dModel ?? (inGroup ? [radioGroupValue === dValue] : undefined),
     onModelChange,

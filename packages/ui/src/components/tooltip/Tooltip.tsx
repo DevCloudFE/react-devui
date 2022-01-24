@@ -25,7 +25,7 @@ const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (pro
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}tooltip-${uniqueId}`;
 
-  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
 
   const renderTrigger = useCallback(
     ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {

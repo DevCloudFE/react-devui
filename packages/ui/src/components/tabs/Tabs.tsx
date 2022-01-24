@@ -69,14 +69,14 @@ export function DTabs(props: DTabsProps) {
   const asyncCapture = useAsync();
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
   const [listOverflow, setListOverflow] = useState(true);
-  const [dropdownList, setDropdownList] = useImmer<Array<React.ReactElement<DTabProps>>>([]);
+  const [dropdownList, setDropdownList] = useImmer<React.ReactElement<DTabProps>[]>([]);
   const [scrollEnd, setScrollEnd] = useState(false);
   const [tabEls, setTabEls] = useImmer(new Map<string, { id: string; el: HTMLElement }>());
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
     () => {
-      const childs = React.Children.toArray(children) as Array<React.ReactElement<DTabProps>>;
+      const childs = React.Children.toArray(children) as React.ReactElement<DTabProps>[];
       if (childs[0]) {
         return childs[0].props.dId;
       }
@@ -96,8 +96,8 @@ export function DTabs(props: DTabsProps) {
 
       if (isOverflow) {
         const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
-        const dropdownList: Array<React.ReactElement<DTabProps>> = [];
-        React.Children.forEach(children as Array<React.ReactElement<DTabProps>>, (child) => {
+        const dropdownList: React.ReactElement<DTabProps>[] = [];
+        React.Children.forEach(children as React.ReactElement<DTabProps>[], (child) => {
           for (const { id, el } of tabEls.values()) {
             if (id === child.props.dId) {
               const elRect = el.getBoundingClientRect();
@@ -191,8 +191,8 @@ export function DTabs(props: DTabsProps) {
   }, [asyncCapture, checkScrollEnd, tablistEl, tablistWrapperEl, updateDropdown]);
 
   const [childs, tabpanels] = useMemo(() => {
-    const tabpanels: Array<{ dId: string; id: string; labelledby: string; node: React.ReactNode }> = [];
-    const childs = React.Children.map(children as Array<React.ReactElement<DTabProps>>, (child, index) => {
+    const tabpanels: { dId: string; id: string; labelledby: string; node: React.ReactNode }[] = [];
+    const childs = React.Children.map(children as React.ReactElement<DTabProps>[], (child, index) => {
       tabpanels.push({
         dId: child.props.dId,
         id: `${dPrefix}tabpanel-${toId(child.props.dId)}`,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { DGeneralStateContextData } from '../../hooks/general-state';
 import type { Updater } from '../../hooks/two-way-binding';
 
@@ -7,27 +6,28 @@ import React, { useMemo } from 'react';
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 
-export interface DRadioGroupContextData {
+export interface DRadioGroupContextData<T> {
   radioGroupName?: string;
-  radioGroupValue: any;
-  radioGroupType: DRadioGroupProps['dType'];
-  onCheckedChange: (value: any) => void;
+  radioGroupValue: T;
+  radioGroupType: DRadioGroupProps<T>['dType'];
+  onCheckedChange: (value: T) => void;
 }
-export const DRadioGroupContext = React.createContext<DRadioGroupContextData | null>(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const DRadioGroupContext = React.createContext<DRadioGroupContextData<any> | null>(null);
 
-export interface DRadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  dModel?: [any, Updater<any>?];
+export interface DRadioGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
+  dModel?: [T, Updater<T>?];
   dFormControlName?: string;
   dName?: string;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
   dSize?: 'smaller' | 'larger';
   dVertical?: boolean;
-  onModelChange?: (value: any) => void;
+  onModelChange?: (value: T) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRadioGroup');
-export function DRadioGroup(props: DRadioGroupProps) {
+export function DRadioGroup<T>(props: DRadioGroupProps<T>) {
   const {
     dModel,
     dFormControlName,
@@ -47,8 +47,8 @@ export function DRadioGroup(props: DRadioGroupProps) {
   const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
-  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding(
-    undefined,
+  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T>(
+    null,
     dModel,
     onModelChange,
     dFormControlName ? { formControlName: dFormControlName } : undefined
@@ -64,7 +64,7 @@ export function DRadioGroup(props: DRadioGroupProps) {
     [disabled]
   );
 
-  const contextValue = useMemo<DRadioGroupContextData>(
+  const contextValue = useMemo<DRadioGroupContextData<T>>(
     () => ({
       radioGroupName: dName,
       radioGroupValue: value,

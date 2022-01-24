@@ -13,7 +13,7 @@ export interface AppComponentRouteArticleProps {
   description: number[];
   api: number[];
   demos: React.ReactNode;
-  links: Array<{ href: string; title: string }>;
+  links: { href: string; title: string }[];
 }
 
 export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {

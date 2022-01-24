@@ -212,7 +212,7 @@ export function DMenuSub(props: DMenuSubProps) {
   const childs = useMemo(() => {
     const length = React.Children.count(children);
 
-    return React.Children.map(children as Array<React.ReactElement<DMenuItemProps>>, (child, index) =>
+    return React.Children.map(children as React.ReactElement<DMenuItemProps>[], (child, index) =>
       React.cloneElement(child, {
         ...child.props,
         className: getClassName(child.props.className, {

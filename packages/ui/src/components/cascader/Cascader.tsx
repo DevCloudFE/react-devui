@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DSelectBoxProps } from '../_select-box';
+import type { DExtendsSelectBoxProps } from '../_select-box';
 import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, TreeOption } from '../tree';
 
@@ -20,76 +19,64 @@ import { DList } from './List';
 import { DSearchList } from './SearchList';
 import { ID_SEPARATOR, OPTIONS_KEY, SEPARATOR, TREE_NODE_KEY } from './utils';
 
-function getSelects<T>(multiple: false, select: T[] | null | T[][]): T[] | null;
-function getSelects<T>(multiple: true, select: T[] | null | T[][]): T[][];
-function getSelects<T>(multiple: boolean, select: T[] | null | T[][]) {
-  return select;
-}
-
-export interface DCascaderContextData {
-  cascaderSelecteds: any[] | null | any[][];
-  cascaderFocusValues: any[];
+export interface DCascaderContextData<T> {
+  cascaderSelecteds: T[] | null | T[][];
+  cascaderFocusValues: T[];
   cascaderUniqueId: string;
   cascaderRendered: boolean;
   cascaderMultiple: boolean;
   cascaderOnlyLeafSelectable: boolean;
-  cascaderOptionRender: NonNullable<DCascaderBaseProps<any>['dOptionRender']>;
-  cascaderGetId: NonNullable<DCascaderBaseProps<any>['dGetId']>;
-  onModelChange: (value: any[] | null | any[][]) => void;
-  onFocusValuesChange: (value: any[]) => void;
+  cascaderOptionRender: NonNullable<DCascaderBaseProps<T>['dOptionRender']>;
+  cascaderGetId: NonNullable<DCascaderBaseProps<T>['dGetId']>;
+  onModelChange: (value: T[] | null | T[][]) => void;
+  onFocusValuesChange: (value: T[]) => void;
   onClose: () => void;
 }
-export const DCascaderContext = React.createContext<DCascaderContextData | null>(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const DCascaderContext = React.createContext<DCascaderContextData<any> | null>(null);
 
-export interface DCascaderOption<T> extends TreeOption {
+export interface DCascaderOption<T> extends TreeOption<T> {
   dValue: T;
   dLoading?: boolean;
-  dChildren?: Array<DCascaderOption<T>>;
+  dChildren?: DCascaderOption<T>[];
 }
 
-type PickSelectBoxProps = Pick<
-  DSelectBoxProps,
-  'dSearchable' | 'dClearIcon' | 'dSize' | 'dPlaceholder' | 'dDisabled' | 'dLoading' | 'dPopupClassName' | 'onClear' | 'onSearch'
->;
-
-export interface DCascaderBaseProps<T> extends React.HTMLAttributes<HTMLDivElement>, PickSelectBoxProps {
+export interface DCascaderBaseProps<T> extends React.HTMLAttributes<HTMLDivElement>, DExtendsSelectBoxProps {
   dFormControlName?: string;
   dVisible?: [boolean, Updater<boolean>?];
-  dOptions: Array<DCascaderOption<T>>;
+  dOptions: DCascaderOption<T>[];
   dOptionRender?: (option: DCascaderOption<T>) => React.ReactNode;
   dGetId?: (value: T) => string;
   dClearable?: boolean;
   dOnlyLeafSelectable?: boolean;
   dCustomSearch?: {
-    filter?: (value: string, options: Array<DCascaderOption<T>>) => boolean;
-    sort?: (a: Array<DCascaderOption<T>>, b: Array<DCascaderOption<T>>) => number;
+    filter?: (value: string, options: DCascaderOption<T>[]) => boolean;
+    sort?: (a: DCascaderOption<T>[], b: DCascaderOption<T>[]) => number;
   };
-  dPopupClassName?: string;
   dAutoMaxWidth?: boolean;
-  onVisibleChange?: (visible: boolean) => void;
   onFocusChange?: (value: T[]) => void;
 }
 
 export interface DCascaderSingleProps<T> extends DCascaderBaseProps<T> {
   dModel?: [T[] | null, Updater<T[] | null>?];
   dMultiple?: false;
-  dCustomSelected?: (select: Array<DCascaderOption<T>>) => string;
+  dCustomSelected?: (select: DCascaderOption<T>[]) => string;
   onModelChange?: (value: T[] | null) => void;
 }
 
 export interface DCascaderMultipleProps<T> extends DCascaderBaseProps<T> {
   dModel?: [T[][], Updater<T[][]>?];
   dMultiple: true;
-  dCustomSelected?: (selects: Array<Array<DCascaderOption<T>>>) => string[];
+  dCustomSelected?: (select: DCascaderOption<T>[][]) => string[];
   onModelChange?: (values: T[][]) => void;
 }
 
-export type DCascaderProps<T = unknown> = DCascaderBaseProps<T> & {
-  dModel?: [any, Updater<any>?];
+export interface DCascaderProps<T = unknown> extends DCascaderBaseProps<T> {
+  dModel?: DCascaderSingleProps<T>['dModel'] | DCascaderMultipleProps<T>['dModel'];
   dMultiple?: boolean;
-  dCustomSelected?: (select: any) => string | string[];
-  onModelChange?: (value: any) => void;
-};
+  dCustomSelected?: DCascaderSingleProps<T>['dCustomSelected'] | DCascaderMultipleProps<T>['dCustomSelected'];
+  onModelChange?: DCascaderSingleProps<T>['onModelChange'] | DCascaderMultipleProps<T>['onModelChange'];
+}
 
 const { COMPONENT_NAME } = generateComponentMate('DCascader');
 const DEFAULT_PROPS = {
@@ -120,6 +107,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     onVisibleChange,
     onFocusChange,
     onModelChange,
+    onClear,
     onSearch,
     id,
     className,
@@ -138,8 +126,8 @@ export function DCascader<T>(props: DCascaderProps<T>) {
 
   const [searchValue, setSearchValue] = useState('');
 
-  const [visible, changeVisible] = useTwoWayBinding(false, dVisible, onVisibleChange);
-  const [_select, changeSelect, { validateClassName, controlDisabled }] = useTwoWayBinding<T[] | null | T[][]>(
+  const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
+  const [select, changeSelect, { validateClassName, controlDisabled }] = useTwoWayBinding<T[] | null | T[][]>(
     dMultiple ? [] : null,
     dModel,
     onModelChange,
@@ -165,27 +153,29 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   const checkedRef = useRef({});
   const getRenderOptions = useCallback(
     (select: T[] | null | T[][]) => {
-      let renderOptions: SingleTreeNode[] | MultipleTreeNode[] = [];
+      let renderOptions: SingleTreeNode<T, DCascaderOption<T>>[] | MultipleTreeNode<T, DCascaderOption<T>>[] = [];
       if (dMultiple) {
         renderOptions = dOptions.map((option) => new MultipleTreeNode(option, { checkeds: select as T[][], getId: dGetId }));
       } else {
-        renderOptions = dOptions.map((option) => new SingleTreeNode(option, { checkedRef, checkeds: select ?? [], getId: dGetId }));
+        renderOptions = dOptions.map(
+          (option) => new SingleTreeNode(option, { checkedRef, checkeds: (select as T[] | null) ?? [], getId: dGetId })
+        );
       }
       return renderOptions;
     },
     [dGetId, dMultiple, dOptions]
   );
-  const [renderOptions, changeSelectByCache] = useTreeData(_select, getRenderOptions, changeSelect);
+  const [renderOptions, changeSelectByCache] = useTreeData(select, getRenderOptions, changeSelect);
 
   const searchOptions = useMemo(() => {
-    const searchOptions: Array<DSelectOption<T[]>> = [];
+    const searchOptions: DSelectOption<T[]>[] = [];
     if (hasSearch) {
-      const defaultFilterFn = (value: string, options: Array<DCascaderOption<T>>) => {
+      const defaultFilterFn = (value: string, options: DCascaderOption<T>[]) => {
         return options.some((option) => option.dLabel.includes(value));
       };
       const filterFn = isUndefined(dCustomSearch) ? defaultFilterFn : dCustomSearch.filter ?? defaultFilterFn;
 
-      const reduceOptions = (options: AbstractTreeNode[], parent?: Array<DCascaderOption<T>>) => {
+      const reduceOptions = (options: AbstractTreeNode<T, DCascaderOption<T>>[], parent?: DCascaderOption<T>[]) => {
         options.forEach((option) => {
           const arr = (parent ?? []).concat([option.node]);
           if ((!dMultiple && !dOnlyLeafSelectable) || option.isLeaf) {
@@ -210,9 +200,8 @@ export function DCascader<T>(props: DCascaderProps<T>) {
               });
             }
           }
-          if (!option.isLeaf) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            reduceOptions(option.children!, arr);
+          if (option.children) {
+            reduceOptions(option.children, arr);
           }
         });
       };
@@ -220,29 +209,28 @@ export function DCascader<T>(props: DCascaderProps<T>) {
 
       const sortFn = dCustomSearch?.sort;
       if (sortFn) {
-        searchOptions.sort((a, b) => sortFn(a[OPTIONS_KEY] as Array<DCascaderOption<T>>, b[OPTIONS_KEY] as Array<DCascaderOption<T>>));
+        searchOptions.sort((a, b) => sortFn(a[OPTIONS_KEY] as DCascaderOption<T>[], b[OPTIONS_KEY] as DCascaderOption<T>[]));
       }
     }
     return searchOptions;
   }, [dCustomSearch, dMultiple, dOnlyLeafSelectable, hasSearch, renderOptions, searchValue]);
 
-  const [focusValues, setFocusValues] = useState<AbstractTreeNode[]>(() => {
-    let optionFirstChecked: AbstractTreeNode | null = null;
+  const [focusValues, setFocusValues] = useState<T[]>(() => {
+    let focusValues: T[] | null = null;
 
-    if (!isNull(_select) && _select.length > 0) {
-      const reduceArr = (arr: AbstractTreeNode[]) => {
+    if (!isNull(select) && select.length > 0) {
+      const reduceArr = (arr: AbstractTreeNode<T, DCascaderOption<T>>[]) => {
         for (const item of arr) {
-          if (optionFirstChecked) {
+          if (focusValues) {
             break;
           }
           if (!item.disabled) {
-            if (item.isLeaf) {
-              if (item.checked) {
-                optionFirstChecked = item;
-              }
+            if (item.children) {
+              reduceArr(item.children);
             } else {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              reduceArr(item.children!);
+              if (item.checked) {
+                focusValues = item.value;
+              }
             }
           }
         }
@@ -250,12 +238,12 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       reduceArr(renderOptions);
     }
 
-    return optionFirstChecked ? (optionFirstChecked as AbstractTreeNode).value : [];
+    return focusValues ?? [];
   });
 
   const searchOptionRender = useCallback(
     (option) => {
-      return (option[OPTIONS_KEY] as Array<DCascaderOption<T>>).map((item, index) => (
+      return (option[OPTIONS_KEY] as DCascaderOption<T>[]).map((item, index) => (
         <React.Fragment key={index}>
           {dOptionRender(item)}
           {index === option[OPTIONS_KEY].length - 1 ? '' : SEPARATOR}
@@ -266,12 +254,14 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   );
 
   const handleClear = useCallback(() => {
+    onClear?.();
+
     if (dMultiple) {
       changeSelect([]);
     } else {
       changeSelect(null);
     }
-  }, [dMultiple, changeSelect]);
+  }, [onClear, dMultiple, changeSelect]);
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -307,23 +297,20 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     };
   }, [asyncCapture, focusValues.length, hasSearch, listRendered, onFocusChange, renderOptions]);
 
-  const hasSelected = dMultiple ? (_select as T[][]).length > 0 : !isNull(_select);
+  const hasSelected = dMultiple ? (select as T[][]).length > 0 : !isNull(select);
 
   const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selects = getSelects(dMultiple, _select);
-
-      let optionsSelecteds: Array<Array<DCascaderOption<T>>> = [];
+      let optionsSelecteds: DCascaderOption<T>[][] = [];
       const customSelected = Symbol();
-      const reduceArr = (arr: AbstractTreeNode[], parent: Array<DCascaderOption<T>>) => {
+      const reduceArr = (arr: AbstractTreeNode<T, DCascaderOption<T>>[], parent: DCascaderOption<T>[]) => {
         for (const item of arr) {
           const list = parent.concat([Object.assign(item.node, { [TREE_NODE_KEY]: item })]);
-          if (!item.isLeaf) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            reduceArr(item.children!, list);
+          if (item.children) {
+            reduceArr(item.children, list);
           } else if (item.checked) {
             optionsSelecteds.push(list);
           }
@@ -332,8 +319,8 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       reduceArr(renderOptions, []);
 
       if (dCustomSelected) {
-        optionsSelecteds = (dCustomSelected(optionsSelecteds) as string[]).map((item, index) =>
-          Object.assign(optionsSelecteds[index], { [customSelected]: item })
+        optionsSelecteds = (dCustomSelected as NonNullable<DCascaderMultipleProps<T>['dCustomSelected']>)(optionsSelecteds).map(
+          (item, index) => Object.assign(optionsSelecteds[index], { [customSelected]: item })
         );
       }
 
@@ -341,13 +328,13 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         <DDropdown
           dTriggerNode={
             <DTag className={`${dPrefix}select__multiple-count`} dSize={size}>
-              {selects.length} ...
+              {(select as T[][]).length} ...
             </DTag>
           }
           dCloseOnItemClick={false}
         >
           {optionsSelecteds.map((item) => {
-            const node = item[item.length - 1][TREE_NODE_KEY] as MultipleTreeNode;
+            const node = item[item.length - 1][TREE_NODE_KEY] as MultipleTreeNode<T, DCascaderOption<T>>;
             const id = node.id.join(ID_SEPARATOR);
 
             return (
@@ -357,7 +344,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
                 dDisabled={node.disabled}
                 onClick={() => {
                   if (!disabled && node.enabled) {
-                    const checkeds = node.changeStatus('UNCHECKED', selects);
+                    const checkeds = node.changeStatus('UNCHECKED', select as T[][]);
                     changeSelectByCache(checkeds);
                   }
                 }}
@@ -369,7 +356,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         </DDropdown>
       );
       selectedNode = optionsSelecteds.map((item) => {
-        const node = item[item.length - 1][TREE_NODE_KEY] as MultipleTreeNode;
+        const node = item[item.length - 1][TREE_NODE_KEY] as MultipleTreeNode<T, DCascaderOption<T>>;
         const id = node.id.join(ID_SEPARATOR);
 
         return (
@@ -379,7 +366,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
             dClosable={node.enabled}
             onClose={() => {
               if (!disabled && node.enabled) {
-                const checkeds = node.changeStatus('UNCHECKED', selects);
+                const checkeds = node.changeStatus('UNCHECKED', select as T[][]);
                 changeSelectByCache(checkeds);
               }
             }}
@@ -389,12 +376,10 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         );
       });
     } else {
-      const select = getSelects(dMultiple, _select);
-
       if (!isNull(select)) {
-        const ids = select.map((v) => dGetId(v));
-        let option: Array<DCascaderOption<T>> | null = null;
-        const reduceArr = (arr: Array<DCascaderOption<T>>, parent: Array<DCascaderOption<T>>) => {
+        const ids = (select as T[]).map((v) => dGetId(v));
+        let option: DCascaderOption<T>[] | null = null;
+        const reduceArr = (arr: DCascaderOption<T>[], parent: DCascaderOption<T>[]) => {
           for (const item of arr) {
             if (option) {
               break;
@@ -412,7 +397,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         reduceArr(dOptions, []);
 
         if (option) {
-          selectedLabel = (option as Array<DCascaderOption<T>>).map((o) => o.dLabel).join(SEPARATOR);
+          selectedLabel = (option as DCascaderOption<T>[]).map((o) => o.dLabel).join(SEPARATOR);
           if (dCustomSelected) {
             selectedNode = dCustomSelected(option);
           } else {
@@ -422,11 +407,11 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [dMultiple, _select, renderOptions, dCustomSelected, dPrefix, size, dGetId, disabled, changeSelectByCache, dOptions]);
+  }, [dMultiple, select, renderOptions, dCustomSelected, dPrefix, size, dGetId, disabled, changeSelectByCache, dOptions]);
 
-  const contextValue = useMemo<DCascaderContextData>(
+  const contextValue = useMemo<DCascaderContextData<T>>(
     () => ({
-      cascaderSelecteds: _select,
+      cascaderSelecteds: select,
       cascaderFocusValues: focusValues,
       cascaderUniqueId: uniqueId,
       cascaderRendered: listRendered,
@@ -446,7 +431,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       },
     }),
     [
-      _select,
+      select,
       changeSelectByCache,
       changeVisible,
       dGetId,

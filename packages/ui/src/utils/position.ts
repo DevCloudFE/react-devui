@@ -267,10 +267,11 @@ export function getPopupPlacementStyle(
   }
 }
 
+export type DVerticalSidePlacement = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
 export function getVerticalSideStyle(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
-  placement: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right',
+  placement: DVerticalSidePlacement,
   offset = 10
 ): {
   top: number;
@@ -373,8 +374,9 @@ export function getVerticalSideStyle(
       return getVerticalSideStyle(
         popupEl,
         targetEl,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (placement.includes('top') ? placement.replace('top', 'bottom') : placement.replace('bottom', 'top')) as any,
+        placement.includes('top')
+          ? (placement.replace('top', 'bottom') as DVerticalSidePlacement)
+          : (placement.replace('bottom', 'top') as DVerticalSidePlacement),
         offset
       );
     }

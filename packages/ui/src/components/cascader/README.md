@@ -65,6 +65,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>, PickSelectBoxProps`.
 export interface DCascaderOption<T> extends TreeOption {
   dValue: T;
   dLoading?: boolean;
-  dChildren?: Array<DCascaderOption<T>>;
+  dChildren?: DCascaderOption<T>[];
 }
 ```

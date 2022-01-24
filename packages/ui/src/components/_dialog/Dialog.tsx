@@ -53,22 +53,17 @@ export function DDialog(props: DDialogProps) {
     };
   }, [asyncCapture, dEscClosable, dVisible, onClose]);
 
-  return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {!(dDestroy && dHidden) && (
-        <div
-          {...restProps}
-          ref={dDialogRef}
-          className={getClassName(className, `${dPrefix}dialog`)}
-          style={mergeStyle({ display: dHidden ? 'none' : undefined }, style)}
-          role="dialog"
-          aria-modal="true"
-        >
-          {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
-          {children}
-        </div>
-      )}
-    </>
+  return dDestroy && dHidden ? null : (
+    <div
+      {...restProps}
+      ref={dDialogRef}
+      className={getClassName(className, `${dPrefix}dialog`)}
+      style={mergeStyle({ display: dHidden ? 'none' : undefined }, style)}
+      role="dialog"
+      aria-modal="true"
+    >
+      {dMask && <DMask dVisible={dVisible} onClose={handleMaskClose} />}
+      {children}
+    </div>
   );
 }

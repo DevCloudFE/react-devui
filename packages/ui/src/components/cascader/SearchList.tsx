@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { DSelectBaseOption, DSelectOption } from '../select';
+import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
+import type { DCascaderContextData, DCascaderOption } from './Cascader';
 
 import React, { useCallback, useState, useContext, useEffect, useLayoutEffect } from 'react';
 import { filter } from 'rxjs';
@@ -13,8 +13,8 @@ import { DCascaderContext } from './Cascader';
 import { ID_SEPARATOR, TREE_NODE_KEY } from './utils';
 
 interface SearchListProps<T> {
-  dOptions: Array<DSelectOption<T[]>>;
-  dOptionRender: (option: DSelectBaseOption<T[]>) => React.ReactNode;
+  dOptions: DSelectOption<T[]>[];
+  dOptionRender: (option: DSelectOption<T[]>) => React.ReactNode;
   dSearchValue: string;
 }
 
@@ -32,8 +32,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
     cascaderGetId,
     onModelChange,
     onClose,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  } = useContext(DCascaderContext)!;
+  } = useContext(DCascaderContext) as DCascaderContextData<T>;
   //#endregion
 
   const [t] = useTranslation('Common');
@@ -68,15 +67,12 @@ export function DSearchList<T>(props: SearchListProps<T>) {
       if (canSelectOption(option) && option.dValue) {
         if (cascaderMultiple) {
           isSwitch = isSwitch ?? true;
-          const node = option[TREE_NODE_KEY] as MultipleTreeNode;
+          const node = option[TREE_NODE_KEY] as MultipleTreeNode<T, DCascaderOption<T>>;
 
-          const checkeds = node.changeStatus(
-            isSwitch ? (node.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED',
-            cascaderSelecteds as unknown[][]
-          );
+          const checkeds = node.changeStatus(isSwitch ? (node.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED', cascaderSelecteds as T[][]);
           onModelChange(checkeds);
         } else {
-          const checkeds = (option[TREE_NODE_KEY] as SingleTreeNode).setChecked();
+          const checkeds = (option[TREE_NODE_KEY] as SingleTreeNode<T, DCascaderOption<T>>).setChecked();
           onModelChange(checkeds);
         }
       }
@@ -142,7 +138,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
 
   const itemRender = useCallback(
     (item: DSelectOption<T[]>, renderProps) => {
-      const node = item[TREE_NODE_KEY] as AbstractTreeNode;
+      const node = item[TREE_NODE_KEY] as AbstractTreeNode<T, DCascaderOption<T>>;
       const optionIds = node.id;
       const id = optionIds.join(ID_SEPARATOR);
       let isFocus = false;
@@ -158,7 +154,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
           className={getClassName(`${dPrefix}select__option`, {
             'is-selected':
               !cascaderMultiple &&
-              (cascaderOnlyLeafSelectable ? node.checked : node.checked && node.value.length === (cascaderSelecteds as unknown[]).length),
+              (cascaderOnlyLeafSelectable ? node.checked : node.checked && node.value.length === (cascaderSelecteds as T[]).length),
             'is-focus': isFocus,
             'is-disabled': node.disabled,
           })}
@@ -176,7 +172,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
           }
         >
           {cascaderMultiple && <DCheckbox dModel={[node.checked]} dDisabled={node.disabled}></DCheckbox>}
-          <span className={`${dPrefix}select__option-content`}>{dOptionRender(item as DSelectBaseOption<T[]>)}</span>
+          <span className={`${dPrefix}select__option-content`}>{dOptionRender(item as DSelectOption<T[]>)}</span>
         </li>
       );
     },

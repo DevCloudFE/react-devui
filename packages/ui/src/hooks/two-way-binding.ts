@@ -12,9 +12,9 @@ import { useStateBackflow } from './state-backflow';
 export type Updater<S> = (value: S) => void;
 
 export function useTwoWayBinding<T, S = T>(
-  initialValue: T | (() => T),
-  input?: [T, Updater<S>?],
-  onValueChange?: (value: S) => void,
+  initialValue: any,
+  input?: [any, Updater<any>?],
+  onValueChange?: (value: any) => void,
   opt?: {
     id?: string;
     formControlName: string;

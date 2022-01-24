@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { DToastProps } from '../toast';
 import type { Subscription } from 'rxjs';
 
 import { useEffect, useMemo } from 'react';
@@ -12,11 +12,11 @@ export function Toast() {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [toasts, setToasts] = useImmer(new Map<number, any>());
+  const [toasts, setToasts] = useImmer(new Map<number, DToastProps & { dVisible: boolean }>());
 
   useEffect(() => {
     const obs: Subscription[] = [];
-    const mergeProps = (uniqueId: number, props: any) => {
+    const mergeProps = (uniqueId: number, props: DToastProps) => {
       return {
         onClose: () => {
           props.onClose?.();

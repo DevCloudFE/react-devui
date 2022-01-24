@@ -1,8 +1,8 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "import", "markdown"],
-  "extends": ["plugin:prettier/recommended"],
+  "plugins": ["@nrwl/nx", "import", "markdown", "jsdoc"],
+  "extends": ["plugin:prettier/recommended", "plugin:jsdoc/recommended"],
   "overrides": [
     {
       "files": ["**/*.md"],
@@ -43,7 +43,8 @@
             },
             "warnOnUnassignedImports": true
           }
-        ]
+        ],
+        "jsdoc/require-jsdoc": "off"
       }
     },
     {
@@ -51,12 +52,7 @@
       "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
         "no-unreachable": "error",
-        "@typescript-eslint/array-type": [
-          "error",
-          {
-            "default": "array-simple"
-          }
-        ],
+        "@typescript-eslint/array-type": "error",
         "@typescript-eslint/ban-types": [
           "error",
           {

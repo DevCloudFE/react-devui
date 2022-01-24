@@ -13,7 +13,7 @@ export interface DPaginationProps extends React.HTMLAttributes<HTMLElement> {
   dTotal: number;
   dPageSize?: [number, Updater<number>?];
   dPageSizeOptions?: number[];
-  dCompose?: Array<'total' | 'pages' | 'size' | 'jump'>;
+  dCompose?: ('total' | 'pages' | 'size' | 'jump')[];
   dCustomRender?: {
     total?: (range: [number, number]) => React.ReactNode;
     prev?: React.ReactNode;
@@ -195,7 +195,9 @@ export function DPagination(props: DPaginationProps) {
         dOptions={options}
         dModel={[pageSize]}
         dCustomSelected={(select) => `${select.dLabel} ${t(' / Page')}`}
-        dOptionRender={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.dValue) : option.dLabel)}
+        dOptionRender={(option) =>
+          dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.dValue as number) : option.dLabel
+        }
         onModelChange={(select) => {
           changePageSize(select as number);
         }}
@@ -262,8 +264,7 @@ export function DPagination(props: DPaginationProps) {
         }
 
         if (item === 'pages') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let pages: any[] = [];
+          let pages: (number | 'prev5' | 'next5')[] = [];
 
           if (lastPage <= 7) {
             pages = Array(lastPage)
@@ -275,10 +276,10 @@ export function DPagination(props: DPaginationProps) {
             }
 
             if (pages[0] < 1) {
-              pages = pages.map((n) => n + (1 - pages[0]));
+              pages = (pages as number[]).map((n) => n + (1 - (pages as number[])[0]));
             }
             if (pages[6] > lastPage) {
-              pages = pages.map((n) => n - (pages[6] - lastPage));
+              pages = (pages as number[]).map((n) => n - ((pages as number[])[6] - lastPage));
             }
 
             if (pages[0] > 1) {

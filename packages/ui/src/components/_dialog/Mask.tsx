@@ -54,8 +54,5 @@ export function DMask(props: DMaskProps) {
     ...dTransitionProps,
   });
 
-  return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>{!hidden && <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>}</>
-  );
+  return hidden ? null : <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>;
 }
