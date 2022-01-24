@@ -150,9 +150,11 @@ export function DSelectBox(props: DSelectBoxProps) {
     (e) => {
       onClick?.(e);
 
-      onVisibleChange?.(!dVisible);
+      if (!disabled) {
+        onVisibleChange?.(!dVisible);
+      }
     },
-    [dVisible, onClick, onVisibleChange]
+    [dVisible, disabled, onClick, onVisibleChange]
   );
 
   const customTransition = useCallback(

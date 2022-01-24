@@ -184,6 +184,38 @@ export function DFormItem(props: DFormItemProps) {
     return [_errors, hasError, errorStyle, status];
   }, [dErrors, formItems, getControl]);
 
+  const required = (() => {
+    if (isBoolean(dShowRequired)) {
+      return dShowRequired;
+    }
+    for (const { formControlName } of formItems.values()) {
+      if (getControl(formControlName).hasValidator(Validators.required)) {
+        return true;
+      }
+    }
+    return false;
+  })();
+
+  const id = (() => {
+    if (formItems.size === 1) {
+      for (const { id } of formItems.values()) {
+        return id;
+      }
+    }
+  })();
+
+  const handleLabelClick = useCallback<React.MouseEventHandler<HTMLLabelElement>>((e) => {
+    const id = e.currentTarget.getAttribute('for');
+    if (id) {
+      const el = document.getElementById(id);
+      if (el && el.tagName !== 'INPUT') {
+        e.preventDefault();
+        el.focus({ preventScroll: true });
+        el.click();
+      }
+    }
+  }, []);
+
   const errorsNode = useMemo(
     () =>
       errors.map((errors) => (
@@ -238,26 +270,6 @@ export function DFormItem(props: DFormItemProps) {
     }
   }, [formFeedbackIcon, status]);
 
-  const required = useMemo(() => {
-    if (isBoolean(dShowRequired)) {
-      return dShowRequired;
-    }
-    for (const { formControlName } of formItems.values()) {
-      if (getControl(formControlName).hasValidator(Validators.required)) {
-        return true;
-      }
-    }
-    return false;
-  }, [dShowRequired, formItems, getControl]);
-
-  const id = useMemo(() => {
-    if (formItems.size === 1) {
-      for (const { id } of formItems.values()) {
-        return id;
-      }
-    }
-  }, [formItems]);
-
   const extraNode = useMemo(() => {
     if (dLabelExtra) {
       return dLabelExtra.map((extra, index) => {
@@ -278,18 +290,6 @@ export function DFormItem(props: DFormItemProps) {
       });
     }
   }, [dLabelExtra]);
-
-  const handleLabelClick = useCallback<React.MouseEventHandler<HTMLLabelElement>>((e) => {
-    const id = e.currentTarget.getAttribute('for');
-    if (id) {
-      const el = document.getElementById(id);
-      if (el && el.tagName !== 'INPUT') {
-        e.preventDefault();
-        el.focus({ preventScroll: true });
-        el.click();
-      }
-    }
-  }, []);
 
   const stateBackflow = useMemo<Pick<DFormItemContextData, 'updateFormItems' | 'removeFormItems'>>(
     () => ({
@@ -319,20 +319,12 @@ export function DFormItem(props: DFormItemProps) {
     <DFormItemContext.Provider value={contextValue}>
       <div
         {...restProps}
-        className={getClassName(
-          className,
-          `${dPrefix}form-item`,
-          hasError
-            ? {
-                'is-error': errorStyle === 'error',
-                'is-warning': errorStyle === 'warning',
-              }
-            : {},
-          {
-            'is-pending': status === 'pending',
-            [`${dPrefix}form-item--vertical`]: formLayout === 'vertical',
-          }
-        )}
+        className={getClassName(className, `${dPrefix}form-item`, {
+          'is-error': hasError && errorStyle === 'error',
+          'is-warning': hasError && errorStyle === 'warning',
+          'is-pending': status === 'pending',
+          [`${dPrefix}form-item--vertical`]: formLayout === 'vertical',
+        })}
         style={mergeStyle(
           {
             flexGrow: span === true ? 1 : undefined,
