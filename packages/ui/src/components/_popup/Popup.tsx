@@ -13,9 +13,9 @@ import {
   useRefSelector,
   useImmer,
   useRefCallback,
-  useContentRefConfig,
   useDTransition,
   useMaxIndex,
+  useContentSVChangeConfig,
 } from '../../hooks';
 import { getClassName, getPopupPlacementStyle, mergeStyle } from '../../utils';
 import { checkOutEl } from './utils';
@@ -93,7 +93,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useContentRefConfig();
+  const contentSVChange = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -508,19 +508,16 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   }, [asyncCapture, dEscClosable, dVisible, changeVisible]);
 
   useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (popupRendered) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
       if (popupEl) {
         asyncGroup.onResize(popupEl, updatePosition);
       }
       if (triggerRef.current) {
         asyncGroup.onResize(triggerRef.current, updatePosition);
       }
-      if (!isFixed && rootContentRef.current) {
-        asyncGroup.onResize(rootContentRef.current, updatePosition);
-      }
 
-      asyncGroup.onGlobalScroll(updatePosition, () => {
+      const skipUpdate = () => {
         if (triggerRef.current) {
           const { top, left } = triggerRef.current.getBoundingClientRect();
 
@@ -530,12 +527,22 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         }
 
         return false;
+      };
+      const ob = contentSVChange?.subscribe({
+        next: () => {
+          if (!skipUpdate()) {
+            updatePosition();
+          }
+        },
       });
+      asyncGroup.onGlobalScroll(updatePosition, skipUpdate);
+
+      return () => {
+        ob?.unsubscribe();
+        asyncCapture.deleteGroup(asyncId);
+      };
     }
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, isFixed, popupEl, popupRendered, rootContentRef, triggerRef, updatePosition]);
+  }, [asyncCapture, popupEl, popupRendered, contentSVChange, triggerRef, updatePosition]);
 
   useImperativeHandle(
     ref,

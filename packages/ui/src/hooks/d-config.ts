@@ -47,12 +47,12 @@ import type {
   DTooltipProps,
 } from '../components';
 import type { DBreakpoints } from '../components/grid';
+import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
 import React, { useContext, useMemo } from 'react';
 
 import { getFragmentChildren } from '../utils';
-import { useRefSelector } from './element-ref';
 
 interface Resources {
   [index: string]: string | Resources;
@@ -128,7 +128,7 @@ export interface DConfigContextData {
       type?: string;
     }[];
   }[];
-  contentSelector?: string;
+  scrollViewChange?: Subject<void>;
 }
 export const DConfigContext = React.createContext<DConfigContextData>({});
 
@@ -187,9 +187,6 @@ export function useComponentConfig<T>(component: keyof DComponentConfig, props: 
   return { ...customConfig, ...(noUndefinedProps as T), children };
 }
 
-export function useContentRefConfig() {
-  const contentSelector = useContext(DConfigContext).contentSelector ?? null;
-  const contentRef = useRefSelector(contentSelector);
-
-  return contentRef;
+export function useContentSVChangeConfig() {
+  return useContext(DConfigContext).scrollViewChange;
 }

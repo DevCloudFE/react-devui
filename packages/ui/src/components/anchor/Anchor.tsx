@@ -3,7 +3,15 @@ import type { DElementSelector } from '../../hooks/element-ref';
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useRefSelector, useImmer, useAsync, useRefCallback, useContentRefConfig } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useRefSelector,
+  useImmer,
+  useAsync,
+  useRefCallback,
+  useContentSVChangeConfig,
+} from '../../hooks';
 import { getClassName, CustomScroll, generateComponentMate } from '../../utils';
 
 export interface DAnchorContextData {
@@ -40,7 +48,7 @@ export const DAnchor = (props: DAnchorProps) => {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useContentRefConfig();
+  const contentSVChange = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -151,10 +159,12 @@ export const DAnchor = (props: DAnchorProps) => {
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (rootContentRef.current) {
-      asyncGroup.onResize(rootContentRef.current, updateAnchor);
-    }
-    asyncGroup.onGlobalScroll(updateAnchor, () => {
+    const ob = contentSVChange?.subscribe({
+      next: () => {
+        updateAnchor();
+      },
+    });
+    const skipUpdate = () => {
       const data = Array.from(links.values())[0];
       if (data) {
         const el = document.getElementById(data.href.slice(1));
@@ -168,11 +178,13 @@ export const DAnchor = (props: DAnchorProps) => {
       }
 
       return false;
-    });
+    };
+    asyncGroup.onGlobalScroll(updateAnchor, skipUpdate);
     return () => {
+      ob?.unsubscribe();
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, links, rootContentRef, updateAnchor]);
+  }, [asyncCapture, links, contentSVChange, updateAnchor]);
 
   const stateBackflow = useMemo<Pick<DAnchorContextData, 'updateLinks' | 'removeLinks'>>(
     () => ({

@@ -4,7 +4,15 @@ import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useAsync, useRefSelector, useImmer, useRefCallback, useContentRefConfig } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useAsync,
+  useRefSelector,
+  useImmer,
+  useRefCallback,
+  useContentSVChangeConfig,
+} from '../../hooks';
 import { getClassName, toPx, mergeStyle, generateComponentMate } from '../../utils';
 
 export interface DAffixRef {
@@ -36,7 +44,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const rootContentRef = useContentRefConfig();
+  const contentSVChange = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -149,10 +157,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (rootContentRef.current) {
-      asyncGroup.onResize(rootContentRef.current, updatePosition);
-    }
-    asyncGroup.onGlobalScroll(updatePosition, () => {
+    const skipUpdate = () => {
       const el = fixed ? referenceEl : affixEl;
       if (el) {
         const { top, left } = el.getBoundingClientRect();
@@ -163,11 +168,20 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
       }
 
       return false;
+    };
+    const ob = contentSVChange?.subscribe({
+      next: () => {
+        if (!skipUpdate()) {
+          updatePosition();
+        }
+      },
     });
+    asyncGroup.onGlobalScroll(updatePosition, skipUpdate);
     return () => {
+      ob?.unsubscribe();
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [affixEl, asyncCapture, fixed, referenceEl, rootContentRef, updatePosition]);
+  }, [affixEl, asyncCapture, fixed, referenceEl, contentSVChange, updatePosition]);
 
   useEffect(() => {
     updatePosition();

@@ -41,6 +41,7 @@
     "regenerator-runtime": "^0.13.9",
     "rfs": "^9.0.6",
     "rxjs": "^7.5.2",
+    "scrollview-resize": "^1.0.0",
     "tslib": "^2.3.1"
   },
   "devDependencies": {
@@ -81,6 +82,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "fs-extra": "^10.0.0",
     "husky": "^7.0.4",
     "jest": "^27.4.7",

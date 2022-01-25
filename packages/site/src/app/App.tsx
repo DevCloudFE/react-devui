@@ -96,7 +96,7 @@ export function App() {
   );
 
   return (
-    <DRoot theme={theme} i18n={{ lang: i18n.language as DLang }} icons={icons} contentSelector="main .app-route-article">
+    <DRoot theme={theme} i18n={{ lang: i18n.language as DLang }} icons={icons} contentSelector="main">
       <AppContext.Provider value={contextValue}>
         <AppHeader />
         <AppSidebar />
