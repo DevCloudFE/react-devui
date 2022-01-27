@@ -22,8 +22,8 @@ export interface DCheckboxGroupRef<T> {
 }
 
 export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
-  dModel?: [T[], Updater<T[]>?];
   dFormControlName?: string;
+  dModel?: [T[], Updater<T[]>?];
   dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: T[]) => void;
@@ -32,8 +32,8 @@ export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<H
 const { COMPONENT_NAME } = generateComponentMate('DCheckboxGroup');
 function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef<DCheckboxGroupRef<T>>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dDisabled = false,
     dVertical = false,
     onModelChange,
@@ -49,12 +49,9 @@ function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef
 
   const [checkboxs, setCheckboxs] = useImmer(new Map<string, { id: string; value: T }>());
 
-  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T[]>(
-    [],
-    dModel,
-    onModelChange,
-    dFormControlName ? { formControlName: dFormControlName } : undefined
-  );
+  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T[]>([], dModel, onModelChange, {
+    formControlName: dFormControlName,
+  });
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 

@@ -10,8 +10,8 @@ import { DInputAffixContext } from './InputAffix';
 export type DInputRef = HTMLInputElement;
 
 export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  dModel?: [string, Updater<string>?];
   dFormControlName?: string;
+  dModel?: [string, Updater<string>?];
   dSize?: 'smaller' | 'larger';
   onModelChange?: (value: string) => void;
 }
@@ -19,8 +19,8 @@ export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 const { COMPONENT_NAME } = generateComponentMate('DInput');
 const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, ref) => {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dSize,
     onModelChange,
     id,
@@ -60,12 +60,10 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
 
   const size = dSize ?? gSize;
 
-  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>(
-    '',
-    dModel,
-    onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
-  );
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>('', dModel, onModelChange, {
+    formControlName: dFormControlName,
+    id: _id,
+  });
 
   const _disabled = disabled || inputAffixDisabled || gDisabled || controlDisabled;
 

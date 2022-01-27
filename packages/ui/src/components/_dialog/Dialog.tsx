@@ -11,7 +11,7 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
   dDestroy?: boolean;
-  dDialogRef?: React.LegacyRef<HTMLDivElement>;
+  dDialogRef?: React.Ref<HTMLDivElement>;
   onClose?: () => void;
 }
 

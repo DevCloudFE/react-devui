@@ -73,7 +73,7 @@
       &:focus {
         border-color: var(--#{$variable-prefix}color-primary-lighter);
 
-        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / 12%);
+        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
       }
     }
   }

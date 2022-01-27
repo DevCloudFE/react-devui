@@ -599,7 +599,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     <>
       {dTriggerRender?.(triggerRenderProps)}
       {!(dDestroy && hidden) &&
-        dPopupContent &&
         containerRef.current &&
         ReactDOM.createPortal(
           <div

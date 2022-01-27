@@ -10,8 +10,8 @@ import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 export type DTextareaRef = HTMLTextAreaElement;
 
 export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
-  dModel?: [string, Updater<string>?];
   dFormControlName?: string;
+  dModel?: [string, Updater<string>?];
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
   dShowCount?: boolean | ((num: number) => React.ReactNode);
@@ -21,8 +21,8 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
 const { COMPONENT_NAME } = generateComponentMate('DTextarea');
 const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dRows,
     dResizable = true,
     dShowCount = false,
@@ -50,12 +50,10 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
 
   const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
-  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>(
-    '',
-    dModel,
-    onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
-  );
+  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>('', dModel, onModelChange, {
+    formControlName: dFormControlName,
+    id: _id,
+  });
 
   const _disabled = disabled || controlDisabled;
 

@@ -14,6 +14,8 @@ body.dark {
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 48%);
   --#{$variable-prefix}shadow-popup: rgb(0 0 0 / 24%) 0 0 20px 2px, rgb(0 0 0 / 32%) 0 4px 10px 0;
   --#{$variable-prefix}shadow-dialog: rgb(0 0 0 / 24%) 0 0 32px 2px, rgb(0 0 0 / 32%) 0 4px 12px 0;
+  --#{$variable-prefix}shadow-normal: 26%;
+  --#{$variable-prefix}shadow-darker: 40%;
 
   /** basic **/
   --#{$variable-prefix}text-color: rgb(205 205 205);

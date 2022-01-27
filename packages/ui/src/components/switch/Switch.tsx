@@ -7,22 +7,22 @@ import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState,
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
-  dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
+  dModel?: [boolean, Updater<boolean>?];
   dLabelPlacement?: 'left' | 'right';
   dStateContent?: [React.ReactNode, React.ReactNode];
   dLoading?: boolean;
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.LegacyRef<HTMLInputElement>;
+  dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DSwitch');
 export function DSwitch(props: DSwitchProps) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dLabelPlacement = 'right',
     dStateContent,
     dLoading = false,
@@ -53,7 +53,7 @@ export function DSwitch(props: DSwitchProps) {
     false,
     dModel,
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    { formControlName: dFormControlName, id: _id }
   );
 
   const disabled = dDisabled || gDisabled || controlDisabled;

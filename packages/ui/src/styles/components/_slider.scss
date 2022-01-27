@@ -1,0 +1,103 @@
+@include b(slider) {
+  position: relative;
+
+  margin: 0 7px;
+
+  padding: 8px 0;
+
+  cursor: pointer;
+
+  &:not(.is-disabled) {
+    @include e(input-wrapper) {
+      &:hover {
+        box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+      }
+    }
+  }
+
+  @include when(disabled) {
+    cursor: not-allowed;
+
+    filter: opacity(50%) saturate(50%) grayscale(50%);
+  }
+
+  @include e(thumb) {
+    position: relative;
+
+    width: 100%;
+    height: 4px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    border-radius: 2px;
+
+    background-color: var(--#{$variable-prefix}background-color-indicator);
+  }
+
+  @include e(active-thumb) {
+    position: absolute;
+    top: 0;
+
+    height: 100%;
+    border-radius: inherit;
+
+    background-color: var(--#{$variable-prefix}color-primary);
+
+    @include m(draggable) {
+      transition: transform 0.1s linear;
+
+      &:hover {
+        transform: scaleY(1.35);
+      }
+    }
+
+    @include when(focus) {
+      transform: scaleY(1.35);
+    }
+  }
+
+  @include e(input-wrapper) {
+    position: absolute;
+    top: 3px;
+    left: -7px;
+    z-index: 1;
+
+    width: 14px;
+    height: 14px;
+    border: solid 2px var(--#{$variable-prefix}color-primary);
+    border-radius: 50%;
+
+    background-color: var(--#{$variable-prefix}background-color);
+
+    transition: box-shadow 133ms linear;
+
+    @include when(focus) {
+      z-index: 5;
+
+      box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+    }
+  }
+
+  @include e(input) {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    appearance: none;
+    pointer-events: none;
+  }
+
+  @include e(tooltip) {
+    font-variant-numeric: tabular-nums;
+  }
+}

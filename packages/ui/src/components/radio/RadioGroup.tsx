@@ -16,8 +16,8 @@ export interface DRadioGroupContextData<T> {
 export const DRadioGroupContext = React.createContext<DRadioGroupContextData<any> | null>(null);
 
 export interface DRadioGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
-  dModel?: [T, Updater<T>?];
   dFormControlName?: string;
+  dModel?: [T, Updater<T>?];
   dName?: string;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
@@ -29,8 +29,8 @@ export interface DRadioGroupProps<T = unknown> extends React.HTMLAttributes<HTML
 const { COMPONENT_NAME } = generateComponentMate('DRadioGroup');
 export function DRadioGroup<T>(props: DRadioGroupProps<T>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dName,
     dDisabled = false,
     dType,
@@ -47,12 +47,9 @@ export function DRadioGroup<T>(props: DRadioGroupProps<T>) {
   const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
-  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T>(
-    null,
-    dModel,
-    onModelChange,
-    dFormControlName ? { formControlName: dFormControlName } : undefined
-  );
+  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T>(null, dModel, onModelChange, {
+    formControlName: dFormControlName,
+  });
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || controlDisabled;

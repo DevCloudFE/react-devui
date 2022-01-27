@@ -88,8 +88,8 @@ export function DCascader<T>(props: DCascaderMultipleProps<T>): React.ReactEleme
 export function DCascader<T>(props: DCascaderProps<T>): React.ReactElement;
 export function DCascader<T>(props: DCascaderProps<T>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dVisible,
     dOptions,
     dOptionRender = DEFAULT_PROPS.dOptionRender,
@@ -131,7 +131,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     dMultiple ? [] : null,
     dModel,
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    { formControlName: dFormControlName, id: _id }
   );
 
   const [rendered, setRendered] = useState(visible);

@@ -1,8 +1,9 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
 import React, { useCallback, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
 import { DInput, DInputAffix } from '../input';
@@ -51,7 +52,6 @@ export function DPagination(props: DPaginationProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const asyncCapture = useAsync();
   const [t] = useTranslation('DPagination');
 
   const [isChange, setIsChange] = useState(false);
@@ -65,10 +65,14 @@ export function DPagination(props: DPaginationProps) {
       _changeActive(active);
 
       setIsChange(true);
-      asyncCapture.setTimeout(() => setIsChange(false));
     },
-    [_changeActive, asyncCapture]
+    [_changeActive]
   );
+  useEffect(() => {
+    if (isChange) {
+      setIsChange(false);
+    }
+  }, [isChange]);
 
   const lastPage = Math.max(Math.ceil(dTotal / pageSize), 1);
   const iconSize = '0.9em';
