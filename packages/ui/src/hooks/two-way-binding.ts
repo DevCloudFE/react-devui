@@ -2,7 +2,7 @@
 import type { Updater as IUpdater } from './immer';
 
 import { freeze, produce } from 'immer';
-import { isEqual, isFunction, isNull, isUndefined } from 'lodash';
+import { isArray, isEqual, isFunction, isNull, isUndefined } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
@@ -21,6 +21,10 @@ export function useTwoWayBinding<T, S = T>(
     deepCompare?: boolean;
   }
 ) {
+  if (!isUndefined(input) && !isArray(input)) {
+    throw new Error('Please check `input` value');
+  }
+
   const [{ formInstance }] = useCustomContext(DFormContext);
   const [{ formGroupPath }] = useCustomContext(DFormGroupContext);
   const [{ updateFormItems, removeFormItems }] = useCustomContext(DFormItemContext);

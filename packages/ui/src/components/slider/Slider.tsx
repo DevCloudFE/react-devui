@@ -1,20 +1,11 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DPopupRef } from '../_popup';
 
-import { isEqual, isNumber, toNumber } from 'lodash';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { isArray, isNumber, toNumber } from 'lodash';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useRef } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTranslation,
-  useGeneralState,
-  useTwoWayBinding,
-  useAsync,
-  useThrottle,
-  useRefCallback,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralState, useTwoWayBinding, useAsync, useThrottle, useRefCallback } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
@@ -22,8 +13,12 @@ export interface DSliderBaseProps extends React.HTMLAttributes<HTMLDivElement> {
   dFormControlName?: string;
   dMax?: number;
   dMin?: number;
-  dStep?: number;
+  dStep?: number | null;
+  dMarks?: number | ({ value: number; label: React.ReactNode } | number)[];
+  dVertical?: boolean;
+  dReverse?: boolean;
   dDisabled?: boolean;
+  dCustomTooltip?: (value: number) => React.ReactNode;
 }
 
 export interface DSliderSingleProps extends DSliderBaseProps {
@@ -31,16 +26,18 @@ export interface DSliderSingleProps extends DSliderBaseProps {
   dRange?: false;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
+  dTooltipVisible?: boolean;
   onModelChange?: (value: number) => void;
 }
 
 export interface DSliderRangeProps extends DSliderBaseProps {
   dModel?: [[number, number], Updater<[number, number]>?];
   dRange: true;
-  dRangeDistance?: number;
+  dRangeMinDistance?: number;
   dRangeThumbDraggable?: boolean;
   dInputProps?: [React.InputHTMLAttributes<HTMLInputElement>?, React.InputHTMLAttributes<HTMLInputElement>?];
   dInputRef?: [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
+  dTooltipVisible?: [boolean?, boolean?];
   onModelChange?: (value: [number, number]) => void;
 }
 
@@ -49,8 +46,9 @@ export interface DSliderProps extends DSliderBaseProps {
   dModel?: DSliderSingleProps['dModel'] | DSliderRangeProps['dModel'];
   dInputProps?: DSliderSingleProps['dInputProps'] | DSliderRangeProps['dInputProps'];
   dInputRef?: DSliderSingleProps['dInputRef'] | DSliderRangeProps['dInputRef'];
+  dTooltipVisible?: DSliderSingleProps['dTooltipVisible'] | DSliderRangeProps['dTooltipVisible'];
   dRange?: boolean;
-  dRangeDistance?: number;
+  dRangeMinDistance?: number;
   dRangeThumbDraggable?: boolean;
   dDisabled?: boolean;
   onModelChange?: DSliderSingleProps['onModelChange'] | DSliderRangeProps['onModelChange'];
@@ -67,12 +65,17 @@ export function DSlider(props: DSliderProps) {
     dMax = 100,
     dMin = 0,
     dStep = 1,
+    dMarks,
     dInputProps,
     dInputRef,
+    dTooltipVisible,
     dRange = false,
-    dRangeDistance,
+    dRangeMinDistance,
     dRangeThumbDraggable = false,
+    dVertical = false,
+    dReverse = false,
     dDisabled = false,
+    dCustomTooltip,
     onModelChange,
     className,
     onMouseDown,
@@ -92,8 +95,6 @@ export function DSlider(props: DSliderProps) {
   const tooltipRightRef = useRef<DPopupRef>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
-
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
 
@@ -102,7 +103,7 @@ export function DSlider(props: DSliderProps) {
   const [focusDot, setFocusDot] = useState<'left' | 'right' | null>(null);
   const [mouseenterDot, setMouseenterDot] = useState<'left' | 'right' | null>(null);
   const [draggableDot, setDraggableDot] = useState<'left' | 'right' | null>(null);
-  const [thumbPoint, setThumbPoint] = useState<{ left: number; right: number; clientX: number } | null>(null);
+  const [thumbPoint, setThumbPoint] = useState<{ left: number; right: number; clientX: number; clientY: number } | null>(null);
 
   const [inputPropsLeft, inputPropsRight] = (dRange ? dInputProps ?? [] : [dInputProps]) as [
     React.InputHTMLAttributes<HTMLInputElement>?,
@@ -126,49 +127,92 @@ export function DSlider(props: DSliderProps) {
   const [valueLeft, valueRight = 0] = (dRange ? _value : [_value]) as [number, number?];
   const disabled = dDisabled || gDisabled || controlDisabled;
 
+  const [visibleLeft, visibleRight] = [
+    (dRange ? dTooltipVisible?.[0] : dTooltipVisible) ?? (mouseenterDot === 'left' ? true : !!(focusDot === 'left' || thumbPoint)),
+    (dRange ? dTooltipVisible?.[1] : undefined) ?? (mouseenterDot === 'right' ? true : !!(focusDot === 'right' || thumbPoint)),
+  ];
+
+  const getValue = useCallback(
+    (value: number, func: 'round' | 'ceil' | 'floor' = 'round') => {
+      let newValue: number | null = null;
+      if (dStep) {
+        const n = Math[func](value / dStep);
+        newValue = Math.min(dMax, Math.max(dMin, n * dStep));
+      }
+
+      if (isArray(dMarks)) {
+        let min = newValue ? Math.abs(newValue - value) : Infinity;
+        if (min > 0) {
+          for (const mark of dMarks) {
+            const v: number = isNumber(mark) ? mark : mark.value;
+            if (func === 'round' || (func === 'ceil' && v - value >= 0) || (func === 'floor' && v - value <= 0)) {
+              const offset = Math.abs(v - value);
+              if (offset < min) {
+                min = offset;
+                newValue = v;
+              }
+            }
+          }
+        }
+      }
+
+      return newValue ?? dMin;
+    },
+    [dMarks, dMax, dMin, dStep]
+  );
+
   const handleMove = useCallback(
     (e: { clientX: number; clientY: number }, isLeft?: boolean) => {
       isLeft = isLeft ?? focusDot === 'left';
       if (sliderEl) {
         const rect = sliderEl.getBoundingClientRect();
-
-        const offset = Math.min(rect.width, Math.max(0, e.clientX - rect.left));
-        const n = Math.round((dMax - dMin) * (offset / rect.width));
+        const newValue = getValue(
+          (dMax - dMin) *
+            (dVertical
+              ? (dReverse ? e.clientY - rect.top : rect.bottom - e.clientY) / rect.height
+              : (dReverse ? rect.right - e.clientX : e.clientX - rect.left) / rect.width)
+        );
 
         if (dRange) {
           changeValue((draft) => {
             const index = isLeft ? 0 : 1;
-            const isAdd = n - draft[index] > 0;
-            draft[index] = n;
-            if (isNumber(dRangeDistance) && Math.abs(draft[1] - draft[0]) < dRangeDistance) {
-              const _index = isLeft ? 1 : 0;
-              draft[_index] = draft[index] + (isAdd ? dRangeDistance : -dRangeDistance);
-              if (draft[_index] < dMin) {
-                draft[_index] = dMin;
-                draft[index] = dRangeDistance;
-              } else if (draft[_index] > dMax) {
-                draft[_index] = dMax;
-                draft[index] = dMax - dRangeDistance;
+            if (draft[index] !== newValue) {
+              const offset = newValue - draft[index];
+              const isAdd = offset > 0;
+              draft[index] = newValue;
+              if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
+                const _index = isLeft ? 1 : 0;
+                draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
+                if (draft[1] - draft[0] < dRangeMinDistance) {
+                  draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
+                }
               }
             }
           });
         } else {
-          changeValue(n);
+          changeValue(newValue);
         }
       }
     },
-    [changeValue, dMax, dMin, dRange, dRangeDistance, focusDot, sliderEl]
+    [changeValue, dMax, dMin, dRange, dRangeMinDistance, dReverse, dVertical, focusDot, getValue, sliderEl]
   );
 
   const handleThumbMove = useCallback(
     (e: { clientX: number; clientY: number }) => {
-      if (sliderEl && thumbPoint) {
+      if (dStep && thumbPoint && sliderEl) {
         const rect = sliderEl.getBoundingClientRect();
-
-        const n = Math.round((dMax - dMin) * ((e.clientX - thumbPoint.clientX) / rect.width));
+        const offset =
+          Math.round(
+            ((dMax - dMin) *
+              (dVertical
+                ? (dReverse ? e.clientY - thumbPoint.clientY : thumbPoint.clientY - e.clientY) / rect.height
+                : (dReverse ? thumbPoint.clientX - e.clientX : e.clientX - thumbPoint.clientX) / rect.width)) /
+              dStep
+          ) * dStep;
         const value: [number, number] = [0, 0];
         let index = -1;
-        for (const v of [thumbPoint.left + n, thumbPoint.right + n]) {
+
+        for (const v of [thumbPoint.left + offset, thumbPoint.right + offset]) {
           index += 1;
           const _index = index === 0 ? 1 : 0;
           if (v < dMin) {
@@ -187,7 +231,7 @@ export function DSlider(props: DSliderProps) {
         changeValue(value);
       }
     },
-    [changeValue, dMax, dMin, sliderEl, thumbPoint]
+    [changeValue, dMax, dMin, dReverse, dStep, dVertical, sliderEl, thumbPoint]
   );
 
   const handleMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
@@ -209,15 +253,19 @@ export function DSlider(props: DSliderProps) {
           if (dotLeftEl && dotRightEl) {
             const rectLeft = dotLeftEl.getBoundingClientRect();
             const rectRight = dotRightEl.getBoundingClientRect();
-            const offsetLeft = Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
-            const offsetRight = Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
+            const offsetLeft = dVertical
+              ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
+              : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
+            const offsetRight = dVertical
+              ? Math.abs(rectRight.bottom - rectRight.height / 2 - e.clientY)
+              : Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
 
             if (
               dRangeThumbDraggable &&
-              e.clientX > Math.min(rectLeft.right, rectRight.right) &&
-              e.clientX < Math.max(rectLeft.left, rectRight.left)
+              (dVertical ? e.clientY < Math.max(rectLeft.top, rectRight.top) : e.clientX > Math.min(rectLeft.right, rectRight.right)) &&
+              (dVertical ? e.clientY > Math.min(rectLeft.bottom, rectRight.bottom) : e.clientX < Math.max(rectLeft.left, rectRight.left))
             ) {
-              setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX });
+              setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX, clientY: e.clientY });
             } else {
               if (offsetRight <= offsetLeft) {
                 handle(false);
@@ -231,20 +279,31 @@ export function DSlider(props: DSliderProps) {
         }
       }
     },
-    [dRange, dRangeThumbDraggable, disabled, dotLeftEl, dotRightEl, handleMove, onMouseDown, valueLeft, valueRight]
+    [dRange, dRangeThumbDraggable, dVertical, disabled, dotLeftEl, dotRightEl, handleMove, onMouseDown, valueLeft, valueRight]
   );
 
   const handleChange = useCallback(
     (e, isLeft = true) => {
       if (dRange) {
+        const index = isLeft ? 0 : 1;
+        const newValue = toNumber(e.currentTarget.value);
         changeValue((draft) => {
-          isLeft ? (draft[0] = toNumber(e.currentTarget.value)) : (draft[1] = toNumber(e.currentTarget.value));
+          const offset = newValue - draft[index];
+          const isAdd = offset > 0;
+          draft[index] = newValue;
+          if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
+            const _index = isLeft ? 1 : 0;
+            draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
+            if (draft[1] - draft[0] < dRangeMinDistance) {
+              draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
+            }
+          }
         });
       } else {
         changeValue(toNumber(e.currentTarget.value));
       }
     },
-    [changeValue, dRange]
+    [changeValue, dRange, dRangeMinDistance, getValue]
   );
 
   const handleFocus = useCallback(
@@ -296,6 +355,19 @@ export function DSlider(props: DSliderProps) {
         },
       });
 
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+        next: (e) => {
+          e.preventDefault();
+
+          clientY = e.touches[0].clientY;
+          clientX = e.touches[0].clientX;
+
+          throttleByAnimationFrame.run(() => {
+            handleMove({ clientX, clientY });
+          });
+        },
+      });
+
       asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
@@ -329,6 +401,19 @@ export function DSlider(props: DSliderProps) {
         },
       });
 
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+        next: (e) => {
+          e.preventDefault();
+
+          clientY = e.touches[0].clientY;
+          clientX = e.touches[0].clientX;
+
+          throttleByAnimationFrame.run(() => {
+            handleThumbMove({ clientX, clientY });
+          });
+        },
+      });
+
       asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
@@ -347,103 +432,169 @@ export function DSlider(props: DSliderProps) {
     };
   }, [asyncCapture, handleThumbMove, throttleByAnimationFrame, thumbPoint]);
 
+  const marks = useMemo(() => {
+    const marks: React.ReactNode[] = [];
+    const getNode = (value: number, label: React.ReactNode = null) => {
+      let percentage = (value / (dMax - dMin)) * 100;
+      if (dReverse) {
+        percentage = 100 - percentage;
+      }
+      marks.push(
+        <div
+          key={value}
+          className={getClassName(`${dPrefix}slider__mark`, {
+            [`${dPrefix}slider__mark--hidden`]: value === dMin || value === dMax,
+          })}
+          style={{
+            left: dVertical ? undefined : `${percentage}%`,
+            bottom: dVertical ? `${percentage}%` : undefined,
+          }}
+        >
+          {label && (
+            <div
+              key={value}
+              className={getClassName(`${dPrefix}slider__mark-label`, {
+                'is-active': dRange
+                  ? value <= Math.max(valueLeft, valueRight) && value >= Math.min(valueLeft, valueRight)
+                  : value <= valueLeft,
+              })}
+            >
+              {label}
+            </div>
+          )}
+        </div>
+      );
+    };
+    if (isArray(dMarks)) {
+      dMarks.forEach((mark) => {
+        const value = isNumber(mark) ? mark : mark.value;
+        getNode(value, isNumber(mark) ? null : mark.label);
+      });
+    } else if (isNumber(dMarks)) {
+      for (let index = 0; index < (dMax - dMin) / dMarks; index++) {
+        const value = index * dMarks;
+        getNode(value);
+      }
+    }
+
+    return marks;
+  }, [dMarks, dMax, dMin, dPrefix, dRange, dReverse, dVertical, valueLeft, valueRight]);
+
   return (
     <div
       {...restProps}
       ref={sliderRef}
-      className={getClassName(className, `${dPrefix}slider`, {
+      className={getClassName(className, `${dPrefix}slider`, `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`, {
         'is-disabled': disabled,
       })}
       onMouseDown={handleMouseDown}
     >
-      <div className={`${dPrefix}slider__thumb`}>
+      <div
+        className={getClassName(`${dPrefix}slider__thumb`, {
+          [`${dPrefix}slider__thumb--reverse `]: dReverse,
+        })}
+      >
         <div
           className={getClassName(`${dPrefix}slider__active-thumb`, {
             [`${dPrefix}slider__active-thumb--draggable`]: dRangeThumbDraggable,
             'is-focus': thumbPoint,
           })}
-          style={{
-            left: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
-            right: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
-          }}
+          style={
+            dVertical
+              ? {
+                  bottom: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  top: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                }
+              : {
+                  left: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  right: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                }
+          }
         ></div>
-      </div>
-      <DTooltip
-        ref={tooltipLeftRef}
-        dVisible={[mouseenterDot === 'left' ? true : !!(focusDot === 'left' || thumbPoint)]}
-        dTitle={<span className={`${dPrefix}slider__tooltip`}>{valueLeft}</span>}
-        onVisibleChange={handleVisibleChange}
-      >
-        <div
-          ref={dotLeftRef}
-          className={getClassName(`${dPrefix}slider__input-wrapper`, {
-            'is-focus': focusDot === 'left',
-          })}
-          style={{
-            left: `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)`,
-          }}
-        >
-          <input
-            {...inputPropsLeft}
-            {...ariaAttribute}
-            ref={inputRefLeft}
-            id={idLeft}
-            className={getClassName(inputPropsLeft?.className, `${dPrefix}slider__input`)}
-            type="range"
-            value={valueLeft}
-            disabled={disabled}
-            max={dMax}
-            min={dMin}
-            step={dStep}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          ></input>
-        </div>
-      </DTooltip>
-      {dRange && (
         <DTooltip
-          ref={tooltipRightRef}
-          dVisible={[mouseenterDot === 'right' ? true : !!(focusDot === 'right' || thumbPoint)]}
-          dTitle={<span className={`${dPrefix}slider__tooltip`}>{valueRight}</span>}
-          onVisibleChange={(visible) => {
-            handleVisibleChange(visible, false);
-          }}
+          ref={tooltipLeftRef}
+          dVisible={[visibleLeft]}
+          dTitle={dCustomTooltip ? dCustomTooltip(valueLeft) : valueLeft}
+          dPlacement={dVertical ? 'right' : 'top'}
+          onVisibleChange={handleVisibleChange}
         >
           <div
-            ref={dotRightRef}
+            ref={dotLeftRef}
             className={getClassName(`${dPrefix}slider__input-wrapper`, {
-              'is-focus': focusDot === 'right',
+              'is-focus': focusDot === 'left',
             })}
             style={{
-              left: `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)`,
+              left: dVertical ? undefined : `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)`,
+              bottom: dVertical ? `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)` : undefined,
             }}
           >
             <input
-              {...inputPropsRight}
+              {...inputPropsLeft}
               {...ariaAttribute}
-              ref={inputRefRight}
-              id={idRight}
-              className={getClassName(inputPropsRight?.className, `${dPrefix}slider__input`)}
+              ref={inputRefLeft}
+              id={idLeft}
+              className={getClassName(inputPropsLeft?.className, `${dPrefix}slider__input`)}
               type="range"
-              value={valueRight}
+              value={valueLeft}
               disabled={disabled}
               max={dMax}
               min={dMin}
-              step={dStep}
-              onChange={(e) => {
-                handleChange(e, false);
-              }}
-              onFocus={(e) => {
-                handleFocus(e, false);
-              }}
-              onBlur={(e) => {
-                handleBlur(e, false);
-              }}
+              step={dStep ?? undefined}
+              aria-orientation={dVertical ? 'vertical' : 'horizontal'}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             ></input>
           </div>
         </DTooltip>
-      )}
+        {dRange && (
+          <DTooltip
+            ref={tooltipRightRef}
+            dVisible={[visibleRight]}
+            dTitle={dCustomTooltip ? dCustomTooltip(valueRight) : valueRight}
+            dPlacement={dVertical ? 'right' : 'top'}
+            onVisibleChange={(visible) => {
+              handleVisibleChange(visible, false);
+            }}
+          >
+            <div
+              ref={dotRightRef}
+              className={getClassName(`${dPrefix}slider__input-wrapper`, {
+                'is-focus': focusDot === 'right',
+              })}
+              style={{
+                left: dVertical ? undefined : `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)`,
+                bottom: dVertical ? `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)` : undefined,
+              }}
+            >
+              <input
+                {...inputPropsRight}
+                {...ariaAttribute}
+                ref={inputRefRight}
+                id={idRight}
+                className={getClassName(inputPropsRight?.className, `${dPrefix}slider__input`)}
+                type="range"
+                value={valueRight}
+                disabled={disabled}
+                max={dMax}
+                min={dMin}
+                step={dStep ?? undefined}
+                aria-orientation={dVertical ? 'vertical' : 'horizontal'}
+                onChange={(e) => {
+                  handleChange(e, false);
+                }}
+                onFocus={(e) => {
+                  handleFocus(e, false);
+                }}
+                onBlur={(e) => {
+                  handleBlur(e, false);
+                }}
+              ></input>
+            </div>
+          </DTooltip>
+        )}
+      </div>
+      {marks}
     </div>
   );
 }

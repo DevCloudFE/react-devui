@@ -1,10 +1,6 @@
 @include b(slider) {
   position: relative;
 
-  margin: 0 7px;
-
-  padding: 8px 0;
-
   cursor: pointer;
 
   &:not(.is-disabled) {
@@ -21,43 +17,150 @@
     filter: opacity(50%) saturate(50%) grayscale(50%);
   }
 
+  @include m(horizontal) {
+    width: calc(100% - 14px);
+    margin: 0 7px;
+
+    padding: 8px 0;
+
+    @include e(thumb) {
+      width: 100%;
+      height: 4px;
+    }
+
+    @include e(active-thumb) {
+      top: 0;
+
+      height: 100%;
+
+      @include when(focus) {
+        transform: scaleY(1.35);
+      }
+
+      @include m(draggable) {
+        &:hover {
+          transform: scaleY(1.35);
+        }
+      }
+    }
+
+    @include e(input-wrapper) {
+      top: -5px;
+    }
+
+    @include e(mark) {
+      top: 9px;
+    }
+
+    @include e(mark-label) {
+      top: 6px;
+      left: 1px;
+
+      transform: translateX(-50%);
+    }
+  }
+
+  @include m(vertical) {
+    display: inline-block;
+    height: calc(100% - 14px);
+    margin: 7px 0;
+
+    padding: 0 8px;
+
+    @include e(thumb) {
+      width: 4px;
+      height: 100%;
+    }
+
+    @include e(active-thumb) {
+      left: 0;
+
+      width: 100%;
+
+      @include when(focus) {
+        transform: scaleX(1.35);
+      }
+
+      @include m(draggable) {
+        &:hover {
+          transform: scaleX(1.35);
+        }
+      }
+    }
+
+    @include e(input-wrapper) {
+      left: -5px;
+    }
+
+    @include e(mark) {
+      left: 9px;
+    }
+
+    @include e(mark-label) {
+      top: 1px;
+      left: 10px;
+
+      transform: translateY(-50%);
+    }
+  }
+
   @include e(thumb) {
     position: relative;
 
-    width: 100%;
-    height: 4px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 2px;
 
     background-color: var(--#{$variable-prefix}background-color-indicator);
+
+    @include m(reverse) {
+      transform: rotate(180deg);
+    }
   }
 
   @include e(active-thumb) {
     position: absolute;
-    top: 0;
 
-    height: 100%;
     border-radius: inherit;
 
     background-color: var(--#{$variable-prefix}color-primary);
 
     @include m(draggable) {
       transition: transform 0.1s linear;
-
-      &:hover {
-        transform: scaleY(1.35);
-      }
     }
+  }
 
-    @include when(focus) {
-      transform: scaleY(1.35);
+  @include e(mark) {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    background-color: #fff;
+
+    @include m(hidden) {
+      background-color: transparent;
+    }
+  }
+
+  @include e(mark-label) {
+    position: absolute;
+
+    font-size: 0.85em;
+
+    opacity: 0.5;
+
+    transition: opacity 0.1s linear;
+
+    @include when(active) {
+      opacity: 1;
     }
   }
 
   @include e(input-wrapper) {
     position: absolute;
-    top: 3px;
-    left: -7px;
+
     z-index: 1;
 
     width: 14px;
@@ -95,9 +198,5 @@
 
     appearance: none;
     pointer-events: none;
-  }
-
-  @include e(tooltip) {
-    font-variant-numeric: tabular-nums;
   }
 }
