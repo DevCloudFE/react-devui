@@ -4,6 +4,7 @@ import type { DPopupRef } from '../_popup';
 import { isArray, isNumber, toNumber } from 'lodash';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useRef } from 'react';
+import { merge } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useGeneralState, useTwoWayBinding, useAsync, useThrottle, useRefCallback } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -363,7 +364,10 @@ export function DSlider(props: DSliderProps) {
       let clientX: number;
       let clientY: number;
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
+      merge(
+        asyncGroup.fromEvent<MouseEvent>(window, 'touchend ', { capture: true, passive: false }),
+        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true })
+      ).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -409,7 +413,10 @@ export function DSlider(props: DSliderProps) {
       let clientX: number;
       let clientY: number;
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
+      merge(
+        asyncGroup.fromEvent<MouseEvent>(window, 'touchend ', { capture: true, passive: false }),
+        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true })
+      ).subscribe({
         next: (e) => {
           e.preventDefault();
 
