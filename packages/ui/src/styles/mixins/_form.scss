@@ -1,6 +1,7 @@
+$form-item-selector: '.#{$variable-prefix}form-item';
+
 @mixin form-validate() {
   $selector: &;
-  $form-item-selector: '.#{$variable-prefix}form-item';
 
   @at-root {
     #{$form-item-selector} {

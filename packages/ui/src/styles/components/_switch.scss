@@ -1,11 +1,11 @@
 /* stylelint-disable declaration-property-value-allowed-list */
 @keyframes switch-focus {
   0% {
-    box-shadow: 0 0 0 8px rgb(var(--#{$variable-prefix}color-primary-rgb) / 16%);
+    box-shadow: 0 0 0 8px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
   }
 
   100% {
-    box-shadow: 0 0 0 10px rgb(var(--#{$variable-prefix}color-primary-rgb) / 24%);
+    box-shadow: 0 0 0 10px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-darker));
   }
 }
 

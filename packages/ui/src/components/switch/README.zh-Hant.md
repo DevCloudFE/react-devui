@@ -23,6 +23,6 @@ title: 开关
 | dLoading | 是否加载中 | boolean | false |
 | dDisabled | 是否禁用 | boolean | false |
 | dInputProps | 应用于 `input` 元素的属性 | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
-| dInputRef | 将 `ref` 传递给 `input` 元素 | React.LegacyRef\<HTMLInputElement\>  | - |
+| dInputRef | 将 `ref` 传递给 `input` 元素 | React.Ref\<HTMLInputElement\>  | - |
 | onModelChange | 开/关状态改变的回调 | `(checked: boolean) => void` | - |
 <!-- prettier-ignore-end -->

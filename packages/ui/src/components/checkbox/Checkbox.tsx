@@ -7,21 +7,21 @@ import { generateComponentMate, getClassName } from '../../utils';
 import { DCheckboxGroupContext } from './CheckboxGroup';
 
 export interface DCheckboxProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
-  dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
+  dModel?: [boolean, Updater<boolean>?];
   dIndeterminate?: boolean;
   dDisabled?: boolean;
   dValue?: T;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.LegacyRef<HTMLInputElement>;
+  dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCheckbox');
 export function DCheckbox<T>(props: DCheckboxProps<T>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dIndeterminate = false,
     dDisabled = false,
     dValue,
@@ -51,7 +51,7 @@ export function DCheckbox<T>(props: DCheckboxProps<T>) {
     false,
     dModel ?? (dIndeterminate ? [undefined] : inGroup ? [checkboxGroupValue?.includes(dValue) ?? false] : undefined),
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    { formControlName: dFormControlName, id: _id }
   );
 
   const disabled = dDisabled || gDisabled || controlDisabled;

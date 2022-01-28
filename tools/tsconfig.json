@@ -2,10 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "sourceMap": false,
-    "declaration": false,
-    "declarationMap": false,
     "module": "commonjs",
-    "target": "es2015",
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts"],

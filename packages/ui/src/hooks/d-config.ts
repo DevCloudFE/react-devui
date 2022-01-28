@@ -38,6 +38,7 @@ import type {
   DRadioGroupProps,
   DSelectProps,
   DSeparatorProps,
+  DSliderProps,
   DSwitchProps,
   DTabProps,
   DTabsProps,
@@ -100,6 +101,7 @@ export interface DComponentConfig {
   DRadioGroup: DRadioGroupProps;
   DSelect: DSelectProps;
   DSeparator: DSeparatorProps;
+  DSlider: DSliderProps;
   DSwitch: DSwitchProps;
   DTab: DTabProps;
   DTabs: DTabsProps;

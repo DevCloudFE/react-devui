@@ -74,7 +74,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
     [theme, dPrefix, onClick, buttonType, wave]
   );
 
-  const buttonIcon = (loading: boolean, ref?: React.LegacyRef<HTMLSpanElement>) => (
+  const buttonIcon = (loading: boolean, ref?: React.Ref<HTMLSpanElement>) => (
     <span
       ref={ref}
       className={getClassName(`${dPrefix}button__icon`, {

@@ -77,8 +77,8 @@ export function DSelect<T>(props: DSelectMultipleProps<T>): React.ReactElement;
 export function DSelect<T>(props: DSelectProps<T>): React.ReactElement;
 export function DSelect<T>(props: DSelectProps<T>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dVisible,
     dOptions,
     dOptionRender = DEFAULT_PROPS.dOptionRender,
@@ -123,7 +123,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
     dMultiple ? [] : null,
     dModel,
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    { formControlName: dFormControlName, id: _id }
   );
 
   const [rendered, setRendered] = useState(visible);

@@ -7,20 +7,20 @@ import { generateComponentMate, getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
 export interface DRadioProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
-  dModel?: [boolean, Updater<boolean>?];
   dFormControlName?: string;
+  dModel?: [boolean, Updater<boolean>?];
   dDisabled?: boolean;
   dValue?: T;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.LegacyRef<HTMLInputElement>;
+  dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRadio');
 export function DRadio<T>(props: DRadioProps<T>) {
   const {
-    dModel,
     dFormControlName,
+    dModel,
     dDisabled = false,
     dValue,
     dInputProps,
@@ -49,7 +49,7 @@ export function DRadio<T>(props: DRadioProps<T>) {
     false,
     dModel ?? (inGroup ? [radioGroupValue === dValue] : undefined),
     onModelChange,
-    dFormControlName ? { formControlName: dFormControlName, id: _id } : undefined
+    { formControlName: dFormControlName, id: _id }
   );
 
   const disabled = dDisabled || gDisabled || controlDisabled;

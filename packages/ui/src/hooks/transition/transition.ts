@@ -108,11 +108,6 @@ export function useDTransition(props: DTransitionProps) {
   };
 
   useLayoutEffect(() => {
-    transition();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startEnterTransition]);
-
-  useEffect(() => {
     if (!dataRef.current.hasfirstRun) {
       if (!dSkipFirst) {
         dataRef.current.hasfirstRun = true;
@@ -128,12 +123,10 @@ export function useDTransition(props: DTransitionProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl]);
 
-  useEffect(() => {
-    if (dVisible !== dataRef.current.preVisible) {
-      prepareTransition();
-    }
+  useLayoutEffect(() => {
+    transition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dVisible]);
+  }, [startEnterTransition]);
 
   useLayoutEffect(() => {
     if (!hidden && dEl && !dataRef.current.elRendered) {
@@ -142,6 +135,13 @@ export function useDTransition(props: DTransitionProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, hidden]);
+
+  useEffect(() => {
+    if (dVisible !== dataRef.current.preVisible) {
+      prepareTransition();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dVisible]);
 
   return hidden;
 }

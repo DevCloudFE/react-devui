@@ -2,8 +2,8 @@
 import type { Updater as IUpdater } from './immer';
 
 import { freeze, produce } from 'immer';
-import { isFunction, isNull, isUndefined } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isArray, isEqual, isFunction, isNull, isUndefined } from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
 import { useCustomContext } from './context';
@@ -17,13 +17,19 @@ export function useTwoWayBinding<T, S = T>(
   onValueChange?: (value: any) => void,
   opt?: {
     id?: string;
-    formControlName: string;
+    formControlName?: string;
+    deepCompare?: boolean;
   }
 ) {
+  if (!isUndefined(input) && !isArray(input)) {
+    throw new Error('Please check `input` value');
+  }
+
   const [{ formInstance }] = useCustomContext(DFormContext);
   const [{ formGroupPath }] = useCustomContext(DFormGroupContext);
   const [{ updateFormItems, removeFormItems }] = useCustomContext(DFormItemContext);
   const formControlName = opt?.formControlName;
+  const deepCompare = opt?.deepCompare ?? false;
 
   const identity = useStateBackflow(updateFormItems, removeFormItems, formControlName, opt?.id);
 
@@ -59,23 +65,29 @@ export function useTwoWayBinding<T, S = T>(
   const value = isUndefined(input) ? autoValue : input[0];
 
   const currentValue = formControl ? formControl.value : value;
+  const dataRef = useRef({
+    preValue: currentValue,
+  });
+  dataRef.current.preValue = currentValue;
 
   const changeValue = useCallback(
     (updater: any) => {
-      const val = isFunction(updater) ? produce(currentValue, updater) : freeze(updater);
-
-      if (formControl) {
-        formControl.markAsDirty(true);
-        formControl.setValue(val);
-        onValueChange?.(val);
-        formInstance?.updateForm();
-      } else {
-        setValue?.(val);
-        setAutoValue(val);
-        onValueChange?.(val);
+      const val = isFunction(updater) ? produce(dataRef.current.preValue, updater) : freeze(updater);
+      const shouldUpdate = deepCompare ? !isEqual(dataRef.current.preValue, val) : !Object.is(dataRef.current.preValue, val);
+      if (shouldUpdate) {
+        if (formControl) {
+          formControl.markAsDirty(true);
+          formControl.setValue(val);
+          onValueChange?.(val);
+          formInstance?.updateForm();
+        } else {
+          setValue?.(val);
+          setAutoValue(val);
+          onValueChange?.(val);
+        }
       }
     },
-    [currentValue, formControl, formInstance, onValueChange, setValue]
+    [deepCompare, formControl, formInstance, onValueChange, setValue]
   );
 
   const res = useMemo<

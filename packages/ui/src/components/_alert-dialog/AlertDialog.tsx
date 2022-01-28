@@ -5,7 +5,7 @@ import { useAsync } from '../../hooks';
 export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dHidden: boolean;
   dDuration: number;
-  dDialogRef?: React.LegacyRef<HTMLDivElement>;
+  dDialogRef?: React.Ref<HTMLDivElement>;
   onClose?: () => void;
 }
 

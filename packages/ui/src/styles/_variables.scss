@@ -45,6 +45,8 @@ $themes: (
   --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}shadow-popup: rgb(0 0 0 / 6%) 0 0 20px 2px, rgb(0 0 0 / 10%) 0 4px 10px 0;
   --#{$variable-prefix}shadow-dialog: rgb(0 0 0 / 6%) 0 0 32px 2px, rgb(0 0 0 / 10%) 0 4px 12px 0;
+  --#{$variable-prefix}shadow-normal: 16%;
+  --#{$variable-prefix}shadow-darker: 26%;
 
   /** basic **/
   --#{$variable-prefix}text-color: rgb(33 37 41);
