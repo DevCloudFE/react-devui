@@ -79,6 +79,7 @@ export function DSlider(props: DSliderProps) {
     onModelChange,
     className,
     onMouseDown,
+    onTouchStart,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -234,6 +235,48 @@ export function DSlider(props: DSliderProps) {
     [changeValue, dMax, dMin, dReverse, dStep, dVertical, sliderEl, thumbPoint]
   );
 
+  const startDrag = useCallback(
+    (e: { clientX: number; clientY: number }) => {
+      const handle = (isLeft = true) => {
+        const el = isLeft ? dotLeftEl : dotRightEl;
+        if (el) {
+          handleMove(e, isLeft);
+          setDraggableDot(isLeft ? 'left' : 'right');
+          (el.firstElementChild as HTMLElement).focus({ preventScroll: true });
+        }
+      };
+      if (dRange) {
+        if (dotLeftEl && dotRightEl) {
+          const rectLeft = dotLeftEl.getBoundingClientRect();
+          const rectRight = dotRightEl.getBoundingClientRect();
+          const offsetLeft = dVertical
+            ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
+            : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
+          const offsetRight = dVertical
+            ? Math.abs(rectRight.bottom - rectRight.height / 2 - e.clientY)
+            : Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
+
+          if (
+            dRangeThumbDraggable &&
+            (dVertical ? e.clientY < Math.max(rectLeft.top, rectRight.top) : e.clientX > Math.min(rectLeft.right, rectRight.right)) &&
+            (dVertical ? e.clientY > Math.min(rectLeft.bottom, rectRight.bottom) : e.clientX < Math.max(rectLeft.left, rectRight.left))
+          ) {
+            setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX, clientY: e.clientY });
+          } else {
+            if (offsetRight <= offsetLeft) {
+              handle(false);
+            } else {
+              handle(true);
+            }
+          }
+        }
+      } else {
+        handle(true);
+      }
+    },
+    [dRange, dRangeThumbDraggable, dVertical, dotLeftEl, dotRightEl, handleMove, valueLeft, valueRight]
+  );
+
   const handleMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (e) => {
       onMouseDown?.(e);
@@ -241,45 +284,18 @@ export function DSlider(props: DSliderProps) {
       if (e.button === 0 && !disabled) {
         e.preventDefault();
 
-        const handle = (isLeft = true) => {
-          const el = isLeft ? dotLeftEl : dotRightEl;
-          if (el) {
-            handleMove(e, isLeft);
-            setDraggableDot(isLeft ? 'left' : 'right');
-            (el.firstElementChild as HTMLElement).focus({ preventScroll: true });
-          }
-        };
-        if (dRange) {
-          if (dotLeftEl && dotRightEl) {
-            const rectLeft = dotLeftEl.getBoundingClientRect();
-            const rectRight = dotRightEl.getBoundingClientRect();
-            const offsetLeft = dVertical
-              ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
-              : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
-            const offsetRight = dVertical
-              ? Math.abs(rectRight.bottom - rectRight.height / 2 - e.clientY)
-              : Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
-
-            if (
-              dRangeThumbDraggable &&
-              (dVertical ? e.clientY < Math.max(rectLeft.top, rectRight.top) : e.clientX > Math.min(rectLeft.right, rectRight.right)) &&
-              (dVertical ? e.clientY > Math.min(rectLeft.bottom, rectRight.bottom) : e.clientX < Math.max(rectLeft.left, rectRight.left))
-            ) {
-              setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX, clientY: e.clientY });
-            } else {
-              if (offsetRight <= offsetLeft) {
-                handle(false);
-              } else {
-                handle(true);
-              }
-            }
-          }
-        } else {
-          handle(true);
-        }
+        startDrag(e);
       }
     },
-    [dRange, dRangeThumbDraggable, dVertical, disabled, dotLeftEl, dotRightEl, handleMove, onMouseDown, valueLeft, valueRight]
+    [disabled, onMouseDown, startDrag]
+  );
+  const handleTouchStart = useCallback<React.TouchEventHandler<HTMLDivElement>>(
+    (e) => {
+      onTouchStart?.(e);
+
+      startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+    },
+    [onTouchStart, startDrag]
   );
 
   const handleChange = useCallback(
@@ -488,6 +504,7 @@ export function DSlider(props: DSliderProps) {
         'is-disabled': disabled,
       })}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       <div
         className={getClassName(`${dPrefix}slider__thumb`, {
