@@ -4,7 +4,6 @@ import type { DPopupRef } from '../_popup';
 import { isArray, isNumber, toNumber } from 'lodash';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useRef } from 'react';
-import { merge } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useGeneralState, useTwoWayBinding, useAsync, useThrottle, useRefCallback } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -81,6 +80,7 @@ export function DSlider(props: DSliderProps) {
     className,
     onMouseDown,
     onTouchStart,
+    onTouchEnd,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -298,6 +298,15 @@ export function DSlider(props: DSliderProps) {
     },
     [onTouchStart, startDrag]
   );
+  const handleTouchEnd = useCallback<React.TouchEventHandler<HTMLDivElement>>(
+    (e) => {
+      onTouchEnd?.(e);
+
+      setDraggableDot(null);
+      setThumbPoint(null);
+    },
+    [onTouchEnd]
+  );
 
   const handleChange = useCallback(
     (e, isLeft = true) => {
@@ -364,10 +373,7 @@ export function DSlider(props: DSliderProps) {
       let clientX: number;
       let clientY: number;
 
-      merge(
-        asyncGroup.fromEvent<MouseEvent>(window, 'touchend ', { capture: true, passive: false }),
-        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true })
-      ).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -413,10 +419,7 @@ export function DSlider(props: DSliderProps) {
       let clientX: number;
       let clientY: number;
 
-      merge(
-        asyncGroup.fromEvent<MouseEvent>(window, 'touchend ', { capture: true, passive: false }),
-        asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true })
-      ).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -512,6 +515,7 @@ export function DSlider(props: DSliderProps) {
       })}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div
         className={getClassName(`${dPrefix}slider__thumb`, {
