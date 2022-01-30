@@ -20,6 +20,7 @@ export interface DVirtualScrollProps<T> extends React.HTMLAttributes<HTMLElement
   dPaddingSize?: number;
   dList: T[];
   dNestedKey?: string;
+  dNestedAsItem?: boolean;
   dCanSelectOption: (option: T) => boolean;
   dCompareOption: (a: T, b: T) => boolean;
   dItemRender: (item: T, props: DItemRenderProps) => React.ReactNode;
@@ -39,6 +40,7 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     dPaddingSize = 0,
     dList,
     dNestedKey,
+    dNestedAsItem = false,
     dCanSelectOption,
     dCompareOption,
     dItemRender,
@@ -109,6 +111,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
     let skipCount = 0;
     let renderCount = 0;
     const loop = (arr: T[]) => {
+      let skipNestedItem = 0;
+      const size = !dNestedAsItem && dNestedKey ? arr.length - arr.filter((item) => isArray(item[dNestedKey])).length : arr.length;
       const list: React.ReactNode[] = [];
       if (arr.length === 0) {
         if (dEmpty) {
@@ -132,10 +136,24 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
           }
           const shouldRender = count > startCount;
           if (dNestedKey && isArray(arr[index][dNestedKey])) {
+            if (!dNestedAsItem) {
+              skipNestedItem += 1;
+            }
             const children = loop(arr[index][dNestedKey] as T[]);
             if (shouldRender || children.length > 0) {
               renderCount += 1;
-              list.push(dItemRender(arr[index], { children }));
+              list.push(
+                dItemRender(
+                  arr[index],
+                  dNestedAsItem
+                    ? {
+                        'aria-setsize': size,
+                        'aria-posinset': index + 1,
+                        children,
+                      }
+                    : { children }
+                )
+              );
             } else {
               skipCount += 1;
             }
@@ -144,8 +162,8 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
               renderCount += 1;
               list.push(
                 dItemRender(arr[index], {
-                  'aria-setsize': arr.length,
-                  'aria-posinset': index + 1,
+                  'aria-setsize': size,
+                  'aria-posinset': index + 1 - skipNestedItem,
                 })
               );
             } else {
@@ -164,7 +182,20 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
         { [dScrollY ? 'height' : 'width']: dItemSize * (flatOptions.length - skipCount - renderCount) },
       ],
     };
-  }, [dEmpty, dItemRender, dItemSize, dList, dNestedKey, dPaddingSize, dScrollY, dSize, flatOptions.length, listEl]);
+  }, [
+    dEmpty,
+    dItemRender,
+    dItemSize,
+    dList,
+    dNestedAsItem,
+    dNestedKey,
+    dPaddingSize,
+    dScrollY,
+    dSize,
+    flatOptions.length,
+    listEl?.scrollLeft,
+    listEl?.scrollTop,
+  ]);
   const [{ list, fillSize }, _updateList] = useState(() => getStates());
   const updateList = useCallback(() => {
     _updateList(getStates());
