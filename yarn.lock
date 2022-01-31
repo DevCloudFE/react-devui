@@ -11756,10 +11756,10 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
-scrollview-resize@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/scrollview-resize/-/scrollview-resize-1.0.1.tgz#43bab6a913f876ec0fdd8f770f60a61257ffdb3f"
-  integrity sha512-JECJMDHquNalxr5uRedtW8Dt280M9kYdAZF14CgnwddbC8dEy1mbOtK4QRnI/vGwml8SS2cmBz4HuW5uO/fmmQ==
+scrollview-resize@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/scrollview-resize/-/scrollview-resize-1.0.2.tgz#4ee365b8a838b2f95083dbb9e6905990e25c9c1a"
+  integrity sha512-9Qm+hKHAOhDfDBODwVQPGOPZ2uIGqzsl+SuNex8t0rLoc6hD2vG0GTGJGYrAbRIG/aFq+hKNM28ljrgIs4b2pQ==
 
 secure-compare@3.0.1:
   version "3.0.1"
