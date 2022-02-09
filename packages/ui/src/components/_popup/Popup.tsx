@@ -1,4 +1,4 @@
-import type { DElementSelector } from '../../hooks/element-ref';
+import type { DElementSelector } from '../../hooks/element';
 import type { DTransitionStateList } from '../../hooks/transition';
 import type { DPlacement } from '../../utils/position';
 
@@ -10,7 +10,7 @@ import { filter } from 'rxjs';
 import {
   usePrefixConfig,
   useAsync,
-  useRefSelector,
+  useElement,
   useImmer,
   useRefCallback,
   useDTransition,
@@ -125,7 +125,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   }, [dVisible]);
   const popupRendered = dVisible && rendered;
 
-  const triggerRef = useRefSelector(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${uniqueId}"]` : dTriggerEl);
+  const triggerEl = useElement(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${uniqueId}"]` : dTriggerEl);
 
   const isFixed = isUndefined(dContainer);
   const handleContainer = useCallback(() => {
@@ -138,11 +138,11 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       }
       return el;
     } else if (dContainer === false) {
-      return triggerRef.current?.parentElement ?? null;
+      return triggerEl?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, dPrefix, isFixed, triggerRef]);
-  const containerRef = useRefSelector(dContainer, handleContainer);
+  }, [dContainer, dPrefix, isFixed, triggerEl]);
+  const containerEl = useElement(dContainer, handleContainer);
 
   const placement = dAutoPlace ? autoPlacement : dPlacement;
 
@@ -160,14 +160,14 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   );
 
   const updatePosition = useCallback(() => {
-    if (popupEl && triggerRef.current && containerRef.current) {
+    if (popupEl && triggerEl && containerEl) {
       if (isUndefined(dCustomPopup)) {
         let currentPlacement = dAutoPlace ? dPlacement : autoPlacement;
 
         if (dAutoPlace) {
           let space: [number, number, number, number] = [0, 0, 0, 0];
           if (!isFixed) {
-            const containerRect = containerRef.current.getBoundingClientRect();
+            const containerRect = containerEl.getBoundingClientRect();
             space = [
               containerRect.top,
               window.innerWidth - containerRect.left - containerRect.width,
@@ -175,7 +175,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
               containerRect.left,
             ];
           }
-          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, isFixed, space);
+          const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed, space);
           if (position) {
             currentPlacement = position.placement;
             setAutoPlacement(position.placement);
@@ -185,7 +185,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
               left: position.left,
             });
           } else {
-            const position = getPopupPlacementStyle(popupEl, triggerRef.current, autoPlacement, dDistance, isFixed);
+            const position = getPopupPlacementStyle(popupEl, triggerEl, autoPlacement, dDistance, isFixed);
             setPopupPositionStyle({
               position: isFixed ? 'fixed' : 'absolute',
               top: position.top,
@@ -193,7 +193,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             });
           }
         } else {
-          const position = getPopupPlacementStyle(popupEl, triggerRef.current, dPlacement, dDistance, isFixed);
+          const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed);
           setPopupPositionStyle({
             position: isFixed ? 'fixed' : 'absolute',
             top: position.top,
@@ -265,7 +265,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
           },
         };
       } else {
-        const { top, left, stateList, arrowPosition } = dCustomPopup(popupEl, triggerRef.current);
+        const { top, left, stateList, arrowPosition } = dCustomPopup(popupEl, triggerEl);
         setArrowStyle(arrowPosition);
         setPopupPositionStyle({
           position: isFixed ? 'fixed' : 'absolute',
@@ -277,7 +277,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     }
   }, [
     autoPlacement,
-    containerRef,
+    containerEl,
     dAutoPlace,
     dCustomPopup,
     dDistance,
@@ -285,9 +285,8 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     isFixed,
     popupEl,
     setArrowStyle,
-    setAutoPlacement,
     setPopupPositionStyle,
-    triggerRef,
+    triggerEl,
   ]);
 
   const hidden = useDTransition({
@@ -335,12 +334,12 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   // trigger element emit `onMouseLeave`.
   // It's also no emit `onMouseEnter` when enter to popup element sometimes.
   const checkMouseLeave = useCallback(() => {
-    if (popupEl && triggerRef.current) {
-      return checkOutEl(popupEl) && checkOutEl(triggerRef.current);
+    if (popupEl && triggerEl) {
+      return checkOutEl(popupEl) && checkOutEl(triggerEl);
     }
 
     return false;
-  }, [popupEl, triggerRef]);
+  }, [popupEl, triggerEl]);
 
   const handleMouseEnter = useCallback(
     (e) => {
@@ -414,9 +413,9 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
-      if (triggerRef.current) {
+      if (triggerEl) {
         if (dTrigger === 'hover') {
-          asyncGroup.fromEvent(triggerRef.current, 'mouseenter').subscribe({
+          asyncGroup.fromEvent(triggerEl, 'mouseenter').subscribe({
             next: () => {
               dataRef.current.clearTid && dataRef.current.clearTid();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
@@ -425,7 +424,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
               }, dMouseEnterDelay);
             },
           });
-          asyncGroup.fromEvent(triggerRef.current, 'mouseleave').subscribe({
+          asyncGroup.fromEvent(triggerEl, 'mouseleave').subscribe({
             next: () => {
               dataRef.current.clearTid && dataRef.current.clearTid();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
@@ -441,13 +440,13 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         }
 
         if (dTrigger === 'focus') {
-          asyncGroup.fromEvent(triggerRef.current, 'focus').subscribe({
+          asyncGroup.fromEvent(triggerEl, 'focus').subscribe({
             next: () => {
               dataRef.current.clearTid && dataRef.current.clearTid();
               flushSync(() => changeVisible(true));
             },
           });
-          asyncGroup.fromEvent(triggerRef.current, 'blur').subscribe({
+          asyncGroup.fromEvent(triggerEl, 'blur').subscribe({
             next: () => {
               dataRef.current.clearTid = asyncCapture.setTimeout(() => flushSync(() => changeVisible(false)), 20);
             },
@@ -455,7 +454,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         }
 
         if (dTrigger === 'click') {
-          asyncGroup.fromEvent(triggerRef.current, 'click').subscribe({
+          asyncGroup.fromEvent(triggerEl, 'click').subscribe({
             next: () => {
               dataRef.current.clearTid && dataRef.current.clearTid();
               flushSync(() => changeVisible());
@@ -468,7 +467,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, checkMouseLeave, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, changeVisible, triggerRef]);
+  }, [asyncCapture, checkMouseLeave, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, changeVisible, triggerEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -513,13 +512,13 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       if (popupEl) {
         asyncGroup.onResize(popupEl, updatePosition);
       }
-      if (triggerRef.current) {
-        asyncGroup.onResize(triggerRef.current, updatePosition);
+      if (triggerEl) {
+        asyncGroup.onResize(triggerEl, updatePosition);
       }
 
       const skipUpdate = () => {
-        if (triggerRef.current) {
-          const { top, left } = triggerRef.current.getBoundingClientRect();
+        if (triggerEl) {
+          const { top, left } = triggerEl.getBoundingClientRect();
 
           const skip = dataRef.current.triggerRect?.top === top && dataRef.current.triggerRect?.left === left;
           dataRef.current.triggerRect = { top, left };
@@ -542,16 +541,16 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, popupEl, popupRendered, contentSVChange, triggerRef, updatePosition]);
+  }, [asyncCapture, popupEl, popupRendered, contentSVChange, updatePosition, triggerEl]);
 
   useImperativeHandle(
     ref,
     () => ({
       el: popupEl,
-      triggerEl: triggerRef.current,
+      triggerEl,
       updatePosition,
     }),
-    [popupEl, triggerRef, updatePosition]
+    [popupEl, triggerEl, updatePosition]
   );
 
   const triggerRenderProps = useMemo<DTriggerRenderProps>(() => {
@@ -599,7 +598,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     <>
       {dTriggerRender?.(triggerRenderProps)}
       {!(dDestroy && hidden) &&
-        containerRef.current &&
+        containerEl &&
         ReactDOM.createPortal(
           <div
             {...restProps}
@@ -630,7 +629,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             )}
             {dPopupContent}
           </div>,
-          containerRef.current
+          containerEl
         )}
     </>
   );

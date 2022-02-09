@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useIsomorphicLayoutEffect } from './layout-effect';
 
 export function useLockScroll(lock: boolean) {
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (lock) {
       const style = document.documentElement.getAttribute('style');
       const scrollTop = document.documentElement.scrollTop;

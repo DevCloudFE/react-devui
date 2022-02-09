@@ -1,7 +1,14 @@
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useTranslation, useStateBackflow } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useCustomContext,
+  useRefCallback,
+  useTranslation,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
@@ -33,8 +40,7 @@ export function DTab(props: DTabProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ tabsActiveId, getDotStyle, onActiveChange, onClose }] = useCustomContext(DTabsContext);
-  const [{ updateTabEls, removeTabEls }] = useCustomContext(DTabsContext);
+  const [{ gUpdateTabEls, gRemoveTabEls, gActiveId, gGetDotStyle, gOnActiveChange, gOnClose }] = useCustomContext(DTabsContext);
   //#endregion
 
   //#region Ref
@@ -47,33 +53,40 @@ export function DTab(props: DTabProps) {
 
   const panelId = `${dPrefix}tabpanel-${toId(dId)}`;
 
-  useStateBackflow(updateTabEls, removeTabEls, dId, tabEl);
+  useIsomorphicLayoutEffect(() => {
+    if (tabEl) {
+      gUpdateTabEls?.(dId, tabEl);
+      return () => {
+        gRemoveTabEls?.(dId);
+      };
+    }
+  }, [dId, gRemoveTabEls, gUpdateTabEls, tabEl]);
 
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
 
       if (!dDisabled) {
-        onActiveChange?.(dId);
+        gOnActiveChange?.(dId);
       }
     },
-    [dDisabled, dId, onActiveChange, onClick]
+    [dDisabled, dId, gOnActiveChange, onClick]
   );
 
   const handleCloseClick = useCallback<React.MouseEventHandler>(
     (e) => {
       e.stopPropagation();
 
-      onClose?.(dId);
+      gOnClose?.(dId);
     },
-    [dId, onClose]
+    [dId, gOnClose]
   );
 
   useEffect(() => {
-    if (!__dropdown && tabsActiveId === dId) {
-      getDotStyle?.();
+    if (!__dropdown && gActiveId === dId) {
+      gGetDotStyle?.();
     }
-  }, [__dropdown, dId, getDotStyle, tabsActiveId]);
+  }, [__dropdown, dId, gActiveId, gGetDotStyle]);
 
   return (
     <div
@@ -82,12 +95,12 @@ export function DTab(props: DTabProps) {
       id={_id}
       className={getClassName(className, `${dPrefix}tab`, {
         [`${dPrefix}tab--dropdown`]: __dropdown,
-        'is-active': tabsActiveId === dId,
+        'is-active': gActiveId === dId,
         'is-disabled': dDisabled,
       })}
       role="tab"
       aria-controls={panelId}
-      aria-selected={tabsActiveId === dId}
+      aria-selected={gActiveId === dId}
       onClick={handleClick}
     >
       {dTitle}

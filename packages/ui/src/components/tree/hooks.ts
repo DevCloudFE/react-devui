@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+
+import { useIsomorphicLayoutEffect } from '../../hooks';
 
 export function useTreeData<R>(
   select: any,
@@ -28,7 +30,7 @@ export function useTreeData<R>(
     [onSelectChange]
   );
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (select !== dataRef.current.select || getOptions !== dataRef.current.getOptions) {
       dataRef.current.select = select;
       dataRef.current.getOptions = getOptions;

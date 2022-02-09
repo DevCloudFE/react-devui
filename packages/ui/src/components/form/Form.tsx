@@ -10,14 +10,14 @@ import { generateComponentMate, getClassName } from '../../utils';
 import { useMediaMatch } from '../grid';
 
 export interface DFormContextData {
-  formInstance: DFormInstance;
-  formBreakpointMatchs: DBreakpoints[];
-  formLabelWidth: number | string;
-  formLabelColon: boolean;
-  formRequiredType: NonNullable<DFormProps['dRequiredType']>;
-  formLayout: NonNullable<DFormProps['dLayout']>;
-  formInlineSpan: number | true;
-  formFeedbackIcon: NonNullable<DFormProps['dFeedbackIcon']>;
+  gInstance: DFormInstance;
+  gBreakpointMatchs: DBreakpoints[];
+  gLabelWidth: number | string;
+  gLabelColon: boolean;
+  gRequiredType: NonNullable<DFormProps['dRequiredType']>;
+  gLayout: NonNullable<DFormProps['dLayout']>;
+  gInlineSpan: number | true;
+  gFeedbackIcon: NonNullable<DFormProps['dFeedbackIcon']>;
 }
 export const DFormContext = React.createContext<DFormContextData | null>(null);
 
@@ -83,16 +83,16 @@ export function DForm(props: DFormProps) {
 
   const mediaMatch = useMediaMatch();
 
-  const contextValue = useMemo(() => {
+  const contextValue = useMemo<DFormContextData>(() => {
     const contextValue = {
-      formInstance: dForm,
-      formBreakpointMatchs: mediaMatch,
-      formLabelWidth: dLabelWidth ?? 150,
-      formLabelColon: dLabelColon ?? true,
-      formRequiredType: dRequiredType,
-      formLayout: dLayout,
-      formInlineSpan: dInlineSpan,
-      formFeedbackIcon: dFeedbackIcon,
+      gInstance: dForm,
+      gBreakpointMatchs: mediaMatch,
+      gLabelWidth: dLabelWidth ?? 150,
+      gLabelColon: dLabelColon ?? true,
+      gRequiredType: dRequiredType,
+      gLayout: dLayout,
+      gInlineSpan: dInlineSpan,
+      gFeedbackIcon: dFeedbackIcon,
     };
     if (dResponsiveProps) {
       const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
@@ -103,16 +103,16 @@ export function DForm(props: DFormProps) {
       };
       for (const breakpoint of mediaMatch) {
         if (breakpoint in dResponsiveProps) {
-          mergeProps(breakpoint, 'formLabelWidth', 'dLabelWidth');
-          mergeProps(breakpoint, 'formRequiredType', 'dRequiredType');
-          mergeProps(breakpoint, 'formLayout', 'dLayout');
-          mergeProps(breakpoint, 'formInlineSpan', 'dInlineSpan');
+          mergeProps(breakpoint, 'gLabelWidth', 'dLabelWidth');
+          mergeProps(breakpoint, 'gRequiredType', 'dRequiredType');
+          mergeProps(breakpoint, 'gLayout', 'dLayout');
+          mergeProps(breakpoint, 'gInlineSpan', 'dInlineSpan');
           break;
         }
       }
     }
-    contextValue.formLabelWidth = dLabelWidth ?? (contextValue.formLayout === 'vertical' ? '100%' : 150);
-    contextValue.formLabelColon = dLabelColon ?? (contextValue.formLayout === 'vertical' ? false : true);
+    contextValue.gLabelWidth = dLabelWidth ?? (contextValue.gLayout === 'vertical' ? '100%' : 150);
+    contextValue.gLabelColon = dLabelColon ?? (contextValue.gLayout === 'vertical' ? false : true);
 
     return contextValue;
   }, [dRequiredType, dFeedbackIcon, dForm, dInlineSpan, dLabelColon, dLabelWidth, dLayout, dResponsiveProps, mediaMatch]);

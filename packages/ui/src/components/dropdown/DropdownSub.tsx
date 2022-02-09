@@ -7,8 +7,8 @@ import {
   useCustomContext,
   useRefCallback,
   useTranslation,
-  useStateBackflow,
   useImmer,
+  useIsomorphicLayoutEffect,
 } from '../../hooks';
 import { generateComponentMate, getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
@@ -16,8 +16,8 @@ import { DIcon } from '../icon';
 import { DDropdownContext } from './Dropdown';
 
 export interface DDropdownSubContextData {
-  updateChildren: (identity: string, visible: boolean) => void;
-  removeChildren: (identity: string) => void;
+  gUpdateChildren: (id: string, visible: boolean) => void;
+  gRemoveChildren: (id: string) => void;
 }
 export const DDropdownSubContext = React.createContext<DDropdownSubContextData | null>(null);
 
@@ -51,14 +51,13 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ dropdownVisible, dropdownFocusId, dropdownPopupTrigger, onFocus: _onFocus, onBlur: _onBlur }] =
-    useCustomContext(DDropdownContext);
+  const [{ gVisible, gPopupTrigger, gFocusId, gOnFocus, gOnBlur }] = useCustomContext(DDropdownContext);
   //#endregion
 
   //#region Ref
   const [ulEl, ulRef] = useRefCallback<HTMLUListElement>();
   const [liEl, liRef] = useRefCallback<HTMLLIElement>();
-  const [{ updateChildren, removeChildren }] = useCustomContext(DDropdownSubContext);
+  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DDropdownSubContext);
   //#endregion
 
   const [t] = useTranslation('Common');
@@ -78,7 +77,12 @@ export function DDropdownSub(props: DDropdownSubProps) {
     return visible;
   }, [childrenPopupVisiable, currentPopupVisible]);
 
-  useStateBackflow(updateChildren, removeChildren, popupVisible);
+  useIsomorphicLayoutEffect(() => {
+    gUpdateChildren?.(dId, popupVisible);
+    return () => {
+      gRemoveChildren?.(dId);
+    };
+  }, [dId, gRemoveChildren, gUpdateChildren, popupVisible]);
 
   const _id = id ?? `${dPrefix}dropdown-sub-${toId(dId)}`;
 
@@ -107,58 +111,60 @@ export function DDropdownSub(props: DDropdownSubProps) {
     (e) => {
       onFocus?.(e);
 
-      !dDisabled && _onFocus?.(dId, _id);
+      !dDisabled && gOnFocus?.(dId, _id);
     },
-    [_id, _onFocus, dDisabled, dId, onFocus]
+    [_id, gOnFocus, dDisabled, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
 
-      _onBlur?.();
+      gOnBlur?.();
     },
-    [_onBlur, onBlur]
+    [gOnBlur, onBlur]
   );
 
   useEffect(() => {
     let isFocus = false;
-    if (dropdownFocusId) {
+    if (gFocusId) {
       ulEl?.childNodes.forEach((child) => {
-        if (dropdownFocusId[1] === (child as HTMLElement)?.id) {
+        if (gFocusId[1] === (child as HTMLElement)?.id) {
           isFocus = true;
         }
       });
     }
-    setActiveDescendant(isFocus ? dropdownFocusId?.[1] : undefined);
-  }, [dropdownFocusId, ulEl, setActiveDescendant]);
+    setActiveDescendant(isFocus ? gFocusId?.[1] : undefined);
+  }, [gFocusId, ulEl, setActiveDescendant]);
 
   useEffect(() => {
-    if (!dropdownVisible) {
+    if (!gVisible) {
       setCurrentPopupVisible(false);
     }
-  }, [dropdownVisible, setCurrentPopupVisible]);
+  }, [gVisible, setCurrentPopupVisible]);
 
-  const stateBackflow = useMemo<Pick<DDropdownSubContextData, 'updateChildren' | 'removeChildren'>>(
-    () => ({
-      updateChildren: (identity, visible) => {
-        setChildrenPopupVisiable((draft) => {
-          draft.set(identity, visible);
-        });
-      },
-      removeChildren: (identity) => {
-        setChildrenPopupVisiable((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
+  const _gUpdateChildren = useCallback(
+    (id, visible) => {
+      setChildrenPopupVisiable((draft) => {
+        draft.set(id, visible);
+      });
+    },
+    [setChildrenPopupVisiable]
+  );
+  const _gRemoveChildren = useCallback(
+    (id) => {
+      setChildrenPopupVisiable((draft) => {
+        draft.delete(id);
+      });
+    },
     [setChildrenPopupVisiable]
   );
   const contextValue = useMemo<DDropdownSubContextData>(
     () => ({
-      ...stateBackflow,
+      gUpdateChildren: _gUpdateChildren,
+      gRemoveChildren: _gRemoveChildren,
     }),
-    [stateBackflow]
+    [_gRemoveChildren, _gUpdateChildren]
   );
 
   return (
@@ -218,7 +224,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
               )}
             </ul>
           }
-          dTrigger={dropdownPopupTrigger}
+          dTrigger={gPopupTrigger}
           dArrow={false}
           dCustomPopup={customTransition}
           dTriggerEl={liEl}

@@ -22,7 +22,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ closeDrawer }] = useCustomContext(DDrawerContext);
+  const [{ gCloseDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
   const [okLoading, setOkLoading] = useState(false);
@@ -56,13 +56,13 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       shouldClose.then((val) => {
         setOkLoading(false);
         if (val !== false) {
-          closeDrawer?.();
+          gCloseDrawer?.();
         }
       });
     } else if (shouldClose !== false) {
-      closeDrawer?.();
+      gCloseDrawer?.();
     }
-  }, [closeDrawer, onOkClick, setOkLoading]);
+  }, [gCloseDrawer, onOkClick, setOkLoading]);
   const handleCancelClick = useCallback(() => {
     const shouldClose = onCancelClick?.();
     if (shouldClose instanceof Promise) {
@@ -70,13 +70,13 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
       shouldClose.then((val) => {
         setCancelLoading(false);
         if (val !== false) {
-          closeDrawer?.();
+          gCloseDrawer?.();
         }
       });
     } else if (shouldClose !== false) {
-      closeDrawer?.();
+      gCloseDrawer?.();
     }
-  }, [closeDrawer, onCancelClick, setCancelLoading]);
+  }, [gCloseDrawer, onCancelClick, setCancelLoading]);
 
   return (
     <DFooter

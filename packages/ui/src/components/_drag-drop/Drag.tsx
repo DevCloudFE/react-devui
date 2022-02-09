@@ -3,17 +3,7 @@ import React, { useId, useEffect, useMemo, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { merge } from 'rxjs';
 
-import {
-  useComponentConfig,
-  useRefSelector,
-  useThrottle,
-  useAsync,
-  usePrefixConfig,
-  useCustomContext,
-  useImmer,
-  useStateBackflow,
-} from '../../hooks';
-import { generateComponentMate } from '../../utils';
+import { useElement, useThrottle, useAsync, usePrefixConfig, useCustomContext, useImmer, useIsomorphicLayoutEffect } from '../../hooks';
 import { DDropContext } from './Drop';
 
 export interface DDragProps {
@@ -25,16 +15,13 @@ export interface DDragProps {
   onDragEnd?: () => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DDrag');
 export function DDrag(props: DDragProps) {
-  const { dId, dPlaceholder, dZIndex, children, onDragStart, onDragEnd } = useComponentConfig(COMPONENT_NAME, props);
+  const { dId, dPlaceholder, dZIndex, children, onDragStart, onDragEnd } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [
-    { updateSelectors, removeSelectors, dropOuter, dropPlaceholder, onDragStart: _onDragStart, onDrag: _onDrag, onDragEnd: _onDragEnd },
-    dropContext,
-  ] = useCustomContext(DDropContext);
+  const [{ gUpdateSelectors, gRemoveSelectors, gOuter, gPlaceholder, gOnDragStart, gOnDrag, gOnDragEnd }, dropContext] =
+    useCustomContext(DDropContext);
   //#endregion
 
   const dataRef = useRef<{ dragEl: HTMLElement | null }>({
@@ -52,7 +39,7 @@ export function DDrag(props: DDragProps) {
 
   const inDrop = dropContext !== null;
 
-  const placeholderRef = useRefSelector(`[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
+  const placeholderEl = useElement(`[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
 
   const [containerEl] = useState(() => {
     let el = document.getElementById(`${dPrefix}drag-root`);
@@ -64,18 +51,17 @@ export function DDrag(props: DDragProps) {
     return el;
   });
 
-  useStateBackflow(
-    updateSelectors,
-    removeSelectors,
-    dId as string,
-    `[data-${dPrefix}drag="${uniqueId}"]`,
-    `[data-${dPrefix}drag-placeholder="${uniqueId}"]`
-  );
+  useIsomorphicLayoutEffect(() => {
+    gUpdateSelectors?.(dId as string, `[data-${dPrefix}drag="${uniqueId}"]`, `[data-${dPrefix}drag-placeholder="${uniqueId}"]`);
+    return () => {
+      gRemoveSelectors?.(dId as string);
+    };
+  }, [dId, dPrefix, gRemoveSelectors, uniqueId, gUpdateSelectors]);
 
   useEffect(() => {
     if (isDragging && isNumber(fixedStyle.top) && isNumber(fixedStyle.left)) {
       if (dId) {
-        _onDrag?.(dId, {
+        gOnDrag?.(dId, {
           width: dragSize.width,
           height: dragSize.height,
           top: fixedStyle.top,
@@ -83,7 +69,7 @@ export function DDrag(props: DDragProps) {
         });
       }
     }
-  }, [_onDrag, dId, dragSize.height, dragSize.width, fixedStyle.left, fixedStyle.top, isDragging]);
+  }, [gOnDrag, dId, dragSize.height, dragSize.width, fixedStyle.left, fixedStyle.top, isDragging]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -111,7 +97,7 @@ export function DDrag(props: DDragProps) {
             draft.left = window.innerWidth - dragSize.width;
           }
 
-          draft.cursor = dropOuter ? 'not-allowed' : 'grabbing';
+          draft.cursor = gOuter ? 'not-allowed' : 'grabbing';
         });
       };
 
@@ -162,7 +148,7 @@ export function DDrag(props: DDragProps) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dragSize.height, dragSize.width, dropOuter, isDragging, setFixedStyle, throttleByAnimationFrame]);
+  }, [asyncCapture, dragSize.height, dragSize.width, gOuter, isDragging, setFixedStyle, throttleByAnimationFrame]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -178,7 +164,7 @@ export function DDrag(props: DDragProps) {
           setIsDragging(false);
           if (inDrop) {
             setFixedStyle((draft) => {
-              const rect = placeholderRef.current?.getBoundingClientRect();
+              const rect = placeholderEl?.getBoundingClientRect();
               if (rect) {
                 draft.top = rect.top;
                 draft.left = rect.left;
@@ -192,7 +178,7 @@ export function DDrag(props: DDragProps) {
               setFixedDrag(false);
               setShowPlaceholder(false);
               if (dId) {
-                _onDragEnd?.(dId);
+                gOnDragEnd?.(dId);
               }
               onDragEnd?.();
             }, 100 + 10);
@@ -212,14 +198,14 @@ export function DDrag(props: DDragProps) {
     asyncCapture,
     inDrop,
     isDragging,
-    _onDragEnd,
-    placeholderRef,
+    gOnDragEnd,
     setFixedDrag,
     setFixedStyle,
     setIsDragging,
     setShowPlaceholder,
     onDragEnd,
     dId,
+    placeholderEl,
   ]);
 
   const child = useMemo(() => {
@@ -243,7 +229,7 @@ export function DDrag(props: DDragProps) {
 
         onDragStart?.();
         if (dId) {
-          _onDragStart?.(dId);
+          gOnDragStart?.(dId);
         }
 
         const currentTarget = e.currentTarget as HTMLElement;
@@ -293,11 +279,11 @@ export function DDrag(props: DDragProps) {
     setShowPlaceholder,
     setFixedDrag,
     setIsDragging,
-    _onDragStart,
+    gOnDragStart,
   ]);
 
   const placeholder = useMemo(() => {
-    const placeholder = (dropPlaceholder ?? dPlaceholder) as React.ReactElement<React.HTMLAttributes<HTMLElement>> | undefined;
+    const placeholder = (gPlaceholder ?? dPlaceholder) as React.ReactElement<React.HTMLAttributes<HTMLElement>> | undefined;
 
     if (placeholder) {
       return React.cloneElement<React.HTMLAttributes<HTMLElement>>(placeholder, {
@@ -312,7 +298,7 @@ export function DDrag(props: DDragProps) {
     }
 
     return null;
-  }, [dPlaceholder, dPrefix, dragSize.height, dragSize.width, dropPlaceholder, uniqueId]);
+  }, [dPlaceholder, dPrefix, dragSize.height, dragSize.width, gPlaceholder, uniqueId]);
 
   return (
     <>

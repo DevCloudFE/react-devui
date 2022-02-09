@@ -1,33 +1,28 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
-import type { NotificationCallback } from '../../hooks/notification';
 
 import { isUndefined } from 'lodash';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTranslation,
-  useAsync,
-  useGeneralState,
-  DGeneralStateContext,
-  useNotification,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useAsync, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DButton } from '../button';
 import { DIcon } from '../icon';
 import { getNumberAttribute } from './utils';
 
+interface InputProps {
+  value: string;
+  max?: number | string;
+  min?: number | string;
+  step?: number | string;
+  validateClassName?: string;
+  setValue: (value: string) => void;
+}
 export interface DInputAffixContextData {
-  inputAffixDisabled: boolean;
-  inputAffixPassword: boolean;
-  inputAffixNumber: boolean;
-  inputAffixSetClearable: React.Dispatch<React.SetStateAction<boolean>>;
-  inputAffixSetInputEl: React.Dispatch<React.SetStateAction<HTMLInputElement | null>>;
-  inputAffixSetValidateClassName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  inputAffixNotificationCallback: NotificationCallback<string>;
-  onFocus: () => void;
-  onBlur: () => void;
+  gUpdateInput: (props: InputProps) => void;
+  gPassword: boolean;
+  gNumber: boolean;
+  gOnFocus: () => void;
+  gOnBlur: () => void;
 }
 export const DInputAffixContext = React.createContext<DInputAffixContextData | null>(null);
 
@@ -75,11 +70,7 @@ export function DInputAffix(props: DInputAffixProps) {
 
   const [isFocus, setIsFocus] = useState(false);
   const [password, setPassword] = useState(true);
-  const [clearable, setClearable] = useState(false);
-  const [inputEl, setInputEl] = useState<HTMLInputElement | null>(null);
-  const [validateClassName, setValidateClassName] = useState<string | undefined>();
-
-  const [notification, notificationCallback] = useNotification<string>();
+  const [inputProps, setInputProps] = useState<InputProps | null>(null);
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled;
@@ -89,33 +80,35 @@ export function DInputAffix(props: DInputAffixProps) {
       if (e.button === 0) {
         e.preventDefault();
 
-        notification.next('');
+        inputProps?.setValue('');
       }
     },
-    [notification]
+    [inputProps]
   );
 
   const handleNumberChange = useCallback(
     (isIncrease = true) => {
-      const handleFunc = () => {
-        if (inputEl) {
-          const step = getNumberAttribute(inputEl.step, 1);
-          const max = getNumberAttribute(inputEl.max, Infinity);
-          const min = getNumberAttribute(inputEl.min, -Infinity);
-          const value = getNumberAttribute(inputEl.value, 0);
-          const newValue = isIncrease ? value + step : value - step;
-          notification.next(Math.max(min, Math.min(max, newValue)).toFixed(step.toString().split('.')[1]?.length ?? 0));
-        }
-      };
+      if (inputProps) {
+        const { setValue } = inputProps;
+        let value = getNumberAttribute(inputProps.value, 0);
+        const max = getNumberAttribute(inputProps.max, Infinity);
+        const min = getNumberAttribute(inputProps.min, -Infinity);
+        const step = getNumberAttribute(inputProps.step, 1);
 
-      handleFunc();
-      const loop = () => {
-        handleFunc();
-        dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
-      };
-      dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);
+        const updateValue = () => {
+          value = isIncrease ? value + step : value - step;
+          setValue(Math.max(min, Math.min(max, value)).toFixed(step.toString().split('.')[1]?.length ?? 0));
+        };
+
+        updateValue();
+        const loop = () => {
+          updateValue();
+          dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
+        };
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);
+      }
     },
-    [asyncCapture, inputEl, notification]
+    [asyncCapture, inputProps]
   );
 
   const handlePasswordMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
@@ -170,23 +163,24 @@ export function DInputAffix(props: DInputAffixProps) {
     [disabled, size]
   );
 
+  const gUpdateInput = useCallback((props) => {
+    setInputProps(props);
+  }, []);
+  const gOnFocus = useCallback(() => {
+    setIsFocus(true);
+  }, []);
+  const gOnBlur = useCallback(() => {
+    setIsFocus(false);
+  }, []);
   const contextValue = useMemo<DInputAffixContextData>(
     () => ({
-      inputAffixDisabled: disabled,
-      inputAffixPassword: dPassword ? password : false,
-      inputAffixNumber: dNumber,
-      inputAffixSetClearable: setClearable,
-      inputAffixSetInputEl: setInputEl,
-      inputAffixSetValidateClassName: setValidateClassName,
-      inputAffixNotificationCallback: notificationCallback,
-      onFocus: () => {
-        setIsFocus(true);
-      },
-      onBlur: () => {
-        setIsFocus(false);
-      },
+      gUpdateInput,
+      gPassword: dPassword ? password : false,
+      gNumber: dNumber,
+      gOnFocus,
+      gOnBlur,
     }),
-    [dNumber, dPassword, disabled, notificationCallback, password]
+    [dNumber, dPassword, gOnBlur, gOnFocus, gUpdateInput, password]
   );
 
   return (
@@ -194,7 +188,7 @@ export function DInputAffix(props: DInputAffixProps) {
       <DInputAffixContext.Provider value={contextValue}>
         <div
           {...restProps}
-          className={getClassName(className, `${dPrefix}input-affix`, validateClassName, {
+          className={getClassName(className, `${dPrefix}input-affix`, inputProps?.validateClassName, {
             [`${dPrefix}input-affix--${size}`]: size,
             [`${dPrefix}input-affix--number`]: dNumber,
             'is-disabled': disabled,
@@ -207,7 +201,7 @@ export function DInputAffix(props: DInputAffixProps) {
           {dClearable && !disabled && (
             <DButton
               className={`${dPrefix}input-affix__clear`}
-              style={{ opacity: clearable ? 1 : 0 }}
+              style={{ opacity: inputProps && inputProps.value.length > 0 ? 1 : 0 }}
               tabIndex={-1}
               dType="link"
               dShape="circle"

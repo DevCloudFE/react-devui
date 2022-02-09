@@ -1,9 +1,17 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useEffect, useId, useImperativeHandle } from 'react';
+import React, { useId, useImperativeHandle } from 'react';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useCustomContext, useRefCallback, useGeneralState } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useTwoWayBinding,
+  useCustomContext,
+  useRefCallback,
+  useGeneralState,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DInputAffixContext } from './InputAffix';
 
@@ -36,19 +44,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralState();
-  const [
-    {
-      inputAffixPassword,
-      inputAffixNumber,
-      inputAffixDisabled,
-      inputAffixSetInputEl,
-      inputAffixSetClearable,
-      inputAffixSetValidateClassName,
-      inputAffixNotificationCallback,
-      onFocus: _onFocus,
-      onBlur: _onBlur,
-    },
-  ] = useCustomContext(DInputAffixContext);
+  const [{ gUpdateInput, gPassword, gNumber, gOnFocus, gOnBlur }] = useCustomContext(DInputAffixContext);
   //#endregion
 
   //#region Ref
@@ -65,7 +61,20 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     id: _id,
   });
 
-  const _disabled = disabled || inputAffixDisabled || gDisabled || controlDisabled;
+  useIsomorphicLayoutEffect(() => {
+    gUpdateInput?.({
+      value,
+      max: props.max,
+      min: props.min,
+      step: props.step,
+      validateClassName,
+      setValue: (value) => {
+        changeValue(value);
+      },
+    });
+  }, [changeValue, gUpdateInput, props.max, props.min, props.step, validateClassName, value]);
+
+  const _disabled = disabled || gDisabled || controlDisabled;
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -80,41 +89,19 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
     (e) => {
       onFocus?.(e);
 
-      _onFocus?.();
+      gOnFocus?.();
     },
-    [_onFocus, onFocus]
+    [gOnFocus, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
 
-      _onBlur?.();
+      gOnBlur?.();
     },
-    [_onBlur, onBlur]
+    [gOnBlur, onBlur]
   );
-
-  useEffect(() => {
-    const fn = (v: string) => {
-      changeValue(v);
-    };
-    inputAffixNotificationCallback?.bind(fn);
-    return () => {
-      inputAffixNotificationCallback?.removeBind(fn);
-    };
-  }, [changeValue, inputAffixNotificationCallback]);
-
-  useEffect(() => {
-    inputAffixSetInputEl?.(inputEl);
-  }, [inputAffixSetInputEl, inputEl]);
-
-  useEffect(() => {
-    inputAffixSetClearable?.(value.length > 0);
-  }, [inputAffixSetClearable, value.length]);
-
-  useEffect(() => {
-    inputAffixSetValidateClassName?.(validateClassName);
-  }, [inputAffixSetValidateClassName, validateClassName]);
 
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(ref, () => inputEl, [inputEl]);
 
@@ -128,7 +115,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
         [`${dPrefix}input--${size}`]: size,
       })}
       value={value}
-      type={inputAffixNumber ? 'number' : inputAffixPassword ? 'password' : type}
+      type={gNumber ? 'number' : gPassword ? 'password' : type}
       disabled={_disabled}
       aria-disabled={_disabled}
       onChange={handleChange}

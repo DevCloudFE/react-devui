@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
 import { useCustomContext } from './context';
-import { useStateBackflow } from './state-backflow';
+import { useIsomorphicLayoutEffect } from './layout-effect';
 
 export type Updater<S> = (value: S) => void;
 
@@ -25,17 +25,24 @@ export function useTwoWayBinding<T, S = T>(
     throw new Error('Please check `input` value');
   }
 
-  const [{ formInstance }] = useCustomContext(DFormContext);
-  const [{ formGroupPath }] = useCustomContext(DFormGroupContext);
-  const [{ updateFormItems, removeFormItems }] = useCustomContext(DFormItemContext);
+  const [{ gInstance }] = useCustomContext(DFormContext);
+  const [{ gPath }] = useCustomContext(DFormGroupContext);
+  const [{ gUpdateFormItems, gRemoveFormItems }] = useCustomContext(DFormItemContext);
   const formControlName = opt?.formControlName;
   const deepCompare = opt?.deepCompare ?? false;
 
-  const identity = useStateBackflow(updateFormItems, removeFormItems, formControlName, opt?.id);
+  useIsomorphicLayoutEffect(() => {
+    if (formControlName) {
+      gUpdateFormItems?.(formControlName, opt?.id);
+      return () => {
+        gRemoveFormItems?.(formControlName);
+      };
+    }
+  }, [formControlName, gRemoveFormItems, gUpdateFormItems, opt?.id]);
 
   const formControl = useMemo(() => {
-    if (formControlName && formInstance) {
-      const control = formInstance.form.get((formGroupPath ?? []).concat([formControlName]));
+    if (formControlName && gInstance) {
+      const control = gInstance.form.get((gPath ?? []).concat([formControlName]));
       if (isNull(control)) {
         throw new Error(`Cant find '${formControlName}', please check if name exists!`);
       }
@@ -43,13 +50,13 @@ export function useTwoWayBinding<T, S = T>(
     }
 
     return null;
-  }, [formControlName, formGroupPath, formInstance]);
+  }, [formControlName, gPath, gInstance]);
   useEffect(() => {
     if (formControl) {
       const ob = formControl.asyncVerifyComplete.subscribe({
         next: (control) => {
           if (control.dirty) {
-            formInstance?.updateForm();
+            gInstance?.updateForm();
           }
         },
       });
@@ -58,7 +65,7 @@ export function useTwoWayBinding<T, S = T>(
         ob.unsubscribe();
       };
     }
-  }, [formControl, formInstance]);
+  }, [formControl, gInstance]);
 
   const setValue = input?.[1];
   const [autoValue, setAutoValue] = useState<T>(initialValue);
@@ -79,7 +86,7 @@ export function useTwoWayBinding<T, S = T>(
           formControl.markAsDirty(true);
           formControl.setValue(val);
           onValueChange?.(val);
-          formInstance?.updateForm();
+          gInstance?.updateForm();
         } else {
           setValue?.(val);
           setAutoValue(val);
@@ -87,7 +94,7 @@ export function useTwoWayBinding<T, S = T>(
         }
       }
     },
-    [deepCompare, formControl, formInstance, onValueChange, setValue]
+    [deepCompare, formControl, gInstance, onValueChange, setValue]
   );
 
   const res = useMemo<
@@ -116,13 +123,13 @@ export function useTwoWayBinding<T, S = T>(
         ariaAttribute:
           formControl && formControl.dirty
             ? formControl.invalid
-              ? { 'aria-invalid': true, 'aria-describedby': formControl.errors ? identity : undefined }
+              ? { 'aria-invalid': true, 'aria-describedby': formControl.errors ? formControlName : undefined }
               : { 'aria-invalid': false }
             : undefined,
         controlDisabled: formControl && formControl.disabled ? true : false,
       },
     ],
-    [currentValue, changeValue, formControl, identity]
+    [currentValue, changeValue, formControl, formControlName]
   );
 
   return res;

@@ -11,7 +11,7 @@ import {
   useTranslation,
   useDCollapseTransition,
   useImmer,
-  useStateBackflow,
+  useIsomorphicLayoutEffect,
 } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DPopup } from '../_popup';
@@ -22,8 +22,8 @@ import { DMenuContext } from './Menu';
 type DIds = Map<string, string | DIds>;
 
 export interface DMenuSubContextData {
-  updateChildren: (identity: string, ids: DIds | string, visible: boolean) => void;
-  removeChildren: (identity: string) => void;
+  gUpdateChildren: (id: string, ids: DIds | string, visible: boolean) => void;
+  gRemoveChildren: (id: string) => void;
 }
 export const DMenuSubContext = React.createContext<DMenuSubContextData | null>(null);
 
@@ -59,9 +59,8 @@ export function DMenuSub(props: DMenuSubProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ menuMode, menuExpandTrigger, menuActiveId, menuExpandIds, menuFocusId, onExpandChange, onFocus: _onFocus, onBlur: _onBlur }] =
-    useCustomContext(DMenuContext);
-  const [{ updateChildren, removeChildren }] = useCustomContext(DMenuSubContext);
+  const [{ gMode, gExpandTrigger, gActiveId, gExpandIds, gFocusId, gOnExpandChange, gOnFocus, gOnBlur }] = useCustomContext(DMenuContext);
+  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DMenuSubContext);
   //#endregion
 
   //#region Ref
@@ -74,8 +73,8 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
-  const expand = menuExpandIds?.has(dId) ?? false;
-  const popupMode = menuMode !== 'vertical';
+  const expand = gExpandIds?.has(dId) ?? false;
+  const popupMode = gMode !== 'vertical';
 
   const [childrenIds, setChildrenIds] = useImmer<DIds>(new Map());
 
@@ -92,17 +91,22 @@ export function DMenuSub(props: DMenuSubProps) {
     return visible;
   }, [childrenPopupVisiable, currentPopupVisible]);
 
-  useStateBackflow(updateChildren, removeChildren, childrenIds, popupVisible);
+  useIsomorphicLayoutEffect(() => {
+    gUpdateChildren?.(dId, childrenIds, popupVisible);
+    return () => {
+      gRemoveChildren?.(dId);
+    };
+  }, [childrenIds, dId, gRemoveChildren, gUpdateChildren, popupVisible]);
 
-  const inHorizontalNav = menuMode === 'horizontal' && __inNav;
+  const inHorizontalNav = gMode === 'horizontal' && __inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
   const isActive = useMemo(() => {
-    if (isString(menuActiveId)) {
+    if (isString(gActiveId)) {
       if (popupMode ? !popupVisible : !expand) {
         const checkActive = (idMap: DIds): boolean | undefined => {
           for (const id of idMap.values()) {
             if (isString(id)) {
-              if (id === menuActiveId) {
+              if (id === gActiveId) {
                 return true;
               }
             } else {
@@ -118,20 +122,20 @@ export function DMenuSub(props: DMenuSubProps) {
     }
 
     return false;
-  }, [childrenIds, expand, menuActiveId, popupMode, popupVisible]);
+  }, [childrenIds, expand, gActiveId, popupMode, popupVisible]);
 
   const iconRotate = useMemo(() => {
     if (inHorizontalNav && popupVisible) {
       return 180;
     }
-    if (menuMode === 'vertical' && expand) {
+    if (gMode === 'vertical' && expand) {
       return 180;
     }
     if (popupMode && !inHorizontalNav) {
       return -90;
     }
     return undefined;
-  }, [expand, inHorizontalNav, menuMode, popupMode, popupVisible]);
+  }, [expand, inHorizontalNav, gMode, popupMode, popupVisible]);
 
   const customTransition = useCallback(
     (popupEl: HTMLElement, targetEl: HTMLElement) => {
@@ -157,13 +161,13 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const handleExpandTrigger = useCallback(
     (val) => {
-      if (menuExpandTrigger === 'click') {
-        onExpandChange?.(dId, !expand);
+      if (gExpandTrigger === 'click') {
+        gOnExpandChange?.(dId, !expand);
       } else if (val) {
-        onExpandChange?.(dId, true);
+        gOnExpandChange?.(dId, true);
       }
     },
-    [dId, expand, menuExpandTrigger, onExpandChange]
+    [dId, expand, gExpandTrigger, gOnExpandChange]
   );
 
   const handlePopupVisibleChange = useCallback(
@@ -177,31 +181,31 @@ export function DMenuSub(props: DMenuSubProps) {
     (e) => {
       onFocus?.(e);
 
-      !dDisabled && _onFocus?.(dId, _id);
+      !dDisabled && gOnFocus?.(dId, _id);
     },
-    [_id, _onFocus, dDisabled, dId, onFocus]
+    [_id, gOnFocus, dDisabled, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
 
-      _onBlur?.();
+      gOnBlur?.();
     },
-    [_onBlur, onBlur]
+    [gOnBlur, onBlur]
   );
 
   useEffect(() => {
     let isFocus = false;
-    if (menuFocusId) {
+    if (gFocusId) {
       (popupMode ? menuPopupEl : menuCollapseEl)?.childNodes.forEach((child) => {
-        if (menuFocusId[1] === (child as HTMLElement)?.id) {
+        if (gFocusId[1] === (child as HTMLElement)?.id) {
           isFocus = true;
         }
       });
     }
-    setActiveDescendant(isFocus ? menuFocusId?.[1] : undefined);
-  }, [menuCollapseEl, menuFocusId, menuPopupEl, popupMode, setActiveDescendant]);
+    setActiveDescendant(isFocus ? gFocusId?.[1] : undefined);
+  }, [menuCollapseEl, gFocusId, menuPopupEl, popupMode, setActiveDescendant]);
 
   useEffect(() => {
     if (!popupMode) {
@@ -248,32 +252,34 @@ export function DMenuSub(props: DMenuSubProps) {
     </ul>
   );
 
-  const stateBackflow = useMemo<Pick<DMenuSubContextData, 'updateChildren' | 'removeChildren'>>(
-    () => ({
-      updateChildren: (identity, ids, visible) => {
-        setChildrenIds((draft) => {
-          draft.set(identity, ids);
-        });
-        setChildrenPopupVisiable((draft) => {
-          draft.set(identity, visible);
-        });
-      },
-      removeChildren: (identity) => {
-        setChildrenIds((draft) => {
-          draft.delete(identity);
-        });
-        setChildrenPopupVisiable((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
+  const _gUpdateChildren = useCallback(
+    (id, ids, visible) => {
+      setChildrenIds((draft) => {
+        draft.set(id, ids);
+      });
+      setChildrenPopupVisiable((draft) => {
+        draft.set(id, visible);
+      });
+    },
+    [setChildrenIds, setChildrenPopupVisiable]
+  );
+  const _gRemoveChildren = useCallback(
+    (id) => {
+      setChildrenIds((draft) => {
+        draft.delete(id);
+      });
+      setChildrenPopupVisiable((draft) => {
+        draft.delete(id);
+      });
+    },
     [setChildrenIds, setChildrenPopupVisiable]
   );
   const contextValue = useMemo<DMenuSubContextData>(
     () => ({
-      ...stateBackflow,
+      gUpdateChildren: _gUpdateChildren,
+      gRemoveChildren: _gRemoveChildren,
     }),
-    [stateBackflow]
+    [_gRemoveChildren, _gUpdateChildren]
   );
 
   const transitionState = {
@@ -299,7 +305,7 @@ export function DMenuSub(props: DMenuSubProps) {
         id={_id}
         className={getClassName(className, `${dPrefix}menu-sub`, {
           [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
-          [`${dPrefix}menu-sub--icon`]: menuMode === 'icon' && __inNav,
+          [`${dPrefix}menu-sub--icon`]: gMode === 'icon' && __inNav,
           'is-active': isActive,
           'is-expand': popupMode ? popupVisible : expand,
           'is-disabled': dDisabled,
@@ -334,14 +340,14 @@ export function DMenuSub(props: DMenuSubProps) {
               className={getClassName(dPopupClassName, `${dPrefix}menu-sub-popup`)}
               dVisible={popupVisible}
               dPopupContent={menuNode({ ref: menuPopupRef })}
-              dTrigger={menuExpandTrigger}
+              dTrigger={gExpandTrigger}
               dArrow={false}
               dCustomPopup={customTransition}
               dTriggerEl={liEl}
               onVisibleChange={handlePopupVisibleChange}
             />
           ) : (
-            <DTrigger dTrigger={menuExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
+            <DTrigger dTrigger={gExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
           )}
           {popupMode && hidden
             ? null

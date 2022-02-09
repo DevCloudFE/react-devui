@@ -13,15 +13,15 @@ import { DMenuSub } from './MenuSub';
 type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
 export interface DMenuContextData {
-  menuMode: DMenuMode;
-  menuExpandTrigger?: 'hover' | 'click';
-  menuActiveId: string | null;
-  menuExpandIds: Set<string>;
-  menuFocusId: [string, string] | null;
-  onActiveChange: (id: string) => void;
-  onExpandChange: (id: string, expand: boolean) => void;
-  onFocus: (dId: string, id: string) => void;
-  onBlur: () => void;
+  gMode: DMenuMode;
+  gExpandTrigger?: 'hover' | 'click';
+  gActiveId: string | null;
+  gExpandIds: Set<string>;
+  gFocusId: [string, string] | null;
+  gOnActiveChange: (id: string) => void;
+  gOnExpandChange: (id: string, expand: boolean) => void;
+  gOnFocus: (dId: string, id: string) => void;
+  gOnBlur: () => void;
 }
 export const DMenuContext = React.createContext<DMenuContextData | null>(null);
 
@@ -62,7 +62,7 @@ export function DMenu(props: DMenuProps) {
   const [navEl, navRef] = useRefCallback();
   //#endregion
 
-  const [focusId, setFocusId] = useImmer<DMenuContextData['menuFocusId']>(null);
+  const [focusId, setFocusId] = useImmer<DMenuContextData['gFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
   const [activeId, changeActiveId] = useTwoWayBinding<string | null, string>(null, dActive, onActiveChange);
@@ -91,54 +91,67 @@ export function DMenu(props: DMenuProps) {
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
   }, [focusId, navEl?.childNodes, setActiveDescendant]);
 
-  const contextValue = useMemo<DMenuContextData>(
-    () => ({
-      menuMode: dMode,
-      menuExpandTrigger: expandTrigger,
-      menuActiveId: activeId,
-      menuExpandIds: expandIds,
-      menuFocusId: focusId,
-      onActiveChange: (id) => {
-        changeActiveId(id);
-      },
-      onExpandChange: (id, expand) => {
-        changeExpandIds((draft) => {
-          if (expand) {
-            if (dExpandOne) {
-              const idsArr: string[][] = [];
-              const getAllIds = (childs: React.ReactNode) => {
-                const nodes = React.Children.toArray(childs).filter((node) => node?.['props']?.dId);
-                idsArr.push(nodes.map((node) => node['props'].dId));
-                nodes.forEach((node) => {
-                  if (node?.['props']?.children) {
-                    getAllIds(node['props'].children);
-                  }
-                });
-              };
-              getAllIds(children);
-              for (const ids of idsArr) {
-                if (ids.includes(id)) {
-                  for (const sameLevelId of ids) {
-                    draft.delete(sameLevelId);
-                  }
-                  break;
+  const gOnActiveChange = useCallback(
+    (id) => {
+      changeActiveId(id);
+    },
+    [changeActiveId]
+  );
+  const gOnExpandChange = useCallback(
+    (id, expand) => {
+      changeExpandIds((draft) => {
+        if (expand) {
+          if (dExpandOne) {
+            const idsArr: string[][] = [];
+            const getAllIds = (childs: React.ReactNode) => {
+              const nodes = React.Children.toArray(childs).filter((node) => node?.['props']?.dId);
+              idsArr.push(nodes.map((node) => node['props'].dId));
+              nodes.forEach((node) => {
+                if (node?.['props']?.children) {
+                  getAllIds(node['props'].children);
                 }
+              });
+            };
+            getAllIds(children);
+            for (const ids of idsArr) {
+              if (ids.includes(id)) {
+                for (const sameLevelId of ids) {
+                  draft.delete(sameLevelId);
+                }
+                break;
               }
             }
-            draft.add(id);
-          } else {
-            draft.delete(id);
           }
-        });
-      },
-      onFocus: (dId, id) => {
-        setFocusId([dId, id]);
-      },
-      onBlur: () => {
-        setFocusId(null);
-      },
+          draft.add(id);
+        } else {
+          draft.delete(id);
+        }
+      });
+    },
+    [changeExpandIds, children, dExpandOne]
+  );
+  const gOnFocus = useCallback(
+    (dId, id) => {
+      setFocusId([dId, id]);
+    },
+    [setFocusId]
+  );
+  const gOnBlur = useCallback(() => {
+    setFocusId(null);
+  }, [setFocusId]);
+  const contextValue = useMemo<DMenuContextData>(
+    () => ({
+      gMode: dMode,
+      gExpandTrigger: expandTrigger,
+      gActiveId: activeId,
+      gExpandIds: expandIds,
+      gFocusId: focusId,
+      gOnActiveChange,
+      gOnExpandChange,
+      gOnFocus,
+      gOnBlur,
     }),
-    [activeId, changeActiveId, changeExpandIds, children, dExpandOne, dMode, expandIds, expandTrigger, focusId, setFocusId]
+    [activeId, dMode, expandIds, expandTrigger, focusId, gOnActiveChange, gOnBlur, gOnExpandChange, gOnFocus]
   );
 
   const childs = useMemo(() => {

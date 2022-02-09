@@ -1,18 +1,10 @@
-import type { DElementSelector } from '../../hooks/element-ref';
+import type { DElementSelector } from '../../hooks/element';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useAsync,
-  useRefSelector,
-  useImmer,
-  useRefCallback,
-  useContentSVChangeConfig,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useAsync, useElement, useImmer, useRefCallback, useContentSVChangeConfig } from '../../hooks';
 import { getClassName, toPx, mergeStyle, generateComponentMate } from '../../utils';
 
 export interface DAffixRef {
@@ -72,7 +64,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     [fixed, onFixedChange]
   );
 
-  const targetRef = useRefSelector(dTarget ?? null);
+  const targetEl = useElement(dTarget ?? null);
 
   const top = isString(dTop) ? toPx(dTop, true) : dTop;
   const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
@@ -89,7 +81,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
   }, [dPrefix]);
 
   const updatePosition = useCallback(() => {
-    if (isUndefined(dTarget) || targetRef.current) {
+    if (isUndefined(dTarget) || targetEl) {
       const offsetEl = fixed ? referenceEl : affixEl;
 
       if (offsetEl) {
@@ -97,8 +89,8 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
           top: 0,
           bottom: window.innerHeight,
         };
-        if (targetRef.current) {
-          targetRect = targetRef.current.getBoundingClientRect();
+        if (targetEl) {
+          targetRect = targetEl.getBoundingClientRect();
         }
 
         const offsetRect = offsetEl.getBoundingClientRect();
@@ -131,10 +123,10 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     }
   }, [
     dTarget,
-    targetRef,
-    affixEl,
-    referenceEl,
+    targetEl,
     fixed,
+    referenceEl,
+    affixEl,
     top,
     props.dBottom,
     bottom,

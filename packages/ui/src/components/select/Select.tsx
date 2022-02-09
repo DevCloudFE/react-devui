@@ -3,10 +3,17 @@ import type { DExtendsSelectBoxProps } from '../_select-box';
 
 import { isNull, isNumber, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState, useId } from 'react';
-import { useLayoutEffect } from 'react';
 import { filter } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useAsync, useTranslation, useGeneralState } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useTwoWayBinding,
+  useAsync,
+  useTranslation,
+  useGeneralState,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DSelectBox } from '../_select-box';
 import { DVirtualScroll } from '../_virtual-scroll';
@@ -324,7 +331,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
     },
     [onSearch]
   );
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (hasSearch) {
       setSearchFocusOption(getFocusOption());
     }

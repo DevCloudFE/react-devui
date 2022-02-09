@@ -6,8 +6,8 @@ import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { useMediaMatch } from './hooks';
 
 export interface DRowContextData {
-  rowMediaMatch: DBreakpoints[];
-  rowSpace: number | string;
+  gMediaMatch: DBreakpoints[];
+  gSpace: number | string;
 }
 export const DRowContext = React.createContext<DRowContextData | null>(null);
 
@@ -63,8 +63,8 @@ export function DRow(props: DRowProps) {
 
   const contextValue = useMemo<DRowContextData>(
     () => ({
-      rowMediaMatch: mediaMatch,
-      rowSpace: space,
+      gMediaMatch: mediaMatch,
+      gSpace: space,
     }),
     [mediaMatch, space]
   );

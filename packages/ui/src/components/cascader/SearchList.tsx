@@ -2,10 +2,10 @@ import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderContextData, DCascaderOption } from './Cascader';
 
-import React, { useCallback, useState, useContext, useEffect, useLayoutEffect } from 'react';
+import React, { useCallback, useState, useContext, useEffect } from 'react';
 import { filter } from 'rxjs';
 
-import { useAsync, usePrefixConfig, useTranslation } from '../../hooks';
+import { useAsync, useIsomorphicLayoutEffect, usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
@@ -23,16 +23,9 @@ export function DSearchList<T>(props: SearchListProps<T>) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const {
-    cascaderSelecteds,
-    cascaderUniqueId,
-    cascaderRendered,
-    cascaderMultiple,
-    cascaderOnlyLeafSelectable,
-    cascaderGetId,
-    onModelChange,
-    onClose,
-  } = useContext(DCascaderContext) as DCascaderContextData<T>;
+  const { gSelecteds, gUniqueId, gRendered, gMultiple, gOnlyLeafSelectable, gGetId, gOnModelChange, gOnClose } = useContext(
+    DCascaderContext
+  ) as DCascaderContextData<T>;
   //#endregion
 
   const [t] = useTranslation('Common');
@@ -57,7 +50,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
   }, [canSelectOption, dOptions]);
 
   const [focusOption, setFocusOption] = useState(() => getFocusOption());
-  const focusIds = focusOption && focusOption.dValue ? focusOption.dValue.map((v) => cascaderGetId(v)) : null;
+  const focusIds = focusOption && focusOption.dValue ? focusOption.dValue.map((v) => gGetId(v)) : null;
   const changeFocusOption = useCallback((option) => {
     setFocusOption(option);
   }, []);
@@ -65,26 +58,26 @@ export function DSearchList<T>(props: SearchListProps<T>) {
   const handleOptionClick = useCallback(
     (option: DSelectOption<T[]>, isSwitch?: boolean) => {
       if (canSelectOption(option) && option.dValue) {
-        if (cascaderMultiple) {
+        if (gMultiple) {
           isSwitch = isSwitch ?? true;
           const node = option[TREE_NODE_KEY] as MultipleTreeNode<T, DCascaderOption<T>>;
 
-          const checkeds = node.changeStatus(isSwitch ? (node.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED', cascaderSelecteds as T[][]);
-          onModelChange(checkeds);
+          const checkeds = node.changeStatus(isSwitch ? (node.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED', gSelecteds as T[][]);
+          gOnModelChange(checkeds);
         } else {
           const checkeds = (option[TREE_NODE_KEY] as SingleTreeNode<T, DCascaderOption<T>>).setChecked();
-          onModelChange(checkeds);
+          gOnModelChange(checkeds);
         }
       }
 
-      if (!cascaderMultiple) {
-        onClose();
+      if (!gMultiple) {
+        gOnClose();
       }
     },
-    [canSelectOption, cascaderMultiple, cascaderSelecteds, onClose, onModelChange]
+    [canSelectOption, gMultiple, gSelecteds, gOnClose, gOnModelChange]
   );
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setFocusOption(getFocusOption());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +86,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (cascaderRendered) {
+    if (gRendered) {
       if (focusOption) {
         asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
           next: (e) => {
@@ -105,7 +98,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
 
               case 'Space':
                 e.preventDefault();
-                if (cascaderMultiple) {
+                if (gMultiple) {
                   handleOptionClick(focusOption, true);
                 }
                 break;
@@ -134,7 +127,7 @@ export function DSearchList<T>(props: SearchListProps<T>) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, cascaderMultiple, cascaderRendered, focusOption, getFocusOption, handleOptionClick]);
+  }, [asyncCapture, gMultiple, gRendered, focusOption, getFocusOption, handleOptionClick]);
 
   const itemRender = useCallback(
     (item: DSelectOption<T[]>, renderProps) => {
@@ -150,11 +143,10 @@ export function DSearchList<T>(props: SearchListProps<T>) {
         <li
           {...renderProps}
           key={id}
-          id={`${dPrefix}select-${cascaderUniqueId}-option-${id}`}
+          id={`${dPrefix}select-${gUniqueId}-option-${id}`}
           className={getClassName(`${dPrefix}select__option`, {
             'is-selected':
-              !cascaderMultiple &&
-              (cascaderOnlyLeafSelectable ? node.checked : node.checked && node.value.length === (cascaderSelecteds as T[]).length),
+              !gMultiple && (gOnlyLeafSelectable ? node.checked : node.checked && node.value.length === (gSelecteds as T[]).length),
             'is-focus': isFocus,
             'is-disabled': node.disabled,
           })}
@@ -171,32 +163,22 @@ export function DSearchList<T>(props: SearchListProps<T>) {
                 }
           }
         >
-          {cascaderMultiple && <DCheckbox dModel={[node.checked]} dDisabled={node.disabled}></DCheckbox>}
+          {gMultiple && <DCheckbox dModel={[node.checked]} dDisabled={node.disabled}></DCheckbox>}
           <span className={`${dPrefix}select__option-content`}>{dOptionRender(item as DSelectOption<T[]>)}</span>
         </li>
       );
     },
-    [
-      cascaderMultiple,
-      cascaderOnlyLeafSelectable,
-      cascaderSelecteds,
-      cascaderUniqueId,
-      changeFocusOption,
-      dOptionRender,
-      dPrefix,
-      focusIds,
-      handleOptionClick,
-    ]
+    [gMultiple, gOnlyLeafSelectable, gSelecteds, gUniqueId, changeFocusOption, dOptionRender, dPrefix, focusIds, handleOptionClick]
   );
 
   return (
     <DVirtualScroll
       className={`${dPrefix}select__list`}
       role="listbox"
-      aria-multiselectable={cascaderMultiple}
-      aria-activedescendant={focusIds ? `${dPrefix}select-${cascaderUniqueId}-option-${focusIds.join(ID_SEPARATOR)}` : undefined}
+      aria-multiselectable={gMultiple}
+      aria-activedescendant={focusIds ? `${dPrefix}select-${gUniqueId}-option-${focusIds.join(ID_SEPARATOR)}` : undefined}
       dFocusOption={focusOption}
-      dRendered={cascaderRendered}
+      dRendered={gRendered}
       dList={dOptions}
       dCanSelectOption={canSelectOption}
       dCompareOption={compareOption}

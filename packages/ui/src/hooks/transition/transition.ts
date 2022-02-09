@@ -1,9 +1,10 @@
 import { isFunction } from 'lodash';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useAsync } from '../async';
 import { useImmer } from '../immer';
+import { useIsomorphicLayoutEffect } from '../layout-effect';
 import { CssRecord, getMaxTime } from './utils';
 
 export interface DTransitionStateList {
@@ -107,7 +108,7 @@ export function useDTransition(props: DTransitionProps) {
     }
   };
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!dataRef.current.hasfirstRun) {
       if (!dSkipFirst) {
         dataRef.current.hasfirstRun = true;
@@ -123,12 +124,7 @@ export function useDTransition(props: DTransitionProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl]);
 
-  useLayoutEffect(() => {
-    transition();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startEnterTransition]);
-
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!hidden && dEl && !dataRef.current.elRendered) {
       dataRef.current.elRendered = true;
       transition();
@@ -136,12 +132,17 @@ export function useDTransition(props: DTransitionProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, hidden]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (dVisible !== dataRef.current.preVisible) {
       prepareTransition();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dVisible]);
+
+  useIsomorphicLayoutEffect(() => {
+    transition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startEnterTransition]);
 
   return hidden;
 }

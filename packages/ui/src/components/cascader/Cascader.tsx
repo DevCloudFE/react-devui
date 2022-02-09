@@ -20,17 +20,17 @@ import { DSearchList } from './SearchList';
 import { ID_SEPARATOR, OPTIONS_KEY, SEPARATOR, TREE_NODE_KEY } from './utils';
 
 export interface DCascaderContextData<T> {
-  cascaderSelecteds: T[] | null | T[][];
-  cascaderFocusValues: T[];
-  cascaderUniqueId: string;
-  cascaderRendered: boolean;
-  cascaderMultiple: boolean;
-  cascaderOnlyLeafSelectable: boolean;
-  cascaderOptionRender: NonNullable<DCascaderBaseProps<T>['dOptionRender']>;
-  cascaderGetId: NonNullable<DCascaderBaseProps<T>['dGetId']>;
-  onModelChange: (value: T[] | null | T[][]) => void;
-  onFocusValuesChange: (value: T[]) => void;
-  onClose: () => void;
+  gSelecteds: T[] | null | T[][];
+  gFocusValues: T[];
+  gUniqueId: string;
+  gRendered: boolean;
+  gMultiple: boolean;
+  gOnlyLeafSelectable: boolean;
+  gOptionRender: NonNullable<DCascaderBaseProps<T>['dOptionRender']>;
+  gGetId: NonNullable<DCascaderBaseProps<T>['dGetId']>;
+  gOnModelChange: (value: T[] | null | T[][]) => void;
+  gOnFocusValuesChange: (value: T[]) => void;
+  gOnClose: () => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DCascaderContext = React.createContext<DCascaderContextData<any> | null>(null);
@@ -409,39 +409,48 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     return [selectedNode, suffixNode, selectedLabel];
   }, [dMultiple, select, renderOptions, dCustomSelected, dPrefix, size, dGetId, disabled, changeSelectByCache, dOptions]);
 
+  const gOnModelChange = useCallback(
+    (select) => {
+      changeSelectByCache(select);
+    },
+    [changeSelectByCache]
+  );
+  const gOnFocusValuesChange = useCallback(
+    (value) => {
+      onFocusChange?.(value);
+      setFocusValues(value);
+    },
+    [onFocusChange]
+  );
+  const gOnClose = useCallback(() => {
+    changeVisible(false);
+  }, [changeVisible]);
   const contextValue = useMemo<DCascaderContextData<T>>(
     () => ({
-      cascaderSelecteds: select,
-      cascaderFocusValues: focusValues,
-      cascaderUniqueId: uniqueId,
-      cascaderRendered: listRendered,
-      cascaderMultiple: dMultiple,
-      cascaderOnlyLeafSelectable: dOnlyLeafSelectable,
-      cascaderOptionRender: dOptionRender,
-      cascaderGetId: dGetId,
-      onModelChange: (select) => {
-        changeSelectByCache(select);
-      },
-      onFocusValuesChange: (value) => {
-        onFocusChange?.(value);
-        setFocusValues(value);
-      },
-      onClose: () => {
-        changeVisible(false);
-      },
+      gSelecteds: select,
+      gFocusValues: focusValues,
+      gUniqueId: uniqueId,
+      gRendered: listRendered,
+      gMultiple: dMultiple,
+      gOnlyLeafSelectable: dOnlyLeafSelectable,
+      gOptionRender: dOptionRender,
+      gGetId: dGetId,
+      gOnModelChange,
+      gOnFocusValuesChange,
+      gOnClose,
     }),
     [
       select,
-      changeSelectByCache,
-      changeVisible,
-      dGetId,
+      focusValues,
+      uniqueId,
+      listRendered,
       dMultiple,
       dOnlyLeafSelectable,
       dOptionRender,
-      focusValues,
-      listRendered,
-      onFocusChange,
-      uniqueId,
+      dGetId,
+      gOnModelChange,
+      gOnFocusValuesChange,
+      gOnClose,
     ]
   );
 

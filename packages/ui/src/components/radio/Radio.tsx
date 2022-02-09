@@ -35,7 +35,7 @@ export function DRadio<T>(props: DRadioProps<T>) {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gDisabled } = useGeneralState();
-  const [{ radioGroupValue, radioGroupName, radioGroupType, onCheckedChange }, radioGroupContext] = useCustomContext(DRadioGroupContext);
+  const [{ gName, gValue, gType, gOnCheckedChange }, radioGroupContext] = useCustomContext(DRadioGroupContext);
   //#endregion
 
   const [waveNode, wave] = useWave();
@@ -47,7 +47,7 @@ export function DRadio<T>(props: DRadioProps<T>) {
 
   const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean>(
     false,
-    dModel ?? (inGroup ? [radioGroupValue === dValue] : undefined),
+    dModel ?? (inGroup ? [gValue === dValue] : undefined),
     onModelChange,
     { formControlName: dFormControlName, id: _id }
   );
@@ -57,19 +57,19 @@ export function DRadio<T>(props: DRadioProps<T>) {
   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
     changeChecked(true);
     if (inGroup) {
-      onCheckedChange?.(dValue);
+      gOnCheckedChange?.(dValue);
     }
-  }, [inGroup, onCheckedChange, dValue, changeChecked]);
+  }, [changeChecked, inGroup, gOnCheckedChange, dValue]);
 
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
 
-      if (!disabled && (radioGroupType === 'fill' || radioGroupType === 'outline')) {
+      if (!disabled && (gType === 'fill' || gType === 'outline')) {
         wave(`var(--${dPrefix}color-primary)`);
       }
     },
-    [dPrefix, disabled, onClick, radioGroupType, wave]
+    [dPrefix, disabled, gType, onClick, wave]
   );
 
   return (
@@ -89,7 +89,7 @@ export function DRadio<T>(props: DRadioProps<T>) {
           id={_id}
           className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
           type="radio"
-          name={radioGroupName}
+          name={gName}
           checked={checked}
           disabled={disabled}
           aria-checked={checked}

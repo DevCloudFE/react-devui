@@ -2,7 +2,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
 import type { DTabProps } from './Tab';
 
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
@@ -10,12 +10,12 @@ import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
 
 export interface DTabsContextData {
-  updateTabEls: (identity: string, id: string, el: HTMLElement | null) => void;
-  removeTabEls: (identity: string) => void;
-  tabsActiveId: string | null;
-  getDotStyle: () => void;
-  onActiveChange: (id: string) => void;
-  onClose: (id: string) => void;
+  gUpdateTabEls: (id: string, el: HTMLElement) => void;
+  gRemoveTabEls: (id: string) => void;
+  gActiveId: string | null;
+  gGetDotStyle: () => void;
+  gOnActiveChange: (id: string) => void;
+  gOnClose: (id: string) => void;
 }
 export const DTabsContext = React.createContext<DTabsContextData | null>(null);
 
@@ -71,7 +71,7 @@ export function DTabs(props: DTabsProps) {
   const [listOverflow, setListOverflow] = useState(true);
   const [dropdownList, setDropdownList] = useImmer<React.ReactElement<DTabProps>[]>([]);
   const [scrollEnd, setScrollEnd] = useState(false);
-  const [tabEls, setTabEls] = useImmer(new Map<string, { id: string; el: HTMLElement }>());
+  const [tabEls, setTabEls] = useImmer(new Map<string, HTMLElement>());
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
@@ -98,7 +98,7 @@ export function DTabs(props: DTabsProps) {
         const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
         const dropdownList: React.ReactElement<DTabProps>[] = [];
         React.Children.forEach(children as React.ReactElement<DTabProps>[], (child) => {
-          for (const { id, el } of tabEls.values()) {
+          for (const [id, el] of tabEls) {
             if (id === child.props.dId) {
               const elRect = el.getBoundingClientRect();
               if (isHorizontal) {
@@ -165,10 +165,6 @@ export function DTabs(props: DTabsProps) {
     }, 300);
   }, [asyncCapture, checkScrollEnd, updateDropdown]);
 
-  useLayoutEffect(() => {
-    setDotStyle({ transition: 'none' });
-  }, [dPlacement, dType, dSize, setDotStyle]);
-
   useEffect(() => {
     getDotStyle();
   }, [dPlacement, dType, dSize, getDotStyle]);
@@ -216,39 +212,47 @@ export function DTabs(props: DTabsProps) {
     return [childs, tabpanels] as const;
   }, [children, dPrefix]);
 
-  const stateBackflow = useMemo<Pick<DTabsContextData, 'updateTabEls' | 'removeTabEls'>>(
-    () => ({
-      updateTabEls: (identity, id, el) => {
-        if (el) {
-          setTabEls((draft) => {
-            draft.set(identity, { id, el });
-          });
-        }
-      },
-      removeTabEls: (identity) => {
-        setTabEls((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
+  const gUpdateTabEls = useCallback(
+    (id, el) => {
+      setTabEls((draft) => {
+        draft.set(id, el);
+      });
+    },
     [setTabEls]
+  );
+  const gRemoveTabEls = useCallback(
+    (id) => {
+      setTabEls((draft) => {
+        draft.delete(id);
+      });
+    },
+    [setTabEls]
+  );
+  const gOnActiveChange = useCallback(
+    (id) => {
+      changeActiveId(id);
+    },
+    [changeActiveId]
+  );
+  const gOnClose = useCallback(
+    (id) => {
+      if (activeId === id) {
+        changeActiveId(null);
+      }
+      onClose?.(id);
+    },
+    [activeId, changeActiveId, onClose]
   );
   const contextValue = useMemo<DTabsContextData>(
     () => ({
-      ...stateBackflow,
-      tabsActiveId: activeId,
-      getDotStyle,
-      onActiveChange: (id) => {
-        changeActiveId(id);
-      },
-      onClose: (id) => {
-        if (activeId === id) {
-          changeActiveId(null);
-        }
-        onClose?.(id);
-      },
+      gUpdateTabEls,
+      gRemoveTabEls,
+      gActiveId: activeId,
+      gGetDotStyle: getDotStyle,
+      gOnActiveChange,
+      gOnClose,
     }),
-    [activeId, changeActiveId, getDotStyle, onClose, stateBackflow]
+    [activeId, gOnActiveChange, gOnClose, gRemoveTabEls, gUpdateTabEls, getDotStyle]
   );
 
   return (

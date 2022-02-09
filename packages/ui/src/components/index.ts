@@ -16,9 +16,6 @@ export { DCheckbox, DCheckboxGroup } from './checkbox';
 export type { DComposeProps, DComposeItemProps } from './compose';
 export { DCompose, DComposeItem } from './compose';
 
-export type { DDragProps, DDropProps, DDragPlaceholderProps } from './drag-drop';
-export { DDrag, DDrop, DDragPlaceholder } from './drag-drop';
-
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 

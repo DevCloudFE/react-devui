@@ -9,12 +9,12 @@ import { generateComponentMate, getClassName, getVerticalSideStyle } from '../..
 import { DPopup } from '../_popup';
 
 export interface DDropdownContextData {
-  dropdownVisible: boolean;
-  dropdownPopupTrigger: 'hover' | 'click';
-  dropdownFocusId: [string, string] | null;
-  onItemClick: (id: string) => void;
-  onFocus: (dId: string, id: string) => void;
-  onBlur: () => void;
+  gVisible: boolean;
+  gPopupTrigger: 'hover' | 'click';
+  gFocusId: [string, string] | null;
+  gOnItemClick: (id: string) => void;
+  gOnFocus: (dId: string, id: string) => void;
+  gOnBlur: () => void;
 }
 export const DDropdownContext = React.createContext<DDropdownContextData | null>(null);
 
@@ -64,7 +64,7 @@ export function DDropdown(props: DDropdownProps) {
 
   const asyncCapture = useAsync();
 
-  const [focusId, setFocusId] = useImmer<DDropdownContextData['dropdownFocusId']>(null);
+  const [focusId, setFocusId] = useImmer<DDropdownContextData['gFocusId']>(null);
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
   const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
@@ -103,30 +103,39 @@ export function DDropdown(props: DDropdownProps) {
     setActiveDescendant(isFocus ? focusId?.[1] : undefined);
   }, [focusId, navEl?.childNodes, setActiveDescendant]);
 
+  const gOnItemClick = useCallback(
+    (id) => {
+      onItemClick?.(id);
+
+      // The `DPopup` will emit `onVisibleChange` callback when click popup.
+      // So use `setTimeout` make sure change visible.
+      if (dCloseOnItemClick) {
+        asyncCapture.setTimeout(() => {
+          changeVisible(false);
+        }, 20);
+      }
+    },
+    [asyncCapture, changeVisible, dCloseOnItemClick, onItemClick]
+  );
+  const gOnFocus = useCallback(
+    (dId, id) => {
+      setFocusId([dId, id]);
+    },
+    [setFocusId]
+  );
+  const gOnBlur = useCallback(() => {
+    setFocusId(null);
+  }, [setFocusId]);
   const contextValue = useMemo<DDropdownContextData>(
     () => ({
-      dropdownVisible: visible,
-      dropdownPopupTrigger: dSubTrigger,
-      dropdownFocusId: focusId,
-      onItemClick: (id) => {
-        onItemClick?.(id);
-
-        // The `DPopup` will emit `onVisibleChange` callback when click popup.
-        // So use `setTimeout` make sure change visible.
-        if (dCloseOnItemClick) {
-          asyncCapture.setTimeout(() => {
-            changeVisible(false);
-          }, 20);
-        }
-      },
-      onFocus: (dId, id) => {
-        setFocusId([dId, id]);
-      },
-      onBlur: () => {
-        setFocusId(null);
-      },
+      gVisible: visible,
+      gPopupTrigger: dSubTrigger,
+      gFocusId: focusId,
+      gOnItemClick,
+      gOnFocus,
+      gOnBlur,
     }),
-    [asyncCapture, changeVisible, dCloseOnItemClick, dSubTrigger, focusId, onItemClick, setFocusId, visible]
+    [dSubTrigger, focusId, gOnBlur, gOnFocus, gOnItemClick, visible]
   );
 
   const childs = useMemo(() => {

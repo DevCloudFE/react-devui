@@ -94,7 +94,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       {mediaMatch.includes('md') && links.length > 0 && (
         <DAnchor className="app-route-article__anchor" dPage=".app-main">
           {links.map((link) => (
-            <DAnchorLink key={link.href} href={link.href} title={link.title}>
+            <DAnchorLink key={link.href} dAProps={link}>
               {link.title}
             </DAnchorLink>
           ))}
@@ -106,7 +106,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
             <div ref={ref} className="app-route-article__anchor-conatiner" style={{ visibility: hidden ? 'hidden' : undefined }}>
               <DAnchor dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR}>
                 {links.map((link) => (
-                  <DAnchorLink key={link.href} href={link.href} title={link.title} onClick={() => setMenuOpen(false)}>
+                  <DAnchorLink key={link.href} dAProps={link} onClick={() => setMenuOpen(false)}>
                     {link.title}
                   </DAnchorLink>
                 ))}

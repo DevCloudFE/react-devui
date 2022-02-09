@@ -1,5 +1,5 @@
 import type { DConfigContextData } from '../../hooks/d-config';
-import type { DElementSelector } from '../../hooks/element-ref';
+import type { DElementSelector } from '../../hooks/element';
 
 import { isUndefined } from 'lodash';
 import { useEffect } from 'react';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Subject } from 'rxjs';
 import { SVResizeObserver } from 'scrollview-resize';
 
-import { useRefSelector } from '../../hooks';
+import { useElement } from '../../hooks';
 import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
@@ -23,7 +23,7 @@ export function DRoot(props: DRootProps) {
   const lang = i18n?.lang ?? 'en-US';
 
   const [scrollViewChange] = useState(() => new Subject<void>());
-  const contentRef = useRefSelector(contentSelector ?? null);
+  const contentEl = useElement(contentSelector ?? null);
 
   useEffect(() => {
     document.body.classList.toggle('CJK', lang === 'zh-Hant');
@@ -49,16 +49,16 @@ export function DRoot(props: DRootProps) {
       return () => {
         observer.disconnect();
       };
-    } else if (contentRef.current) {
+    } else if (contentEl) {
       const observer = new SVResizeObserver(() => {
         scrollViewChange.next();
       });
-      observer.observe(contentRef.current);
+      observer.observe(contentEl);
       return () => {
         observer.disconnect();
       };
     }
-  }, [contentRef, contentSelector, scrollViewChange]);
+  }, [contentEl, contentSelector, scrollViewChange]);
 
   return (
     <DConfigContext.Provider

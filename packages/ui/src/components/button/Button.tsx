@@ -49,7 +49,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralState();
-  const [{ buttonGroupType, buttonGroupTheme, buttonGroupDisabled }] = useCustomContext(DButtonGroupContext);
+  const [{ gType, gTheme }] = useCustomContext(DButtonGroupContext);
   //#endregion
 
   //#region Ref
@@ -58,10 +58,10 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
 
   const [waveNode, wave] = useWave();
 
-  const buttonType = isUndefined(props.dType) ? buttonGroupType ?? dType : dType;
-  const theme = isUndefined(props.dTheme) ? buttonGroupTheme ?? dTheme : dTheme;
+  const buttonType = isUndefined(props.dType) ? gType ?? dType : dType;
+  const theme = isUndefined(props.dTheme) ? gTheme ?? dTheme : dTheme;
   const size = dSize ?? gSize;
-  const _disabled = disabled || dLoading || buttonGroupDisabled || gDisabled;
+  const _disabled = disabled || dLoading || gDisabled;
 
   const handleClick = useCallback(
     (e) => {

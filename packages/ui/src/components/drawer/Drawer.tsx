@@ -1,4 +1,4 @@
-import type { DElementSelector } from '../../hooks/element-ref';
+import type { DElementSelector } from '../../hooks/element';
 import type { Updater } from '../../hooks/two-way-binding';
 
 import { isUndefined } from 'lodash';
@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import {
   usePrefixConfig,
   useComponentConfig,
-  useRefSelector,
+  useElement,
   useImmer,
   useRefCallback,
   useLockScroll,
@@ -19,8 +19,8 @@ import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DDialog } from '../_dialog';
 
 export interface DDrawerContextData {
-  drawerId?: string;
-  closeDrawer?: () => void;
+  gId: string;
+  gCloseDrawer: () => void;
 }
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
 
@@ -173,7 +173,7 @@ export function DDrawer(props: DDrawerProps) {
     }
     return null;
   }, [dContainer, dPrefix, dialogEl, isFixed]);
-  const containerRef = useRefSelector(dContainer, handleContainer);
+  const containerEl = useElement(dContainer, handleContainer);
 
   const [distance, setDistance] = useImmer<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
     visible: false,
@@ -206,8 +206,8 @@ export function DDrawer(props: DDrawerProps) {
 
   const contextValue = useMemo<DDrawerContextData>(
     () => ({
-      drawerId: uniqueId,
-      closeDrawer,
+      gId: uniqueId,
+      gCloseDrawer: closeDrawer,
     }),
     [closeDrawer, uniqueId]
   );
@@ -265,5 +265,5 @@ export function DDrawer(props: DDrawerProps) {
     </>
   );
 
-  return dContainer === false ? drawerNode : containerRef.current && ReactDOM.createPortal(drawerNode, containerRef.current);
+  return dContainer === false ? drawerNode : containerEl && ReactDOM.createPortal(drawerNode, containerEl);
 }

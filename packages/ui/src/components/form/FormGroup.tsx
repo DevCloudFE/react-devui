@@ -4,7 +4,7 @@ import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hoo
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DFormGroupContextData {
-  formGroupPath: string[];
+  gPath: string[];
 }
 export const DFormGroupContext = React.createContext<DFormGroupContextData | null>(null);
 
@@ -19,13 +19,10 @@ export function DFormGroup(props: DFormGroupProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ formGroupPath }] = useCustomContext(DFormGroupContext);
+  const [{ gPath }] = useCustomContext(DFormGroupContext);
   //#endregion
 
-  const contextValue = useMemo<DFormGroupContextData>(
-    () => ({ formGroupPath: (formGroupPath ?? []).concat([dFormGroupName]) }),
-    [dFormGroupName, formGroupPath]
-  );
+  const contextValue = useMemo<DFormGroupContextData>(() => ({ gPath: (gPath ?? []).concat([dFormGroupName]) }), [dFormGroupName, gPath]);
 
   return (
     <DFormGroupContext.Provider value={contextValue}>

@@ -1,16 +1,16 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DRadioGroupContextData<T> {
-  radioGroupName?: string;
-  radioGroupValue: T;
-  radioGroupType: DRadioGroupProps<T>['dType'];
-  onCheckedChange: (value: T) => void;
+  gName?: string;
+  gValue: T;
+  gType: DRadioGroupProps<T>['dType'];
+  gOnCheckedChange: (value: T) => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DRadioGroupContext = React.createContext<DRadioGroupContextData<any> | null>(null);
@@ -61,16 +61,20 @@ export function DRadioGroup<T>(props: DRadioGroupProps<T>) {
     [disabled]
   );
 
+  const gOnCheckedChange = useCallback(
+    (value) => {
+      changeValue(value);
+    },
+    [changeValue]
+  );
   const contextValue = useMemo<DRadioGroupContextData<T>>(
     () => ({
-      radioGroupName: dName,
-      radioGroupValue: value,
-      radioGroupType: dType,
-      onCheckedChange: (value) => {
-        changeValue(value);
-      },
+      gName: dName,
+      gValue: value,
+      gType: dType,
+      gOnCheckedChange,
     }),
-    [changeValue, dName, dType, value]
+    [dName, dType, gOnCheckedChange, value]
   );
 
   return (

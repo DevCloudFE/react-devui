@@ -9,9 +9,6 @@ import type {
   DCheckboxGroupProps,
   DComposeProps,
   DComposeItemProps,
-  DDragProps,
-  DDropProps,
-  DDragPlaceholderProps,
   DDrawerProps,
   DDrawerHeaderProps,
   DDrawerFooterProps,
@@ -72,9 +69,6 @@ export interface DComponentConfig {
   DCheckboxGroup: DCheckboxGroupProps;
   DCompose: DComposeProps;
   DComposeItem: DComposeItemProps;
-  DDrag: DDragProps;
-  DDrop: DDropProps;
-  DDragPlaceholder: DDragPlaceholderProps;
   DDrawer: DDrawerProps;
   DDrawerHeader: DDrawerHeaderProps;
   DDrawerFooter: DDrawerFooterProps;

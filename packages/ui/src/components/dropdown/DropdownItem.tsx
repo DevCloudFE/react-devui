@@ -32,7 +32,7 @@ export function DDropdownItem(props: DDropdownItemProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ onItemClick, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DDropdownContext);
+  const [{ gOnItemClick, gOnFocus, gOnBlur }] = useCustomContext(DDropdownContext);
   //#endregion
 
   const _id = id ?? `${dPrefix}dropdown-item-${toId(dId)}`;
@@ -41,27 +41,27 @@ export function DDropdownItem(props: DDropdownItemProps) {
     (e) => {
       onClick?.(e);
 
-      !dDisabled && onItemClick?.(dId);
+      !dDisabled && gOnItemClick?.(dId);
     },
-    [dDisabled, dId, onClick, onItemClick]
+    [dDisabled, dId, onClick, gOnItemClick]
   );
 
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
 
-      !dDisabled && _onFocus?.(dId, _id);
+      !dDisabled && gOnFocus?.(dId, _id);
     },
-    [_id, _onFocus, dDisabled, dId, onFocus]
+    [_id, gOnFocus, dDisabled, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
 
-      _onBlur?.();
+      gOnBlur?.();
     },
-    [_onBlur, onBlur]
+    [gOnBlur, onBlur]
   );
 
   return (

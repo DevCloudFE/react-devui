@@ -1,25 +1,17 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
 import type { Updater } from '../../hooks/two-way-binding';
-import type { DCheckboxProps } from './Checkbox';
 
-import React, { useImperativeHandle, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext, useImmer } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DCheckboxGroupContextData<T> {
-  updateCheckboxs: (identity: string, id: string, value: T) => void;
-  removeCheckboxs: (identity: string) => void;
-  checkboxGroupValue: T[];
-  onCheckedChange: (value: T, checked: boolean) => void;
+  gValue: T[];
+  gOnCheckedChange: (value: T, checked: boolean) => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DCheckboxGroupContext = React.createContext<DCheckboxGroupContextData<any> | null>(null);
-
-export interface DCheckboxGroupRef<T> {
-  indeterminateProps: DCheckboxProps<T>;
-  indeterminateChecked: 'mixed' | boolean;
-}
 
 export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControlName?: string;
@@ -30,7 +22,7 @@ export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<H
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCheckboxGroup');
-function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef<DCheckboxGroupRef<T>>) {
+export function DCheckboxGroup<T>(props: DCheckboxGroupProps<T>) {
   const {
     dFormControlName,
     dModel,
@@ -47,8 +39,6 @@ function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef
   const { gDisabled } = useGeneralState();
   //#endregion
 
-  const [checkboxs, setCheckboxs] = useImmer(new Map<string, { id: string; value: T }>());
-
   const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T[]>([], dModel, onModelChange, {
     formControlName: dFormControlName,
   });
@@ -62,64 +52,27 @@ function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef
     [disabled]
   );
 
-  const stateBackflow = useMemo<Pick<DCheckboxGroupContextData<T>, 'updateCheckboxs' | 'removeCheckboxs'>>(
-    () => ({
-      updateCheckboxs: (identity, id, value) => {
-        setCheckboxs((draft) => {
-          draft.set(identity, { id, value });
-        });
-      },
-      removeCheckboxs: (identity) => {
-        setCheckboxs((draft) => {
-          draft.delete(identity);
-        });
-      },
-    }),
-    [setCheckboxs]
+  const gOnCheckedChange = useCallback(
+    (value, checked) => {
+      changeValue((draft) => {
+        if (checked) {
+          draft.push(value);
+        } else {
+          draft.splice(
+            draft.findIndex((item) => item === value),
+            1
+          );
+        }
+      });
+    },
+    [changeValue]
   );
   const contextValue = useMemo<DCheckboxGroupContextData<T>>(
     () => ({
-      ...stateBackflow,
-      checkboxGroupValue: value,
-      onCheckedChange: (value, checked) => {
-        changeValue((draft) => {
-          if (checked) {
-            draft.push(value);
-          } else {
-            draft.splice(
-              draft.findIndex((item) => item === value),
-              1
-            );
-          }
-        });
-      },
+      gValue: value,
+      gOnCheckedChange,
     }),
-    [changeValue, stateBackflow, value]
-  );
-
-  useImperativeHandle(
-    ref,
-    () => {
-      const allLength = checkboxs.size;
-      const checkedLength = value.length;
-      const checked = checkedLength === 0 ? false : checkedLength === allLength ? true : ('mixed' as const);
-      return {
-        indeterminateProps: {
-          dModel: checked !== 'mixed' ? [checked] : undefined,
-          dIndeterminate: checked === 'mixed',
-          dInputProps: {
-            'aria-controls': Array.from(checkboxs.values())
-              .map((item) => item.id)
-              .join(' '),
-          },
-          onModelChange: () => {
-            checked === true ? changeValue([]) : changeValue(Array.from(checkboxs.values()).map((item) => item.value));
-          },
-        } as DCheckboxProps<T>,
-        indeterminateChecked: checked,
-      };
-    },
-    [changeValue, checkboxs, value.length]
+    [gOnCheckedChange, value]
   );
 
   return (
@@ -131,6 +84,7 @@ function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef
           className={getClassName(className, `${dPrefix}checkbox-group`, {
             [`${dPrefix}checkbox-group--vertical`]: dVertical,
           })}
+          role="group"
         >
           {children}
         </div>
@@ -138,5 +92,3 @@ function CheckboxGroup<T>(props: DCheckboxGroupProps<T>, ref: React.ForwardedRef
     </DGeneralStateContext.Provider>
   );
 }
-
-export const DCheckboxGroup = React.forwardRef(CheckboxGroup);

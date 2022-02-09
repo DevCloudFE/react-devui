@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { useCallback } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useStateBackflow } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useIsomorphicLayoutEffect } from '../../hooks';
 import { getClassName, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -36,8 +36,8 @@ export function DMenuItem(props: DMenuItemProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ menuMode, menuActiveId, onActiveChange, onFocus: _onFocus, onBlur: _onBlur }] = useCustomContext(DMenuContext);
-  const [{ updateChildren, removeChildren }] = useCustomContext(DMenuSubContext);
+  const [{ gMode, gActiveId, gOnActiveChange, gOnFocus, gOnBlur }] = useCustomContext(DMenuContext);
+  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DMenuSubContext);
   //#endregion
 
   //#region Ref
@@ -46,33 +46,38 @@ export function DMenuItem(props: DMenuItemProps) {
 
   const _id = id ?? `${dPrefix}menu-item-${toId(dId)}`;
 
-  useStateBackflow(updateChildren, removeChildren, dId, false);
+  useIsomorphicLayoutEffect(() => {
+    gUpdateChildren?.(dId, dId, false);
+    return () => {
+      gRemoveChildren?.(dId);
+    };
+  }, [dId, gRemoveChildren, gUpdateChildren]);
 
   const handleClick = useCallback(
     (e) => {
       onClick?.(e);
 
-      !dDisabled && onActiveChange?.(dId);
+      !dDisabled && gOnActiveChange?.(dId);
     },
-    [dDisabled, dId, onActiveChange, onClick]
+    [dDisabled, dId, gOnActiveChange, onClick]
   );
 
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e);
 
-      !dDisabled && _onFocus?.(dId, _id);
+      !dDisabled && gOnFocus?.(dId, _id);
     },
-    [_id, _onFocus, dDisabled, dId, onFocus]
+    [_id, gOnFocus, dDisabled, dId, onFocus]
   );
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e);
 
-      _onBlur?.();
+      gOnBlur?.();
     },
-    [_onBlur, onBlur]
+    [gOnBlur, onBlur]
   );
 
   return (
@@ -82,9 +87,9 @@ export function DMenuItem(props: DMenuItemProps) {
         ref={liRef}
         id={_id}
         className={getClassName(className, `${dPrefix}menu-item`, {
-          [`${dPrefix}menu-item--horizontal`]: menuMode === 'horizontal' && __inNav,
-          [`${dPrefix}menu-item--icon`]: menuMode === 'icon' && __inNav,
-          'is-active': menuActiveId === dId,
+          [`${dPrefix}menu-item--horizontal`]: gMode === 'horizontal' && __inNav,
+          [`${dPrefix}menu-item--icon`]: gMode === 'icon' && __inNav,
+          'is-active': gActiveId === dId,
           'is-disabled': dDisabled,
         })}
         style={mergeStyle(
@@ -106,7 +111,7 @@ export function DMenuItem(props: DMenuItemProps) {
         {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
         <div className={`${dPrefix}menu-item__title`}>{children}</div>
       </li>
-      {__inNav && menuMode === 'icon' && <DTooltip dTitle={children} dTriggerEl={liEl} dPlacement="right" />}
+      {__inNav && gMode === 'icon' && <DTooltip dTitle={children} dTriggerEl={liEl} dPlacement="right" />}
     </>
   );
 }

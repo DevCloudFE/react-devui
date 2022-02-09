@@ -7,9 +7,8 @@ import { usePrefixConfig, useComponentConfig, useGeneralState, DGeneralStateCont
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DButtonGroupContextData {
-  buttonGroupType: DButtonProps['dType'];
-  buttonGroupTheme: DButtonProps['dTheme'];
-  buttonGroupDisabled: boolean;
+  gType: DButtonProps['dType'];
+  gTheme: DButtonProps['dTheme'];
 }
 export const DButtonGroupContext = React.createContext<DButtonGroupContextData | null>(null);
 
@@ -50,11 +49,10 @@ export function DButtonGroup(props: DButtonGroupProps) {
 
   const contextValue = useMemo<DButtonGroupContextData>(
     () => ({
-      buttonGroupType: dType,
-      buttonGroupTheme: dTheme,
-      buttonGroupDisabled: dDisabled,
+      gType: dType,
+      gTheme: dTheme,
     }),
-    [dType, dTheme, dDisabled]
+    [dType, dTheme]
   );
 
   return (

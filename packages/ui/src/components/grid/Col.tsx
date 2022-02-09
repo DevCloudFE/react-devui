@@ -23,14 +23,14 @@ export function DCol(props: DColProps) {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { colNum } = useGridConfig();
-  const [{ rowMediaMatch, rowSpace }] = useCustomContext(DRowContext);
+  const [{ gMediaMatch, gSpace }] = useCustomContext(DRowContext);
   //#endregion
 
   const [span, responsiveProps] = useMemo<[DSpanValue?, React.HTMLAttributes<HTMLDivElement>?]>(() => {
     let span = dSpan;
     let responsiveProps: DColBaseProps | undefined = undefined;
-    if (rowMediaMatch && dResponsiveProps) {
-      for (const breakpoint of rowMediaMatch) {
+    if (gMediaMatch && dResponsiveProps) {
+      for (const breakpoint of gMediaMatch) {
         if (breakpoint in dResponsiveProps) {
           const data = dResponsiveProps[breakpoint];
           if (isObject(data)) {
@@ -46,7 +46,7 @@ export function DCol(props: DColProps) {
     }
 
     return [span, responsiveProps];
-  }, [dResponsiveProps, dSpan, rowMediaMatch]);
+  }, [dResponsiveProps, dSpan, gMediaMatch]);
 
   return (
     <div
@@ -57,8 +57,8 @@ export function DCol(props: DColProps) {
         {
           width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
           flexGrow: span === true ? 1 : undefined,
-          paddingLeft: rowSpace,
-          paddingRight: rowSpace,
+          paddingLeft: gSpace,
+          paddingRight: gSpace,
         },
         style,
         responsiveProps?.style

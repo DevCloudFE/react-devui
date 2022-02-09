@@ -15,17 +15,17 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ drawerId, closeDrawer }] = useCustomContext(DDrawerContext);
+  const [{ gId, gCloseDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
   const handleClose = useCallback(() => {
-    closeDrawer?.();
-  }, [closeDrawer]);
+    gCloseDrawer?.();
+  }, [gCloseDrawer]);
 
   return (
     <DHeader
       {...restProps}
-      id={drawerId ? `${dPrefix}drawer-header-${drawerId}` : undefined}
+      id={gId ? `${dPrefix}drawer-header-${gId}` : undefined}
       className={getClassName(className, `${dPrefix}drawer-header`)}
       onClose={handleClose}
     ></DHeader>
