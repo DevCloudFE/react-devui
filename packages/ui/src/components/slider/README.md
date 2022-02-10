@@ -3,12 +3,6 @@ group: Data Entry
 title: Slider
 ---
 
-Slide the input bar.
-
-## When To Use
-
-Let the user specify a numeric value which must be no less than a given value, and no more than another given value.
-
 ## API
 
 ### DSliderSingleProps

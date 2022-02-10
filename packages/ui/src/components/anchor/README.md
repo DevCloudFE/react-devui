@@ -3,12 +3,6 @@ group: Navigation
 title: Anchor
 ---
 
-Jump to the specified location on the page.
-
-## When To Use
-
-Need to show the anchor links available for jumping on the current page, and quickly jump between anchor points.
-
 ## API
 
 ### DAnchorProps

@@ -3,12 +3,6 @@ group: Feedback
 title: Notification
 ---
 
-Notification.
-
-## When To Use
-
-Global display notification reminder information.
-
 ## API
 
 ### DNotificationProps

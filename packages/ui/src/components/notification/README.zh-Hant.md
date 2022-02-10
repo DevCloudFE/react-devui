@@ -2,12 +2,6 @@
 title: 通知
 ---
 
-通知。
-
-## 何时使用
-
-全局展示通知提醒信息。
-
 ## API
 
 ### DNotificationProps

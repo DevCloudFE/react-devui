@@ -3,12 +3,6 @@ group: Data Entry
 title: Checkbox
 ---
 
-Checkbox group.
-
-## When To Use
-
-In a set, the user can make one or more choices through the multi-selection group component.
-
 ## API
 
 ### DCheckboxProps

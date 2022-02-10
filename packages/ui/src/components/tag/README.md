@@ -3,12 +3,6 @@ group: Data Display
 title: Tag
 ---
 
-Tag.
-
-## When To Use
-
-Mark and classify.
-
 ## API
 
 ### DTagProps

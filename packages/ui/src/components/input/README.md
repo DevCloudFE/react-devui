@@ -3,12 +3,6 @@ group: Data Entry
 title: Input
 ---
 
-The input box is the most basic component that receives user text input.
-
-## When To Use
-
-When the user needs to enter content.
-
 ## API
 
 ### DRadioProps

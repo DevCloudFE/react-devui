@@ -3,12 +3,6 @@ group: Feedback
 title: Drawer
 ---
 
-A panel which slides in from the edge of the screen.
-
-## When To Use
-
-Users do not need to switch pages to complete some operations.
-
 ## API
 
 ### DDrawerProps

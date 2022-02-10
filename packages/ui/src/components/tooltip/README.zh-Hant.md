@@ -2,12 +2,6 @@
 title: 文字提示
 ---
 
-文字提示气泡框。
-
-## 何时使用
-
-代替系统默认的 `title` 提示。
-
 ## API
 
 ### DTooltipProps

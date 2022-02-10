@@ -3,12 +3,6 @@ group: Data Display
 title: Empty
 ---
 
-Empty state.
-
-## When To Use
-
-Display when the data is empty.
-
 ## API
 
 ### DEmptyProps

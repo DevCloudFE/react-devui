@@ -3,12 +3,6 @@ group: Data Entry
 title: Select
 ---
 
-A control that provides options.
-
-## When To Use
-
-Replace the native selector.
-
 ## API
 
 ### DSelectSingleProps\<T\>

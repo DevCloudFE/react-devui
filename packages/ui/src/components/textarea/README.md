@@ -3,12 +3,6 @@ group: Data Entry
 title: Textarea
 ---
 
-Multi-line plain text edit control.
-
-## When To Use
-
-It is desirable to allow users to enter large amounts of free-form text, such as comments on comments or feedback forms.
-
 ## API
 
 ### DTextareaProps

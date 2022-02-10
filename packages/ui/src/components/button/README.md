@@ -3,12 +3,6 @@ group: General
 title: Button
 ---
 
-Basic buttons.
-
-## When To Use
-
-Respond to user click behavior.
-
 ## API
 
 ### DButtonProps

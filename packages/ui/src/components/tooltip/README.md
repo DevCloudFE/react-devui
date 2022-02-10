@@ -3,12 +3,6 @@ group: Data Display
 title: Tooltip
 ---
 
-A text popup tip.
-
-## When To Use
-
-Replace the system default `title` prompt.
-
 ## API
 
 ### DTooltipProps

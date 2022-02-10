@@ -18,7 +18,6 @@ import {
   useContentSVChangeConfig,
 } from '../../hooks';
 import { getClassName, getPopupPlacementStyle, mergeStyle } from '../../utils';
-import { checkOutEl } from './utils';
 
 export interface DTriggerRenderProps {
   [key: `data-${string}popup-trigger`]: string;
@@ -102,12 +101,10 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
 
   const dataRef = useRef<{
     clearTid: (() => void) | null;
-    hasCancelLeave: boolean;
     transitionState?: DTransitionStateList;
     triggerRect?: { top: number; left: number };
   }>({
     clearTid: null,
-    hasCancelLeave: false,
   });
 
   const asyncCapture = useAsync();
@@ -294,7 +291,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     dVisible,
     dCallbackList: {
       beforeEnter: () => {
-        dataRef.current.hasCancelLeave = false;
         updatePosition();
         setRendered(true);
         onRendered?.();
@@ -304,9 +300,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       beforeLeave: () => dataRef.current.transitionState,
     },
     afterEnter: () => {
-      if (dataRef.current.hasCancelLeave && checkMouseLeave()) {
-        changeVisible(false);
-      }
       afterVisibleChange?.(true);
     },
     afterLeave: () => {
@@ -328,18 +321,6 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       }
     }
   }, [dPrefix, dZIndex, hidden, isFixed, maxZIndex]);
-
-  // `onMouseEnter` and `onMouseLeave` trigger time is uncertain.
-  // Very strange, sometimes popup element emit `onMouseEnter` before
-  // trigger element emit `onMouseLeave`.
-  // It's also no emit `onMouseEnter` when enter to popup element sometimes.
-  const checkMouseLeave = useCallback(() => {
-    if (popupEl && triggerEl) {
-      return checkOutEl(popupEl) && checkOutEl(triggerEl);
-    }
-
-    return false;
-  }, [popupEl, triggerEl]);
 
   const handleMouseEnter = useCallback(
     (e) => {
@@ -364,15 +345,11 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         dataRef.current.clearTid && dataRef.current.clearTid();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
           dataRef.current.clearTid = null;
-          if (checkMouseLeave()) {
-            changeVisible(false);
-          } else {
-            dataRef.current.hasCancelLeave = true;
-          }
+          changeVisible(false);
         }, dMouseLeaveDelay);
       }
     },
-    [onMouseLeave, dTrigger, asyncCapture, dMouseLeaveDelay, checkMouseLeave, changeVisible]
+    [onMouseLeave, dTrigger, asyncCapture, dMouseLeaveDelay, changeVisible]
   );
 
   const handleFocus = useCallback(
@@ -429,11 +406,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
               dataRef.current.clearTid && dataRef.current.clearTid();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
                 dataRef.current.clearTid = null;
-                if (checkMouseLeave()) {
-                  flushSync(() => changeVisible(false));
-                } else {
-                  dataRef.current.hasCancelLeave = true;
-                }
+                flushSync(() => changeVisible(false));
               }, dMouseLeaveDelay);
             },
           });
@@ -467,7 +440,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, checkMouseLeave, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, changeVisible, triggerEl]);
+  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, changeVisible, triggerEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -566,12 +539,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       triggerRenderProps.onMouseLeave = () => {
         dataRef.current.clearTid && dataRef.current.clearTid();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
-          if (checkMouseLeave()) {
-            changeVisible(false);
-          } else {
-            dataRef.current.hasCancelLeave = true;
-          }
+          changeVisible(false);
         }, dMouseLeaveDelay);
       };
     }
@@ -592,7 +560,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     }
 
     return triggerRenderProps;
-  }, [asyncCapture, checkMouseLeave, dMouseEnterDelay, dMouseLeaveDelay, dPrefix, dTrigger, uniqueId, changeVisible]);
+  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dPrefix, dTrigger, uniqueId, changeVisible]);
 
   return (
     <>

@@ -3,12 +3,6 @@ group: Layout
 title: Grid
 ---
 
-Grid system.
-
-## When To Use
-
-Need more flexible Flex layout, or page content needs to support responsive layout.
-
 ## API
 
 ### DRowProps

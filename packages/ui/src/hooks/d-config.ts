@@ -33,6 +33,7 @@ import type {
   DPaginationProps,
   DRadioProps,
   DRadioGroupProps,
+  DRatingProps,
   DSelectProps,
   DSeparatorProps,
   DSliderProps,
@@ -93,6 +94,7 @@ export interface DComponentConfig {
   DPagination: DPaginationProps;
   DRadio: DRadioProps;
   DRadioGroup: DRadioGroupProps;
+  DRating: DRatingProps;
   DSelect: DSelectProps;
   DSeparator: DSeparatorProps;
   DSlider: DSliderProps;

@@ -3,12 +3,6 @@ group: Layout
 title: Affix
 ---
 
-Pin the page nodes to the visible range.
-
-## When To Use
-
-Need more flexible `sticky` positioning.
-
 ## API
 
 ### DAffixProps

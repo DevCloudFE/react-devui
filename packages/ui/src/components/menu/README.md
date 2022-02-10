@@ -3,12 +3,6 @@ group: Navigation
 title: Menu
 ---
 
-A list of menus that provide navigation for pages and functions.
-
-## When To Use
-
-Users need top navigation or side navigation.
-
 ## API
 
 ### DMenuProps

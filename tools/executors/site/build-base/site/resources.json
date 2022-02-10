@@ -1,16 +1,13 @@
 {
   "en-US": {
     "translation": {
-      "Edit this page on GitHub": "Edit this page on GitHub",
       "Examples": "Examples",
-      "Expand all code": "Expand all code",
       "Open in CodeSandbox": "Open in CodeSandbox",
       "Open in Stackblitz": "Open in Stackblitz",
       "Hide code": "Hide code",
       "Show code": "Show code",
       "Copy code": "Copy code",
       "Copied!": "Copied!",
-      "Edit this demo on GitHub": "Edit this demo on GitHub",
       "Documentation": {
         "Interface": "Interface"
       },
@@ -20,16 +17,13 @@
   },
   "zh-Hant": {
     "translation": {
-      "Edit this page on GitHub": "在 GitHub 上编辑此页",
       "Examples": "代码演示",
-      "Expand all code": "展开全部代码",
       "Open in CodeSandbox": "在 CodeSandbox 中打开",
       "Open in Stackblitz": "在 Stackblitz 中打开",
       "Hide code": "收起代码",
       "Show code": "显示代码",
       "Copy code": "复制代码",
       "Copied!": "复制成功！",
-      "Edit this demo on GitHub": "在 GitHub 上编辑此示例",
       "Documentation": {
         "Interface": "接口"
       },

@@ -2,12 +2,6 @@
 title: 选择框
 ---
 
-一个提供选项的控件。
-
-## 何时使用
-
-代替原生的选择器。
-
 ## API
 
 ### DSelectSingleProps\<T\>

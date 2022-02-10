@@ -3,12 +3,6 @@ group: Feedback
 title: Toast
 ---
 
-Toast.
-
-## When To Use
-
-Global display operation feedback information.
-
 ## API
 
 ### DToastProps

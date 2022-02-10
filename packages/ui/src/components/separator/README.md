@@ -3,12 +3,6 @@ group: Layout
 title: Separator
 ---
 
-A separator is a thin line that groups content in lists and layouts.
-
-## When To Use
-
-Separators separate content into clear groups.
-
 ## API
 
 ### DSeparatorProps

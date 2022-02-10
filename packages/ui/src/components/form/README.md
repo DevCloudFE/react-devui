@@ -3,12 +3,6 @@ group: Data Entry
 title: Form
 ---
 
-Data entry and verification.
-
-## When To Use
-
-Need to verify the data.
-
 ## API
 
 ### DFormProps

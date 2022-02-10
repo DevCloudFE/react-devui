@@ -3,12 +3,6 @@ group: Data Entry
 title: Radio
 ---
 
-Radio group.
-
-## When To Use
-
-The user needs to select a single option from a data set, and can view all the available options side by side.
-
 ## API
 
 ### DRadioProps

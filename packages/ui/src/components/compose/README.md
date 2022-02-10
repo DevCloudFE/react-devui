@@ -3,12 +3,6 @@ group: General
 title: Compose
 ---
 
-Used to combine various components to form a whole.
-
-## When To Use
-
-It is often used to combine various input components or buttons.
-
 ## API
 
 ### DComposeProps

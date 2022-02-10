@@ -3,12 +3,6 @@ group: Navigation
 title: Tabs
 ---
 
-Tab switching component.
-
-## When To Use
-
-Users need to store and display large pieces of content through a flat area to keep the interface clean and tidy.
-
 ## API
 
 ### DTabsProps

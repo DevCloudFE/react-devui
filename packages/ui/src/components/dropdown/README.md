@@ -3,12 +3,6 @@ group: Navigation
 title: Dropdown
 ---
 
-List that pops down.
-
-## When To Use
-
-When there are too many operation commands on the page, this component can be used to store operation commands.
-
 ## API
 
 ### DDropdownProps

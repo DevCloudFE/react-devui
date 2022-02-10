@@ -3,12 +3,6 @@ group: Data Entry
 title: Cascader
 ---
 
-Cascading selection boxes.
-
-## When To Use
-
-Category selection is required.
-
 ## API
 
 ### DSelectSingleProps\<T\>

@@ -2,12 +2,6 @@
 title: 级联选择框
 ---
 
-级联选择框。
-
-## 何时使用
-
-需要分类选择。
-
 ## API
 
 ### DCascaderSingleProps\<T\>

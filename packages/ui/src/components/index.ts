@@ -49,6 +49,9 @@ export { DPagination } from './pagination';
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
 
+export type { DRatingProps } from './rating';
+export { DRating } from './rating';
+
 export type { DRootProps } from './root';
 export { DRoot } from './root';
 

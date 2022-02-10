@@ -3,12 +3,6 @@ group: Navigation
 title: Pagination
 ---
 
-Divide a series of pages into different pages.
-
-## When To Use
-
-Often used for page navigation or table paging.
-
 ## API
 
 ### DPaginationProps

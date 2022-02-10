@@ -3,12 +3,6 @@ group: Data Entry
 title: Switch
 ---
 
-Switch.
-
-## When To Use
-
-Switch on/off status.
-
 ## API
 
 ### DSwitchProps
