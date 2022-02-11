@@ -1,10 +1,10 @@
 import type { DToastProps } from '../toast';
 import type { Subscription } from 'rxjs';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useImmer, usePrefixConfig } from '../../hooks';
+import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
 import { DToast, ToastService, toastSubject } from '../toast';
 
 export function Toast() {
@@ -78,8 +78,8 @@ export function Toast() {
     );
   }, [setToasts]);
 
-  const [toastTRoot, toastBRoot] = useMemo(() => {
-    const getRoot = (id: string) => {
+  const getRoot = useCallback(
+    (id: string) => {
       let root = document.getElementById(`${dPrefix}toast-root`);
       if (!root) {
         root = document.createElement('div');
@@ -94,25 +94,34 @@ export function Toast() {
         root.appendChild(el);
       }
       return el;
-    };
-
-    return [getRoot(`${dPrefix}toast-t-root`), getRoot(`${dPrefix}toast-b-root`)];
-  }, [dPrefix]);
+    },
+    [dPrefix]
+  );
+  const [toastTRoot, setToastTRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setToastTRoot(getRoot(`${dPrefix}toast-t-root`));
+  }, [dPrefix, getRoot]);
+  const [toastBRoot, setToastBRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setToastBRoot(getRoot(`${dPrefix}toast-b-root`));
+  }, [dPrefix, getRoot]);
 
   return (
     <>
-      {ReactDOM.createPortal(
-        Array.from(toasts.entries())
-          .filter(([, toastProps]) => (toastProps.dPlacement ?? 'top') === 'top')
-          .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
-        toastTRoot
-      )}
-      {ReactDOM.createPortal(
-        Array.from(toasts.entries())
-          .filter(([, toastProps]) => toastProps.dPlacement === 'bottom')
-          .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
-        toastBRoot
-      )}
+      {toastTRoot &&
+        ReactDOM.createPortal(
+          Array.from(toasts.entries())
+            .filter(([, toastProps]) => (toastProps.dPlacement ?? 'top') === 'top')
+            .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
+          toastTRoot
+        )}
+      {toastBRoot &&
+        ReactDOM.createPortal(
+          Array.from(toasts.entries())
+            .filter(([, toastProps]) => toastProps.dPlacement === 'bottom')
+            .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
+          toastBRoot
+        )}
     </>
   );
 }

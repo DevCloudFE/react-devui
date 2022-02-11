@@ -55,7 +55,9 @@ export function DFormItem(props: DFormItemProps) {
 
   const [t] = useTranslation('DForm');
 
-  const dataRef = useRef<{ preErrors: DErrors }>({
+  const dataRef = useRef<{
+    preErrors: DErrors;
+  }>({
     preErrors: [],
   });
 

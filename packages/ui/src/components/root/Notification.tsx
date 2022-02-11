@@ -1,10 +1,10 @@
 import type { DNotificationProps } from '../notification';
 import type { Subscription } from 'rxjs';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useImmer, usePrefixConfig } from '../../hooks';
+import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
 import { DNotification, NotificationService, notificationSubject } from '../notification';
 
 export function Notification() {
@@ -78,8 +78,8 @@ export function Notification() {
     );
   }, [setNotifications]);
 
-  const [notificationLTRoot, notificationRTRoot, notificationLBRoot, notificationRBRoot] = useMemo(() => {
-    const getRoot = (id: string) => {
+  const getRoot = useCallback(
+    (id: string) => {
       let root = document.getElementById(`${dPrefix}notification-root`);
       if (!root) {
         root = document.createElement('div');
@@ -94,42 +94,56 @@ export function Notification() {
         root.appendChild(el);
       }
       return el;
-    };
-
-    return [
-      getRoot(`${dPrefix}notification-lt-root`),
-      getRoot(`${dPrefix}notification-rt-root`),
-      getRoot(`${dPrefix}notification-lb-root`),
-      getRoot(`${dPrefix}notification-rb-root`),
-    ];
-  }, [dPrefix]);
+    },
+    [dPrefix]
+  );
+  const [notificationLTRoot, setNotificationLTRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setNotificationLTRoot(getRoot(`${dPrefix}notification-lt-root`));
+  }, [dPrefix, getRoot]);
+  const [notificationRTRoot, setNotificationRTRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setNotificationRTRoot(getRoot(`${dPrefix}notification-rt-root`));
+  }, [dPrefix, getRoot]);
+  const [notificationLBRoot, setNotificationLBRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setNotificationLBRoot(getRoot(`${dPrefix}notification-lb-root`));
+  }, [dPrefix, getRoot]);
+  const [notificationRBRoot, setNotificationRBRoot] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
+    setNotificationRBRoot(getRoot(`${dPrefix}notification-rb-root`));
+  }, [dPrefix, getRoot]);
 
   return (
     <>
-      {ReactDOM.createPortal(
-        Array.from(notifications.entries())
-          .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-top')
-          .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
-        notificationLTRoot
-      )}
-      {ReactDOM.createPortal(
-        Array.from(notifications.entries())
-          .filter(([, notificationProps]) => (notificationProps.dPlacement ?? 'right-top') === 'right-top')
-          .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
-        notificationRTRoot
-      )}
-      {ReactDOM.createPortal(
-        Array.from(notifications.entries())
-          .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-bottom')
-          .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
-        notificationLBRoot
-      )}
-      {ReactDOM.createPortal(
-        Array.from(notifications.entries())
-          .filter(([, notificationProps]) => notificationProps.dPlacement === 'right-bottom')
-          .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
-        notificationRBRoot
-      )}
+      {notificationLTRoot &&
+        ReactDOM.createPortal(
+          Array.from(notifications.entries())
+            .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-top')
+            .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
+          notificationLTRoot
+        )}
+      {notificationRTRoot &&
+        ReactDOM.createPortal(
+          Array.from(notifications.entries())
+            .filter(([, notificationProps]) => (notificationProps.dPlacement ?? 'right-top') === 'right-top')
+            .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
+          notificationRTRoot
+        )}
+      {notificationLBRoot &&
+        ReactDOM.createPortal(
+          Array.from(notifications.entries())
+            .filter(([, notificationProps]) => notificationProps.dPlacement === 'left-bottom')
+            .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
+          notificationLBRoot
+        )}
+      {notificationRBRoot &&
+        ReactDOM.createPortal(
+          Array.from(notifications.entries())
+            .filter(([, notificationProps]) => notificationProps.dPlacement === 'right-bottom')
+            .map(([uniqueId, notificationProps]) => <DNotification key={uniqueId} {...notificationProps}></DNotification>),
+          notificationRBRoot
+        )}
     </>
   );
 }

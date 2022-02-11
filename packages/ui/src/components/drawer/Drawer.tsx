@@ -79,7 +79,9 @@ export function DDrawer(props: DDrawerProps) {
   const [dialogContentEl, dialogContentRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const dataRef = useRef<{ preActiveEl: HTMLElement | null }>({
+  const dataRef = useRef<{
+    preActiveEl: HTMLElement | null;
+  }>({
     preActiveEl: null,
   });
 
@@ -159,7 +161,7 @@ export function DDrawer(props: DDrawerProps) {
     }
   }, [__zIndex, dPrefix, dZIndex, hidden, isFixed, maxZIndex]);
 
-  const handleContainer = useCallback(() => {
+  const getContainer = useCallback(() => {
     if (isFixed) {
       let el = document.getElementById(`${dPrefix}drawer-root`);
       if (!el) {
@@ -173,7 +175,7 @@ export function DDrawer(props: DDrawerProps) {
     }
     return null;
   }, [dContainer, dPrefix, dialogEl, isFixed]);
-  const containerEl = useElement(dContainer, handleContainer);
+  const containerEl = useElement(dContainer, getContainer);
 
   const [distance, setDistance] = useImmer<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
     visible: false,
@@ -189,6 +191,15 @@ export function DDrawer(props: DDrawerProps) {
   }, [onClose, setVisible]);
 
   useLockScroll(isFixed && !hidden);
+
+  const handleContentKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
+    (e) => {
+      if (dEscClosable && e.code === 'Escape') {
+        closeDrawer();
+      }
+    },
+    [closeDrawer, dEscClosable]
+  );
 
   const childDrawer = useMemo(() => {
     if (dChildDrawer) {
@@ -239,7 +250,6 @@ export function DDrawer(props: DDrawerProps) {
         dHidden={hidden}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
-        dEscClosable={dEscClosable}
         dDestroy={dDestroy}
         dDialogRef={dialogRef}
         onClose={closeDrawer}
@@ -254,6 +264,7 @@ export function DDrawer(props: DDrawerProps) {
               height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
             }}
             tabIndex={-1}
+            onKeyDown={handleContentKeyDown}
           >
             {dHeader}
             <div className={`${dPrefix}drawer__body`}>{children}</div>

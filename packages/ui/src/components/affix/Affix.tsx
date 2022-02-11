@@ -1,11 +1,20 @@
 import type { DElementSelector } from '../../hooks/element';
 
-import { isString, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { isUndefined } from 'lodash';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useAsync, useElement, useImmer, useRefCallback, useContentSVChangeConfig } from '../../hooks';
-import { getClassName, toPx, mergeStyle, generateComponentMate } from '../../utils';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useAsync,
+  useElement,
+  useImmer,
+  useRefCallback,
+  useContentSVChangeConfig,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
+import { getClassName, mergeStyle, generateComponentMate } from '../../utils';
 
 export interface DAffixRef {
   el: HTMLDivElement | null;
@@ -14,8 +23,8 @@ export interface DAffixRef {
 
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
-  dTop?: number | string;
-  dBottom?: number | string;
+  dTop?: number;
+  dBottom?: number;
   dZIndex?: number | string;
   onFixedChange?: (fixed: boolean) => void;
 }
@@ -66,18 +75,15 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   const targetEl = useElement(dTarget ?? null);
 
-  const top = isString(dTop) ? toPx(dTop, true) : dTop;
-  const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
-
-  const rootEl = useMemo(() => {
+  const [rootEl, setRootEl] = useState<HTMLElement>();
+  useIsomorphicLayoutEffect(() => {
     let root = document.getElementById(`${dPrefix}affix-root`);
     if (!root) {
       root = document.createElement('div');
       root.id = `${dPrefix}affix-root`;
       document.body.appendChild(root);
     }
-
-    return root;
+    setRootEl(root);
   }, [dPrefix]);
 
   const updatePosition = useCallback(() => {
@@ -95,11 +101,11 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
         const offsetRect = offsetEl.getBoundingClientRect();
 
-        let fixedCondition = offsetRect.top - targetRect.top <= top;
-        let fixedTop = targetRect.top + top;
+        let fixedCondition = offsetRect.top - targetRect.top <= dTop;
+        let fixedTop = targetRect.top + dTop;
         if (!isUndefined(props.dBottom)) {
-          fixedCondition = targetRect.bottom - offsetRect.bottom <= bottom;
-          fixedTop = targetRect.bottom - bottom - offsetRect.height;
+          fixedCondition = targetRect.bottom - offsetRect.bottom <= dBottom;
+          fixedTop = targetRect.bottom - dBottom - offsetRect.height;
         }
 
         if (fixedCondition) {
@@ -127,9 +133,9 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     fixed,
     referenceEl,
     affixEl,
-    top,
+    dTop,
     props.dBottom,
-    bottom,
+    dBottom,
     setFixedStyle,
     dZIndex,
     dPrefix,
@@ -201,12 +207,13 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
         }}
         aria-hidden={true}
       ></div>
-      {ReactDOM.createPortal(
-        <div {...restProps} className={getClassName(className, `${dPrefix}affix`)} style={mergeStyle(fixedStyle, style)}>
-          {children}
-        </div>,
-        rootEl
-      )}
+      {rootEl &&
+        ReactDOM.createPortal(
+          <div {...restProps} className={getClassName(className, `${dPrefix}affix`)} style={mergeStyle(fixedStyle, style)}>
+            {children}
+          </div>,
+          rootEl
+        )}
     </>
   ) : (
     <div {...restProps} ref={affixRef} className={getClassName(className, `${dPrefix}affix`)} style={style}>

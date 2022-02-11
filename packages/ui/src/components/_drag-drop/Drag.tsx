@@ -24,7 +24,9 @@ export function DDrag(props: DDragProps) {
     useCustomContext(DDropContext);
   //#endregion
 
-  const dataRef = useRef<{ dragEl: HTMLElement | null }>({
+  const dataRef = useRef<{
+    dragEl: HTMLElement | null;
+  }>({
     dragEl: null,
   });
 

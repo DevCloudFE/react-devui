@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback, useId } from 'react';
+import React, { useId } from 'react';
 import { Subject } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useRefCallback, useDTransition, useTranslation } from '../../hooks';
@@ -91,8 +91,6 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     onClose,
     afterVisibleChange,
     className,
-    tabIndex = -1,
-    onKeyDown,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -143,29 +141,17 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     },
   });
 
-  const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
-    (e) => {
-      onKeyDown?.(e);
-
-      if (dEscClosable && e.code === 'Escape') {
-        onClose?.();
-      }
-    },
-    [dEscClosable, onClose, onKeyDown]
-  );
-
   return (
     <DAlertDialog
       {...restProps}
       className={getClassName(className, `${dPrefix}notification`)}
-      tabIndex={tabIndex}
       aria-labelledby={isUndefined(dTitle) ? undefined : `${dPrefix}notification-header-${uniqueId}`}
       aria-describedby={`${dPrefix}notification-content-${uniqueId}`}
       dHidden={hidden}
       dDuration={dDuration}
+      dEscClosable={dEscClosable}
       dDialogRef={dialogRef}
       onClose={onClose}
-      onKeyDown={handleKeyDown}
     >
       {(!isUndefined(dType) || !isUndefined(dIcon)) && (
         <div className={`${dPrefix}notification__icon`}>

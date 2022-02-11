@@ -13,6 +13,7 @@ export interface DToastProps extends React.HTMLAttributes<HTMLDivElement> {
   dContent: React.ReactNode;
   dDuration?: number;
   dPlacement?: 'top' | 'bottom';
+  dEscClosable?: boolean;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
@@ -79,6 +80,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }) {
     dContent,
     dDuration = 2,
     dPlacement = 'top',
+    dEscClosable = true,
     onClose,
     afterVisibleChange,
     className,
@@ -137,6 +139,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }) {
       aria-describedby={`${dPrefix}toast-content-${uniqueId}`}
       dHidden={hidden}
       dDuration={dDuration}
+      dEscClosable={dEscClosable}
       dDialogRef={dialogRef}
       onClose={onClose}
     >

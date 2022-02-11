@@ -8,10 +8,14 @@ export function useTreeData<R>(
   getOptions: (select: any) => R,
   onSelectChange?: (value: any) => void
 ): [R, (value: any) => void] {
-  const dataRef = useRef<{ select: any; getOptions: (select: any) => R; options: any }>({
+  const dataRef = useRef<{
+    select: any;
+    options: any;
+    getOptions: (select: any) => R;
+  }>({
     select,
-    getOptions,
     options: null,
+    getOptions,
   });
 
   const [options, setOptions] = useState<any>(() => getOptions(select));

@@ -27,9 +27,9 @@ export interface DTriggerProps {
 export function DTrigger(props: DTriggerProps) {
   const { dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dTriggerEl, dRender, onTrigger } = props;
 
-  const dataRef = useRef<{ clearTid: (() => void) | null }>({
-    clearTid: null,
-  });
+  const dataRef = useRef<{
+    clearTid?: () => void;
+  }>({});
 
   const asyncCapture = useAsync();
 
@@ -40,18 +40,16 @@ export function DTrigger(props: DTriggerProps) {
         if (dTrigger === 'hover') {
           asyncGroup.fromEvent(dTriggerEl, 'mouseenter').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                dataRef.current.clearTid = null;
                 flushSync(() => onTrigger?.(true));
               }, dMouseEnterDelay);
             },
           });
           asyncGroup.fromEvent(dTriggerEl, 'mouseleave').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                dataRef.current.clearTid = null;
                 flushSync(() => onTrigger?.(false));
               }, dMouseLeaveDelay);
             },
@@ -61,7 +59,7 @@ export function DTrigger(props: DTriggerProps) {
         if (dTrigger === 'focus') {
           asyncGroup.fromEvent(dTriggerEl, 'focus').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               flushSync(() => onTrigger?.(true));
             },
           });
@@ -75,7 +73,7 @@ export function DTrigger(props: DTriggerProps) {
         if (dTrigger === 'click') {
           asyncGroup.fromEvent(dTriggerEl, 'click').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               flushSync(() => onTrigger?.());
             },
           });
@@ -92,23 +90,21 @@ export function DTrigger(props: DTriggerProps) {
     const renderProps: DRenderProps = {};
     if (dTrigger === 'hover') {
       renderProps.onMouseEnter = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
           onTrigger?.(true);
         }, dMouseEnterDelay);
       };
       renderProps.onMouseLeave = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
           onTrigger?.(false);
         }, dMouseLeaveDelay);
       };
     }
     if (dTrigger === 'focus') {
       renderProps.onFocus = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         onTrigger?.(true);
       };
       renderProps.onBlur = () => {
@@ -117,7 +113,7 @@ export function DTrigger(props: DTriggerProps) {
     }
     if (dTrigger === 'click') {
       renderProps.onClick = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         onTrigger?.();
       };
     }

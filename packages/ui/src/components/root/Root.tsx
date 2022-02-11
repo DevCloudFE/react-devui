@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Subject } from 'rxjs';
 import { SVResizeObserver } from 'scrollview-resize';
 
-import { useElement } from '../../hooks';
+import { useElement, useIsomorphicLayoutEffect } from '../../hooks';
 import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
@@ -25,11 +25,11 @@ export function DRoot(props: DRootProps) {
   const [scrollViewChange] = useState(() => new Subject<void>());
   const contentEl = useElement(contentSelector ?? null);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     document.body.classList.toggle('CJK', lang === 'zh-Hant');
   }, [lang]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     document.body.classList.toggle('dark', theme === 'dark');
     if (theme === 'dark') {
       const colorScheme = document.documentElement.style.colorScheme;

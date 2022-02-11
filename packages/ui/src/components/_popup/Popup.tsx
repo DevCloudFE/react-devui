@@ -100,12 +100,10 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   //#endregion
 
   const dataRef = useRef<{
-    clearTid: (() => void) | null;
     transitionState?: DTransitionStateList;
     triggerRect?: { top: number; left: number };
-  }>({
-    clearTid: null,
-  });
+    clearTid?: () => void;
+  }>({});
 
   const asyncCapture = useAsync();
   const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
@@ -125,7 +123,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   const triggerEl = useElement(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${uniqueId}"]` : dTriggerEl);
 
   const isFixed = isUndefined(dContainer);
-  const handleContainer = useCallback(() => {
+  const getContainer = useCallback(() => {
     if (isFixed) {
       let el = document.getElementById(`${dPrefix}popup-root`);
       if (!el) {
@@ -139,7 +137,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     }
     return null;
   }, [dContainer, dPrefix, isFixed, triggerEl]);
-  const containerEl = useElement(dContainer, handleContainer);
+  const containerEl = useElement(dContainer, getContainer);
 
   const placement = dAutoPlace ? autoPlacement : dPlacement;
 
@@ -327,9 +325,8 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       onMouseEnter?.(e);
 
       if (dTrigger === 'hover') {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
           changeVisible(true);
         }, dMouseEnterDelay);
       }
@@ -342,9 +339,8 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       onMouseLeave?.(e);
 
       if (dTrigger === 'hover') {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
           changeVisible(false);
         }, dMouseLeaveDelay);
       }
@@ -357,7 +353,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       onFocus?.(e);
 
       if (dTrigger === 'focus') {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         changeVisible(true);
       }
     },
@@ -380,7 +376,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       onClick?.(e);
 
       if (dTrigger === 'click') {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         changeVisible(true);
       }
     },
@@ -394,18 +390,16 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         if (dTrigger === 'hover') {
           asyncGroup.fromEvent(triggerEl, 'mouseenter').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                dataRef.current.clearTid = null;
                 flushSync(() => changeVisible(true));
               }, dMouseEnterDelay);
             },
           });
           asyncGroup.fromEvent(triggerEl, 'mouseleave').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                dataRef.current.clearTid = null;
                 flushSync(() => changeVisible(false));
               }, dMouseLeaveDelay);
             },
@@ -415,7 +409,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         if (dTrigger === 'focus') {
           asyncGroup.fromEvent(triggerEl, 'focus').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               flushSync(() => changeVisible(true));
             },
           });
@@ -429,7 +423,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         if (dTrigger === 'click') {
           asyncGroup.fromEvent(triggerEl, 'click').subscribe({
             next: () => {
-              dataRef.current.clearTid && dataRef.current.clearTid();
+              dataRef.current.clearTid?.();
               flushSync(() => changeVisible());
             },
           });
@@ -530,14 +524,13 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     const triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: uniqueId };
     if (dTrigger === 'hover') {
       triggerRenderProps.onMouseEnter = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          dataRef.current.clearTid = null;
           changeVisible(true);
         }, dMouseEnterDelay);
       };
       triggerRenderProps.onMouseLeave = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         dataRef.current.clearTid = asyncCapture.setTimeout(() => {
           changeVisible(false);
         }, dMouseLeaveDelay);
@@ -545,7 +538,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     }
     if (dTrigger === 'focus') {
       triggerRenderProps.onFocus = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         changeVisible(true);
       };
       triggerRenderProps.onBlur = () => {
@@ -554,7 +547,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     }
     if (dTrigger === 'click') {
       triggerRenderProps.onClick = () => {
-        dataRef.current.clearTid && dataRef.current.clearTid();
+        dataRef.current.clearTid?.();
         changeVisible();
       };
     }

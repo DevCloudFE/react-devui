@@ -24,7 +24,9 @@ const MAX_INDEX_MANAGER = {
 export function useMaxIndex(getIndex: boolean) {
   const dPrefix = usePrefixConfig();
 
-  const dataRef = useRef<{ key?: symbol }>({});
+  const dataRef = useRef<{
+    key?: symbol;
+  }>({});
 
   const zIndex = useMemo(() => {
     MAX_INDEX_MANAGER.deleteRecord(dataRef.current.key);

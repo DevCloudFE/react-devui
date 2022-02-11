@@ -76,7 +76,9 @@ export function useThrottle() {
 }
 
 export function useDebounce() {
-  const dataRef = useRef<{ tid: number | null }>({
+  const dataRef = useRef<{
+    tid: number | null;
+  }>({
     tid: null,
   });
 

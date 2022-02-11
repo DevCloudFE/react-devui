@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useElement, useImmer, useAsync, useRefCallback, useContentSVChangeConfig } from '../../hooks';
-import { getClassName, CustomScroll, generateComponentMate } from '../../utils';
+import { getClassName, generateComponentMate, scrollTo } from '../../utils';
 
 export interface DAnchorContextData {
   gUpdateLinks: (href: string, el: HTMLLIElement) => void;
@@ -49,10 +49,10 @@ export const DAnchor = (props: DAnchorProps) => {
 
   const dataRef = useRef<{
     top?: { href: string; num: number };
+    clearTid?: () => void;
   }>({});
 
   const asyncCapture = useAsync();
-  const [customScroll] = useState(() => new CustomScroll());
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
   const [links, setLinks] = useImmer(new Map<string, HTMLLIElement>());
 
@@ -185,13 +185,14 @@ export const DAnchor = (props: DAnchorProps) => {
       if (el) {
         const top = el.getBoundingClientRect().top;
         const scrollTop = top - pageTop + targetEl.scrollTop - dDistance;
-        customScroll.scrollTo(targetEl, {
+        dataRef.current.clearTid?.();
+        dataRef.current.clearTid = scrollTo(targetEl, {
           top: scrollTop,
           behavior: dScrollBehavior,
         });
       }
     },
-    [dPage, pageEl, dDistance, customScroll, dScrollBehavior]
+    [dPage, pageEl, dDistance, dScrollBehavior]
   );
   const contextValue = useMemo<DAnchorContextData>(
     () => ({

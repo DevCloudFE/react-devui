@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { usePrefixConfig, useAsync } from '../../hooks';
+import { usePrefixConfig } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 import { DMask } from './Mask';
 
@@ -9,7 +9,6 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dHidden: boolean;
   dMask?: boolean;
   dMaskClosable?: boolean;
-  dEscClosable?: boolean;
   dDestroy?: boolean;
   dDialogRef?: React.Ref<HTMLDivElement>;
   onClose?: () => void;
@@ -21,7 +20,6 @@ export function DDialog(props: DDialogProps) {
     dHidden,
     dMask = true,
     dMaskClosable = true,
-    dEscClosable = true,
     dDestroy = false,
     dDialogRef,
     onClose,
@@ -35,23 +33,11 @@ export function DDialog(props: DDialogProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const asyncCapture = useAsync();
-
   const handleMaskClose = useCallback(() => {
     if (dMaskClosable) {
       onClose?.();
     }
   }, [dMaskClosable, onClose]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (dVisible && dEscClosable) {
-      asyncGroup.onEscKeydown(() => onClose?.());
-    }
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, dEscClosable, dVisible, onClose]);
 
   return dDestroy && dHidden ? null : (
     <div

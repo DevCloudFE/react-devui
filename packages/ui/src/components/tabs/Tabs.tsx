@@ -59,10 +59,10 @@ export function DTabs(props: DTabsProps) {
   const [tablistWrapperEl, tablistWrapperRef] = useRefCallback();
   //#endregion
 
-  const dataRef = useRef<{ clearTid: (() => void) | null; scrollTid: (() => void) | null }>({
-    clearTid: null,
-    scrollTid: null,
-  });
+  const dataRef = useRef<{
+    clearTid?: () => void;
+    scrollTid?: () => void;
+  }>({});
 
   const [t] = useTranslation('Common');
 
@@ -132,9 +132,8 @@ export function DTabs(props: DTabsProps) {
   }, [isHorizontal, setScrollEnd, tablistWrapperEl]);
 
   const getDotStyle = useCallback(() => {
-    dataRef.current.clearTid && dataRef.current.clearTid();
+    dataRef.current.clearTid?.();
     dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-      dataRef.current.clearTid = null;
       if (tablistEl) {
         const tablistRect = tablistEl.getBoundingClientRect();
         const activeEl = tablistEl.querySelector(`.${dPrefix}tab.is-active`);
@@ -159,7 +158,7 @@ export function DTabs(props: DTabsProps) {
 
   const handleScroll = useCallback<React.UIEventHandler>(() => {
     checkScrollEnd();
-    dataRef.current.scrollTid && dataRef.current.scrollTid();
+    dataRef.current.scrollTid?.();
     dataRef.current.scrollTid = asyncCapture.setTimeout(() => {
       updateDropdown();
     }, 300);

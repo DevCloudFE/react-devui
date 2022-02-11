@@ -1,17 +1,19 @@
 import type { DBreakpoints } from './Row';
 
 import { isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useImmer, useAsync, useGridConfig } from '../../hooks';
+import { useAsync, useGridConfig, useIsomorphicLayoutEffect } from '../../hooks';
 
 export const MEDIA_QUERY_LIST = Object.freeze(['xxl', 'xl', 'lg', 'md', 'sm', 'xs'] as DBreakpoints[]);
 
-function getMediaMatch(mqlList: Map<DBreakpoints, MediaQueryList>) {
+function getMediaMatch(mqlList?: Map<DBreakpoints, MediaQueryList>) {
   const mediaMatch: DBreakpoints[] = [];
-  for (const [breakpoint, mql] of mqlList) {
-    if (mql.matches) {
-      mediaMatch.push(breakpoint);
+  if (mqlList) {
+    for (const [breakpoint, mql] of mqlList) {
+      if (mql.matches) {
+        mediaMatch.push(breakpoint);
+      }
     }
   }
   return mediaMatch;
@@ -22,15 +24,15 @@ export function useMediaMatch(onMediaChange?: (match: DBreakpoints[]) => void) {
 
   const asyncCapture = useAsync();
 
-  const mqlList = useMemo(
-    () =>
-      new Map<DBreakpoints, MediaQueryList>(
-        MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${breakpoints.get(breakpoint)}px)`)])
-      ),
-    [breakpoints]
-  );
-
-  const [mediaMatch, setMediaMatch] = useImmer(() => getMediaMatch(mqlList));
+  const [mqlList, setMqlList] = useState<Map<DBreakpoints, MediaQueryList>>();
+  const [mediaMatch, setMediaMatch] = useState<DBreakpoints[]>([]);
+  useIsomorphicLayoutEffect(() => {
+    const mqlList = new Map<DBreakpoints, MediaQueryList>(
+      MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${breakpoints.get(breakpoint)}px)`)])
+    );
+    setMqlList(mqlList);
+    setMediaMatch(getMediaMatch(mqlList));
+  }, [breakpoints]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

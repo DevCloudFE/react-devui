@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
-import { globalEscStack } from './esc';
-
 interface CaptureMethod {
   fromEvent: typeof fromEvent;
 }
@@ -76,17 +74,6 @@ class BaseAsyncCapture {
     const tid = Symbol();
     const clear = () => {
       observer.unsubscribe();
-      this.tids.delete(tid);
-    };
-    this.tids.set(tid, clear);
-    return clear;
-  }
-
-  onEscKeydown(cb: () => void) {
-    const tid = Symbol();
-    globalEscStack.stackPush(tid, cb);
-    const clear = () => {
-      globalEscStack.stackDelete(tid);
       this.tids.delete(tid);
     };
     this.tids.set(tid, clear);

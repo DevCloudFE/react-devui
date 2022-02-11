@@ -83,7 +83,9 @@ export function DSelectBox(props: DSelectBoxProps) {
   const [searchEl, searchRef] = useRefCallback();
   //#endregion
 
-  const dataRef = useRef({ visible: dVisible });
+  const dataRef = useRef({
+    visible: dVisible,
+  });
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
