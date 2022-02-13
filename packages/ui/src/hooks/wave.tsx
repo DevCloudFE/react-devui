@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Subject } from 'rxjs';
 
 import { usePrefixConfig } from './d-config';
 
-export function useWave() {
+export function useWave(): [React.ReactNode, (color: string, animation?: string) => void] {
   const dPrefix = usePrefixConfig();
 
   const [node, setNode] = useState<React.ReactNode>(null);
-  const [subject] = useState(() => new Subject<{ color: string; animation?: string }>());
+  const [wave$] = useState(() => new Subject<{ color: string; animation?: string }>());
 
   useEffect(() => {
-    const ob = subject.subscribe({
+    const ob = wave$.subscribe({
       next: ({ color, animation }) => {
         setNode(
           <div
@@ -33,17 +33,7 @@ export function useWave() {
     return () => {
       ob.unsubscribe();
     };
-  }, [dPrefix, subject]);
+  }, [dPrefix, wave$]);
 
-  const res = useMemo<[React.ReactNode, (color: string, animation?: string) => void]>(
-    () => [
-      node,
-      (color, animation) => {
-        subject.next({ color, animation });
-      },
-    ],
-    [node, subject]
-  );
-
-  return res;
+  return [node, (color, animation) => wave$.next({ color, animation })];
 }

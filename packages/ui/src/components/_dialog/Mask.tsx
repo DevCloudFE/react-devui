@@ -1,7 +1,5 @@
 import type { DTransitionProps } from '../../hooks/transition';
 
-import React, { useCallback } from 'react';
-
 import { usePrefixConfig, useDTransition, useRefCallback } from '../../hooks';
 import { getClassName } from '../../utils';
 
@@ -22,15 +20,6 @@ export function DMask(props: DMaskProps) {
   //#region Ref
   const [el, ref] = useRefCallback();
   //#endregion
-
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      onClose?.();
-    },
-    [onClick, onClose]
-  );
 
   const transitionState = {
     'enter-from': { opacity: '0' },
@@ -53,6 +42,12 @@ export function DMask(props: DMaskProps) {
     },
     ...dTransitionProps,
   });
+
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(e);
+
+    onClose?.();
+  };
 
   return hidden ? null : <div {...restProps} ref={ref} className={getClassName(className, `${dPrefix}mask`)} onClick={handleClick}></div>;
 }

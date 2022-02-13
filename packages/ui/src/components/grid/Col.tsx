@@ -1,7 +1,6 @@
 import type { DBreakpoints } from './Row';
 
 import { isNumber, isObject } from 'lodash';
-import { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useGridConfig } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
@@ -26,7 +25,7 @@ export function DCol(props: DColProps) {
   const [{ gMediaMatch, gSpace }] = useCustomContext(DRowContext);
   //#endregion
 
-  const [span, responsiveProps] = useMemo<[DSpanValue?, React.HTMLAttributes<HTMLDivElement>?]>(() => {
+  const [span, responsiveProps] = (() => {
     let span = dSpan;
     let responsiveProps: DColBaseProps | undefined = undefined;
     if (gMediaMatch && dResponsiveProps) {
@@ -46,7 +45,7 @@ export function DCol(props: DColProps) {
     }
 
     return [span, responsiveProps];
-  }, [dResponsiveProps, dSpan, gMediaMatch]);
+  })();
 
   return (
     <div

@@ -12,7 +12,7 @@ import { DConfigContext } from '../../hooks/d-config';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
 
-export interface DRootProps extends Omit<DConfigContextData, 'scrollViewChange'> {
+export interface DRootProps extends Omit<DConfigContextData, 'onScrollViewChange$'> {
   contentSelector?: DElementSelector;
   children: React.ReactNode;
 }
@@ -22,7 +22,7 @@ export function DRoot(props: DRootProps) {
 
   const lang = i18n?.lang ?? 'en-US';
 
-  const [scrollViewChange] = useState(() => new Subject<void>());
+  const [onScrollViewChange$] = useState(() => new Subject<void>());
   const contentEl = useElement(contentSelector ?? null);
 
   useIsomorphicLayoutEffect(() => {
@@ -43,7 +43,7 @@ export function DRoot(props: DRootProps) {
   useEffect(() => {
     if (isUndefined(contentSelector)) {
       const observer = new ResizeObserver(() => {
-        scrollViewChange.next();
+        onScrollViewChange$.next();
       });
       observer.observe(document.documentElement);
       return () => {
@@ -51,21 +51,21 @@ export function DRoot(props: DRootProps) {
       };
     } else if (contentEl) {
       const observer = new SVResizeObserver(() => {
-        scrollViewChange.next();
+        onScrollViewChange$.next();
       });
       observer.observe(contentEl);
       return () => {
         observer.disconnect();
       };
     }
-  }, [contentEl, contentSelector, scrollViewChange]);
+  }, [contentEl, contentSelector, onScrollViewChange$]);
 
   return (
     <DConfigContext.Provider
       value={{
         theme,
         i18n,
-        scrollViewChange,
+        onScrollViewChange$,
         ...restProps,
       }}
     >

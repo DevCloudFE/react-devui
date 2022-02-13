@@ -38,7 +38,7 @@ export function DRow(props: DRowProps) {
 
   const mediaMatch = useMediaMatch(onMediaChange);
 
-  const gap = useMemo(() => {
+  const gap = (() => {
     const getGap = (gutter: DGutterValue): [number | string, number | string] => {
       if (isArray(gutter)) {
         return [gutter[0], gutter[1]];
@@ -58,7 +58,7 @@ export function DRow(props: DRowProps) {
     }
 
     return gap;
-  }, [dGutter, dResponsiveGutter, mediaMatch]);
+  })();
   const space = isNumber(gap[1]) ? gap[1] / 2 : `calc(${gap[1]} / 2)`;
 
   const contextValue = useMemo<DRowContextData>(

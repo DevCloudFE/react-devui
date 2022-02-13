@@ -1,6 +1,6 @@
 import type { DButtonProps } from '../button';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -36,13 +36,13 @@ export function DFooter(props: DFooterProps) {
 
   const [t] = useTranslation('DFooter');
 
-  const handleOkClick = useCallback(() => {
-    onOkClick?.();
-  }, [onOkClick]);
-
-  const handleCancelClick = useCallback(() => {
+  const handleCancelClick = () => {
     onCancelClick?.();
-  }, [onCancelClick]);
+  };
+
+  const handleOkClick = () => {
+    onOkClick?.();
+  };
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>

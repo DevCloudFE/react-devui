@@ -1,7 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
 import React, { useId, useImperativeHandle } from 'react';
-import { useCallback } from 'react';
 
 import {
   usePrefixConfig,
@@ -76,34 +75,25 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
 
   const _disabled = disabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      onChange?.(e);
-
-      changeValue(e.currentTarget.value);
-    },
-    [changeValue, onChange]
-  );
-
-  const handleFocus = useCallback<React.FocusEventHandler<HTMLInputElement>>(
-    (e) => {
-      onFocus?.(e);
-
-      gOnFocus?.();
-    },
-    [gOnFocus, onFocus]
-  );
-
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
-
-      gOnBlur?.();
-    },
-    [gOnBlur, onBlur]
-  );
-
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(ref, () => inputEl, [inputEl]);
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    onChange?.(e);
+
+    changeValue(e.currentTarget.value);
+  };
+
+  const handleFocus: React.FocusEventHandler<HTMLInputElement> = (e) => {
+    onFocus?.(e);
+
+    gOnFocus?.();
+  };
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement> = (e) => {
+    onBlur?.(e);
+
+    gOnBlur?.();
+  };
 
   return (
     <input

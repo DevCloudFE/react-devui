@@ -35,14 +35,14 @@ export function Toast() {
       };
     };
     obs.push(
-      toastSubject.open.subscribe({
+      toastSubject.open$.subscribe({
         next: ({ uniqueId, props }) => {
           setToasts((draft) => {
             draft.set(uniqueId, { ...props, dVisible: true, ...mergeProps(uniqueId, props) });
           });
         },
       }),
-      toastSubject.close.subscribe({
+      toastSubject.close$.subscribe({
         next: (uniqueId) => {
           setToasts((draft) => {
             const props = draft.get(uniqueId);
@@ -52,7 +52,7 @@ export function Toast() {
           });
         },
       }),
-      toastSubject.rerender.subscribe({
+      toastSubject.rerender$.subscribe({
         next: ({ uniqueId, props: newProps }) => {
           setToasts((draft) => {
             const props = draft.get(uniqueId);
@@ -62,7 +62,7 @@ export function Toast() {
           });
         },
       }),
-      toastSubject.closeAll.subscribe({
+      toastSubject.closeAll$.subscribe({
         next: (animation) => {
           setToasts((draft) => {
             if (animation) {

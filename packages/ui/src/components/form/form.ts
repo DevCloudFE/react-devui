@@ -193,7 +193,7 @@ export abstract class AbstractControl {
     return !this._pristine;
   }
 
-  public readonly asyncVerifyComplete = new Subject<AbstractControl>();
+  public readonly asyncVerifyComplete$ = new Subject<AbstractControl>();
 
   setValidators(validators: ValidatorFn | ValidatorFn[] | null): void {
     this._rawValidators = validators;
@@ -417,7 +417,7 @@ export abstract class AbstractControl {
         // the state of the asynchronous validation (whether it is in progress or not). So, it is
         // necessary that we have updated the `_hasOwnPendingAsyncValidator` boolean flag first.
         this.setErrors(errors);
-        this.asyncVerifyComplete.next(this);
+        this.asyncVerifyComplete$.next(this);
       });
     }
   }

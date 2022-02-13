@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 
 export interface MultipleExecutorOptions {
-  tasks: Array<{
+  tasks: {
     targetDescription: {
       project: string;
       target: string;
@@ -14,7 +14,7 @@ export interface MultipleExecutorOptions {
     options?: {
       [k: string]: any;
     };
-  }>;
+  }[];
 }
 
 export default async function* multipleExecutor(options: MultipleExecutorOptions, context: ExecutorContext) {

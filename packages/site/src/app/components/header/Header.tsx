@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DButton, DIcon, useMediaMatch } from '@react-devui/ui';
@@ -13,13 +12,13 @@ export function AppHeader() {
 
   const [{ theme, changeTheme: _changeTheme, menuOpen = false, onMenuOpenChange }] = useCustomContext(AppContext);
 
-  const changeLanguage = useCallback(() => {
+  const changeLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en-US' ? 'zh-Hant' : 'en-US');
-  }, [i18n]);
+  };
 
-  const changeTheme = useCallback(() => {
+  const changeTheme = () => {
     _changeTheme?.(theme === 'light' ? 'dark' : 'light');
-  }, [_changeTheme, theme]);
+  };
 
   const mediaMatch = useMediaMatch();
 

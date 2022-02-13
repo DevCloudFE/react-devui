@@ -1,6 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useCallback, useId, useState } from 'react';
+import React, { useId, useState } from 'react';
 
 import { DIcon } from '..';
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useRefCallback, useDTransition } from '../../hooks';
@@ -58,27 +58,6 @@ export function DSwitch(props: DSwitchProps) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
-    changeChecked(!checked);
-  }, [changeChecked, checked]);
-
-  const handleFocus = useCallback(
-    (e) => {
-      dInputProps?.onFocus?.(e);
-
-      setIsFocus(true);
-    },
-    [dInputProps]
-  );
-  const handleBlur = useCallback(
-    (e) => {
-      dInputProps?.onBlur?.(e);
-
-      setIsFocus(false);
-    },
-    [dInputProps]
-  );
-
   const transitionState = {
     'enter-from': { left: '2px' },
     'enter-to': { left: 'calc(100% - 20px)', transition: 'width 133ms ease-in, left 133ms ease-out' },
@@ -125,9 +104,21 @@ export function DSwitch(props: DSwitchProps) {
           role="switch"
           disabled={disabled || dLoading}
           aria-checked={checked}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onChange={(e) => {
+            dInputProps?.onChange?.(e);
+
+            changeChecked(!checked);
+          }}
+          onFocus={(e) => {
+            dInputProps?.onFocus?.(e);
+
+            setIsFocus(true);
+          }}
+          onBlur={(e) => {
+            dInputProps?.onBlur?.(e);
+
+            setIsFocus(false);
+          }}
         />
         <div
           ref={dotRef}

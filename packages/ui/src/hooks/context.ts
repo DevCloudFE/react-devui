@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 
-export function useCustomContext<T>(Context: React.Context<T>) {
+export function useCustomContext<T>(Context: React.Context<T>): [Partial<Exclude<T, null>>, T] {
   const context = useContext(Context);
 
   const proxy = useMemo(() => {
@@ -17,7 +17,5 @@ export function useCustomContext<T>(Context: React.Context<T>) {
     return new Proxy(context ?? {}, handler);
   }, [context]);
 
-  const res = useMemo<[Partial<Exclude<T, null>>, T]>(() => [proxy, context], [context, proxy]);
-
-  return res;
+  return [proxy, context];
 }

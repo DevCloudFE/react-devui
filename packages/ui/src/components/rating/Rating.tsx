@@ -1,7 +1,7 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
 import { isFunction } from 'lodash';
-import React, { useCallback, useId, useState } from 'react';
+import React, { useId, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -35,6 +35,7 @@ export function DRating(props: DRatingProps) {
     dTooltip,
     onModelChange,
     className,
+    onMouseLeave,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -53,9 +54,11 @@ export function DRating(props: DRatingProps) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseLeave?.(e);
+
     setHoverValue(null);
-  }, []);
+  };
 
   return (
     <div

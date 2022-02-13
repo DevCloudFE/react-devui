@@ -1,6 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation } from '../../hooks';
@@ -60,14 +60,12 @@ export function DPagination(props: DPaginationProps) {
   const [active, _changeActive] = useTwoWayBinding<number>(1, dActive, onActiveChange);
   const [pageSize, changePageSize] = useTwoWayBinding<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
 
-  const changeActive = useCallback(
-    (active: number) => {
-      _changeActive(active);
+  const changeActive = (active: number) => {
+    _changeActive(active);
 
-      setIsChange(true);
-    },
-    [_changeActive]
-  );
+    setIsChange(true);
+  };
+
   useEffect(() => {
     if (isChange) {
       setIsChange(false);
@@ -81,7 +79,7 @@ export function DPagination(props: DPaginationProps) {
     _changeActive(lastPage);
   }
 
-  const totalNode = useMemo(() => {
+  const totalNode = (() => {
     if (dCompose.includes('total')) {
       const range: [number, number] = [Math.min((active - 1) * pageSize + 1, dTotal), Math.min(active * pageSize, dTotal)];
       if (dCustomRender && dCustomRender.total) {
@@ -95,9 +93,9 @@ export function DPagination(props: DPaginationProps) {
       }
     }
     return null;
-  }, [active, dCompose, dCustomRender, dTotal, pageSize, t]);
+  })();
 
-  const [prevNode, pageNode, nextNode] = useMemo(() => {
+  const [prevNode, pageNode, nextNode] = (() => {
     let [prevNode, nextNode]: [React.ReactNode, React.ReactNode] = [null, null];
     if (dCompose.includes('pages')) {
       if (dCustomRender && dCustomRender.prev) {
@@ -182,9 +180,9 @@ export function DPagination(props: DPaginationProps) {
       },
       nextNode,
     ];
-  }, [active, changeActive, dCompose, dCustomRender, dPrefix, lastPage, t]);
+  })();
 
-  const sizeNode = useMemo(() => {
+  const sizeNode = (() => {
     const options = dPageSizeOptions.map((size) => ({
       dLabel: size.toString(),
       dValue: size,
@@ -207,9 +205,9 @@ export function DPagination(props: DPaginationProps) {
         }}
       ></DSelect>
     );
-  }, [changePageSize, dCustomRender, dMini, dPageSizeOptions, dPrefix, pageSize, t]);
+  })();
 
-  const jumpNode = useMemo(() => {
+  const jumpNode = (() => {
     if (dCompose.includes('jump')) {
       const inputNode = (
         <DInput
@@ -245,7 +243,7 @@ export function DPagination(props: DPaginationProps) {
       }
     }
     return null;
-  }, [changeActive, dCompose, dCustomRender, dMini, dPrefix, jumpValue, lastPage, t]);
+  })();
 
   return (
     <nav

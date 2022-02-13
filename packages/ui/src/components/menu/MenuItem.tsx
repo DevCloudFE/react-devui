@@ -1,5 +1,4 @@
 import { isUndefined } from 'lodash';
-import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useIsomorphicLayoutEffect } from '../../hooks';
 import { getClassName, toId, mergeStyle, generateComponentMate } from '../../utils';
@@ -53,32 +52,23 @@ export function DMenuItem(props: DMenuItemProps) {
     };
   }, [dId, gRemoveChildren, gUpdateChildren]);
 
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
+  const handleClick: React.MouseEventHandler<HTMLLIElement> = (e) => {
+    onClick?.(e);
 
-      !dDisabled && gOnActiveChange?.(dId);
-    },
-    [dDisabled, dId, gOnActiveChange, onClick]
-  );
+    !dDisabled && gOnActiveChange?.(dId);
+  };
 
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
+  const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onFocus?.(e);
 
-      !dDisabled && gOnFocus?.(dId, _id);
-    },
-    [_id, gOnFocus, dDisabled, dId, onFocus]
-  );
+    !dDisabled && gOnFocus?.(dId, _id);
+  };
 
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
+  const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onBlur?.(e);
 
-      gOnBlur?.();
-    },
-    [gOnBlur, onBlur]
-  );
+    gOnBlur?.();
+  };
 
   return (
     <>

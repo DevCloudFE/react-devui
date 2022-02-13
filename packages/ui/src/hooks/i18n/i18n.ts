@@ -1,9 +1,9 @@
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 
 import { DConfigContext } from '../d-config';
 import dResources from './resources.json';
 
-export function useTranslation(group?: string) {
+export function useTranslation(group?: string): [(...keys: string[]) => string, 'en-US' | 'zh-Hant'] {
   const { lang = 'en-US', resources = dResources } = useContext(DConfigContext).i18n ?? {};
   const t = useCallback(
     (...keys: string[]) => {
@@ -16,7 +16,5 @@ export function useTranslation(group?: string) {
     [lang, resources, group]
   );
 
-  const res = useMemo<[(...keys: string[]) => string, 'en-US' | 'zh-Hant']>(() => [t, lang], [lang, t]);
-
-  return res;
+  return [t, lang];
 }

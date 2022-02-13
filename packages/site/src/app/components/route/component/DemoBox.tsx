@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DTooltip, DIcon, DTabs, DTab } from '@react-devui/ui';
@@ -42,24 +42,22 @@ ${'```'}
   const [tab, setTab] = useState<string | null>('tsx');
 
   const [openCode, setOpencode] = useState(false);
-  const handleOpenClick = useCallback(() => {
-    setOpencode((draft) => !draft);
-  }, [setOpencode]);
-
   const [copyCode, setCopycode] = useState(false);
-  const handleCopyClick = useCallback(() => {
+
+  const handleOpenClick = () => {
+    setOpencode((draft) => !draft);
+  };
+
+  const handleCopyClick = () => {
     copy(tab === 'tsx' ? tsxSource : (scssSource as string));
     setCopycode(true);
-  }, [scssSource, setCopycode, tab, tsxSource]);
+  };
 
-  const afterCopyTrige = useCallback(
-    (v) => {
-      if (!v) {
-        setCopycode(false);
-      }
-    },
-    [setCopycode]
-  );
+  const afterCopyTrige = (visible: boolean) => {
+    if (!visible) {
+      setCopycode(false);
+    }
+  };
 
   const { t } = useTranslation();
 

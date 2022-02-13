@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
   usePrefixConfig,
@@ -63,16 +63,28 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   const size = dSize ?? gSize;
   const _disabled = disabled || dLoading || gDisabled;
 
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      if (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed') {
-        wave(`var(--${dPrefix}color-${theme})`);
-      }
+  const transitionState = {
+    'enter-from': { width: '0' },
+    'enter-to': { transition: 'width 0.3s linear' },
+    'leave-to': { width: '0', transition: 'width 0.3s linear' },
+  };
+  const hidden = useDCollapseTransition({
+    dEl: loadingEl,
+    dVisible: dLoading,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
     },
-    [theme, dPrefix, onClick, buttonType, wave]
-  );
+    dDirection: 'horizontal',
+  });
+
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    onClick?.(e);
+
+    if (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed') {
+      wave(`var(--${dPrefix}color-${theme})`);
+    }
+  };
 
   const buttonIcon = (loading: boolean, ref?: React.Ref<HTMLSpanElement>) => (
     <span
@@ -90,21 +102,6 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
       )}
     </span>
   );
-
-  const transitionState = {
-    'enter-from': { width: '0' },
-    'enter-to': { transition: 'width 0.3s linear' },
-    'leave-to': { width: '0', transition: 'width 0.3s linear' },
-  };
-  const hidden = useDCollapseTransition({
-    dEl: loadingEl,
-    dVisible: dLoading,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
-    dDirection: 'horizontal',
-  });
 
   return (
     <button

@@ -75,86 +75,6 @@ export function DInputAffix(props: DInputAffixProps) {
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled;
 
-  const handleClearMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
-    (e) => {
-      if (e.button === 0) {
-        e.preventDefault();
-
-        inputProps?.setValue('');
-      }
-    },
-    [inputProps]
-  );
-
-  const handleNumberChange = useCallback(
-    (isIncrease = true) => {
-      if (inputProps) {
-        const { setValue } = inputProps;
-        let value = getNumberAttribute(inputProps.value, 0);
-        const max = getNumberAttribute(inputProps.max, Infinity);
-        const min = getNumberAttribute(inputProps.min, -Infinity);
-        const step = getNumberAttribute(inputProps.step, 1);
-
-        const updateValue = () => {
-          value = isIncrease ? value + step : value - step;
-          setValue(Math.max(min, Math.min(max, value)).toFixed(step.toString().split('.')[1]?.length ?? 0));
-        };
-
-        updateValue();
-        const loop = () => {
-          updateValue();
-          dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
-        };
-        dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);
-      }
-    },
-    [asyncCapture, inputProps]
-  );
-
-  const handlePasswordMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
-    (e) => {
-      if (e.button === 0) {
-        e.preventDefault();
-
-        if (dPasswordToggle) {
-          setPassword(!password);
-        }
-      }
-    },
-    [dPasswordToggle, password]
-  );
-
-  const handleNumberIncreaseMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
-    (e) => {
-      if (e.button === 0) {
-        e.preventDefault();
-
-        handleNumberChange();
-      }
-    },
-    [handleNumberChange]
-  );
-
-  const handleNumberDecreaseMouseDown = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
-    (e) => {
-      if (e.button === 0) {
-        e.preventDefault();
-
-        handleNumberChange(false);
-      }
-    },
-    [handleNumberChange]
-  );
-
-  const handleMouseUp = useCallback((e) => {
-    if (e.button === 0) {
-      e.preventDefault();
-
-      dataRef.current.clearLoop?.();
-      dataRef.current.clearTid?.();
-    }
-  }, []);
-
   const generalStateContextValue = useMemo<DGeneralStateContextData>(
     () => ({
       gSize: size,
@@ -182,6 +102,59 @@ export function DInputAffix(props: DInputAffixProps) {
     }),
     [dNumber, dPassword, gOnBlur, gOnFocus, gUpdateInput, password]
   );
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.button === 0) {
+      e.preventDefault();
+
+      dataRef.current.clearLoop?.();
+      dataRef.current.clearTid?.();
+    }
+  };
+
+  const handleClearMouseDown: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    if (e.button === 0) {
+      e.preventDefault();
+
+      inputProps?.setValue('');
+    }
+  };
+
+  const handlePasswordMouseDown: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    if (e.button === 0) {
+      e.preventDefault();
+
+      if (dPasswordToggle) {
+        setPassword(!password);
+      }
+    }
+  };
+
+  const handleNumberMouseDown = (e: React.MouseEvent<HTMLButtonElement>, isIncrease = true) => {
+    if (e.button === 0) {
+      e.preventDefault();
+
+      if (inputProps) {
+        const { setValue } = inputProps;
+        let value = getNumberAttribute(inputProps.value, 0);
+        const max = getNumberAttribute(inputProps.max, Infinity);
+        const min = getNumberAttribute(inputProps.min, -Infinity);
+        const step = getNumberAttribute(inputProps.step, 1);
+
+        const updateValue = () => {
+          value = isIncrease ? value + step : value - step;
+          setValue(Math.max(min, Math.min(max, value)).toFixed(step.toString().split('.')[1]?.length ?? 0));
+        };
+
+        updateValue();
+        const loop = () => {
+          updateValue();
+          dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
+        };
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);
+      }
+    }
+  };
 
   return (
     <DGeneralStateContext.Provider value={generalStateContextValue}>
@@ -254,7 +227,7 @@ export function DInputAffix(props: DInputAffixProps) {
                   </DIcon>
                 }
                 aria-label={t('DInputAffix', 'Increase number')}
-                onMouseDown={handleNumberIncreaseMouseDown}
+                onMouseDown={handleNumberMouseDown}
                 onMouseUp={handleMouseUp}
               ></DButton>
               <DButton
@@ -267,7 +240,9 @@ export function DInputAffix(props: DInputAffixProps) {
                   </DIcon>
                 }
                 aria-label={t('DInputAffix', 'Decrease number')}
-                onMouseDown={handleNumberDecreaseMouseDown}
+                onMouseDown={(e) => {
+                  handleNumberMouseDown(e, false);
+                }}
                 onMouseUp={handleMouseUp}
               ></DButton>
             </div>

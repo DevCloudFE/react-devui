@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { usePrefixConfig } from './d-config';
 
@@ -28,7 +28,7 @@ export function useMaxIndex(getIndex: boolean) {
     key?: symbol;
   }>({});
 
-  const zIndex = useMemo(() => {
+  const zIndex = (() => {
     MAX_INDEX_MANAGER.deleteRecord(dataRef.current.key);
 
     if (getIndex) {
@@ -38,7 +38,7 @@ export function useMaxIndex(getIndex: boolean) {
     }
 
     return `var(--${dPrefix}zindex-fixed)`;
-  }, [dPrefix, getIndex]);
+  })();
 
   useEffect(() => {
     return () => {

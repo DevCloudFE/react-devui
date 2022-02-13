@@ -1,5 +1,4 @@
 import { isUndefined } from 'lodash';
-import { useCallback } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle, toId } from '../../utils';
@@ -37,32 +36,23 @@ export function DDropdownItem(props: DDropdownItemProps) {
 
   const _id = id ?? `${dPrefix}dropdown-item-${toId(dId)}`;
 
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
+  const handleClick: React.MouseEventHandler<HTMLLIElement> = (e) => {
+    onClick?.(e);
 
-      !dDisabled && gOnItemClick?.(dId);
-    },
-    [dDisabled, dId, onClick, gOnItemClick]
-  );
+    !dDisabled && gOnItemClick?.(dId);
+  };
 
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
+  const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onFocus?.(e);
 
-      !dDisabled && gOnFocus?.(dId, _id);
-    },
-    [_id, gOnFocus, dDisabled, dId, onFocus]
-  );
+    !dDisabled && gOnFocus?.(dId, _id);
+  };
 
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
+  const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onBlur?.(e);
 
-      gOnBlur?.();
-    },
-    [gOnBlur, onBlur]
-  );
+    gOnBlur?.();
+  };
 
   return (
     <li

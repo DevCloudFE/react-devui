@@ -1,6 +1,6 @@
 import type { FormGroup } from './form';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export interface DFormInstance {
   form: FormGroup;
@@ -9,17 +9,18 @@ export interface DFormInstance {
 }
 
 export function useForm(initData: () => FormGroup): DFormInstance {
-  const [form, setForm] = useState(initData);
+  const [form, setForm] = useState(() => initData());
   const [formChange, setFormChange] = useState(0);
 
-  const updateForm = useCallback(() => {
+  const updateForm = () => {
     setFormChange((n) => n + 1);
-  }, []);
+  };
 
-  const initForm = useCallback(() => {
+  const initForm = () => {
     const data = initData();
     setForm(data);
-  }, [initData]);
+    updateForm();
+  };
 
   const formInstance = useMemo(
     () => ({

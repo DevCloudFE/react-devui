@@ -80,7 +80,7 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
   const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(new Map<string, boolean>());
-  const popupVisible = useMemo(() => {
+  const popupVisible = (() => {
     let visible = currentPopupVisible;
     for (const childrenVisiable of childrenPopupVisiable.values()) {
       if (childrenVisiable) {
@@ -89,7 +89,7 @@ export function DMenuSub(props: DMenuSubProps) {
       }
     }
     return visible;
-  }, [childrenPopupVisiable, currentPopupVisible]);
+  })();
 
   useIsomorphicLayoutEffect(() => {
     gUpdateChildren?.(dId, childrenIds, popupVisible);
@@ -100,7 +100,7 @@ export function DMenuSub(props: DMenuSubProps) {
 
   const inHorizontalNav = gMode === 'horizontal' && __inNav;
   const _id = id ?? `${dPrefix}menu-sub-${toId(dId)}`;
-  const isActive = useMemo(() => {
+  const isActive = (() => {
     if (isString(gActiveId)) {
       if (popupMode ? !popupVisible : !expand) {
         const checkActive = (idMap: DIds): boolean | undefined => {
@@ -122,9 +122,9 @@ export function DMenuSub(props: DMenuSubProps) {
     }
 
     return false;
-  }, [childrenIds, expand, gActiveId, popupMode, popupVisible]);
+  })();
 
-  const iconRotate = useMemo(() => {
+  const iconRotate = (() => {
     if (inHorizontalNav && popupVisible) {
       return 180;
     }
@@ -135,65 +135,7 @@ export function DMenuSub(props: DMenuSubProps) {
       return -90;
     }
     return undefined;
-  }, [expand, inHorizontalNav, gMode, popupMode, popupVisible]);
-
-  const customTransition = useCallback(
-    (popupEl: HTMLElement, targetEl: HTMLElement) => {
-      if (inHorizontalNav) {
-        popupEl.style.width = targetEl.getBoundingClientRect().width - 32 + 'px';
-      }
-      const { top, left, transformOrigin } = inHorizontalNav
-        ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
-        : getHorizontalSideStyle(popupEl, targetEl, 'right', __inNav ? 10 : 14);
-      return {
-        top,
-        left: inHorizontalNav ? left + 16 : left,
-        stateList: {
-          'enter-from': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
-          'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
-          'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-          'leave-to': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
-        },
-      };
-    },
-    [inHorizontalNav, __inNav]
-  );
-
-  const handleExpandTrigger = useCallback(
-    (val) => {
-      if (gExpandTrigger === 'click') {
-        gOnExpandChange?.(dId, !expand);
-      } else if (val) {
-        gOnExpandChange?.(dId, true);
-      }
-    },
-    [dId, expand, gExpandTrigger, gOnExpandChange]
-  );
-
-  const handlePopupVisibleChange = useCallback(
-    (visible) => {
-      setCurrentPopupVisible(visible);
-    },
-    [setCurrentPopupVisible]
-  );
-
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
-
-      !dDisabled && gOnFocus?.(dId, _id);
-    },
-    [_id, gOnFocus, dDisabled, dId, onFocus]
-  );
-
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
-
-      gOnBlur?.();
-    },
-    [gOnBlur, onBlur]
-  );
+  })();
 
   useEffect(() => {
     let isFocus = false;
@@ -252,6 +194,21 @@ export function DMenuSub(props: DMenuSubProps) {
     </ul>
   );
 
+  const transitionState = {
+    'enter-from': { height: '0' },
+    'enter-to': { transition: 'height 0.2s linear' },
+    'leave-to': { height: '0', transition: 'height 0.2s linear' },
+  };
+  const hidden = useDCollapseTransition({
+    dEl: menuCollapseEl,
+    dVisible: popupMode ? false : expand,
+    dCallbackList: {
+      beforeEnter: () => transitionState,
+      beforeLeave: () => transitionState,
+    },
+    dDuring: 200,
+  });
+
   const _gUpdateChildren = useCallback(
     (id, ids, visible) => {
       setChildrenIds((draft) => {
@@ -282,20 +239,29 @@ export function DMenuSub(props: DMenuSubProps) {
     [_gRemoveChildren, _gUpdateChildren]
   );
 
-  const transitionState = {
-    'enter-from': { height: '0' },
-    'enter-to': { transition: 'height 0.2s linear' },
-    'leave-to': { height: '0', transition: 'height 0.2s linear' },
+  const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onFocus?.(e);
+
+    !dDisabled && gOnFocus?.(dId, _id);
   };
-  const hidden = useDCollapseTransition({
-    dEl: menuCollapseEl,
-    dVisible: popupMode ? false : expand,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
-    dDuring: 200,
-  });
+
+  const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onBlur?.(e);
+
+    gOnBlur?.();
+  };
+
+  const handlePopupVisibleChange = (visible: boolean) => {
+    setCurrentPopupVisible(visible);
+  };
+
+  const handleTrigger = (state?: boolean) => {
+    if (gExpandTrigger === 'click') {
+      gOnExpandChange?.(dId, !expand);
+    } else if (state) {
+      gOnExpandChange?.(dId, true);
+    }
+  };
 
   return (
     <DMenuSubContext.Provider value={contextValue}>
@@ -342,12 +308,29 @@ export function DMenuSub(props: DMenuSubProps) {
               dPopupContent={menuNode({ ref: menuPopupRef })}
               dTrigger={gExpandTrigger}
               dArrow={false}
-              dCustomPopup={customTransition}
+              dCustomPopup={(popupEl, targetEl) => {
+                if (inHorizontalNav) {
+                  popupEl.style.width = targetEl.getBoundingClientRect().width - 32 + 'px';
+                }
+                const { top, left, transformOrigin } = inHorizontalNav
+                  ? getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 12)
+                  : getHorizontalSideStyle(popupEl, targetEl, 'right', __inNav ? 10 : 14);
+                return {
+                  top,
+                  left: inHorizontalNav ? left + 16 : left,
+                  stateList: {
+                    'enter-from': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
+                    'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
+                    'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
+                    'leave-to': { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: '0' },
+                  },
+                };
+              }}
               dTriggerEl={liEl}
               onVisibleChange={handlePopupVisibleChange}
             />
           ) : (
-            <DTrigger dTrigger={gExpandTrigger} dTriggerEl={liEl} onTrigger={handleExpandTrigger} />
+            <DTrigger dTrigger={gExpandTrigger} dTriggerEl={liEl} onTrigger={handleTrigger} />
           )}
           {popupMode && hidden
             ? null

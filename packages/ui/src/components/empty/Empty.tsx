@@ -1,5 +1,4 @@
 import { isUndefined } from 'lodash';
-import { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useThemeConfig } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -20,7 +19,7 @@ export function DEmpty(props: DEmptyProps) {
 
   const [t] = useTranslation('Common');
 
-  const descriptionNode = useMemo(() => <div className={`${dPrefix}empty__description`}>{t('No Data')}</div>, [dPrefix, t]);
+  const descriptionNode = <div className={`${dPrefix}empty__description`}>{t('No Data')}</div>;
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}empty`)}>

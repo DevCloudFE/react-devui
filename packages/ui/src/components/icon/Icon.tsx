@@ -1,5 +1,5 @@
 import { isUndefined, isNumber, isArray } from 'lodash';
-import React, { useMemo, useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { DConfigContext } from '../../hooks/d-config';
@@ -36,7 +36,7 @@ export function DIcon(props: DIconProps) {
 
   const iconContext = useContext(DConfigContext).icons;
 
-  const [_viewBox, paths] = useMemo(() => {
+  const [_viewBox, paths] = (() => {
     if (!children && isArray(iconContext)) {
       if (isUndefined(dName)) {
         throw new Error('Missing `dName` prop');
@@ -55,7 +55,7 @@ export function DIcon(props: DIconProps) {
     }
 
     return [];
-  }, [iconContext, dName, dType, children]);
+  })();
 
   const width = isArray(dSize) ? dSize[0] : dSize;
   const height = isArray(dSize) ? dSize[1] : dSize;

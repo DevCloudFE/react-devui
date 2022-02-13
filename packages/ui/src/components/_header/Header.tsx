@@ -1,5 +1,4 @@
 import { isUndefined } from 'lodash';
-import { useCallback } from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -22,9 +21,9 @@ export function DHeader(props: DHeaderProps) {
 
   const [t] = useTranslation('Common');
 
-  const handleCloseClick = useCallback(() => {
+  const handleCloseClick = () => {
     onClose?.();
-  }, [onClose]);
+  };
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}header`)}>

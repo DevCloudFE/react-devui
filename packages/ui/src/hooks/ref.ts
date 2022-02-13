@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-export function useRefCallback<T = HTMLElement>() {
+export function useRefCallback<T = HTMLElement>(): [T | null, React.RefCallback<T>] {
   const [el, setEl] = useState<T | null>(null);
 
   const ref = useCallback(
@@ -10,7 +10,5 @@ export function useRefCallback<T = HTMLElement>() {
     [setEl]
   );
 
-  const res = useMemo<[T | null, React.RefCallback<T>]>(() => [el, ref], [el, ref]);
-
-  return res;
+  return [el, ref];
 }

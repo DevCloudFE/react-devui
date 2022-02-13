@@ -35,14 +35,14 @@ export function Notification() {
       };
     };
     obs.push(
-      notificationSubject.open.subscribe({
+      notificationSubject.open$.subscribe({
         next: ({ uniqueId, props }) => {
           setNotifications((draft) => {
             draft.set(uniqueId, { ...props, dVisible: true, ...mergeProps(uniqueId, props) });
           });
         },
       }),
-      notificationSubject.close.subscribe({
+      notificationSubject.close$.subscribe({
         next: (uniqueId) => {
           setNotifications((draft) => {
             const props = draft.get(uniqueId);
@@ -52,7 +52,7 @@ export function Notification() {
           });
         },
       }),
-      notificationSubject.rerender.subscribe({
+      notificationSubject.rerender$.subscribe({
         next: ({ uniqueId, props: newProps }) => {
           setNotifications((draft) => {
             const props = draft.get(uniqueId);
@@ -62,7 +62,7 @@ export function Notification() {
           });
         },
       }),
-      notificationSubject.closeAll.subscribe({
+      notificationSubject.closeAll$.subscribe({
         next: (animation) => {
           setNotifications((draft) => {
             if (animation) {

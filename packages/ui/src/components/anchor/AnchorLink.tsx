@@ -1,5 +1,3 @@
-import React, { useCallback } from 'react';
-
 import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useIsomorphicLayoutEffect } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DAnchorContext } from './Anchor';
@@ -33,17 +31,14 @@ export function DAnchorLink(props: DAnchorLinkProps) {
     }
   }, [href, linkEl, gRemoveLinks, gUpdateLinks]);
 
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
+  const handleClick: React.MouseEventHandler<HTMLLIElement> = (e) => {
+    onClick?.(e);
 
-      e.preventDefault();
-      if (href) {
-        gOnLinkClick?.(href);
-      }
-    },
-    [href, onClick, gOnLinkClick]
-  );
+    e.preventDefault();
+    if (href) {
+      gOnLinkClick?.(href);
+    }
+  };
 
   return (
     <li {...restProps} ref={linkRef} className={getClassName(className, `${dPrefix}anchor-link`)} onClick={handleClick}>

@@ -66,7 +66,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
   const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
   const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(new Map<string, boolean>());
-  const popupVisible = useMemo(() => {
+  const popupVisible = (() => {
     let visible = currentPopupVisible;
     for (const childrenVisiable of childrenPopupVisiable.values()) {
       if (childrenVisiable) {
@@ -75,7 +75,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
       }
     }
     return visible;
-  }, [childrenPopupVisiable, currentPopupVisible]);
+  })();
 
   useIsomorphicLayoutEffect(() => {
     gUpdateChildren?.(dId, popupVisible);
@@ -85,45 +85,6 @@ export function DDropdownSub(props: DDropdownSubProps) {
   }, [dId, gRemoveChildren, gUpdateChildren, popupVisible]);
 
   const _id = id ?? `${dPrefix}dropdown-sub-${toId(dId)}`;
-
-  const customTransition = useCallback((popupEl, targetEl) => {
-    const { top, left, transformOrigin } = getHorizontalSideStyle(popupEl, targetEl, 'right', 10);
-    return {
-      top,
-      left,
-      stateList: {
-        'enter-from': { transform: 'scale(0)', opacity: '0' },
-        'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
-        'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-        'leave-to': { transform: 'scale(0)', opacity: '0' },
-      },
-    };
-  }, []);
-
-  const handlePopupVisibleChange = useCallback(
-    (visible) => {
-      setCurrentPopupVisible(visible);
-    },
-    [setCurrentPopupVisible]
-  );
-
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
-
-      !dDisabled && gOnFocus?.(dId, _id);
-    },
-    [_id, gOnFocus, dDisabled, dId, onFocus]
-  );
-
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
-
-      gOnBlur?.();
-    },
-    [gOnBlur, onBlur]
-  );
 
   useEffect(() => {
     let isFocus = false;
@@ -166,6 +127,22 @@ export function DDropdownSub(props: DDropdownSubProps) {
     }),
     [_gRemoveChildren, _gUpdateChildren]
   );
+
+  const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onFocus?.(e);
+
+    !dDisabled && gOnFocus?.(dId, _id);
+  };
+
+  const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
+    onBlur?.(e);
+
+    gOnBlur?.();
+  };
+
+  const handlePopupVisibleChange = (visible: boolean) => {
+    setCurrentPopupVisible(visible);
+  };
 
   return (
     <DDropdownSubContext.Provider value={contextValue}>
@@ -226,7 +203,19 @@ export function DDropdownSub(props: DDropdownSubProps) {
           }
           dTrigger={gPopupTrigger}
           dArrow={false}
-          dCustomPopup={customTransition}
+          dCustomPopup={(popupEl, targetEl) => {
+            const { top, left, transformOrigin } = getHorizontalSideStyle(popupEl, targetEl, 'right', 10);
+            return {
+              top,
+              left,
+              stateList: {
+                'enter-from': { transform: 'scale(0)', opacity: '0' },
+                'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
+                'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
+                'leave-to': { transform: 'scale(0)', opacity: '0' },
+              },
+            };
+          }}
           dTriggerEl={liEl}
           onVisibleChange={handlePopupVisibleChange}
         />

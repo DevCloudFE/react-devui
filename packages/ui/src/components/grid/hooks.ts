@@ -3,7 +3,7 @@ import type { DBreakpoints } from './Row';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 
-import { useAsync, useGridConfig, useIsomorphicLayoutEffect } from '../../hooks';
+import { useAsync, useEventCallback, useGridConfig, useIsomorphicLayoutEffect } from '../../hooks';
 
 export const MEDIA_QUERY_LIST = Object.freeze(['xxl', 'xl', 'lg', 'md', 'sm', 'xs'] as DBreakpoints[]);
 
@@ -34,24 +34,27 @@ export function useMediaMatch(onMediaChange?: (match: DBreakpoints[]) => void) {
     setMediaMatch(getMediaMatch(mqlList));
   }, [breakpoints]);
 
+  const handleResize = useEventCallback(() => {
+    const _mediaMatch = getMediaMatch(mqlList);
+
+    if (!isEqual(_mediaMatch, mediaMatch)) {
+      onMediaChange?.(_mediaMatch);
+      setMediaMatch(_mediaMatch);
+    }
+  });
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     asyncGroup.fromEvent(window, 'resize').subscribe({
       next: () => {
-        const _mediaMatch = getMediaMatch(mqlList);
-
-        if (!isEqual(_mediaMatch, mediaMatch)) {
-          onMediaChange?.(_mediaMatch);
-          setMediaMatch(_mediaMatch);
-        }
+        handleResize();
       },
     });
 
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, mediaMatch, mqlList, onMediaChange, setMediaMatch]);
+  }, [asyncCapture, handleResize]);
 
   return mediaMatch;
 }

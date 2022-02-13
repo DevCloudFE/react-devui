@@ -1,9 +1,8 @@
 import { isUndefined } from 'lodash';
 import { useRef } from 'react';
-import { useEffect, useMemo } from 'react';
-import { flushSync } from 'react-dom';
+import { useEffect } from 'react';
 
-import { useAsync } from '../../hooks';
+import { useAsync, useEventCallback } from '../../hooks';
 
 export type DTriggerType = 'hover' | 'focus' | 'click';
 
@@ -16,7 +15,7 @@ export interface DRenderProps {
 }
 
 export interface DTriggerProps {
-  dTrigger?: DTriggerType | DTriggerType[];
+  dTrigger?: DTriggerType;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dTriggerEl?: HTMLElement | null;
@@ -33,6 +32,10 @@ export function DTrigger(props: DTriggerProps) {
 
   const asyncCapture = useAsync();
 
+  const changeState = useEventCallback((state?: boolean) => {
+    onTrigger?.(state);
+  });
+
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -42,7 +45,7 @@ export function DTrigger(props: DTriggerProps) {
             next: () => {
               dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                flushSync(() => onTrigger?.(true));
+                changeState(true);
               }, dMouseEnterDelay);
             },
           });
@@ -50,7 +53,7 @@ export function DTrigger(props: DTriggerProps) {
             next: () => {
               dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                flushSync(() => onTrigger?.(false));
+                changeState(false);
               }, dMouseLeaveDelay);
             },
           });
@@ -60,12 +63,12 @@ export function DTrigger(props: DTriggerProps) {
           asyncGroup.fromEvent(dTriggerEl, 'focus').subscribe({
             next: () => {
               dataRef.current.clearTid?.();
-              flushSync(() => onTrigger?.(true));
+              changeState(true);
             },
           });
           asyncGroup.fromEvent(dTriggerEl, 'blur').subscribe({
             next: () => {
-              dataRef.current.clearTid = asyncCapture.setTimeout(() => flushSync(() => onTrigger?.(false)), 20);
+              dataRef.current.clearTid = asyncCapture.setTimeout(() => changeState(false), 20);
             },
           });
         }
@@ -74,7 +77,7 @@ export function DTrigger(props: DTriggerProps) {
           asyncGroup.fromEvent(dTriggerEl, 'click').subscribe({
             next: () => {
               dataRef.current.clearTid?.();
-              flushSync(() => onTrigger?.());
+              changeState();
             },
           });
         }
@@ -84,9 +87,9 @@ export function DTrigger(props: DTriggerProps) {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, onTrigger]);
+  }, [asyncCapture, changeState, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl]);
 
-  const renderProps = useMemo<DRenderProps>(() => {
+  const renderProps = (() => {
     const renderProps: DRenderProps = {};
     if (dTrigger === 'hover') {
       renderProps.onMouseEnter = () => {
@@ -119,7 +122,7 @@ export function DTrigger(props: DTriggerProps) {
     }
 
     return renderProps;
-  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, onTrigger]);
+  })();
 
   return (dRender?.(renderProps) as React.ReactElement) ?? null;
 }

@@ -72,25 +72,6 @@ export function DDropdown(props: DDropdownProps) {
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
 
-  const customTransition = useCallback(
-    (popupEl, targetEl) => {
-      const { top, left, transformOrigin, arrowPosition } = getVerticalSideStyle(popupEl, targetEl, dPlacement, 8);
-
-      return {
-        top,
-        left,
-        stateList: {
-          'enter-from': { transform: 'scaleY(0.7)', opacity: '0' },
-          'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
-          'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-          'leave-to': { transform: 'scaleY(0.7)', opacity: '0' },
-        },
-        arrowPosition,
-      };
-    },
-    [dPlacement]
-  );
-
   useEffect(() => {
     let isFocus = false;
     if (focusId) {
@@ -152,53 +133,6 @@ export function DDropdown(props: DDropdownProps) {
     });
   }, [children]);
 
-  const renderTrigger = useCallback(
-    ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {
-      if (dTriggerNode) {
-        const triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-        const props: DTriggerRenderProps = renderProps;
-        if (onMouseEnter) {
-          props.onMouseEnter = (e) => {
-            triggerNode.props.onMouseEnter?.(e);
-            onMouseEnter?.(e);
-          };
-          props.onMouseLeave = (e) => {
-            triggerNode.props.onMouseLeave?.(e);
-            onMouseLeave?.(e);
-          };
-        }
-        if (onFocus) {
-          props.onFocus = (e) => {
-            triggerNode.props.onFocus?.(e);
-            onFocus?.(e);
-          };
-          props.onBlur = (e) => {
-            triggerNode.props.onBlur?.(e);
-            onBlur?.(e);
-          };
-        }
-        if (onClick) {
-          props.onClick = (e) => {
-            triggerNode.props.onClick?.(e);
-            onClick?.(e);
-          };
-        }
-
-        return React.cloneElement(triggerNode, {
-          ...triggerNode.props,
-          ...props,
-          role: 'button',
-          'aria-haspopup': 'menu',
-          'aria-expanded': visible ? true : undefined,
-          'aria-controls': _id,
-        });
-      }
-
-      return null;
-    },
-    [_id, dTriggerNode, visible]
-  );
-
   return (
     <DDropdownContext.Provider value={contextValue}>
       <DPopup
@@ -218,8 +152,64 @@ export function DDropdown(props: DDropdownProps) {
             {React.Children.count(childs) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : childs}
           </nav>
         }
-        dCustomPopup={customTransition}
-        dTriggerRender={renderTrigger}
+        dCustomPopup={(popupEl, targetEl) => {
+          const { top, left, transformOrigin, arrowPosition } = getVerticalSideStyle(popupEl, targetEl, dPlacement, 8);
+
+          return {
+            top,
+            left,
+            stateList: {
+              'enter-from': { transform: 'scaleY(0.7)', opacity: '0' },
+              'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
+              'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
+              'leave-to': { transform: 'scaleY(0.7)', opacity: '0' },
+            },
+            arrowPosition,
+          };
+        }}
+        dTriggerRender={({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }) => {
+          if (dTriggerNode) {
+            const triggerNode = React.Children.only(dTriggerNode) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+            const props: DTriggerRenderProps = renderProps;
+            if (onMouseEnter) {
+              props.onMouseEnter = (e) => {
+                triggerNode.props.onMouseEnter?.(e);
+                onMouseEnter?.(e);
+              };
+              props.onMouseLeave = (e) => {
+                triggerNode.props.onMouseLeave?.(e);
+                onMouseLeave?.(e);
+              };
+            }
+            if (onFocus) {
+              props.onFocus = (e) => {
+                triggerNode.props.onFocus?.(e);
+                onFocus?.(e);
+              };
+              props.onBlur = (e) => {
+                triggerNode.props.onBlur?.(e);
+                onBlur?.(e);
+              };
+            }
+            if (onClick) {
+              props.onClick = (e) => {
+                triggerNode.props.onClick?.(e);
+                onClick?.(e);
+              };
+            }
+
+            return React.cloneElement(triggerNode, {
+              ...triggerNode.props,
+              ...props,
+              role: 'button',
+              'aria-haspopup': 'menu',
+              'aria-expanded': visible ? true : undefined,
+              'aria-controls': _id,
+            });
+          }
+
+          return null;
+        }}
         dDestroy={dDestroy}
         dArrow={dArrow}
         onVisibleChange={changeVisible}

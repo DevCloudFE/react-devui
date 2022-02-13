@@ -1,7 +1,7 @@
 import type { DFooterProps } from '../_footer';
 
 import { isBoolean } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -28,7 +28,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
   const [okLoading, setOkLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
-  const okButtonProps = useMemo(() => {
+  const okButtonProps = (() => {
     if (isBoolean(dOkButtonProps?.dLoading)) {
       return dOkButtonProps;
     } else {
@@ -37,8 +37,8 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
         dLoading: okLoading,
       };
     }
-  }, [dOkButtonProps, okLoading]);
-  const cancelButtonProps = useMemo(() => {
+  })();
+  const cancelButtonProps = (() => {
     if (isBoolean(dCancelButtonProps?.dLoading)) {
       return dCancelButtonProps;
     } else {
@@ -47,9 +47,9 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
         dLoading: cancelLoading,
       };
     }
-  }, [dCancelButtonProps, cancelLoading]);
+  })();
 
-  const handleOkClick = useCallback(() => {
+  const handleOkClick = () => {
     const shouldClose = onOkClick?.();
     if (shouldClose instanceof Promise) {
       setOkLoading(true);
@@ -62,8 +62,9 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
     } else if (shouldClose !== false) {
       gCloseDrawer?.();
     }
-  }, [gCloseDrawer, onOkClick, setOkLoading]);
-  const handleCancelClick = useCallback(() => {
+  };
+
+  const handleCancelClick = () => {
     const shouldClose = onCancelClick?.();
     if (shouldClose instanceof Promise) {
       setCancelLoading(true);
@@ -76,7 +77,7 @@ export function DDrawerFooter(props: DDrawerFooterProps) {
     } else if (shouldClose !== false) {
       gCloseDrawer?.();
     }
-  }, [gCloseDrawer, onCancelClick, setCancelLoading]);
+  };
 
   return (
     <DFooter

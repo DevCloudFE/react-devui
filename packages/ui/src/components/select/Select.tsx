@@ -2,7 +2,7 @@ import type { Updater } from '../../hooks/two-way-binding';
 import type { DExtendsSelectBoxProps } from '../_select-box';
 
 import { isNull, isNumber, isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState, useId } from 'react';
+import React, { useEffect, useState, useId, useCallback } from 'react';
 import { filter } from 'rxjs';
 
 import {
@@ -13,6 +13,7 @@ import {
   useTranslation,
   useGeneralState,
   useIsomorphicLayoutEffect,
+  useEventCallback,
 } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DSelectBox } from '../_select-box';
@@ -134,10 +135,7 @@ export function DSelect<T>(props: DSelectProps<T>) {
   );
 
   const [rendered, setRendered] = useState(visible);
-  const handleRendered = useCallback(() => {
-    setRendered(true);
-  }, []);
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!visible) {
       setRendered(false);
     }
@@ -148,8 +146,9 @@ export function DSelect<T>(props: DSelectProps<T>) {
   const disabled = dDisabled || gDisabled || controlDisabled;
 
   const hasSearch = searchValue.length > 0;
+  const hasSelected = dMultiple ? (select as T[]).length > 0 : !isNull(select);
 
-  const renderOptions = useMemo(() => {
+  const renderOptions = (() => {
     const defaultFilterFn = (value: string, option: DSelectOption<T>) => {
       return option.dLabel.includes(value);
     };
@@ -206,45 +205,40 @@ export function DSelect<T>(props: DSelectProps<T>) {
     }
 
     return renderOptions;
-  }, [dCreateOption, dCustomSearch, dGetId, dOptions, hasSearch, searchValue]);
+  })();
 
-  const canSelectOption = useCallback((option) => !option.dDisabled && !option[IS_GROUP], []);
-  const compareOption = useCallback(
-    (a: DSelectOption<T>, b: DSelectOption<T>) => {
-      if (a.dValue && b.dValue) {
-        return dGetId(a.dValue) === dGetId(b.dValue);
-      }
+  const canSelectOption = (option: DSelectOption<T>) => !option.dDisabled && !option[IS_GROUP];
+  const compareOption = (a: DSelectOption<T>, b: DSelectOption<T>) => {
+    if (a.dValue && b.dValue) {
+      return dGetId(a.dValue) === dGetId(b.dValue);
+    }
 
-      return false;
-    },
-    [dGetId]
-  );
-  const findOption = useCallback(
-    (fn: (option: DSelectOption<T>) => unknown, options?: DSelectOption<T>[]): DSelectOption<T> | null => {
-      options = options ?? renderOptions;
-      let option: DSelectOption<T> | null = null;
-      let stop = false;
-      const reduceArr = (arr: DSelectOption<T>[]) => {
-        for (const item of arr) {
-          if (stop) {
-            break;
-          }
-
-          if (item.dChildren) {
-            reduceArr(item.dChildren);
-          } else if (fn(item)) {
-            option = item;
-            stop = true;
-          }
+    return false;
+  };
+  const findOption = (fn: (option: DSelectOption<T>) => unknown, options?: DSelectOption<T>[]): DSelectOption<T> | null => {
+    options = options ?? renderOptions;
+    let option: DSelectOption<T> | null = null;
+    let stop = false;
+    const reduceArr = (arr: DSelectOption<T>[]) => {
+      for (const item of arr) {
+        if (stop) {
+          break;
         }
-      };
-      reduceArr(options);
 
-      return option;
-    },
-    [renderOptions]
-  );
-  const getFocusOption = useCallback(() => {
+        if (item.dChildren) {
+          reduceArr(item.dChildren);
+        } else if (fn(item)) {
+          option = item;
+          stop = true;
+        }
+      }
+    };
+    reduceArr(options);
+
+    return option;
+  };
+
+  const getFocusOptionFn = () => {
     let option: DSelectOption<T> | null = null;
 
     if (!hasSearch) {
@@ -270,122 +264,60 @@ export function DSelect<T>(props: DSelectProps<T>) {
     }
 
     return option;
-  }, [canSelectOption, dGetId, dMultiple, findOption, hasSearch, select]);
+  };
+  const getFocusOption = useEventCallback(getFocusOptionFn);
 
-  const [searchFocusOption, setSearchFocusOption] = useState(() => getFocusOption());
-  const [noSearchFocusOption, setNoSearchFocusOption] = useState(() => getFocusOption());
-  const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
-  const focusId = focusOption && focusOption.dValue ? dGetId(focusOption.dValue) : null;
-  const changeFocusOption = useCallback(
-    (option) => {
-      hasSearch ? setSearchFocusOption(option) : setNoSearchFocusOption(option);
-    },
-    [hasSearch]
-  );
-
-  const handleOptionClick = useCallback(
-    (option: DSelectOption<T>, isSwitch?: boolean) => {
-      if (canSelectOption(option) && option.dValue) {
-        const optionId = dGetId(option.dValue);
-        if (dMultiple) {
-          isSwitch = isSwitch ?? true;
-
-          changeSelect((draft) => {
-            const index = (draft as T[]).findIndex((item) => dGetId(item) === optionId);
-            if (index !== -1) {
-              isSwitch && (draft as T[]).splice(index, 1);
-            } else {
-              if (isNumber(dMaxSelectNum) && (draft as T[]).length === dMaxSelectNum) {
-                onExceed?.();
-              } else {
-                (draft as T[]).push(option.dValue as T);
-              }
-            }
-          });
-        } else {
-          changeSelect(option.dValue);
-        }
-      }
-
-      if (!dMultiple) {
-        changeVisible(false);
-      }
-    },
-    [canSelectOption, changeSelect, changeVisible, dGetId, dMaxSelectNum, dMultiple, onExceed]
-  );
-
-  const handleClear = useCallback(() => {
-    onClear?.();
-
-    if (dMultiple) {
-      changeSelect([]);
-    } else {
-      changeSelect(null);
-    }
-  }, [onClear, dMultiple, changeSelect]);
-
-  const handleSearch = useCallback(
-    (value: string) => {
-      onSearch?.(value);
-      setSearchValue(value);
-    },
-    [onSearch]
-  );
+  const [[searchFocusOption, noSearchFocusOption], setFocusOption] = useState(() => {
+    const option = getFocusOptionFn();
+    return [option, option];
+  });
   useIsomorphicLayoutEffect(() => {
     if (hasSearch) {
-      setSearchFocusOption(getFocusOption());
+      setFocusOption(([, noSearchFocusOption]) => [getFocusOption(), noSearchFocusOption]);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
+  const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
+  const focusId = focusOption && focusOption.dValue ? dGetId(focusOption.dValue) : null;
+  const changeFocusOption = useCallback(
+    (option: DSelectOption<T> | null) => {
+      setFocusOption(([searchFocusOption, noSearchFocusOption]) =>
+        hasSearch ? [option, noSearchFocusOption] : [searchFocusOption, option]
+      );
+    },
+    [hasSearch]
+  );
 
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+  const handleOptionClick = useEventCallback((option: DSelectOption<T>, isSwitch?: boolean) => {
+    if (canSelectOption(option) && option.dValue) {
+      const optionId = dGetId(option.dValue);
+      if (dMultiple) {
+        isSwitch = isSwitch ?? true;
 
-    if (listRendered) {
-      if (focusOption) {
-        asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
-          next: (e) => {
-            switch (e.code) {
-              case 'Enter':
-                e.preventDefault();
-                handleOptionClick(focusOption, false);
-                break;
-
-              case 'Space':
-                e.preventDefault();
-                if (dMultiple) {
-                  handleOptionClick(focusOption, true);
-                }
-                break;
-
-              default:
-                break;
+        changeSelect((draft) => {
+          const index = (draft as T[]).findIndex((item) => dGetId(item) === optionId);
+          if (index !== -1) {
+            isSwitch && (draft as T[]).splice(index, 1);
+          } else {
+            if (isNumber(dMaxSelectNum) && (draft as T[]).length === dMaxSelectNum) {
+              onExceed?.();
+            } else {
+              (draft as T[]).push(option.dValue as T);
             }
-          },
+          }
         });
       } else {
-        asyncGroup
-          .fromEvent<KeyboardEvent>(window, 'keydown')
-          .pipe(filter((e) => e.code === 'ArrowDown'))
-          .subscribe({
-            next: (e) => {
-              e.preventDefault();
-              const option = getFocusOption();
-              if (option) {
-                hasSearch ? setSearchFocusOption(option) : setNoSearchFocusOption(option);
-              }
-            },
-          });
+        changeSelect(option.dValue);
       }
     }
 
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, dMultiple, focusOption, getFocusOption, handleOptionClick, hasSearch, listRendered]);
+    if (!dMultiple) {
+      changeVisible(false);
+    }
+  });
 
-  const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
+  const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
@@ -483,83 +415,69 @@ export function DSelect<T>(props: DSelectProps<T>) {
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [dMultiple, select, dOptions, dCustomSelected, dPrefix, size, dMaxSelectNum, dGetId, disabled, handleOptionClick, findOption]);
+  })();
 
-  const hasSelected = dMultiple ? (select as T[]).length > 0 : !isNull(select);
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-  const itemRender = useCallback(
-    (item: DSelectOption<T>, renderProps) => {
-      if (item.dChildren) {
-        return (
-          <ul
-            key={`${dPrefix}select-group-${item.dLabel}`}
-            className={getClassName(`${dPrefix}select__option-group`)}
-            role="group"
-            aria-labelledby={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
-          >
-            <li key={`${dPrefix}select-group-${item.dLabel}`} id={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`} role="presentation">
-              <span className={`${dPrefix}select__option-content`}>{item.dLabel}</span>
-            </li>
-            {renderProps.children}
-          </ul>
-        );
-      }
+    if (listRendered) {
+      if (focusOption) {
+        asyncGroup.fromEvent<KeyboardEvent>(window, 'keydown').subscribe({
+          next: (e) => {
+            switch (e.code) {
+              case 'Enter':
+                e.preventDefault();
+                handleOptionClick(focusOption, false);
+                break;
 
-      const optionId = dGetId(item.dValue as T);
-
-      let isSelected = false;
-      if (dMultiple) {
-        isSelected = (select as T[]).findIndex((item) => dGetId(item) === optionId) !== -1;
-      } else {
-        if (isNull(select)) {
-          isSelected = false;
-        } else {
-          isSelected = dGetId(select as T) === optionId;
-        }
-      }
-
-      return (
-        <li
-          {...renderProps}
-          key={optionId}
-          id={`${dPrefix}select-${uniqueId}-option-${optionId}`}
-          className={getClassName(`${dPrefix}select__option`, {
-            'is-selected': !dMultiple && isSelected,
-            'is-focus': focusId === optionId,
-            'is-disabled': item.dDisabled,
-          })}
-          role="option"
-          title={(item[IS_CREATE] ? t('Create') + ' ' : '') + item.dLabel}
-          aria-selected={isSelected}
-          aria-disabled={item.dDisabled}
-          onClick={
-            item.dDisabled
-              ? undefined
-              : () => {
-                  if (item[IS_CREATE]) {
-                    const option = { ...item };
-                    delete option[IS_CREATE];
-                    onCreateOption?.(option);
-                  }
-                  changeFocusOption(item);
-                  handleOptionClick(item);
+              case 'Space':
+                e.preventDefault();
+                if (dMultiple) {
+                  handleOptionClick(focusOption, true);
                 }
-          }
-        >
-          {item[IS_CREATE] ? (
-            <DIcon viewBox="64 64 896 896" dTheme="primary">
-              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
-              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
-            </DIcon>
-          ) : dMultiple ? (
-            <DCheckbox dModel={[isSelected]} dDisabled={item.dDisabled}></DCheckbox>
-          ) : null}
-          <span className={`${dPrefix}select__option-content`}>{dOptionRender(item)}</span>
-        </li>
-      );
-    },
-    [changeFocusOption, dGetId, dMultiple, dOptionRender, dPrefix, focusId, handleOptionClick, onCreateOption, select, t, uniqueId]
-  );
+                break;
+
+              default:
+                break;
+            }
+          },
+        });
+      } else {
+        asyncGroup
+          .fromEvent<KeyboardEvent>(window, 'keydown')
+          .pipe(filter((e) => e.code === 'ArrowDown'))
+          .subscribe({
+            next: (e) => {
+              e.preventDefault();
+              const option = getFocusOption();
+              if (option) {
+                changeFocusOption(option);
+              }
+            },
+          });
+      }
+    }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, changeFocusOption, dMultiple, focusOption, getFocusOption, handleOptionClick, listRendered]);
+
+  const handleClear = () => {
+    onClear?.();
+
+    if (dMultiple) {
+      changeSelect([]);
+    } else {
+      changeSelect(null);
+    }
+  };
+
+  const handleSearch = (value: string) => {
+    onSearch?.(value);
+
+    setSearchValue(value);
+  };
 
   return (
     <DSelectBox
@@ -593,7 +511,80 @@ export function DSelect<T>(props: DSelectProps<T>) {
             dNestedKey="dChildren"
             dCanSelectOption={canSelectOption}
             dCompareOption={compareOption}
-            dItemRender={itemRender}
+            dItemRender={(item, renderProps) => {
+              if (item.dChildren) {
+                return (
+                  <ul
+                    key={`${dPrefix}select-group-${item.dLabel}`}
+                    className={getClassName(`${dPrefix}select__option-group`)}
+                    role="group"
+                    aria-labelledby={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+                  >
+                    <li
+                      key={`${dPrefix}select-group-${item.dLabel}`}
+                      id={`${dPrefix}select-${uniqueId}-group-${item.dLabel}`}
+                      role="presentation"
+                    >
+                      <span className={`${dPrefix}select__option-content`}>{item.dLabel}</span>
+                    </li>
+                    {renderProps.children}
+                  </ul>
+                );
+              }
+
+              const optionId = dGetId(item.dValue as T);
+
+              let isSelected = false;
+              if (dMultiple) {
+                isSelected = (select as T[]).findIndex((item) => dGetId(item) === optionId) !== -1;
+              } else {
+                if (isNull(select)) {
+                  isSelected = false;
+                } else {
+                  isSelected = dGetId(select as T) === optionId;
+                }
+              }
+
+              return (
+                <li
+                  {...renderProps}
+                  key={optionId}
+                  id={`${dPrefix}select-${uniqueId}-option-${optionId}`}
+                  className={getClassName(`${dPrefix}select__option`, {
+                    'is-selected': !dMultiple && isSelected,
+                    'is-focus': focusId === optionId,
+                    'is-disabled': item.dDisabled,
+                  })}
+                  role="option"
+                  title={(item[IS_CREATE] ? t('Create') + ' ' : '') + item.dLabel}
+                  aria-selected={isSelected}
+                  aria-disabled={item.dDisabled}
+                  onClick={
+                    item.dDisabled
+                      ? undefined
+                      : () => {
+                          if (item[IS_CREATE]) {
+                            const option = { ...item };
+                            delete option[IS_CREATE];
+                            onCreateOption?.(option);
+                          }
+                          changeFocusOption(item);
+                          handleOptionClick(item);
+                        }
+                  }
+                >
+                  {item[IS_CREATE] ? (
+                    <DIcon viewBox="64 64 896 896" dTheme="primary">
+                      <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                      <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                    </DIcon>
+                  ) : dMultiple ? (
+                    <DCheckbox dModel={[isSelected]} dDisabled={item.dDisabled}></DCheckbox>
+                  ) : null}
+                  <span className={`${dPrefix}select__option-content`}>{dOptionRender(item)}</span>
+                </li>
+              );
+            }}
             dEmpty={
               <li key={`${dPrefix}select-empty`} className={`${dPrefix}select__empty`}>
                 <span className={`${dPrefix}select__option-content`}>{t('No Data')}</span>
@@ -618,7 +609,9 @@ export function DSelect<T>(props: DSelectProps<T>) {
       onClear={handleClear}
       onSearch={handleSearch}
       onVisibleChange={changeVisible}
-      onRendered={handleRendered}
+      onRendered={() => {
+        setRendered(true);
+      }}
     >
       {hasSelected && selectedNode}
     </DSelectBox>

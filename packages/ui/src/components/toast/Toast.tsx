@@ -19,10 +19,10 @@ export interface DToastProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const toastSubject = {
-  open: new Subject<{ uniqueId: number; props: DToastProps }>(),
-  close: new Subject<number>(),
-  rerender: new Subject<{ uniqueId: number; props: DToastProps }>(),
-  closeAll: new Subject<boolean>(),
+  open$: new Subject<{ uniqueId: number; props: DToastProps }>(),
+  close$: new Subject<number>(),
+  rerender$: new Subject<{ uniqueId: number; props: DToastProps }>(),
+  closeAll$: new Subject<boolean>(),
 };
 
 class Toast {
@@ -50,7 +50,7 @@ export class ToastService {
 
   static open(props: DToastProps) {
     UNIQUEID += 1;
-    toastSubject.open.next({ uniqueId: UNIQUEID, props });
+    toastSubject.open$.next({ uniqueId: UNIQUEID, props });
     const toast = new Toast(UNIQUEID);
     TOASTS.push(toast);
     return toast;
@@ -58,16 +58,16 @@ export class ToastService {
 
   static close(uniqueId: number) {
     TOASTS = TOASTS.filter((item) => item.uniqueId !== uniqueId);
-    toastSubject.close.next(uniqueId);
+    toastSubject.close$.next(uniqueId);
   }
 
   static rerender(uniqueId: number, props: DToastProps) {
-    toastSubject.rerender.next({ uniqueId, props });
+    toastSubject.rerender$.next({ uniqueId, props });
   }
 
   static closeAll(animation = true) {
     TOASTS = [];
-    toastSubject.closeAll.next(animation);
+    toastSubject.closeAll$.next(animation);
   }
 }
 

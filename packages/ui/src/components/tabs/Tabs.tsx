@@ -4,7 +4,17 @@ import type { DTabProps } from './Tab';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useImmer, useTwoWayBinding, useRefCallback, useAsync, useTranslation } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useImmer,
+  useTwoWayBinding,
+  useRefCallback,
+  useAsync,
+  useTranslation,
+  useEventCallback,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DDropdown, DDropdownItem } from '../dropdown';
 import { DIcon } from '../icon';
@@ -60,7 +70,6 @@ export function DTabs(props: DTabsProps) {
   //#endregion
 
   const dataRef = useRef<{
-    clearTid?: () => void;
     scrollTid?: () => void;
   }>({});
 
@@ -87,7 +96,7 @@ export function DTabs(props: DTabsProps) {
     onActiveChange
   );
 
-  const updateDropdown = useCallback(() => {
+  const updateDropdown = useEventCallback(() => {
     if (tablistWrapperEl) {
       const isOverflow = isHorizontal
         ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
@@ -117,9 +126,13 @@ export function DTabs(props: DTabsProps) {
         setDropdownList(dropdownList);
       }
     }
-  }, [children, isHorizontal, onAddClick, setDropdownList, tabEls, tablistWrapperEl]);
+  });
+  useIsomorphicLayoutEffect(() => {
+    updateDropdown();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabEls]);
 
-  const checkScrollEnd = useCallback(() => {
+  const checkScrollEnd = useEventCallback(() => {
     if (tablistWrapperEl) {
       setScrollEnd(
         Math.abs(
@@ -129,56 +142,15 @@ export function DTabs(props: DTabsProps) {
         ) < 1
       );
     }
-  }, [isHorizontal, setScrollEnd, tablistWrapperEl]);
-
-  const getDotStyle = useCallback(() => {
-    dataRef.current.clearTid?.();
-    dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-      if (tablistEl) {
-        const tablistRect = tablistEl.getBoundingClientRect();
-        const activeEl = tablistEl.querySelector(`.${dPrefix}tab.is-active`);
-        if (activeEl) {
-          const rect = activeEl.getBoundingClientRect();
-          if (isHorizontal) {
-            setDotStyle({ left: rect.left - tablistRect.left, width: rect.width, opacity: 1 });
-          }
-          if (!isHorizontal) {
-            setDotStyle({ top: rect.top - tablistRect.top, opacity: 1 });
-          }
-        } else {
-          setDotStyle({});
-        }
-      }
-    }, 20);
-  }, [asyncCapture, dPrefix, isHorizontal, setDotStyle, tablistEl]);
-
-  const handleAddClick = useCallback(() => {
-    onAddClick?.();
-  }, [onAddClick]);
-
-  const handleScroll = useCallback<React.UIEventHandler>(() => {
-    checkScrollEnd();
-    dataRef.current.scrollTid?.();
-    dataRef.current.scrollTid = asyncCapture.setTimeout(() => {
-      updateDropdown();
-    }, 300);
-  }, [asyncCapture, checkScrollEnd, updateDropdown]);
-
-  useEffect(() => {
-    getDotStyle();
-  }, [dPlacement, dType, dSize, getDotStyle]);
+  });
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
     if (tablistWrapperEl && tablistEl) {
-      asyncGroup.onResize(
-        tablistEl,
-        () => {
-          updateDropdown();
-          checkScrollEnd();
-        },
-        false
-      );
+      asyncGroup.onResize(tablistEl, () => {
+        updateDropdown();
+        checkScrollEnd();
+      });
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
@@ -227,6 +199,23 @@ export function DTabs(props: DTabsProps) {
     },
     [setTabEls]
   );
+  const gGetDotStyle = useCallback(() => {
+    if (tablistEl) {
+      const tablistRect = tablistEl.getBoundingClientRect();
+      const activeEl = tablistEl.querySelector(`.${dPrefix}tab.is-active`);
+      if (activeEl) {
+        const rect = activeEl.getBoundingClientRect();
+        if (isHorizontal) {
+          setDotStyle({ left: rect.left - tablistRect.left, width: rect.width, opacity: 1 });
+        }
+        if (!isHorizontal) {
+          setDotStyle({ top: rect.top - tablistRect.top, opacity: 1 });
+        }
+      } else {
+        setDotStyle({});
+      }
+    }
+  }, [dPrefix, isHorizontal, setDotStyle, tablistEl]);
   const gOnActiveChange = useCallback(
     (id) => {
       changeActiveId(id);
@@ -247,12 +236,20 @@ export function DTabs(props: DTabsProps) {
       gUpdateTabEls,
       gRemoveTabEls,
       gActiveId: activeId,
-      gGetDotStyle: getDotStyle,
+      gGetDotStyle,
       gOnActiveChange,
       gOnClose,
     }),
-    [activeId, gOnActiveChange, gOnClose, gRemoveTabEls, gUpdateTabEls, getDotStyle]
+    [activeId, gGetDotStyle, gOnActiveChange, gOnClose, gRemoveTabEls, gUpdateTabEls]
   );
+
+  const handleListScroll: React.UIEventHandler<HTMLDivElement> = () => {
+    checkScrollEnd();
+    dataRef.current.scrollTid?.();
+    dataRef.current.scrollTid = asyncCapture.setTimeout(() => {
+      updateDropdown();
+    }, 200);
+  };
 
   return (
     <DTabsContext.Provider value={contextValue}>
@@ -264,7 +261,7 @@ export function DTabs(props: DTabsProps) {
           [`${dPrefix}tabs--center`]: dCenter,
         })}
       >
-        <div ref={tablistWrapperRef} className={`${dPrefix}tabs__tablist-wrapper`} onScroll={handleScroll}>
+        <div ref={tablistWrapperRef} className={`${dPrefix}tabs__tablist-wrapper`} onScroll={handleListScroll}>
           <div
             ref={tablistRef}
             className={`${dPrefix}tabs__tablist`}
@@ -314,7 +311,9 @@ export function DTabs(props: DTabsProps) {
                     role="button"
                     tabIndex={-1}
                     aria-label={t('Add')}
-                    onClick={handleAddClick}
+                    onClick={() => {
+                      onAddClick?.();
+                    }}
                   >
                     <DIcon viewBox="64 64 896 896" dSize={18}>
                       <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>

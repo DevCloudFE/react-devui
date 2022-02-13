@@ -1,8 +1,7 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useId, useImperativeHandle, useMemo, useState } from 'react';
-import { useCallback } from 'react';
+import React, { useEffect, useId, useImperativeHandle, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback, useGeneralState } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
@@ -60,7 +59,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   const [rowNum, setRowNum] = useState(1);
 
   const resizable = dResizable && isUndefined(dRows);
-  const heightStyle = useMemo(() => {
+  const heightStyle = (() => {
     let overflow: 'hidden' | undefined;
     let height: number | undefined;
     let minHeight: number | undefined;
@@ -82,27 +81,7 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
       }
     }
     return { overflow, height, minHeight, maxHeight };
-  }, [dRows, lineHeight, rowNum]);
-
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLTextAreaElement>>(
-    (e) => {
-      onChange?.(e);
-      changeValue(e.currentTarget.value);
-
-      const el = e.currentTarget;
-      const overflow = el.style.overflow;
-      const height = el.style.height;
-      const minHeight = el.style.minHeight;
-      el.style.overflow = 'hidden';
-      el.style.height = '32px';
-      el.style.minHeight = '';
-      setRowNum(Math.round((el.scrollHeight - 6) / lineHeight));
-      el.style.overflow = overflow;
-      el.style.height = height;
-      el.style.minHeight = minHeight;
-    },
-    [changeValue, lineHeight, onChange]
-  );
+  })();
 
   useEffect(() => {
     if (textareaEl) {
@@ -111,6 +90,24 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   }, [lineHeight, setRowNum, textareaEl]);
 
   useImperativeHandle<HTMLTextAreaElement | null, HTMLTextAreaElement | null>(ref, () => textareaEl, [textareaEl]);
+
+  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    onChange?.(e);
+
+    changeValue(e.currentTarget.value);
+
+    const el = e.currentTarget;
+    const overflow = el.style.overflow;
+    const height = el.style.height;
+    const minHeight = el.style.minHeight;
+    el.style.overflow = 'hidden';
+    el.style.height = '32px';
+    el.style.minHeight = '';
+    setRowNum(Math.round((el.scrollHeight - 6) / lineHeight));
+    el.style.overflow = overflow;
+    el.style.height = height;
+    el.style.minHeight = minHeight;
+  };
 
   return (
     <>

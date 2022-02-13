@@ -49,7 +49,7 @@ import type { DBreakpoints } from '../components/grid';
 import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 
 import { getFragmentChildren } from '../utils';
 
@@ -126,7 +126,7 @@ export interface DConfigContextData {
       type?: string;
     }[];
   }[];
-  scrollViewChange?: Subject<void>;
+  onScrollViewChange$?: Subject<void>;
 }
 export const DConfigContext = React.createContext<DConfigContextData>({});
 
@@ -148,15 +148,10 @@ export function useGridConfig() {
   const breakpoints = grid?.breakpoints ?? BREAKPOINTS;
   const colNum = grid?.colNum ?? 12;
 
-  const res = useMemo(
-    () => ({
-      breakpoints,
-      colNum,
-    }),
-    [breakpoints, colNum]
-  );
-
-  return res;
+  return {
+    breakpoints,
+    colNum,
+  };
 }
 
 export function useThemeConfig() {
@@ -186,5 +181,5 @@ export function useComponentConfig<T>(component: keyof DComponentConfig, props: 
 }
 
 export function useContentSVChangeConfig() {
-  return useContext(DConfigContext).scrollViewChange;
+  return useContext(DConfigContext).onScrollViewChange$;
 }

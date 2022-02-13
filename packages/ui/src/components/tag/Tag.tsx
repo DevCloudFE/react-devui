@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState, useThemeConfig } from '../../hooks';
 import { convertHex, generateComponentMate, getClassName, mergeStyle, pSBC } from '../../utils';
 import { DIcon } from '../icon';
@@ -38,14 +36,11 @@ export function DTag(props: DTagProps) {
 
   const [t] = useTranslation('Common');
 
-  const handleCloseClick = useCallback(
-    (e) => {
-      e.stopPropagation();
+  const handleCloseClick: React.MouseEventHandler<HTMLSpanElement> = (e) => {
+    e.stopPropagation();
 
-      onClose?.(e);
-    },
-    [onClose]
-  );
+    onClose?.(e);
+  };
 
   return (
     <div

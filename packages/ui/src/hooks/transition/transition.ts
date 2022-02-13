@@ -1,4 +1,4 @@
-import { isFunction } from 'lodash';
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
@@ -115,13 +115,12 @@ export function useDTransition(props: DTransitionProps) {
         prepareTransition();
       } else if (dEl) {
         dataRef.current.hasfirstRun = true;
-        const callbackList = isFunction(dCallbackList) ? dCallbackList() ?? {} : dCallbackList ?? {};
+        const callbackList = dCallbackList ?? {};
         callbackList[dVisible ? 'beforeEnter' : 'beforeLeave'](dEl);
         callbackList[dVisible ? 'enter' : 'leave']?.(dEl);
         callbackList[dVisible ? 'afterEnter' : 'afterLeave']?.(dEl);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl]);
 
   useIsomorphicLayoutEffect(() => {
@@ -129,19 +128,16 @@ export function useDTransition(props: DTransitionProps) {
       dataRef.current.elRendered = true;
       transition();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dEl, hidden]);
 
   useIsomorphicLayoutEffect(() => {
     if (dVisible !== dataRef.current.preVisible) {
       prepareTransition();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dVisible]);
 
   useIsomorphicLayoutEffect(() => {
     transition();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startEnterTransition]);
 
   return hidden;

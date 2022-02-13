@@ -1,9 +1,19 @@
 import type { DElementSelector } from '../../hooks/element';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useElement, useImmer, useAsync, useRefCallback, useContentSVChangeConfig } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useElement,
+  useImmer,
+  useAsync,
+  useRefCallback,
+  useContentSVChangeConfig,
+  useForceUpdate,
+  useCallbackWithState,
+} from '../../hooks';
 import { getClassName, generateComponentMate, scrollTo } from '../../utils';
 
 export interface DAnchorContextData {
@@ -40,7 +50,7 @@ export const DAnchor = (props: DAnchorProps) => {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const contentSVChange = useContentSVChangeConfig();
+  const onContentSVChange$ = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -48,105 +58,87 @@ export const DAnchor = (props: DAnchorProps) => {
   //#endregion
 
   const dataRef = useRef<{
-    top?: { href: string; num: number };
     clearTid?: () => void;
   }>({});
 
   const asyncCapture = useAsync();
-  const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
-  const [links, setLinks] = useImmer(new Map<string, HTMLLIElement>());
+  const forceUpdate = useForceUpdate();
 
-  const [activeHref, setActiveHref] = useState<string | null>(null);
-  const changeActiveHref = useCallback(
-    (value) => {
-      if (value !== activeHref) {
-        setActiveHref(value);
-        onHrefChange?.(value);
-      }
-    },
-    [activeHref, onHrefChange]
-  );
+  const [links, setLinks] = useImmer(new Map<string, HTMLLIElement>());
 
   const pageEl = useElement(dPage ?? null);
 
-  const updateAnchor = useCallback(() => {
-    let pageTop = 0;
-    if (!isUndefined(dPage)) {
-      if (pageEl) {
-        pageTop = pageEl.getBoundingClientRect().top;
-      } else {
-        return;
-      }
-    }
-
-    let nearestEl: [string, number] | null = null;
-    for (const [href] of links) {
-      const el = document.getElementById(href.slice(1));
-      if (el) {
-        const top = el.getBoundingClientRect().top;
-        // Add 1 because `getBoundingClientRect` return decimal
-        if (top - pageTop <= dDistance + 1) {
-          if (nearestEl === null) {
-            nearestEl = [href, top];
-          } else if (top > nearestEl[1]) {
-            nearestEl = [href, top];
-          }
-        }
-      }
-    }
-
-    const newHref = nearestEl ? nearestEl[0] : null;
-    changeActiveHref(newHref);
-    setDotStyle((draft) => {
-      draft.opacity = nearestEl ? 1 : 0;
-      if (newHref) {
-        for (const [href, el] of links) {
-          if (href === newHref) {
-            const rect = el.getBoundingClientRect();
-            if (anchorEl) {
-              draft.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
-            }
-            break;
-          }
+  const { activeHref, dotStyle } = useCallbackWithState<{
+    activeHref: string | null;
+    dotStyle: React.CSSProperties;
+  }>(
+    (draft) => {
+      let pageTop = 0;
+      if (!isUndefined(dPage)) {
+        if (pageEl) {
+          pageTop = pageEl.getBoundingClientRect().top;
+        } else {
+          return;
         }
       }
 
-      return draft;
-    });
-  }, [anchorEl, changeActiveHref, dDistance, dPage, links, pageEl, setDotStyle]);
-
-  useEffect(() => {
-    updateAnchor();
-  }, [updateAnchor]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    const ob = contentSVChange?.subscribe({
-      next: () => {
-        updateAnchor();
-      },
-    });
-    const skipUpdate = () => {
-      const [href] = Array.from(links)[0] ?? [];
-      if (href) {
+      let nearestEl: [string, number] | null = null;
+      for (const [href] of links) {
         const el = document.getElementById(href.slice(1));
         if (el) {
           const top = el.getBoundingClientRect().top;
-
-          const skip = dataRef.current.top?.href === href && dataRef.current.top?.num === top;
-          dataRef.current.top = { href, num: top };
-          return skip;
+          // Add 1 because `getBoundingClientRect` return decimal
+          if (top - pageTop <= dDistance + 1) {
+            if (nearestEl === null) {
+              nearestEl = [href, top];
+            } else if (top > nearestEl[1]) {
+              nearestEl = [href, top];
+            }
+          }
         }
       }
 
-      return false;
-    };
-    asyncGroup.onGlobalScroll(updateAnchor, skipUpdate);
+      const newHref = nearestEl ? nearestEl[0] : null;
+      if (newHref !== draft.activeHref) {
+        draft.activeHref = newHref;
+        onHrefChange?.(newHref);
+      }
+      draft.dotStyle = (() => {
+        draft.dotStyle.opacity = nearestEl ? 1 : 0;
+        if (newHref) {
+          for (const [href, el] of links) {
+            if (href === newHref) {
+              const rect = el.getBoundingClientRect();
+              if (anchorEl) {
+                draft.dotStyle.top = rect.top + rect.height / 2 - anchorEl.getBoundingClientRect().top;
+              }
+              break;
+            }
+          }
+        }
+
+        return draft.dotStyle;
+      })();
+    },
+    {
+      activeHref: null,
+      dotStyle: {},
+    }
+  )();
+
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    const ob = onContentSVChange$?.subscribe({
+      next: () => {
+        forceUpdate();
+      },
+    });
+    asyncGroup.onGlobalScroll(forceUpdate);
     return () => {
       ob?.unsubscribe();
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, links, contentSVChange, updateAnchor]);
+  }, [asyncCapture, forceUpdate, onContentSVChange$]);
 
   const gUpdateLinks = useCallback(
     (href, el) => {

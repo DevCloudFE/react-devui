@@ -75,8 +75,8 @@ export function DDrawer(props: DDrawerProps) {
   //#endregion
 
   //#region Ref
-  const [dialogEl, dialogRef] = useRefCallback<HTMLDivElement>();
-  const [dialogContentEl, dialogContentRef] = useRefCallback<HTMLDivElement>();
+  const [drawerEl, drawerRef] = useRefCallback<HTMLDivElement>();
+  const [drawerContentEl, drawerContentRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
   const dataRef = useRef<{
@@ -105,7 +105,7 @@ export function DDrawer(props: DDrawerProps) {
     };
   })();
   const hidden = useDTransition({
-    dEl: dialogContentEl,
+    dEl: drawerContentEl,
     dVisible: visible,
     dCallbackList: {
       beforeEnter: (el) => {
@@ -144,7 +144,7 @@ export function DDrawer(props: DDrawerProps) {
   const isFixed = isUndefined(dContainer);
 
   const maxZIndex = useMaxIndex(!hidden);
-  const zIndex = useMemo(() => {
+  const zIndex = (() => {
     if (!hidden) {
       if (!isUndefined(dZIndex)) {
         return dZIndex;
@@ -159,9 +159,9 @@ export function DDrawer(props: DDrawerProps) {
         return __zIndex;
       }
     }
-  }, [__zIndex, dPrefix, dZIndex, hidden, isFixed, maxZIndex]);
+  })();
 
-  const getContainer = useCallback(() => {
+  const containerEl = useElement(dContainer, () => {
     if (isFixed) {
       let el = document.getElementById(`${dPrefix}drawer-root`);
       if (!el) {
@@ -171,11 +171,10 @@ export function DDrawer(props: DDrawerProps) {
       }
       return el;
     } else if (dContainer === false) {
-      return dialogEl?.parentElement ?? null;
+      return drawerEl?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, dPrefix, dialogEl, isFixed]);
-  const containerEl = useElement(dContainer, getContainer);
+  });
 
   const [distance, setDistance] = useImmer<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
     visible: false,
@@ -191,15 +190,6 @@ export function DDrawer(props: DDrawerProps) {
   }, [onClose, setVisible]);
 
   useLockScroll(isFixed && !hidden);
-
-  const handleContentKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
-    (e) => {
-      if (dEscClosable && e.code === 'Escape') {
-        closeDrawer();
-      }
-    },
-    [closeDrawer, dEscClosable]
-  );
 
   const childDrawer = useMemo(() => {
     if (dChildDrawer) {
@@ -223,6 +213,12 @@ export function DDrawer(props: DDrawerProps) {
     [closeDrawer, uniqueId]
   );
 
+  const handleContentKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if (dEscClosable && e.code === 'Escape') {
+      closeDrawer();
+    }
+  };
+
   const drawerNode = (
     <>
       <DDialog
@@ -245,19 +241,19 @@ export function DDrawer(props: DDrawerProps) {
           style
         )}
         aria-labelledby={dHeader ? `${dPrefix}drawer-header-${uniqueId}` : undefined}
-        aria-describedby={`${dPrefix}dialog-content-${uniqueId}`}
+        aria-describedby={`${dPrefix}drawer-content-${uniqueId}`}
         dVisible={visible}
         dHidden={hidden}
         dMask={dMask}
         dMaskClosable={dMaskClosable}
         dDestroy={dDestroy}
-        dDialogRef={dialogRef}
+        dDialogRef={drawerRef}
         onClose={closeDrawer}
       >
         <DDrawerContext.Provider value={contextValue}>
           <div
-            ref={dialogContentRef}
-            id={`${dPrefix}dialog-content-${uniqueId}`}
+            ref={drawerContentRef}
+            id={`${dPrefix}drawer-content-${uniqueId}`}
             className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
             style={{
               width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,

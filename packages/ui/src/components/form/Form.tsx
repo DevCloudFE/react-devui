@@ -3,7 +3,7 @@ import type { DBreakpoints } from '../grid';
 import type { DFormInstance } from './hooks';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, DGeneralStateContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -63,16 +63,6 @@ export function DForm(props: DFormProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const handleSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
-    (e) => {
-      onSubmit?.(e);
-
-      e.preventDefault();
-      e.stopPropagation();
-    },
-    [onSubmit]
-  );
-
   const generalStateContextValue = useMemo<DGeneralStateContextData>(
     () => ({
       gSize: dSize,
@@ -116,6 +106,13 @@ export function DForm(props: DFormProps) {
 
     return contextValue;
   }, [dRequiredType, dFeedbackIcon, dForm, dInlineSpan, dLabelColon, dLabelWidth, dLayout, dResponsiveProps, mediaMatch]);
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    onSubmit?.(e);
+
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   return (
     <DGeneralStateContext.Provider value={generalStateContextValue}>

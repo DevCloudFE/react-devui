@@ -3,9 +3,10 @@ import type { Updater as IUpdater } from './immer';
 
 import { freeze, produce } from 'immer';
 import { isArray, isEqual, isFunction, isNull, isUndefined } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
+import { useEventCallback } from './callback';
 import { useCustomContext } from './context';
 import { useIsomorphicLayoutEffect } from './layout-effect';
 
@@ -20,7 +21,15 @@ export function useTwoWayBinding<T, S = T>(
     formControlName?: string;
     deepCompare?: boolean;
   }
-) {
+): [
+  T,
+  IUpdater<S>,
+  {
+    validateClassName?: string;
+    ariaAttribute?: React.HTMLAttributes<HTMLElement>;
+    controlDisabled: boolean;
+  }
+] {
   if (!isUndefined(input) && !isArray(input)) {
     throw new Error('Please check `input` value');
   }
@@ -40,7 +49,7 @@ export function useTwoWayBinding<T, S = T>(
     }
   }, [formControlName, gRemoveFormItems, gUpdateFormItems, opt?.id]);
 
-  const formControl = useMemo(() => {
+  const formControl = (() => {
     if (formControlName && gInstance) {
       const control = gInstance.form.get((gPath ?? []).concat([formControlName]));
       if (isNull(control)) {
@@ -50,10 +59,10 @@ export function useTwoWayBinding<T, S = T>(
     }
 
     return null;
-  }, [formControlName, gPath, gInstance]);
+  })();
   useEffect(() => {
     if (formControl) {
-      const ob = formControl.asyncVerifyComplete.subscribe({
+      const ob = formControl.asyncVerifyComplete$.subscribe({
         next: (control) => {
           if (control.dirty) {
             gInstance?.updateForm();
@@ -72,65 +81,43 @@ export function useTwoWayBinding<T, S = T>(
   const value = isUndefined(input) ? autoValue : input[0];
 
   const currentValue = formControl ? formControl.value : value;
-  const dataRef = useRef({
-    preValue: currentValue,
+
+  const changeValue = useEventCallback((updater: any) => {
+    const val = isFunction(updater) ? produce(currentValue, updater) : freeze(updater);
+    const shouldUpdate = deepCompare ? !isEqual(currentValue, val) : !Object.is(currentValue, val);
+    if (shouldUpdate) {
+      if (formControl) {
+        formControl.markAsDirty(true);
+        formControl.setValue(val);
+        onValueChange?.(val);
+        gInstance?.updateForm();
+      } else {
+        setValue?.(val);
+        setAutoValue(val);
+        onValueChange?.(val);
+      }
+    }
   });
-  dataRef.current.preValue = currentValue;
 
-  const changeValue = useCallback(
-    (updater: any) => {
-      const val = isFunction(updater) ? produce(dataRef.current.preValue, updater) : freeze(updater);
-      const shouldUpdate = deepCompare ? !isEqual(dataRef.current.preValue, val) : !Object.is(dataRef.current.preValue, val);
-      if (shouldUpdate) {
-        if (formControl) {
-          formControl.markAsDirty(true);
-          formControl.setValue(val);
-          onValueChange?.(val);
-          gInstance?.updateForm();
-        } else {
-          setValue?.(val);
-          setAutoValue(val);
-          onValueChange?.(val);
-        }
-      }
+  return [
+    currentValue,
+    changeValue,
+    {
+      validateClassName:
+        formControl && formControl.dirty
+          ? formControl.pending
+            ? 'is-pending'
+            : formControl.invalid
+            ? 'is-invalid'
+            : undefined
+          : undefined,
+      ariaAttribute:
+        formControl && formControl.dirty
+          ? formControl.invalid
+            ? { 'aria-invalid': true, 'aria-describedby': formControl.errors ? formControlName : undefined }
+            : { 'aria-invalid': false }
+          : undefined,
+      controlDisabled: formControl && formControl.disabled ? true : false,
     },
-    [deepCompare, formControl, gInstance, onValueChange, setValue]
-  );
-
-  const res = useMemo<
-    [
-      T,
-      IUpdater<S>,
-      {
-        validateClassName?: string;
-        ariaAttribute?: React.HTMLAttributes<HTMLElement>;
-        controlDisabled: boolean;
-      }
-    ]
-  >(
-    () => [
-      currentValue,
-      changeValue,
-      {
-        validateClassName:
-          formControl && formControl.dirty
-            ? formControl.pending
-              ? 'is-pending'
-              : formControl.invalid
-              ? 'is-invalid'
-              : undefined
-            : undefined,
-        ariaAttribute:
-          formControl && formControl.dirty
-            ? formControl.invalid
-              ? { 'aria-invalid': true, 'aria-describedby': formControl.errors ? formControlName : undefined }
-              : { 'aria-invalid': false }
-            : undefined,
-        controlDisabled: formControl && formControl.disabled ? true : false,
-      },
-    ],
-    [currentValue, changeValue, formControl, formControlName]
-  );
-
-  return res;
+  ];
 }

@@ -87,20 +87,15 @@ export function DFormItem(props: DFormItemProps) {
 
   const [formItems, setFormItems] = useImmer(new Map<string, string | undefined>());
 
-  const getControl = useCallback(
-    (formControlName: string) => {
-      const control = gInstance.form.get((gPath ?? []).concat([formControlName]));
-      if (isNull(control)) {
-        throw new Error(`Cant find '${formControlName}', please check if name exists!`);
-      }
-      return control;
-    },
-    [gPath, gInstance]
-  );
+  const getControl = (formControlName: string) => {
+    const control = gInstance.form.get((gPath ?? []).concat([formControlName]));
+    if (isNull(control)) {
+      throw new Error(`Cant find '${formControlName}', please check if name exists!`);
+    }
+    return control;
+  };
 
-  const [errors, hasError, errorStyle, status] = useMemo<
-    [{ formControlName: string; errors: DErrors }[], boolean, 'error' | 'warning', DValidateStatus | undefined]
-  >(() => {
+  const [errors, hasError, errorStyle, status] = (() => {
     const errors: DErrors = [];
     let hasError = false;
     let status: DValidateStatus | undefined = undefined;
@@ -181,8 +176,8 @@ export function DFormItem(props: DFormItemProps) {
       _errors.push({ formControlName, errors: errors.filter((item) => item.formControlName === formControlName) });
     });
 
-    return [_errors, hasError, errorStyle, status];
-  }, [dErrors, formItems, getControl]);
+    return [_errors, hasError, errorStyle, status as DValidateStatus | undefined];
+  })();
 
   const required = (() => {
     if (isBoolean(dShowRequired)) {
@@ -204,39 +199,23 @@ export function DFormItem(props: DFormItemProps) {
     }
   })();
 
-  const handleLabelClick = useCallback<React.MouseEventHandler<HTMLLabelElement>>((e) => {
-    const id = e.currentTarget.getAttribute('for');
-    if (id) {
-      const el = document.getElementById(id);
-      if (el && el.tagName !== 'INPUT') {
-        e.preventDefault();
-        el.focus({ preventScroll: true });
-        el.click();
-      }
-    }
-  }, []);
+  const errorsNode = errors.map((errors) => (
+    <div key={errors.formControlName} id={errors.formControlName}>
+      {errors.errors.map((error) => (
+        <DError
+          key={error.key}
+          dVisible={!error.hidden}
+          dMessage={error.message}
+          dStatus={error.status}
+          onHidden={() => {
+            dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
+          }}
+        ></DError>
+      ))}
+    </div>
+  ));
 
-  const errorsNode = useMemo(
-    () =>
-      errors.map((errors) => (
-        <div key={errors.formControlName} id={errors.formControlName}>
-          {errors.errors.map((error) => (
-            <DError
-              key={error.key}
-              dVisible={!error.hidden}
-              dMessage={error.message}
-              dStatus={error.status}
-              onHidden={() => {
-                dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
-              }}
-            ></DError>
-          ))}
-        </div>
-      )),
-    [errors]
-  );
-
-  const feedbackIcon = useMemo(() => {
+  const feedbackIcon = (() => {
     if (isUndefined(status)) {
       return null;
     } else {
@@ -268,9 +247,9 @@ export function DFormItem(props: DFormItemProps) {
         return gFeedbackIcon[status] ?? statusIcons[status];
       }
     }
-  }, [gFeedbackIcon, status]);
+  })();
 
-  const extraNode = useMemo(() => {
+  const extraNode = (() => {
     if (dLabelExtra) {
       return dLabelExtra.map((extra, index) => {
         if (isString(extra)) {
@@ -289,7 +268,7 @@ export function DFormItem(props: DFormItemProps) {
         }
       });
     }
-  }, [dLabelExtra]);
+  })();
 
   const gUpdateFormItems = useCallback(
     (formControlName, id) => {
@@ -314,6 +293,18 @@ export function DFormItem(props: DFormItemProps) {
     }),
     [gRemoveFormItems, gUpdateFormItems]
   );
+
+  const handleLabelClick: React.MouseEventHandler<HTMLLabelElement> = (e) => {
+    const id = e.currentTarget.getAttribute('for');
+    if (id) {
+      const el = document.getElementById(id);
+      if (el && el.tagName !== 'INPUT') {
+        e.preventDefault();
+        el.focus({ preventScroll: true });
+        el.click();
+      }
+    }
+  };
 
   return (
     <DFormItemContext.Provider value={contextValue}>

@@ -1,49 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 
-import { useIsomorphicLayoutEffect } from '../../hooks';
+import { useEventCallback, useForceUpdate } from '../../hooks';
 
 export function useTreeData<R>(
   select: any,
   getOptions: (select: any) => R,
   onSelectChange?: (value: any) => void
 ): [R, (value: any) => void] {
-  const dataRef = useRef<{
-    select: any;
-    options: any;
-    getOptions: (select: any) => R;
-  }>({
-    select,
-    options: null,
-    getOptions,
-  });
+  const dataRef = useRef<any>(null);
 
-  const [options, setOptions] = useState<any>(() => getOptions(select));
+  const forceUpdate = useForceUpdate();
 
-  if (dataRef.current.options === null) {
-    dataRef.current.options = options;
-  }
-
-  const changeSelect = useCallback(
-    (value: any) => {
-      dataRef.current.select = value;
-      setOptions([].concat(dataRef.current.options));
-
-      onSelectChange?.(value);
-    },
-    [onSelectChange]
-  );
-
-  useIsomorphicLayoutEffect(() => {
-    if (select !== dataRef.current.select || getOptions !== dataRef.current.getOptions) {
-      dataRef.current.select = select;
-      dataRef.current.getOptions = getOptions;
-      dataRef.current.options = getOptions(select);
-      setOptions([].concat(dataRef.current.options));
+  const options = useMemo(() => {
+    if (dataRef.current) {
+      const res = dataRef.current;
+      dataRef.current = null;
+      return res;
+    } else {
+      return getOptions(select);
     }
   }, [getOptions, select]);
 
-  const res = useMemo<[any, (value: any) => void]>(() => [options, changeSelect], [changeSelect, options]);
+  const changeSelect = useEventCallback((value: any) => {
+    onSelectChange?.(value);
 
-  return res;
+    dataRef.current = [].concat(options);
+    forceUpdate();
+  });
+
+  return [options, changeSelect];
 }

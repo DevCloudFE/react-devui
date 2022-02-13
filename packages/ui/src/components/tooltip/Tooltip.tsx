@@ -1,7 +1,7 @@
 import type { Updater } from '../../hooks/two-way-binding';
 import type { DPopupProps, DPopupRef, DTriggerRenderProps } from '../_popup';
 
-import React, { useCallback, useId } from 'react';
+import React, { useId } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTwoWayBinding } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -27,50 +27,6 @@ const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (pro
 
   const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
 
-  const renderTrigger = useCallback(
-    ({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }: DTriggerRenderProps) => {
-      if (children) {
-        const child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-
-        const props: DTriggerRenderProps = renderProps;
-        if (onMouseEnter) {
-          props.onMouseEnter = (e) => {
-            child.props.onMouseEnter?.(e);
-            onMouseEnter?.(e);
-          };
-          props.onMouseLeave = (e) => {
-            child.props.onMouseLeave?.(e);
-            onMouseLeave?.(e);
-          };
-        }
-        if (onFocus) {
-          props.onFocus = (e) => {
-            child.props.onFocus?.(e);
-            onFocus?.(e);
-          };
-          props.onBlur = (e) => {
-            child.props.onBlur?.(e);
-            onBlur?.(e);
-          };
-        }
-        if (onClick) {
-          props.onClick = (e) => {
-            child.props.onClick?.(e);
-            onClick?.(e);
-          };
-        }
-        return React.cloneElement(child, {
-          ...child.props,
-          ...props,
-          'aria-describedby': _id,
-        });
-      }
-
-      return null;
-    },
-    [_id, children]
-  );
-
   return (
     <DPopup
       {...restProps}
@@ -80,7 +36,46 @@ const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (pro
       role="tooltip"
       dVisible={visible}
       dPopupContent={dTitle}
-      dTriggerRender={renderTrigger}
+      dTriggerRender={({ onMouseEnter, onMouseLeave, onFocus, onBlur, onClick, ...renderProps }) => {
+        if (children) {
+          const child = React.Children.only(children) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+
+          const props: DTriggerRenderProps = renderProps;
+          if (onMouseEnter) {
+            props.onMouseEnter = (e) => {
+              child.props.onMouseEnter?.(e);
+              onMouseEnter?.(e);
+            };
+            props.onMouseLeave = (e) => {
+              child.props.onMouseLeave?.(e);
+              onMouseLeave?.(e);
+            };
+          }
+          if (onFocus) {
+            props.onFocus = (e) => {
+              child.props.onFocus?.(e);
+              onFocus?.(e);
+            };
+            props.onBlur = (e) => {
+              child.props.onBlur?.(e);
+              onBlur?.(e);
+            };
+          }
+          if (onClick) {
+            props.onClick = (e) => {
+              child.props.onClick?.(e);
+              onClick?.(e);
+            };
+          }
+          return React.cloneElement(child, {
+            ...child.props,
+            ...props,
+            'aria-describedby': _id,
+          });
+        }
+
+        return null;
+      }}
       onVisibleChange={changeVisible}
     />
   );

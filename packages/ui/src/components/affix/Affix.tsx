@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/element';
 
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -9,15 +9,15 @@ import {
   useComponentConfig,
   useAsync,
   useElement,
-  useImmer,
   useRefCallback,
   useContentSVChangeConfig,
   useIsomorphicLayoutEffect,
+  useForceUpdate,
+  useCallbackWithState,
 } from '../../hooks';
 import { getClassName, mergeStyle, generateComponentMate } from '../../utils';
 
 export interface DAffixRef {
-  el: HTMLDivElement | null;
   updatePosition: () => void;
 }
 
@@ -45,7 +45,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const contentSVChange = useContentSVChangeConfig();
+  const onContentSVChange$ = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -53,25 +53,8 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
   const [referenceEl, referenceRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const dataRef = useRef<{
-    rect?: { top: number; left: number };
-  }>({});
-
   const asyncCapture = useAsync();
-
-  const [fixedStyle, setFixedStyle] = useImmer<React.CSSProperties>({});
-  const [referenceStyle, setReferenceStyle] = useImmer<React.CSSProperties>({});
-
-  const [fixed, setFixed] = useState(false);
-  const changeFixed = useCallback(
-    (value) => {
-      if (value !== fixed) {
-        setFixed(value);
-        onFixedChange?.(value);
-      }
-    },
-    [fixed, onFixedChange]
-  );
+  const forceUpdate = useForceUpdate();
 
   const targetEl = useElement(dTarget ?? null);
 
@@ -86,112 +69,98 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
     setRootEl(root);
   }, [dPrefix]);
 
-  const updatePosition = useCallback(() => {
-    if (isUndefined(dTarget) || targetEl) {
-      const offsetEl = fixed ? referenceEl : affixEl;
+  const { fixedStyle, referenceStyle, fixed } = useCallbackWithState<{
+    fixedStyle: React.CSSProperties;
+    referenceStyle?: React.CSSProperties;
+    fixed: boolean;
+  }>(
+    (draft) => {
+      if (isUndefined(dTarget) || targetEl) {
+        const offsetEl = draft.fixed ? referenceEl : affixEl;
 
-      if (offsetEl) {
-        let targetRect = {
-          top: 0,
-          bottom: window.innerHeight,
-        };
-        if (targetEl) {
-          targetRect = targetEl.getBoundingClientRect();
-        }
+        if (offsetEl) {
+          let targetRect = {
+            top: 0,
+            bottom: window.innerHeight,
+          };
+          if (targetEl) {
+            targetRect = targetEl.getBoundingClientRect();
+          }
 
-        const offsetRect = offsetEl.getBoundingClientRect();
+          const offsetRect = offsetEl.getBoundingClientRect();
 
-        let fixedCondition = offsetRect.top - targetRect.top <= dTop;
-        let fixedTop = targetRect.top + dTop;
-        if (!isUndefined(props.dBottom)) {
-          fixedCondition = targetRect.bottom - offsetRect.bottom <= dBottom;
-          fixedTop = targetRect.bottom - dBottom - offsetRect.height;
-        }
+          let fixedCondition = offsetRect.top - targetRect.top <= dTop;
+          let fixedTop = targetRect.top + dTop;
+          if (!isUndefined(props.dBottom)) {
+            fixedCondition = targetRect.bottom - offsetRect.bottom <= dBottom;
+            fixedTop = targetRect.bottom - dBottom - offsetRect.height;
+          }
 
-        if (fixedCondition) {
-          setFixedStyle({
-            position: 'fixed',
-            zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
-            width: offsetRect.width,
-            height: offsetRect.height,
-            left: offsetRect.left,
-            top: fixedTop,
-          });
-          setReferenceStyle({
-            width: offsetRect.width,
-            height: offsetRect.height,
-          });
-          changeFixed(true);
-        } else {
-          changeFixed(false);
+          const changeFixed = (value: boolean) => {
+            if (value !== draft.fixed) {
+              draft.fixed = value;
+              onFixedChange?.(value);
+            }
+          };
+          if (fixedCondition) {
+            draft.fixedStyle = {
+              position: 'fixed',
+              zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
+              width: offsetRect.width,
+              height: offsetRect.height,
+              left: offsetRect.left,
+              top: fixedTop,
+            };
+            draft.referenceStyle = {
+              width: offsetRect.width,
+              height: offsetRect.height,
+            };
+            changeFixed(true);
+          } else {
+            changeFixed(false);
+          }
         }
       }
+    },
+    {
+      fixedStyle: {},
+      referenceStyle: {},
+      fixed: false,
     }
-  }, [
-    dTarget,
-    targetEl,
-    fixed,
-    referenceEl,
-    affixEl,
-    dTop,
-    props.dBottom,
-    dBottom,
-    setFixedStyle,
-    dZIndex,
-    dPrefix,
-    setReferenceStyle,
-    changeFixed,
-  ]);
+  )();
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (fixed && referenceEl) {
-      asyncGroup.onResize(referenceEl, updatePosition);
+    if (referenceEl) {
+      asyncGroup.onResize(referenceEl, forceUpdate);
     }
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, fixed, referenceEl, updatePosition]);
+  }, [asyncCapture, forceUpdate, referenceEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    const skipUpdate = () => {
-      const el = fixed ? referenceEl : affixEl;
-      if (el) {
-        const { top, left } = el.getBoundingClientRect();
-
-        const skip = dataRef.current.rect?.top === top && dataRef.current.rect?.left === left;
-        dataRef.current.rect = { top, left };
-        return skip;
-      }
-
-      return false;
-    };
-    const ob = contentSVChange?.subscribe({
+    const ob = onContentSVChange$?.subscribe({
       next: () => {
-        if (!skipUpdate()) {
-          updatePosition();
-        }
+        forceUpdate();
       },
     });
-    asyncGroup.onGlobalScroll(updatePosition, skipUpdate);
+    asyncGroup.onGlobalScroll(forceUpdate);
     return () => {
       ob?.unsubscribe();
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [affixEl, asyncCapture, fixed, referenceEl, contentSVChange, updatePosition]);
-
-  useEffect(() => {
-    updatePosition();
-  }, [updatePosition]);
+  }, [asyncCapture, forceUpdate, onContentSVChange$]);
 
   useImperativeHandle(
     ref,
     () => ({
-      el: affixEl,
-      updatePosition: () => updatePosition(),
+      updatePosition: () => {
+        forceUpdate();
+      },
     }),
-    [affixEl, updatePosition]
+    [forceUpdate]
   );
 
   return fixed ? (

@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { usePrefixConfig } from '../../hooks';
 import { getClassName, mergeStyle } from '../../utils';
 import { DMask } from './Mask';
@@ -33,11 +31,11 @@ export function DDialog(props: DDialogProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const handleMaskClose = useCallback(() => {
+  const handleMaskClose = () => {
     if (dMaskClosable) {
       onClose?.();
     }
-  }, [dMaskClosable, onClose]);
+  };
 
   return dDestroy && dHidden ? null : (
     <div

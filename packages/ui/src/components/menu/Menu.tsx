@@ -70,15 +70,6 @@ export function DMenu(props: DMenuProps) {
 
   const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
 
-  const handleTrigger = useCallback(
-    (val) => {
-      if (dMode === 'vertical' && expandTrigger === 'hover' && !val) {
-        changeExpandIds(new Set());
-      }
-    },
-    [dMode, expandTrigger, changeExpandIds]
-  );
-
   useEffect(() => {
     let isFocus = false;
     if (focusId) {
@@ -184,6 +175,12 @@ export function DMenu(props: DMenuProps) {
     },
     dDirection: 'horizontal',
   });
+
+  const handleTrigger = (state?: boolean) => {
+    if (dMode === 'vertical' && expandTrigger === 'hover' && state === false) {
+      changeExpandIds(new Set());
+    }
+  };
 
   return (
     <DMenuContext.Provider value={contextValue}>

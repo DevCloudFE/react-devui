@@ -1,5 +1,3 @@
-import React, { useCallback, useMemo } from 'react';
-
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
@@ -24,57 +22,42 @@ export function DStar(props: DStarProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
+  const checked = dValue === dChecked;
+
   const halfValue = dValue - 0.5;
   const halfChecked = dValue === halfValue;
 
-  const handleHalfChange = useCallback(() => {
-    onCheck(halfValue);
-  }, [halfValue, onCheck]);
-
-  const handleHalfMouseEnter = useCallback(() => {
-    onHoverChange(halfValue);
-  }, [halfValue, onHoverChange]);
-
-  const halfInputNode = useMemo(
-    () => (
-      <input
-        className={`${dPrefix}rating-star__input`}
-        type="radio"
-        name={dName}
-        checked={halfChecked}
-        disabled={dDisabled}
-        aria-checked={halfChecked}
-        onChange={handleHalfChange}
-        onMouseEnter={handleHalfMouseEnter}
-      />
-    ),
-    [dDisabled, dName, dPrefix, halfChecked, handleHalfChange, handleHalfMouseEnter]
+  const halfInputNode = (
+    <input
+      className={`${dPrefix}rating-star__input`}
+      type="radio"
+      name={dName}
+      checked={halfChecked}
+      disabled={dDisabled}
+      aria-checked={halfChecked}
+      onChange={() => {
+        onCheck(halfValue);
+      }}
+      onMouseEnter={() => {
+        onHoverChange(halfValue);
+      }}
+    />
   );
-
-  const checked = dValue === dChecked;
-
-  const handleChange = useCallback(() => {
-    onCheck(dValue);
-  }, [dValue, onCheck]);
-
-  const handleMouseEnter = useCallback(() => {
-    onHoverChange(dValue);
-  }, [dValue, onHoverChange]);
-
-  const inputNode = useMemo(
-    () => (
-      <input
-        className={`${dPrefix}rating-star__input`}
-        type="radio"
-        name={dName}
-        checked={checked}
-        disabled={dDisabled}
-        aria-checked={checked}
-        onChange={handleChange}
-        onMouseEnter={handleMouseEnter}
-      />
-    ),
-    [checked, dDisabled, dName, dPrefix, handleChange, handleMouseEnter]
+  const inputNode = (
+    <input
+      className={`${dPrefix}rating-star__input`}
+      type="radio"
+      name={dName}
+      checked={checked}
+      disabled={dDisabled}
+      aria-checked={checked}
+      onChange={() => {
+        onCheck(dValue);
+      }}
+      onMouseEnter={() => {
+        onHoverChange(dValue);
+      }}
+    />
   );
 
   return (

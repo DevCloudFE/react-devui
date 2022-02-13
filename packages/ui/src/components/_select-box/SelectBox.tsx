@@ -1,9 +1,9 @@
 import { isUndefined } from 'lodash';
-import React, { startTransition, useCallback, useRef, useState } from 'react';
+import React, { startTransition, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { filter } from 'rxjs';
 
-import { useAsync, usePrefixConfig, useRefCallback, useGeneralState, useTranslation } from '../../hooks';
+import { useAsync, usePrefixConfig, useRefCallback, useGeneralState, useTranslation, useEventCallback } from '../../hooks';
 import { getClassName, getVerticalSideStyle } from '../../utils';
 import { DPopup } from '../_popup';
 import { DIcon } from '../icon';
@@ -97,104 +97,9 @@ export function DSelectBox(props: DSelectBoxProps) {
 
   const iconSize = size === 'smaller' ? 12 : size === 'larger' ? 16 : 14;
 
-  const preventBlur = useCallback(
-    (e) => {
-      if (dVisible && e.button === 0) {
-        e.preventDefault();
-      }
-    },
-    [dVisible]
-  );
-
-  const handleSuffixClick = useCallback((e) => {
-    e.stopPropagation();
-  }, []);
-
-  const handleClearClick = useCallback(
-    (e) => {
-      e.stopPropagation();
-
-      onClear?.();
-    },
-    [onClear]
-  );
-
-  const handleSearchChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-    (e) => {
-      setSearchValue(e.currentTarget.value);
-      startTransition(() => {
-        onSearch?.(e.currentTarget.value);
-      });
-    },
-    [onSearch, setSearchValue]
-  );
-
-  const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
-    (e) => {
-      onKeyDown?.(e);
-
-      if (!disabled && !dVisible) {
-        if (e.code === 'Space' || e.code === 'Enter') {
-          e.preventDefault();
-          onVisibleChange?.(true);
-        }
-      }
-    },
-    [dVisible, disabled, onVisibleChange, onKeyDown]
-  );
-  const handleMouseDown = useCallback(
-    (e) => {
-      onMouseDown?.(e);
-
-      if (e.button === 0) {
-        e.preventDefault();
-      }
-    },
-    [onMouseDown]
-  );
-  const handleMouseUp = useCallback(
-    (e) => {
-      onMouseUp?.(e);
-
-      if (e.button === 0) {
-        e.preventDefault();
-      }
-    },
-    [onMouseUp]
-  );
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      if (!disabled) {
-        onVisibleChange?.(!dVisible);
-      }
-    },
-    [dVisible, disabled, onClick, onVisibleChange]
-  );
-
-  const customTransition = useCallback(
-    (popupEl: HTMLElement, targetEl: HTMLElement) => {
-      if (!dCustomWidth) {
-        popupEl.style.width = targetEl.getBoundingClientRect().width + 'px';
-      }
-      const { top, left, transformOrigin } = getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 8);
-      if (dAutoMaxWidth) {
-        popupEl.style.maxWidth = window.innerWidth - left - 20 + 'px';
-      }
-      return {
-        top,
-        left,
-        stateList: {
-          'enter-from': { transform: 'scaleY(0.7)', opacity: '0' },
-          'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
-          'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-          'leave-to': { transform: 'scaleY(0.7)', opacity: '0' },
-        },
-      };
-    },
-    [dAutoMaxWidth, dCustomWidth]
-  );
+  const changeVisible = useEventCallback((visiable: boolean) => {
+    onVisibleChange?.(visiable);
+  });
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -205,7 +110,7 @@ export function DSelectBox(props: DSelectBoxProps) {
         .pipe(filter((e) => e.code === 'Escape'))
         .subscribe({
           next: () => {
-            onVisibleChange?.(false);
+            changeVisible(false);
           },
         });
     }
@@ -213,7 +118,7 @@ export function DSelectBox(props: DSelectBoxProps) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dVisible, onVisibleChange]);
+  }, [asyncCapture, changeVisible, dVisible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -223,14 +128,14 @@ export function DSelectBox(props: DSelectBoxProps) {
         searchEl.focus({ preventScroll: true });
         asyncGroup.fromEvent(searchEl, 'blur').subscribe({
           next: () => {
-            onVisibleChange?.(false);
+            changeVisible(false);
           },
         });
       } else {
         boxEl.focus({ preventScroll: true });
         asyncGroup.fromEvent(boxEl, 'blur').subscribe({
           next: () => {
-            onVisibleChange?.(false);
+            changeVisible(false);
           },
         });
       }
@@ -239,7 +144,7 @@ export function DSelectBox(props: DSelectBoxProps) {
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, boxEl, dSearchable, dVisible, onVisibleChange, searchEl]);
+  }, [asyncCapture, boxEl, changeVisible, dSearchable, dVisible, searchEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -260,6 +165,64 @@ export function DSelectBox(props: DSelectBoxProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dVisible]);
 
+  const preventBlur: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    if (dVisible && e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    onKeyDown?.(e);
+
+    if (!disabled && !dVisible) {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        onVisibleChange?.(true);
+      }
+    }
+  };
+
+  const handleMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseDown?.(e);
+
+    if (e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseUp: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseUp?.(e);
+
+    if (e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(e);
+
+    if (!disabled) {
+      onVisibleChange?.(!dVisible);
+    }
+  };
+
+  const handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setSearchValue(e.currentTarget.value);
+    startTransition(() => {
+      onSearch?.(e.currentTarget.value);
+    });
+  };
+
+  const handleSuffixClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleClearClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+
+    onClear?.();
+  };
+
   return (
     <DPopup
       className={dPopupClassName}
@@ -267,7 +230,25 @@ export function DSelectBox(props: DSelectBoxProps) {
       dPopupContent={dPopupContent}
       dTrigger={null}
       dArrow={false}
-      dCustomPopup={customTransition}
+      dCustomPopup={(popupEl, targetEl) => {
+        if (!dCustomWidth) {
+          popupEl.style.width = targetEl.getBoundingClientRect().width + 'px';
+        }
+        const { top, left, transformOrigin } = getVerticalSideStyle(popupEl, targetEl, 'bottom-left', 8);
+        if (dAutoMaxWidth) {
+          popupEl.style.maxWidth = window.innerWidth - left - 20 + 'px';
+        }
+        return {
+          top,
+          left,
+          stateList: {
+            'enter-from': { transform: 'scaleY(0.7)', opacity: '0' },
+            'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
+            'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
+            'leave-to': { transform: 'scaleY(0.7)', opacity: '0' },
+          },
+        };
+      }}
       dTriggerRender={(renderProps) => (
         <div
           {...restProps}

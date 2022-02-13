@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   usePrefixConfig,
@@ -54,39 +54,33 @@ export function DTab(props: DTabProps) {
   const panelId = `${dPrefix}tabpanel-${toId(dId)}`;
 
   useIsomorphicLayoutEffect(() => {
-    if (tabEl) {
+    if (!__dropdown && tabEl) {
       gUpdateTabEls?.(dId, tabEl);
       return () => {
         gRemoveTabEls?.(dId);
       };
     }
-  }, [dId, gRemoveTabEls, gUpdateTabEls, tabEl]);
-
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      if (!dDisabled) {
-        gOnActiveChange?.(dId);
-      }
-    },
-    [dDisabled, dId, gOnActiveChange, onClick]
-  );
-
-  const handleCloseClick = useCallback<React.MouseEventHandler>(
-    (e) => {
-      e.stopPropagation();
-
-      gOnClose?.(dId);
-    },
-    [dId, gOnClose]
-  );
+  }, [__dropdown, dId, gRemoveTabEls, gUpdateTabEls, tabEl]);
 
   useEffect(() => {
     if (!__dropdown && gActiveId === dId) {
       gGetDotStyle?.();
     }
   }, [__dropdown, dId, gActiveId, gGetDotStyle]);
+
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(e);
+
+    if (!dDisabled) {
+      gOnActiveChange?.(dId);
+    }
+  };
+
+  const handleCloseClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+
+    gOnClose?.(dId);
+  };
 
   return (
     <div

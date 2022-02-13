@@ -1,6 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useCallback, useId } from 'react';
+import React, { useId } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useGeneralState } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -54,23 +54,22 @@ export function DRadio<T>(props: DRadioProps<T>) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
+  const handleClick: React.MouseEventHandler<HTMLLabelElement> = (e) => {
+    onClick?.(e);
+
+    if (!disabled && (gType === 'fill' || gType === 'outline')) {
+      wave(`var(--${dPrefix}color-primary)`);
+    }
+  };
+
+  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    dInputProps?.onChange?.(e);
+
     changeChecked(true);
     if (inGroup) {
       gOnCheckedChange?.(dValue);
     }
-  }, [changeChecked, inGroup, gOnCheckedChange, dValue]);
-
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      if (!disabled && (gType === 'fill' || gType === 'outline')) {
-        wave(`var(--${dPrefix}color-primary)`);
-      }
-    },
-    [dPrefix, disabled, gType, onClick, wave]
-  );
+  };
 
   return (
     <label
@@ -93,7 +92,7 @@ export function DRadio<T>(props: DRadioProps<T>) {
           checked={checked}
           disabled={disabled}
           aria-checked={checked}
-          onChange={handleChange}
+          onChange={handleInputChange}
         />
       </div>
       {children && <span className={`${dPrefix}radio__label`}>{children}</span>}

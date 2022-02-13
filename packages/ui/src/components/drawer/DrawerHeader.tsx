@@ -1,7 +1,5 @@
 import type { DHeaderProps } from '../_header';
 
-import { useCallback } from 'react';
-
 import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DHeader } from '../_header';
@@ -18,9 +16,9 @@ export function DDrawerHeader(props: DDrawerHeaderProps) {
   const [{ gId, gCloseDrawer }] = useCustomContext(DDrawerContext);
   //#endregion
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     gCloseDrawer?.();
-  }, [gCloseDrawer]);
+  };
 
   return (
     <DHeader

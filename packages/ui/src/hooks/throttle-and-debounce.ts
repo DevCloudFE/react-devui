@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export class ThrottleByAnimationFrame {
   private skip = false;
@@ -58,13 +58,6 @@ export class ThrottleByAnimationFrame {
 export function useThrottle() {
   const [throttleByAnimationFrame] = useState(() => new ThrottleByAnimationFrame());
 
-  const throttle = useMemo(
-    () => ({
-      throttleByAnimationFrame,
-    }),
-    [throttleByAnimationFrame]
-  );
-
   useEffect(() => {
     return () => {
       throttleByAnimationFrame.clearTids();
@@ -72,39 +65,7 @@ export function useThrottle() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return throttle;
-}
-
-export function useDebounce() {
-  const dataRef = useRef<{
-    tid: number | null;
-  }>({
-    tid: null,
-  });
-
-  const debounce = useMemo(
-    () => ({
-      debounceByTime: (cb: () => void, timeout: number) => {
-        if (dataRef.current.tid) {
-          clearTimeout(dataRef.current.tid);
-        }
-        dataRef.current.tid = window.setTimeout(() => {
-          dataRef.current.tid = null;
-          cb();
-        }, timeout);
-      },
-    }),
-    []
-  );
-
-  useEffect(() => {
-    return () => {
-      if (dataRef.current.tid) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        clearTimeout(dataRef.current.tid);
-      }
-    };
-  }, []);
-
-  return debounce;
+  return {
+    throttleByAnimationFrame,
+  };
 }

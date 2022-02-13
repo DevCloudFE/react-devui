@@ -23,10 +23,10 @@ export interface DNotificationProps extends React.HTMLAttributes<HTMLDivElement>
 }
 
 export const notificationSubject = {
-  open: new Subject<{ uniqueId: number; props: DNotificationProps }>(),
-  close: new Subject<number>(),
-  rerender: new Subject<{ uniqueId: number; props: DNotificationProps }>(),
-  closeAll: new Subject<boolean>(),
+  open$: new Subject<{ uniqueId: number; props: DNotificationProps }>(),
+  close$: new Subject<number>(),
+  rerender$: new Subject<{ uniqueId: number; props: DNotificationProps }>(),
+  closeAll$: new Subject<boolean>(),
 };
 
 class Notification {
@@ -54,7 +54,7 @@ export class NotificationService {
 
   static open(props: DNotificationProps) {
     UNIQUEID += 1;
-    notificationSubject.open.next({ uniqueId: UNIQUEID, props });
+    notificationSubject.open$.next({ uniqueId: UNIQUEID, props });
     const notification = new Notification(UNIQUEID);
     NOTIFICATIONS.push(notification);
     return notification;
@@ -62,16 +62,16 @@ export class NotificationService {
 
   static close(uniqueId: number) {
     NOTIFICATIONS = NOTIFICATIONS.filter((item) => item.uniqueId !== uniqueId);
-    notificationSubject.close.next(uniqueId);
+    notificationSubject.close$.next(uniqueId);
   }
 
   static rerender(uniqueId: number, props: DNotificationProps) {
-    notificationSubject.rerender.next({ uniqueId, props });
+    notificationSubject.rerender$.next({ uniqueId, props });
   }
 
   static closeAll(animation = true) {
     NOTIFICATIONS = [];
-    notificationSubject.closeAll.next(animation);
+    notificationSubject.closeAll$.next(animation);
   }
 }
 

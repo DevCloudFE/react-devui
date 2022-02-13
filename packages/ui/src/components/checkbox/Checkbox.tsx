@@ -1,6 +1,6 @@
 import type { Updater } from '../../hooks/two-way-binding';
 
-import React, { useCallback, useId } from 'react';
+import React, { useId } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useGeneralState } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
@@ -53,12 +53,14 @@ export function DCheckbox<T>(props: DCheckboxProps<T>) {
 
   const disabled = dDisabled || gDisabled || controlDisabled;
 
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(() => {
+  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    dInputProps?.onChange?.(e);
+
     changeChecked(dIndeterminate ? true : !checked);
     if (inGroup) {
       gOnCheckedChange?.(dValue, dIndeterminate ? true : !checked);
     }
-  }, [changeChecked, dIndeterminate, checked, inGroup, gOnCheckedChange, dValue]);
+  };
 
   return (
     <label
@@ -79,7 +81,7 @@ export function DCheckbox<T>(props: DCheckboxProps<T>) {
           type="checkbox"
           disabled={disabled}
           aria-checked={dIndeterminate ? 'mixed' : checked}
-          onChange={handleChange}
+          onChange={handleInputChange}
         />
         {!dIndeterminate && checked && <div className={`${dPrefix}checkbox__tick`}></div>}
         {dIndeterminate && <div className={`${dPrefix}checkbox__indeterminate`}></div>}

@@ -7,7 +7,7 @@ import { isNull, isUndefined } from 'lodash';
 import React, { useCallback, useMemo, useState, useId, useEffect, useRef } from 'react';
 import { filter } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useAsync, useIsomorphicLayoutEffect } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DSelectBox } from '../_select-box';
 import { DDropdown, DDropdownItem } from '../dropdown';
@@ -135,10 +135,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   );
 
   const [rendered, setRendered] = useState(visible);
-  const handleRendered = useCallback(() => {
-    setRendered(true);
-  }, []);
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!visible) {
       setRendered(false);
     }
@@ -149,6 +146,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   const disabled = dDisabled || gDisabled || controlDisabled;
 
   const hasSearch = searchValue.length > 0;
+  const hasSelected = dMultiple ? (select as T[][]).length > 0 : !isNull(select);
 
   const checkedRef = useRef({});
   const getRenderOptions = useCallback(
@@ -167,7 +165,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
   );
   const [renderOptions, changeSelectByCache] = useTreeData(select, getRenderOptions, changeSelect);
 
-  const searchOptions = useMemo(() => {
+  const searchOptions = (() => {
     const searchOptions: DSelectOption<T[]>[] = [];
     if (hasSearch) {
       const defaultFilterFn = (value: string, options: DCascaderOption<T>[]) => {
@@ -213,7 +211,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       }
     }
     return searchOptions;
-  }, [dCustomSearch, dMultiple, dOnlyLeafSelectable, hasSearch, renderOptions, searchValue]);
+  })();
 
   const [focusValues, setFocusValues] = useState<T[]>(() => {
     let focusValues: T[] | null = null;
@@ -241,35 +239,15 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     return focusValues ?? [];
   });
 
-  const searchOptionRender = useCallback(
-    (option) => {
-      return (option[OPTIONS_KEY] as DCascaderOption<T>[]).map((item, index) => (
-        <React.Fragment key={index}>
-          {dOptionRender(item)}
-          {index === option[OPTIONS_KEY].length - 1 ? '' : SEPARATOR}
-        </React.Fragment>
-      ));
-    },
-    [dOptionRender]
-  );
-
-  const handleClear = useCallback(() => {
-    onClear?.();
-
-    if (dMultiple) {
-      changeSelect([]);
-    } else {
-      changeSelect(null);
-    }
-  }, [onClear, dMultiple, changeSelect]);
-
-  const handleSearch = useCallback(
-    (value: string) => {
-      onSearch?.(value);
-      setSearchValue(value);
-    },
-    [onSearch]
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const searchOptionRender = (option: any) => {
+    return (option[OPTIONS_KEY] as DCascaderOption<T>[]).map((item, index) => (
+      <React.Fragment key={index}>
+        {dOptionRender(item)}
+        {index === option[OPTIONS_KEY].length - 1 ? '' : SEPARATOR}
+      </React.Fragment>
+    ));
+  };
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -297,9 +275,67 @@ export function DCascader<T>(props: DCascaderProps<T>) {
     };
   }, [asyncCapture, focusValues.length, hasSearch, listRendered, onFocusChange, renderOptions]);
 
-  const hasSelected = dMultiple ? (select as T[][]).length > 0 : !isNull(select);
+  const gOnModelChange = useCallback(
+    (select) => {
+      changeSelectByCache(select);
+    },
+    [changeSelectByCache]
+  );
+  const gOnFocusValuesChange = useCallback(
+    (value) => {
+      onFocusChange?.(value);
+      setFocusValues(value);
+    },
+    [onFocusChange]
+  );
+  const gOnClose = useCallback(() => {
+    changeVisible(false);
+  }, [changeVisible]);
+  const contextValue = useMemo<DCascaderContextData<T>>(
+    () => ({
+      gSelecteds: select,
+      gFocusValues: focusValues,
+      gUniqueId: uniqueId,
+      gRendered: listRendered,
+      gMultiple: dMultiple,
+      gOnlyLeafSelectable: dOnlyLeafSelectable,
+      gOptionRender: dOptionRender,
+      gGetId: dGetId,
+      gOnModelChange,
+      gOnFocusValuesChange,
+      gOnClose,
+    }),
+    [
+      select,
+      focusValues,
+      uniqueId,
+      listRendered,
+      dMultiple,
+      dOnlyLeafSelectable,
+      dOptionRender,
+      dGetId,
+      gOnModelChange,
+      gOnFocusValuesChange,
+      gOnClose,
+    ]
+  );
 
-  const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
+  const handleClear = () => {
+    onClear?.();
+
+    if (dMultiple) {
+      changeSelect([]);
+    } else {
+      changeSelect(null);
+    }
+  };
+
+  const handleSearch = (value: string) => {
+    onSearch?.(value);
+    setSearchValue(value);
+  };
+
+  const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
@@ -407,52 +443,7 @@ export function DCascader<T>(props: DCascaderProps<T>) {
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [dMultiple, select, renderOptions, dCustomSelected, dPrefix, size, dGetId, disabled, changeSelectByCache, dOptions]);
-
-  const gOnModelChange = useCallback(
-    (select) => {
-      changeSelectByCache(select);
-    },
-    [changeSelectByCache]
-  );
-  const gOnFocusValuesChange = useCallback(
-    (value) => {
-      onFocusChange?.(value);
-      setFocusValues(value);
-    },
-    [onFocusChange]
-  );
-  const gOnClose = useCallback(() => {
-    changeVisible(false);
-  }, [changeVisible]);
-  const contextValue = useMemo<DCascaderContextData<T>>(
-    () => ({
-      gSelecteds: select,
-      gFocusValues: focusValues,
-      gUniqueId: uniqueId,
-      gRendered: listRendered,
-      gMultiple: dMultiple,
-      gOnlyLeafSelectable: dOnlyLeafSelectable,
-      gOptionRender: dOptionRender,
-      gGetId: dGetId,
-      gOnModelChange,
-      gOnFocusValuesChange,
-      gOnClose,
-    }),
-    [
-      select,
-      focusValues,
-      uniqueId,
-      listRendered,
-      dMultiple,
-      dOnlyLeafSelectable,
-      dOptionRender,
-      dGetId,
-      gOnModelChange,
-      gOnFocusValuesChange,
-      gOnClose,
-    ]
-  );
+  })();
 
   return (
     <DCascaderContext.Provider value={contextValue}>
@@ -495,7 +486,9 @@ export function DCascader<T>(props: DCascaderProps<T>) {
         onClear={handleClear}
         onSearch={handleSearch}
         onVisibleChange={changeVisible}
-        onRendered={handleRendered}
+        onRendered={() => {
+          setRendered(true);
+        }}
       >
         {hasSelected && selectedNode}
       </DSelectBox>

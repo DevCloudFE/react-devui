@@ -2,10 +2,19 @@ import type { Updater } from '../../hooks/two-way-binding';
 import type { DPopupRef } from '../_popup';
 
 import { isArray, isNumber, toNumber } from 'lodash';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralState, useTwoWayBinding, useAsync, useThrottle, useRefCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useGeneralState,
+  useTwoWayBinding,
+  useAsync,
+  useThrottle,
+  useRefCallback,
+  useEventCallback,
+} from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
@@ -134,224 +143,158 @@ export function DSlider(props: DSliderProps) {
     (dRange ? dTooltipVisible?.[1] : undefined) ?? (mouseenterDot === 'right' ? true : !!(focusDot === 'right' || thumbPoint)),
   ];
 
-  const getValue = useCallback(
-    (value: number, func: 'round' | 'ceil' | 'floor' = 'round') => {
-      let newValue: number | null = null;
-      if (dStep) {
-        const n = Math[func](value / dStep);
-        newValue = Math.min(dMax, Math.max(dMin, n * dStep));
-      }
+  const getValue = (value: number, func: 'round' | 'ceil' | 'floor' = 'round') => {
+    let newValue: number | null = null;
+    if (dStep) {
+      const n = Math[func](value / dStep);
+      newValue = Math.min(dMax, Math.max(dMin, n * dStep));
+    }
 
-      if (isArray(dMarks)) {
-        let min = newValue ? Math.abs(newValue - value) : Infinity;
-        if (min > 0) {
-          for (const mark of dMarks) {
-            const v: number = isNumber(mark) ? mark : mark.value;
-            if (func === 'round' || (func === 'ceil' && v - value >= 0) || (func === 'floor' && v - value <= 0)) {
-              const offset = Math.abs(v - value);
-              if (offset < min) {
-                min = offset;
-                newValue = v;
-              }
+    if (isArray(dMarks)) {
+      let min = newValue ? Math.abs(newValue - value) : Infinity;
+      if (min > 0) {
+        for (const mark of dMarks) {
+          const v: number = isNumber(mark) ? mark : mark.value;
+          if (func === 'round' || (func === 'ceil' && v - value >= 0) || (func === 'floor' && v - value <= 0)) {
+            const offset = Math.abs(v - value);
+            if (offset < min) {
+              min = offset;
+              newValue = v;
             }
           }
         }
       }
+    }
 
-      return newValue ?? dMin;
-    },
-    [dMarks, dMax, dMin, dStep]
-  );
+    return newValue ?? dMin;
+  };
 
-  const handleMove = useCallback(
-    (e: { clientX: number; clientY: number }, isLeft?: boolean) => {
-      isLeft = isLeft ?? focusDot === 'left';
-      if (sliderEl) {
-        const rect = sliderEl.getBoundingClientRect();
-        const newValue = getValue(
-          (dMax - dMin) *
-            (dVertical
-              ? (dReverse ? e.clientY - rect.top : rect.bottom - e.clientY) / rect.height
-              : (dReverse ? rect.right - e.clientX : e.clientX - rect.left) / rect.width)
-        );
+  const handleMove = useEventCallback((e: { clientX: number; clientY: number }, isLeft?: boolean) => {
+    isLeft = isLeft ?? focusDot === 'left';
+    if (sliderEl) {
+      const rect = sliderEl.getBoundingClientRect();
+      const newValue = getValue(
+        (dMax - dMin) *
+          (dVertical
+            ? (dReverse ? e.clientY - rect.top : rect.bottom - e.clientY) / rect.height
+            : (dReverse ? rect.right - e.clientX : e.clientX - rect.left) / rect.width)
+      );
 
-        if (dRange) {
-          changeValue((draft) => {
-            const index = isLeft ? 0 : 1;
-            if (draft[index] !== newValue) {
-              const offset = newValue - draft[index];
-              const isAdd = offset > 0;
-              draft[index] = newValue;
-              if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
-                const _index = isLeft ? 1 : 0;
-                draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
-                if (draft[1] - draft[0] < dRangeMinDistance) {
-                  draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
-                }
-              }
-            }
-          });
-        } else {
-          changeValue(newValue);
-        }
-      }
-    },
-    [changeValue, dMax, dMin, dRange, dRangeMinDistance, dReverse, dVertical, focusDot, getValue, sliderEl]
-  );
-
-  const handleThumbMove = useCallback(
-    (e: { clientX: number; clientY: number }) => {
-      if (dStep && thumbPoint && sliderEl) {
-        const rect = sliderEl.getBoundingClientRect();
-        const offset =
-          Math.round(
-            ((dMax - dMin) *
-              (dVertical
-                ? (dReverse ? e.clientY - thumbPoint.clientY : thumbPoint.clientY - e.clientY) / rect.height
-                : (dReverse ? thumbPoint.clientX - e.clientX : e.clientX - thumbPoint.clientX) / rect.width)) /
-              dStep
-          ) * dStep;
-        const value: [number, number] = [0, 0];
-        let index = -1;
-
-        for (const v of [thumbPoint.left + offset, thumbPoint.right + offset]) {
-          index += 1;
-          const _index = index === 0 ? 1 : 0;
-          if (v < dMin) {
-            value[index] = dMin;
-            value[_index] = dMin + Math.abs(thumbPoint.left - thumbPoint.right);
-            break;
-          }
-          if (v > dMax) {
-            value[index] = dMax;
-            value[_index] = dMax - Math.abs(thumbPoint.left - thumbPoint.right);
-            break;
-          }
-          value[index] = v;
-        }
-
-        changeValue(value);
-      }
-    },
-    [changeValue, dMax, dMin, dReverse, dStep, dVertical, sliderEl, thumbPoint]
-  );
-
-  const startDrag = useCallback(
-    (e: { clientX: number; clientY: number }) => {
-      const handle = (isLeft = true) => {
-        const el = isLeft ? dotLeftEl : dotRightEl;
-        if (el) {
-          handleMove(e, isLeft);
-          setDraggableDot(isLeft ? 'left' : 'right');
-          (el.firstElementChild as HTMLElement).focus({ preventScroll: true });
-        }
-      };
       if (dRange) {
-        if (dotLeftEl && dotRightEl) {
-          const rectLeft = dotLeftEl.getBoundingClientRect();
-          const rectRight = dotRightEl.getBoundingClientRect();
-          const offsetLeft = dVertical
-            ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
-            : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
-          const offsetRight = dVertical
-            ? Math.abs(rectRight.bottom - rectRight.height / 2 - e.clientY)
-            : Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
-
-          if (
-            dRangeThumbDraggable &&
-            (dVertical ? e.clientY < Math.max(rectLeft.top, rectRight.top) : e.clientX > Math.min(rectLeft.right, rectRight.right)) &&
-            (dVertical ? e.clientY > Math.min(rectLeft.bottom, rectRight.bottom) : e.clientX < Math.max(rectLeft.left, rectRight.left))
-          ) {
-            setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX, clientY: e.clientY });
-          } else {
-            if (offsetRight <= offsetLeft) {
-              handle(false);
-            } else {
-              handle(true);
-            }
-          }
-        }
-      } else {
-        handle(true);
-      }
-    },
-    [dRange, dRangeThumbDraggable, dVertical, dotLeftEl, dotRightEl, handleMove, valueLeft, valueRight]
-  );
-
-  const handleMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
-    (e) => {
-      onMouseDown?.(e);
-
-      if (e.button === 0 && !disabled) {
-        e.preventDefault();
-
-        startDrag(e);
-      }
-    },
-    [disabled, onMouseDown, startDrag]
-  );
-  const handleTouchStart = useCallback<React.TouchEventHandler<HTMLDivElement>>(
-    (e) => {
-      onTouchStart?.(e);
-
-      startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-    },
-    [onTouchStart, startDrag]
-  );
-  const handleTouchEnd = useCallback<React.TouchEventHandler<HTMLDivElement>>(
-    (e) => {
-      onTouchEnd?.(e);
-
-      setDraggableDot(null);
-      setThumbPoint(null);
-    },
-    [onTouchEnd]
-  );
-
-  const handleChange = useCallback(
-    (e, isLeft = true) => {
-      if (dRange) {
-        const index = isLeft ? 0 : 1;
-        const newValue = toNumber(e.currentTarget.value);
         changeValue((draft) => {
-          const offset = newValue - draft[index];
-          const isAdd = offset > 0;
-          draft[index] = newValue;
-          if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
-            const _index = isLeft ? 1 : 0;
-            draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
-            if (draft[1] - draft[0] < dRangeMinDistance) {
-              draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
+          const index = isLeft ? 0 : 1;
+          if (draft[index] !== newValue) {
+            const offset = newValue - draft[index];
+            const isAdd = offset > 0;
+            draft[index] = newValue;
+            if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
+              const _index = isLeft ? 1 : 0;
+              draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
+              if (draft[1] - draft[0] < dRangeMinDistance) {
+                draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
+              }
             }
           }
         });
       } else {
-        changeValue(toNumber(e.currentTarget.value));
+        changeValue(newValue);
       }
-    },
-    [changeValue, dRange, dRangeMinDistance, getValue]
-  );
+    }
+  });
 
-  const handleFocus = useCallback(
-    (e, isLeft = true) => {
-      (isLeft ? inputPropsLeft : inputPropsRight)?.onFocus?.(e);
+  const handleThumbMove = useEventCallback((e: { clientX: number; clientY: number }) => {
+    if (dStep && thumbPoint && sliderEl) {
+      const rect = sliderEl.getBoundingClientRect();
+      const offset =
+        Math.round(
+          ((dMax - dMin) *
+            (dVertical
+              ? (dReverse ? e.clientY - thumbPoint.clientY : thumbPoint.clientY - e.clientY) / rect.height
+              : (dReverse ? thumbPoint.clientX - e.clientX : e.clientX - thumbPoint.clientX) / rect.width)) /
+            dStep
+        ) * dStep;
+      const value: [number, number] = [0, 0];
+      let index = -1;
 
-      setFocusDot(isLeft ? 'left' : 'right');
-    },
-    [inputPropsLeft, inputPropsRight]
-  );
-  const handleBlur = useCallback(
-    (e, isLeft = true) => {
-      (isLeft ? inputPropsLeft : inputPropsRight)?.onBlur?.(e);
+      for (const v of [thumbPoint.left + offset, thumbPoint.right + offset]) {
+        index += 1;
+        const _index = index === 0 ? 1 : 0;
+        if (v < dMin) {
+          value[index] = dMin;
+          value[_index] = dMin + Math.abs(thumbPoint.left - thumbPoint.right);
+          break;
+        }
+        if (v > dMax) {
+          value[index] = dMax;
+          value[_index] = dMax - Math.abs(thumbPoint.left - thumbPoint.right);
+          break;
+        }
+        value[index] = v;
+      }
 
-      setFocusDot(null);
-    },
-    [inputPropsLeft, inputPropsRight]
-  );
+      changeValue(value);
+    }
+  });
 
-  const handleVisibleChange = useCallback((visible, isLeft = true) => {
-    setMouseenterDot(visible ? (isLeft ? 'left' : 'right') : null);
-  }, []);
+  const startDrag = (e: { clientX: number; clientY: number }) => {
+    const handle = (isLeft = true) => {
+      const el = isLeft ? dotLeftEl : dotRightEl;
+      if (el) {
+        handleMove(e, isLeft);
+        setDraggableDot(isLeft ? 'left' : 'right');
+        (el.firstElementChild as HTMLElement).focus({ preventScroll: true });
+      }
+    };
+    if (dRange) {
+      if (dotLeftEl && dotRightEl) {
+        const rectLeft = dotLeftEl.getBoundingClientRect();
+        const rectRight = dotRightEl.getBoundingClientRect();
+        const offsetLeft = dVertical
+          ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
+          : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
+        const offsetRight = dVertical
+          ? Math.abs(rectRight.bottom - rectRight.height / 2 - e.clientY)
+          : Math.abs(e.clientX - (rectRight.left + rectRight.width / 2));
+
+        if (
+          dRangeThumbDraggable &&
+          (dVertical ? e.clientY < Math.max(rectLeft.top, rectRight.top) : e.clientX > Math.min(rectLeft.right, rectRight.right)) &&
+          (dVertical ? e.clientY > Math.min(rectLeft.bottom, rectRight.bottom) : e.clientX < Math.max(rectLeft.left, rectRight.left))
+        ) {
+          setThumbPoint({ left: valueLeft, right: valueRight, clientX: e.clientX, clientY: e.clientY });
+        } else {
+          if (offsetRight <= offsetLeft) {
+            handle(false);
+          } else {
+            handle(true);
+          }
+        }
+      }
+    } else {
+      handle(true);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, isLeft = true) => {
+    if (dRange) {
+      const index = isLeft ? 0 : 1;
+      const newValue = toNumber(e.currentTarget.value);
+      changeValue((draft) => {
+        const offset = newValue - draft[index];
+        const isAdd = offset > 0;
+        draft[index] = newValue;
+        if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
+          const _index = isLeft ? 1 : 0;
+          draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
+          if (draft[1] - draft[0] < dRangeMinDistance) {
+            draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
+          }
+        }
+      });
+    } else {
+      changeValue(toNumber(e.currentTarget.value));
+    }
+  };
 
   useEffect(() => {
     if (thumbPoint) {
@@ -458,7 +401,7 @@ export function DSlider(props: DSliderProps) {
     };
   }, [asyncCapture, handleThumbMove, throttleByAnimationFrame, thumbPoint]);
 
-  const marks = useMemo(() => {
+  const marks = (() => {
     const marks: React.ReactNode[] = [];
     const getNode = (value: number, label: React.ReactNode = null) => {
       let percentage = (value / (dMax - dMin)) * 100;
@@ -504,7 +447,30 @@ export function DSlider(props: DSliderProps) {
     }
 
     return marks;
-  }, [dMarks, dMax, dMin, dPrefix, dRange, dReverse, dVertical, valueLeft, valueRight]);
+  })();
+
+  const handleMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseDown?.(e);
+
+    if (e.button === 0 && !disabled) {
+      e.preventDefault();
+
+      startDrag(e);
+    }
+  };
+
+  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    onTouchStart?.(e);
+
+    startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+  };
+
+  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    onTouchEnd?.(e);
+
+    setDraggableDot(null);
+    setThumbPoint(null);
+  };
 
   return (
     <div
@@ -550,7 +516,9 @@ export function DSlider(props: DSliderProps) {
           dVisible={[visibleLeft]}
           dTitle={dCustomTooltip ? dCustomTooltip(valueLeft) : valueLeft}
           dPlacement={dVertical ? 'right' : 'top'}
-          onVisibleChange={handleVisibleChange}
+          onVisibleChange={(visible) => {
+            setMouseenterDot(visible ? 'left' : null);
+          }}
         >
           <div
             ref={dotLeftRef}
@@ -576,8 +544,16 @@ export function DSlider(props: DSliderProps) {
               step={dStep ?? undefined}
               aria-orientation={dVertical ? 'vertical' : 'horizontal'}
               onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              onFocus={(e) => {
+                inputPropsLeft?.onFocus?.(e);
+
+                setFocusDot('left');
+              }}
+              onBlur={(e) => {
+                inputPropsLeft?.onBlur?.(e);
+
+                setFocusDot(null);
+              }}
             ></input>
           </div>
         </DTooltip>
@@ -588,7 +564,7 @@ export function DSlider(props: DSliderProps) {
             dTitle={dCustomTooltip ? dCustomTooltip(valueRight) : valueRight}
             dPlacement={dVertical ? 'right' : 'top'}
             onVisibleChange={(visible) => {
-              handleVisibleChange(visible, false);
+              setMouseenterDot(visible ? 'right' : null);
             }}
           >
             <div
@@ -618,10 +594,14 @@ export function DSlider(props: DSliderProps) {
                   handleChange(e, false);
                 }}
                 onFocus={(e) => {
-                  handleFocus(e, false);
+                  inputPropsRight?.onFocus?.(e);
+
+                  setFocusDot('right');
                 }}
                 onBlur={(e) => {
-                  handleBlur(e, false);
+                  inputPropsRight?.onBlur?.(e);
+
+                  setFocusDot(null);
                 }}
               ></input>
             </div>

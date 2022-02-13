@@ -3,19 +3,23 @@ import type { DTransitionStateList } from '../../hooks/transition';
 import type { DPlacement } from '../../utils/position';
 
 import { isUndefined } from 'lodash';
-import React, { useId, useCallback, useEffect, useMemo, useImperativeHandle, useRef, useState } from 'react';
-import ReactDOM, { flushSync } from 'react-dom';
+import React, { useId, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
 import {
   usePrefixConfig,
   useAsync,
   useElement,
-  useImmer,
   useRefCallback,
   useDTransition,
   useMaxIndex,
   useContentSVChangeConfig,
+  useEventCallback,
+  useIsomorphicLayoutEffect,
+  useForceUpdate,
+  useCallbackWithCondition,
+  useCallbackWithState,
 } from '../../hooks';
 import { getClassName, getPopupPlacementStyle, mergeStyle } from '../../utils';
 
@@ -29,8 +33,6 @@ export interface DTriggerRenderProps {
 }
 
 export interface DPopupRef {
-  el: HTMLDivElement | null;
-  triggerEl: HTMLElement | null;
   updatePosition: () => void;
 }
 
@@ -53,7 +55,7 @@ export interface DPopupProps extends React.HTMLAttributes<HTMLDivElement> {
   dCustomPopup?: (
     popupEl: HTMLElement,
     triggerEl: HTMLElement
-  ) => { top: number; left: number; stateList: DTransitionStateList; arrowPosition?: React.CSSProperties };
+  ) => { top: number; left: number; stateList: DTransitionStateList; arrowStyle?: React.CSSProperties };
   onVisibleChange?: (visible: boolean) => void;
   onRendered?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
@@ -92,7 +94,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const contentSVChange = useContentSVChangeConfig();
+  const onContentSVChange$ = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
@@ -100,20 +102,18 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   //#endregion
 
   const dataRef = useRef<{
-    transitionState?: DTransitionStateList;
-    triggerRect?: { top: number; left: number };
+    transitionState: DTransitionStateList;
     clearTid?: () => void;
-  }>({});
+  }>({
+    transitionState: {},
+  });
 
   const asyncCapture = useAsync();
-  const [popupPositionStyle, setPopupPositionStyle] = useImmer<React.CSSProperties>({});
-  const [arrowPosition, setArrowStyle] = useImmer<React.CSSProperties | undefined>(undefined);
+  const forceUpdate = useForceUpdate();
   const uniqueId = useId();
 
-  const [autoPlacement, setAutoPlacement] = useState<DPlacement>(dPlacement);
-
   const [rendered, setRendered] = useState(dVisible);
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!dVisible) {
       setRendered(false);
     }
@@ -121,9 +121,8 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   const popupRendered = dVisible && rendered;
 
   const triggerEl = useElement(isUndefined(dTriggerEl) ? `[data-${dPrefix}popup-trigger="${uniqueId}"]` : dTriggerEl);
-
   const isFixed = isUndefined(dContainer);
-  const getContainer = useCallback(() => {
+  const containerEl = useElement(dContainer, () => {
     if (isFixed) {
       let el = document.getElementById(`${dPrefix}popup-root`);
       if (!el) {
@@ -136,153 +135,148 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       return triggerEl?.parentElement ?? null;
     }
     return null;
-  }, [dContainer, dPrefix, isFixed, triggerEl]);
-  const containerEl = useElement(dContainer, getContainer);
+  });
 
-  const placement = dAutoPlace ? autoPlacement : dPlacement;
+  const changeVisible = useEventCallback((visiable: boolean | 'reverse') => {
+    if (visiable === 'reverse') {
+      onVisibleChange?.(!dVisible);
+    } else {
+      if (!Object.is(dVisible, visiable)) {
+        onVisibleChange?.(visiable);
+      }
+    }
+  });
 
-  const changeVisible = useCallback(
-    (visiable?: boolean) => {
-      if (isUndefined(visiable)) {
-        onVisibleChange?.(!dVisible);
-      } else {
-        if (!Object.is(dVisible, visiable)) {
-          onVisibleChange?.(visiable);
+  const updatePosition = useCallbackWithState<{
+    popupPositionStyle: React.CSSProperties;
+    arrowStyle?: React.CSSProperties;
+    autoPlacement: DPlacement;
+  }>(
+    (draft) => {
+      if (popupEl && triggerEl && containerEl) {
+        if (isUndefined(dCustomPopup)) {
+          draft.arrowStyle = undefined;
+          let currentPlacement = dAutoPlace ? dPlacement : draft.autoPlacement;
+
+          if (dAutoPlace) {
+            let space: [number, number, number, number] = [0, 0, 0, 0];
+            if (!isFixed) {
+              const containerRect = containerEl.getBoundingClientRect();
+              space = [
+                containerRect.top,
+                window.innerWidth - containerRect.left - containerRect.width,
+                window.innerHeight - containerRect.top - containerRect.height,
+                containerRect.left,
+              ];
+            }
+            const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed, space);
+            if (position) {
+              currentPlacement = position.placement;
+              draft.autoPlacement = position.placement;
+              draft.popupPositionStyle = {
+                position: isFixed ? 'fixed' : 'absolute',
+                top: position.top,
+                left: position.left,
+              };
+            } else {
+              const position = getPopupPlacementStyle(popupEl, triggerEl, draft.autoPlacement, dDistance, isFixed);
+              draft.popupPositionStyle = {
+                position: isFixed ? 'fixed' : 'absolute',
+                top: position.top,
+                left: position.left,
+              };
+            }
+          } else {
+            const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed);
+            draft.popupPositionStyle = {
+              position: isFixed ? 'fixed' : 'absolute',
+              top: position.top,
+              left: position.left,
+            };
+          }
+
+          let transformOrigin = 'center bottom';
+          switch (currentPlacement) {
+            case 'top':
+              transformOrigin = 'center bottom';
+              break;
+
+            case 'top-left':
+              transformOrigin = '20px bottom';
+              break;
+
+            case 'top-right':
+              transformOrigin = 'calc(100% - 20px) bottom';
+              break;
+
+            case 'right':
+              transformOrigin = 'left center';
+              break;
+
+            case 'right-top':
+              transformOrigin = 'left 12px';
+              break;
+
+            case 'right-bottom':
+              transformOrigin = 'left calc(100% - 12px)';
+              break;
+
+            case 'bottom':
+              transformOrigin = 'center top';
+              break;
+
+            case 'bottom-left':
+              transformOrigin = '20px top';
+              break;
+
+            case 'bottom-right':
+              transformOrigin = 'calc(100% - 20px) top';
+              break;
+
+            case 'left':
+              transformOrigin = 'right center';
+              break;
+
+            case 'left-top':
+              transformOrigin = 'right 12px';
+              break;
+
+            case 'left-bottom':
+              transformOrigin = 'right calc(100% - 12px)';
+              break;
+
+            default:
+              break;
+          }
+          dataRef.current.transitionState = {
+            'enter-from': { transform: 'scale(0.3)', opacity: '0' },
+            'enter-to': { transition: 'transform 86ms ease-out, opacity 86ms ease-out', transformOrigin },
+            'leave-to': {
+              transform: 'scale(0.3)',
+              opacity: '0',
+              transition: 'transform 0.1s ease-in, opacity 0.1s ease-in',
+              transformOrigin,
+            },
+          };
+        } else {
+          const { top, left, stateList, arrowStyle } = dCustomPopup(popupEl, triggerEl);
+          draft.arrowStyle = arrowStyle;
+          draft.popupPositionStyle = {
+            position: isFixed ? 'fixed' : 'absolute',
+            top,
+            left,
+          };
+          dataRef.current.transitionState = stateList;
         }
       }
     },
-    [dVisible, onVisibleChange]
-  );
-
-  const updatePosition = useCallback(() => {
-    if (popupEl && triggerEl && containerEl) {
-      if (isUndefined(dCustomPopup)) {
-        let currentPlacement = dAutoPlace ? dPlacement : autoPlacement;
-
-        if (dAutoPlace) {
-          let space: [number, number, number, number] = [0, 0, 0, 0];
-          if (!isFixed) {
-            const containerRect = containerEl.getBoundingClientRect();
-            space = [
-              containerRect.top,
-              window.innerWidth - containerRect.left - containerRect.width,
-              window.innerHeight - containerRect.top - containerRect.height,
-              containerRect.left,
-            ];
-          }
-          const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed, space);
-          if (position) {
-            currentPlacement = position.placement;
-            setAutoPlacement(position.placement);
-            setPopupPositionStyle({
-              position: isFixed ? 'fixed' : 'absolute',
-              top: position.top,
-              left: position.left,
-            });
-          } else {
-            const position = getPopupPlacementStyle(popupEl, triggerEl, autoPlacement, dDistance, isFixed);
-            setPopupPositionStyle({
-              position: isFixed ? 'fixed' : 'absolute',
-              top: position.top,
-              left: position.left,
-            });
-          }
-        } else {
-          const position = getPopupPlacementStyle(popupEl, triggerEl, dPlacement, dDistance, isFixed);
-          setPopupPositionStyle({
-            position: isFixed ? 'fixed' : 'absolute',
-            top: position.top,
-            left: position.left,
-          });
-        }
-
-        let transformOrigin = 'center bottom';
-        switch (currentPlacement) {
-          case 'top':
-            transformOrigin = 'center bottom';
-            break;
-
-          case 'top-left':
-            transformOrigin = '20px bottom';
-            break;
-
-          case 'top-right':
-            transformOrigin = 'calc(100% - 20px) bottom';
-            break;
-
-          case 'right':
-            transformOrigin = 'left center';
-            break;
-
-          case 'right-top':
-            transformOrigin = 'left 12px';
-            break;
-
-          case 'right-bottom':
-            transformOrigin = 'left calc(100% - 12px)';
-            break;
-
-          case 'bottom':
-            transformOrigin = 'center top';
-            break;
-
-          case 'bottom-left':
-            transformOrigin = '20px top';
-            break;
-
-          case 'bottom-right':
-            transformOrigin = 'calc(100% - 20px) top';
-            break;
-
-          case 'left':
-            transformOrigin = 'right center';
-            break;
-
-          case 'left-top':
-            transformOrigin = 'right 12px';
-            break;
-
-          case 'left-bottom':
-            transformOrigin = 'right calc(100% - 12px)';
-            break;
-
-          default:
-            break;
-        }
-        dataRef.current.transitionState = {
-          'enter-from': { transform: 'scale(0.3)', opacity: '0' },
-          'enter-to': { transition: 'transform 86ms ease-out, opacity 86ms ease-out', transformOrigin },
-          'leave-to': {
-            transform: 'scale(0.3)',
-            opacity: '0',
-            transition: 'transform 0.1s ease-in, opacity 0.1s ease-in',
-            transformOrigin,
-          },
-        };
-      } else {
-        const { top, left, stateList, arrowPosition } = dCustomPopup(popupEl, triggerEl);
-        setArrowStyle(arrowPosition);
-        setPopupPositionStyle({
-          position: isFixed ? 'fixed' : 'absolute',
-          top,
-          left,
-        });
-        dataRef.current.transitionState = stateList;
-      }
+    {
+      popupPositionStyle: {},
+      autoPlacement: dPlacement,
     }
-  }, [
-    autoPlacement,
-    containerEl,
-    dAutoPlace,
-    dCustomPopup,
-    dDistance,
-    dPlacement,
-    isFixed,
-    popupEl,
-    setArrowStyle,
-    setPopupPositionStyle,
-    triggerEl,
-  ]);
+  );
+  const { popupPositionStyle, arrowStyle, autoPlacement } = useCallbackWithCondition(popupRendered, updatePosition)();
+  const placement = dAutoPlace ? autoPlacement : dPlacement;
 
   const hidden = useDTransition({
     dEl: popupEl,
@@ -306,7 +300,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
   });
 
   const maxZIndex = useMaxIndex(!hidden);
-  const zIndex = useMemo(() => {
+  const zIndex = (() => {
     if (!hidden) {
       if (isUndefined(dZIndex)) {
         if (isFixed) {
@@ -318,70 +312,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         return dZIndex;
       }
     }
-  }, [dPrefix, dZIndex, hidden, isFixed, maxZIndex]);
-
-  const handleMouseEnter = useCallback(
-    (e) => {
-      onMouseEnter?.(e);
-
-      if (dTrigger === 'hover') {
-        dataRef.current.clearTid?.();
-        dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          changeVisible(true);
-        }, dMouseEnterDelay);
-      }
-    },
-    [onMouseEnter, dTrigger, asyncCapture, dMouseEnterDelay, changeVisible]
-  );
-
-  const handleMouseLeave = useCallback(
-    (e) => {
-      onMouseLeave?.(e);
-
-      if (dTrigger === 'hover') {
-        dataRef.current.clearTid?.();
-        dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-          changeVisible(false);
-        }, dMouseLeaveDelay);
-      }
-    },
-    [onMouseLeave, dTrigger, asyncCapture, dMouseLeaveDelay, changeVisible]
-  );
-
-  const handleFocus = useCallback(
-    (e) => {
-      onFocus?.(e);
-
-      if (dTrigger === 'focus') {
-        dataRef.current.clearTid?.();
-        changeVisible(true);
-      }
-    },
-    [onFocus, dTrigger, changeVisible]
-  );
-
-  const handleBlur = useCallback(
-    (e) => {
-      onBlur?.(e);
-
-      if (dTrigger === 'focus') {
-        dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(false), 20);
-      }
-    },
-    [onBlur, dTrigger, asyncCapture, changeVisible]
-  );
-
-  const handleClick = useCallback(
-    (e) => {
-      onClick?.(e);
-
-      if (dTrigger === 'click') {
-        dataRef.current.clearTid?.();
-        changeVisible(true);
-      }
-    },
-    [onClick, dTrigger, changeVisible]
-  );
+  })();
 
   useEffect(() => {
     if (!isUndefined(dTriggerEl)) {
@@ -392,7 +323,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             next: () => {
               dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                flushSync(() => changeVisible(true));
+                changeVisible(true);
               }, dMouseEnterDelay);
             },
           });
@@ -400,7 +331,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             next: () => {
               dataRef.current.clearTid?.();
               dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-                flushSync(() => changeVisible(false));
+                changeVisible(false);
               }, dMouseLeaveDelay);
             },
           });
@@ -410,12 +341,12 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
           asyncGroup.fromEvent(triggerEl, 'focus').subscribe({
             next: () => {
               dataRef.current.clearTid?.();
-              flushSync(() => changeVisible(true));
+              changeVisible(true);
             },
           });
           asyncGroup.fromEvent(triggerEl, 'blur').subscribe({
             next: () => {
-              dataRef.current.clearTid = asyncCapture.setTimeout(() => flushSync(() => changeVisible(false)), 20);
+              dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(false), 20);
             },
           });
         }
@@ -424,7 +355,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
           asyncGroup.fromEvent(triggerEl, 'click').subscribe({
             next: () => {
               dataRef.current.clearTid?.();
-              flushSync(() => changeVisible());
+              changeVisible('reverse');
             },
           });
         }
@@ -434,7 +365,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, changeVisible, triggerEl]);
+  }, [asyncCapture, changeVisible, dMouseEnterDelay, dMouseLeaveDelay, dTrigger, dTriggerEl, triggerEl]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -443,7 +374,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
       asyncGroup.fromEvent(window, 'click', { capture: true }).subscribe({
         next: () => {
           dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-            flushSync(() => changeVisible(false));
+            changeVisible(false);
           }, 20);
         },
       });
@@ -452,7 +383,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dTrigger, dVisible, changeVisible]);
+  }, [asyncCapture, changeVisible, dTrigger, dVisible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -463,7 +394,7 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
         .pipe(filter((e) => e.code === 'Escape'))
         .subscribe({
           next: () => {
-            flushSync(() => changeVisible(false));
+            changeVisible(false);
           },
         });
     }
@@ -471,56 +402,49 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, dEscClosable, dVisible, changeVisible]);
+  }, [asyncCapture, changeVisible, dEscClosable, dVisible]);
 
   useEffect(() => {
     if (popupRendered) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
       if (popupEl) {
-        asyncGroup.onResize(popupEl, updatePosition);
+        asyncGroup.onResize(popupEl, () => {
+          forceUpdate();
+        });
       }
       if (triggerEl) {
-        asyncGroup.onResize(triggerEl, updatePosition);
+        asyncGroup.onResize(triggerEl, () => {
+          forceUpdate();
+        });
       }
 
-      const skipUpdate = () => {
-        if (triggerEl) {
-          const { top, left } = triggerEl.getBoundingClientRect();
-
-          const skip = dataRef.current.triggerRect?.top === top && dataRef.current.triggerRect?.left === left;
-          dataRef.current.triggerRect = { top, left };
-          return skip;
-        }
-
-        return false;
-      };
-      const ob = contentSVChange?.subscribe({
+      const ob = onContentSVChange$?.subscribe({
         next: () => {
-          if (!skipUpdate()) {
-            updatePosition();
-          }
+          forceUpdate();
         },
       });
-      asyncGroup.onGlobalScroll(updatePosition, skipUpdate);
+      asyncGroup.onGlobalScroll(() => {
+        forceUpdate();
+      });
 
       return () => {
         ob?.unsubscribe();
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, popupEl, popupRendered, contentSVChange, updatePosition, triggerEl]);
+  }, [asyncCapture, forceUpdate, onContentSVChange$, popupEl, popupRendered, triggerEl]);
 
   useImperativeHandle(
     ref,
     () => ({
-      el: popupEl,
-      triggerEl,
-      updatePosition,
+      updatePosition: () => {
+        forceUpdate();
+      },
     }),
-    [popupEl, triggerEl, updatePosition]
+    [forceUpdate]
   );
 
-  const triggerRenderProps = useMemo<DTriggerRenderProps>(() => {
+  const triggerRenderProps = (() => {
     const triggerRenderProps: DTriggerRenderProps = { [`data-${dPrefix}popup-trigger`]: uniqueId };
     if (dTrigger === 'hover') {
       triggerRenderProps.onMouseEnter = () => {
@@ -548,12 +472,60 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
     if (dTrigger === 'click') {
       triggerRenderProps.onClick = () => {
         dataRef.current.clearTid?.();
-        changeVisible();
+        changeVisible('reverse');
       };
     }
 
     return triggerRenderProps;
-  }, [asyncCapture, dMouseEnterDelay, dMouseLeaveDelay, dPrefix, dTrigger, uniqueId, changeVisible]);
+  })();
+
+  const handleMouseEnter: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseEnter?.(e);
+
+    if (dTrigger === 'hover') {
+      dataRef.current.clearTid?.();
+      dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+        changeVisible(true);
+      }, dMouseEnterDelay);
+    }
+  };
+
+  const handleMouseLeave: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onMouseLeave?.(e);
+
+    if (dTrigger === 'hover') {
+      dataRef.current.clearTid?.();
+      dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+        changeVisible(false);
+      }, dMouseLeaveDelay);
+    }
+  };
+
+  const handleFocus: React.FocusEventHandler<HTMLDivElement> = (e) => {
+    onFocus?.(e);
+
+    if (dTrigger === 'focus') {
+      dataRef.current.clearTid?.();
+      changeVisible(true);
+    }
+  };
+
+  const handleBlur: React.FocusEventHandler<HTMLDivElement> = (e) => {
+    onBlur?.(e);
+
+    if (dTrigger === 'focus') {
+      dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(false), 20);
+    }
+  };
+
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(e);
+
+    if (dTrigger === 'click') {
+      dataRef.current.clearTid?.();
+      changeVisible(true);
+    }
+  };
 
   return (
     <>
@@ -583,9 +555,9 @@ const Popup: React.ForwardRefRenderFunction<DPopupRef, DPopupProps> = (props, re
             {dArrow && (
               <div
                 className={getClassName(`${dPrefix}popup__arrow`, {
-                  [`${dPrefix}popup__arrow--custom`]: arrowPosition,
+                  [`${dPrefix}popup__arrow--custom`]: arrowStyle,
                 })}
-                style={arrowPosition}
+                style={arrowStyle}
               ></div>
             )}
             {dPopupContent}
