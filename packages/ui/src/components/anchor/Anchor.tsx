@@ -28,7 +28,7 @@ export interface DAnchorProps extends React.HTMLAttributes<HTMLUListElement> {
   dDistance?: number;
   dPage?: DElementSelector;
   dScrollBehavior?: 'instant' | 'smooth';
-  dIndicator?: React.ReactNode | symbol;
+  dIndicator?: React.FC | symbol;
   onHrefChange?: (href: string | null) => void;
 }
 
@@ -36,7 +36,11 @@ const DOT_INDICATOR = Symbol('dot');
 const LINE_INDICATOR = Symbol('line');
 
 const { COMPONENT_NAME } = generateComponentMate('DAnchor');
-export const DAnchor = (props: DAnchorProps) => {
+export const DAnchor: {
+  (props: DAnchorProps): JSX.Element | null;
+  DOT_INDICATOR: typeof DOT_INDICATOR;
+  LINE_INDICATOR: typeof LINE_INDICATOR;
+} = (props: DAnchorProps) => {
   const {
     dDistance = 0,
     dPage,
@@ -213,5 +217,6 @@ export const DAnchor = (props: DAnchorProps) => {
     </DAnchorContext.Provider>
   );
 };
+
 DAnchor.DOT_INDICATOR = DOT_INDICATOR;
 DAnchor.LINE_INDICATOR = LINE_INDICATOR;

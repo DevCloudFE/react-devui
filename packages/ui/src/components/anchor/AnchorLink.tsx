@@ -8,7 +8,7 @@ export interface DAnchorLinkProps extends React.LiHTMLAttributes<HTMLLIElement> 
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DAnchorLink');
-export function DAnchorLink(props: DAnchorLinkProps) {
+export function DAnchorLink(props: DAnchorLinkProps): JSX.Element | null {
   const { dLevel = 0, dAProps, className, children, onClick, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

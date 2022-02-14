@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DExtendsSelectBoxProps } from '../_select-box';
 
 import { isNull, isNumber, isUndefined } from 'lodash';
@@ -36,7 +36,7 @@ export interface DSelectOption<T> {
 
 export interface DSelectBaseProps<T> extends React.HTMLAttributes<HTMLDivElement>, DExtendsSelectBoxProps {
   dFormControlName?: string;
-  dVisible?: [boolean, Updater<boolean>?];
+  dVisible?: [boolean, DUpdater<boolean>?];
   dOptions: DSelectOption<T>[];
   dOptionRender?: (option: DSelectOption<T>) => React.ReactNode;
   dGetId?: (value: T) => string;
@@ -51,14 +51,14 @@ export interface DSelectBaseProps<T> extends React.HTMLAttributes<HTMLDivElement
 }
 
 export interface DSelectSingleProps<T> extends DSelectBaseProps<T> {
-  dModel?: [T | null, Updater<T | null>?];
+  dModel?: [T | null, DUpdater<T | null>?];
   dMultiple?: false;
   dCustomSelected?: (select: DSelectOption<T>) => string;
   onModelChange?: (value: T | null) => void;
 }
 
 export interface DSelectMultipleProps<T> extends DSelectBaseProps<T> {
-  dModel?: [T[], Updater<T[]>?];
+  dModel?: [T[], DUpdater<T[]>?];
   dMultiple: true;
   dMaxSelectNum?: number;
   dCustomSelected?: (selects: DSelectOption<T>[]) => string[];
@@ -80,10 +80,10 @@ const DEFAULT_PROPS = {
   dOptionRender: (option: DSelectOption<unknown>) => option.dLabel,
   dGetId: (value: unknown) => String(value),
 };
-export function DSelect<T>(props: DSelectSingleProps<T>): React.ReactElement;
-export function DSelect<T>(props: DSelectMultipleProps<T>): React.ReactElement;
-export function DSelect<T>(props: DSelectProps<T>): React.ReactElement;
-export function DSelect<T>(props: DSelectProps<T>) {
+export function DSelect<T>(props: DSelectSingleProps<T>): JSX.Element | null;
+export function DSelect<T>(props: DSelectMultipleProps<T>): JSX.Element | null;
+export function DSelect<T>(props: DSelectProps<T>): JSX.Element | null;
+export function DSelect<T>(props: DSelectProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

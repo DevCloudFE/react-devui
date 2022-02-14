@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import { isFunction } from 'lodash';
 import React, { useId, useState } from 'react';
@@ -10,7 +10,7 @@ import { DStar } from './Star';
 
 export interface DRatingProps extends React.HTMLAttributes<HTMLDivElement> {
   dFormControlName?: string;
-  dModel?: [number, Updater<number>?];
+  dModel?: [number, DUpdater<number>?];
   dName?: string;
   dTotal?: number;
   dHalf?: boolean;
@@ -22,7 +22,7 @@ export interface DRatingProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRating');
-export function DRating(props: DRatingProps) {
+export function DRating(props: DRatingProps): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

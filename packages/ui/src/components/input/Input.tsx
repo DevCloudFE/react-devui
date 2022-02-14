@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId, useImperativeHandle } from 'react';
 
@@ -18,7 +18,7 @@ export type DInputRef = HTMLInputElement;
 
 export interface DInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   dFormControlName?: string;
-  dModel?: [string, Updater<string>?];
+  dModel?: [string, DUpdater<string>?];
   dSize?: 'smaller' | 'larger';
   onModelChange?: (value: string) => void;
 }

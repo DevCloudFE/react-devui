@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
 import { DNotification, NotificationService, notificationSubject } from '../notification';
 
-export function Notification() {
+export function Notification(): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion
@@ -97,19 +97,19 @@ export function Notification() {
     },
     [dPrefix]
   );
-  const [notificationLTRoot, setNotificationLTRoot] = useState<HTMLElement>();
+  const [notificationLTRoot, setNotificationLTRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setNotificationLTRoot(getRoot(`${dPrefix}notification-lt-root`));
   }, [dPrefix, getRoot]);
-  const [notificationRTRoot, setNotificationRTRoot] = useState<HTMLElement>();
+  const [notificationRTRoot, setNotificationRTRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setNotificationRTRoot(getRoot(`${dPrefix}notification-rt-root`));
   }, [dPrefix, getRoot]);
-  const [notificationLBRoot, setNotificationLBRoot] = useState<HTMLElement>();
+  const [notificationLBRoot, setNotificationLBRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setNotificationLBRoot(getRoot(`${dPrefix}notification-lb-root`));
   }, [dPrefix, getRoot]);
-  const [notificationRBRoot, setNotificationRBRoot] = useState<HTMLElement>();
+  const [notificationRBRoot, setNotificationRBRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setNotificationRBRoot(getRoot(`${dPrefix}notification-rb-root`));
   }, [dPrefix, getRoot]);

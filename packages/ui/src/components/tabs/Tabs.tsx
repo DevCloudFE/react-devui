@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
 import type { DTabProps } from './Tab';
 
@@ -30,7 +30,7 @@ export interface DTabsContextData {
 export const DTabsContext = React.createContext<DTabsContextData | null>(null);
 
 export interface DTabsProps extends React.HTMLAttributes<HTMLDivElement> {
-  dActive?: [string | null, Updater<string | null>?];
+  dActive?: [string | null, DUpdater<string | null>?];
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
@@ -43,7 +43,7 @@ export interface DTabsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DTabs');
-export function DTabs(props: DTabsProps) {
+export function DTabs(props: DTabsProps): JSX.Element | null {
   const {
     dActive,
     dPlacement = 'top',

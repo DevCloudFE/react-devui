@@ -38,7 +38,7 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DMenuSub');
-export function DMenuSub(props: DMenuSubProps) {
+export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   const {
     dId,
     dIcon,

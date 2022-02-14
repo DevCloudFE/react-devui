@@ -14,7 +14,7 @@ export interface DDrawerFooterProps extends DFooterProps {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDrawerFooter');
-export function DDrawerFooter(props: DDrawerFooterProps) {
+export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
   const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useComponentConfig(
     COMPONENT_NAME,
     props

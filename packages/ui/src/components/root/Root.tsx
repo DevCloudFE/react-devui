@@ -17,7 +17,7 @@ export interface DRootProps extends Omit<DConfigContextData, 'onScrollViewChange
   children: React.ReactNode;
 }
 
-export function DRoot(props: DRootProps) {
+export function DRoot(props: DRootProps): JSX.Element | null {
   const { contentSelector, children, theme, i18n, ...restProps } = props;
 
   const lang = i18n?.lang ?? 'en-US';

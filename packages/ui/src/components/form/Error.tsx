@@ -8,7 +8,7 @@ export interface DErrorProps {
   onHidden?: () => void;
 }
 
-export function DError(props: DErrorProps) {
+export function DError(props: DErrorProps): JSX.Element | null {
   const { dVisible, dMessage, dStatus = 'error', onHidden } = props;
 
   //#region Context

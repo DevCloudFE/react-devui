@@ -21,7 +21,7 @@ export interface DRowProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRow');
-export function DRow(props: DRowProps) {
+export function DRow(props: DRowProps): JSX.Element | null {
   const {
     dGutter = 0,
     dResponsiveGutter,

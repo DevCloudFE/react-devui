@@ -19,7 +19,7 @@ interface SearchListProps<T> {
   dSearchValue: string;
 }
 
-export function DSearchList<T>(props: SearchListProps<T>) {
+export function DSearchList<T>(props: SearchListProps<T>): JSX.Element | null {
   const { dOptions, dOptionRender, dSearchValue } = props;
 
   //#region Context

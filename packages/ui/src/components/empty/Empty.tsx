@@ -9,7 +9,7 @@ export interface DEmptyProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DEmpty');
-export function DEmpty(props: DEmptyProps) {
+export function DEmpty(props: DEmptyProps): JSX.Element | null {
   const { dIcon, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

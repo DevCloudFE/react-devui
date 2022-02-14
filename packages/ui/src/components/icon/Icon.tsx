@@ -16,7 +16,7 @@ export interface DIconProps extends React.SVGAttributes<SVGElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DIcon');
-export function DIcon(props: DIconProps) {
+export function DIcon(props: DIconProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   const {
     dName,

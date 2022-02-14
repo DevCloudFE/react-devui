@@ -39,7 +39,7 @@ export interface DInputAffixProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DInputAffix');
-export function DInputAffix(props: DInputAffixProps) {
+export function DInputAffix(props: DInputAffixProps): JSX.Element | null {
   const {
     dPrefix: _dPrefix,
     dSuffix,

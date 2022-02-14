@@ -1,5 +1,5 @@
 import type { DElementSelector } from '../../hooks/element';
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import { isUndefined } from 'lodash';
 import React, { useCallback, useId, useMemo, useRef } from 'react';
@@ -25,7 +25,7 @@ export interface DDrawerContextData {
 export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
-  dVisible: [boolean, Updater<boolean>?];
+  dVisible: [boolean, DUpdater<boolean>?];
   dContainer?: DElementSelector | false;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dWidth?: number | string;
@@ -45,7 +45,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDrawer');
-export function DDrawer(props: DDrawerProps) {
+export function DDrawer(props: DDrawerProps): JSX.Element | null {
   const {
     dVisible,
     dContainer,

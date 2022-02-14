@@ -18,7 +18,7 @@ export interface DFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 const DEFAULT_PROPS = {
   dButtons: ['cancel', 'ok'],
 };
-export function DFooter(props: DFooterProps) {
+export function DFooter(props: DFooterProps): JSX.Element | null {
   const {
     dAlign = 'right',
     dButtons = DEFAULT_PROPS.dButtons,

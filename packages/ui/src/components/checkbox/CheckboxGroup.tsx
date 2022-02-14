@@ -1,5 +1,5 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useCallback, useMemo } from 'react';
 
@@ -15,14 +15,14 @@ export const DCheckboxGroupContext = React.createContext<DCheckboxGroupContextDa
 
 export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControlName?: string;
-  dModel?: [T[], Updater<T[]>?];
+  dModel?: [T[], DUpdater<T[]>?];
   dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: T[]) => void;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCheckboxGroup');
-export function DCheckboxGroup<T>(props: DCheckboxGroupProps<T>) {
+export function DCheckboxGroup<T>(props: DCheckboxGroupProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

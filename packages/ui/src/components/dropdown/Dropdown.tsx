@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DTriggerRenderProps } from '../_popup';
 import type { DDropdownItemProps } from './DropdownItem';
 
@@ -20,7 +20,7 @@ export const DDropdownContext = React.createContext<DDropdownContextData | null>
 
 export interface DDropdownProps extends React.HTMLAttributes<HTMLElement> {
   dTriggerNode: React.ReactNode;
-  dVisible?: [boolean, Updater<boolean>?];
+  dVisible?: [boolean, DUpdater<boolean>?];
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dTrigger?: 'hover' | 'click';
   dSubTrigger?: 'hover' | 'click';
@@ -33,7 +33,7 @@ export interface DDropdownProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDropdown');
-export function DDropdown(props: DDropdownProps) {
+export function DDropdown(props: DDropdownProps): JSX.Element | null {
   const {
     dTriggerNode,
     dVisible,

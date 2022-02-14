@@ -76,7 +76,7 @@ export class NotificationService {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DNotification');
-export function DNotification(props: DNotificationProps & { dVisible: boolean }) {
+export function DNotification(props: DNotificationProps & { dVisible: boolean }): JSX.Element | null {
   const {
     dVisible,
     dType,

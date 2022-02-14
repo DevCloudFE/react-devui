@@ -1,5 +1,5 @@
 import type { DGeneralStateContextData } from '../../hooks/general-state';
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useCallback, useMemo } from 'react';
 
@@ -17,7 +17,7 @@ export const DRadioGroupContext = React.createContext<DRadioGroupContextData<any
 
 export interface DRadioGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControlName?: string;
-  dModel?: [T, Updater<T>?];
+  dModel?: [T, DUpdater<T>?];
   dName?: string;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
@@ -27,7 +27,7 @@ export interface DRadioGroupProps<T = unknown> extends React.HTMLAttributes<HTML
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRadioGroup');
-export function DRadioGroup<T>(props: DRadioGroupProps<T>) {
+export function DRadioGroup<T>(props: DRadioGroupProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

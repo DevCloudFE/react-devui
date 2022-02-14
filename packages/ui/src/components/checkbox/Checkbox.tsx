@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId } from 'react';
 
@@ -8,7 +8,7 @@ import { DCheckboxGroupContext } from './CheckboxGroup';
 
 export interface DCheckboxProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
   dFormControlName?: string;
-  dModel?: [boolean, Updater<boolean>?];
+  dModel?: [boolean, DUpdater<boolean>?];
   dIndeterminate?: boolean;
   dDisabled?: boolean;
   dValue?: T;
@@ -18,7 +18,7 @@ export interface DCheckboxProps<T = unknown> extends React.HTMLAttributes<HTMLEl
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCheckbox');
-export function DCheckbox<T>(props: DCheckboxProps<T>) {
+export function DCheckbox<T>(props: DCheckboxProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

@@ -11,7 +11,7 @@ export interface DMenuGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DMenuGroup');
-export function DMenuGroup(props: DMenuGroupProps) {
+export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
   const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

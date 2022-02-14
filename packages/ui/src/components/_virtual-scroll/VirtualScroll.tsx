@@ -28,7 +28,7 @@ export interface DVirtualScrollProps<T> extends React.HTMLAttributes<HTMLElement
   onFocusChange?: (option: T | null) => void;
 }
 
-export function DVirtualScroll<T>(props: DVirtualScrollProps<T>) {
+export function DVirtualScroll<T>(props: DVirtualScrollProps<T>): JSX.Element | null {
   const {
     dFocusOption,
     dHasSelected = false,

@@ -10,7 +10,7 @@ export interface DMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-export function DMask(props: DMaskProps) {
+export function DMask(props: DMaskProps): JSX.Element | null {
   const { dVisible, dTransitionProps, onClose, afterVisibleChange, className, onClick, ...restProps } = props;
 
   //#region Context

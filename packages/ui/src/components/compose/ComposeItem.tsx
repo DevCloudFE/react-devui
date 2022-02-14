@@ -6,7 +6,7 @@ export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DComposeItem');
-export function DComposeItem(props: DComposeItemProps) {
+export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
   const { dGray = false, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

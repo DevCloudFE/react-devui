@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -10,9 +10,9 @@ import { DInput, DInputAffix } from '../input';
 import { DSelect } from '../select';
 
 export interface DPaginationProps extends React.HTMLAttributes<HTMLElement> {
-  dActive?: [number, Updater<number>?];
+  dActive?: [number, DUpdater<number>?];
   dTotal: number;
-  dPageSize?: [number, Updater<number>?];
+  dPageSize?: [number, DUpdater<number>?];
   dPageSizeOptions?: number[];
   dCompose?: ('total' | 'pages' | 'size' | 'jump')[];
   dCustomRender?: {
@@ -33,7 +33,7 @@ const DEFAULT_PROPS = {
   dCompose: ['pages'],
   dPageSizeOptions: [10, 20, 50, 100],
 };
-export function DPagination(props: DPaginationProps) {
+export function DPagination(props: DPaginationProps): JSX.Element | null {
   const {
     dActive,
     dTotal,

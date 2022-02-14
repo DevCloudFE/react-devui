@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DPopupProps, DPopupRef, DTriggerRenderProps } from '../_popup';
 
 import React, { useId } from 'react';
@@ -10,7 +10,7 @@ import { DPopup } from '../_popup';
 export type DTooltipRef = DPopupRef;
 
 export interface DTooltipProps extends Omit<DPopupProps, 'dVisible' | 'dPopupContent'> {
-  dVisible?: [boolean, Updater<boolean>?];
+  dVisible?: [boolean, DUpdater<boolean>?];
   dTitle: React.ReactNode;
 }
 

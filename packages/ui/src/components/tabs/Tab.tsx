@@ -24,7 +24,7 @@ export interface DTabProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DTab');
-export function DTab(props: DTabProps) {
+export function DTab(props: DTabProps): JSX.Element | null {
   const {
     dId,
     dTitle,

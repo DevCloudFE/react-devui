@@ -15,7 +15,7 @@ export interface DListProps<T> {
   dList: AbstractTreeNode<T, DCascaderOption<T>>[];
 }
 
-export function DList<T>(props: DListProps<T>) {
+export function DList<T>(props: DListProps<T>): JSX.Element | null {
   const { dList } = props;
 
   //#region Context

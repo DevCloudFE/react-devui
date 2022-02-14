@@ -58,7 +58,7 @@ const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, re
 
   const targetEl = useElement(dTarget ?? null);
 
-  const [rootEl, setRootEl] = useState<HTMLElement>();
+  const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     let root = document.getElementById(`${dPrefix}affix-root`);
     if (!root) {

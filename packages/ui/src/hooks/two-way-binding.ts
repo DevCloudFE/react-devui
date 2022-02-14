@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Updater as IUpdater } from './immer';
+import type { Updater } from './immer';
 
 import { freeze, produce } from 'immer';
 import { isArray, isEqual, isFunction, isNull, isUndefined } from 'lodash';
@@ -10,11 +10,11 @@ import { useEventCallback } from './callback';
 import { useCustomContext } from './context';
 import { useIsomorphicLayoutEffect } from './layout-effect';
 
-export type Updater<S> = (value: S) => void;
+export type DUpdater<S> = (value: S) => void;
 
 export function useTwoWayBinding<T, S = T>(
   initialValue: any,
-  input?: [any, Updater<any>?],
+  input?: [any, DUpdater<any>?],
   onValueChange?: (value: any) => void,
   opt?: {
     id?: string;
@@ -23,7 +23,7 @@ export function useTwoWayBinding<T, S = T>(
   }
 ): [
   T,
-  IUpdater<S>,
+  Updater<S>,
   {
     validateClassName?: string;
     ariaAttribute?: React.HTMLAttributes<HTMLElement>;

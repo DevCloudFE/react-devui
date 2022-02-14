@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DExtendsSelectBoxProps } from '../_select-box';
 import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, TreeOption } from '../tree';
@@ -43,7 +43,7 @@ export interface DCascaderOption<T> extends TreeOption<T> {
 
 export interface DCascaderBaseProps<T> extends React.HTMLAttributes<HTMLDivElement>, DExtendsSelectBoxProps {
   dFormControlName?: string;
-  dVisible?: [boolean, Updater<boolean>?];
+  dVisible?: [boolean, DUpdater<boolean>?];
   dOptions: DCascaderOption<T>[];
   dOptionRender?: (option: DCascaderOption<T>) => React.ReactNode;
   dGetId?: (value: T) => string;
@@ -58,14 +58,14 @@ export interface DCascaderBaseProps<T> extends React.HTMLAttributes<HTMLDivEleme
 }
 
 export interface DCascaderSingleProps<T> extends DCascaderBaseProps<T> {
-  dModel?: [T[] | null, Updater<T[] | null>?];
+  dModel?: [T[] | null, DUpdater<T[] | null>?];
   dMultiple?: false;
   dCustomSelected?: (select: DCascaderOption<T>[]) => string;
   onModelChange?: (value: T[] | null) => void;
 }
 
 export interface DCascaderMultipleProps<T> extends DCascaderBaseProps<T> {
-  dModel?: [T[][], Updater<T[][]>?];
+  dModel?: [T[][], DUpdater<T[][]>?];
   dMultiple: true;
   dCustomSelected?: (select: DCascaderOption<T>[][]) => string[];
   onModelChange?: (values: T[][]) => void;
@@ -83,10 +83,10 @@ const DEFAULT_PROPS = {
   dOptionRender: (option: DCascaderOption<unknown>) => option.dLabel,
   dGetId: (value: unknown) => String(value),
 };
-export function DCascader<T>(props: DCascaderSingleProps<T>): React.ReactElement;
-export function DCascader<T>(props: DCascaderMultipleProps<T>): React.ReactElement;
-export function DCascader<T>(props: DCascaderProps<T>): React.ReactElement;
-export function DCascader<T>(props: DCascaderProps<T>) {
+export function DCascader<T>(props: DCascaderSingleProps<T>): JSX.Element | null;
+export function DCascader<T>(props: DCascaderMultipleProps<T>): JSX.Element | null;
+export function DCascader<T>(props: DCascaderProps<T>): JSX.Element | null;
+export function DCascader<T>(props: DCascaderProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

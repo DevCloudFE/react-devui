@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DPopupRef } from '../_popup';
 
 import { isArray, isNumber, toNumber } from 'lodash';
@@ -31,7 +31,7 @@ export interface DSliderBaseProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export interface DSliderSingleProps extends DSliderBaseProps {
-  dModel?: [number, Updater<number>?];
+  dModel?: [number, DUpdater<number>?];
   dRange?: false;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
@@ -40,7 +40,7 @@ export interface DSliderSingleProps extends DSliderBaseProps {
 }
 
 export interface DSliderRangeProps extends DSliderBaseProps {
-  dModel?: [[number, number], Updater<[number, number]>?];
+  dModel?: [[number, number], DUpdater<[number, number]>?];
   dRange: true;
   dRangeMinDistance?: number;
   dRangeThumbDraggable?: boolean;
@@ -64,10 +64,10 @@ export interface DSliderProps extends DSliderBaseProps {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DSlider');
-export function DSlider(props: DSliderSingleProps): React.ReactElement;
-export function DSlider(props: DSliderRangeProps): React.ReactElement;
-export function DSlider(props: DSliderProps): React.ReactElement;
-export function DSlider(props: DSliderProps) {
+export function DSlider(props: DSliderSingleProps): JSX.Element | null;
+export function DSlider(props: DSliderRangeProps): JSX.Element | null;
+export function DSlider(props: DSliderProps): JSX.Element | null;
+export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

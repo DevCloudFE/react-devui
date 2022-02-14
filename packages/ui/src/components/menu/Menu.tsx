@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DMenuItemProps } from './MenuItem';
 
 import { isUndefined } from 'lodash';
@@ -26,8 +26,8 @@ export interface DMenuContextData {
 export const DMenuContext = React.createContext<DMenuContextData | null>(null);
 
 export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
-  dActive?: [string | null, Updater<string | null>?];
-  dExpands?: [Set<string>, Updater<Set<string>>?];
+  dActive?: [string | null, DUpdater<string | null>?];
+  dExpands?: [Set<string>, DUpdater<Set<string>>?];
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
@@ -36,7 +36,7 @@ export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DMenu');
-export function DMenu(props: DMenuProps) {
+export function DMenu(props: DMenuProps): JSX.Element | null {
   const {
     dActive,
     dExpands,

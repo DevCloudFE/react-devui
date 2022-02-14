@@ -15,7 +15,7 @@ export interface DStarProps {
   onHoverChange: (value: number) => void;
 }
 
-export function DStar(props: DStarProps) {
+export function DStar(props: DStarProps): JSX.Element | null {
   const { dName, dValue, dIcon, dChecked, dHoverValue, dDisabled, dHalf, dTooltip, onCheck, onHoverChange } = props;
 
   //#region Context

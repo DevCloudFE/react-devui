@@ -16,7 +16,7 @@ export interface DColProps extends DColBaseProps {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DCol');
-export function DCol(props: DColProps) {
+export function DCol(props: DColProps): JSX.Element | null {
   const { dSpan, dResponsiveProps, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

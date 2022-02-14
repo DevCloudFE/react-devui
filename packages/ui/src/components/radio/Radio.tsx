@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId } from 'react';
 
@@ -8,7 +8,7 @@ import { DRadioGroupContext } from './RadioGroup';
 
 export interface DRadioProps<T = unknown> extends React.HTMLAttributes<HTMLElement> {
   dFormControlName?: string;
-  dModel?: [boolean, Updater<boolean>?];
+  dModel?: [boolean, DUpdater<boolean>?];
   dDisabled?: boolean;
   dValue?: T;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -17,7 +17,7 @@ export interface DRadioProps<T = unknown> extends React.HTMLAttributes<HTMLEleme
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DRadio');
-export function DRadio<T>(props: DRadioProps<T>) {
+export function DRadio<T>(props: DRadioProps<T>): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

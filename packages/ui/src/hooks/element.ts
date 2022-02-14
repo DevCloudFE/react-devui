@@ -6,11 +6,9 @@ import { useIsomorphicLayoutEffect } from './layout-effect';
 
 export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 
-type SelectorHandle = () => HTMLElement | null;
-
 export function useElement(selector: DElementSelector): HTMLElement | null;
-export function useElement(selector: any, handle: SelectorHandle): HTMLElement | null;
-export function useElement(selector: any, handle?: SelectorHandle): HTMLElement | null {
+export function useElement(selector: any, handle: () => HTMLElement | null): HTMLElement | null;
+export function useElement(selector: any, handle?: any): any {
   const [el, setEl] = useState<HTMLElement | null>(null);
   const preEl = useRef(el);
 

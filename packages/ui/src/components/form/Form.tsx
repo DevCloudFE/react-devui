@@ -41,7 +41,7 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DForm');
-export function DForm(props: DFormProps) {
+export function DForm(props: DFormProps): JSX.Element | null {
   const {
     dForm,
     dLabelWidth,

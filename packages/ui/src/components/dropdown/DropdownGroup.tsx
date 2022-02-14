@@ -11,7 +11,7 @@ export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElemen
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDropdownGroup');
-export function DDropdownGroup(props: DDropdownGroupProps) {
+export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
   const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

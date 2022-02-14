@@ -12,7 +12,7 @@ export interface DDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
 }
 
-export function DDialog(props: DDialogProps) {
+export function DDialog(props: DDialogProps): JSX.Element | null {
   const {
     dVisible,
     dHidden,

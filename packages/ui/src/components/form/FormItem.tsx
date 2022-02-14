@@ -40,7 +40,7 @@ export interface DFormItemProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DFormItem');
-export function DFormItem(props: DFormItemProps) {
+export function DFormItem(props: DFormItemProps): JSX.Element | null {
   const { dLabel, dLabelWidth, dLabelExtra, dShowRequired, dErrors, dSpan, dResponsiveProps, className, style, children, ...restProps } =
     useComponentConfig(COMPONENT_NAME, props);
 

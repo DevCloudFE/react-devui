@@ -23,7 +23,7 @@ export interface DTriggerProps {
   onTrigger?: (state?: boolean) => void;
 }
 
-export function DTrigger(props: DTriggerProps) {
+export function DTrigger(props: DTriggerProps): JSX.Element | null {
   const { dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dTriggerEl, dRender, onTrigger } = props;
 
   const dataRef = useRef<{

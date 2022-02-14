@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
 import { DToast, ToastService, toastSubject } from '../toast';
 
-export function Toast() {
+export function Toast(): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion
@@ -97,11 +97,11 @@ export function Toast() {
     },
     [dPrefix]
   );
-  const [toastTRoot, setToastTRoot] = useState<HTMLElement>();
+  const [toastTRoot, setToastTRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setToastTRoot(getRoot(`${dPrefix}toast-t-root`));
   }, [dPrefix, getRoot]);
-  const [toastBRoot, setToastBRoot] = useState<HTMLElement>();
+  const [toastBRoot, setToastBRoot] = useState<HTMLElement | null>(null);
   useIsomorphicLayoutEffect(() => {
     setToastBRoot(getRoot(`${dPrefix}toast-b-root`));
   }, [dPrefix, getRoot]);

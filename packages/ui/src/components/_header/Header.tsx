@@ -12,7 +12,7 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
 }
 
-export function DHeader(props: DHeaderProps) {
+export function DHeader(props: DHeaderProps): JSX.Element | null {
   const { dClosable = true, dCloseIcon, dExtraIcons, onClose, className, children, ...restProps } = props;
 
   //#region Context

@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId, useState } from 'react';
 
@@ -8,7 +8,7 @@ import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
   dFormControlName?: string;
-  dModel?: [boolean, Updater<boolean>?];
+  dModel?: [boolean, DUpdater<boolean>?];
   dLabelPlacement?: 'left' | 'right';
   dStateContent?: [React.ReactNode, React.ReactNode];
   dLoading?: boolean;
@@ -19,7 +19,7 @@ export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DSwitch');
-export function DSwitch(props: DSwitchProps) {
+export function DSwitch(props: DSwitchProps): JSX.Element | null {
   const {
     dFormControlName,
     dModel,

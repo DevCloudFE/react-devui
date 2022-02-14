@@ -12,7 +12,7 @@ export interface DDropdownItemProps extends React.LiHTMLAttributes<HTMLLIElement
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDropdownItem');
-export function DDropdownItem(props: DDropdownItemProps) {
+export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
   const {
     dId,
     dIcon,

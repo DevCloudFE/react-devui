@@ -15,7 +15,7 @@ export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DMenuItem');
-export function DMenuItem(props: DMenuItemProps) {
+export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
   const {
     dId,
     dIcon,

@@ -43,7 +43,7 @@ export interface DSelectBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   onRendered?: () => void;
 }
 
-export function DSelectBox(props: DSelectBoxProps) {
+export function DSelectBox(props: DSelectBoxProps): JSX.Element | null {
   const {
     dPopupContent,
     dSuffix,

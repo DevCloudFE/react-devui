@@ -12,7 +12,7 @@ export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DTag');
-export function DTag(props: DTagProps) {
+export function DTag(props: DTagProps): JSX.Element | null {
   const {
     dType = 'primary',
     dTheme,

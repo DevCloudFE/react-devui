@@ -20,7 +20,7 @@ export interface DButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DButtonGroup');
-export function DButtonGroup(props: DButtonGroupProps) {
+export function DButtonGroup(props: DButtonGroupProps): JSX.Element | null {
   const {
     dType = 'secondary',
     dTheme = 'primary',

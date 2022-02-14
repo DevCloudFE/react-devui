@@ -8,7 +8,7 @@ import { DDrawerContext } from './Drawer';
 export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
 
 const { COMPONENT_NAME } = generateComponentMate('DDrawerHeader');
-export function DDrawerHeader(props: DDrawerHeaderProps) {
+export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
   const { className, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

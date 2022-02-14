@@ -72,7 +72,7 @@ export class ToastService {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DToast');
-export function DToast(props: DToastProps & { dVisible: boolean }) {
+export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element | null {
   const {
     dVisible,
     dType,

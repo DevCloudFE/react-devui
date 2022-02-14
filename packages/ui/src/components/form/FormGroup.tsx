@@ -14,7 +14,7 @@ export interface DFormGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DFormGroup');
-export function DFormGroup(props: DFormGroupProps) {
+export function DFormGroup(props: DFormGroupProps): JSX.Element | null {
   const { dFormGroupName, dTitle, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context

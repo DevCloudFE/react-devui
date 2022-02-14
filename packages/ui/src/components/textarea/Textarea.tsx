@@ -1,4 +1,4 @@
-import type { Updater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/two-way-binding';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useId, useImperativeHandle, useState } from 'react';
@@ -10,7 +10,7 @@ export type DTextareaRef = HTMLTextAreaElement;
 
 export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   dFormControlName?: string;
-  dModel?: [string, Updater<string>?];
+  dModel?: [string, DUpdater<string>?];
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
   dShowCount?: boolean | ((num: number) => React.ReactNode);
