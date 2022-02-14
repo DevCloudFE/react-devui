@@ -14,7 +14,7 @@ type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
 export interface DMenuContextData {
   gMode: DMenuMode;
-  gExpandTrigger?: 'hover' | 'click';
+  gExpandTrigger: 'hover' | 'click';
   gActiveId: string | null;
   gExpandIds: Set<string>;
   gFocusId: [string, string] | null;

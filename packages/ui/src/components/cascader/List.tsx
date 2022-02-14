@@ -1,9 +1,9 @@
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderContextData, DCascaderOption } from './Cascader';
 
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 
-import { usePrefixConfig, useAsync, useTranslation, useEventCallback } from '../../hooks';
+import { usePrefixConfig, useAsync, useTranslation, useEventCallback, useContextRequired } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
@@ -32,7 +32,7 @@ export function DList<T>(props: DListProps<T>): JSX.Element | null {
     gOnModelChange,
     gOnFocusValuesChange,
     gOnClose,
-  } = useContext(DCascaderContext) as DCascaderContextData<T>;
+  } = useContextRequired(DCascaderContext) as DCascaderContextData<T>;
   //#endregion
 
   const [t] = useTranslation('Common');

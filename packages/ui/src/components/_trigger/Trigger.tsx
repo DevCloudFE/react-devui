@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isUndefined } from 'lodash';
 import { useRef } from 'react';
 import { useEffect } from 'react';
@@ -15,15 +16,15 @@ export interface DRenderProps {
 }
 
 export interface DTriggerProps {
-  dTrigger?: DTriggerType;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dTriggerEl?: HTMLElement | null;
   dRender?: (props: DRenderProps) => React.ReactNode;
-  onTrigger?: (state?: boolean) => void;
 }
-
-export function DTrigger(props: DTriggerProps): JSX.Element | null {
+export function DTrigger(props: DTriggerProps & { dTrigger: 'click'; onTrigger?: () => void }): JSX.Element | null;
+export function DTrigger(props: DTriggerProps & { dTrigger: 'hover' | 'focus'; onTrigger?: (state: boolean) => void }): JSX.Element | null;
+export function DTrigger(props: DTriggerProps & { dTrigger: DTriggerType; onTrigger?: (state?: boolean) => void }): JSX.Element | null;
+export function DTrigger(props: DTriggerProps & { dTrigger: DTriggerType; onTrigger?: (state?: any) => void }): JSX.Element | null {
   const { dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dTriggerEl, dRender, onTrigger } = props;
 
   const dataRef = useRef<{

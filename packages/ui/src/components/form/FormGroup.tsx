@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useContextOptional } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 
 export interface DFormGroupContextData {
@@ -19,7 +19,7 @@ export function DFormGroup(props: DFormGroupProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gPath }] = useCustomContext(DFormGroupContext);
+  const { gPath } = useContextOptional(DFormGroupContext);
   //#endregion
 
   const contextValue = useMemo<DFormGroupContextData>(() => ({ gPath: (gPath ?? []).concat([dFormGroupName]) }), [dFormGroupName, gPath]);

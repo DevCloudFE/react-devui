@@ -1,5 +1,10 @@
+import type { DRenderProps } from '../_trigger';
+
+import { useState } from 'react';
+
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
+import { DTrigger } from '../_trigger';
 import { DTooltip } from '../tooltip';
 
 export interface DStarProps {
@@ -27,7 +32,9 @@ export function DStar(props: DStarProps): JSX.Element | null {
   const halfValue = dValue - 0.5;
   const halfChecked = dValue === halfValue;
 
-  const halfInputNode = (
+  const [tooltipValue, setTooltipValue] = useState<number>(dValue);
+
+  const halfInputNode = (renderProps?: DRenderProps) => (
     <input
       className={`${dPrefix}rating-star__input`}
       type="radio"
@@ -38,12 +45,15 @@ export function DStar(props: DStarProps): JSX.Element | null {
       onChange={() => {
         onCheck(halfValue);
       }}
-      onMouseEnter={() => {
+      onMouseEnter={(e) => {
+        renderProps?.onMouseEnter?.(e);
+
         onHoverChange(halfValue);
       }}
+      onMouseLeave={renderProps?.onMouseLeave}
     />
   );
-  const inputNode = (
+  const inputNode = (renderProps?: DRenderProps) => (
     <input
       className={`${dPrefix}rating-star__input`}
       type="radio"
@@ -54,13 +64,16 @@ export function DStar(props: DStarProps): JSX.Element | null {
       onChange={() => {
         onCheck(dValue);
       }}
-      onMouseEnter={() => {
+      onMouseEnter={(e) => {
+        renderProps?.onMouseEnter?.(e);
+
         onHoverChange(dValue);
       }}
+      onMouseLeave={renderProps?.onMouseLeave}
     />
   );
 
-  return (
+  const node = (
     <div className={`${dPrefix}rating-star`}>
       {dHalf && (
         <label
@@ -68,7 +81,19 @@ export function DStar(props: DStarProps): JSX.Element | null {
             'is-checked': halfValue <= (dHoverValue ?? dChecked),
           })}
         >
-          {dTooltip ? <DTooltip dTitle={dTooltip(halfValue)}>{halfInputNode}</DTooltip> : halfInputNode}
+          {dTooltip ? (
+            <DTrigger
+              dTrigger="hover"
+              dRender={halfInputNode}
+              onTrigger={(visible) => {
+                if (visible) {
+                  setTooltipValue(halfValue);
+                }
+              }}
+            ></DTrigger>
+          ) : (
+            halfInputNode()
+          )}
           {dIcon}
         </label>
       )}
@@ -77,9 +102,23 @@ export function DStar(props: DStarProps): JSX.Element | null {
           'is-checked': dValue <= (dHoverValue ?? dChecked),
         })}
       >
-        {dTooltip ? <DTooltip dTitle={dTooltip(dValue)}>{inputNode}</DTooltip> : inputNode}
+        {dTooltip ? (
+          <DTrigger
+            dTrigger="hover"
+            dRender={inputNode}
+            onTrigger={(visible) => {
+              if (visible) {
+                setTooltipValue(dValue);
+              }
+            }}
+          ></DTrigger>
+        ) : (
+          inputNode()
+        )}
         {dIcon}
       </label>
     </div>
   );
+
+  return dTooltip ? <DTooltip dTitle={dTooltip(tooltipValue)}>{node}</DTooltip> : node;
 }

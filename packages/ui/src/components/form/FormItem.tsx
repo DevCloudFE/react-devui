@@ -1,11 +1,18 @@
 import type { DBreakpoints } from '../grid';
-import type { DFormContextData } from './Form';
 import type { AbstractControl, FormControlStatus } from './form';
 
 import { isArray, isBoolean, isNull, isNumber, isString, isUndefined } from 'lodash';
-import React, { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useImmer, useTranslation, useGridConfig } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useImmer,
+  useTranslation,
+  useGridConfig,
+  useContextRequired,
+  useContextOptional,
+} from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DIcon } from '../icon';
 import { DTooltip } from '../tooltip';
@@ -47,10 +54,9 @@ export function DFormItem(props: DFormItemProps): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { colNum } = useGridConfig();
-  const { gInstance, gBreakpointMatchs, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } = useContext(
-    DFormContext
-  ) as DFormContextData;
-  const [{ gPath }] = useCustomContext(DFormGroupContext);
+  const { gInstance, gBreakpointMatchs, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } =
+    useContextRequired(DFormContext);
+  const { gPath } = useContextOptional(DFormGroupContext);
   //#endregion
 
   const [t] = useTranslation('DForm');

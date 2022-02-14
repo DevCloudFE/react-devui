@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { useCustomContext } from '@react-devui/ui/hooks';
+import { useContextRequired } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../../App';
 import { AppRoute } from '../../../components';
@@ -13,10 +13,10 @@ export default function __Route__() {
     'zh-Hant': { html: [__zh-Hant__] },
   };
 
-  const [{ onMount: _onMount }] = useCustomContext(AppContext);
+  const { onMount } = useContextRequired(AppContext);
 
   useEffect(() => {
-    _onMount?.();
+    onMount();
   }, []);
 
   return <AppRoute {...props} />;

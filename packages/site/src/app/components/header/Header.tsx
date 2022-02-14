@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { DButton, DIcon, useMediaMatch } from '@react-devui/ui';
-import { useCustomContext } from '@react-devui/ui/hooks';
+import { useContextRequired } from '@react-devui/ui/hooks';
 import { getClassName } from '@react-devui/ui/utils';
 
 import { AppContext } from '../../App';
@@ -10,14 +10,14 @@ import './Header.scss';
 export function AppHeader() {
   const { i18n } = useTranslation();
 
-  const [{ theme, changeTheme: _changeTheme, menuOpen = false, onMenuOpenChange }] = useCustomContext(AppContext);
+  const { theme, changeTheme: _changeTheme, menuOpen, onMenuOpenChange } = useContextRequired(AppContext);
 
   const changeLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en-US' ? 'zh-Hant' : 'en-US');
   };
 
   const changeTheme = () => {
-    _changeTheme?.(theme === 'light' ? 'dark' : 'light');
+    _changeTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   const mediaMatch = useMediaMatch();
@@ -30,7 +30,7 @@ export function AppHeader() {
           <span className="app-header__title">DevUI</span>
         </div>
       ) : (
-        <DButton className="app-header__menu-button" dType="text" onClick={() => onMenuOpenChange?.(!menuOpen)}>
+        <DButton className="app-header__menu-button" dType="text" onClick={() => onMenuOpenChange(!menuOpen)}>
           <div
             className={getClassName('hamburger', {
               'is-active': menuOpen,

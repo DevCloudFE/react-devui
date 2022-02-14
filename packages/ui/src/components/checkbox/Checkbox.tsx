@@ -2,7 +2,7 @@ import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useContextOptional } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DCheckboxGroupContext } from './CheckboxGroup';
 
@@ -36,17 +36,15 @@ export function DCheckbox<T>(props: DCheckboxProps<T>): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gDisabled } = useGeneralState();
-  const [{ gValue, gOnCheckedChange }, checkboxGroupContext] = useCustomContext(DCheckboxGroupContext);
+  const { __context_exist, gValue, gOnCheckedChange } = useContextOptional(DCheckboxGroupContext);
   //#endregion
 
   const uniqueId = useId();
   const _id = dInputProps?.id ?? `${dPrefix}checkbox-input-${uniqueId}`;
 
-  const inGroup = checkboxGroupContext !== null;
-
   const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean | undefined, boolean>(
     false,
-    dModel ?? (dIndeterminate ? [undefined] : inGroup ? [gValue?.includes(dValue) ?? false] : undefined),
+    dModel ?? (dIndeterminate ? [undefined] : __context_exist ? [gValue?.includes(dValue) ?? false] : undefined),
     onModelChange,
     { formControlName: dFormControlName, id: _id }
   );
@@ -57,7 +55,7 @@ export function DCheckbox<T>(props: DCheckboxProps<T>): JSX.Element | null {
     dInputProps?.onChange?.(e);
 
     changeChecked(dIndeterminate ? true : !checked);
-    if (inGroup) {
+    if (__context_exist) {
       gOnCheckedChange?.(dValue, dIndeterminate ? true : !checked);
     }
   };

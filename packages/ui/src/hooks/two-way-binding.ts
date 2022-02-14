@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { DFormContext, DFormGroupContext, DFormItemContext } from '../components/form';
 import { useEventCallback } from './callback';
-import { useCustomContext } from './context';
+import { useContextOptional } from './context';
 import { useIsomorphicLayoutEffect } from './layout-effect';
 
 export type DUpdater<S> = (value: S) => void;
@@ -34,9 +34,9 @@ export function useTwoWayBinding<T, S = T>(
     throw new Error('Please check `input` value');
   }
 
-  const [{ gInstance }] = useCustomContext(DFormContext);
-  const [{ gPath }] = useCustomContext(DFormGroupContext);
-  const [{ gUpdateFormItems, gRemoveFormItems }] = useCustomContext(DFormItemContext);
+  const { gInstance } = useContextOptional(DFormContext);
+  const { gPath } = useContextOptional(DFormGroupContext);
+  const { gUpdateFormItems, gRemoveFormItems } = useContextOptional(DFormItemContext);
   const formControlName = opt?.formControlName;
   const deepCompare = opt?.deepCompare ?? false;
 

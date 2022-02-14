@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 import {
   usePrefixConfig,
   useComponentConfig,
-  useCustomContext,
   useRefCallback,
   useTranslation,
   useIsomorphicLayoutEffect,
+  useContextRequired,
 } from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DButton } from '../button';
@@ -40,7 +40,7 @@ export function DTab(props: DTabProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gUpdateTabEls, gRemoveTabEls, gActiveId, gGetDotStyle, gOnActiveChange, gOnClose }] = useCustomContext(DTabsContext);
+  const { gUpdateTabEls, gRemoveTabEls, gActiveId, gGetDotStyle, gOnActiveChange, gOnClose } = useContextRequired(DTabsContext);
   //#endregion
 
   //#region Ref
@@ -55,16 +55,16 @@ export function DTab(props: DTabProps): JSX.Element | null {
 
   useIsomorphicLayoutEffect(() => {
     if (!__dropdown && tabEl) {
-      gUpdateTabEls?.(dId, tabEl);
+      gUpdateTabEls(dId, tabEl);
       return () => {
-        gRemoveTabEls?.(dId);
+        gRemoveTabEls(dId);
       };
     }
   }, [__dropdown, dId, gRemoveTabEls, gUpdateTabEls, tabEl]);
 
   useEffect(() => {
     if (!__dropdown && gActiveId === dId) {
-      gGetDotStyle?.();
+      gGetDotStyle();
     }
   }, [__dropdown, dId, gActiveId, gGetDotStyle]);
 
@@ -72,14 +72,14 @@ export function DTab(props: DTabProps): JSX.Element | null {
     onClick?.(e);
 
     if (!dDisabled) {
-      gOnActiveChange?.(dId);
+      gOnActiveChange(dId);
     }
   };
 
   const handleCloseClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
 
-    gOnClose?.(dId);
+    gOnClose(dId);
   };
 
   return (

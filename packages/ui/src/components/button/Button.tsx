@@ -5,10 +5,10 @@ import {
   usePrefixConfig,
   useComponentConfig,
   useWave,
-  useCustomContext,
   useGeneralState,
   useDCollapseTransition,
   useRefCallback,
+  useContextOptional,
 } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DIcon } from '../icon';
@@ -49,7 +49,7 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralState();
-  const [{ gType, gTheme }] = useCustomContext(DButtonGroupContext);
+  const { gType, gTheme } = useContextOptional(DButtonGroupContext);
   //#endregion
 
   //#region Ref

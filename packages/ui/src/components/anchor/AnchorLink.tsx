@@ -1,4 +1,4 @@
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useIsomorphicLayoutEffect } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useRefCallback, useIsomorphicLayoutEffect, useContextRequired } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DAnchorContext } from './Anchor';
 
@@ -13,7 +13,7 @@ export function DAnchorLink(props: DAnchorLinkProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gUpdateLinks, gRemoveLinks, gActiveHref, gOnLinkClick }] = useCustomContext(DAnchorContext);
+  const { gUpdateLinks, gRemoveLinks, gActiveHref, gOnLinkClick } = useContextRequired(DAnchorContext);
   //#endregion
 
   //#region Ref
@@ -24,9 +24,9 @@ export function DAnchorLink(props: DAnchorLinkProps): JSX.Element | null {
 
   useIsomorphicLayoutEffect(() => {
     if (href && linkEl) {
-      gUpdateLinks?.(href, linkEl);
+      gUpdateLinks(href, linkEl);
       return () => {
-        gRemoveLinks?.(href);
+        gRemoveLinks(href);
       };
     }
   }, [href, linkEl, gRemoveLinks, gUpdateLinks]);
@@ -36,7 +36,7 @@ export function DAnchorLink(props: DAnchorLinkProps): JSX.Element | null {
 
     e.preventDefault();
     if (href) {
-      gOnLinkClick?.(href);
+      gOnLinkClick(href);
     }
   };
 

@@ -2,7 +2,7 @@ export { useTranslation } from './i18n';
 export { useDTransition, useDCollapseTransition } from './transition';
 export { useAsync } from './async';
 export { useEventCallback, useCallbackWithCondition, useCallbackWithState } from './callback';
-export { useCustomContext } from './context';
+export { useContextOptional, useContextRequired } from './context';
 export { usePrefixConfig, useThemeConfig, useGridConfig, useContentSVChangeConfig, useComponentConfig } from './d-config';
 export { useElement } from './element';
 export { useGeneralState, DGeneralStateContext } from './general-state';

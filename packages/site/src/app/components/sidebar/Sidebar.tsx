@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { DDrawer, DDrawerHeader, DMenu, DMenuGroup, DMenuItem, useMediaMatch } from '@react-devui/ui';
-import { useCustomContext } from '@react-devui/ui/hooks';
+import { useContextRequired } from '@react-devui/ui/hooks';
 
 import { AppContext } from '../../App';
 import menu from '../../configs/menu.json';
@@ -12,7 +12,7 @@ import './Sidebar.scss';
 export function AppSidebar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [{ menuOpen = false, pageMounted, onMenuOpenChange }] = useCustomContext(AppContext);
+  const { menuOpen, pageMounted, onMenuOpenChange } = useContextRequired(AppContext);
 
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export function AppSidebar() {
   }, [pageMounted, setActiveId]);
 
   const menuNode = (
-    <DMenu dActive={[activeId, setActiveId]} onActiveChange={() => onMenuOpenChange?.(false)}>
+    <DMenu dActive={[activeId, setActiveId]} onActiveChange={() => onMenuOpenChange(false)}>
       {menu.map((group) => (
         <DMenuGroup key={group.title} dTitle={t(`menu-group.${group.title}`)}>
           {group.title === 'Other' ? (
@@ -71,7 +71,7 @@ export function AppSidebar() {
         </DDrawerHeader>
       }
       dWidth={280}
-      onClose={() => onMenuOpenChange?.(false)}
+      onClose={() => onMenuOpenChange(false)}
     >
       {menuNode}
     </DDrawer>

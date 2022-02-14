@@ -3,7 +3,7 @@ import type { DFooterProps } from '../_footer';
 import { isBoolean } from 'lodash';
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useContextRequired } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DFooter } from '../_footer';
 import { DDrawerContext } from './Drawer';
@@ -22,7 +22,7 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gCloseDrawer }] = useCustomContext(DDrawerContext);
+  const { gCloseDrawer } = useContextRequired(DDrawerContext);
   //#endregion
 
   const [okLoading, setOkLoading] = useState(false);
@@ -56,11 +56,11 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
       shouldClose.then((val) => {
         setOkLoading(false);
         if (val !== false) {
-          gCloseDrawer?.();
+          gCloseDrawer();
         }
       });
     } else if (shouldClose !== false) {
-      gCloseDrawer?.();
+      gCloseDrawer();
     }
   };
 
@@ -71,11 +71,11 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
       shouldClose.then((val) => {
         setCancelLoading(false);
         if (val !== false) {
-          gCloseDrawer?.();
+          gCloseDrawer();
         }
       });
     } else if (shouldClose !== false) {
-      gCloseDrawer?.();
+      gCloseDrawer();
     }
   };
 

@@ -2,7 +2,7 @@ import type { DUpdater } from '../../hooks/two-way-binding';
 
 import React, { useId } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useTwoWayBinding, useWave, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useWave, useGeneralState, useContextOptional } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DRadioGroupContext } from './RadioGroup';
 
@@ -35,7 +35,7 @@ export function DRadio<T>(props: DRadioProps<T>): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gDisabled } = useGeneralState();
-  const [{ gName, gValue, gType, gOnCheckedChange }, radioGroupContext] = useCustomContext(DRadioGroupContext);
+  const { __context_exist, gName, gValue, gType, gOnCheckedChange } = useContextOptional(DRadioGroupContext);
   //#endregion
 
   const [waveNode, wave] = useWave();
@@ -43,11 +43,9 @@ export function DRadio<T>(props: DRadioProps<T>): JSX.Element | null {
   const uniqueId = useId();
   const _id = dInputProps?.id ?? `${dPrefix}radio-input-${uniqueId}`;
 
-  const inGroup = radioGroupContext !== null;
-
   const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean>(
     false,
-    dModel ?? (inGroup ? [gValue === dValue] : undefined),
+    dModel ?? (__context_exist ? [gValue === dValue] : undefined),
     onModelChange,
     { formControlName: dFormControlName, id: _id }
   );
@@ -66,7 +64,7 @@ export function DRadio<T>(props: DRadioProps<T>): JSX.Element | null {
     dInputProps?.onChange?.(e);
 
     changeChecked(true);
-    if (inGroup) {
+    if (__context_exist) {
       gOnCheckedChange?.(dValue);
     }
   };

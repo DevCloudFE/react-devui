@@ -1,6 +1,6 @@
 import type { DHeaderProps } from '../_header';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useContextRequired } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DHeader } from '../_header';
 import { DDrawerContext } from './Drawer';
@@ -13,17 +13,17 @@ export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gId, gCloseDrawer }] = useCustomContext(DDrawerContext);
+  const { gId, gCloseDrawer } = useContextRequired(DDrawerContext);
   //#endregion
 
   const handleClose = () => {
-    gCloseDrawer?.();
+    gCloseDrawer();
   };
 
   return (
     <DHeader
       {...restProps}
-      id={gId ? `${dPrefix}drawer-header-${gId}` : undefined}
+      id={`${dPrefix}drawer-header-${gId}`}
       className={getClassName(className, `${dPrefix}drawer-header`)}
       onClose={handleClose}
     ></DHeader>

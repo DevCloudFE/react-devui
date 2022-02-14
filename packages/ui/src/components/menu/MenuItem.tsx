@@ -1,6 +1,13 @@
 import { isUndefined } from 'lodash';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useRefCallback, useIsomorphicLayoutEffect } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useRefCallback,
+  useIsomorphicLayoutEffect,
+  useContextOptional,
+  useContextRequired,
+} from '../../hooks';
 import { getClassName, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DTooltip } from '../tooltip';
 import { DMenuContext } from './Menu';
@@ -35,8 +42,8 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gMode, gActiveId, gOnActiveChange, gOnFocus, gOnBlur }] = useCustomContext(DMenuContext);
-  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DMenuSubContext);
+  const { gMode, gActiveId, gOnActiveChange, gOnFocus, gOnBlur } = useContextRequired(DMenuContext);
+  const { gUpdateChildren, gRemoveChildren } = useContextOptional(DMenuSubContext);
   //#endregion
 
   //#region Ref
@@ -55,19 +62,19 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
   const handleClick: React.MouseEventHandler<HTMLLIElement> = (e) => {
     onClick?.(e);
 
-    !dDisabled && gOnActiveChange?.(dId);
+    !dDisabled && gOnActiveChange(dId);
   };
 
   const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onFocus?.(e);
 
-    !dDisabled && gOnFocus?.(dId, _id);
+    !dDisabled && gOnFocus(dId, _id);
   };
 
   const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onBlur?.(e);
 
-    gOnBlur?.();
+    gOnBlur();
   };
 
   return (

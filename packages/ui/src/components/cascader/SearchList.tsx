@@ -3,10 +3,10 @@ import type { DSelectOption } from '../select';
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderContextData, DCascaderOption } from './Cascader';
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { filter } from 'rxjs';
 
-import { useAsync, useEventCallback, useIsomorphicLayoutEffect, usePrefixConfig, useTranslation } from '../../hooks';
+import { useAsync, useContextRequired, useEventCallback, useIsomorphicLayoutEffect, usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
@@ -24,7 +24,7 @@ export function DSearchList<T>(props: SearchListProps<T>): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSelecteds, gUniqueId, gRendered, gMultiple, gOnlyLeafSelectable, gGetId, gOnModelChange, gOnClose } = useContext(
+  const { gSelecteds, gUniqueId, gRendered, gMultiple, gOnlyLeafSelectable, gGetId, gOnModelChange, gOnClose } = useContextRequired(
     DCascaderContext
   ) as DCascaderContextData<T>;
   //#endregion

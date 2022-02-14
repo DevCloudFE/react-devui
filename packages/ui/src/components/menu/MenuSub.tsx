@@ -6,12 +6,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   usePrefixConfig,
   useComponentConfig,
-  useCustomContext,
   useRefCallback,
   useTranslation,
   useDCollapseTransition,
   useImmer,
   useIsomorphicLayoutEffect,
+  useContextOptional,
+  useContextRequired,
 } from '../../hooks';
 import { getClassName, getHorizontalSideStyle, getVerticalSideStyle, toId, mergeStyle, generateComponentMate } from '../../utils';
 import { DPopup } from '../_popup';
@@ -59,8 +60,8 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gMode, gExpandTrigger, gActiveId, gExpandIds, gFocusId, gOnExpandChange, gOnFocus, gOnBlur }] = useCustomContext(DMenuContext);
-  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DMenuSubContext);
+  const { gMode, gExpandTrigger, gActiveId, gExpandIds, gFocusId, gOnExpandChange, gOnFocus, gOnBlur } = useContextRequired(DMenuContext);
+  const { gUpdateChildren, gRemoveChildren } = useContextOptional(DMenuSubContext);
   //#endregion
 
   //#region Ref
@@ -73,7 +74,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
   const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
 
-  const expand = gExpandIds?.has(dId) ?? false;
+  const expand = gExpandIds.has(dId) ?? false;
   const popupMode = gMode !== 'vertical';
 
   const [childrenIds, setChildrenIds] = useImmer<DIds>(new Map());
@@ -242,13 +243,13 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onFocus?.(e);
 
-    !dDisabled && gOnFocus?.(dId, _id);
+    !dDisabled && gOnFocus(dId, _id);
   };
 
   const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onBlur?.(e);
 
-    gOnBlur?.();
+    gOnBlur();
   };
 
   const handlePopupVisibleChange = (visible: boolean) => {
@@ -257,9 +258,9 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
   const handleTrigger = (state?: boolean) => {
     if (gExpandTrigger === 'click') {
-      gOnExpandChange?.(dId, !expand);
+      gOnExpandChange(dId, !expand);
     } else if (state) {
-      gOnExpandChange?.(dId, true);
+      gOnExpandChange(dId, true);
     }
   };
 

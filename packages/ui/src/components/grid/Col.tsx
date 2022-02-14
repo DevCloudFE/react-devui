@@ -2,7 +2,7 @@ import type { DBreakpoints } from './Row';
 
 import { isNumber, isObject } from 'lodash';
 
-import { usePrefixConfig, useComponentConfig, useCustomContext, useGridConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGridConfig, useContextRequired } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 import { DRowContext } from './Row';
 
@@ -22,13 +22,13 @@ export function DCol(props: DColProps): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { colNum } = useGridConfig();
-  const [{ gMediaMatch, gSpace }] = useCustomContext(DRowContext);
+  const { gMediaMatch, gSpace } = useContextRequired(DRowContext);
   //#endregion
 
   const [span, responsiveProps] = (() => {
     let span = dSpan;
     let responsiveProps: DColBaseProps | undefined = undefined;
-    if (gMediaMatch && dResponsiveProps) {
+    if (dResponsiveProps) {
       for (const breakpoint of gMediaMatch) {
         if (breakpoint in dResponsiveProps) {
           const data = dResponsiveProps[breakpoint];

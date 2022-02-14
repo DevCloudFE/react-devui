@@ -4,11 +4,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   usePrefixConfig,
   useComponentConfig,
-  useCustomContext,
   useRefCallback,
   useTranslation,
   useImmer,
   useIsomorphicLayoutEffect,
+  useContextRequired,
+  useContextOptional,
 } from '../../hooks';
 import { generateComponentMate, getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
 import { DPopup } from '../_popup';
@@ -51,13 +52,13 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const [{ gVisible, gPopupTrigger, gFocusId, gOnFocus, gOnBlur }] = useCustomContext(DDropdownContext);
+  const { gVisible, gPopupTrigger, gFocusId, gOnFocus, gOnBlur } = useContextRequired(DDropdownContext);
   //#endregion
 
   //#region Ref
   const [ulEl, ulRef] = useRefCallback<HTMLUListElement>();
   const [liEl, liRef] = useRefCallback<HTMLLIElement>();
-  const [{ gUpdateChildren, gRemoveChildren }] = useCustomContext(DDropdownSubContext);
+  const { gUpdateChildren, gRemoveChildren } = useContextOptional(DDropdownSubContext);
   //#endregion
 
   const [t] = useTranslation('Common');
@@ -131,13 +132,13 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onFocus?.(e);
 
-    !dDisabled && gOnFocus?.(dId, _id);
+    !dDisabled && gOnFocus(dId, _id);
   };
 
   const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
     onBlur?.(e);
 
-    gOnBlur?.();
+    gOnBlur();
   };
 
   const handlePopupVisibleChange = (visible: boolean) => {

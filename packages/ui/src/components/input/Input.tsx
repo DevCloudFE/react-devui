@@ -6,10 +6,10 @@ import {
   usePrefixConfig,
   useComponentConfig,
   useTwoWayBinding,
-  useCustomContext,
   useRefCallback,
   useGeneralState,
   useIsomorphicLayoutEffect,
+  useContextOptional,
 } from '../../hooks';
 import { generateComponentMate, getClassName } from '../../utils';
 import { DInputAffixContext } from './InputAffix';
@@ -43,7 +43,7 @@ const Input: React.ForwardRefRenderFunction<DInputRef, DInputProps> = (props, re
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralState();
-  const [{ gUpdateInput, gPassword, gNumber, gOnFocus, gOnBlur }] = useCustomContext(DInputAffixContext);
+  const { gUpdateInput, gPassword, gNumber, gOnFocus, gOnBlur } = useContextOptional(DInputAffixContext);
   //#endregion
 
   //#region Ref
