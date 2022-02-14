@@ -37,12 +37,6 @@ export interface DTransitionProps {
 export function useDTransition(props: DTransitionProps) {
   const { dEl, dVisible = false, dCallbackList, dSkipFirst = true, afterEnter, afterLeave } = props;
 
-  const dataRef = useRef({
-    hasfirstRun: false,
-    elRendered: true,
-    preVisible: dVisible,
-  });
-
   const asyncCapture = useAsync();
   const [hidden, setHidden] = useState(!dVisible);
   const [cssRecord] = useImmer(() => new CssRecord());
@@ -92,8 +86,14 @@ export function useDTransition(props: DTransitionProps) {
     }
   };
 
+  const dataRef = useRef({
+    hasfirstRun: false,
+    elRendered: true,
+    prevVisible: dVisible,
+  });
+
   const prepareTransition = () => {
-    dataRef.current.preVisible = dVisible;
+    dataRef.current.prevVisible = dVisible;
     if (dVisible) {
       setHidden(false);
       if (dEl) {
@@ -131,7 +131,7 @@ export function useDTransition(props: DTransitionProps) {
   }, [dEl, hidden]);
 
   useIsomorphicLayoutEffect(() => {
-    if (dVisible !== dataRef.current.preVisible) {
+    if (dVisible !== dataRef.current.prevVisible) {
       prepareTransition();
     }
   }, [dVisible]);

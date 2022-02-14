@@ -33,10 +33,10 @@ export function useCallbackWithCondition<S>(condition: boolean, fn: () => S): ()
   };
 }
 
-export function useCallbackWithState<S>(fn: (draft: S) => void, initState: S): () => S {
+export function useCallbackWithState<S>(fn: (draft: S) => void, initialState: S): () => S {
   const ref = useRef({
-    state: initState,
-    nextState: initState,
+    state: initialState,
+    nextState: initialState,
   });
 
   useIsomorphicLayoutEffect(() => {

@@ -10,11 +10,11 @@ export function useElement(selector: DElementSelector): HTMLElement | null;
 export function useElement(selector: any, handle: () => HTMLElement | null): HTMLElement | null;
 export function useElement(selector: any, handle?: any): any {
   const [el, setEl] = useState<HTMLElement | null>(null);
-  const preEl = useRef(el);
+  const prevEl = useRef(el);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useIsomorphicLayoutEffect(() => {
-    let el = preEl.current;
+    let el = prevEl.current;
     if (isString(selector)) {
       el = document.querySelector(selector) as HTMLElement | null;
     } else if (isFunction(selector)) {
@@ -25,8 +25,8 @@ export function useElement(selector: any, handle?: any): any {
       el = handle();
     }
 
-    if (el !== preEl.current) {
-      preEl.current = el;
+    if (el !== prevEl.current) {
+      prevEl.current = el;
       setEl(el);
     }
   });

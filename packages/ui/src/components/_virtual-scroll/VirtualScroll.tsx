@@ -54,12 +54,6 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>): JSX.Element | 
   const [listEl, listRef] = useRefCallback<HTMLUListElement>();
   //#endregion
 
-  const dataRef = useRef<{
-    hasInitFocus: boolean;
-  }>({
-    hasInitFocus: dHasSelected,
-  });
-
   const asyncCapture = useAsync();
   const forceUpdate = useForceUpdate();
 
@@ -188,10 +182,11 @@ export function DVirtualScroll<T>(props: DVirtualScrollProps<T>): JSX.Element | 
   };
   const { flatOptions, focusIndex, list, fillSize } = useCallbackWithCondition(dRendered, updateList)();
 
+  const hasInitFocus = useRef(dHasSelected);
   useEffect(() => {
     if (dRendered) {
-      if (dataRef.current.hasInitFocus && listEl) {
-        dataRef.current.hasInitFocus = false;
+      if (hasInitFocus.current && listEl) {
+        hasInitFocus.current = false;
         listEl[dScrollY ? 'scrollTop' : 'scrollLeft'] = focusIndex * dItemSize;
       }
     }

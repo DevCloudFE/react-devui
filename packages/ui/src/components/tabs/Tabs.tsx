@@ -70,7 +70,7 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
   //#endregion
 
   const dataRef = useRef<{
-    scrollTid?: () => void;
+    stopScroll?: () => void;
   }>({});
 
   const [t] = useTranslation('Common');
@@ -245,8 +245,8 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
 
   const handleListScroll: React.UIEventHandler<HTMLDivElement> = () => {
     checkScrollEnd();
-    dataRef.current.scrollTid?.();
-    dataRef.current.scrollTid = asyncCapture.setTimeout(() => {
+    dataRef.current.stopScroll?.();
+    dataRef.current.stopScroll = asyncCapture.setTimeout(() => {
       updateDropdown();
     }, 200);
   };

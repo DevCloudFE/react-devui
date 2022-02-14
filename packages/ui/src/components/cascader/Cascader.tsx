@@ -165,7 +165,7 @@ export function DCascader<T>(props: DCascaderProps<T>): JSX.Element | null {
   );
   const [renderOptions, changeSelectByCache] = useTreeData(select, getRenderOptions, changeSelect);
 
-  const searchOptions = (() => {
+  const searchOptions = useMemo(() => {
     const searchOptions: DSelectOption<T[]>[] = [];
     if (hasSearch) {
       const defaultFilterFn = (value: string, options: DCascaderOption<T>[]) => {
@@ -211,7 +211,7 @@ export function DCascader<T>(props: DCascaderProps<T>): JSX.Element | null {
       }
     }
     return searchOptions;
-  })();
+  }, [dCustomSearch, dMultiple, dOnlyLeafSelectable, hasSearch, renderOptions, searchValue]);
 
   const [focusValues, setFocusValues] = useState<T[]>(() => {
     let focusValues: T[] | null = null;

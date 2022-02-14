@@ -2,7 +2,7 @@ import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DExtendsSelectBoxProps } from '../_select-box';
 
 import { isNull, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useState, useId, useCallback } from 'react';
+import React, { useEffect, useState, useId, useCallback, useMemo } from 'react';
 import { filter } from 'rxjs';
 
 import {
@@ -148,7 +148,7 @@ export function DSelect<T>(props: DSelectProps<T>): JSX.Element | null {
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as T[]).length > 0 : !isNull(select);
 
-  const renderOptions = (() => {
+  const renderOptions = useMemo(() => {
     const defaultFilterFn = (value: string, option: DSelectOption<T>) => {
       return option.dLabel.includes(value);
     };
@@ -205,7 +205,7 @@ export function DSelect<T>(props: DSelectProps<T>): JSX.Element | null {
     }
 
     return renderOptions;
-  })();
+  }, [dCreateOption, dCustomSearch, dGetId, dOptions, hasSearch, searchValue]);
 
   const canSelectOption = (option: DSelectOption<T>) => !option.dDisabled && !option[IS_GROUP];
   const compareOption = (a: DSelectOption<T>, b: DSelectOption<T>) => {

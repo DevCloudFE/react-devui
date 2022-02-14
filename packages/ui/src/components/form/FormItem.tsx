@@ -55,12 +55,6 @@ export function DFormItem(props: DFormItemProps): JSX.Element | null {
 
   const [t] = useTranslation('DForm');
 
-  const dataRef = useRef<{
-    preErrors: DErrors;
-  }>({
-    preErrors: [],
-  });
-
   const { span, labelWidth } = (() => {
     const props = {
       span: dSpan ?? (gLayout === 'inline' ? gInlineSpan : colNum),
@@ -95,6 +89,7 @@ export function DFormItem(props: DFormItemProps): JSX.Element | null {
     return control;
   };
 
+  const prevErrors = useRef<DErrors>([]);
   const [errors, hasError, errorStyle, status] = (() => {
     const errors: DErrors = [];
     let hasError = false;
@@ -162,13 +157,12 @@ export function DFormItem(props: DFormItemProps): JSX.Element | null {
       status = 'warning';
     }
 
-    const preErrors = dataRef.current.preErrors;
-    dataRef.current.preErrors = errors;
-    preErrors.forEach((error, inedx) => {
+    prevErrors.current.forEach((error, inedx) => {
       if (errors.findIndex((item) => item.key === error.key) === -1) {
         errors.splice(inedx, 0, { ...error, hidden: true });
       }
     });
+    prevErrors.current = errors;
 
     const formControlNames = new Set(errors.map((item) => item.formControlName));
     const _errors: { formControlName: string; errors: DErrors }[] = [];
@@ -208,7 +202,7 @@ export function DFormItem(props: DFormItemProps): JSX.Element | null {
           dMessage={error.message}
           dStatus={error.status}
           onHidden={() => {
-            dataRef.current.preErrors = dataRef.current.preErrors.filter((item) => item.key !== error.key);
+            prevErrors.current = prevErrors.current.filter((item) => item.key !== error.key);
           }}
         ></DError>
       ))}

@@ -83,10 +83,6 @@ export function DSelectBox(props: DSelectBoxProps): JSX.Element | null {
   const [searchEl, searchRef] = useRefCallback();
   //#endregion
 
-  const dataRef = useRef({
-    visible: dVisible,
-  });
-
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
@@ -146,10 +142,11 @@ export function DSelectBox(props: DSelectBoxProps): JSX.Element | null {
     };
   }, [asyncCapture, boxEl, changeVisible, dSearchable, dVisible, searchEl]);
 
+  const prevVisible = useRef(dVisible);
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    if (!dVisible && dVisible !== dataRef.current.visible) {
+    if (!dVisible && dVisible !== prevVisible.current) {
       asyncGroup.setTimeout(() => {
         if (document.activeElement === null || document.activeElement === document.body) {
           boxEl?.focus({ preventScroll: true });
@@ -157,7 +154,7 @@ export function DSelectBox(props: DSelectBoxProps): JSX.Element | null {
       }, 20);
     }
 
-    dataRef.current.visible = dVisible;
+    prevVisible.current = dVisible;
 
     return () => {
       asyncCapture.deleteGroup(asyncId);

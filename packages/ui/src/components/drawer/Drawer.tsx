@@ -79,12 +79,6 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   const [drawerContentEl, drawerContentRef] = useRefCallback<HTMLDivElement>();
   //#endregion
 
-  const dataRef = useRef<{
-    preActiveEl: HTMLElement | null;
-  }>({
-    preActiveEl: null,
-  });
-
   const uniqueId = useId();
 
   const [visible, setVisible] = dVisible;
@@ -104,6 +98,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
       'leave-to': { transform, transition: 'transform 0.2s ease-in' },
     };
   })();
+  const prevActiveEl = useRef<HTMLElement | null>(null);
   const hidden = useDTransition({
     dEl: drawerContentEl,
     dVisible: visible,
@@ -121,11 +116,11 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
         return transitionState;
       },
       afterEnter: (el) => {
-        dataRef.current.preActiveEl = document.activeElement as HTMLElement | null;
+        prevActiveEl.current = document.activeElement as HTMLElement | null;
         el.focus({ preventScroll: true });
       },
       beforeLeave: () => {
-        dataRef.current.preActiveEl?.focus({ preventScroll: true });
+        prevActiveEl.current?.focus({ preventScroll: true });
         __onVisibleChange?.({
           ...distance,
           visible: false,
