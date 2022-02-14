@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
-    "@commitlint/config-conventional": "^16.0.0",
+    "@commitlint/config-conventional": "^16.2.1",
     "@nrwl/cli": "^13.8.0",
     "@nrwl/cypress": "^13.8.0",
     "@nrwl/eslint-plugin-nx": "^13.8.0",
