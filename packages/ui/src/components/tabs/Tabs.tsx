@@ -1,6 +1,6 @@
 import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DDropdownProps } from '../dropdown';
-import type { DTabProps } from './Tab';
+import type { DTabPropsWithPrivate } from './Tab';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -78,14 +78,14 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
   const asyncCapture = useAsync();
   const [dotStyle, setDotStyle] = useImmer<React.CSSProperties>({});
   const [listOverflow, setListOverflow] = useState(true);
-  const [dropdownList, setDropdownList] = useImmer<React.ReactElement<DTabProps>[]>([]);
+  const [dropdownList, setDropdownList] = useImmer<React.ReactElement<DTabPropsWithPrivate>[]>([]);
   const [scrollEnd, setScrollEnd] = useState(false);
   const [tabEls, setTabEls] = useImmer(new Map<string, HTMLElement>());
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useTwoWayBinding<string | null>(
     () => {
-      const childs = React.Children.toArray(children) as React.ReactElement<DTabProps>[];
+      const childs = React.Children.toArray(children) as React.ReactElement<DTabPropsWithPrivate>[];
       if (childs[0]) {
         return childs[0].props.dId;
       }
@@ -105,8 +105,8 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
 
       if (isOverflow) {
         const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
-        const dropdownList: React.ReactElement<DTabProps>[] = [];
-        React.Children.forEach(children as React.ReactElement<DTabProps>[], (child) => {
+        const dropdownList: React.ReactElement<DTabPropsWithPrivate>[] = [];
+        React.Children.forEach(children as React.ReactElement<DTabPropsWithPrivate>[], (child) => {
           for (const [id, el] of tabEls) {
             if (id === child.props.dId) {
               const elRect = el.getBoundingClientRect();
@@ -156,32 +156,6 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
       asyncCapture.deleteGroup(asyncId);
     };
   }, [asyncCapture, checkScrollEnd, tablistEl, tablistWrapperEl, updateDropdown]);
-
-  const [childs, tabpanels] = useMemo(() => {
-    const tabpanels: { dId: string; id: string; labelledby: string; node: React.ReactNode }[] = [];
-    const childs = React.Children.map(children as React.ReactElement<DTabProps>[], (child, index) => {
-      tabpanels.push({
-        dId: child.props.dId,
-        id: `${dPrefix}tabpanel-${toId(child.props.dId)}`,
-        labelledby: child.props.id ?? `${dPrefix}tab-${toId(child.props.dId)}`,
-        node: child.props.children,
-      });
-
-      let tabIndex = child.props.tabIndex;
-      if (index === 0) {
-        tabIndex = 0;
-      }
-
-      const node = React.cloneElement(child, {
-        ...child.props,
-        tabIndex,
-      });
-
-      return node;
-    });
-
-    return [childs, tabpanels] as const;
-  }, [children, dPrefix]);
 
   const gUpdateTabEls = useCallback(
     (id, el) => {
@@ -251,6 +225,20 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
     }, 200);
   };
 
+  const tabpanels = (() => {
+    const tabpanels: { dId: string; id: string; labelledby: string; node: React.ReactNode }[] = [];
+    React.Children.forEach(children as React.ReactElement<DTabPropsWithPrivate>[], (child) => {
+      tabpanels.push({
+        dId: child.props.dId,
+        id: `${dPrefix}tabpanel-${toId(child.props.dId)}`,
+        labelledby: child.props.id ?? `${dPrefix}tab-${toId(child.props.dId)}`,
+        node: child.props.children,
+      });
+    });
+
+    return tabpanels;
+  })();
+
   return (
     <DTabsContext.Provider value={contextValue}>
       <div
@@ -269,7 +257,7 @@ export function DTabs(props: DTabsProps): JSX.Element | null {
             aria-label={dTabAriaLabel}
             aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
           >
-            {childs}
+            {children}
             {(listOverflow || onAddClick) && (
               <div className={`${dPrefix}tabs__button-container`}>
                 {listOverflow && (

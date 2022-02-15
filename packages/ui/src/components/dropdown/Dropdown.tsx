@@ -1,6 +1,5 @@
 import type { DUpdater } from '../../hooks/two-way-binding';
 import type { DTriggerRenderProps } from '../_popup';
-import type { DDropdownItemProps } from './DropdownItem';
 
 import React, { useId, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -119,20 +118,6 @@ export function DDropdown(props: DDropdownProps): JSX.Element | null {
     [dSubTrigger, focusId, gOnBlur, gOnFocus, gOnItemClick, visible]
   );
 
-  const childs = useMemo(() => {
-    return React.Children.map(children as React.ReactElement<DDropdownItemProps>[], (child, index) => {
-      let tabIndex = child.props.tabIndex;
-      if (index === 0) {
-        tabIndex = 0;
-      }
-
-      return React.cloneElement(child, {
-        ...child.props,
-        tabIndex,
-      });
-    });
-  }, [children]);
-
   return (
     <DDropdownContext.Provider value={contextValue}>
       <DPopup
@@ -149,7 +134,7 @@ export function DDropdown(props: DDropdownProps): JSX.Element | null {
             aria-orientation="vertical"
             aria-activedescendant={activedescendant}
           >
-            {React.Children.count(childs) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : childs}
+            {React.Children.count(children) === 0 ? <span className={`${dPrefix}dropdown__empty`}>{t('No Data')}</span> : children}
           </nav>
         }
         dCustomPopup={(popupEl, targetEl) => {

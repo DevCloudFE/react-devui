@@ -67,6 +67,7 @@ const Tooltip: React.ForwardRefRenderFunction<DTooltipRef, DTooltipProps> = (pro
               onClick?.(e);
             };
           }
+
           return React.cloneElement(child, {
             ...child.props,
             ...props,

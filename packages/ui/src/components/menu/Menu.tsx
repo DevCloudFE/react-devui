@@ -1,5 +1,4 @@
 import type { DUpdater } from '../../hooks/two-way-binding';
-import type { DMenuItemProps } from './MenuItem';
 
 import { isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -145,22 +144,6 @@ export function DMenu(props: DMenuProps): JSX.Element | null {
     [activeId, dMode, expandIds, expandTrigger, focusId, gOnActiveChange, gOnBlur, gOnExpandChange, gOnFocus]
   );
 
-  const childs = useMemo(() => {
-    return React.Children.map(children as React.ReactElement<DMenuItemProps>[], (child, index) => {
-      const props = Object.assign({}, child.props);
-
-      if ('type' in child && (child.type === DMenuSub || child.type === DMenuItem)) {
-        props.__inNav = true;
-      }
-
-      if (index === 0) {
-        props.tabIndex = 0;
-      }
-
-      return React.cloneElement(child, props);
-    });
-  }, [children]);
-
   const transitionState = {
     'enter-from': { width: '80px' },
     'enter-to': { transition: 'width 0.2s linear' },
@@ -181,6 +164,16 @@ export function DMenu(props: DMenuProps): JSX.Element | null {
       changeExpandIds(new Set());
     }
   };
+
+  const childs = React.Children.map(children as React.ReactElement[], (child) => {
+    const props = Object.assign({}, child.props);
+
+    if ('type' in child && (child.type === DMenuSub || child.type === DMenuItem)) {
+      props.__inNav = true;
+    }
+
+    return React.cloneElement(child, props);
+  });
 
   return (
     <DMenuContext.Provider value={contextValue}>

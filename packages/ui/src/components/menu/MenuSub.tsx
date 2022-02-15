@@ -1,5 +1,3 @@
-import type { DMenuItemProps } from './MenuItem';
-
 import { isString, isUndefined } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -34,6 +32,9 @@ export interface DMenuSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dTitle: React.ReactNode;
   dDisabled?: boolean;
   dPopupClassName?: string;
+}
+
+export interface DMenuSubPropsWithPrivate extends DMenuSubProps {
   __level?: number;
   __inNav?: boolean;
 }
@@ -46,8 +47,6 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     dTitle,
     dDisabled = false,
     dPopupClassName,
-    __level = 0,
-    __inNav = false,
     id,
     className,
     style,
@@ -55,8 +54,10 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     children,
     onFocus,
     onBlur,
+    __level = 0,
+    __inNav = false,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DMenuSubPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -156,10 +157,10 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     }
   }, [popupMode, setCurrentPopupVisible]);
 
-  const childs = useMemo(() => {
+  const childs = (() => {
     const length = React.Children.count(children);
 
-    return React.Children.map(children as React.ReactElement<DMenuItemProps>[], (child, index) =>
+    return React.Children.map(children as React.ReactElement[], (child, index) =>
       React.cloneElement(child, {
         ...child.props,
         className: getClassName(child.props.className, {
@@ -169,7 +170,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
         __level: popupMode ? 0 : __level + 1,
       })
     );
-  }, [children, popupMode, __level]);
+  })();
 
   const menuNode = (_props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
     <ul

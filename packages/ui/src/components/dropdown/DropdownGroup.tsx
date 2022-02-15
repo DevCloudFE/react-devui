@@ -1,5 +1,3 @@
-import type { DDropdownItemProps } from './DropdownItem';
-
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
@@ -7,12 +5,22 @@ import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 
 export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dTitle: React.ReactNode;
+}
+
+export interface DDropdownGroupPropsWithPrivate extends DDropdownGroupProps {
   __level?: number;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DDropdownGroup');
 export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
-  const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    dTitle,
+    className,
+    style,
+    children,
+    __level = 0,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props as DDropdownGroupPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -21,7 +29,7 @@ export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
   const [t] = useTranslation('Common');
 
   const childs = useMemo(() => {
-    return React.Children.map(children as React.ReactElement<DDropdownItemProps>[], (child) =>
+    return React.Children.map(children as React.ReactElement[], (child) =>
       React.cloneElement(child, {
         ...child.props,
         __level: __level + 1,

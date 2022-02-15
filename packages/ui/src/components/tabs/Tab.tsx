@@ -8,6 +8,7 @@ import {
   useTranslation,
   useIsomorphicLayoutEffect,
   useContextRequired,
+  useAsync,
 } from '../../hooks';
 import { generateComponentMate, getClassName, toId } from '../../utils';
 import { DButton } from '../button';
@@ -20,6 +21,9 @@ export interface DTabProps extends React.HTMLAttributes<HTMLDivElement> {
   dDisabled?: boolean;
   dClosable?: boolean;
   dCloseIcon?: React.ReactNode;
+}
+
+export interface DTabPropsWithPrivate extends DTabProps {
   __dropdown?: boolean;
 }
 
@@ -31,12 +35,12 @@ export function DTab(props: DTabProps): JSX.Element | null {
     dDisabled = false,
     dClosable = false,
     dCloseIcon,
-    __dropdown = false,
     id,
     className,
     onClick,
+    __dropdown = false,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DTabPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -47,6 +51,7 @@ export function DTab(props: DTabProps): JSX.Element | null {
   const [tabEl, tabRef] = useRefCallback();
   //#endregion
 
+  const asyncCapture = useAsync();
   const [t] = useTranslation('Common');
 
   const _id = id ?? `${dPrefix}tab-${toId(dId)}`;
@@ -63,10 +68,20 @@ export function DTab(props: DTabProps): JSX.Element | null {
   }, [__dropdown, dId, gRemoveTabEls, gUpdateTabEls, tabEl]);
 
   useEffect(() => {
-    if (!__dropdown && gActiveId === dId) {
-      gGetDotStyle();
+    if (!__dropdown && gActiveId === dId && tabEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+      asyncGroup.onResize(
+        tabEl,
+        () => {
+          gGetDotStyle();
+        },
+        false
+      );
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
     }
-  }, [__dropdown, dId, gActiveId, gGetDotStyle]);
+  }, [__dropdown, asyncCapture, dId, gActiveId, gGetDotStyle, tabEl]);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
     onClick?.(e);

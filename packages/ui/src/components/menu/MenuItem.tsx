@@ -17,6 +17,9 @@ export interface DMenuItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dId: string;
   dIcon?: React.ReactNode;
   dDisabled?: boolean;
+}
+
+export interface DMenuItemPropsWithPrivate extends DMenuItemProps {
   __level?: number;
   __inNav?: boolean;
 }
@@ -27,8 +30,6 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
     dId,
     dIcon,
     dDisabled = false,
-    __level = 0,
-    __inNav = false,
     id,
     className,
     style,
@@ -37,8 +38,10 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
     onClick,
     onFocus,
     onBlur,
+    __level = 0,
+    __inNav = false,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DMenuItemPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();

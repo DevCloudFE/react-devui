@@ -40,6 +40,9 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dChildDrawer?: React.ReactNode;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
+}
+
+export interface DDrawerPropsWithPrivate extends DDrawerProps {
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
   __zIndex?: number | string;
 }
@@ -62,13 +65,13 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     dChildDrawer,
     onClose,
     afterVisibleChange,
-    __onVisibleChange,
-    __zIndex,
     className,
     style,
     children,
+    __onVisibleChange,
+    __zIndex,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DDrawerPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -186,20 +189,6 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
 
   useLockScroll(isFixed && !hidden);
 
-  const childDrawer = useMemo(() => {
-    if (dChildDrawer) {
-      const childDrawer = React.Children.only(dChildDrawer) as React.ReactElement<DDrawerProps>;
-      return React.cloneElement<DDrawerProps>(childDrawer, {
-        ...childDrawer.props,
-        __onVisibleChange: (distance) => {
-          setDistance(distance);
-        },
-        __zIndex: isUndefined(zIndex) ? zIndex : `calc(${zIndex} + 1)`,
-      });
-    }
-    return null;
-  }, [dChildDrawer, setDistance, zIndex]);
-
   const contextValue = useMemo<DDrawerContextData>(
     () => ({
       gId: uniqueId,
@@ -213,6 +202,20 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
       closeDrawer();
     }
   };
+
+  const childDrawer = (() => {
+    if (dChildDrawer) {
+      const childDrawer = React.Children.only(dChildDrawer) as React.ReactElement<DDrawerProps>;
+      return React.cloneElement<DDrawerPropsWithPrivate>(childDrawer, {
+        ...childDrawer.props,
+        __onVisibleChange: (distance) => {
+          setDistance(distance);
+        },
+        __zIndex: isUndefined(zIndex) ? zIndex : `calc(${zIndex} + 1)`,
+      });
+    }
+    return null;
+  })();
 
   const drawerNode = (
     <>

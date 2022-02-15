@@ -1,18 +1,26 @@
-import type { DMenuItemProps } from './MenuItem';
-
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
 import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
 
 export interface DMenuGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
   dTitle: React.ReactNode;
+}
+
+export interface DMenuGroupPropsWithPrivate extends DMenuGroupProps {
   __level?: number;
 }
 
 const { COMPONENT_NAME } = generateComponentMate('DMenuGroup');
 export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
-  const { dTitle, __level = 0, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    dTitle,
+    className,
+    style,
+    children,
+    __level = 0,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props as DMenuGroupPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -20,10 +28,10 @@ export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
 
   const [t] = useTranslation('Common');
 
-  const childs = useMemo(() => {
+  const childs = (() => {
     const length = React.Children.count(children);
 
-    return React.Children.map(children as React.ReactElement<DMenuItemProps>[], (child, index) =>
+    return React.Children.map(children as React.ReactElement[], (child, index) =>
       React.cloneElement(child, {
         ...child.props,
         className: getClassName(child.props.className, {
@@ -33,7 +41,7 @@ export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
         __level: __level + 1,
       })
     );
-  }, [children, __level]);
+  })();
 
   return (
     <>

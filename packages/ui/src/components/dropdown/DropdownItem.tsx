@@ -8,6 +8,9 @@ export interface DDropdownItemProps extends React.LiHTMLAttributes<HTMLLIElement
   dId: string;
   dIcon?: React.ReactNode;
   dDisabled?: boolean;
+}
+
+export interface DDropdownItemPropsWithPrivate extends DDropdownItemProps {
   __level?: number;
 }
 
@@ -17,7 +20,6 @@ export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
     dId,
     dIcon,
     dDisabled = false,
-    __level = 0,
     id,
     className,
     style,
@@ -26,8 +28,9 @@ export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
     onClick,
     onFocus,
     onBlur,
+    __level = 0,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DDropdownItemPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();

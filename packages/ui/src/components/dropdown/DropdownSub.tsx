@@ -28,6 +28,9 @@ export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement>
   dTitle: React.ReactNode;
   dDisabled?: boolean;
   dPopupClassName?: string;
+}
+
+export interface DDropdownSubPropsWithPrivate extends DDropdownSubProps {
   __level?: number;
 }
 
@@ -39,7 +42,6 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
     dTitle,
     dDisabled = false,
     dPopupClassName,
-    __level = 0,
     id,
     className,
     style,
@@ -47,8 +49,9 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
     children,
     onFocus,
     onBlur,
+    __level = 0,
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DDropdownSubPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
