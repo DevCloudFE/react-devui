@@ -28,7 +28,7 @@
     "check-update": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
-    "core-js": "^3.21.0",
+    "core-js": "^3.21.1",
     "highlight.js": "^11.4.0",
     "i18next": "^21.6.11",
     "immer": "^9.0.12",
