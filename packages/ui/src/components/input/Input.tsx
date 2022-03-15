@@ -249,7 +249,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
               }
             }}
             onTouchStart={() => {
-              handleNumberMouseDown();
+              handleNumberMouseDown(false);
             }}
             onTouchEnd={() => {
               handleNumberMouseUp();
