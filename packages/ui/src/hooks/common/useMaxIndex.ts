@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react';
+import { useId, useMemo, useRef } from 'react';
 
 import { usePrefixConfig } from '../d-config';
 import { useUnmount } from '../lifecycle';
@@ -27,7 +27,7 @@ export function useMaxIndex(condition: boolean) {
   const prevIndex = useRef<string>();
   const id = useId();
 
-  const zIndex = (() => {
+  const zIndex = useMemo(() => {
     MAX_INDEX_MANAGER.deleteRecord(id);
 
     if (condition) {
@@ -36,7 +36,7 @@ export function useMaxIndex(condition: boolean) {
     }
 
     return prevIndex.current;
-  })();
+  }, [condition, dPrefix, id]);
   prevIndex.current = zIndex;
 
   useUnmount(() => {
