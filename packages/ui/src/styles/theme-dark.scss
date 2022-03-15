@@ -20,6 +20,7 @@ body.dark {
   /** basic **/
   --#{$variable-prefix}text-color: rgb(205 205 205);
   --#{$variable-prefix}text-color-rgb: 205 205 205;
+  --#{$variable-prefix}text-color-sub: #8e8e8e;
   --#{$variable-prefix}background-color: rgb(31 31 31);
   --#{$variable-prefix}background-color-rgb: 31 31 31;
   --#{$variable-prefix}background-color-hover: rgb(255 255 255 / 6%);
@@ -29,35 +30,7 @@ body.dark {
   --#{$variable-prefix}color-divider: #303030;
   --#{$variable-prefix}color-border: #434343;
   --#{$variable-prefix}color-disabled: #4e4e50;
-
-  /** step **/
-  --#{$variable-prefix}color-step-10: hsl(0deg 0% 1%);
-  --#{$variable-prefix}color-step-20: hsl(0deg 0% 2%);
-  --#{$variable-prefix}color-step-30: hsl(0deg 0% 3%);
-  --#{$variable-prefix}color-step-40: hsl(0deg 0% 4%);
-  --#{$variable-prefix}color-step-50: hsl(0deg 0% 5%);
-  --#{$variable-prefix}color-step-60: hsl(0deg 0% 6%);
-  --#{$variable-prefix}color-step-70: hsl(0deg 0% 7%);
-  --#{$variable-prefix}color-step-80: hsl(0deg 0% 8%);
-  --#{$variable-prefix}color-step-90: hsl(0deg 0% 9%);
-  --#{$variable-prefix}color-step-100: hsl(0deg 0% 10%);
-  --#{$variable-prefix}color-step-150: hsl(0deg 0% 15%);
-  --#{$variable-prefix}color-step-200: hsl(0deg 0% 20%);
-  --#{$variable-prefix}color-step-250: hsl(0deg 0% 25%);
-  --#{$variable-prefix}color-step-300: hsl(0deg 0% 30%);
-  --#{$variable-prefix}color-step-350: hsl(0deg 0% 35%);
-  --#{$variable-prefix}color-step-400: hsl(0deg 0% 40%);
-  --#{$variable-prefix}color-step-450: hsl(0deg 0% 45%);
-  --#{$variable-prefix}color-step-500: hsl(0deg 0% 50%);
-  --#{$variable-prefix}color-step-550: hsl(0deg 0% 55%);
-  --#{$variable-prefix}color-step-600: hsl(0deg 0% 60%);
-  --#{$variable-prefix}color-step-650: hsl(0deg 0% 65%);
-  --#{$variable-prefix}color-step-700: hsl(0deg 0% 70%);
-  --#{$variable-prefix}color-step-750: hsl(0deg 0% 75%);
-  --#{$variable-prefix}color-step-800: hsl(0deg 0% 80%);
-  --#{$variable-prefix}color-step-850: hsl(0deg 0% 85%);
-  --#{$variable-prefix}color-step-900: hsl(0deg 0% 90%);
-  --#{$variable-prefix}color-step-950: hsl(0deg 0% 95%);
+  --#{$variable-prefix}color-icon-decorator: #95989b;
 
   @each $theme, $rgb in $dark-themes {
     /** rgb **/
@@ -84,4 +57,5 @@ body.dark {
   --#{$variable-prefix}empty-color: #868a93;
   --#{$variable-prefix}switch-background-color: #5f6164;
   --#{$variable-prefix}tag-background-color: rgb(255 255 255 / 10%);
+  --#{$variable-prefix}compose-item-gray-background-color: hsl(0deg 0% 2%);
 }

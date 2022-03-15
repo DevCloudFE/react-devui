@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
-import { useAsync, usePrefixConfig } from '../../hooks';
+import { useAsync, useMount, usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 
 export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> {
-  dHidden: boolean;
   dDuration: number;
   dEscClosable: boolean;
   dDialogRef?: React.Ref<HTMLDivElement>;
@@ -13,14 +12,12 @@ export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> 
 
 export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
   const {
-    dHidden,
+    className,
+    children,
     dDuration,
     dEscClosable = true,
     dDialogRef,
     onClose,
-    children,
-    className,
-    tabIndex = -1,
     onMouseEnter,
     onMouseLeave,
     onKeyDown,
@@ -37,52 +34,44 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
 
   const asyncCapture = useAsync();
 
-  useEffect(() => {
+  useMount(() => {
     if (dDuration > 0) {
-      dataRef.current.clearTid?.();
       dataRef.current.clearTid = asyncCapture.setTimeout(() => {
         onClose?.();
       }, dDuration * 1000);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
-  const handleMouseEnter: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    onMouseEnter?.(e);
-
-    dataRef.current.clearTid?.();
-  };
-
-  const handleMouseLeave: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    onMouseLeave?.(e);
-
-    if (dDuration > 0) {
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-        onClose?.();
-      }, dDuration * 1000);
-    }
-  };
-
-  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-    onKeyDown?.(e);
-
-    if (dEscClosable && e.code === 'Escape') {
-      onClose?.();
-    }
-  };
-
-  return dHidden ? null : (
+  return (
     <div
       {...restProps}
       className={getClassName(className, `${dPrefix}alert-dialog`)}
       ref={dDialogRef}
+      tabIndex={-1}
       role="alertdialog"
-      tabIndex={tabIndex}
       aria-modal="true"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onKeyDown={handleKeyDown}
+      onMouseEnter={(e) => {
+        onMouseEnter?.(e);
+
+        dataRef.current.clearTid?.();
+      }}
+      onMouseLeave={(e) => {
+        onMouseLeave?.(e);
+
+        if (dDuration > 0) {
+          dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+            onClose?.();
+          }, dDuration * 1000);
+        }
+      }}
+      onKeyDown={(e) => {
+        onKeyDown?.(e);
+
+        if (dEscClosable && e.code === 'Escape') {
+          dataRef.current.clearTid?.();
+          onClose?.();
+        }
+      }}
     >
       {children}
     </div>

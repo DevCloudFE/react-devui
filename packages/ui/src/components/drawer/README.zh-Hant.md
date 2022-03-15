@@ -22,7 +22,6 @@ title: 抽屉
 | dEscClosable | 按下Esc是否关闭 | boolean | true |
 | dHeader | 抽屉的页头 | React.ReactNode | - |
 | dFooter | 抽屉的页脚 | React.ReactNode | - |
-| dDestroy | 关闭后销毁节点 | boolean | false |
 | dChildDrawer | 嵌套子抽屉 | React.ReactNode | - |
 | onClose | 抽屉关闭时的回调 | `() => void` | - |
 | afterVisibleChange | 抽屉打开/关闭动画结束的回调 | `(visible: boolean) => void` | - |

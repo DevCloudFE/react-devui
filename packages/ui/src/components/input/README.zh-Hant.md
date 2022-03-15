@@ -22,7 +22,7 @@ title: 输入框
 type DInputRef = HTMLInputElement;
 ```
 
-### DInputAffixProps
+### DInputProps
 
 继承 `React.HTMLAttributes<HTMLDivElement>`。
 
@@ -31,7 +31,7 @@ type DInputRef = HTMLInputElement;
 | --- | --- | --- | --- | 
 | dPrefix | 输入框前缀 | React.ReactNode | - |
 | dSuffix | 输入框后缀 | React.ReactNode | - |
-| dDisabled | 是否禁用 | boolean | false |
+| disabled | 是否禁用 | boolean | false |
 | dPassword | 是否为密码框 | boolean | false |
 | dPasswordToggle | 密码框是否能够切换密码显示 | boolean | true |
 | dNumber | 是否为数字框 | boolean | false |

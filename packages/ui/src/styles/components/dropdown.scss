@@ -2,40 +2,35 @@ $dropdown-item-height: 32px;
 
 @mixin dropdown-item() {
   position: relative;
-
   display: flex;
   align-items: center;
   height: $dropdown-item-height;
   margin: 0;
-
   list-style: none;
   cursor: pointer;
+  transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  transition: background-color 0.2s linear;
-
-  &:not(.is-disabled) {
-    &:focus,
-    &:hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
-    }
+  &:hover {
+    background-color: var(--#{$variable-prefix}background-color-hover);
   }
 
-  @include utils-outline;
   @include utils-disabled;
 
   @include e(icon) {
-    flex-shrink: 0;
     width: calc(1.05rem + 8px);
-
-    font-size: 1.1em;
+    font-size: var(--#{$variable-prefix}icon-size);
   }
 
   @include e(title) {
-    flex-grow: 1;
-    flex-shrink: 0;
-
     @include utils-ellipsis;
   }
+}
+
+@mixin dropdown-popup() {
+  position: fixed;
+  background-color: var(--#{$variable-prefix}background-color);
+  border-radius: var(--#{$variable-prefix}border-radius);
+  box-shadow: var(--#{$variable-prefix}shadow-popup);
 }
 
 @mixin dropdown-empty() {
@@ -45,19 +40,29 @@ $dropdown-item-height: 32px;
     width: 100%;
     height: $dropdown-item-height;
     padding: 0 12px;
-
-    color: var(--#{$variable-prefix}color-step-400);
+    color: var(--#{$variable-prefix}color-disabled);
   }
 }
 
 @include b(dropdown) {
-  position: relative;
+  @include dropdown-popup;
 
-  min-width: 120px;
-  max-height: calc(8px + #{$dropdown-item-height} * 6);
+  @include e(arrow) {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    background-color: inherit;
+  }
 
-  padding: 4px 0;
-  overflow-x: hidden;
+  @include e(list) {
+    min-width: 120px;
+    max-height: calc(8px + #{$dropdown-item-height} * 6);
+    padding: 4px 0;
+    margin: 0;
+    overflow: hidden auto;
+    list-style: none;
+  }
 
   @include dropdown-empty;
 }
@@ -80,58 +85,45 @@ $dropdown-item-height: 32px;
     }
   }
 
+  @include when(expand) {
+    background-color: var(--#{$variable-prefix}background-color-hover);
+  }
+
   @include e(arrow) {
     position: absolute;
     right: 6px;
-
     display: inline-flex;
     align-items: center;
-
     height: 100%;
-
-    color: var(--#{$variable-prefix}color-step-450);
+    color: var(--#{$variable-prefix}color-icon-decorator);
   }
 
   @include e(list) {
-    position: relative;
-
     min-width: 120px;
-    margin: 0;
-
     padding: 4px 0;
-    overflow-x: hidden;
-
+    margin: 0;
     list-style: none;
+
+    @include dropdown-popup;
   }
 }
 
 @include b(dropdown-group) {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  height: $dropdown-item-height;
+  padding: 0;
   margin: 0;
-  padding: 0 12px;
-
-  color: var(--#{$variable-prefix}color-step-400);
-  font-size: 0.9em;
-
   list-style: none;
 
-  @include utils-outline;
-  @include utils-ellipsis;
-  @include dropdown-empty;
-}
+  @include e(label) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: $dropdown-item-height;
+    padding: 0 12px;
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}text-color-sub);
 
-@include b(dropdown-popup) {
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
-}
-
-@include b(dropdown-sub-popup) {
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
+    @include utils-ellipsis;
+    @include dropdown-empty;
+  }
 }

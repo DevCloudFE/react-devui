@@ -1,31 +1,23 @@
 import type { DHeaderProps } from '../_header';
 
-import { usePrefixConfig, useComponentConfig, useContextRequired } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
 import { DHeader } from '../_header';
-import { DDrawerContext } from './Drawer';
 
 export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
 
-const { COMPONENT_NAME } = generateComponentMate('DDrawerHeader');
+export interface DDrawerHeaderPropsWithPrivate extends DDrawerHeaderProps {
+  __id?: string;
+  __onClose?: () => void;
+}
+
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerHeader' });
 export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
-  const { className, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const { className, __id, __onClose, ...restProps } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gId, gCloseDrawer } = useContextRequired(DDrawerContext);
   //#endregion
 
-  const handleClose = () => {
-    gCloseDrawer();
-  };
-
-  return (
-    <DHeader
-      {...restProps}
-      id={`${dPrefix}drawer-header-${gId}`}
-      className={getClassName(className, `${dPrefix}drawer-header`)}
-      onClose={handleClose}
-    ></DHeader>
-  );
+  return <DHeader {...restProps} id={__id} className={getClassName(className, `${dPrefix}drawer-header`)} onClose={__onClose}></DHeader>;
 }

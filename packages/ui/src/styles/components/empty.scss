@@ -2,13 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
   color: var(--#{$variable-prefix}empty-color);
 
   @include e(description) {
     margin-top: 8px;
 
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    font-size: 14px;
+    @include font-size(0.9rem);
   }
 }

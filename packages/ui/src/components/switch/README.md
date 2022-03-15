@@ -16,7 +16,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | dLabelPlacement | Label placement | 'left' \| 'right' | 'right' |
 | dStateContent | Status content | [React.ReactNode, React.ReactNode] | - |
 | dLoading | Loading | boolean | false |
-| dDisabled | Whether to disable | boolean | false |
+| disabled | Whether to disable | boolean | false |
 | dInputProps | Attributes applied to the `input` element | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
 | dInputRef | Pass a `ref` to the `input` element | React.Ref\<HTMLInputElement\>  | - |
 | onModelChange | Callback for on/off status change | `(checked: boolean) => void` | - |

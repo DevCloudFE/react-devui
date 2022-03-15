@@ -3,10 +3,8 @@
   right: 20px;
   left: 20px;
   z-index: var(--#{$variable-prefix}zindex-max);
-
   display: flex;
   flex-direction: column;
-
   pointer-events: none;
 }
 
@@ -24,24 +22,19 @@
 
 @include b(toast) {
   position: relative;
-
   display: flex;
   align-items: center;
   max-width: calc(100vw - 40px);
-
-  margin: 0 auto 12px;
   padding: 8px 16px;
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  background-color: var(--#{$variable-prefix}background-color);
-  box-shadow: var(--#{$variable-prefix}shadow-dialog);
-
+  margin: 0 auto 12px;
   pointer-events: all;
+  background-color: var(--#{$variable-prefix}background-color);
+  border-radius: var(--#{$variable-prefix}border-radius);
+  box-shadow: var(--#{$variable-prefix}shadow-dialog);
 
   @include e(icon) {
     flex-shrink: 0;
     margin-right: 10px;
-
     font-size: 1.25em;
   }
 }

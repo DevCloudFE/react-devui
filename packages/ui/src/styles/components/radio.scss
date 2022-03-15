@@ -1,116 +1,14 @@
-@mixin button-radio {
-  $radio-selector: '.#{$variable-prefix}radio';
-
-  flex-wrap: nowrap;
-
-  &#{$radio-selector}-group--vertical {
-    #{$radio-selector} + #{$radio-selector} {
-      margin-top: -1px;
-      margin-left: 0;
-    }
-  }
-
-  #{$radio-selector} + #{$radio-selector} {
-    margin-left: -1px;
-  }
-
-  #{$radio-selector} {
-    gap: 0;
-    height: var(--#{$variable-prefix}size);
-    border: 1px solid var(--#{$variable-prefix}color-border);
-
-    font-size: var(--#{$variable-prefix}font);
-
-    cursor: pointer;
-
-    transition: border-color 116ms linear, background-color 116ms linear;
-
-    &:first-of-type {
-      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
-    }
-
-    &:last-of-type {
-      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
-    }
-
-    &:not(.is-disabled) {
-      @include when(checked) {
-        z-index: 5;
-
-        border-color: var(--#{$variable-prefix}color-primary);
-      }
-
-      &:not(.is-checked):hover {
-        z-index: 1;
-
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-
-        color: var(--#{$variable-prefix}color-primary-lighter);
-      }
-    }
-
-    @include when(disabled) {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
-
-      @include when(checked) {
-        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
-      }
-    }
-  }
-
-  #{$radio-selector}__input-wrapper {
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-
-  #{$radio-selector}__label {
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
-
-    transition: color 133ms linear;
-  }
-}
-
 @include b(radio) {
   position: relative;
-
   display: inline-flex;
   gap: 0 8px;
   align-items: center;
 
   @include utils-disabled;
 
-  &:not(.is-disabled) {
-    &:hover {
-      @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-      }
-    }
-
-    @include when(checked) {
-      @include e(input-wrapper) {
-        &::before {
-          animation: wave-spread 0.36s ease-in-out;
-          animation-fill-mode: backwards;
-        }
-      }
-
-      @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
-      }
-    }
-
+  &:hover {
     @include e(input) {
-      @include utils-outline;
-
-      &:focus {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-
-        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
-      }
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
     }
   }
 
@@ -125,23 +23,110 @@
   }
 
   @include when(checked) {
+    &:not(.is-disabled) {
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+
+      @include e(input-wrapper) {
+        &::before {
+          animation: wave-spread 0.36s ease-in-out;
+          animation-fill-mode: backwards;
+        }
+      }
+    }
+
     @include e(input-wrapper) {
       &::after {
-        transform: scale(1);
         opacity: 1;
+        transform: scale(1);
       }
     }
   }
 
+  @include m(button) {
+    gap: 0;
+    height: var(--#{$variable-prefix}size);
+    font-size: var(--#{$variable-prefix}font-size);
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid var(--#{$variable-prefix}color-border);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include when(disabled) {
+      background-color: var(--#{$variable-prefix}background-color-disabled);
+
+      @include when(checked) {
+        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
+      }
+    }
+
+    @include when(focus-visible) {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+    }
+
+    @include e(input-wrapper) {
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    @include e(label) {
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
+      transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    }
+  }
+
+  @include m(button-outline) {
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    @include when(checked) {
+      color: var(--#{$variable-prefix}color-primary);
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include m(button-fill) {
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    @include when(checked) {
+      color: map.get($colors, 'white');
+      background-color: var(--#{$variable-prefix}color-primary);
+      border-color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
+  }
+
   @include e(input-wrapper) {
     position: relative;
-
     width: 16px;
     height: 16px;
-    border-radius: 50%;
-
-    background-color: var(--#{$variable-prefix}background-color-input);
     cursor: pointer;
+    background-color: var(--#{$variable-prefix}background-color-input);
+    border-radius: 50%;
 
     &::before {
       position: absolute;
@@ -149,13 +134,10 @@
       right: 0;
       bottom: 0;
       left: 0;
-
+      content: '';
       border: 1px solid var(--#{$variable-prefix}color-primary);
       border-radius: 50%;
-
       opacity: 0;
-
-      content: '';
     }
 
     &::after {
@@ -164,16 +146,13 @@
       right: 4px;
       bottom: 4px;
       left: 4px;
-
-      border-radius: 50%;
-
-      background-color: var(--#{$variable-prefix}color-primary);
-      transform: scale(0);
-      opacity: 0;
-
-      transition: transform 133ms linear, opacity 133ms linear;
-
       content: '';
+      background-color: var(--#{$variable-prefix}color-primary);
+      border-radius: 50%;
+      opacity: 0;
+      transition: transform var(--#{$variable-prefix}animation-duration-fast) linear,
+        opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+      transform: scale(0);
     }
   }
 
@@ -182,87 +161,33 @@
     top: 0;
     left: 0;
     z-index: 1;
-
     width: 100%;
     height: 100%;
     margin: 0;
+    cursor: inherit;
     border: 1px solid var(--#{$variable-prefix}color-border);
     border-radius: 50%;
-
     outline: none;
-
-    cursor: inherit;
-
-    transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
-
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
     appearance: none;
+
+    &:focus {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+    }
   }
 }
 
 @include b(radio-group) {
-  $selector: &;
+  @include when(change) {
+    .#{$variable-prefix}radio,
+    .#{$variable-prefix}radio__label {
+      transition: none;
+    }
+  }
 
-  position: relative;
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-
-  &:not(#{$selector}--outline):not(#{$selector}--fill) {
+  @include m(default) {
+    flex-wrap: wrap;
     gap: 8px 12px;
-  }
-
-  $radio-selector: '.#{$variable-prefix}radio';
-  #{$radio-selector} {
-    flex-shrink: 0;
-  }
-
-  @include m(outline) {
-    @include button-radio;
-
-    #{$radio-selector}:not(.is-disabled).is-checked {
-      color: var(--#{$variable-prefix}color-primary);
-    }
-  }
-
-  @include m(fill) {
-    @include button-radio;
-
-    #{$radio-selector}:not(.is-disabled).is-checked {
-      /* stylelint-disable-next-line declaration-property-value-allowed-list */
-      color: #fff;
-
-      background-color: var(--#{$variable-prefix}color-primary);
-    }
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
-    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
-    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
-  }
-
-  @include m(vertical) {
-    flex-direction: column;
-    align-items: flex-start;
-
-    &.#{$variable-prefix}radio-group--outline,
-    &.#{$variable-prefix}radio-group--fill {
-      #{$radio-selector} {
-        &:first-of-type {
-          border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
-        }
-
-        &:last-of-type {
-          border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
-        }
-      }
-    }
   }
 }

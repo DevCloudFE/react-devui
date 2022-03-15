@@ -1,0 +1,135 @@
+@include b(selectbox) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--#{$variable-prefix}size);
+  padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+  font-family: inherit;
+  font-size: var(--#{$variable-prefix}font-size);
+  text-align: unset;
+  text-transform: none;
+  white-space: nowrap;
+  vertical-align: top;
+  cursor: pointer;
+  background-color: var(--#{$variable-prefix}background-color-input);
+  border: 1px solid var(--#{$variable-prefix}color-border);
+  border-radius: var(--#{$variable-prefix}border-radius);
+  transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+  appearance: none;
+
+  @include utils-disabled(true);
+  @include form-validate;
+
+  &:hover {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  @include when(focus) {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  @include when(expanded) {
+    border-color: var(--#{$variable-prefix}color-primary);
+  }
+
+  @include when(disabled) {
+    @include e(icon) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+
+    @include e(placeholder) {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+    }
+  }
+
+  @include m(smaller) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+  }
+
+  @include e(container) {
+    position: relative;
+    display: inline-flex;
+    flex-grow: 1;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  @include e(content) {
+    @include utils-ellipsis;
+  }
+
+  @include e(suffix) {
+    z-index: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+
+  @include e(search) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: var(--#{$variable-prefix}text-color);
+    letter-spacing: inherit;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    appearance: none;
+    caret-color: var(--#{$variable-prefix}color-primary);
+
+    &::-webkit-search-cancel-button {
+      display: none;
+      appearance: none;
+    }
+  }
+
+  @include e(placeholder-wrapper) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
+    user-select: none;
+  }
+
+  @include e(placeholder) {
+    @include utils-ellipsis;
+  }
+
+  @include e(clear) {
+    position: absolute;
+    right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+    z-index: 5;
+  }
+
+  @include e(icon) {
+    z-index: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
+      color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include when(expand) {
+      color: var(--#{$variable-prefix}color-primary);
+      transform: rotate(180deg);
+    }
+  }
+}

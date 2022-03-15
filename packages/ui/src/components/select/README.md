@@ -59,7 +59,7 @@ Extend `Omit<DSelectBoxProps, 'dExpanded' | 'dShowClear'>`.
 interface DSelectBaseOption<T> {
   dLabel: string;
   dValue: T;
-  dDisabled?: boolean;
+  disabled?: boolean;
   [index: string | symbol]: unknown;
 }
 ```
@@ -70,7 +70,7 @@ interface DSelectBaseOption<T> {
 interface DSelectOption<T> {
   dLabel: string;
   dValue?: T;
-  dDisabled?: boolean;
+  disabled?: boolean;
   dChildren?: DSelectBaseOption<T>[];
   [index: string | symbol]: unknown;
 }

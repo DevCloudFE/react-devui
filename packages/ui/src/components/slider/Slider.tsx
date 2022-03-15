@@ -1,8 +1,9 @@
-import type { DUpdater } from '../../hooks/two-way-binding';
-import type { DPopupRef } from '../_popup';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DFormControl } from '../form';
+import type { DTooltipRef } from '../tooltip';
 
 import { isArray, isNumber, toNumber } from 'lodash';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 
 import {
@@ -12,21 +13,20 @@ import {
   useTwoWayBinding,
   useAsync,
   useThrottle,
-  useRefCallback,
   useEventCallback,
 } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
 import { DTooltip } from '../tooltip';
 
-export interface DSliderBaseProps extends React.HTMLAttributes<HTMLDivElement> {
-  dFormControlName?: string;
-  dMax?: number;
-  dMin?: number;
-  dStep?: number | null;
+export interface DSliderBaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  max?: number;
+  min?: number;
+  step?: number | null;
+  disabled?: boolean;
+  dFormControl?: DFormControl;
   dMarks?: number | ({ value: number; label: React.ReactNode } | number)[];
   dVertical?: boolean;
   dReverse?: boolean;
-  dDisabled?: boolean;
   dCustomTooltip?: (value: number) => React.ReactNode;
 }
 
@@ -51,29 +51,30 @@ export interface DSliderRangeProps extends DSliderBaseProps {
 }
 
 export interface DSliderProps extends DSliderBaseProps {
-  dFormControlName?: string;
-  dModel?: DSliderSingleProps['dModel'] | DSliderRangeProps['dModel'];
+  dFormControl?: DFormControl;
+  dModel?: [any, DUpdater<any>?];
   dInputProps?: DSliderSingleProps['dInputProps'] | DSliderRangeProps['dInputProps'];
   dInputRef?: DSliderSingleProps['dInputRef'] | DSliderRangeProps['dInputRef'];
   dTooltipVisible?: DSliderSingleProps['dTooltipVisible'] | DSliderRangeProps['dTooltipVisible'];
   dRange?: boolean;
   dRangeMinDistance?: number;
   dRangeThumbDraggable?: boolean;
-  dDisabled?: boolean;
-  onModelChange?: DSliderSingleProps['onModelChange'] | DSliderRangeProps['onModelChange'];
+  onModelChange?: (value: any) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DSlider');
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlider' });
 export function DSlider(props: DSliderSingleProps): JSX.Element | null;
 export function DSlider(props: DSliderRangeProps): JSX.Element | null;
 export function DSlider(props: DSliderProps): JSX.Element | null;
 export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
-    dFormControlName,
+    className,
+    max = 100,
+    min = 0,
+    step = 1,
+    disabled: _disabled,
+    dFormControl,
     dModel,
-    dMax = 100,
-    dMin = 0,
-    dStep = 1,
     dMarks,
     dInputProps,
     dInputRef,
@@ -83,11 +84,10 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     dRangeThumbDraggable = false,
     dVertical = false,
     dReverse = false,
-    dDisabled = false,
     dCustomTooltip,
     onModelChange,
-    className,
     onMouseDown,
+    onMouseUp,
     onTouchStart,
     onTouchEnd,
     ...restProps
@@ -99,17 +99,15 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const [sliderEl, sliderRef] = useRefCallback<HTMLDivElement>();
-  const [dotLeftEl, dotLeftRef] = useRefCallback<HTMLDivElement>();
-  const [dotRightEl, dotRightRef] = useRefCallback<HTMLDivElement>();
-  const tooltipLeftRef = useRef<DPopupRef>(null);
-  const tooltipRightRef = useRef<DPopupRef>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const dotLeftRef = useRef<HTMLDivElement>(null);
+  const dotRightRef = useRef<HTMLDivElement>(null);
+  const tooltipLeftRef = useRef<DTooltipRef>(null);
+  const tooltipRightRef = useRef<DTooltipRef>(null);
   //#endregion
 
   const asyncCapture = useAsync();
   const { throttleByAnimationFrame } = useThrottle();
-
-  const uniqueId = useId();
 
   const [focusDot, setFocusDot] = useState<'left' | 'right' | null>(null);
   const [mouseenterDot, setMouseenterDot] = useState<'left' | 'right' | null>(null);
@@ -125,29 +123,37 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     React.Ref<HTMLInputElement>?
   ];
 
-  const idLeft = inputPropsLeft?.id ?? `${dPrefix}slider-input-left-${uniqueId}`;
-  const idRight = inputPropsRight?.id ?? `${dPrefix}slider-input-right-${uniqueId}`;
-
-  const [_value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<number | [number, number]>(
-    dRange ? [0, 0] : 0,
-    dModel,
-    onModelChange,
-    { formControlName: dFormControlName, id: idLeft, deepCompare: true }
-  );
+  const [_value, changeValue] = useTwoWayBinding<number | [number, number]>(dRange ? [0, 0] : 0, dModel, onModelChange, {
+    formControl: dFormControl?.control,
+    deepCompare: (a, b) => {
+      if (isNumber(a) && isNumber(b)) {
+        return a === b;
+      } else if (isArray(a) && isArray(b)) {
+        return a[0] === b[0] && a[1] === b[1];
+      }
+      return false;
+    },
+  });
 
   const [valueLeft, valueRight = 0] = (dRange ? _value : [_value]) as [number, number?];
-  const disabled = dDisabled || gDisabled || controlDisabled;
+  const disabled = _disabled || gDisabled || dFormControl?.disabled;
 
   const [visibleLeft, visibleRight] = [
     (dRange ? dTooltipVisible?.[0] : dTooltipVisible) ?? (mouseenterDot === 'left' ? true : !!(focusDot === 'left' || thumbPoint)),
     (dRange ? dTooltipVisible?.[1] : undefined) ?? (mouseenterDot === 'right' ? true : !!(focusDot === 'right' || thumbPoint)),
   ];
 
+  const preventBlur: React.MouseEventHandler = (e) => {
+    if (e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
   const getValue = (value: number, func: 'round' | 'ceil' | 'floor' = 'round') => {
     let newValue: number | null = null;
-    if (dStep) {
-      const n = Math[func](value / dStep);
-      newValue = Math.min(dMax, Math.max(dMin, n * dStep));
+    if (step) {
+      const n = Math[func](value / step);
+      newValue = Math.min(max, Math.max(min, n * step));
     }
 
     if (isArray(dMarks)) {
@@ -166,15 +172,15 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     }
 
-    return newValue ?? dMin;
+    return newValue ?? min;
   };
 
   const handleMove = useEventCallback((e: { clientX: number; clientY: number }, isLeft?: boolean) => {
     isLeft = isLeft ?? focusDot === 'left';
-    if (sliderEl) {
-      const rect = sliderEl.getBoundingClientRect();
+    if (sliderRef.current) {
+      const rect = sliderRef.current.getBoundingClientRect();
       const newValue = getValue(
-        (dMax - dMin) *
+        (max - min) *
           (dVertical
             ? (dReverse ? e.clientY - rect.top : rect.bottom - e.clientY) / rect.height
             : (dReverse ? rect.right - e.clientX : e.clientX - rect.left) / rect.width)
@@ -203,30 +209,30 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   });
 
   const handleThumbMove = useEventCallback((e: { clientX: number; clientY: number }) => {
-    if (dStep && thumbPoint && sliderEl) {
-      const rect = sliderEl.getBoundingClientRect();
+    if (step && thumbPoint && sliderRef.current) {
+      const rect = sliderRef.current.getBoundingClientRect();
       const offset =
         Math.round(
-          ((dMax - dMin) *
+          ((max - min) *
             (dVertical
               ? (dReverse ? e.clientY - thumbPoint.clientY : thumbPoint.clientY - e.clientY) / rect.height
               : (dReverse ? thumbPoint.clientX - e.clientX : e.clientX - thumbPoint.clientX) / rect.width)) /
-            dStep
-        ) * dStep;
+            step
+        ) * step;
       const value: [number, number] = [0, 0];
       let index = -1;
 
       for (const v of [thumbPoint.left + offset, thumbPoint.right + offset]) {
         index += 1;
         const _index = index === 0 ? 1 : 0;
-        if (v < dMin) {
-          value[index] = dMin;
-          value[_index] = dMin + Math.abs(thumbPoint.left - thumbPoint.right);
+        if (v < min) {
+          value[index] = min;
+          value[_index] = min + Math.abs(thumbPoint.left - thumbPoint.right);
           break;
         }
-        if (v > dMax) {
-          value[index] = dMax;
-          value[_index] = dMax - Math.abs(thumbPoint.left - thumbPoint.right);
+        if (v > max) {
+          value[index] = max;
+          value[_index] = max - Math.abs(thumbPoint.left - thumbPoint.right);
           break;
         }
         value[index] = v;
@@ -238,7 +244,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   const startDrag = (e: { clientX: number; clientY: number }) => {
     const handle = (isLeft = true) => {
-      const el = isLeft ? dotLeftEl : dotRightEl;
+      const el = isLeft ? dotLeftRef.current : dotRightRef.current;
       if (el) {
         handleMove(e, isLeft);
         setDraggableDot(isLeft ? 'left' : 'right');
@@ -246,9 +252,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     };
     if (dRange) {
-      if (dotLeftEl && dotRightEl) {
-        const rectLeft = dotLeftEl.getBoundingClientRect();
-        const rectRight = dotRightEl.getBoundingClientRect();
+      if (dotLeftRef.current && dotRightRef.current) {
+        const rectLeft = dotLeftRef.current.getBoundingClientRect();
+        const rectRight = dotRightRef.current.getBoundingClientRect();
         const offsetLeft = dVertical
           ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
           : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
@@ -310,9 +316,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   }, [focusDot, _value, thumbPoint]);
 
   useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
     if (draggableDot !== null) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
       let clientX: number;
       let clientY: number;
 
@@ -348,17 +354,17 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           });
         },
       });
-    }
 
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
   }, [asyncCapture, draggableDot, handleMove, throttleByAnimationFrame]);
 
   useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
     if (thumbPoint) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
       let clientX: number;
       let clientY: number;
 
@@ -394,17 +400,17 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           });
         },
       });
-    }
 
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
   }, [asyncCapture, handleThumbMove, throttleByAnimationFrame, thumbPoint]);
 
   const marks = (() => {
     const marks: React.ReactNode[] = [];
     const getNode = (value: number, label: React.ReactNode = null) => {
-      let percentage = (value / (dMax - dMin)) * 100;
+      let percentage = (value / (max - min)) * 100;
       if (dReverse) {
         percentage = 100 - percentage;
       }
@@ -412,7 +418,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         <div
           key={value}
           className={getClassName(`${dPrefix}slider__mark`, {
-            [`${dPrefix}slider__mark--hidden`]: value === dMin || value === dMax,
+            [`${dPrefix}slider__mark--hidden`]: value === min || value === max,
           })}
           style={{
             left: dVertical ? undefined : `${percentage}%`,
@@ -440,7 +446,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         getNode(value, isNumber(mark) ? null : mark.label);
       });
     } else if (isNumber(dMarks)) {
-      for (let index = 0; index < (dMax - dMin) / dMarks; index++) {
+      for (let index = 0; index < (max - min) / dMarks; index++) {
         const value = index * dMarks;
         getNode(value);
       }
@@ -449,45 +455,38 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     return marks;
   })();
 
-  const handleMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    onMouseDown?.(e);
-
-    if (e.button === 0 && !disabled) {
-      e.preventDefault();
-
-      startDrag(e);
-    }
-  };
-
-  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    onTouchStart?.(e);
-
-    startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-  };
-
-  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    onTouchEnd?.(e);
-
-    setDraggableDot(null);
-    setThumbPoint(null);
-  };
-
   return (
     <div
       {...restProps}
+      {...dFormControl?.dataAttrs}
       ref={sliderRef}
-      className={getClassName(
-        className,
-        validateClassName,
-        `${dPrefix}slider`,
-        `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`,
-        {
-          'is-disabled': disabled,
+      className={getClassName(className, `${dPrefix}slider`, `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`, {
+        'is-disabled': disabled,
+      })}
+      onMouseDown={(e) => {
+        onMouseDown?.(e);
+
+        preventBlur(e);
+        if (e.button === 0) {
+          startDrag(e);
         }
-      )}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      }}
+      onMouseUp={(e) => {
+        onMouseUp?.(e);
+
+        preventBlur(e);
+      }}
+      onTouchStart={(e) => {
+        onTouchStart?.(e);
+
+        startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      }}
+      onTouchEnd={(e) => {
+        onTouchEnd?.(e);
+
+        setDraggableDot(null);
+        setThumbPoint(null);
+      }}
     >
       <div
         className={getClassName(`${dPrefix}slider__thumb`, {
@@ -502,12 +501,12 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           style={
             dVertical
               ? {
-                  bottom: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
-                  top: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  bottom: `calc(${Math.min(valueLeft, valueRight)} / ${max - min} * 100%)`,
+                  top: `calc(${max - Math.max(valueLeft, valueRight)} / ${max - min} * 100%)`,
                 }
               : {
-                  left: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
-                  right: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  left: `calc(${Math.min(valueLeft, valueRight)} / ${max - min} * 100%)`,
+                  right: `calc(${max - Math.max(valueLeft, valueRight)} / ${max - min} * 100%)`,
                 }
           }
         ></div>
@@ -526,23 +525,24 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
               'is-focus': focusDot === 'left',
             })}
             style={{
-              left: dVertical ? undefined : `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)`,
-              bottom: dVertical ? `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)` : undefined,
+              left: dVertical ? undefined : `calc(${valueLeft} / ${max - min} * 100% - 7px)`,
+              bottom: dVertical ? `calc(${valueLeft} / ${max - min} * 100% - 7px)` : undefined,
             }}
           >
             <input
               {...inputPropsLeft}
-              {...ariaAttribute}
+              {...dFormControl?.inputAttrs}
+              id={inputPropsLeft?.id ?? dFormControl?.controlId}
               ref={inputRefLeft}
-              id={idLeft}
               className={getClassName(inputPropsLeft?.className, `${dPrefix}slider__input`)}
               type="range"
               value={valueLeft}
               disabled={disabled}
-              max={dMax}
-              min={dMin}
-              step={dStep ?? undefined}
+              max={max}
+              min={min}
+              step={step ?? undefined}
               aria-orientation={dVertical ? 'vertical' : 'horizontal'}
+              aria-describedby={mergeAriaDescribedby(inputPropsLeft?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
               onChange={handleChange}
               onFocus={(e) => {
                 inputPropsLeft?.onFocus?.(e);
@@ -573,23 +573,27 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                 'is-focus': focusDot === 'right',
               })}
               style={{
-                left: dVertical ? undefined : `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)`,
-                bottom: dVertical ? `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)` : undefined,
+                left: dVertical ? undefined : `calc(${valueRight} / ${max - min} * 100% - 7px)`,
+                bottom: dVertical ? `calc(${valueRight} / ${max - min} * 100% - 7px)` : undefined,
               }}
             >
               <input
                 {...inputPropsRight}
-                {...ariaAttribute}
+                {...dFormControl?.inputAttrs}
+                id={inputPropsRight?.id ?? dFormControl?.controlId}
                 ref={inputRefRight}
-                id={idRight}
                 className={getClassName(inputPropsRight?.className, `${dPrefix}slider__input`)}
                 type="range"
                 value={valueRight}
                 disabled={disabled}
-                max={dMax}
-                min={dMin}
-                step={dStep ?? undefined}
+                max={max}
+                min={min}
+                step={step ?? undefined}
                 aria-orientation={dVertical ? 'vertical' : 'horizontal'}
+                aria-describedby={mergeAriaDescribedby(
+                  inputPropsRight?.['aria-describedby'],
+                  dFormControl?.inputAttrs?.['aria-describedby']
+                )}
                 onChange={(e) => {
                   handleChange(e, false);
                 }}

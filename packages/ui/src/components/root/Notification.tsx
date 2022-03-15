@@ -1,10 +1,10 @@
 import type { DNotificationProps } from '../notification';
 import type { Subscription } from 'rxjs';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
+import { useElement, useImmer, usePrefixConfig } from '../../hooks';
 import { DNotification, NotificationService, notificationSubject } from '../notification';
 
 export function Notification(): JSX.Element | null {
@@ -13,6 +13,27 @@ export function Notification(): JSX.Element | null {
   //#endregion
 
   const [notifications, setNotifications] = useImmer(new Map<number, DNotificationProps & { dVisible: boolean }>());
+
+  const getRoot = (id: string) => {
+    let root = document.getElementById(`${dPrefix}notification-root`);
+    if (!root) {
+      root = document.createElement('div');
+      root.id = `${dPrefix}notification-root`;
+      document.body.appendChild(root);
+    }
+
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = id;
+      root.appendChild(el);
+    }
+    return el;
+  };
+  const notificationLTRoot = useElement(() => getRoot(`${dPrefix}notification-lt-root`));
+  const notificationRTRoot = useElement(() => getRoot(`${dPrefix}notification-rt-root`));
+  const notificationLBRoot = useElement(() => getRoot(`${dPrefix}notification-lb-root`));
+  const notificationRBRoot = useElement(() => getRoot(`${dPrefix}notification-rb-root`));
 
   useEffect(() => {
     const obs: Subscription[] = [];
@@ -77,42 +98,6 @@ export function Notification(): JSX.Element | null {
       })
     );
   }, [setNotifications]);
-
-  const getRoot = useCallback(
-    (id: string) => {
-      let root = document.getElementById(`${dPrefix}notification-root`);
-      if (!root) {
-        root = document.createElement('div');
-        root.id = `${dPrefix}notification-root`;
-        document.body.appendChild(root);
-      }
-
-      let el = document.getElementById(id);
-      if (!el) {
-        el = document.createElement('div');
-        el.id = id;
-        root.appendChild(el);
-      }
-      return el;
-    },
-    [dPrefix]
-  );
-  const [notificationLTRoot, setNotificationLTRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setNotificationLTRoot(getRoot(`${dPrefix}notification-lt-root`));
-  }, [dPrefix, getRoot]);
-  const [notificationRTRoot, setNotificationRTRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setNotificationRTRoot(getRoot(`${dPrefix}notification-rt-root`));
-  }, [dPrefix, getRoot]);
-  const [notificationLBRoot, setNotificationLBRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setNotificationLBRoot(getRoot(`${dPrefix}notification-lb-root`));
-  }, [dPrefix, getRoot]);
-  const [notificationRBRoot, setNotificationRBRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setNotificationRBRoot(getRoot(`${dPrefix}notification-rb-root`));
-  }, [dPrefix, getRoot]);
 
   return (
     <>

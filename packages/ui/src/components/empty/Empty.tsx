@@ -1,16 +1,16 @@
 import { isUndefined } from 'lodash';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useThemeConfig } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
-import { DIcon } from '../icon';
+import { DCustomIcon } from '../../icons';
+import { registerComponentMate, getClassName } from '../../utils';
 
 export interface DEmptyProps extends React.HTMLAttributes<HTMLDivElement> {
   dIcon?: React.ReactNode;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DEmpty');
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DEmpty' });
 export function DEmpty(props: DEmptyProps): JSX.Element | null {
-  const { dIcon, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const { className, children, dIcon, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -19,12 +19,10 @@ export function DEmpty(props: DEmptyProps): JSX.Element | null {
 
   const [t] = useTranslation('Common');
 
-  const descriptionNode = <div className={`${dPrefix}empty__description`}>{t('No Data')}</div>;
-
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}empty`)}>
       {isUndefined(dIcon) ? (
-        <DIcon viewBox="0 -20 1442 1024" dSize={[140, 104]}>
+        <DCustomIcon viewBox="0 -20 1442 1024" width={140} height={104}>
           <path
             d="M159.816113 858.429296c0 88.496676 253.605859 160.263211 566.430648 160.263211s566.416225-71.766535 566.416225-160.263211c0-88.511099-253.605859-160.277634-566.416225-160.277634-312.824789 0.014423-566.430648 71.766535-566.430648 160.277634z"
             fill="#fff"
@@ -95,11 +93,11 @@ export function DEmpty(props: DEmptyProps): JSX.Element | null {
             d="M341.294873 866.174197c-20.898254-5.538254-38.493746-3.317183-53.882591-2.22107-15.403268 1.110535-27.489352 2.22107-40.700395-2.206648l2.192226-5.538254c11.004394 4.427718 24.215437 3.317183 38.508169 2.221071 16.484958-1.110535 34.094873-3.317183 54.993126 2.206648l-1.110535 5.538253z"
             fill={theme === 'light' ? '#94A0B2' : '#4f5f78'}
           ></path>
-        </DIcon>
+        </DCustomIcon>
       ) : (
         dIcon
       )}
-      {isUndefined(children) ? descriptionNode : children}
+      {isUndefined(children) ? <div className={`${dPrefix}empty__description`}>{t('No Data')}</div> : children}
     </div>
   );
 }

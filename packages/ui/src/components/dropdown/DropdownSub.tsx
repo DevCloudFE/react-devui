@@ -1,229 +1,195 @@
-import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useRefCallback,
-  useTranslation,
-  useImmer,
-  useIsomorphicLayoutEffect,
-  useContextRequired,
-  useContextOptional,
-} from '../../hooks';
-import { generateComponentMate, getClassName, getHorizontalSideStyle, mergeStyle, toId } from '../../utils';
+import { usePrefixConfig, useTranslation, useEventCallback, useElement, useMaxIndex } from '../../hooks';
+import { RightOutlined } from '../../icons';
+import { getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
 import { DPopup } from '../_popup';
-import { DIcon } from '../icon';
-import { DDropdownContext } from './Dropdown';
+import { DTransition } from '../_transition';
 
-export interface DDropdownSubContextData {
-  gUpdateChildren: (id: string, visible: boolean) => void;
-  gRemoveChildren: (id: string) => void;
-}
-export const DDropdownSubContext = React.createContext<DDropdownSubContextData | null>(null);
-
-export interface DDropdownSubProps extends React.LiHTMLAttributes<HTMLLIElement> {
-  dId: string;
+export interface DDropdownSubProps {
+  id: string;
+  disabled?: boolean;
+  children: React.ReactNode;
+  dFocusVisible: boolean;
+  dPopup: React.ReactNode;
+  dPopupVisible: boolean;
+  dPopupState: boolean;
+  dEmpty: boolean;
+  dTrigger: 'hover' | 'click';
   dIcon?: React.ReactNode;
-  dTitle: React.ReactNode;
-  dDisabled?: boolean;
-  dPopupClassName?: string;
+  dLevel?: number;
+  onVisibleChange: (visible: boolean) => void;
 }
 
-export interface DDropdownSubPropsWithPrivate extends DDropdownSubProps {
-  __level?: number;
-}
-
-const { COMPONENT_NAME } = generateComponentMate('DDropdownSub');
+const TTANSITION_DURING = 116;
 export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   const {
-    dId,
-    dIcon,
-    dTitle,
-    dDisabled = false,
-    dPopupClassName,
     id,
-    className,
-    style,
-    tabIndex,
+    disabled,
     children,
-    onFocus,
-    onBlur,
-    __level = 0,
-    ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DDropdownSubPropsWithPrivate);
+    dFocusVisible,
+    dPopup,
+    dPopupVisible,
+    dPopupState,
+    dEmpty,
+    dTrigger,
+    dIcon,
+    dLevel = 0,
+    onVisibleChange,
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gVisible, gPopupTrigger, gFocusId, gOnFocus, gOnBlur } = useContextRequired(DDropdownContext);
   //#endregion
 
   //#region Ref
-  const [ulEl, ulRef] = useRefCallback<HTMLUListElement>();
-  const [liEl, liRef] = useRefCallback<HTMLLIElement>();
-  const { gUpdateChildren, gRemoveChildren } = useContextOptional(DDropdownSubContext);
+  const ulRef = useRef<HTMLUListElement>(null);
+  const liRef = useRef<HTMLLIElement>(null);
   //#endregion
 
   const [t] = useTranslation('Common');
 
-  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
-
-  const [currentPopupVisible, setCurrentPopupVisible] = useState(false);
-  const [childrenPopupVisiable, setChildrenPopupVisiable] = useImmer(new Map<string, boolean>());
-  const popupVisible = (() => {
-    let visible = currentPopupVisible;
-    for (const childrenVisiable of childrenPopupVisiable.values()) {
-      if (childrenVisiable) {
-        visible = childrenVisiable;
-        break;
-      }
+  const containerEl = useElement(() => {
+    let el = document.getElementById(`${dPrefix}dropdown-root`);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = `${dPrefix}dropdown-root`;
+      document.body.appendChild(el);
     }
-    return visible;
-  })();
+    return el;
+  });
 
-  useIsomorphicLayoutEffect(() => {
-    gUpdateChildren?.(dId, popupVisible);
-    return () => {
-      gRemoveChildren?.(dId);
-    };
-  }, [dId, gRemoveChildren, gUpdateChildren, popupVisible]);
-
-  const _id = id ?? `${dPrefix}dropdown-sub-${toId(dId)}`;
-
-  useEffect(() => {
-    let isFocus = false;
-    if (gFocusId) {
-      ulEl?.childNodes.forEach((child) => {
-        if (gFocusId[1] === (child as HTMLElement)?.id) {
-          isFocus = true;
-        }
+  const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
+    top: -9999,
+    left: -9999,
+  });
+  const [transformOrigin, setTransformOrigin] = useState<string>();
+  const updatePosition = useEventCallback(() => {
+    if (ulRef.current && liRef.current) {
+      const { width, height } = getNoTransformSize(ulRef.current);
+      const { top, left, transformOrigin } = getHorizontalSidePosition(liRef.current, { width, height }, 'right', 10);
+      setPopupPositionStyle({
+        top,
+        left,
       });
+      setTransformOrigin(transformOrigin);
     }
-    setActiveDescendant(isFocus ? gFocusId?.[1] : undefined);
-  }, [gFocusId, ulEl, setActiveDescendant]);
+  });
 
-  useEffect(() => {
-    if (!gVisible) {
-      setCurrentPopupVisible(false);
-    }
-  }, [gVisible, setCurrentPopupVisible]);
-
-  const _gUpdateChildren = useCallback(
-    (id, visible) => {
-      setChildrenPopupVisiable((draft) => {
-        draft.set(id, visible);
-      });
-    },
-    [setChildrenPopupVisiable]
-  );
-  const _gRemoveChildren = useCallback(
-    (id) => {
-      setChildrenPopupVisiable((draft) => {
-        draft.delete(id);
-      });
-    },
-    [setChildrenPopupVisiable]
-  );
-  const contextValue = useMemo<DDropdownSubContextData>(
-    () => ({
-      gUpdateChildren: _gUpdateChildren,
-      gRemoveChildren: _gRemoveChildren,
-    }),
-    [_gRemoveChildren, _gUpdateChildren]
-  );
-
-  const handleFocus: React.FocusEventHandler<HTMLLIElement> = (e) => {
-    onFocus?.(e);
-
-    !dDisabled && gOnFocus(dId, _id);
-  };
-
-  const handleBlur: React.FocusEventHandler<HTMLLIElement> = (e) => {
-    onBlur?.(e);
-
-    gOnBlur();
-  };
-
-  const handlePopupVisibleChange = (visible: boolean) => {
-    setCurrentPopupVisible(visible);
-  };
+  const maxZIndex = useMaxIndex(dPopupVisible);
 
   return (
-    <DDropdownSubContext.Provider value={contextValue}>
-      <li
-        {...restProps}
-        ref={liRef}
-        id={_id}
-        className={getClassName(className, `${dPrefix}dropdown-sub`, {
-          'is-disabled': dDisabled,
-        })}
-        style={mergeStyle(
-          {
-            paddingLeft: 12 + __level * 16,
-          },
-          style
-        )}
-        role="menuitem"
-        tabIndex={isUndefined(tabIndex) ? -1 : tabIndex}
-        aria-haspopup={true}
-        aria-expanded={popupVisible}
-        aria-disabled={dDisabled}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      >
-        {dIcon && <div className={`${dPrefix}dropdown-sub__icon`}>{dIcon}</div>}
-        <div className={`${dPrefix}dropdown-sub__title`}>{dTitle}</div>
-        <DIcon className={`${dPrefix}dropdown-sub__arrow`} viewBox="64 64 896 896" dSize={14}>
-          <path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"></path>
-        </DIcon>
-      </li>
-      {!dDisabled && (
-        <DPopup
-          className={getClassName(dPopupClassName, `${dPrefix}dropdown-sub-popup`)}
-          dVisible={popupVisible}
-          dPopupContent={
-            <ul
-              ref={ulRef}
-              className={`${dPrefix}dropdown-sub__list`}
-              role="menu"
-              tabIndex={-1}
-              aria-labelledby={_id}
-              aria-orientation="vertical"
-              aria-activedescendant={activedescendant}
-            >
-              {React.Children.count(children) === 0 ? (
-                <span
-                  className={`${dPrefix}dropdown-sub__empty`}
-                  style={{
-                    paddingLeft: 12 + __level * 16,
-                  }}
-                >
-                  {t('No Data')}
-                </span>
-              ) : (
-                children
-              )}
-            </ul>
-          }
-          dTrigger={gPopupTrigger}
-          dArrow={false}
-          dCustomPopup={(popupEl, targetEl) => {
-            const { top, left, transformOrigin } = getHorizontalSideStyle(popupEl, targetEl, 'right', 10);
-            return {
-              top,
-              left,
-              stateList: {
-                'enter-from': { transform: 'scale(0)', opacity: '0' },
-                'enter-to': { transition: 'transform 116ms ease-out, opacity 116ms ease-out', transformOrigin },
-                'leave-active': { transition: 'transform 116ms ease-in, opacity 116ms ease-in', transformOrigin },
-                'leave-to': { transform: 'scale(0)', opacity: '0' },
-              },
+    <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
+      {(state) => {
+        let transitionStyle: React.CSSProperties = {};
+        switch (state) {
+          case 'enter':
+            transitionStyle = { transform: 'scale(0)', opacity: 0 };
+            break;
+
+          case 'entering':
+            transitionStyle = {
+              transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+              transformOrigin,
             };
-          }}
-          dTriggerEl={liEl}
-          onVisibleChange={handlePopupVisibleChange}
-        />
-      )}
-    </DDropdownSubContext.Provider>
+            break;
+
+          case 'leaving':
+            transitionStyle = {
+              transform: 'scale(0)',
+              opacity: 0,
+              transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+              transformOrigin,
+            };
+            break;
+
+          case 'leaved':
+            transitionStyle = { display: 'none' };
+            break;
+
+          default:
+            break;
+        }
+
+        return (
+          <DPopup
+            disabled={disabled}
+            dVisible={dPopupState}
+            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+              <ul
+                {...restPCProps}
+                ref={ulRef}
+                className={`${dPrefix}dropdown-sub__list`}
+                style={{
+                  ...popupPositionStyle,
+                  ...transitionStyle,
+                  zIndex: maxZIndex,
+                }}
+                role="menu"
+                aria-labelledby={id}
+                onClick={() => {
+                  pOnClick?.();
+                }}
+                onMouseEnter={() => {
+                  pOnMouseEnter?.();
+                }}
+                onMouseLeave={() => {
+                  pOnMouseLeave?.();
+                }}
+              >
+                {dEmpty ? (
+                  <div className={`${dPrefix}dropdown-sub__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
+                    {t('No Data')}
+                  </div>
+                ) : (
+                  dPopup
+                )}
+              </ul>
+            )}
+            dContainer={containerEl}
+            dTrigger={dTrigger}
+            onVisibleChange={onVisibleChange}
+            onUpdate={updatePosition}
+          >
+            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+              <li
+                {...restPCProps}
+                ref={liRef}
+                id={id}
+                className={getClassName(`${dPrefix}dropdown-sub`, {
+                  'is-expand': dPopupVisible,
+                  'is-disabled': disabled,
+                })}
+                style={{ paddingLeft: 12 + dLevel * 16 }}
+                role="menuitem"
+                aria-haspopup={true}
+                aria-expanded={dPopupVisible}
+                aria-disabled={disabled}
+                onClick={() => {
+                  pOnClick?.();
+                }}
+                onFocus={() => {
+                  pOnFocus?.();
+                }}
+                onBlur={() => {
+                  pOnBlur?.();
+                }}
+                onMouseEnter={() => {
+                  pOnMouseEnter?.();
+                }}
+                onMouseLeave={() => {
+                  pOnMouseLeave?.();
+                }}
+              >
+                {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
+                {dIcon && <div className={`${dPrefix}dropdown-sub__icon`}>{dIcon}</div>}
+                <div className={`${dPrefix}dropdown-sub__title`}>{children}</div>
+                <RightOutlined className={`${dPrefix}dropdown-sub__arrow`} dSize={14} />
+              </li>
+            )}
+          </DPopup>
+        );
+      }}
+    </DTransition>
   );
 }

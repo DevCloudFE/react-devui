@@ -1,15 +1,11 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-prettier", "stylelint-config-recommended-scss"],
-  "plugins": ["stylelint-order", "stylelint-config-rational-order/plugin", "stylelint-scss"],
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-recess-order",
+    "stylelint-config-recommended-scss",
+    "stylelint-config-prettier"
+  ],
   "rules": {
-    "order/properties-order": [],
-    "plugin/rational-order": [
-      true,
-      {
-        "border-in-box-model": true,
-        "empty-line-between-groups": true
-      }
-    ],
     "selector-type-no-unknown": [
       true,
       {
@@ -17,23 +13,21 @@
       }
     ],
     "declaration-property-value-allowed-list": {
-      "/color/": ["/var/", "currentColor", "transparent", "unset", "inherit"],
+      "/color/": ["/var/", "/\\$colors/", "currentColor", "transparent", "unset", "inherit"],
       "font-size": ["/var/", "/[0-9]+em$/", "unset", "inherit"],
       "border-radius": ["/var/", "50%", "0", "inherit"]
     },
     "declaration-property-value-disallowed-list": {
-      "transition": ["/all/"]
+      "transition": ["/all/", "/[0-9]ms/"]
     },
-    "declaration-empty-line-before": null,
     "custom-property-pattern": null,
+    "no-invalid-position-at-import-rule": null,
     "selector-class-pattern": null
   },
   "overrides": [
     {
       "files": ["*.scss", "**/*.scss"],
       "rules": {
-        "at-rule-no-unknown": null,
-        "scss/at-rule-no-unknown": true,
         "function-no-unknown": null
       }
     },

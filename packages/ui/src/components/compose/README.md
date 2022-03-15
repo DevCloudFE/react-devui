@@ -13,7 +13,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dSize | Set items size | 'smaller' \| 'larger' | - |
-| dDisabled | Whether to disable items | boolean | false |
+| disabled | Whether to disable items | boolean | false |
 <!-- prettier-ignore-end -->
 
 ### DComposeItemProps

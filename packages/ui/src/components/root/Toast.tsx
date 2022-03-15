@@ -1,10 +1,10 @@
 import type { DToastProps } from '../toast';
 import type { Subscription } from 'rxjs';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useImmer, useIsomorphicLayoutEffect, usePrefixConfig } from '../../hooks';
+import { useElement, useImmer, usePrefixConfig } from '../../hooks';
 import { DToast, ToastService, toastSubject } from '../toast';
 
 export function Toast(): JSX.Element | null {
@@ -13,6 +13,25 @@ export function Toast(): JSX.Element | null {
   //#endregion
 
   const [toasts, setToasts] = useImmer(new Map<number, DToastProps & { dVisible: boolean }>());
+
+  const getRoot = (id: string) => {
+    let root = document.getElementById(`${dPrefix}toast-root`);
+    if (!root) {
+      root = document.createElement('div');
+      root.id = `${dPrefix}toast-root`;
+      document.body.appendChild(root);
+    }
+
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = id;
+      root.appendChild(el);
+    }
+    return el;
+  };
+  const toastTRoot = useElement(() => getRoot(`${dPrefix}toast-t-root`));
+  const toastBRoot = useElement(() => getRoot(`${dPrefix}toast-b-root`));
 
   useEffect(() => {
     const obs: Subscription[] = [];
@@ -77,34 +96,6 @@ export function Toast(): JSX.Element | null {
       })
     );
   }, [setToasts]);
-
-  const getRoot = useCallback(
-    (id: string) => {
-      let root = document.getElementById(`${dPrefix}toast-root`);
-      if (!root) {
-        root = document.createElement('div');
-        root.id = `${dPrefix}toast-root`;
-        document.body.appendChild(root);
-      }
-
-      let el = document.getElementById(id);
-      if (!el) {
-        el = document.createElement('div');
-        el.id = id;
-        root.appendChild(el);
-      }
-      return el;
-    },
-    [dPrefix]
-  );
-  const [toastTRoot, setToastTRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setToastTRoot(getRoot(`${dPrefix}toast-t-root`));
-  }, [dPrefix, getRoot]);
-  const [toastBRoot, setToastBRoot] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    setToastBRoot(getRoot(`${dPrefix}toast-b-root`));
-  }, [dPrefix, getRoot]);
 
   return (
     <>

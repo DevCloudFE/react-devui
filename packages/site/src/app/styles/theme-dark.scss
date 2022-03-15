@@ -2,13 +2,13 @@
 @import '../../../../ui/src/styles/theme-dark';
 
 body.dark {
-  /* stylelint-disable-next-line no-invalid-position-at-import-rule */
   @import '~highlight.js/scss/github-dark';
 
   --app-th-background-color: rgb(13 13 13);
   --app-code-background-color: #2d2d2f;
   --app-demo-box-background-color: rgb(8 8 8);
   --app-header-background-color: rgb(26 26 26);
+  --app-anchor-button-color: #eceef1;
 
   background-color: rgb(18 18 18);
 }

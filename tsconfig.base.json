@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
     "rootDir": ".",
     "module": "esnext",
     "moduleResolution": "node",
@@ -24,11 +23,7 @@
     "disableSizeLimit": true,
     "noErrorTruncation": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@react-devui/ui": ["packages/ui/src/index.ts"],
-      "@react-devui/ui/*": ["packages/ui/src/*"]
-    }
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "tmp"]
 }

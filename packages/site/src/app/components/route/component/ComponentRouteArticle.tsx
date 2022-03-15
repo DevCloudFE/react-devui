@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { AppRouteArticle } from '../RouteArticle';
@@ -22,7 +22,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
 
   const { t, i18n } = useTranslation();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const _title = document.title;
     document.title = title + (i18n.language !== 'en-US' ? ` ${subtitle}` : '') + ' - React DevUI';
     return () => {
@@ -52,7 +52,9 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
       <h2 id="Examples" className="app-component-route-article__examples">
         {t('Examples')}
       </h2>
-      <section className="app-component-route-article__demos">{demos}</section>
+      <section className="app-component-route-article__demos" data-demo={title}>
+        {demos}
+      </section>
       <section className="app-component-route-article__api" dangerouslySetInnerHTML={{ __html: api }} />
     </AppRouteArticle>
   );

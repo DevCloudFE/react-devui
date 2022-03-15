@@ -1,22 +1,10 @@
 @import '~rfs/scss';
 
-.app-route-article {
-  a:not(.d-anchor-link__link) {
-    color: var(--d-color-primary);
-    text-decoration: none;
-
-    &:hover {
-      color: var(--d-color-primary-lighter);
-    }
-  }
-}
-
 .app-route-article__anchor {
   position: fixed;
   top: 120px;
   right: 20px;
   z-index: 910;
-
   width: 168px;
 }
 
@@ -25,12 +13,10 @@
   right: 0;
   bottom: 0;
   z-index: 909;
-
   width: 100%;
   height: calc(100% - 64px);
   padding: 20px;
   overflow: auto;
-
   background-color: var(--d-background-color);
 }
 
@@ -39,20 +25,20 @@
   right: 20px;
   bottom: 44px;
   z-index: 910;
-
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 2px 0;
   align-items: center;
   justify-content: center;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-
+  padding: 0;
+  margin: 0;
   color: var(--d-color-primary-lighter);
-
-  background-color: var(--d-color-step-800);
+  user-select: none;
+  background-color: var(--app-anchor-button-color);
+  border: none;
+  border-radius: 50%;
   box-shadow: 0 2px 20px 2px var(--d-shadow-color);
-
   appearance: none;
 }

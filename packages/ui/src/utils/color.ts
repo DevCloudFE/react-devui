@@ -2,7 +2,6 @@
 // @ts-nocheck
 
 // https://github.com/PimpTrizkit/PJs/wiki/12.-Shade,-Blend-and-Convert-a-Web-Color-(pSBC.js)
-// Version 4.0
 export const pSBC=(p,c0,c1?:any,l?:any)=>{
 	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
 	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;

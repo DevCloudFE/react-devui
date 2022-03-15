@@ -21,16 +21,6 @@
   }
 }
 
-@function containJsFlag($selector) {
-  $selector: selectortostring($selector);
-
-  @if str-index($selector, '.' + $js-prefix) {
-    @return true;
-  } @else {
-    @return false;
-  }
-}
-
 @function containPseudoClass($selector) {
   $selector: selectortostring($selector);
 
@@ -42,5 +32,5 @@
 }
 
 @function hitAllSpecialNestRule($selector) {
-  @return containsModifier($selector) or containWhenFlag($selector) or containJsFlag($selector) or containPseudoClass($selector);
+  @return containsModifier($selector) or containWhenFlag($selector) or containPseudoClass($selector);
 }

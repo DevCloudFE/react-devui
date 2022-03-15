@@ -4,64 +4,17 @@
   --#{$variable-prefix}slider-color-rgb: var(--#{$variable-prefix}color-primary-rgb);
 
   position: relative;
-
   cursor: pointer;
 
-  &:not(.is-disabled) {
-    @include e(input-wrapper) {
-      &:hover {
-        box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}slider-color-rgb) / var(--#{$variable-prefix}shadow-normal));
-      }
-    }
-  }
-
-  @at-root {
-    #{$form-item-selector} {
-      @include when(pending) {
-        #{$selector}.is-pending {
-          #{$selector}__input-wrapper::after {
-            position: absolute;
-            top: 1px;
-            right: 1px;
-            bottom: 1px;
-            left: 1px;
-
-            display: block;
-            border: solid 1px transparent;
-            border-right-color: rgb(var(--#{$variable-prefix}slider-color-rgb));
-            border-radius: 50%;
-
-            animation: spin 1s linear infinite;
-
-            content: '';
-          }
-        }
-      }
-
-      @include when(error) {
-        #{$selector}.is-invalid {
-          --#{$variable-prefix}slider-color-rgb: var(--#{$variable-prefix}color-danger-rgb) !important;
-        }
-      }
-      @include when(warning) {
-        #{$selector}.is-invalid {
-          --#{$variable-prefix}slider-color-rgb: var(--#{$variable-prefix}color-warning-rgb) !important;
-        }
-      }
-    }
-  }
-
   @include when(disabled) {
-    cursor: not-allowed;
-
+    pointer-events: none;
     filter: opacity(50%) saturate(50%) grayscale(50%);
   }
 
   @include m(horizontal) {
     width: calc(100% - 14px);
-    margin: 0 7px;
-
     padding: 8px 0;
+    margin: 0 7px;
 
     @include e(thumb) {
       width: 100%;
@@ -70,7 +23,6 @@
 
     @include e(active-thumb) {
       top: 0;
-
       height: 100%;
 
       @include when(focus) {
@@ -95,7 +47,6 @@
     @include e(mark-label) {
       top: 6px;
       left: 1px;
-
       transform: translateX(-50%);
     }
   }
@@ -103,9 +54,8 @@
   @include m(vertical) {
     display: inline-block;
     height: calc(100% - 14px);
-    margin: 7px 0;
-
     padding: 0 8px;
+    margin: 7px 0;
 
     @include e(thumb) {
       width: 4px;
@@ -114,7 +64,6 @@
 
     @include e(active-thumb) {
       left: 0;
-
       width: 100%;
 
       @include when(focus) {
@@ -139,18 +88,15 @@
     @include e(mark-label) {
       top: 1px;
       left: 10px;
-
       transform: translateY(-50%);
     }
   }
 
   @include e(thumb) {
     position: relative;
-
+    background-color: var(--#{$variable-prefix}background-color-indicator);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 2px;
-
-    background-color: var(--#{$variable-prefix}background-color-indicator);
 
     @include m(reverse) {
       transform: rotate(180deg);
@@ -159,25 +105,20 @@
 
   @include e(active-thumb) {
     position: absolute;
-
+    background-color: rgb(var(--#{$variable-prefix}slider-color-rgb));
     border-radius: inherit;
 
-    background-color: rgb(var(--#{$variable-prefix}slider-color-rgb));
-
     @include m(draggable) {
-      transition: transform 0.1s linear;
+      transition: transform var(--#{$variable-prefix}animation-duration-fast) linear;
     }
   }
 
   @include e(mark) {
     position: absolute;
-
     width: 2px;
     height: 2px;
+    background-color: map.get($colors, 'white');
     border-radius: 50%;
-
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    background-color: #fff;
 
     @include m(hidden) {
       background-color: transparent;
@@ -186,12 +127,9 @@
 
   @include e(mark-label) {
     position: absolute;
-
     font-size: 0.85em;
-
     opacity: 0.5;
-
-    transition: opacity 0.1s linear;
+    transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
 
     @include when(active) {
       opacity: 1;
@@ -200,21 +138,20 @@
 
   @include e(input-wrapper) {
     position: absolute;
-
     z-index: 1;
-
     width: 14px;
     height: 14px;
+    background-color: var(--#{$variable-prefix}background-color);
     border: solid 2px rgb(var(--#{$variable-prefix}slider-color-rgb));
     border-radius: 50%;
+    transition: box-shadow var(--#{$variable-prefix}animation-duration-fast) linear;
 
-    background-color: var(--#{$variable-prefix}background-color);
-
-    transition: box-shadow 133ms linear;
+    &:hover {
+      box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}slider-color-rgb) / var(--#{$variable-prefix}shadow-normal));
+    }
 
     @include when(focus) {
       z-index: 5;
-
       box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}slider-color-rgb) / var(--#{$variable-prefix}shadow-normal));
     }
   }
@@ -223,20 +160,15 @@
     position: absolute;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 100%;
-    margin: 0;
     padding: 0;
-    border: none;
-
+    margin: 0;
     overflow: hidden;
-
-    cursor: pointer;
-
-    opacity: 0;
-
-    appearance: none;
     pointer-events: none;
+    cursor: pointer;
+    border: none;
+    opacity: 0;
+    appearance: none;
   }
 }

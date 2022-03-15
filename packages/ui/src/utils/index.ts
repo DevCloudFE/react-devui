@@ -1,10 +1,10 @@
-export { getClassName } from './class-name';
+export { findNested } from './array';
+export { getClassName, mergeAriaDescribedby } from './attributes';
 export { pSBC, convertHex } from './color';
-export { generateComponentMate } from './component-mate';
+export { COMPONENT_MATES, registerComponentMate } from './component-mate';
 export { copy } from './copy';
-export { getFragmentChildren } from './fragment-children';
-export { mergeStyle } from './merge-style';
-export { getFillingStyle, getPopupPlacementStyle, getHorizontalSideStyle, getVerticalSideStyle } from './position';
-export { scrollTo } from './scroll';
-export { toId } from './to-id';
-export { toPx, getNoTransformElSize } from './measure';
+export { toPx, getNoTransformSize } from './measure';
+export { getFillingPosition, getHorizontalSidePosition, getVerticalSidePosition } from './position';
+export { scrollTo, scrollElementToView } from './scroll';
+export { getPositionedParent } from './selector';
+export * from './vars';

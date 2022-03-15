@@ -1,0 +1,36 @@
+@import '~rfs/scss';
+
+.app-sidebar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 260px;
+  height: calc(100% - 64px);
+  padding: 0;
+  overflow: auto;
+
+  &::after {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    width: 1px;
+    height: calc(100% - 40px);
+    content: '';
+    background-color: var(--d-color-divider);
+  }
+}
+
+.app-sidebar__drawer {
+  .d-drawer__body {
+    padding: 12px 0;
+  }
+
+  .app-sidebar__subtitle {
+    margin-left: 4px;
+    font-size: 0.8em;
+  }
+
+  .app-sidebar__title {
+    margin-left: 8px;
+  }
+}

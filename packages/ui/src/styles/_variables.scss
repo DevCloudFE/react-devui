@@ -11,10 +11,12 @@ $themes: (
   'danger': 235 68 90,
 ) !default;
 
+$colors: (
+  'white': #fff,
+) !default;
+
 :root {
   /** z-index **/
-  --#{$variable-prefix}zindex-active: 20;
-  --#{$variable-prefix}zindex-hover: 30;
   --#{$variable-prefix}zindex-absolute: 100;
   --#{$variable-prefix}zindex-sticky: 900;
   --#{$variable-prefix}zindex-fixed: 1000;
@@ -33,9 +35,15 @@ $themes: (
   --#{$variable-prefix}margin-size: 8px;
   --#{$variable-prefix}margin-size-smaller: 6px;
   --#{$variable-prefix}margin-size-larger: 10px;
-  @include rfs(1rem, --#{$variable-prefix}font);
-  @include rfs(0.85rem, --#{$variable-prefix}font-smaller);
-  @include rfs(1.1rem, --#{$variable-prefix}font-larger);
+  --#{$variable-prefix}icon-size: 1.1em;
+  @include rfs(1rem, --#{$variable-prefix}font-size);
+  @include rfs(0.85rem, --#{$variable-prefix}font-size-smaller);
+  @include rfs(1.1rem, --#{$variable-prefix}font-size-larger);
+
+  /** animation **/
+  --#{$variable-prefix}animation-duration-slow: 300ms;
+  --#{$variable-prefix}animation-duration-base: 200ms;
+  --#{$variable-prefix}animation-duration-fast: 100ms;
 
   /** border-radius **/
   --#{$variable-prefix}border-radius: 2px;
@@ -51,6 +59,7 @@ $themes: (
   /** basic **/
   --#{$variable-prefix}text-color: rgb(33 37 41);
   --#{$variable-prefix}text-color-rgb: 33 37 41;
+  --#{$variable-prefix}text-color-sub: #999;
   --#{$variable-prefix}background-color: rgb(255 255 255);
   --#{$variable-prefix}background-color-rgb: 255 255 255;
   --#{$variable-prefix}background-color-hover: rgb(0 0 0 / 4%);
@@ -60,35 +69,7 @@ $themes: (
   --#{$variable-prefix}color-divider: #eee;
   --#{$variable-prefix}color-border: #d9d9d9;
   --#{$variable-prefix}color-disabled: #d5d5d5;
-
-  /** step **/
-  --#{$variable-prefix}color-step-10: hsl(0deg 0% 99%);
-  --#{$variable-prefix}color-step-20: hsl(0deg 0% 98%);
-  --#{$variable-prefix}color-step-30: hsl(0deg 0% 97%);
-  --#{$variable-prefix}color-step-40: hsl(0deg 0% 96%);
-  --#{$variable-prefix}color-step-50: hsl(0deg 0% 95%);
-  --#{$variable-prefix}color-step-60: hsl(0deg 0% 94%);
-  --#{$variable-prefix}color-step-70: hsl(0deg 0% 93%);
-  --#{$variable-prefix}color-step-80: hsl(0deg 0% 92%);
-  --#{$variable-prefix}color-step-90: hsl(0deg 0% 91%);
-  --#{$variable-prefix}color-step-100: hsl(0deg 0% 90%);
-  --#{$variable-prefix}color-step-150: hsl(0deg 0% 85%);
-  --#{$variable-prefix}color-step-200: hsl(0deg 0% 80%);
-  --#{$variable-prefix}color-step-250: hsl(0deg 0% 75%);
-  --#{$variable-prefix}color-step-300: hsl(0deg 0% 70%);
-  --#{$variable-prefix}color-step-350: hsl(0deg 0% 65%);
-  --#{$variable-prefix}color-step-400: hsl(0deg 0% 60%);
-  --#{$variable-prefix}color-step-450: hsl(0deg 0% 55%);
-  --#{$variable-prefix}color-step-500: hsl(0deg 0% 50%);
-  --#{$variable-prefix}color-step-550: hsl(0deg 0% 45%);
-  --#{$variable-prefix}color-step-600: hsl(0deg 0% 40%);
-  --#{$variable-prefix}color-step-650: hsl(0deg 0% 35%);
-  --#{$variable-prefix}color-step-700: hsl(0deg 0% 30%);
-  --#{$variable-prefix}color-step-750: hsl(0deg 0% 25%);
-  --#{$variable-prefix}color-step-800: hsl(0deg 0% 20%);
-  --#{$variable-prefix}color-step-850: hsl(0deg 0% 15%);
-  --#{$variable-prefix}color-step-900: hsl(0deg 0% 10%);
-  --#{$variable-prefix}color-step-950: hsl(0deg 0% 5%);
+  --#{$variable-prefix}color-icon-decorator: #7e8083;
 
   @each $theme, $rgb in $themes {
     /** rgb **/
@@ -115,4 +96,5 @@ $themes: (
   --#{$variable-prefix}empty-color: #a8afbc;
   --#{$variable-prefix}switch-background-color: #d4d6d9;
   --#{$variable-prefix}tag-background-color: rgb(0 0 0 / 6%);
+  --#{$variable-prefix}compose-item-gray-background-color: hsl(0deg 0% 98%);
 }

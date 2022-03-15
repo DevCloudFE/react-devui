@@ -8,6 +8,8 @@
       "Show code": "Show code",
       "Copy code": "Copy code",
       "Copied!": "Copied!",
+      "Open main navigation": "Open main navigation",
+      "GitHub repository": "GitHub repository",
       "Documentation": {
         "Interface": "Interface"
       },
@@ -24,6 +26,8 @@
       "Show code": "显示代码",
       "Copy code": "复制代码",
       "Copied!": "复制成功！",
+      "Open main navigation": "打开主导航栏",
+      "GitHub repository": "GitHub 存储库",
       "Documentation": {
         "Interface": "接口"
       },

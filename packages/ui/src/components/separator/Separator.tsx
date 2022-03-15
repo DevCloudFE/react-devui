@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName } from '../../utils';
 
 export type DSeparatorRef = HTMLButtonElement;
 
@@ -11,14 +11,14 @@ export interface DSeparatorProps extends React.HTMLAttributes<HTMLElement> {
   dVertical?: boolean;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DSeparator');
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSeparator' });
 export function DSeparator(props: DSeparatorProps): JSX.Element | null {
   const {
+    className,
+    children,
     dTag = 'hr',
     dTextAlign = 'left',
     dVertical = false,
-    className,
-    children,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -31,6 +31,7 @@ export function DSeparator(props: DSeparatorProps): JSX.Element | null {
     {
       ...restProps,
       className: getClassName(className, `${dPrefix}separator`, {
+        [`${dPrefix}separator--text`]: children,
         [`${dPrefix}separator--text-${dTextAlign}`]: children,
         [`${dPrefix}separator--vertical`]: dVertical,
       }),

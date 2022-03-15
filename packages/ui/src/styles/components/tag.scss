@@ -6,31 +6,38 @@
   align-items: center;
   height: var(--#{$variable-prefix}tag-size);
   padding: 0 var(--#{$variable-prefix}tag-padding-size);
-  border-radius: var(--#{$variable-prefix}border-radius);
-
   vertical-align: top;
+  border-radius: var(--#{$variable-prefix}border-radius);
 
   @include font-size(0.9rem);
 
   @include m(primary) {
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
-
     background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}tag-background-color));
   }
 
   @include m(fill) {
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    color: #fff;
+    color: map.get($colors, 'white');
+    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-icon-decorator));
 
-    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-step-400));
+    @include e(close) {
+      color: map.get($colors, 'white');
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}color-primary-darker);
+      }
+    }
   }
 
   @include m(outline) {
     padding: 0 calc(var(--#{$variable-prefix}tag-padding-size) - 1px);
-
+    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-icon-decorator));
     border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}color-border));
-
-    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-step-600));
   }
 
   @each $theme, $rgb in $themes {
@@ -57,14 +64,5 @@
 
   @include e(close) {
     margin-left: 4px;
-
-    cursor: pointer;
-
-    transition: color 0.1s linear;
-
-    &:hover,
-    &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
-    }
   }
 }

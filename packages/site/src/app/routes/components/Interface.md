@@ -47,7 +47,7 @@ interface DPopupRef {
 
 ```tsx
 interface DTriggerRenderProps {
-  [key: `data-${string}popup-trigger`]: string;
+  'data-triggerid': string;
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
   onFocus?: React.FocusEventHandler<HTMLElement>;
@@ -110,8 +110,8 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dSearchable | Searchable | boolean | false |
 | dClearIcon | Custom clear button | React.ReactNode | - |
 | dSize | Select box size | 'smaller' \| 'larger' | - |
-| dPlaceholder | Placeholder content | string | - |
-| dDisabled | Whether to disable | boolean | false |
+| placeholder | Placeholder content | string | - |
+| disabled | Whether to disable | boolean | false |
 | dLoading | Whether it is loading | boolean | false |
 | onClear | Callback for clicking the clear button | `() => void` | - |
 | onSearch | Search callback | `(value: string) => void` | - |

@@ -10,8 +10,7 @@ export function toPx(str: string, toNum?: true): number | string {
     num = toNumber(str.slice(0, str.length - 2));
   } else {
     const el = document.createElement('div');
-    el.setAttribute('style', 'visibility: hidden;position: absolute;top: -999px;left: -999px;');
-    el.style.width = str;
+    el.style.cssText = `visibility:hidden;position:absolute;top:-999px;left:-999px;width:${str};`;
     document.body.appendChild(el);
     num = el.clientWidth;
     document.body.removeChild(el);
@@ -20,7 +19,7 @@ export function toPx(str: string, toNum?: true): number | string {
   return toNum ? num : num + 'px';
 }
 
-export function getNoTransformElSize(el: HTMLElement) {
+export function getNoTransformSize(el: HTMLElement) {
   let width = el.clientWidth;
   let height = el.clientHeight;
   const {

@@ -14,7 +14,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | --- | --- | --- | --- | 
 | dGutter | Grid interval, written as an array to represent `[Vertical Spacing, Horizontal Spacing]` | DGutterValue | 0 |
 | dResponsiveGutter | Grid spacing supports responsive layout | Record\<DBreakpoints, DGutterValue\> | - |
-| onMediaChange | Callback when the breakpoint changes | `(match: DBreakpoints \| null, matchs: DBreakpoints[]) => void` | - | 
 <!-- prettier-ignore-end -->
 
 ### DColProps

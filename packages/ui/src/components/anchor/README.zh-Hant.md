@@ -17,14 +17,3 @@ title: 锚点
 | dIndicator | 自定义指示器，预定义了 `DOT_INDICATOR` 以及 `LINE_INDICATOR` 形态的指示器 | React.ReactNode \| symbol | DOT_INDICATOR |
 | onHrefChange | 锚点改变的回调 | `(href: string \| null) => void` | - |
 <!-- prettier-ignore-end -->
-
-### DAnchorLinkProps
-
-继承 `React.LiHTMLAttributes<HTMLLIElement>`。
-
-<!-- prettier-ignore-start -->
-| 参数 | 说明 | 类型 | 默认值 | 
-| --- | --- | --- | --- | 
-| dLevel | 设置锚点的层级 | number | 0 |
-| href | 设置锚点链接 | string | - |
-<!-- prettier-ignore-end -->

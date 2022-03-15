@@ -1,36 +1,35 @@
-import type { DGeneralStateContextData } from '../../hooks/general-state';
-import type { DUpdater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DId } from '../../types';
+import type { DFormControl } from '../form';
 
-import React, { useCallback, useMemo } from 'react';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DCheckbox } from './Checkbox';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, DGeneralStateContext } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
-
-export interface DCheckboxGroupContextData<T> {
-  gValue: T[];
-  gOnCheckedChange: (value: T, checked: boolean) => void;
+export interface DCheckboxOption<V extends DId> {
+  label: React.ReactNode;
+  value: V;
+  disabled?: boolean;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const DCheckboxGroupContext = React.createContext<DCheckboxGroupContextData<any> | null>(null);
-
-export interface DCheckboxGroupProps<T = unknown> extends React.HTMLAttributes<HTMLDivElement> {
-  dFormControlName?: string;
-  dModel?: [T[], DUpdater<T[]>?];
-  dDisabled?: boolean;
+export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  disabled?: boolean;
+  dFormControl?: DFormControl;
+  dOptions: DCheckboxOption<V>[];
+  dModel?: [V[], DUpdater<V[]>?];
   dVertical?: boolean;
-  onModelChange?: (values: T[]) => void;
+  onModelChange?: (values: V[]) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DCheckboxGroup');
-export function DCheckboxGroup<T>(props: DCheckboxGroupProps<T>): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckboxGroup' });
+export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JSX.Element | null {
   const {
-    dFormControlName,
+    className,
+    disabled: _disabled,
+    dFormControl,
+    dOptions,
     dModel,
-    dDisabled = false,
     dVertical = false,
     onModelChange,
-    className,
-    children,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -39,56 +38,49 @@ export function DCheckboxGroup<T>(props: DCheckboxGroupProps<T>): JSX.Element | 
   const { gDisabled } = useGeneralState();
   //#endregion
 
-  const [value, changeValue, { ariaAttribute, controlDisabled }] = useTwoWayBinding<T[]>([], dModel, onModelChange, {
-    formControlName: dFormControlName,
+  const [value, changeValue] = useTwoWayBinding<V[]>([], dModel, onModelChange, {
+    formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || controlDisabled;
-
-  const generalStateContextValue = useMemo<DGeneralStateContextData>(
-    () => ({
-      gDisabled: disabled,
-    }),
-    [disabled]
-  );
-
-  const gOnCheckedChange = useCallback(
-    (value, checked) => {
-      changeValue((draft) => {
-        if (checked) {
-          draft.push(value);
-        } else {
-          draft.splice(
-            draft.findIndex((item) => item === value),
-            1
-          );
-        }
-      });
-    },
-    [changeValue]
-  );
-  const contextValue = useMemo<DCheckboxGroupContextData<T>>(
-    () => ({
-      gValue: value,
-      gOnCheckedChange,
-    }),
-    [gOnCheckedChange, value]
-  );
+  const disabled = _disabled || gDisabled || dFormControl?.disabled;
 
   return (
-    <DGeneralStateContext.Provider value={generalStateContextValue}>
-      <DCheckboxGroupContext.Provider value={contextValue}>
-        <div
-          {...restProps}
-          {...ariaAttribute}
-          className={getClassName(className, `${dPrefix}checkbox-group`, {
-            [`${dPrefix}checkbox-group--vertical`]: dVertical,
-          })}
-          role="group"
+    <div
+      {...restProps}
+      className={getClassName(className, `${dPrefix}checkbox-group`, {
+        [`${dPrefix}checkbox-group--vertical`]: dVertical,
+      })}
+      role="group"
+    >
+      {dOptions.map((option, index) => (
+        <DCheckbox
+          key={option.value}
+          disabled={option.disabled || disabled}
+          dInputProps={
+            index === 0
+              ? {
+                  ...dFormControl?.inputAttrs,
+                  id: dFormControl?.controlId,
+                }
+              : undefined
+          }
+          dModel={[value.includes(option.value)]}
+          onModelChange={(checked) => {
+            changeValue((draft) => {
+              if (checked) {
+                draft.push(option.value);
+              } else {
+                draft.splice(
+                  draft.findIndex((v) => v === option.value),
+                  1
+                );
+              }
+            });
+          }}
         >
-          {children}
-        </div>
-      </DCheckboxGroupContext.Provider>
-    </DGeneralStateContext.Provider>
+          {option.label}
+        </DCheckbox>
+      ))}
+    </div>
   );
 }

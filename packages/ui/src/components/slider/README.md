@@ -50,6 +50,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dMarks | Tick marks | number | ({ value: number; label: React.ReactNode } | number)[] | - |
 | dVertical | Whether to display vertically | boolean | false |
 | dReverse | Whether to invert the display | boolean | false |
-| dDisabled | Whether to disable | boolean | false |
+| disabled | Whether to disable | boolean | false |
 | dCustomTooltip | Custom prompt | `(value: number) => React.ReactNode` | - |
 <!-- prettier-ignore-end -->

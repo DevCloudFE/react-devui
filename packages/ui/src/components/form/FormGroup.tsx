@@ -1,36 +1,25 @@
-import React, { useMemo } from 'react';
+import type { FormGroup } from './form';
 
-import { usePrefixConfig, useComponentConfig, useContextOptional } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import React from 'react';
 
-export interface DFormGroupContextData {
-  gPath: string[];
-}
-export const DFormGroupContext = React.createContext<DFormGroupContextData | null>(null);
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 
-export interface DFormGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  dFormGroupName: string;
+export const DFormGroupContext = React.createContext<FormGroup | null>(null);
+
+export interface DFormGroupProps {
+  children: React.ReactNode;
+  dFormGroup: FormGroup;
   dTitle?: React.ReactNode;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DFormGroup');
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFormGroup' });
 export function DFormGroup(props: DFormGroupProps): JSX.Element | null {
-  const { dFormGroupName, dTitle, className, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
-
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  const { gPath } = useContextOptional(DFormGroupContext);
-  //#endregion
-
-  const contextValue = useMemo<DFormGroupContextData>(() => ({ gPath: (gPath ?? []).concat([dFormGroupName]) }), [dFormGroupName, gPath]);
+  const { children, dFormGroup, dTitle } = useComponentConfig(COMPONENT_NAME, props);
 
   return (
-    <DFormGroupContext.Provider value={contextValue}>
-      {dTitle && (
-        <div {...restProps} className={getClassName(className, `${dPrefix}form-group`)} role="separator">
-          {dTitle}
-        </div>
-      )}
+    <DFormGroupContext.Provider value={dFormGroup}>
+      {dTitle}
       {children}
     </DFormGroupContext.Provider>
   );

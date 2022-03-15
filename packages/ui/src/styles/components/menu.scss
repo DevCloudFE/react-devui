@@ -1,23 +1,11 @@
 $menu-item-height: 40px;
 
-@mixin menu-list() {
-  @include e(list) {
-    position: relative;
-
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-  }
-}
-
 @mixin menu-empty() {
   @include e(empty) {
     display: flex;
     align-items: center;
     height: $menu-item-height;
-
-    color: var(--#{$variable-prefix}color-step-400);
+    color: var(--#{$variable-prefix}color-disabled);
   }
 }
 
@@ -25,55 +13,57 @@ $menu-item-height: 40px;
   $selector: &;
 
   position: relative;
-
   display: flex;
   align-items: center;
   height: $menu-item-height;
   margin: 0;
-
   list-style: none;
   cursor: pointer;
+  transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+    background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  transition: color 0.2s linear, background-color 0.2s linear;
+  &:hover {
+    color: var(--#{$variable-prefix}color-primary);
+  }
 
-  &:not(.is-disabled) {
-    &:focus,
-    &:hover {
-      color: var(--#{$variable-prefix}color-primary);
+  &:not(#{$selector}--horizontal):hover {
+    background-color: var(--#{$variable-prefix}background-color-hover-primary);
+  }
 
-      background-color: var(--#{$variable-prefix}background-color-hover-primary);
+  @include when(active) {
+    color: var(--#{$variable-prefix}color-primary);
+
+    &:not(#{$selector}--horizontal) {
+      @include e(indicator) {
+        & > div::before {
+          transform: scaleY(1);
+        }
+      }
     }
   }
 
-  @include utils-outline;
-  @include utils-disabled;
+  @include when(disabled) {
+    pointer-events: none;
+    filter: opacity(50%);
+  }
 
   @include m(horizontal) {
     display: inline-flex;
     min-width: unset;
-
-    &:not(.is-disabled) {
-      &:focus,
-      &:hover {
-        background-color: transparent;
-      }
-    }
+    padding: 0 20px;
 
     &::after {
       position: absolute;
-      right: 16px;
+      right: 20px;
       bottom: -5px;
-      left: 16px;
+      left: 20px;
       z-index: 1;
-
       height: 2px;
-
-      background-color: transparent;
-      transform: scaleX(0.8);
-
-      transition: background-color 0.2s linear, transform 166ms linear;
-
       content: '';
+      background-color: transparent;
+      transition: background-color var(--#{$variable-prefix}animation-duration-base) linear,
+        transform var(--#{$variable-prefix}animation-duration-base) linear;
+      transform: scaleX(0.8);
     }
 
     @include when(active) {
@@ -101,33 +91,19 @@ $menu-item-height: 40px;
     }
   }
 
-  @include when(active) {
-    color: var(--#{$variable-prefix}color-primary);
-
-    &:not(#{$selector}--horizontal) {
-      @include e(indicator) {
-        & > div::before {
-          transform: scaleY(1);
-        }
-      }
-    }
-  }
-
   @include e(icon) {
     flex-shrink: 0;
     width: calc(1.05rem + 12px);
-
     font-size: 1.1em;
-
-    transition: height 0.2s linear;
+    transition: height var(--#{$variable-prefix}animation-duration-base) linear;
 
     & > .#{$variable-prefix}icon {
-      transition: transform 0.2s linear, width 0.2s linear;
+      transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
+        width var(--#{$variable-prefix}animation-duration-base) linear;
     }
   }
 
   @include e(title) {
-    flex-grow: 1;
     min-width: 1em;
 
     @include utils-ellipsis;
@@ -135,73 +111,55 @@ $menu-item-height: 40px;
 }
 
 @mixin menu-indicator() {
-  @include js(first) {
-    @include e(indicator) {
-      & > div {
-        bottom: 0;
-
-        height: calc(100% - 8px);
-
-        &::before {
-          top: 0;
-
-          height: calc(100% - 8px);
-
-          transform-origin: top;
-        }
-      }
-    }
-  }
-
-  @include js(last) {
-    @include e(indicator) {
-      & > div {
-        top: 0;
-
-        height: calc(100% - 8px);
-
-        &::before {
-          bottom: 0;
-
-          height: calc(100% - 8px);
-
-          transform-origin: bottom;
-        }
-      }
-    }
-  }
-
   @include e(indicator) {
     position: relative;
-
     width: 0;
     height: 100%;
 
     & > div {
       position: absolute;
       left: -8px;
-
       width: 2px;
       height: 100%;
-
       background-color: var(--#{$variable-prefix}background-color-indicator);
 
       &::before {
         position: absolute;
-
         top: 8px;
         left: 0;
-
         display: block;
         width: 2px;
         height: calc(100% - 16px);
-
-        background-color: var(--#{$variable-prefix}color-primary);
-        transform: scaleY(0);
-
-        transition: transform 0.2s linear;
-
         content: '';
+        background-color: var(--#{$variable-prefix}color-primary);
+        transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+        transform: scaleY(0);
+      }
+    }
+
+    @include m(first) {
+      & > div {
+        bottom: 0;
+        height: calc(100% - 8px);
+
+        &::before {
+          top: 0;
+          height: calc(100% - 8px);
+          transform-origin: top;
+        }
+      }
+    }
+
+    @include m(last) {
+      & > div {
+        top: 0;
+        height: calc(100% - 8px);
+
+        &::before {
+          bottom: 0;
+          height: calc(100% - 8px);
+          transform-origin: bottom;
+        }
       }
     }
   }
@@ -209,14 +167,16 @@ $menu-item-height: 40px;
 
 @include b(menu) {
   position: relative;
-
   padding: 8px 0;
+  outline: none;
 
   &:not(&--horizontal) {
-    overflow-x: hidden;
+    overflow: hidden auto;
   }
 
   @include m(horizontal) {
+    display: inline-block;
+    min-width: 100%;
     white-space: nowrap;
 
     &::after {
@@ -224,52 +184,46 @@ $menu-item-height: 40px;
       right: 4px;
       bottom: 10px;
       left: 4px;
-
       height: 1px;
-
-      background-color: var(--#{$variable-prefix}background-color-indicator);
-
-      content: '';
       pointer-events: none;
+      content: '';
+      background-color: var(--#{$variable-prefix}background-color-indicator);
     }
   }
 }
 
 @include b(menu-group) {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  height: $menu-item-height;
+  padding: 0;
   margin: 0;
-  padding: 0 16px;
+  list-style: none;
 
-  color: var(--#{$variable-prefix}color-step-400);
-  font-size: 0.9em;
+  @include e(label) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: $menu-item-height;
+    padding: 0 16px;
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}text-color-sub);
 
-  @include utils-outline;
-  @include utils-ellipsis;
+    @include utils-ellipsis;
+  }
 
   @include menu-empty;
 }
 
 @include b(menu-sub) {
-  $selector: &;
+  padding-right: 32px;
 
-  padding: 0 32px 0 16px;
-
-  &:not(.is-disabled) {
-    &:focus,
-    &:hover {
-      @include e(arrow) {
-        color: var(--#{$variable-prefix}color-primary-lighter);
-      }
+  &:hover {
+    @include e(arrow) {
+      color: inherit;
     }
   }
 
   @include menu-item;
   @include menu-indicator;
-  @include menu-list;
   @include menu-empty;
 
   @include m(horizontal) {
@@ -289,7 +243,7 @@ $menu-item-height: 40px;
 
   @include when(active) {
     @include e(arrow) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: inherit;
     }
   }
 
@@ -297,7 +251,7 @@ $menu-item-height: 40px;
     color: var(--#{$variable-prefix}color-primary);
 
     @include e(arrow) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: inherit;
     }
   }
 
@@ -310,15 +264,41 @@ $menu-item-height: 40px;
   @include e(arrow) {
     position: absolute;
     right: 12px;
-
     display: inline-flex;
     align-items: center;
-
     height: 100%;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      transform var(--#{$variable-prefix}animation-duration-base) linear;
+  }
 
-    color: var(--#{$variable-prefix}color-step-450);
+  @include e(list) {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 
-    transition: color 0.2s linear, transform 0.2s linear;
+    @include m(popup) {
+      position: fixed;
+      padding: 4px;
+      background-color: var(--#{$variable-prefix}background-color);
+      border-radius: var(--#{$variable-prefix}border-radius);
+      box-shadow: var(--#{$variable-prefix}shadow-popup);
+
+      $padding-size: 8px;
+      .#{$variable-prefix}menu-item {
+        padding: 0 $padding-size;
+      }
+      .#{$variable-prefix}menu-sub {
+        padding: 0 24px 0 $padding-size;
+      }
+      .#{$variable-prefix}menu-sub__arrow {
+        right: 6px;
+      }
+      .#{$variable-prefix}menu-group__label {
+        padding: 0 $padding-size;
+      }
+    }
   }
 }
 
@@ -329,35 +309,9 @@ $menu-item-height: 40px;
   @include menu-indicator;
 
   @include m(horizontal) {
-    &:not(.is-disabled) {
-      &:focus,
-      &:hover {
-        &::after {
-          background-color: var(--#{$variable-prefix}color-primary);
-          transform: scaleX(1);
-        }
-      }
-    }
-  }
-}
-
-@include b(menu-sub-popup) {
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
-
-  .#{$variable-prefix}menu-sub__arrow {
-    right: 6px;
-  }
-
-  .#{$variable-prefix}menu-sub__list {
-    padding: 4px;
-
-    .#{$variable-prefix}menu-group {
-      padding-right: 8px;
-    }
-    .#{$variable-prefix}menu-sub {
-      padding-right: 24px;
+    &:hover::after {
+      background-color: var(--#{$variable-prefix}color-primary);
+      transform: scaleX(1);
     }
   }
 }

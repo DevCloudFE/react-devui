@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-empty-function */
-
-// Refer to Angular [forms](https://github.com/angular/angular/blob/13.1.1/packages/forms)
-
 import type { Subscription } from 'rxjs';
 
 import { isArray, isNull, isNumber, isString } from 'lodash';
@@ -148,7 +145,6 @@ export abstract class AbstractControl {
     return this._parent;
   }
   get root(): AbstractControl {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let control: AbstractControl = this;
 
     while (control.parent) {

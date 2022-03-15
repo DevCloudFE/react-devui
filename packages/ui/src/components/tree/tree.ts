@@ -1,42 +1,33 @@
-export interface TreeOption<V> {
-  dLabel: string;
-  dValue: V;
-  dDisabled?: boolean;
-  dChildren?: TreeOption<V>[];
-  [index: string | symbol]: unknown;
-}
+import type { DId } from '../../types';
 
+/* eslint-disable @typescript-eslint/no-this-alias */
 export type TreeNodeStatus = 'INDETERMINATE' | 'CHECKED' | 'UNCHECKED';
 
 const [INDETERMINATE, CHECKED, UNCHECKED] = ['INDETERMINATE', 'CHECKED', 'UNCHECKED'] as TreeNodeStatus[];
 
-export abstract class AbstractTreeNode<V, O> {
-  private _parent: AbstractTreeNode<V, O> | null = null;
+export abstract class AbstractTreeNode<ID extends DId, T> {
+  private _parent: AbstractTreeNode<ID, T> | null = null;
 
-  constructor(public node: O) {}
+  constructor(public origin: T) {}
 
-  get parent(): AbstractTreeNode<V, O> | null {
+  get parent(): AbstractTreeNode<ID, T> | null {
     return this._parent;
   }
-  get root(): AbstractTreeNode<V, O> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let node: AbstractTreeNode<V, O> = this;
+  get root(): AbstractTreeNode<ID, T> {
+    let origin: AbstractTreeNode<ID, T> = this;
 
-    while (node.parent) {
-      node = node.parent;
+    while (origin.parent) {
+      origin = origin.parent;
     }
 
-    return node;
+    return origin;
   }
 
   get isLeaf(): boolean {
     return !this.children;
   }
 
-  get value(): V[] {
-    return this._value;
-  }
-  get id(): string[] {
+  get id(): ID {
     return this._id;
   }
 
@@ -61,155 +52,125 @@ export abstract class AbstractTreeNode<V, O> {
     return !this._disabled;
   }
 
-  updateStatus(checkeds: V[] | null | V[][], onlySelf = false): void {
-    this._calculateStatus(checkeds);
+  updateStatus(checked: ID | null | ID[], onlySelf = false): void {
+    this._calculateStatus(checked);
 
-    this._updateAncestors(checkeds, onlySelf);
+    this._updateAncestors(checked, onlySelf);
   }
 
-  protected _setParent(parent: AbstractTreeNode<V, O>): void {
+  protected _setParent(parent: AbstractTreeNode<ID, T>): void {
     this._parent = parent;
   }
 
-  protected _updateAncestors(checkeds: V[] | null | V[][], onlySelf: boolean) {
+  protected _updateAncestors(checked: ID | null | ID[], onlySelf: boolean) {
     if (this._parent && !onlySelf) {
-      this._parent.updateStatus(checkeds, onlySelf);
+      this._parent.updateStatus(checked, onlySelf);
     }
   }
 
-  abstract children: AbstractTreeNode<V, O>[] | null;
+  abstract children?: AbstractTreeNode<ID, T>[];
 
-  protected abstract _value: V[];
-  protected abstract _id: string[];
+  protected abstract _id: ID;
 
   protected abstract _status: TreeNodeStatus;
   protected abstract _disabled: boolean;
 
-  protected abstract _calculateStatus(checkeds: V[] | null | V[][]): void;
+  protected abstract _calculateStatus(checked: ID | null | ID[]): void;
 }
 
-export class SingleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNode<V, O> {
-  children: SingleTreeNode<V, O>[] | null = null;
+export class SingleTreeNode<ID extends DId, T extends { disabled?: boolean; children?: T[] }> extends AbstractTreeNode<ID, T> {
+  children?: SingleTreeNode<ID, T>[];
 
-  protected _value: V[];
-  protected _id: string[];
+  protected _id: ID;
   protected _status!: TreeNodeStatus;
   protected _disabled: boolean;
 
   constructor(
-    node: O,
+    origin: T,
+    private getId: (o: T) => ID,
     private opts: {
-      checkedRef: React.MutableRefObject<{ node?: SingleTreeNode<V, O> }>;
-      checkeds: V[];
-      getId: (value: V) => string;
-      parent?: { value: V[]; id: string[]; disabled: boolean };
+      checkedRef: React.MutableRefObject<SingleTreeNode<ID, T> | undefined>;
+      checked: ID | null;
+      disabled?: boolean;
     }
   ) {
-    super(node);
-    if (opts.parent) {
-      this._value = opts.parent.value.concat([node.dValue]);
-      this._id = opts.parent.id.concat([opts.getId(node.dValue)]);
-      this._disabled = !!(opts.parent.disabled || node.dDisabled);
-    } else {
-      this._value = [node.dValue];
-      this._id = [opts.getId(node.dValue)];
-      this._disabled = !!node.dDisabled;
-    }
+    super(origin);
+    this._id = getId(origin);
+    this._disabled = !!(opts.disabled || origin.disabled);
 
     this._setUpChildren();
-    this.updateStatus(opts.checkeds, true);
+    this.updateStatus(opts.checked, true);
   }
 
-  setChecked(): V[] {
-    if (this.opts.checkedRef.current.node) {
-      let node = this.opts.checkedRef.current.node;
-      node._status = UNCHECKED;
+  setChecked(): void {
+    if (this.opts.checkedRef.current) {
+      let origin = this.opts.checkedRef.current;
+      origin._status = UNCHECKED;
 
-      while (node.parent) {
-        node = node.parent as SingleTreeNode<V, O>;
-        node._status = UNCHECKED;
+      while (origin.parent) {
+        origin = origin.parent as SingleTreeNode<ID, T>;
+        origin._status = UNCHECKED;
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let node: SingleTreeNode<V, O> = this;
-    this.opts.checkedRef.current.node = node;
-    node._status = CHECKED;
+    let origin: SingleTreeNode<ID, T> = this;
+    this.opts.checkedRef.current = origin;
+    origin._status = CHECKED;
 
-    while (node.parent) {
-      node = node.parent as SingleTreeNode<V, O>;
-      node._status = CHECKED;
+    while (origin.parent) {
+      origin = origin.parent as SingleTreeNode<ID, T>;
+      origin._status = CHECKED;
     }
-
-    return this.value;
   }
 
   private _setUpChildren(): void {
-    if (this.node.dChildren) {
-      this.children = this.node.dChildren.map((v) => {
-        const node = new SingleTreeNode(
+    if (this.origin.children) {
+      this.children = this.origin.children.map((v) => {
+        const origin = new SingleTreeNode(
           v,
+          this.getId,
           Object.assign(this.opts, {
-            parent: {
-              value: this._value,
-              id: this._id,
-              disabled: this._disabled,
-            },
+            disabled: this._disabled,
           })
         );
-        node._setParent(this);
-        return node as SingleTreeNode<V, O>;
+        origin._setParent(this);
+        return origin;
       });
     }
   }
 
-  protected override _calculateStatus(checkeds: V[]): void {
-    const checkedIds = checkeds.map((v) => this.opts.getId(v));
-    this._status = this.id.every((id, index) => checkedIds[index] && checkedIds[index] === id) ? CHECKED : UNCHECKED;
+  protected override _calculateStatus(checked: ID | null): void {
+    this._status = this.id === checked ? CHECKED : UNCHECKED;
     if (this._status === CHECKED) {
-      if (this.opts.checkedRef.current.node) {
-        if (this.opts.checkedRef.current.node.value.length < this.value.length) {
-          this.opts.checkedRef.current.node = this;
-        }
-      } else {
-        this.opts.checkedRef.current.node = this;
-      }
+      this.opts.checkedRef.current = this;
     }
   }
 }
 
-export class MultipleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNode<V, O> {
-  children: MultipleTreeNode<V, O>[] | null = null;
+export class MultipleTreeNode<ID extends DId, T extends { disabled?: boolean; children?: T[] }> extends AbstractTreeNode<ID, T> {
+  children?: MultipleTreeNode<ID, T>[];
 
-  protected _value: V[];
-  protected _id: string[];
+  protected _id: ID;
   protected _status!: TreeNodeStatus;
   protected _disabled: boolean;
 
   constructor(
-    node: O,
+    origin: T,
+    private getId: (o: T) => ID,
     private opts: {
-      checkeds: V[][];
-      getId: (value: V) => string;
-      parent?: { value: V[]; id: string[]; disabled: boolean };
+      checkeds: ID[];
+      disabled?: boolean;
     }
   ) {
-    super(node);
-    if (opts.parent) {
-      this._value = opts.parent.value.concat([node.dValue]);
-      this._id = opts.parent.id.concat([opts.getId(node.dValue)]);
-      this._disabled = !!(opts.parent.disabled || node.dDisabled);
-    } else {
-      this._value = [node.dValue];
-      this._id = [opts.getId(node.dValue)];
-      this._disabled = !!node.dDisabled;
-    }
+    super(origin);
+    this._id = getId(origin);
+    this._disabled = !!(opts.disabled || origin.disabled);
 
     this._setUpChildren();
     this.updateStatus(opts.checkeds, true);
   }
 
-  changeStatus(status: TreeNodeStatus, checkeds: V[][]): V[][] {
+  changeStatus(status: TreeNodeStatus, checkeds: ID[]): ID[] {
     const newCheckeds = this._changeStatus(status, checkeds);
 
     this._updateAncestors(newCheckeds, false);
@@ -217,7 +178,7 @@ export class MultipleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNo
     return newCheckeds;
   }
 
-  protected override _calculateStatus(checkeds: V[][]): void {
+  protected override _calculateStatus(checkeds: ID[]): void {
     if (this.children) {
       let checkedNum = 0;
       let hasIndeterminate = false;
@@ -237,13 +198,11 @@ export class MultipleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNo
         ? CHECKED
         : INDETERMINATE;
     } else {
-      const checkedIds = checkeds.map((vs) => vs.map((v) => this.opts.getId(v)));
-      const index = checkedIds.findIndex((checkeds) => this._id.every((id, index) => checkeds[index] && checkeds[index] === id));
-      this._status = index === -1 ? UNCHECKED : CHECKED;
+      this._status = checkeds.includes(this._id) ? CHECKED : UNCHECKED;
     }
   }
 
-  protected _changeStatus(status: TreeNodeStatus, initValue: V[][]): V[][] {
+  protected _changeStatus(status: TreeNodeStatus, initValue: ID[]): ID[] {
     let res = [...initValue];
     if (this.enabled && this._status !== status) {
       this._status = status;
@@ -253,9 +212,9 @@ export class MultipleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNo
         });
       } else {
         if (status === CHECKED) {
-          res.push(this.value);
+          res.push(this._id);
         } else {
-          res = res.filter((checkeds) => !this.id.every((id, index) => checkeds[index] && this.opts.getId(checkeds[index]) === id));
+          res = res.filter((v) => v !== this._id);
         }
       }
     }
@@ -264,20 +223,17 @@ export class MultipleTreeNode<V, O extends TreeOption<V>> extends AbstractTreeNo
   }
 
   private _setUpChildren(): void {
-    if (this.node.dChildren) {
-      this.children = this.node.dChildren.map((v) => {
-        const node = new MultipleTreeNode(
+    if (this.origin.children) {
+      this.children = this.origin.children.map((v) => {
+        const origin = new MultipleTreeNode(
           v,
+          this.getId,
           Object.assign(this.opts, {
-            parent: {
-              value: this._value,
-              id: this._id,
-              disabled: this._disabled,
-            },
+            disabled: this._disabled,
           })
         );
-        node._setParent(this);
-        return node as MultipleTreeNode<V, O>;
+        origin._setParent(this);
+        return origin;
       });
     }
   }

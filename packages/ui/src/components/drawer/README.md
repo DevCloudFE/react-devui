@@ -23,7 +23,6 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | dEscClosable | Whether to close by pressing Esc | boolean | true |
 | dHeader | Drawer header | React.ReactNode | - |
 | dFooter | Drawer footer | React.ReactNode | - |
-| dDestroy | Destroy the node after shutdown | boolean | false |
 | dChildDrawer | Nested child drawer | React.ReactNode | - |
 | onClose | Callback when the drawer is closed | `() => void` | - |
 | afterVisibleChange | Callback for the end of the drawer opening/closing animation | `(visible: boolean) => void` | - |

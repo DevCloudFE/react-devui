@@ -1,34 +1,23 @@
-$form-item-selector: '.#{$variable-prefix}form-item';
+@mixin form-warning() {
+  &[data-form-item-warning='true'] {
+    @content;
+  }
+}
+
+@mixin form-error() {
+  &[data-form-item-error='true'] {
+    @content;
+  }
+}
 
 @mixin form-validate() {
-  $selector: &;
+  @include form-warning {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+    caret-color: var(--#{$variable-prefix}color-warning) !important;
+  }
 
-  @at-root {
-    #{$form-item-selector} {
-      @include when(pending) {
-        #{$selector}.is-pending {
-          z-index: var(--#{$variable-prefix}zindex-active) !important;
-
-          border-color: var(--#{$variable-prefix}color-border) !important;
-        }
-      }
-
-      @include when(error) {
-        #{$selector}.is-invalid {
-          z-index: var(--#{$variable-prefix}zindex-active) !important;
-
-          border-color: var(--#{$variable-prefix}color-danger) !important;
-          caret-color: var(--#{$variable-prefix}color-danger) !important;
-        }
-      }
-      @include when(warning) {
-        #{$selector}.is-invalid {
-          z-index: var(--#{$variable-prefix}zindex-active) !important;
-
-          border-color: var(--#{$variable-prefix}color-warning) !important;
-          caret-color: var(--#{$variable-prefix}color-warning) !important;
-        }
-      }
-    }
+  @include form-error {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+    caret-color: var(--#{$variable-prefix}color-danger) !important;
   }
 }

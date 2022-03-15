@@ -47,7 +47,7 @@ interface DPopupRef {
 
 ```tsx
 interface DTriggerRenderProps {
-  [key: `data-${string}popup-trigger`]: string;
+  'data-triggerid': string;
   onMouseEnter?: React.MouseEventHandler<HTMLElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLElement>;
   onFocus?: React.FocusEventHandler<HTMLElement>;
@@ -110,8 +110,8 @@ interface DTransitionStateList {
 | dSearchable | 是否可搜索 | boolean | false |
 | dClearIcon | 自定义清除按钮 | React.ReactNode | - |
 | dSize | 选择框尺寸 | 'smaller' \| 'larger' | - |
-| dPlaceholder | 占位内容 | string | - |
-| dDisabled | 是否禁用 | boolean | false |
+| placeholder | 占位内容 | string | - |
+| disabled | 是否禁用 | boolean | false |
 | dLoading | 是否为加载状态 | boolean | false |
 | onClear | 点击清除按钮的回调 | `() => void` | - |
 | onSearch | 搜索的回调 | `(value: string) => void` | - |

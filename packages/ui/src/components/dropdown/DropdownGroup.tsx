@@ -1,26 +1,15 @@
-import React, { useMemo } from 'react';
+import { usePrefixConfig, useTranslation } from '../../hooks';
 
-import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
-import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
-
-export interface DDropdownGroupProps extends React.LiHTMLAttributes<HTMLLIElement> {
-  dTitle: React.ReactNode;
+export interface DDropdownGroupProps {
+  id: string;
+  children: React.ReactNode;
+  dOptions: React.ReactNode;
+  dEmpty: boolean;
+  dLevel?: number;
 }
 
-export interface DDropdownGroupPropsWithPrivate extends DDropdownGroupProps {
-  __level?: number;
-}
-
-const { COMPONENT_NAME } = generateComponentMate('DDropdownGroup');
 export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
-  const {
-    dTitle,
-    className,
-    style,
-    children,
-    __level = 0,
-    ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DDropdownGroupPropsWithPrivate);
+  const { id, children, dOptions, dEmpty, dLevel = 0 } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -28,43 +17,18 @@ export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
 
   const [t] = useTranslation('Common');
 
-  const childs = useMemo(() => {
-    return React.Children.map(children as React.ReactElement[], (child) =>
-      React.cloneElement(child, {
-        ...child.props,
-        __level: __level + 1,
-      })
-    );
-  }, [children, __level]);
-
   return (
-    <>
-      <li
-        {...restProps}
-        style={mergeStyle(
-          {
-            paddingLeft: 12 + __level * 16,
-          },
-          style
-        )}
-        className={getClassName(className, `${dPrefix}dropdown-group`)}
-        role="separator"
-        aria-orientation="horizontal"
-      >
-        {dTitle}
+    <ul className={`${dPrefix}dropdown-group`} role="group" aria-labelledby={id}>
+      <li id={id} className={`${dPrefix}dropdown-group__label`} style={{ paddingLeft: 12 + dLevel * 16 }} role="presentation">
+        {children}
       </li>
-      {React.Children.count(childs) === 0 ? (
-        <span
-          className={`${dPrefix}dropdown-group__empty`}
-          style={{
-            paddingLeft: 12 + (__level + 1) * 16,
-          }}
-        >
+      {dEmpty ? (
+        <div className={`${dPrefix}dropdown-group__empty`} style={{ paddingLeft: 12 + (dLevel + 1) * 16 }}>
           {t('No Data')}
-        </span>
+        </div>
       ) : (
-        childs
+        dOptions
       )}
-    </>
+    </ul>
   );
 }

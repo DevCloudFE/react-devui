@@ -1,37 +1,41 @@
-import type { DUpdater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DTransitionState } from '../_transition';
+import type { DFormControl } from '../form';
 
-import React, { useId, useState } from 'react';
+import { useState } from 'react';
 
-import { DIcon } from '..';
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useRefCallback, useDTransition } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { LoadingOutlined } from '../../icons';
+import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
+import { DTransition } from '../_transition';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
-  dFormControlName?: string;
+  disabled?: boolean;
+  dFormControl?: DFormControl;
   dModel?: [boolean, DUpdater<boolean>?];
   dLabelPlacement?: 'left' | 'right';
   dStateContent?: [React.ReactNode, React.ReactNode];
   dLoading?: boolean;
-  dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DSwitch');
+const TTANSITION_DURING = 133;
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSwitch' });
 export function DSwitch(props: DSwitchProps): JSX.Element | null {
   const {
-    dFormControlName,
+    className,
+    disabled: _disabled,
+    children,
+    dFormControl,
     dModel,
     dLabelPlacement = 'right',
     dStateContent,
     dLoading = false,
-    dDisabled = false,
     dInputProps,
     dInputRef,
     onModelChange,
-    className,
-    children,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -40,38 +44,22 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
   const { gDisabled } = useGeneralState();
   //#endregion
 
-  //#region Ref
-  const [dotEl, dotRef] = useRefCallback();
-  //#endregion
-
-  const uniqueId = useId();
-  const _id = dInputProps?.id ?? `${dPrefix}switch-input-${uniqueId}`;
-
   const [isFocus, setIsFocus] = useState(false);
 
-  const [checked, changeChecked, { ariaAttribute, controlDisabled }] = useTwoWayBinding<boolean | undefined, boolean>(
-    false,
-    dModel,
-    onModelChange,
-    { formControlName: dFormControlName, id: _id }
-  );
-
-  const disabled = dDisabled || gDisabled || controlDisabled;
-
-  const transitionState = {
-    'enter-from': { left: '2px' },
-    'enter-to': { left: 'calc(100% - 20px)', transition: 'width 133ms ease-in, left 133ms ease-out' },
-    'leave-from': { right: '2px' },
-    'leave-to': { right: 'calc(100% - 20px)', transition: 'width 133ms ease-in, right 133ms ease-out' },
-  };
-  const hidden = useDTransition({
-    dEl: dotEl,
-    dVisible: checked,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
+  const [checked, changeChecked] = useTwoWayBinding<boolean, boolean>(false, dModel, onModelChange, {
+    formControl: dFormControl?.control,
   });
+
+  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+
+  const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
+    enter: { left: 2 },
+    entering: { left: 'calc(100% - 20px)', transition: `width ${TTANSITION_DURING}ms ease-in, left ${TTANSITION_DURING}ms ease-out` },
+    entered: { right: 2 },
+    leave: { right: 2 },
+    leaving: { right: 'calc(100% - 20px)', transition: `width ${TTANSITION_DURING}ms ease-in, right ${TTANSITION_DURING}ms ease-out` },
+    leaved: { left: 2 },
+  };
 
   return (
     <label
@@ -96,14 +84,15 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
         )}
         <input
           {...dInputProps}
-          {...ariaAttribute}
+          {...dFormControl?.inputAttrs}
+          id={dInputProps?.id ?? dFormControl?.controlId}
           ref={dInputRef}
-          id={_id}
           className={getClassName(dInputProps?.className, `${dPrefix}switch__input`)}
           type="checkbox"
-          role="switch"
           disabled={disabled || dLoading}
+          role="switch"
           aria-checked={checked}
+          aria-describedby={mergeAriaDescribedby(dInputProps?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 
@@ -120,24 +109,20 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
             setIsFocus(false);
           }}
         />
-        <div
-          ref={dotRef}
-          className={getClassName(`${dPrefix}switch__state-dot`, {
-            'is-focus': isFocus,
-          })}
-          style={{
-            left: hidden ? 2 : undefined,
-            right: !hidden ? 2 : undefined,
-          }}
-        >
-          {dLoading && (
-            <DIcon viewBox="0 0 1024 1024" dSpin>
-              <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
-            </DIcon>
+        <DTransition dIn={checked} dDuring={TTANSITION_DURING}>
+          {(state) => (
+            <div
+              className={getClassName(`${dPrefix}switch__state-dot`, {
+                'is-focus': isFocus,
+              })}
+              style={transitionStyles[state]}
+            >
+              {dLoading && <LoadingOutlined dSpin />}
+            </div>
           )}
-        </div>
+        </DTransition>
       </div>
-      {children && <span className={`${dPrefix}switch__label`}>{children}</span>}
+      {children && <div className={`${dPrefix}switch__label`}>{children}</div>}
     </label>
   );
 }

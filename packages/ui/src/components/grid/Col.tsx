@@ -1,9 +1,9 @@
-import type { DBreakpoints } from './Row';
+import type { DBreakpoints } from '../../types';
 
 import { isNumber, isObject } from 'lodash';
 
 import { usePrefixConfig, useComponentConfig, useGridConfig, useContextRequired } from '../../hooks';
-import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
+import { registerComponentMate, getClassName } from '../../utils';
 import { DRowContext } from './Row';
 
 export type DSpanValue = number | true;
@@ -15,9 +15,9 @@ export interface DColProps extends DColBaseProps {
   dResponsiveProps?: Record<DBreakpoints, DSpanValue | DColBaseProps>;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DCol');
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' });
 export function DCol(props: DColProps): JSX.Element | null {
-  const { dSpan, dResponsiveProps, className, style, children, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const { className, style, children, dSpan, dResponsiveProps, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -52,16 +52,14 @@ export function DCol(props: DColProps): JSX.Element | null {
       {...restProps}
       {...responsiveProps}
       className={getClassName(className, responsiveProps?.className, `${dPrefix}col`)}
-      style={mergeStyle(
-        {
-          width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
-          flexGrow: span === true ? 1 : undefined,
-          paddingLeft: gSpace,
-          paddingRight: gSpace,
-        },
-        style,
-        responsiveProps?.style
-      )}
+      style={{
+        ...style,
+        ...responsiveProps?.style,
+        width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
+        flexGrow: span === true ? 1 : undefined,
+        paddingLeft: gSpace,
+        paddingRight: gSpace,
+      }}
     >
       {children}
     </div>

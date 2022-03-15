@@ -1,194 +1,146 @@
-import type { DElementSelector } from '../../hooks/element';
+import type { DElementSelector } from '../../hooks/ui/useElement';
 
-import { isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { isString, isUndefined } from 'lodash';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   usePrefixConfig,
   useComponentConfig,
   useAsync,
   useElement,
-  useRefCallback,
-  useContentSVChangeConfig,
+  useContentScrollViewChange,
   useIsomorphicLayoutEffect,
-  useForceUpdate,
-  useCallbackWithState,
+  useEventCallback,
 } from '../../hooks';
-import { getClassName, mergeStyle, generateComponentMate } from '../../utils';
+import { getClassName, registerComponentMate, toPx } from '../../utils';
 
 export interface DAffixRef {
+  fixed: boolean;
   updatePosition: () => void;
 }
 
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dTarget?: DElementSelector;
-  dTop?: number;
-  dBottom?: number;
+  dTop?: number | string;
+  dBottom?: number | string;
   dZIndex?: number | string;
-  onFixedChange?: (fixed: boolean) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DAffix');
-const Affix: React.ForwardRefRenderFunction<DAffixRef, DAffixProps> = (props, ref) => {
-  const {
-    dTarget,
-    dTop = 0,
-    dBottom = 0,
-    dZIndex,
-    onFixedChange,
-    className,
-    style,
-    children,
-    ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' });
+function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>) {
+  const { className, style, children, dTarget, dTop = 0, dBottom, dZIndex, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const onContentSVChange$ = useContentSVChangeConfig();
   //#endregion
 
   //#region Ref
-  const [affixEl, affixRef] = useRefCallback<HTMLDivElement>();
-  const [referenceEl, referenceRef] = useRefCallback<HTMLDivElement>();
+  const affixRef = useRef<HTMLDivElement>(null);
+  const referenceRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const asyncCapture = useAsync();
-  const forceUpdate = useForceUpdate();
 
   const targetEl = useElement(dTarget ?? null);
 
-  const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
-  useIsomorphicLayoutEffect(() => {
-    let root = document.getElementById(`${dPrefix}affix-root`);
-    if (!root) {
-      root = document.createElement('div');
-      root.id = `${dPrefix}affix-root`;
-      document.body.appendChild(root);
-    }
-    setRootEl(root);
-  }, [dPrefix]);
+  const [fixedStyle, setFixedStyle] = useState<React.CSSProperties>();
+  const [referenceStyle, setReferenceStyle] = useState<React.CSSProperties>();
+  const [fixed, setFixed] = useState(false);
+  const updatePosition = useEventCallback(() => {
+    if (isUndefined(dTarget) || targetEl) {
+      const offsetEl = fixed ? referenceRef.current : affixRef.current;
 
-  const { fixedStyle, referenceStyle, fixed } = useCallbackWithState<{
-    fixedStyle: React.CSSProperties;
-    referenceStyle?: React.CSSProperties;
-    fixed: boolean;
-  }>(
-    (draft) => {
-      if (isUndefined(dTarget) || targetEl) {
-        const offsetEl = draft.fixed ? referenceEl : affixEl;
-
-        if (offsetEl) {
-          let targetRect = {
-            top: 0,
-            bottom: window.innerHeight,
-          };
-          if (targetEl) {
-            targetRect = targetEl.getBoundingClientRect();
-          }
-
-          const offsetRect = offsetEl.getBoundingClientRect();
-
-          let fixedCondition = offsetRect.top - targetRect.top <= dTop;
-          let fixedTop = targetRect.top + dTop;
-          if (!isUndefined(props.dBottom)) {
-            fixedCondition = targetRect.bottom - offsetRect.bottom <= dBottom;
-            fixedTop = targetRect.bottom - dBottom - offsetRect.height;
-          }
-
-          const changeFixed = (value: boolean) => {
-            if (value !== draft.fixed) {
-              draft.fixed = value;
-              onFixedChange?.(value);
-            }
-          };
-          if (fixedCondition) {
-            draft.fixedStyle = {
-              position: 'fixed',
-              zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
-              width: offsetRect.width,
-              height: offsetRect.height,
-              left: offsetRect.left,
-              top: fixedTop,
-            };
-            draft.referenceStyle = {
-              width: offsetRect.width,
-              height: offsetRect.height,
-            };
-            changeFixed(true);
-          } else {
-            changeFixed(false);
-          }
+      if (offsetEl) {
+        let targetRect = {
+          top: 0,
+          bottom: window.innerHeight,
+        };
+        if (targetEl) {
+          targetRect = targetEl.getBoundingClientRect();
         }
+
+        const offsetRect = offsetEl.getBoundingClientRect();
+
+        const top = isString(dTop) ? toPx(dTop, true) : dTop;
+        let fixed = offsetRect.top - targetRect.top <= top;
+        let fixedTop = targetRect.top + top;
+        if (!isUndefined(dBottom)) {
+          const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
+          fixed = targetRect.bottom - offsetRect.bottom <= bottom;
+          fixedTop = targetRect.bottom - bottom - offsetRect.height;
+        }
+
+        if (fixed) {
+          setFixedStyle({
+            position: 'fixed',
+            zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
+            width: offsetRect.width,
+            height: offsetRect.height,
+            left: offsetRect.left,
+            top: fixedTop,
+          });
+          setReferenceStyle({
+            width: offsetRect.width,
+            height: offsetRect.height,
+          });
+        }
+        setFixed(fixed);
       }
-    },
-    {
-      fixedStyle: {},
-      referenceStyle: {},
-      fixed: false,
     }
-  )();
+  });
+  useIsomorphicLayoutEffect(() => {
+    updatePosition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useContentScrollViewChange(updatePosition);
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (referenceEl) {
-      asyncGroup.onResize(referenceEl, forceUpdate);
-    }
+
+    asyncGroup.onGlobalScroll(updatePosition);
+
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, forceUpdate, referenceEl]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    const ob = onContentSVChange$?.subscribe({
-      next: () => {
-        forceUpdate();
-      },
-    });
-    asyncGroup.onGlobalScroll(forceUpdate);
-    return () => {
-      ob?.unsubscribe();
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, forceUpdate, onContentSVChange$]);
+  }, [asyncCapture, updatePosition]);
 
   useImperativeHandle(
     ref,
     () => ({
-      updatePosition: () => {
-        forceUpdate();
-      },
+      fixed,
+      updatePosition,
     }),
-    [forceUpdate]
+    [fixed, updatePosition]
   );
 
-  return fixed ? (
+  return (
     <>
+      {fixed && (
+        <div
+          {...restProps}
+          ref={referenceRef}
+          className={getClassName(className, `${dPrefix}affix`)}
+          style={{
+            ...style,
+            ...referenceStyle,
+            visibility: 'hidden',
+          }}
+          aria-hidden={true}
+        ></div>
+      )}
       <div
         {...restProps}
-        ref={referenceRef}
+        ref={affixRef}
         className={getClassName(className, `${dPrefix}affix`)}
         style={{
           ...style,
-          ...referenceStyle,
-          visibility: 'hidden',
+          ...(fixed ? fixedStyle : {}),
         }}
-        aria-hidden={true}
-      ></div>
-      {rootEl &&
-        ReactDOM.createPortal(
-          <div {...restProps} className={getClassName(className, `${dPrefix}affix`)} style={mergeStyle(fixedStyle, style)}>
-            {children}
-          </div>,
-          rootEl
-        )}
+      >
+        {children}
+      </div>
     </>
-  ) : (
-    <div {...restProps} ref={affixRef} className={getClassName(className, `${dPrefix}affix`)} style={style}>
-      {children}
-    </div>
   );
-};
+}
 
 export const DAffix = React.forwardRef(Affix);

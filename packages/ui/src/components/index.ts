@@ -1,11 +1,11 @@
 export type { DAffixProps } from './affix';
 export { DAffix } from './affix';
 
-export type { DAnchorProps, DAnchorLinkProps } from './anchor';
-export { DAnchor, DAnchorLink } from './anchor';
+export type { DAnchorProps } from './anchor';
+export { DAnchor } from './anchor';
 
-export type { DButtonProps, DButtonGroupProps } from './button';
-export { DButton, DButtonGroup } from './button';
+export type { DButtonProps } from './button';
+export { DButton } from './button';
 
 export type { DCascaderProps } from './cascader';
 export { DCascader } from './cascader';
@@ -19,8 +19,8 @@ export { DCompose, DComposeItem } from './compose';
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 
-export type { DDropdownProps, DDropdownItemProps, DDropdownSubProps, DDropdownGroupProps } from './dropdown';
-export { DDropdown, DDropdownItem, DDropdownSub, DDropdownGroup } from './dropdown';
+export type { DDropdownProps } from './dropdown';
+export { DDropdown } from './dropdown';
 
 export type { DEmptyProps } from './empty';
 export { DEmpty } from './empty';
@@ -31,14 +31,11 @@ export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validato
 export type { DRowProps, DColProps } from './grid';
 export { DRow, DCol, useMediaMatch } from './grid';
 
-export type { DIconProps } from './icon';
-export { DIcon } from './icon';
+export type { DInputProps } from './input';
+export { DInput } from './input';
 
-export type { DInputProps, DInputAffixProps } from './input';
-export { DInput, DInputAffix } from './input';
-
-export type { DMenuProps, DMenuGroupProps, DMenuItemProps, DMenuSubProps } from './menu';
-export { DMenu, DMenuGroup, DMenuItem, DMenuSub } from './menu';
+export type { DMenuProps } from './menu';
+export { DMenu } from './menu';
 
 export type { DNotificationProps } from './notification';
 export { NotificationService } from './notification';
@@ -67,8 +64,8 @@ export { DSlider } from './slider';
 export type { DSwitchProps } from './switch';
 export { DSwitch } from './switch';
 
-export type { DTabProps, DTabsProps } from './tabs';
-export { DTab, DTabs } from './tabs';
+export type { DTabsProps } from './tabs';
+export { DTabs } from './tabs';
 
 export type { DTagProps } from './tag';
 export { DTag } from './tag';

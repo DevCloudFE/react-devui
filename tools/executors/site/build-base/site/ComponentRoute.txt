@@ -2,9 +2,6 @@
 
 import { useEffect } from 'react';
 
-import { useContextRequired } from '@react-devui/ui/hooks';
-
-import { AppContext } from '../../../App';
 import { AppComponentRoute, AppDemoBox } from '../../../components';
 
 __import__
@@ -14,12 +11,6 @@ export default function __Route__() {
     'en-US': __en-US__,
     'zh-Hant': __zh-Hant__,
   };
-
-  const { onMount } = useContextRequired(AppContext);
-
-  useEffect(() => {
-    onMount();
-  }, []);
 
   return <AppComponentRoute {...props} />;
 }

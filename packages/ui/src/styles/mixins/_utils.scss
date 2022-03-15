@@ -1,15 +1,13 @@
 @mixin utils-ellipsis {
   overflow: hidden;
-
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @mixin utils-disabled($background: false, $disabled: '.is-disabled') {
   &#{$disabled} {
     color: var(--#{$variable-prefix}color-disabled);
-
-    cursor: not-allowed;
+    pointer-events: none;
 
     @if $background {
       background-color: var(--#{$variable-prefix}background-color-disabled);
@@ -18,20 +16,18 @@
 }
 
 @mixin utils-loading($border: '0') {
+  pointer-events: none;
+
   &::after {
     position: absolute;
     top: -#{$border};
     right: -#{$border};
     bottom: -#{$border};
     left: -#{$border};
-
-    border-radius: inherit;
-
+    content: '';
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     background-color: rgb(255 255 255 / 30%);
-
-    content: '';
-    pointer-events: none;
+    border-radius: inherit;
   }
 }
 
@@ -43,22 +39,6 @@
   @at-root {
     body.CJK #{$selector} {
       word-break: break-all;
-    }
-  }
-}
-
-@mixin utils-outline($disabled: '.is-disabled') {
-  outline: none;
-
-  @if $disabled {
-    &:not(#{$disabled}) {
-      &:focus-visible {
-        outline: 1px dashed var(--#{$variable-prefix}color-primary);
-      }
-    }
-  } @else {
-    &:focus-visible {
-      outline: 1px dashed var(--#{$variable-prefix}color-primary);
     }
   }
 }

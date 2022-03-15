@@ -63,13 +63,3 @@
     }
   }
 }
-
-// Signify that this piece of the DOM has some behaviour acting upon it,
-// and that JavaScript binds onto it to provide that behaviour.
-@mixin js($js) {
-  @at-root {
-    &.#{$js-prefix + $js} {
-      @content;
-    }
-  }
-}

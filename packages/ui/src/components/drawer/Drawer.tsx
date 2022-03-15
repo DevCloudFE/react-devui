@@ -1,28 +1,17 @@
-import type { DElementSelector } from '../../hooks/element';
-import type { DUpdater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DElementSelector } from '../../hooks/ui/useElement';
+import type { DTransitionState } from '../_transition';
+import type { DDrawerFooterProps, DDrawerFooterPropsWithPrivate } from './DrawerFooter';
+import type { DDrawerHeaderProps, DDrawerHeaderPropsWithPrivate } from './DrawerHeader';
 
-import { isUndefined } from 'lodash';
-import React, { useCallback, useId, useMemo, useRef } from 'react';
+import { isString, isUndefined } from 'lodash';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useElement,
-  useImmer,
-  useRefCallback,
-  useLockScroll,
-  useDTransition,
-  useMaxIndex,
-} from '../../hooks';
-import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
-import { DDialog } from '../_dialog';
-
-export interface DDrawerContextData {
-  gId: string;
-  gCloseDrawer: () => void;
-}
-export const DDrawerContext = React.createContext<DDrawerContextData | null>(null);
+import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useEventCallback, useAsync } from '../../hooks';
+import { registerComponentMate, getClassName, toPx } from '../../utils';
+import { DMask } from '../_mask';
+import { DTransition } from '../_transition';
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: [boolean, DUpdater<boolean>?];
@@ -34,22 +23,25 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
-  dHeader?: React.ReactNode;
-  dFooter?: React.ReactNode;
-  dDestroy?: boolean;
-  dChildDrawer?: React.ReactNode;
+  dHeader?: React.ReactElement<DDrawerHeaderProps>;
+  dFooter?: React.ReactElement<DDrawerFooterProps>;
+  dChildDrawer?: React.ReactElement<DDrawerProps>;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 export interface DDrawerPropsWithPrivate extends DDrawerProps {
-  __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
   __zIndex?: number | string;
+  __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DDrawer');
+const TTANSITION_DURING = 200;
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
 export function DDrawer(props: DDrawerProps): JSX.Element | null {
   const {
+    className,
+    style,
+    children,
     dVisible,
     dContainer,
     dPlacement = 'right',
@@ -61,15 +53,11 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     dEscClosable = true,
     dHeader,
     dFooter,
-    dDestroy = false,
     dChildDrawer,
     onClose,
     afterVisibleChange,
-    className,
-    style,
-    children,
-    __onVisibleChange,
     __zIndex,
+    __onVisibleChange,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerPropsWithPrivate);
 
@@ -78,15 +66,114 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const [drawerEl, drawerRef] = useRefCallback<HTMLDivElement>();
-  const [drawerContentEl, drawerContentRef] = useRefCallback<HTMLDivElement>();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerContentRef = useRef<HTMLDivElement>(null);
   //#endregion
 
+  const asyncCapture = useAsync();
+
   const uniqueId = useId();
+  const headerId = `${dPrefix}drawer-header-${uniqueId}`;
+  const contentId = `${dPrefix}drawer-content-${uniqueId}`;
+
+  const [distance, setDistance] = useState<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
+    visible: false,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  });
+  const nestedStyle = {
+    transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
+    transform:
+      dPlacement === 'top'
+        ? `translateY(${(distance[dPlacement] / 3) * 2}px)`
+        : dPlacement === 'right'
+        ? `translateX(${-(distance[dPlacement] / 3) * 2}px)`
+        : dPlacement === 'bottom'
+        ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
+        : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
+  };
 
   const [visible, setVisible] = dVisible;
 
-  const transitionState = (() => {
+  const isFixed = isUndefined(dContainer);
+
+  const maxZIndex = useMaxIndex(visible);
+  const zIndex = (() => {
+    if (!isUndefined(dZIndex)) {
+      return dZIndex;
+    }
+    if (isUndefined(__zIndex)) {
+      if (isFixed) {
+        return maxZIndex;
+      } else {
+        return `var(--${dPrefix}zindex-absolute)`;
+      }
+    } else {
+      return __zIndex;
+    }
+  })();
+
+  const containerEl = useElement(
+    isUndefined(dContainer) || dContainer === false
+      ? () => {
+          if (isUndefined(dContainer)) {
+            let el = document.getElementById(`${dPrefix}drawer-root`);
+            if (!el) {
+              el = document.createElement('div');
+              el.id = `${dPrefix}drawer-root`;
+              document.body.appendChild(el);
+            }
+            return el;
+          } else {
+            return drawerRef.current?.parentElement ?? null;
+          }
+        }
+      : dContainer
+  );
+
+  const closeDrawer = useEventCallback(() => {
+    setVisible?.(false);
+    onClose?.();
+  });
+
+  useLockScroll(isFixed && visible);
+
+  useEffect(() => {
+    if (visible) {
+      const height = isString(dHeight) ? toPx(dHeight, true) : dHeight;
+      const width = isString(dWidth) ? toPx(dWidth, true) : dWidth;
+      __onVisibleChange?.({
+        visible: true,
+        top: distance.top + (dPlacement === 'top' ? height : 0),
+        right: distance.right + (dPlacement === 'right' ? width : 0),
+        bottom: distance.bottom + (dPlacement === 'bottom' ? height : 0),
+        left: distance.left + (dPlacement === 'left' ? width : 0),
+      });
+    } else {
+      __onVisibleChange?.({
+        ...distance,
+        visible: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
+
+  const prevActiveEl = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (visible) {
+      prevActiveEl.current = document.activeElement as HTMLElement | null;
+
+      if (drawerContentRef.current) {
+        drawerContentRef.current.focus({ preventScroll: true });
+      }
+    } else if (prevActiveEl.current) {
+      prevActiveEl.current.focus({ preventScroll: true });
+    }
+  }, [asyncCapture, visible]);
+
+  const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = (() => {
     const transform =
       dPlacement === 'top'
         ? 'translate(0, -100%)'
@@ -95,123 +182,23 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
         : dPlacement === 'bottom'
         ? 'translate(0, 100%)'
         : 'translate(-100%, 0)';
+
     return {
-      'enter-from': { transform },
-      'enter-to': { transition: 'transform 0.2s ease-out' },
-      'leave-to': { transform, transition: 'transform 0.2s ease-in' },
+      enter: { transform },
+      entering: { transition: `transform ${TTANSITION_DURING}ms ease-out` },
+      leaving: { transform, transition: `transform ${TTANSITION_DURING}ms ease-in` },
+      leaved: { transform },
     };
   })();
-  const prevActiveEl = useRef<HTMLElement | null>(null);
-  const hidden = useDTransition({
-    dEl: drawerContentEl,
-    dVisible: visible,
-    dCallbackList: {
-      beforeEnter: (el) => {
-        const rect = el.getBoundingClientRect();
-        __onVisibleChange?.({
-          visible: true,
-          top: distance.top + (dPlacement === 'top' ? rect.height : 0),
-          right: distance.right + (dPlacement === 'right' ? rect.width : 0),
-          bottom: distance.bottom + (dPlacement === 'bottom' ? rect.height : 0),
-          left: distance.left + (dPlacement === 'left' ? rect.width : 0),
-        });
-
-        return transitionState;
-      },
-      afterEnter: (el) => {
-        prevActiveEl.current = document.activeElement as HTMLElement | null;
-        el.focus({ preventScroll: true });
-      },
-      beforeLeave: () => {
-        prevActiveEl.current?.focus({ preventScroll: true });
-        __onVisibleChange?.({
-          ...distance,
-          visible: false,
-        });
-        return transitionState;
-      },
-    },
-    afterEnter: () => {
-      afterVisibleChange?.(true);
-    },
-    afterLeave: () => {
-      afterVisibleChange?.(false);
-    },
-  });
-
-  const isFixed = isUndefined(dContainer);
-
-  const maxZIndex = useMaxIndex(!hidden);
-  const zIndex = (() => {
-    if (!hidden) {
-      if (!isUndefined(dZIndex)) {
-        return dZIndex;
-      }
-      if (isUndefined(__zIndex)) {
-        if (isFixed) {
-          return maxZIndex;
-        } else {
-          return `var(--${dPrefix}zindex-absolute)`;
-        }
-      } else {
-        return __zIndex;
-      }
-    }
-  })();
-
-  const containerEl = useElement(dContainer, () => {
-    if (isFixed) {
-      let el = document.getElementById(`${dPrefix}drawer-root`);
-      if (!el) {
-        el = document.createElement('div');
-        el.id = `${dPrefix}drawer-root`;
-        document.body.appendChild(el);
-      }
-      return el;
-    } else if (dContainer === false) {
-      return drawerEl?.parentElement ?? null;
-    }
-    return null;
-  });
-
-  const [distance, setDistance] = useImmer<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
-    visible: false,
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  });
-
-  const closeDrawer = useCallback(() => {
-    setVisible?.(false);
-    onClose?.();
-  }, [onClose, setVisible]);
-
-  useLockScroll(isFixed && !hidden);
-
-  const contextValue = useMemo<DDrawerContextData>(
-    () => ({
-      gId: uniqueId,
-      gCloseDrawer: closeDrawer,
-    }),
-    [closeDrawer, uniqueId]
-  );
-
-  const handleContentKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-    if (dEscClosable && e.code === 'Escape') {
-      closeDrawer();
-    }
-  };
 
   const childDrawer = (() => {
     if (dChildDrawer) {
-      const childDrawer = React.Children.only(dChildDrawer) as React.ReactElement<DDrawerProps>;
-      return React.cloneElement<DDrawerPropsWithPrivate>(childDrawer, {
-        ...childDrawer.props,
+      return React.cloneElement<DDrawerPropsWithPrivate>(dChildDrawer, {
+        ...dChildDrawer.props,
+        __zIndex: isUndefined(zIndex) ? zIndex : `calc(${zIndex} + 1)`,
         __onVisibleChange: (distance) => {
           setDistance(distance);
         },
-        __zIndex: isUndefined(zIndex) ? zIndex : `calc(${zIndex} + 1)`,
       });
     }
     return null;
@@ -219,53 +206,75 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
 
   const drawerNode = (
     <>
-      <DDialog
-        {...restProps}
-        className={getClassName(className, `${dPrefix}drawer`)}
-        style={mergeStyle(
-          {
-            position: isFixed ? undefined : 'absolute',
-            transition: `transform 140ms ${distance.visible ? 'ease-out' : 'ease-in'} 60ms`,
-            transform:
-              dPlacement === 'top'
-                ? `translateY(${(distance[dPlacement] / 3) * 2}px)`
-                : dPlacement === 'right'
-                ? `translateX(${-(distance[dPlacement] / 3) * 2}px)`
-                : dPlacement === 'bottom'
-                ? `translateY(${-(distance[dPlacement] / 3) * 2}px)`
-                : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
-            zIndex,
-          },
-          style
-        )}
-        aria-labelledby={dHeader ? `${dPrefix}drawer-header-${uniqueId}` : undefined}
-        aria-describedby={`${dPrefix}drawer-content-${uniqueId}`}
-        dVisible={visible}
-        dHidden={hidden}
-        dMask={dMask}
-        dMaskClosable={dMaskClosable}
-        dDestroy={dDestroy}
-        dDialogRef={drawerRef}
-        onClose={closeDrawer}
+      <DTransition
+        dIn={visible}
+        dDuring={TTANSITION_DURING}
+        afterEnter={() => {
+          afterVisibleChange?.(true);
+        }}
+        afterLeave={() => {
+          afterVisibleChange?.(false);
+        }}
       >
-        <DDrawerContext.Provider value={contextValue}>
+        {(state) => (
           <div
-            ref={drawerContentRef}
-            id={`${dPrefix}drawer-content-${uniqueId}`}
-            className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
+            {...restProps}
+            ref={drawerRef}
+            className={getClassName(className, `${dPrefix}drawer`)}
             style={{
-              width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
-              height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
+              ...style,
+              ...nestedStyle,
+              display: state === 'leaved' ? 'none' : undefined,
+              position: isFixed ? undefined : 'absolute',
+              zIndex,
             }}
-            tabIndex={-1}
-            onKeyDown={handleContentKeyDown}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={dHeader ? headerId : undefined}
+            aria-describedby={contentId}
           >
-            {dHeader}
-            <div className={`${dPrefix}drawer__body`}>{children}</div>
-            {dFooter}
+            {dMask && (
+              <DMask
+                dVisible={visible}
+                onClose={() => {
+                  if (dMaskClosable) {
+                    closeDrawer();
+                  }
+                }}
+              />
+            )}
+            <div
+              ref={drawerContentRef}
+              id={contentId}
+              className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
+              style={{
+                width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
+                height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
+                ...transitionStyles[state],
+              }}
+              tabIndex={-1}
+              onKeyDown={(e) => {
+                if (dEscClosable && e.code === 'Escape') {
+                  closeDrawer();
+                }
+              }}
+            >
+              {dHeader &&
+                React.cloneElement<DDrawerHeaderPropsWithPrivate>(dHeader, {
+                  ...dHeader.props,
+                  __id: headerId,
+                  __onClose: closeDrawer,
+                })}
+              <div className={`${dPrefix}drawer__body`}>{children}</div>
+              {dFooter &&
+                React.cloneElement<DDrawerFooterPropsWithPrivate>(dFooter, {
+                  ...dFooter.props,
+                  __onClose: closeDrawer,
+                })}
+            </div>
           </div>
-        </DDrawerContext.Provider>
-      </DDialog>
+        )}
+      </DTransition>
       {childDrawer}
     </>
   );

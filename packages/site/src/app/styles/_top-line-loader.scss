@@ -14,11 +14,9 @@
   top: 0;
   left: 0;
   z-index: 920;
-
   width: 100vw;
   height: 4px;
   overflow: hidden;
-
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   background-color: rgb(221 221 221 / 40%);
 
@@ -26,12 +24,9 @@
     display: block;
     width: calc(100vw / 3);
     height: 100%;
-
-    transform-origin: top left;
-
-    animation: top-line-loader-progress 5s infinite linear, top-line-loader-third 1s infinite linear;
-
     content: '';
+    transform-origin: top left;
+    animation: top-line-loader-progress 5s infinite linear, top-line-loader-third 1s infinite linear;
   }
 }
 

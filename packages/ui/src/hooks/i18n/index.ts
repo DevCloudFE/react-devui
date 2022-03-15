@@ -1,1 +1,1 @@
-export * from './i18n';
+export { useTranslation } from './useTranslation';

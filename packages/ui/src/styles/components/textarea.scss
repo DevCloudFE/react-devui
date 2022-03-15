@@ -4,48 +4,35 @@
   display: block;
   width: 100%;
   min-height: calc(var(--#{$variable-prefix}textarea-line-height) + 8px);
-  margin: 0;
   padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+  margin: 0;
+  font: inherit;
+  font-size: var(--#{$variable-prefix}font-size);
+  line-height: var(--#{$variable-prefix}textarea-line-height);
+  color: var(--#{$variable-prefix}text-color);
+  letter-spacing: inherit;
+  resize: vertical;
+  background-color: var(--#{$variable-prefix}background-color-input);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
-
-  color: var(--#{$variable-prefix}text-color);
-  font: inherit;
-  font-size: var(--#{$variable-prefix}font);
-  line-height: var(--#{$variable-prefix}textarea-line-height);
-  letter-spacing: inherit;
-
-  background-color: var(--#{$variable-prefix}background-color-input);
-
   outline: none;
-
-  transition: border-color 0.2s linear;
-
+  transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
   appearance: none;
-  resize: vertical;
   caret-color: var(--#{$variable-prefix}color-primary);
 
   @include utils-disabled(true, ':disabled');
+  @include form-validate;
 
-  &:not(:disabled) {
-    @include form-validate;
+  &:hover {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
 
-    &:hover {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-    }
-
-    &:focus {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary);
-    }
+  &:focus {
+    border-color: var(--#{$variable-prefix}color-primary);
   }
 
   &::placeholder {
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
-
     transform: translateX(1px);
   }
 
@@ -55,20 +42,20 @@
 
   @include m(smaller) {
     --#{$variable-prefix}textarea-line-height: 20px;
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
   }
 
   @include m(larger) {
     --#{$variable-prefix}textarea-line-height: 28px;
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
   }
 
   @include e(count) {
-    color: var(--#{$variable-prefix}color-step-400);
-    line-height: 28px;
-    text-align: right;
     font-variant-numeric: tabular-nums;
+    line-height: 28px;
+    color: var(--#{$variable-prefix}text-color-sub);
+    text-align: right;
   }
 }

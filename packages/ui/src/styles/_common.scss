@@ -1,0 +1,65 @@
+@keyframes wave-wave {
+  0% {
+    box-shadow: 0 0 0 0 var(--#{$variable-prefix}wave-color);
+  }
+
+  100% {
+    box-shadow: 0 0 0 6px var(--#{$variable-prefix}wave-color);
+  }
+}
+
+@keyframes wave-fade-out {
+  0% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@include b(wave) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  animation: wave-wave 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), wave-fade-out 2s cubic-bezier(0.08, 0.82, 0.17, 1);
+  animation-fill-mode: both;
+}
+
+@include b(focus-outline) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
+}
+
+@include b(icon-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--#{$variable-prefix}color-icon-decorator);
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+  appearance: none;
+
+  &:hover,
+  &:focus {
+    color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  &:active {
+    color: var(--#{$variable-prefix}color-primary-darker);
+  }
+}

@@ -245,7 +245,7 @@ class GenerateSite {
 
             demosStr += demoStr;
 
-            linksStr += String.raw`{ href: '#${demo.get(lang)!.id!}', title: '${demo.get(lang)!.title!}' }, `;
+            linksStr += String.raw`{ title: '${demo.get(lang)!.title!}', href: '#${demo.get(lang)!.id!}' }, `;
           }
         });
 

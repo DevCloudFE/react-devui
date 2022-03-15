@@ -1,9 +1,118 @@
-@include b(tooltip) {
-  padding: 4px 12px;
-  border-radius: var(--#{$variable-prefix}border-radius-larger);
+@mixin tooltip-arrow() {
+  @include e(arrow) {
+    @content;
+  }
+}
 
+@include b(tooltip) {
+  position: fixed;
+  padding: 4px 12px;
   color: var(--#{$variable-prefix}tooltip-text-color);
   white-space: pre;
-
   background-color: var(--#{$variable-prefix}tooltip-background-color);
+  border-radius: var(--#{$variable-prefix}border-radius-larger);
+
+  @include m(top) {
+    @include tooltip-arrow {
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-left) {
+    @include tooltip-arrow {
+      bottom: 0;
+      left: 20px;
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-right) {
+    @include tooltip-arrow {
+      right: 20px;
+      bottom: 0;
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(right) {
+    @include tooltip-arrow {
+      top: 50%;
+      left: 0;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(right-top) {
+    @include tooltip-arrow {
+      top: 12px;
+      left: 0;
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(right-bottom) {
+    @include tooltip-arrow {
+      bottom: 12px;
+      left: 0;
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(bottom) {
+    @include tooltip-arrow {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-left) {
+    @include tooltip-arrow {
+      top: 0;
+      left: 20px;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-right) {
+    @include tooltip-arrow {
+      top: 0;
+      right: 20px;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left) {
+    @include tooltip-arrow {
+      top: 50%;
+      right: 0;
+      transform: translate(50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left-top) {
+    @include tooltip-arrow {
+      top: 12px;
+      right: 0;
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(left-bottom) {
+    @include tooltip-arrow {
+      right: 0;
+      bottom: 12px;
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+
+  @include e(arrow) {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    background-color: inherit;
+  }
 }

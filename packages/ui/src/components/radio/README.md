@@ -13,7 +13,7 @@ Extend `React.HTMLAttributes<HTMLElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dModel | Manual control is selected | [boolean, Updater\<boolean\>?] | - |
-| dDisabled | Whether to disable | boolean | false |
+| disabled | Whether to disable | boolean | false |
 | dValue | Pass as an identifier in radio group | any  | - |
 | dInputProps | Attributes applied to the `input` element | React.InputHTMLAttributes\<HTMLInputElement\>  | - |
 | dInputRef | Pass a `ref` to the `input` element | React.Ref\<HTMLInputElement\>  | - |
@@ -29,7 +29,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | --- | --- | --- | --- | 
 | dModel | Manual control selection | [any, Updater\<any\>?] | - |
 | dName | Single option `name` attribute | string | - |
-| dDisabled | Whether to disable | boolean | false |
+| disabled | Whether to disable | boolean | false |
 | dType | Radio group style | 'outline' \| 'fill' | - |
 | dSize | Radio button size | 'smaller' \| 'larger' | - |
 | dVertical | Radio group arranged vertically | boolean | false |

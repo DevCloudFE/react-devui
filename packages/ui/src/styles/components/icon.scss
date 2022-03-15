@@ -1,0 +1,9 @@
+@include b(icon) {
+  display: block;
+
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      color: var(--#{$variable-prefix}color-#{$theme});
+    }
+  }
+}

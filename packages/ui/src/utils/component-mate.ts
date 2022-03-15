@@ -1,17 +1,25 @@
-const COMPONENT_MATES: { name: string }[] = [];
+interface ComponentMate<N extends string> {
+  COMPONENT_NAME: N;
+}
 
 const COMPONENT_NAME_REG = /^D[A-Z][a-zA-Z]+$/;
 
-export function generateComponentMate<N extends string>(name: N) {
-  if (COMPONENT_MATES.findIndex((mate) => mate.name === name) !== -1) {
-    throw new Error(`'${name}' already exists`);
-  } else {
-    if (COMPONENT_NAME_REG.test(name)) {
-      COMPONENT_MATES.push({ name });
-    } else {
-      throw new Error(`'${name}' not a correct component name`);
+export const COMPONENT_MATES: ComponentMate<string>[] = [];
+
+export function registerComponentMate<N extends string>(mate: ComponentMate<N>): ComponentMate<N> {
+  const { COMPONENT_NAME } = mate;
+
+  for (const _mate of COMPONENT_MATES) {
+    if (_mate.COMPONENT_NAME === COMPONENT_NAME) {
+      throw new Error(`'${COMPONENT_NAME}' already exists`);
     }
   }
 
-  return { COMPONENT_NAME: name };
+  if (COMPONENT_NAME_REG.test(COMPONENT_NAME)) {
+    COMPONENT_MATES.push(mate);
+  } else {
+    throw new Error(`'${COMPONENT_NAME}' not a correct component name`);
+  }
+
+  return mate;
 }

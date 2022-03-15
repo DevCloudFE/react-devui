@@ -1,15 +1,16 @@
-import type { DUpdater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useEffect, useId, useImperativeHandle, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useRefCallback, useGeneralState } from '../../hooks';
-import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useForkRef } from '../../hooks';
+import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
 export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
-  dFormControlName?: string;
+  dFormControl?: DFormControl;
   dModel?: [string, DUpdater<string>?];
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
@@ -17,20 +18,20 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
   onModelChange?: (value: string) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DTextarea');
-const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (props, ref) => {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTextarea' });
+function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) {
   const {
-    dFormControlName,
+    id,
+    className,
+    style,
+    maxLength,
+    disabled: _disabled,
+    dFormControl,
     dModel,
     dRows,
     dResizable = true,
     dShowCount = false,
     onModelChange,
-    id,
-    className,
-    style,
-    maxLength,
-    disabled,
     onChange,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -41,24 +42,36 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
   //#endregion
 
   //#region Ref
-  const [textareaEl, textareaRef] = useRefCallback<HTMLTextAreaElement>();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   //#endregion
 
-  const uniqueId = useId();
-  const _id = id ?? `${dPrefix}input-${uniqueId}`;
+  const combineTextareaRef = useForkRef(textareaRef, ref);
 
   const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
-  const [value, changeValue, { validateClassName, ariaAttribute, controlDisabled }] = useTwoWayBinding<string>('', dModel, onModelChange, {
-    formControlName: dFormControlName,
-    id: _id,
+  const [value, changeValue] = useTwoWayBinding<string>('', dModel, onModelChange, {
+    formControl: dFormControl?.control,
   });
 
-  const _disabled = disabled || controlDisabled;
-
-  const [rowNum, setRowNum] = useState(1);
+  const disabled = _disabled || dFormControl?.disabled;
 
   const resizable = dResizable && isUndefined(dRows);
+
+  const getRowNum = () => {
+    if (textareaRef.current) {
+      const cssText = textareaRef.current.style.cssText;
+      textareaRef.current.style.cssText += 'overflow:hidden;height:32px;min-height:unset;';
+      setRowNum(Math.round((textareaRef.current.scrollHeight - 6) / lineHeight));
+      textareaRef.current.style.cssText = cssText;
+    }
+  };
+
+  const [rowNum, setRowNum] = useState(1);
+  useLayoutEffect(() => {
+    getRowNum();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const heightStyle = (() => {
     let overflow: 'hidden' | undefined;
     let height: number | undefined;
@@ -83,54 +96,33 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
     return { overflow, height, minHeight, maxHeight };
   })();
 
-  useEffect(() => {
-    if (textareaEl) {
-      setRowNum(Math.round((textareaEl.scrollHeight - 6) / lineHeight));
-    }
-  }, [lineHeight, setRowNum, textareaEl]);
-
-  useImperativeHandle<HTMLTextAreaElement | null, HTMLTextAreaElement | null>(ref, () => textareaEl, [textareaEl]);
-
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    onChange?.(e);
-
-    changeValue(e.currentTarget.value);
-
-    const el = e.currentTarget;
-    const overflow = el.style.overflow;
-    const height = el.style.height;
-    const minHeight = el.style.minHeight;
-    el.style.overflow = 'hidden';
-    el.style.height = '32px';
-    el.style.minHeight = '';
-    setRowNum(Math.round((el.scrollHeight - 6) / lineHeight));
-    el.style.overflow = overflow;
-    el.style.height = height;
-    el.style.minHeight = minHeight;
-  };
-
   return (
     <>
       <textarea
         {...restProps}
-        {...ariaAttribute}
-        ref={textareaRef}
-        id={_id}
-        className={getClassName(className, `${dPrefix}textarea`, validateClassName, {
+        {...dFormControl?.dataAttrs}
+        {...dFormControl?.inputAttrs}
+        id={id ?? dFormControl?.controlId}
+        ref={combineTextareaRef}
+        className={getClassName(className, `${dPrefix}textarea`, {
           [`${dPrefix}textarea--${gSize}`]: gSize,
         })}
-        style={mergeStyle(
-          {
-            resize: resizable ? undefined : 'none',
-            ...heightStyle,
-          },
-          style
-        )}
+        style={{
+          ...style,
+          ...heightStyle,
+          resize: resizable ? undefined : 'none',
+        }}
         maxLength={maxLength}
         value={value}
-        disabled={_disabled}
-        aria-disabled={_disabled}
-        onChange={handleChange}
+        disabled={disabled}
+        aria-disabled={disabled}
+        aria-describedby={mergeAriaDescribedby(restProps['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
+        onChange={(e) => {
+          onChange?.(e);
+
+          changeValue(e.currentTarget.value);
+          getRowNum();
+        }}
       />
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
@@ -139,6 +131,6 @@ const Textarea: React.ForwardRefRenderFunction<DTextareaRef, DTextareaProps> = (
       )}
     </>
   );
-};
+}
 
 export const DTextarea = React.forwardRef(Textarea);

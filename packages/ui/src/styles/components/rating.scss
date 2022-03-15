@@ -1,19 +1,15 @@
 @include b(rating) {
   position: relative;
-
   display: inline-flex;
-
   gap: 0 0.35em;
   align-items: center;
-
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  font-size: 20px;
   color: var(--#{$variable-prefix}color-warning);
 
-  @include font-size(1.4rem);
-
   @include when(disabled) {
-    filter: opacity(50%);
-
     pointer-events: none;
+    filter: opacity(50%);
   }
 
   @include m(read-only) {
@@ -23,17 +19,19 @@
 
 @include b(rating-star) {
   position: relative;
-
-  transition: transform 0.1s linear;
+  transition: transform var(--#{$variable-prefix}animation-duration-fast) linear;
 
   &:hover {
     transform: scale(1.2);
   }
 
+  @include when(focus) {
+    transform: scale(1.2);
+  }
+
   @include e(icon) {
     color: var(--#{$variable-prefix}color-divider);
-
-    transition: color 0.1s linear;
+    transition: color var(--#{$variable-prefix}animation-duration-fast) linear;
 
     @include when(checked) {
       color: inherit;
@@ -43,8 +41,6 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 5;
-
       width: 50%;
       height: 100%;
       overflow: hidden;
@@ -56,14 +52,15 @@
     top: 0;
     left: 0;
     z-index: 1;
-
     width: 100%;
     height: 100%;
     margin: 0;
-
-    outline: none;
     cursor: pointer;
-
     appearance: none;
+
+    @include m(half) {
+      z-index: 5;
+      width: 50%;
+    }
   }
 }

@@ -15,7 +15,7 @@ title: 评分
 | dName | 单选项的 `name` 属性 | string | - |
 | dTotal | 评分数 | number | 5 |
 | dHalf | 是否允许半选 | boolean | false |
-| dDisabled | 是否禁用 | boolean | false |
+| disabled | 是否禁用 | boolean | false |
 | dReadOnly | 是否只读 | boolean | false |
 | dCustomIcon | 自定义显示 | React.ReactNode \| `((value: number) => React.ReactNode)` | - |
 | dTooltip | 设置提示 | `(value: number) => React.ReactNode` | - |

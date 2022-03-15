@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useRef } from 'react';
 
 import { useEventCallback, useForceUpdate, useIsomorphicLayoutEffect } from '../../hooks';

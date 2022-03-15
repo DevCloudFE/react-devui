@@ -1,9 +1,99 @@
 $cascader-option-height: 32px;
 
+@mixin cascader-list {
+  position: relative;
+  max-height: 264px;
+  padding: 4px 0;
+  margin: 0;
+  overflow: hidden auto;
+  list-style: none;
+
+  @include e(option) {
+    position: relative;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+    width: 100%;
+    height: $cascader-option-height;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include utils-disabled;
+
+    &:not(.is-selected):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(selected) {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
+  }
+
+  @include e(option-content) {
+    @include utils-ellipsis;
+  }
+
+  @include e(empty) {
+    display: flex;
+    align-items: center;
+    height: $cascader-option-height;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-disabled);
+  }
+}
+
+@include b(cascader) {
+  @include when(disabled) {
+    @include e(multiple-tag) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+    @include e(multiple-count) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+  }
+
+  @include e(popup) {
+    position: fixed;
+    overflow: auto hidden;
+    white-space: nowrap;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
+  }
+
+  @include e(loading) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-primary);
+    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+
+    @include m(empty) {
+      justify-content: flex-start;
+      background-color: var(--#{$variable-prefix}background-color);
+    }
+  }
+
+  @include e(multiple-tag) {
+    & + & {
+      margin-left: 8px;
+    }
+  }
+}
+
 @include b(cascader-list) {
   display: inline-block;
-
   vertical-align: top;
+
+  @include cascader-list;
 
   & + & {
     border-left: 1px solid var(--#{$variable-prefix}color-divider);
@@ -14,13 +104,16 @@ $cascader-option-height: 32px;
     align-items: center;
     justify-content: flex-end;
     width: 24px;
-
     font-size: 0.8em;
+  }
+
+  @include e(option) {
+    @include when(focus) {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
   }
 }
 
-@include b(cascader-popup) {
-  overflow-x: auto;
-
-  white-space: nowrap;
+@include b(cascader-search-list) {
+  @include cascader-list;
 }

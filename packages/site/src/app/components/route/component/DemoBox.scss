@@ -1,15 +1,14 @@
 @import '~rfs/scss';
 
 .app-demo-box {
+  background-color: var(--app-demo-box-background-color);
   border: 1px solid var(--d-color-divider);
 
-  background-color: var(--app-demo-box-background-color);
+  @include font-size(1rem);
 
   &.is-active {
     border-color: var(--d-color-primary);
   }
-
-  @include font-size(1rem);
 
   & + & {
     margin-top: 24px;
@@ -23,7 +22,6 @@
 
 .app-demo-box__info {
   position: relative;
-
   border-top: 1px solid var(--d-color-divider);
 }
 
@@ -31,12 +29,9 @@
   position: absolute;
   top: -14px;
   left: 16px;
-
   display: flex;
   align-items: center;
-
   padding: 1px 8px;
-
   background-color: var(--app-demo-box-background-color);
 }
 
@@ -46,32 +41,19 @@
 
 .app-demo-box__toolbar {
   display: flex;
+  gap: 0 12px;
   justify-content: center;
   width: 100%;
   padding: 12px 0;
   border-top: 1px dashed var(--d-color-divider);
 
   .app-icon-button {
-    color: var(--d-color-step-300);
-
-    transition: color 0.1s linear, transform 0.1s linear;
+    color: var(--d-color-icon-decorator);
+    transition: color var(--d-animation-duration-fast) linear, transform var(--d-animation-duration-fast) linear;
 
     &:hover {
       color: var(--d-color-primary);
-
       transform: scale(1.2);
-    }
-
-    &:nth-of-type(2) {
-      margin-left: 12px;
-    }
-
-    &:nth-of-type(3) {
-      margin-left: 10px;
-    }
-
-    &:nth-of-type(4) {
-      margin-left: 12px;
     }
   }
 }
@@ -85,7 +67,6 @@
 
   pre > code.hljs {
     padding: 24px;
-
     background-color: transparent !important;
   }
 }

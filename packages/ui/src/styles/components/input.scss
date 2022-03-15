@@ -1,168 +1,84 @@
 @include b(input) {
-  $selector: &;
-
-  display: inline-block;
-  width: 100%;
-  height: var(--#{$variable-prefix}size);
-  margin: 0;
-  padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
-  border: 1px solid var(--#{$variable-prefix}color-border);
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  color: var(--#{$variable-prefix}text-color);
-  font: inherit;
-  font-size: var(--#{$variable-prefix}font);
-  letter-spacing: inherit;
-
-  background-color: var(--#{$variable-prefix}background-color-input);
-
-  outline: none;
-
-  transition: border-color 0.2s linear;
-
-  appearance: none;
-  caret-color: var(--#{$variable-prefix}color-primary);
-
-  @include utils-disabled(true, ':disabled');
-
-  @at-root {
-    .#{$variable-prefix}compose,
-    .#{$variable-prefix}input-affix {
-      #{$selector} {
-        flex-grow: 1;
-        width: 0;
-      }
-    }
-  }
-
-  &[type='number'] {
-    appearance: textfield; /* Firefox */
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-
-      /* display: none; <- Crashes Chrome on hover */
-      appearance: none;
-    }
-  }
-
-  &:not(:disabled) {
-    @include form-validate;
-
-    &:hover {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-    }
-
-    &:focus {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary);
-    }
-  }
-
-  &::placeholder {
-    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
-
-    transform: translateX(1px);
-  }
-
-  &:disabled::placeholder {
-    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
-  }
-}
-
-@include b(input-affix) {
-  $selector: &;
-
   display: inline-flex;
   align-items: center;
-  width: 100%;
+  height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+  font-size: var(--#{$variable-prefix}font-size);
+  color: var(--#{$variable-prefix}text-color);
+  background-color: var(--#{$variable-prefix}background-color-input);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
-
-  font-size: var(--#{$variable-prefix}font);
-
-  background-color: var(--#{$variable-prefix}background-color-input);
-
-  transition: border-color 0.2s linear;
+  transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
 
   @include utils-disabled(true);
+  @include form-validate;
 
-  @at-root {
-    .#{$variable-prefix}compose {
-      #{$selector} {
-        flex-grow: 1;
-        width: 0;
-
-        @include m(number) {
-          flex-grow: unset;
-          width: auto;
-        }
-      }
-    }
+  &:hover {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
   }
 
-  &:not(.is-disabled) {
-    @include form-validate;
-
-    &:hover {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-    }
-
-    @include when(focus) {
-      z-index: var(--#{$variable-prefix}zindex-hover);
-
-      border-color: var(--#{$variable-prefix}color-primary);
-    }
-  }
-
-  .#{$variable-prefix}input {
-    height: calc(var(--#{$variable-prefix}size) - 2px);
-    padding: 0;
-    border: none;
+  @include when(focus) {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
   }
 
   @include m(number) {
-    width: auto;
-
-    .#{$variable-prefix}input {
-      width: 4em;
-    }
-
     &:not(.is-disabled) {
       padding-right: 0;
-      .#{$variable-prefix}input-affix__suffix {
+      @include e(suffix) {
         margin-right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
       }
     }
   }
 
   @include m(smaller) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
   }
 
   @include m(larger) {
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+  }
+
+  @include e(input) {
+    display: inline-block;
+    flex-grow: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    appearance: none;
+    caret-color: var(--#{$variable-prefix}color-primary);
+
+    &[type='number'] {
+      appearance: textfield; /* Firefox */
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+
+        /* display: none; <- Crashes Chrome on hover */
+        appearance: none;
+      }
+    }
+
+    &::placeholder {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
+      transform: translateX(1px);
+    }
+
+    &:disabled::placeholder {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+    }
   }
 
   @include e(prefix) {
@@ -177,37 +93,36 @@
 
   @include e(clear) {
     flex-shrink: 0;
-    min-width: unset;
-    height: 22px;
     margin-left: 4px;
-
-    color: var(--d-color-step-400);
-
-    transition: color 0.2s linear, opacity 133ms linear;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      opacity var(--#{$variable-prefix}animation-duration-fast) linear;
   }
 
   @include e(password) {
     flex-shrink: 0;
-    min-width: unset;
-    height: 22px;
     margin-left: 4px;
-
-    color: var(--d-color-step-400);
   }
 
   @include e(number-container) {
     display: inline-flex;
     flex-direction: column;
-    align-items: center;
+    height: 100%;
     margin-left: 4px;
   }
 
   @include e(number) {
     flex-grow: 1;
     width: 24px;
-    min-width: unset;
-    height: unset;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-    color: var(--d-color-step-400);
+    &:hover,
+    &:focus {
+      background-color: var(--#{$variable-prefix}background-color-hover-primary);
+    }
+
+    &:active {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
   }
 }

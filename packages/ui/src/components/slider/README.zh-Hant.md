@@ -49,6 +49,6 @@ title: 滑动输入条
 | dMarks | 刻度标记 | number | ({ value: number; label: React.ReactNode } | number)[] | - |
 | dVertical | 是否垂直显示 | boolean | false |
 | dReverse | 是否反置显示 | boolean | false |
-| dDisabled | 是否禁用 | boolean | false |
+| disabled | 是否禁用 | boolean | false |
 | dCustomTooltip | 自定义提示 | `(value: number) => React.ReactNode` | - |
 <!-- prettier-ignore-end -->

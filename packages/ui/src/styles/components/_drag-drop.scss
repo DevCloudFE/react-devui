@@ -1,9 +1,0 @@
-@include b(drag-placeholder) {
-  position: relative;
-
-  border: 1px dashed var(--#{$variable-prefix}color-primary);
-
-  @include m(horizontal) {
-    display: inline-block;
-  }
-}

@@ -5,15 +5,12 @@
   "description": "DevUI components based on React",
   "title": "DevUI",
   "keywords": [
+    "ui",
     "devui",
     "component",
     "components",
-    "design",
-    "framework",
-    "frontend",
     "react",
-    "react-component",
-    "ui"
+    "react-component"
   ],
   "repository": {
     "type": "git",

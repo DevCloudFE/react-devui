@@ -1,13 +1,17 @@
-import { usePrefixConfig, useDCollapseTransition, useRefCallback } from '../../hooks';
+import { useRef } from 'react';
+
+import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
+import { DCollapseTransition } from '../_transition';
 
 export interface DErrorProps {
   dVisible: boolean;
   dMessage: string;
-  dStatus?: 'error' | 'warning';
-  onHidden?: () => void;
+  dStatus: 'error' | 'warning';
+  onHidden: () => void;
 }
 
+const TTANSITION_DURING = 133;
 export function DError(props: DErrorProps): JSX.Element | null {
   const { dVisible, dMessage, dStatus = 'error', onHidden } = props;
 
@@ -16,37 +20,37 @@ export function DError(props: DErrorProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const [el, ref] = useRefCallback<HTMLDivElement>();
+  const elRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  const transitionState = {
-    'enter-from': { height: '0', opacity: '0' },
-    'enter-to': { transition: 'height 133ms ease-out, opacity 133ms ease-out' },
-    'leave-to': { height: '0', opacity: '0', transition: 'height 133ms ease-in, opacity 133ms ease-in' },
-  };
-  const hidden = useDCollapseTransition({
-    dEl: el,
-    dVisible,
-    dSkipFirst: false,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
-    afterLeave: () => {
-      onHidden?.();
-    },
-  });
-
-  return hidden ? null : (
-    <div
-      ref={ref}
-      className={getClassName(`${dPrefix}form-error`, {
-        [`${dPrefix}form-error--error`]: dStatus === 'error',
-        [`${dPrefix}form-error--warning`]: dStatus === 'warning',
-      })}
-      title={dMessage}
+  return (
+    <DCollapseTransition
+      dRef={elRef}
+      dSize={0}
+      dIn={dVisible}
+      dDuring={TTANSITION_DURING}
+      dStyles={{
+        enter: { opacity: 0 },
+        entering: { transition: `height ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out` },
+        leaving: { opacity: 0, transition: `height ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in` },
+        leaved: { display: 'none' },
+      }}
+      dSkipFirstTransition={false}
+      afterLeave={onHidden}
     >
-      {dMessage}
-    </div>
+      {(collapseStyle) => (
+        <div
+          ref={elRef}
+          className={getClassName(`${dPrefix}form-error`, {
+            [`${dPrefix}form-error--error`]: dStatus === 'error',
+            [`${dPrefix}form-error--warning`]: dStatus === 'warning',
+          })}
+          style={collapseStyle}
+          title={dMessage}
+        >
+          {dMessage}
+        </div>
+      )}
+    </DCollapseTransition>
   );
 }

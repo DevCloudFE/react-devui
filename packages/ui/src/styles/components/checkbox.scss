@@ -14,34 +14,41 @@
 
 @include b(checkbox) {
   position: relative;
-
   display: inline-flex;
   gap: 0 8px;
   align-items: center;
 
   @include utils-disabled;
 
-  &:not(.is-disabled) {
-    &:hover {
-      @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
+  &:hover {
+    @include e(input) {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+  }
+
+  @include when(disabled) {
+    @include e(state-container) {
+      &::before {
+        border-color: var(--#{$variable-prefix}color-disabled);
+      }
+
+      &::after {
+        background-color: var(--#{$variable-prefix}color-disabled);
       }
     }
+  }
 
-    @include when(checked) {
+  @include when(checked) {
+    &:not(.is-disabled) {
+      @include e(input) {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+
       @include e(state-container) {
         &::before {
           animation: wave-spread 0.36s ease-in-out;
           animation-fill-mode: backwards;
         }
-
-        &::after {
-          opacity: 1;
-        }
-      }
-
-      @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
       }
 
       @include e(tick) {
@@ -50,59 +57,39 @@
       }
     }
 
-    @include when(indeterminate) {
-      @include e(state-container) {
-        &::before {
-          animation: wave-spread 0.36s ease-in-out;
-          animation-fill-mode: backwards;
-        }
-
-        &::after {
-          opacity: 1;
-        }
+    @include e(state-container) {
+      &::after {
+        opacity: 1;
       }
+    }
+  }
 
+  @include when(indeterminate) {
+    &:not(.is-disabled) {
       @include e(input) {
         border-color: var(--#{$variable-prefix}color-primary);
       }
     }
 
-    @include e(input) {
-      @include utils-outline;
-
-      &:focus {
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
-
-        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
-      }
-    }
-  }
-
-  @include when(disabled) {
     @include e(state-container) {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
-    }
-
-    @include e(tick) {
-      &::after {
-        border-color: var(--#{$variable-prefix}color-disabled);
+      &::before {
+        animation: wave-spread 0.36s ease-in-out;
+        animation-fill-mode: backwards;
       }
-    }
 
-    @include e(indeterminate) {
-      background-color: var(--#{$variable-prefix}color-disabled);
+      &::after {
+        opacity: 1;
+      }
     }
   }
 
   @include e(state-container) {
     position: relative;
-
     width: 16px;
     height: 16px;
-    border-radius: var(--#{$variable-prefix}border-radius);
-
-    background-color: var(--#{$variable-prefix}background-color-input);
     cursor: pointer;
+    background-color: var(--#{$variable-prefix}background-color-input);
+    border-radius: var(--#{$variable-prefix}border-radius);
 
     &::before {
       position: absolute;
@@ -110,13 +97,10 @@
       right: 0;
       bottom: 0;
       left: 0;
-
+      content: '';
       border: 1px solid var(--#{$variable-prefix}color-primary);
       border-radius: var(--#{$variable-prefix}border-radius);
-
       opacity: 0;
-
-      content: '';
     }
 
     &::after {
@@ -125,15 +109,12 @@
       right: 0;
       bottom: 0;
       left: 0;
-
-      border-radius: var(--#{$variable-prefix}border-radius);
-
-      background-color: var(--#{$variable-prefix}color-primary);
-      opacity: 0;
-
-      transition: transform 133ms linear, opacity 133ms linear;
-
       content: '';
+      background-color: var(--#{$variable-prefix}color-primary);
+      border-radius: var(--#{$variable-prefix}border-radius);
+      opacity: 0;
+      transition: transform var(--#{$variable-prefix}animation-duration-fast) linear,
+        opacity var(--#{$variable-prefix}animation-duration-fast) linear;
     }
   }
 
@@ -144,25 +125,20 @@
     bottom: 0;
     left: 0;
     z-index: 1;
-
-    border-radius: var(--#{$variable-prefix}border-radius);
-
     overflow: hidden;
+    border-radius: var(--#{$variable-prefix}border-radius);
 
     &::after {
       position: absolute;
       top: 3px;
       left: 3px;
-
       display: block;
       width: 10px;
       height: 6px;
-      border-bottom: 2px solid #fff;
-      border-left: 2px solid #fff;
-
-      transform: rotate(-45deg);
-
       content: '';
+      border-bottom: 2px solid map.get($colors, 'white');
+      border-left: 2px solid map.get($colors, 'white');
+      transform: rotate(-45deg);
     }
   }
 
@@ -171,12 +147,9 @@
     top: 7px;
     left: 4px;
     z-index: 1;
-
     width: 8px;
     height: 2px;
-
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    background-color: #fff;
+    background-color: map.get($colors, 'white');
   }
 
   @include e(input) {
@@ -184,26 +157,23 @@
     top: 0;
     left: 0;
     z-index: 5;
-
     width: 100%;
     height: 100%;
     margin: 0;
+    cursor: inherit;
     border: 1px solid var(--#{$variable-prefix}color-border);
     border-radius: var(--#{$variable-prefix}border-radius);
-
-    outline: none;
-
-    cursor: inherit;
-
-    transition: border-color 133ms linear, background-color 66ms linear, color 133ms linear;
-
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
     appearance: none;
+
+    &:focus {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+    }
   }
 }
 
 @include b(checkbox-group) {
-  position: relative;
-
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;

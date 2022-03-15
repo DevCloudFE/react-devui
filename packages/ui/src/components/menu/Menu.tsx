@@ -1,42 +1,46 @@
-import type { DUpdater } from '../../hooks/two-way-binding';
+import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
+import type { DId, DNestedChildren } from '../../types';
 
-import { isUndefined } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { isNull, isUndefined, nth } from 'lodash';
+import React, { useId, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useImmer, useRefCallback, useTwoWayBinding, useDCollapseTransition } from '../../hooks';
-import { generateComponentMate, getClassName, mergeStyle } from '../../utils';
-import { DTrigger } from '../_trigger';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useFocusVisible } from '../../hooks';
+import { findNested, registerComponentMate, getClassName } from '../../utils';
+import { useNestedPopup } from '../_popup';
+import { DCollapseTransition } from '../_transition';
+import { DMenuGroup } from './MenuGroup';
 import { DMenuItem } from './MenuItem';
 import { DMenuSub } from './MenuSub';
+import { checkEnableOption, getOptions } from './utils';
 
-type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
+export type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
-export interface DMenuContextData {
-  gMode: DMenuMode;
-  gExpandTrigger: 'hover' | 'click';
-  gActiveId: string | null;
-  gExpandIds: Set<string>;
-  gFocusId: [string, string] | null;
-  gOnActiveChange: (id: string) => void;
-  gOnExpandChange: (id: string, expand: boolean) => void;
-  gOnFocus: (dId: string, id: string) => void;
-  gOnBlur: () => void;
+export interface DMenuOption<ID extends DId> {
+  id: ID;
+  title: React.ReactNode;
+  type: 'item' | 'group' | 'sub';
+  icon?: React.ReactNode;
+  disabled?: boolean;
 }
-export const DMenuContext = React.createContext<DMenuContextData | null>(null);
 
-export interface DMenuProps extends React.HTMLAttributes<HTMLElement> {
-  dActive?: [string | null, DUpdater<string | null>?];
-  dExpands?: [Set<string>, DUpdater<Set<string>>?];
+export interface DMenuProps<ID extends DId, T extends DMenuOption<ID>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  dOptions: DNestedChildren<T>[];
+  dActive?: [ID | null, DUpdater<ID>?];
+  dExpands?: [ID[], DUpdater<ID[]>?];
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
-  onActiveChange?: (id: string) => void;
-  onExpandsChange?: (ids: Set<string>) => void;
+  onActiveChange?: (id: ID, option: DNestedChildren<T>) => void;
+  onExpandsChange?: (ids: ID[], options: DNestedChildren<T>[]) => void;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DMenu');
-export function DMenu(props: DMenuProps): JSX.Element | null {
+const TTANSITION_DURING = 200;
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
+export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>): JSX.Element | null {
   const {
+    className,
+    style,
+    dOptions,
     dActive,
     dExpands,
     dMode = 'vertical',
@@ -44,12 +48,11 @@ export function DMenu(props: DMenuProps): JSX.Element | null {
     dExpandTrigger,
     onActiveChange,
     onExpandsChange,
-    className,
-    style,
-    children,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    onMouseDown,
+    onMouseUp,
+    onFocus,
+    onBlur,
+    onKeyDown,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -58,165 +61,438 @@ export function DMenu(props: DMenuProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const [navEl, navRef] = useRefCallback();
+  const navRef = useRef<HTMLElement>(null);
   //#endregion
 
-  const [focusId, setFocusId] = useImmer<DMenuContextData['gFocusId']>(null);
-  const [activedescendant, setActiveDescendant] = useState<string | undefined>(undefined);
+  const uniqueId = useId();
+  const getOptionId = (id: ID) => `${dPrefix}menu-option-${uniqueId}-${id}`;
 
-  const [activeId, changeActiveId] = useTwoWayBinding<string | null, string>(null, dActive, onActiveChange);
-  const [expandIds, changeExpandIds] = useTwoWayBinding<Set<string>>(new Set(), dExpands, onExpandsChange);
-
-  const expandTrigger = isUndefined(dExpandTrigger) ? (dMode === 'vertical' ? 'click' : 'hover') : dExpandTrigger;
-
-  useEffect(() => {
-    let isFocus = false;
-    if (focusId) {
-      navEl?.childNodes.forEach((child) => {
-        if (focusId[1] === (child as HTMLElement)?.id) {
-          isFocus = true;
-        }
-      });
+  const [activeId, changeActiveId] = useTwoWayBinding<ID | null, ID>(null, dActive, (id) => {
+    if (onActiveChange) {
+      onActiveChange(id, findNested(dOptions, (option) => option.id === id) as T);
     }
-    setActiveDescendant(isFocus ? focusId?.[1] : undefined);
-  }, [focusId, navEl?.childNodes, setActiveDescendant]);
+  });
+  const activeIds = (() => {
+    let ids: ID[] | undefined;
+    const reduceArr = (arr: DNestedChildren<T>[], subParent: ID[] = []) => {
+      for (const item of arr) {
+        if (ids) {
+          break;
+        }
+        if (item.children) {
+          reduceArr(item.children, item.type === 'sub' ? subParent.concat([item.id]) : subParent);
+        } else if (item.id === activeId) {
+          ids = subParent.concat([item.id]);
+        }
+      }
+    };
+    if (!isNull(activeId)) {
+      reduceArr(dOptions);
+    }
 
-  const gOnActiveChange = useCallback(
-    (id) => {
-      changeActiveId(id);
-    },
-    [changeActiveId]
-  );
-  const gOnExpandChange = useCallback(
-    (id, expand) => {
-      changeExpandIds((draft) => {
-        if (expand) {
-          if (dExpandOne) {
-            const idsArr: string[][] = [];
-            const getAllIds = (childs: React.ReactNode) => {
-              const nodes = React.Children.toArray(childs).filter((node) => node?.['props']?.dId);
-              idsArr.push(nodes.map((node) => node['props'].dId));
-              nodes.forEach((node) => {
-                if (node?.['props']?.children) {
-                  getAllIds(node['props'].children);
-                }
+    return ids ?? [];
+  })();
+
+  const [expanoptionIds, changeExpanoptionIds] = useTwoWayBinding<ID[]>([], dExpands, (ids) => {
+    if (onExpandsChange) {
+      let length = ids.length;
+      const options: DNestedChildren<T>[] = [];
+      const reduceArr = (arr: DNestedChildren<T>[]) => {
+        for (const item of arr) {
+          if (length === 0) {
+            break;
+          }
+
+          if (item.children) {
+            reduceArr(item.children);
+          } else {
+            const index = ids.findIndex((id) => id === item.id);
+            if (index !== -1) {
+              options[index] = item;
+              length -= 1;
+            }
+          }
+        }
+      };
+      reduceArr(dOptions);
+
+      onExpandsChange(ids, options);
+    }
+  });
+  const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
+  const [focusIds, setFocusIds] = useState<ID[]>([]);
+  const [isFocus, setIsFocus] = useState(false);
+  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const { fvOnFocus, fvOnBlur, fvOnKeyDown } = useFocusVisible(setIsFocusVisible);
+  const focusId = (() => {
+    if (isFocus) {
+      if (dMode === 'vertical') {
+        return nth(focusIds, -1);
+      } else {
+        let id: ID | undefined;
+        for (const [index, focusId] of focusIds.entries()) {
+          id = focusId;
+          if (nth(popupIds, index)?.id !== focusId) {
+            break;
+          }
+        }
+        return id;
+      }
+    }
+  })();
+
+  const initFocus = () => {
+    let firstId: ID | undefined;
+    const ids: ID[] = [];
+    const reduceArr = (arr: DNestedChildren<T>[]) => {
+      for (const item of arr) {
+        if (ids.length === 1) {
+          break;
+        }
+
+        if ((item.type === 'group' || (dMode === 'vertical' && item.type === 'sub' && expanoptionIds.includes(item.id))) && item.children) {
+          reduceArr(item.children);
+        } else if (checkEnableOption(item)) {
+          if (isUndefined(firstId)) {
+            firstId = item.id;
+          }
+          if (activeIds.includes(item.id)) {
+            ids.push(item.id);
+          }
+        }
+      }
+    };
+    reduceArr(dOptions);
+    setFocusIds(ids.length === 0 ? (isUndefined(firstId) ? [] : [firstId]) : ids);
+  };
+
+  const preventBlur: React.MouseEventHandler<HTMLElement> = (e) => {
+    if (isFocus && e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  let handleKeyDown: React.KeyboardEventHandler<HTMLElement> | undefined;
+  const optionNodes = (() => {
+    const getNodes = (arr: DNestedChildren<T>[], level: number, subParents: DNestedChildren<T>[], inNav = false): JSX.Element[] => {
+      const posinset = new Map<ID, [number, number]>();
+      let noGroup: DNestedChildren<T>[] = [];
+      for (const option of arr) {
+        if (option.type === 'group') {
+          for (const [i, o] of noGroup.entries()) {
+            posinset.set(o.id, [i, noGroup.length]);
+          }
+          noGroup = [];
+        } else {
+          noGroup.push(option);
+        }
+      }
+      for (const [i, o] of noGroup.entries()) {
+        posinset.set(o.id, [i, noGroup.length]);
+      }
+
+      return arr.map((option) => {
+        const { id: optionId, title: optionTitle, type: optionType, icon: optionIcon, disabled: optionDisabled, children } = option;
+
+        const _subParents = optionType === 'sub' ? subParents.concat([option]) : subParents;
+        const id = getOptionId(optionId);
+        const isExpand = expanoptionIds.includes(optionId);
+        const isFocus = optionId === focusId;
+        const isEmpty = !(children && children.length > 0);
+        const popupState = popupIds.find((v) => v.id === optionId);
+
+        let step = 20;
+        let space = 16;
+        if (dMode === 'horizontal' && inNav) {
+          space = 20;
+        }
+        if (dMode !== 'vertical' && !inNav) {
+          step = 12;
+          space = 10;
+        }
+
+        const handleItemClick = () => {
+          changeActiveId(optionId);
+          setFocusIds(subParents.map((o) => o.id).concat([optionId]));
+        };
+
+        const handleSubExpand = (sameLevelOptions: T[]) => {
+          if (isExpand) {
+            changeExpanoptionIds((draft) => {
+              const index = draft.findIndex((id) => id === optionId);
+              draft.splice(index, 1);
+            });
+          } else {
+            if (dExpandOne) {
+              const ids = expanoptionIds.filter((id) => sameLevelOptions.findIndex((o) => o.id === id) === -1);
+              ids.push(optionId);
+              changeExpanoptionIds(ids);
+            } else {
+              changeExpanoptionIds((draft) => {
+                draft.push(optionId);
               });
+            }
+          }
+        };
+
+        if (isFocus) {
+          handleKeyDown = (e) => {
+            const sameLevelOptions = getOptions(nth(subParents, -1)?.children ?? dOptions);
+            const focusOption = (o?: T) => {
+              if (o) {
+                setFocusIds(subParents.map((o) => o.id).concat([o.id]));
+              }
             };
-            getAllIds(children);
-            for (const ids of idsArr) {
-              if (ids.includes(id)) {
-                for (const sameLevelId of ids) {
-                  draft.delete(sameLevelId);
+
+            if (dMode === 'horizontal' && inNav) {
+              switch (e.code) {
+                case 'ArrowUp':
+                  e.code = 'ArrowLeft';
+                  break;
+
+                case 'ArrowLeft':
+                  e.code = 'ArrowUp';
+                  break;
+
+                case 'ArrowDown':
+                  e.code = 'ArrowRight';
+                  break;
+
+                case 'ArrowRight':
+                  e.code = 'ArrowDown';
+                  break;
+
+                default:
+                  break;
+              }
+            }
+
+            switch (e.code) {
+              case 'ArrowUp': {
+                e.preventDefault();
+                const index = sameLevelOptions.findIndex((o) => o.id === optionId);
+                const o = nth(sameLevelOptions, index - 1);
+                focusOption(o);
+                if (o && nth(popupIds, -1)?.id === optionId) {
+                  setPopupIds(popupIds.slice(0, -1));
                 }
                 break;
               }
+
+              case 'ArrowDown': {
+                e.preventDefault();
+                const index = sameLevelOptions.findIndex((o) => o.id === optionId);
+                const o = nth(sameLevelOptions, (index + 1) % sameLevelOptions.length);
+                focusOption(o);
+                if (o && nth(popupIds, -1)?.id === optionId) {
+                  setPopupIds(popupIds.slice(0, -1));
+                }
+                break;
+              }
+
+              case 'ArrowLeft': {
+                e.preventDefault();
+                if (dMode !== 'vertical') {
+                  setPopupIds(popupIds.slice(0, -1));
+                }
+                const ids = subParents.map((item) => item.id);
+                if (ids.length > 0) {
+                  setFocusIds(ids);
+                }
+                break;
+              }
+
+              case 'ArrowRight':
+                e.preventDefault();
+                if (optionType === 'sub') {
+                  if (dMode === 'vertical') {
+                    if (!isExpand) {
+                      handleSubExpand(sameLevelOptions);
+                    }
+                  } else {
+                    addPopupId(optionId);
+                  }
+                  if (children) {
+                    const o = nth(getOptions(children), 0);
+                    if (o) {
+                      setFocusIds(_subParents.map((o) => o.id).concat([o.id]));
+                    }
+                  }
+                }
+                break;
+
+              case 'Home':
+                e.preventDefault();
+                focusOption(nth(sameLevelOptions, 0));
+                break;
+
+              case 'End':
+                e.preventDefault();
+                focusOption(nth(sameLevelOptions, -1));
+                break;
+
+              case 'Enter':
+              case 'Space':
+                e.preventDefault();
+                if (optionType === 'item') {
+                  handleItemClick();
+                } else if (optionType === 'sub') {
+                  if (dMode === 'vertical') {
+                    handleSubExpand(sameLevelOptions);
+                  } else {
+                    addPopupId(optionId);
+                  }
+                }
+                break;
+
+              default:
+                break;
             }
-          }
-          draft.add(id);
-        } else {
-          draft.delete(id);
+          };
         }
+
+        return (
+          <React.Fragment key={optionId}>
+            {optionType === 'item' ? (
+              <DMenuItem
+                id={id}
+                disabled={optionDisabled}
+                dPosinset={posinset.get(optionId)!}
+                dMode={dMode}
+                dInNav={inNav}
+                dActive={activeId === optionId}
+                dFocusVisible={isFocusVisible && isFocus}
+                dIcon={optionIcon}
+                dStep={step}
+                dSpace={space}
+                dLevel={level}
+                onClick={handleItemClick}
+              >
+                {optionTitle}
+              </DMenuItem>
+            ) : optionType === 'group' ? (
+              <DMenuGroup
+                id={id}
+                dOptions={children && getNodes(children, level + 1, _subParents)}
+                dEmpty={isEmpty}
+                dStep={step}
+                dSpace={space}
+                dLevel={level}
+              >
+                {optionTitle}
+              </DMenuGroup>
+            ) : (
+              <DMenuSub
+                id={id}
+                disabled={optionDisabled}
+                dPosinset={posinset.get(optionId)!}
+                dMode={dMode}
+                dInNav={inNav}
+                dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(optionId)}
+                dExpand={isExpand}
+                dFocusVisible={isFocusVisible && isFocus}
+                dList={children && getNodes(children, dMode === 'vertical' ? level + 1 : 0, _subParents)}
+                dPopupVisible={dMode === 'vertical' ? false : !isUndefined(popupState)}
+                dPopupState={popupState?.visible ?? false}
+                dEmpty={isEmpty}
+                dTrigger={dExpandTrigger ?? (dMode === 'vertical' ? 'click' : 'hover')}
+                dIcon={optionIcon}
+                dStep={step}
+                dSpace={space}
+                dLevel={level}
+                onVisibleChange={(visible) => {
+                  if (visible) {
+                    if (subParents.length === 0) {
+                      setPopupIds([{ id: optionId, visible: true }]);
+                    } else {
+                      addPopupId(optionId);
+                    }
+                  } else {
+                    removePopupId(optionId);
+                  }
+                }}
+                onClick={() => {
+                  if (!optionDisabled) {
+                    setFocusIds(subParents.map((o) => o.id).concat([optionId]));
+
+                    if (dMode === 'vertical') {
+                      const sameLevelOptions = getOptions(nth(subParents, -1)?.children ?? dOptions);
+                      handleSubExpand(sameLevelOptions);
+                    }
+                  }
+                }}
+              >
+                {optionTitle}
+              </DMenuSub>
+            )}
+          </React.Fragment>
+        );
       });
-    },
-    [changeExpandIds, children, dExpandOne]
-  );
-  const gOnFocus = useCallback(
-    (dId, id) => {
-      setFocusId([dId, id]);
-    },
-    [setFocusId]
-  );
-  const gOnBlur = useCallback(() => {
-    setFocusId(null);
-  }, [setFocusId]);
-  const contextValue = useMemo<DMenuContextData>(
-    () => ({
-      gMode: dMode,
-      gExpandTrigger: expandTrigger,
-      gActiveId: activeId,
-      gExpandIds: expandIds,
-      gFocusId: focusId,
-      gOnActiveChange,
-      gOnExpandChange,
-      gOnFocus,
-      gOnBlur,
-    }),
-    [activeId, dMode, expandIds, expandTrigger, focusId, gOnActiveChange, gOnBlur, gOnExpandChange, gOnFocus]
-  );
+    };
 
-  const transitionState = {
-    'enter-from': { width: '80px' },
-    'enter-to': { transition: 'width 0.2s linear' },
-    'leave-to': { width: '80px', transition: 'width 0.2s linear' },
-  };
-  const hidden = useDCollapseTransition({
-    dEl: navEl,
-    dVisible: dMode !== 'icon',
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
-    dDirection: 'horizontal',
-  });
-
-  const handleTrigger = (state?: boolean) => {
-    if (dMode === 'vertical' && expandTrigger === 'hover' && state === false) {
-      changeExpandIds(new Set());
-    }
-  };
-
-  const childs = React.Children.map(children as React.ReactElement[], (child) => {
-    const props = Object.assign({}, child.props);
-
-    if ('type' in child && (child.type === DMenuSub || child.type === DMenuItem)) {
-      props.__inNav = true;
-    }
-
-    return React.cloneElement(child, props);
-  });
+    return getNodes(dOptions, 0, [], true);
+  })();
 
   return (
-    <DMenuContext.Provider value={contextValue}>
-      <DTrigger
-        dTrigger="hover"
-        dRender={(triggerRenderProps) => (
-          <nav
-            {...restProps}
-            ref={navRef}
-            className={getClassName(className, `${dPrefix}menu`, {
-              [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-            })}
-            style={mergeStyle(
-              {
-                width: hidden ? 80 : undefined,
-              },
-              style
-            )}
-            tabIndex={-1}
-            role="menubar"
-            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-            aria-activedescendant={activedescendant}
-            onMouseEnter={(e) => {
-              onMouseEnter?.(e);
+    <DCollapseTransition
+      dRef={navRef}
+      dSize={80}
+      dIn={dMode !== 'icon'}
+      dDuring={TTANSITION_DURING}
+      dHorizontal
+      dStyles={{
+        entering: { transition: `width ${TTANSITION_DURING}ms linear` },
+        leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
+      }}
+    >
+      {(collapseStyle) => (
+        <nav
+          {...restProps}
+          ref={navRef}
+          className={getClassName(className, `${dPrefix}menu`, {
+            [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+          })}
+          style={{
+            ...style,
+            ...collapseStyle,
+          }}
+          tabIndex={0}
+          role="menubar"
+          aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+          aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
+          onMouseDown={(e) => {
+            onMouseDown?.(e);
 
-              triggerRenderProps.onMouseEnter?.(e);
-            }}
-            onMouseLeave={(e) => {
-              onMouseLeave?.(e);
+            preventBlur(e);
+          }}
+          onMouseUp={(e) => {
+            onMouseUp?.(e);
 
-              triggerRenderProps.onMouseLeave?.(e);
-            }}
-            onClick={(e) => {
-              onClick?.(e);
+            preventBlur(e);
+          }}
+          onFocus={(e) => {
+            onFocus?.(e);
+            fvOnFocus();
 
-              triggerRenderProps.onClick?.(e);
-            }}
-          >
-            {childs}
-          </nav>
-        )}
-        onTrigger={handleTrigger}
-      />
-    </DMenuContext.Provider>
+            setIsFocus(true);
+            initFocus();
+          }}
+          onBlur={(e) => {
+            onBlur?.(e);
+            fvOnBlur();
+
+            setIsFocus(false);
+          }}
+          onKeyDown={(e) => {
+            onKeyDown?.(e);
+            fvOnKeyDown(e);
+
+            handleKeyDown?.(e);
+          }}
+        >
+          {optionNodes}
+        </nav>
+      )}
+    </DCollapseTransition>
   );
 }

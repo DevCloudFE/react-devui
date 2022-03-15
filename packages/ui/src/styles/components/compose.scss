@@ -1,28 +1,83 @@
+/* stylelint-disable no-descending-specificity */
 @include b(compose) {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  width: 100%;
+  $compose-support: '[data-compose-support]';
+  $compose-support--active: '[data-compose-support-active]';
+  $compose-support--disabled: '[data-compose-support-disabled]';
 
-  & > * {
-    margin: 0 !important;
+  display: inline-flex;
+  align-items: stretch;
+  vertical-align: top;
 
-    & + * {
-      margin-left: -1px !important;
+  & > #{$compose-support} {
+    &#{$compose-support--disabled} {
+      z-index: 0;
     }
 
-    &:not(:first-child):not(:last-child) {
-      border-radius: 0 !important;
-    }
+    &:not(#{$compose-support--disabled}) {
+      z-index: 1;
 
-    &:first-child:not(:only-child) {
-      border-top-right-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
+      &:hover {
+        z-index: 5;
+      }
 
-    &:last-child:not(:only-child) {
-      border-top-left-radius: 0 !important;
-      border-bottom-left-radius: 0 !important;
+      @include form-warning {
+        z-index: 6;
+      }
+
+      @include form-error {
+        z-index: 7;
+      }
+
+      &:focus,
+      &#{$compose-support--active} {
+        z-index: 10;
+      }
+    }
+  }
+
+  &:not(#{&}--vertical) {
+    & > #{$compose-support} {
+      & + #{$compose-support} {
+        margin-left: -1px !important;
+      }
+
+      &:not(:first-child):not(:last-child) {
+        border-radius: 0 !important;
+      }
+
+      &:first-child:not(:only-child) {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+      }
+
+      &:last-child:not(:only-child) {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+      }
+    }
+  }
+
+  @include m(vertical) {
+    flex-direction: column;
+
+    & > #{$compose-support} {
+      & + #{$compose-support} {
+        margin-top: -1px !important;
+      }
+
+      &:not(:first-child):not(:last-child) {
+        border-radius: 0 !important;
+      }
+
+      &:first-child:not(:only-child) {
+        border-bottom-right-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+      }
+
+      &:last-child:not(:only-child) {
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+      }
     }
   }
 }
@@ -34,30 +89,25 @@
   min-width: var(--#{$variable-prefix}size);
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
+  font-size: var(--#{$variable-prefix}font-size);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 
-  font-size: var(--#{$variable-prefix}font);
-
-  @include utils-disabled;
+  @include utils-disabled(true);
 
   @include m(gray) {
-    background-color: var(--#{$variable-prefix}color-step-20);
-
-    @include when(disabled) {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
-    }
+    background-color: var(--#{$variable-prefix}compose-item-gray-background-color);
   }
 
   @include m(smaller) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-smaller);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}font: var(--#{$variable-prefix}font-larger);
+    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
   }
 }

@@ -1,9 +1,8 @@
-import type { DBreakpoints } from './Row';
+import type { DBreakpoints } from '../../types';
 
-import { isEqual } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useAsync, useEventCallback, useGridConfig, useIsomorphicLayoutEffect } from '../../hooks';
+import { useAsync, useGridConfig, useMount } from '../../hooks';
 
 export const MEDIA_QUERY_LIST = Object.freeze(['xxl', 'xl', 'lg', 'md', 'sm', 'xs'] as DBreakpoints[]);
 
@@ -19,42 +18,60 @@ function getMediaMatch(mqlList?: Map<DBreakpoints, MediaQueryList>) {
   return mediaMatch;
 }
 
-export function useMediaMatch(onMediaChange?: (match: DBreakpoints[]) => void) {
+export function useMediaMatch() {
   const { breakpoints } = useGridConfig();
 
   const asyncCapture = useAsync();
 
-  const [mqlList, setMqlList] = useState<Map<DBreakpoints, MediaQueryList>>();
-  const [mediaMatch, setMediaMatch] = useState<DBreakpoints[]>([]);
-  useIsomorphicLayoutEffect(() => {
-    const mqlList = new Map<DBreakpoints, MediaQueryList>(
-      MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${breakpoints.get(breakpoint)}px)`)])
-    );
-    setMqlList(mqlList);
-    setMediaMatch(getMediaMatch(mqlList));
+  const mqlList = useMemo<Map<DBreakpoints, MediaQueryList> | undefined>(() => {
+    if (typeof window !== 'undefined') {
+      return new Map<DBreakpoints, MediaQueryList>(
+        MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${breakpoints.get(breakpoint)}px)`)])
+      );
+    }
   }, [breakpoints]);
 
-  const handleResize = useEventCallback(() => {
+  const [mediaMatch, setMediaMatch] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return getMediaMatch(mqlList);
+    }
+    return [];
+  });
+
+  const updateMediaMatch = useCallback(() => {
     const _mediaMatch = getMediaMatch(mqlList);
 
-    if (!isEqual(_mediaMatch, mediaMatch)) {
-      onMediaChange?.(_mediaMatch);
-      setMediaMatch(_mediaMatch);
-    }
+    setMediaMatch((draft) => {
+      if (draft.length !== _mediaMatch.length) {
+        return _mediaMatch;
+      } else {
+        for (const breakpoint of draft) {
+          if (!_mediaMatch.includes(breakpoint)) {
+            return _mediaMatch;
+          }
+        }
+        return draft;
+      }
+    });
+  }, [mqlList]);
+
+  useMount(() => {
+    updateMediaMatch();
   });
+
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
     asyncGroup.fromEvent(window, 'resize').subscribe({
       next: () => {
-        handleResize();
+        updateMediaMatch();
       },
     });
 
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, handleResize]);
+  }, [asyncCapture, updateMediaMatch]);
 
   return mediaMatch;
 }

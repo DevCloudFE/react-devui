@@ -1,35 +1,37 @@
-import type { DConfigContextData } from '../../hooks/d-config';
-import type { DElementSelector } from '../../hooks/element';
+import type { DConfigContextData } from '../../hooks/d-config/contex';
+import type { DElementSelector } from '../../hooks/ui/useElement';
 
 import { isUndefined } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 import { Subject } from 'rxjs';
 import { SVResizeObserver } from 'scrollview-resize';
 
-import { useElement, useIsomorphicLayoutEffect } from '../../hooks';
-import { DConfigContext } from '../../hooks/d-config';
+import { useElement } from '../../hooks';
+import { DConfigContext } from '../../hooks/d-config/contex';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
 
-export interface DRootProps extends Omit<DConfigContextData, 'onScrollViewChange$'> {
-  contentSelector?: DElementSelector;
+export interface DRootProps {
   children: React.ReactNode;
+  dContext?: Omit<DConfigContextData, 'onScrollViewChange$'>;
+  dContentSelector?: DElementSelector;
 }
 
 export function DRoot(props: DRootProps): JSX.Element | null {
-  const { contentSelector, children, theme, i18n, ...restProps } = props;
+  const { children, dContext, dContentSelector } = props;
 
-  const lang = i18n?.lang ?? 'en-US';
+  const lang = dContext?.i18n?.lang ?? 'zh-Hant';
+  const theme = dContext?.theme;
 
   const [onScrollViewChange$] = useState(() => new Subject<void>());
-  const contentEl = useElement(contentSelector ?? null);
+  const contentEl = useElement(dContentSelector ?? null);
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     document.body.classList.toggle('CJK', lang === 'zh-Hant');
   }, [lang]);
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     document.body.classList.toggle('dark', theme === 'dark');
     if (theme === 'dark') {
       const colorScheme = document.documentElement.style.colorScheme;
@@ -41,7 +43,7 @@ export function DRoot(props: DRootProps): JSX.Element | null {
   }, [theme]);
 
   useEffect(() => {
-    if (isUndefined(contentSelector)) {
+    if (isUndefined(dContentSelector)) {
       const observer = new ResizeObserver(() => {
         onScrollViewChange$.next();
       });
@@ -58,17 +60,18 @@ export function DRoot(props: DRootProps): JSX.Element | null {
         observer.disconnect();
       };
     }
-  }, [contentEl, contentSelector, onScrollViewChange$]);
+  }, [contentEl, dContentSelector, onScrollViewChange$]);
+
+  const contextValue = useMemo<DConfigContextData>(
+    () => ({
+      ...dContext,
+      onScrollViewChange$,
+    }),
+    [dContext, onScrollViewChange$]
+  );
 
   return (
-    <DConfigContext.Provider
-      value={{
-        theme,
-        i18n,
-        onScrollViewChange$,
-        ...restProps,
-      }}
-    >
+    <DConfigContext.Provider value={contextValue}>
       {children}
       <Notification></Notification>
       <Toast></Toast>

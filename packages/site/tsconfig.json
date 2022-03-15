@@ -2,7 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@react-devui/ui": ["../ui/src/index.ts"],
+      "@react-devui/ui/*": ["../ui/src/*"]
+    }
   },
   "files": [],
   "include": [],

@@ -3,26 +3,28 @@ import type { DFooterProps } from '../_footer';
 import { isBoolean } from 'lodash';
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useContextRequired } from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
 import { DFooter } from '../_footer';
-import { DDrawerContext } from './Drawer';
 
 export interface DDrawerFooterProps extends DFooterProps {
   onOkClick?: () => void | boolean | Promise<void | boolean>;
   onCancelClick?: () => void | boolean | Promise<void | boolean>;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DDrawerFooter');
+export interface DDrawerFooterPropsWithPrivate extends DDrawerFooterProps {
+  __onClose?: () => void;
+}
+
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerFooter' });
 export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
-  const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, ...restProps } = useComponentConfig(
+  const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, __onClose, ...restProps } = useComponentConfig(
     COMPONENT_NAME,
-    props
+    props as DDrawerFooterPropsWithPrivate
   );
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gCloseDrawer } = useContextRequired(DDrawerContext);
   //#endregion
 
   const [okLoading, setOkLoading] = useState(false);
@@ -49,44 +51,40 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
     }
   })();
 
-  const handleOkClick = () => {
-    const shouldClose = onOkClick?.();
-    if (shouldClose instanceof Promise) {
-      setOkLoading(true);
-      shouldClose.then((val) => {
-        setOkLoading(false);
-        if (val !== false) {
-          gCloseDrawer();
-        }
-      });
-    } else if (shouldClose !== false) {
-      gCloseDrawer();
-    }
-  };
-
-  const handleCancelClick = () => {
-    const shouldClose = onCancelClick?.();
-    if (shouldClose instanceof Promise) {
-      setCancelLoading(true);
-      shouldClose.then((val) => {
-        setCancelLoading(false);
-        if (val !== false) {
-          gCloseDrawer();
-        }
-      });
-    } else if (shouldClose !== false) {
-      gCloseDrawer();
-    }
-  };
-
   return (
     <DFooter
       {...restProps}
       className={getClassName(className, `${dPrefix}drawer-footer`)}
       dOkButtonProps={okButtonProps}
       dCancelButtonProps={cancelButtonProps}
-      onOkClick={handleOkClick}
-      onCancelClick={handleCancelClick}
+      onOkClick={() => {
+        const shouldClose = onOkClick?.();
+        if (shouldClose instanceof Promise) {
+          setOkLoading(true);
+          shouldClose.then((val) => {
+            setOkLoading(false);
+            if (val !== false) {
+              __onClose?.();
+            }
+          });
+        } else if (shouldClose !== false) {
+          __onClose?.();
+        }
+      }}
+      onCancelClick={() => {
+        const shouldClose = onCancelClick?.();
+        if (shouldClose instanceof Promise) {
+          setCancelLoading(true);
+          shouldClose.then((val) => {
+            setCancelLoading(false);
+            if (val !== false) {
+              __onClose?.();
+            }
+          });
+        } else if (shouldClose !== false) {
+          __onClose?.();
+        }
+      }}
     ></DFooter>
   );
 }

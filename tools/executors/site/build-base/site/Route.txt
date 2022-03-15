@@ -2,9 +2,6 @@
 
 import { useEffect } from 'react';
 
-import { useContextRequired } from '@react-devui/ui/hooks';
-
-import { AppContext } from '../../../App';
 import { AppRoute } from '../../../components';
 
 export default function __Route__() {
@@ -12,12 +9,6 @@ export default function __Route__() {
     'en-US': { html: [__en-US__] },
     'zh-Hant': { html: [__zh-Hant__] },
   };
-
-  const { onMount } = useContextRequired(AppContext);
-
-  useEffect(() => {
-    onMount();
-  }, []);
 
   return <AppRoute {...props} />;
 }

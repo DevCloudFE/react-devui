@@ -1,24 +1,18 @@
-import type { DLang, DTheme } from '@react-devui/ui/hooks/d-config';
+import type { DLang, DTheme } from '@react-devui/ui/types';
 
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 
-import { DRoot, NotificationService, ToastService } from '@react-devui/ui';
-import { useAsync } from '@react-devui/ui/hooks';
+import { DRoot } from '@react-devui/ui';
+import { useAsync, useMount } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
-import { AppHeader, AppSidebar } from './components';
-import icons from './configs/icons.json';
+import { AppLayout } from './components';
 import { AppRoutes } from './routes/Routes';
 
 export interface AppContextData {
-  menuOpen: boolean;
-  pageMounted: boolean;
-  theme: DTheme;
-  changeTheme: (theme: DTheme) => void;
-  onMount: () => void;
-  onMenuOpenChange: (open: boolean) => void;
+  gTheme: DTheme;
+  gOnThemeChange: (theme: DTheme) => void;
 }
 export const AppContext = React.createContext<AppContextData | null>(null);
 
@@ -26,84 +20,68 @@ export function App() {
   const { i18n } = useTranslation();
   const asyncCapture = useAsync();
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [pageMounted, setPageMounted] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
   const [theme, setTheme] = useState<DTheme>(() => (localStorage.getItem('theme') as DTheme) ?? 'light');
 
-  const [mainEl, setMainEl] = useState<HTMLElement | null>(null);
-  const mainRef = useCallback(
-    (node) => {
-      if (node !== null) {
-        setMainEl(node);
-      }
-    },
-    [setMainEl]
-  );
+  useMount(() => {
+    if (!environment.production) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-  useLayoutEffect(() => {
-    localStorage.setItem('language', i18n.language);
-    document.documentElement.lang = i18n.language;
-  }, [i18n.language]);
-
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-    if (mainEl) {
-      if (!environment.production) {
-        asyncGroup.fromEvent(window, 'beforeunload').subscribe({
-          next: () => {
-            localStorage.setItem('scrollTop', mainEl.scrollTop.toString());
-          },
-        });
+      if (!window.location.hash && mainRef.current) {
+        asyncGroup.setTimeout(() => {
+          if (mainRef.current) {
+            mainRef.current.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
+          }
+        }, 300);
       }
+
+      asyncGroup.fromEvent(window, 'beforeunload').subscribe({
+        next: () => {
+          if (mainRef.current) {
+            localStorage.setItem('scrollTop', mainRef.current.scrollTop.toString());
+          }
+        },
+      });
+
       return () => {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, mainEl]);
+  });
 
-  const location = useLocation();
   useEffect(() => {
-    NotificationService.closeAll(false);
-    ToastService.closeAll(false);
-  }, [location]);
+    localStorage.setItem('language', i18n.language);
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
+
+  const rootContext = useMemo(
+    () => ({
+      theme,
+      i18n: { lang: i18n.language as DLang },
+    }),
+    [i18n.language, theme]
+  );
 
   const contextValue = useMemo<AppContextData>(
     () => ({
-      menuOpen,
-      pageMounted,
-      theme,
-      changeTheme: (theme) => {
+      gTheme: theme,
+      gOnThemeChange: (theme) => {
         setTheme(theme);
         localStorage.setItem('theme', theme);
       },
-      onMount: () => {
-        setPageMounted(true);
-        if (mainEl) {
-          if (window.location.hash) {
-            const hash = window.location.hash;
-            window.location.hash = '';
-            window.location.hash = hash;
-          } else if (!environment.production) {
-            mainEl.scrollTop = Number(localStorage.getItem('scrollTop') ?? 0);
-          }
-        }
-      },
-      onMenuOpenChange: (open) => {
-        setMenuOpen(open);
-      },
     }),
-    [mainEl, menuOpen, pageMounted, theme]
+    [theme]
   );
 
   return (
-    <DRoot theme={theme} i18n={{ lang: i18n.language as DLang }} icons={icons} contentSelector="main">
+    <DRoot dContext={rootContext} dContentSelector="main">
       <AppContext.Provider value={contextValue}>
-        <AppHeader />
-        <AppSidebar />
-        <main ref={mainRef} className="app-main">
-          <AppRoutes />
-        </main>
+        <AppLayout />
       </AppContext.Provider>
+
+      <main ref={mainRef} className="app-main">
+        <AppRoutes />
+      </main>
     </DRoot>
   );
 }

@@ -1,40 +1,20 @@
-import React from 'react';
+import type { DId, DNestedChildren } from '../../types';
+import type { DMenuOption } from './Menu';
 
-import { getClassName } from '../../utils';
+export function checkEnableOption<ID extends DId, T extends DMenuOption<ID>>(option: DNestedChildren<T>) {
+  return (option.type === 'item' || option.type === 'sub') && !option.disabled;
+}
 
-export function generateChildren(children: React.ReactNode, adjustIndicator = false) {
-  const length = React.Children.count(children);
-  return React.Children.map(children as React.ReactElement[], (child, index) => {
-    let className = '';
-    if (length > 1) {
-      if (index === 0) {
-        className = 'is-first';
+export function getOptions<ID extends DId, T extends DMenuOption<ID>>(arr: DNestedChildren<T>[], _options?: DNestedChildren<T>[]) {
+  const options = _options ?? [];
+  arr.forEach((o) => {
+    if (o.type === 'group') {
+      if (o.children) {
+        getOptions(o.children, options);
       }
-      if (index === length - 1) {
-        className = 'is-last';
-      }
+    } else if (checkEnableOption(o)) {
+      options.push(o);
     }
-    return React.cloneElement(child, {
-      ...child.props,
-      className: getClassName(child.props.className, { [className]: adjustIndicator }),
-    });
   });
+  return options;
 }
-
-export function getAllIds(id: string, data?: Map<string, string[]>): string[] {
-  const arr = [];
-  const children = data?.get(id);
-  if (children) {
-    for (const child of children) {
-      arr.push(child);
-      arr.push(...getAllIds(child, data));
-    }
-  }
-  return arr;
-}
-
-export interface DMenuCommonContextData {
-  expandIds: Set<string>;
-  onExpandChange: (id: string, expand: boolean) => void;
-}
-export const DMenuCommonContext = React.createContext<DMenuCommonContextData | null>(null);

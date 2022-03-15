@@ -1,66 +1,46 @@
 $select-option-height: 32px;
 
 @include b(select) {
-  @include m(multiple) {
-    .#{$variable-prefix}select-box__content {
-      display: inline-flex;
-      gap: 0 8px;
+  @include when(disabled) {
+    @include e(multiple-tag) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+    @include e(multiple-count) {
+      color: var(--#{$variable-prefix}color-disabled);
     }
   }
 
-  @include when(disabled) {
-    .#{$variable-prefix}tag {
-      &.#{$variable-prefix}select__multiple-count {
-        cursor: pointer;
-      }
-
-      &:not(.#{$variable-prefix}select__multiple-count) {
-        color: var(--#{$variable-prefix}color-disabled);
-      }
-    }
-
-    .#{$variable-prefix}tag__close {
-      cursor: unset;
-    }
+  @include e(popup) {
+    position: fixed;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
   }
 
   @include e(list) {
     position: relative;
-
     max-height: 264px;
-    margin: 0;
-
     padding: 4px 0;
+    margin: 0;
     overflow: hidden auto;
-
     list-style: none;
-    outline: none;
   }
 
   @include e(option) {
+    position: relative;
     display: flex;
     gap: 0 8px;
     align-items: center;
     width: 100%;
     height: $select-option-height;
     padding: 0 12px;
-
-    outline: none;
     cursor: pointer;
-
-    transition: background-color 0.2s linear;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
     @include utils-disabled;
 
-    &:not(.#{$variable-prefix}select__option--loading):not(.is-disabled) {
-      &:focus,
-      &.is-focus {
-        color: var(--#{$variable-prefix}color-primary-lighter);
-      }
-
-      &:not(.is-selected):hover {
-        background-color: var(--#{$variable-prefix}background-color-hover);
-      }
+    &:not(.is-selected):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
     }
 
     @include when(selected) {
@@ -69,29 +49,21 @@ $select-option-height: 32px;
   }
 
   @include e(option-group) {
-    margin: 0;
     padding: 0;
-
+    margin: 0;
     list-style: none;
+  }
 
-    & > li {
-      padding-left: 24px;
-    }
-
-    & > li[role='presentation'] {
-      display: flex;
-      align-items: center;
-      height: $select-option-height;
-      padding: 0 12px;
-
-      color: var(--#{$variable-prefix}color-step-400);
-      font-size: 0.9em;
-    }
+  @include e(option-group-label) {
+    display: flex;
+    align-items: center;
+    height: $select-option-height;
+    padding: 0 12px;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}text-color-sub);
   }
 
   @include e(option-content) {
-    flex-grow: 1;
-
     @include utils-ellipsis;
   }
 
@@ -100,8 +72,7 @@ $select-option-height: 32px;
     align-items: center;
     height: $select-option-height;
     padding: 0 12px;
-
-    color: var(--#{$variable-prefix}color-step-400);
+    color: var(--#{$variable-prefix}color-disabled);
   }
 
   @include e(loading) {
@@ -111,27 +82,23 @@ $select-option-height: 32px;
     bottom: 0;
     left: 0;
     z-index: 5;
-
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-
     color: var(--#{$variable-prefix}color-primary);
-
+    pointer-events: none;
     background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
 
     @include m(empty) {
       justify-content: flex-start;
-
       background-color: var(--#{$variable-prefix}background-color);
     }
   }
-}
 
-@include b(select-popup) {
-  min-height: 40px;
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
+  @include e(multiple-tag) {
+    & + & {
+      margin-left: 8px;
+    }
+  }
 }

@@ -1,7 +1,6 @@
 @mixin notification-root {
   position: fixed;
   z-index: var(--#{$variable-prefix}zindex-max);
-
   pointer-events: none;
 }
 
@@ -35,24 +34,19 @@
 
 @include b(notification) {
   position: relative;
-
   display: flex;
   width: 380px;
   max-width: calc(100vw - 40px);
-
-  margin-bottom: 20px;
   padding: 16px 24px;
-  border-radius: var(--#{$variable-prefix}border-radius);
-
-  background-color: var(--#{$variable-prefix}background-color);
-  box-shadow: var(--#{$variable-prefix}shadow-dialog);
-
+  margin-bottom: 20px;
   pointer-events: all;
+  background-color: var(--#{$variable-prefix}background-color);
+  border-radius: var(--#{$variable-prefix}border-radius);
+  box-shadow: var(--#{$variable-prefix}shadow-dialog);
 
   @include e(icon) {
     flex-shrink: 0;
     margin-right: 16px;
-
     font-size: 1.75em;
   }
 
@@ -62,20 +56,15 @@
 
   @include e(title) {
     margin-bottom: 8px;
-
     font-size: 1.15em;
   }
 
-  @include e(close, true) {
+  @include e(close) {
     position: absolute;
     top: 10px;
     right: 12px;
     z-index: 1;
-
     width: 28px;
-    min-width: unset;
     height: 28px;
-
-    color: var(--#{$variable-prefix}color-step-400);
   }
 }

@@ -32,7 +32,7 @@ title: 页签面板
 | --- | --- | --- | --- | 
 | dId | 唯一标识 | string | - |
 | dTitle | 页签的标题 | React.ReactNode | - |
-| dDisabled | 是否禁用 | boolean | false |
+| disabled | 是否禁用 | boolean | false |
 | dClosable | 是否可关闭 | boolean | false |
 | dCloseIcon | 自定义关闭图标 | React.ReactNode | - |
 <!-- prettier-ignore-end -->

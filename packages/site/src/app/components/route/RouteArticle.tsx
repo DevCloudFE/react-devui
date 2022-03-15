@@ -1,37 +1,42 @@
-import { isString, isUndefined } from 'lodash';
-import { useLayoutEffect, useState } from 'react';
+import type { DTransitionState } from '@react-devui/ui/components/_transition';
 
-import { DIcon, DAnchor, DAnchorLink, useMediaMatch } from '@react-devui/ui';
-import { useImmer, useDTransition, useRefCallback } from '@react-devui/ui/hooks';
+import { isString, isUndefined } from 'lodash';
+import { useEffect, useLayoutEffect, useState } from 'react';
+
+import { DAnchor, useMediaMatch } from '@react-devui/ui';
+import { DTransition } from '@react-devui/ui/components/_transition';
+import { useImmer } from '@react-devui/ui/hooks';
+import { DCustomIcon } from '@react-devui/ui/icons';
 
 import './RouteArticle.scss';
 import marked, { toString } from './utils';
 
 export interface AppRouteArticleProps {
   html?: number[];
-  links?: { href: string; title: string }[];
+  links?: { title: string; href: string }[];
   children?: React.ReactNode;
 }
 
+const TTANSITION_DURING = 200;
 export function AppRouteArticle(props: AppRouteArticleProps) {
   const html = props.html ? marked(toString(props.html)) : undefined;
 
-  const [links, setLinks] = useImmer<{ href: string; title: string }[]>(props.links ?? []);
+  const mediaMatch = useMediaMatch();
+
+  const [links, setLinks] = useImmer<{ title: string; href: string }[]>(props.links ?? []);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [el, ref] = useRefCallback();
 
   const icon = (top: boolean) => (
-    <DIcon
+    <div
       style={{
-        transform: menuOpen ? 'translateY(-12px)' : undefined,
-        transition: 'transform 0.2s ease',
+        transform: menuOpen ? `translateY(${top ? '' : '-'}12px)` : undefined,
+        transition: 'transform 200ms ease',
       }}
-      viewBox="0 0 926.23699 573.74994"
-      dRotate={top ? 180 : undefined}
     >
-      <g transform="translate(904.92214,-879.1482)">
-        <path
-          d="
+      <DCustomIcon viewBox="0 0 926.23699 573.74994" dRotate={top ? 180 : undefined} dSize={16}>
+        <g transform="translate(904.92214,-879.1482)">
+          <path
+            d="
 m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 -55.627 c 30.5891,-30.59485 56.1806,-55.627 56.8701,-55.627 0.6894,
 0 79.8637,78.60862 175.9427,174.68583 l 174.6892,174.6858 174.6892,
@@ -41,33 +46,29 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 -231.5279,231.248 -231.873,231.248 -0.3451,0 -104.688,
 -104.0616 -231.873,-231.248 z
 "
-        ></path>
-      </g>
-    </DIcon>
+          ></path>
+        </g>
+      </DCustomIcon>
+    </div>
   );
-
-  const transitionState = {
-    'enter-from': { opacity: '0', transform: 'translateY(120px)' },
-    'enter-to': { transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
-    'leave-to': { opacity: '0', transform: 'translateY(120px)', transition: 'opacity 0.2s linear, transform 0.2s ease-out' },
-  };
 
   useLayoutEffect(() => {
     if (isUndefined(props.links)) {
-      const arr: { href: string; title: string }[] = [];
+      const arr: { title: string; href: string }[] = [];
       document.querySelectorAll('.app-route-article h2').forEach((el) => {
-        arr.push({ href: '#' + el.id, title: el.id });
+        arr.push({ title: el.id, href: `#${el.id}` });
       });
       setLinks(arr);
       return () => {
         setLinks([]);
       };
     } else {
-      setLinks([...props.links, { href: '#API', title: 'API' }]);
+      setLinks([...props.links, { title: 'API', href: '#API' }]);
     }
-  }, [props.links, setLinks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isString(html)) {
       const el = document.querySelector(`.app-route-article > h1:first-child`);
       const title = document.title;
@@ -78,45 +79,35 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
     }
   }, [html]);
 
-  const hidden = useDTransition({
-    dEl: el,
-    dVisible: menuOpen,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
+  const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
+    enter: { opacity: 0, transform: 'translateY(120px)' },
+    entering: { transition: `opacity ${TTANSITION_DURING}ms linear, transform ${TTANSITION_DURING}ms ease-out` },
+    leaving: {
+      opacity: 0,
+      transform: 'translateY(120px)',
+      transition: `opacity ${TTANSITION_DURING}ms linear, transform ${TTANSITION_DURING}ms ease-in`,
     },
-  });
-
-  const mediaMatch = useMediaMatch();
+    leaved: { display: 'none' },
+  };
 
   return (
     <>
-      {mediaMatch.includes('md') && links.length > 0 && (
-        <DAnchor className="app-route-article__anchor" dPage=".app-main">
-          {links.map((link) => (
-            <DAnchorLink key={link.href} dAProps={link}>
-              {link.title}
-            </DAnchorLink>
-          ))}
-        </DAnchor>
-      )}
+      {mediaMatch.includes('md') && links.length > 0 && <DAnchor className="app-route-article__anchor" dLinks={links} dPage=".app-main" />}
       {!mediaMatch.includes('md') && (
         <>
           {links.length > 0 && (
-            <div ref={ref} className="app-route-article__anchor-conatiner" style={{ visibility: hidden ? 'hidden' : undefined }}>
-              <DAnchor dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR}>
-                {links.map((link) => (
-                  <DAnchorLink key={link.href} dAProps={link} onClick={() => setMenuOpen(false)}>
-                    {link.title}
-                  </DAnchorLink>
-                ))}
-              </DAnchor>
-            </div>
+            <DTransition dIn={menuOpen} dDuring={TTANSITION_DURING}>
+              {(state) => (
+                <div className="app-route-article__anchor-conatiner" style={transitionStyles[state]}>
+                  <DAnchor dLinks={links} dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR} onLinkClick={() => setMenuOpen(false)} />
+                </div>
+              )}
+            </DTransition>
           )}
-          <div className="app-route-article__anchor-button" role="button" tabIndex={0} onClick={() => setMenuOpen(!menuOpen)}>
+          <button className="app-route-article__anchor-button" onClick={() => setMenuOpen(!menuOpen)}>
             {icon(true)}
             {icon(false)}
-          </div>
+          </button>
         </>
       )}
 

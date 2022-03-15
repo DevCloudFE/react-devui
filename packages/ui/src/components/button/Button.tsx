@@ -1,18 +1,12 @@
-import { isUndefined } from 'lodash';
-import React from 'react';
+import type { DSize } from '../../types';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useWave,
-  useGeneralState,
-  useDCollapseTransition,
-  useRefCallback,
-  useContextOptional,
-} from '../../hooks';
-import { generateComponentMate, getClassName } from '../../utils';
-import { DIcon } from '../icon';
-import { DButtonGroupContext } from './ButtonGroup';
+import React, { useRef } from 'react';
+
+import { usePrefixConfig, useComponentConfig, useWave, useGeneralState } from '../../hooks';
+import { LoadingOutlined } from '../../icons';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DCollapseTransition } from '../_transition';
+import { useCompose } from '../compose';
 
 export type DButtonRef = HTMLButtonElement;
 
@@ -22,14 +16,19 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dLoading?: boolean;
   dBlock?: boolean;
   dShape?: 'circle' | 'round';
-  dSize?: 'smaller' | 'larger';
+  dSize?: DSize;
   dIcon?: React.ReactNode;
   dIconRight?: boolean;
 }
 
-const { COMPONENT_NAME } = generateComponentMate('DButton');
-const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props, ref) => {
+const TTANSITION_DURING = 300;
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
+function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
   const {
+    className,
+    type = 'button',
+    disabled: _disabled,
+    children,
     dType = 'primary',
     dTheme = 'primary',
     dLoading = false,
@@ -38,10 +37,6 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
     dSize,
     dIcon,
     dIconRight = false,
-    className,
-    type = 'button',
-    disabled,
-    children,
     onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -49,65 +44,37 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralState();
-  const { gType, gTheme } = useContextOptional(DButtonGroupContext);
   //#endregion
 
   //#region Ref
-  const [loadingEl, loadingRef] = useRefCallback<HTMLDivElement>();
+  const iconRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const [waveNode, wave] = useWave();
 
-  const buttonType = isUndefined(props.dType) ? gType ?? dType : dType;
-  const theme = isUndefined(props.dTheme) ? gTheme ?? dTheme : dTheme;
   const size = dSize ?? gSize;
-  const _disabled = disabled || dLoading || gDisabled;
+  const disabled = _disabled || dLoading || gDisabled;
 
-  const transitionState = {
-    'enter-from': { width: '0' },
-    'enter-to': { transition: 'width 0.3s linear' },
-    'leave-to': { width: '0', transition: 'width 0.3s linear' },
-  };
-  const hidden = useDCollapseTransition({
-    dEl: loadingEl,
-    dVisible: dLoading,
-    dCallbackList: {
-      beforeEnter: () => transitionState,
-      beforeLeave: () => transitionState,
-    },
-    dDirection: 'horizontal',
-  });
-
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    onClick?.(e);
-
-    if (buttonType === 'primary' || buttonType === 'secondary' || buttonType === 'outline' || buttonType === 'dashed') {
-      wave(`var(--${dPrefix}color-${theme})`);
-    }
-  };
-
-  const buttonIcon = (loading: boolean, ref?: React.Ref<HTMLSpanElement>) => (
-    <span
-      ref={ref}
+  const buttonIcon = (loading: boolean, style?: React.CSSProperties) => (
+    <div
+      ref={iconRef}
       className={getClassName(`${dPrefix}button__icon`, {
         [`${dPrefix}button__icon--right`]: dIconRight,
       })}
+      style={style}
     >
-      {loading ? (
-        <DIcon viewBox="0 0 1024 1024" dSpin>
-          <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
-        </DIcon>
-      ) : (
-        dIcon
-      )}
-    </span>
+      {loading ? <LoadingOutlined dSpin /> : dIcon}
+    </div>
   );
+
+  const composeDataAttrs = useCompose(false, disabled);
 
   return (
     <button
       {...restProps}
+      {...composeDataAttrs}
       ref={ref}
-      className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${buttonType}`, `t-${theme}`, {
+      className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
         [`${dPrefix}button--${dShape}`]: dShape,
         [`${dPrefix}button--${size}`]: size,
         [`${dPrefix}button--block`]: dBlock,
@@ -115,16 +82,39 @@ const Button: React.ForwardRefRenderFunction<DButtonRef, DButtonProps> = (props,
         'is-loading': dLoading,
       })}
       type={type}
-      disabled={_disabled}
-      aria-disabled={_disabled}
-      onClick={handleClick}
+      disabled={disabled}
+      aria-disabled={disabled}
+      onClick={(e) => {
+        onClick?.(e);
+
+        if (dType === 'primary' || dType === 'secondary' || dType === 'outline' || dType === 'dashed') {
+          wave(`var(--${dPrefix}color-${dTheme})`);
+        }
+      }}
     >
       {dIconRight && children}
-      {dIcon ? buttonIcon(dLoading) : !hidden && buttonIcon(true, loadingRef)}
+      {dIcon ? (
+        buttonIcon(dLoading)
+      ) : (
+        <DCollapseTransition
+          dRef={iconRef}
+          dSize={0}
+          dIn={dLoading}
+          dDuring={TTANSITION_DURING}
+          dHorizontal
+          dStyles={{
+            entering: { transition: `width ${TTANSITION_DURING}ms linear` },
+            leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
+            leaved: { display: 'none' },
+          }}
+        >
+          {(collapseStyle) => buttonIcon(true, collapseStyle)}
+        </DCollapseTransition>
+      )}
       {!dIconRight && children}
       {waveNode}
     </button>
   );
-};
+}
 
 export const DButton = React.forwardRef(Button);
