@@ -168,7 +168,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
               return (
                 <DPopup
-                  disabled={disabled}
+                  disabled={disabled || dMode === 'vertical'}
                   dVisible={dPopupState}
                   dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
                     <ul

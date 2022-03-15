@@ -273,7 +273,7 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
                 const index = sameLevelOptions.findIndex((o) => o.id === optionId);
                 const o = nth(sameLevelOptions, index - 1);
                 focusOption(o);
-                if (o && nth(popupIds, -1)?.id === optionId) {
+                if (dMode !== 'vertical' && o && nth(popupIds, -1)?.id === optionId) {
                   setPopupIds(popupIds.slice(0, -1));
                 }
                 break;
@@ -284,7 +284,7 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
                 const index = sameLevelOptions.findIndex((o) => o.id === optionId);
                 const o = nth(sameLevelOptions, (index + 1) % sameLevelOptions.length);
                 focusOption(o);
-                if (o && nth(popupIds, -1)?.id === optionId) {
+                if (dMode !== 'vertical' && o && nth(popupIds, -1)?.id === optionId) {
                   setPopupIds(popupIds.slice(0, -1));
                 }
                 break;
