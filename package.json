@@ -59,7 +59,7 @@
     "@nrwl/tao": "13.8.8",
     "@nrwl/web": "13.8.8",
     "@nrwl/workspace": "13.8.8",
-    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "13.0.0-alpha.5",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/fs-extra": "^9.0.13",
