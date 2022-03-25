@@ -34,7 +34,6 @@ export interface DTabsProps<ID extends DId, T extends DTabsOption<ID>> extends O
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
 export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
   const {
-    className,
     dTabs,
     dActive,
     dPlacement = 'top',
@@ -44,6 +43,8 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
     onActiveChange,
     onAddClick,
     onClose,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -218,9 +219,9 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
             return (
               <DTab
                 key={tabId}
-                id={getTabId(tabId)}
-                panelId={getPanelId(tabId)}
-                disabled={tabDisabled}
+                dId={getTabId(tabId)}
+                dPanelId={getPanelId(tabId)}
+                dDisabled={tabDisabled}
                 dActive={tabId === activeId}
                 dClosable={tabClosable}
                 onActive={() => {

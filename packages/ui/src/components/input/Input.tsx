@@ -20,20 +20,20 @@ import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../..
 import { useCompose } from '../compose';
 
 export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  type?: React.HTMLInputTypeAttribute;
-  max?: number;
-  min?: number;
-  step?: number;
-  placeholder?: string;
-  disabled?: boolean;
   dFormControl?: DFormControl;
   dModel?: [string, DUpdater<string>?];
+  dType?: React.HTMLInputTypeAttribute;
   dPrefix?: React.ReactNode;
   dSuffix?: React.ReactNode;
   dPasswordToggle?: boolean;
   dNumbetButton?: boolean;
   dClearable?: boolean;
   dSize?: DSize;
+  dMax?: number;
+  dMin?: number;
+  dStep?: number;
+  dPlaceholder?: string;
+  dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (value: string) => void;
@@ -42,13 +42,12 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' });
 export function DInput(props: DInputProps): JSX.Element | null {
   const {
-    className,
-    type,
-    max,
-    min,
-    step,
-    placeholder,
-    disabled: _disabled,
+    dType,
+    dMax,
+    dMin,
+    dStep,
+    dPlaceholder,
+    dDisabled = false,
     dFormControl,
     dModel,
     dPrefix: _dPrefix,
@@ -60,6 +59,8 @@ export function DInput(props: DInputProps): JSX.Element | null {
     dInputProps,
     dInputRef,
     onModelChange,
+
+    className,
     onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -91,10 +92,10 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const [password, setPassword] = useState(true);
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const changeNumber = useEventCallback((isIncrease = true) => {
-    const stepVal = step ?? 1;
+    const stepVal = dStep ?? 1;
     let val = (() => {
       if (isNumber(value)) {
         return value;
@@ -106,7 +107,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
       return num;
     })();
     val = isIncrease ? val + stepVal : val - stepVal;
-    changeValue(Math.max(min ?? -Infinity, Math.min(max ?? Infinity, val)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
+    changeValue(Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, val)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
   });
 
   const handleNumberMouseDown = (isIncrease = true) => {
@@ -131,7 +132,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
       {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}input`, {
         [`${dPrefix}input--${size}`]: size,
-        [`${dPrefix}input--number`]: type === 'number',
+        [`${dPrefix}input--number`]: dType === 'number',
         'is-disabled': disabled,
         'is-focus': isFocus,
       })}
@@ -148,12 +149,12 @@ export function DInput(props: DInputProps): JSX.Element | null {
         id={dInputProps?.id ?? dFormControl?.controlId}
         ref={combineInputRef}
         className={getClassName(dInputProps?.className, `${dPrefix}input__input`)}
-        placeholder={placeholder}
+        placeholder={dPlaceholder}
         value={value}
-        type={type === 'password' ? (password ? 'password' : 'text') : type}
-        max={max}
-        min={min}
-        step={step}
+        type={dType === 'password' ? (password ? 'password' : 'text') : dType}
+        max={dMax}
+        min={dMin}
+        step={dStep}
         disabled={disabled}
         aria-disabled={disabled}
         aria-describedby={mergeAriaDescribedby(dInputProps?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
@@ -186,7 +187,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
           <CloseCircleFilled dSize="0.8em" />
         </button>
       )}
-      {type === 'password' && !disabled && (
+      {dType === 'password' && !disabled && (
         <button
           className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__password`)}
           tabIndex={dPasswordToggle ? 0 : -1}
@@ -202,7 +203,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
           {password ? <EyeInvisibleOutlined dSize="0.9em" /> : <EyeOutlined dSize="0.9em" />}
         </button>
       )}
-      {type === 'number' && dNumbetButton && !disabled && (
+      {dType === 'number' && dNumbetButton && !disabled && (
         <div className={`${dPrefix}input__number-container`}>
           <button
             className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__number`)}

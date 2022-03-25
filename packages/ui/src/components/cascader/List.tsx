@@ -14,8 +14,8 @@ import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
 
 export interface DListProps<ID extends DId, T> {
-  listId?: string;
-  getOptionId: (value: ID) => string;
+  dListId?: string;
+  dGetOptionId: (value: ID) => string;
   dNodes: AbstractTreeNode<ID, T>[];
   dSelected: ID | null | ID[];
   dFocusNode: AbstractTreeNode<ID, T> | undefined;
@@ -32,8 +32,8 @@ export interface DListProps<ID extends DId, T> {
 
 export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>): JSX.Element | null {
   const {
-    listId,
-    getOptionId,
+    dListId,
+    dGetOptionId,
     dNodes,
     dSelected,
     dFocusNode,
@@ -178,18 +178,18 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
     <>
       <DVirtualScroll
         ref={dVSRef}
-        id={listId}
+        id={dListId}
         className={`${dPrefix}cascader-list`}
         role="listbox"
         aria-multiselectable={dMultiple}
-        aria-activedescendant={dRoot && dFocusNode ? getOptionId(dFocusNode.id) : undefined}
+        aria-activedescendant={dRoot && dFocusNode ? dGetOptionId(dFocusNode.id) : undefined}
         dList={dNodes}
         dItemRender={(item, index, renderProps) => {
           return (
             <li
               {...renderProps}
               key={item.id}
-              id={getOptionId(item.id)}
+              id={dGetOptionId(item.id)}
               className={getClassName(`${dPrefix}cascader-list__option`, {
                 'is-focus': item.id === inFocusNode?.id,
                 'is-selected': !dMultiple && item.checked,
@@ -209,7 +209,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
               {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
               {dMultiple && (
                 <DCheckbox
-                  disabled={item.disabled}
+                  dDisabled={item.disabled}
                   dModel={[item.checked]}
                   dIndeterminate={item.indeterminate}
                   onClick={(e) => {
@@ -241,7 +241,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
         }
       />
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
-        <DList {...props} listId={undefined} dNodes={inFocusNode.children} dRoot={false}></DList>
+        <DList {...props} dListId={undefined} dNodes={inFocusNode.children} dRoot={false}></DList>
       )}
     </>
   );

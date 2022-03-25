@@ -10,7 +10,15 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function DHeader(props: DHeaderProps): JSX.Element | null {
-  const { className, children, dClosable = true, dExtraIcons, onClose, ...restProps } = props;
+  const {
+    children,
+    dClosable = true,
+    dExtraIcons,
+    onClose,
+
+    className,
+    ...restProps
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();

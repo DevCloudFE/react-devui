@@ -167,14 +167,20 @@ h3 {
 
 // demo general style
 .app-component-route-article__demos {
-  .d-radio-group {
-    margin-bottom: 16px;
-  }
-
   &:not([data-demo='Form']) {
     .d-compose:not(.d-radio-group) {
       margin-right: 8px;
       margin-bottom: 12px;
+    }
+  }
+
+  .d-radio-group {
+    margin-bottom: 16px;
+  }
+
+  section[id='FormSupportComponentsDemo'] {
+    .d-radio-group {
+      margin-bottom: unset;
     }
   }
 

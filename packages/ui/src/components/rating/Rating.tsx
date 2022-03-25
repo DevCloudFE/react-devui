@@ -10,8 +10,8 @@ import { registerComponentMate, getClassName } from '../../utils';
 import { DStar } from './Star';
 
 export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  name?: string;
-  disabled?: boolean;
+  dName?: string;
+  dDisabled?: boolean;
   dFormControl?: DFormControl;
   dModel?: [number, DUpdater<number>?];
   dTotal?: number;
@@ -25,9 +25,8 @@ export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRating' });
 export function DRating(props: DRatingProps): JSX.Element | null {
   const {
-    name,
-    className,
-    disabled: _disabled,
+    dName,
+    dDisabled = false,
     dFormControl,
     dModel,
     dTotal = 5,
@@ -36,6 +35,8 @@ export function DRating(props: DRatingProps): JSX.Element | null {
     dCustomIcon,
     dTooltip,
     onModelChange,
+
+    className,
     onMouseLeave,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -53,7 +54,7 @@ export function DRating(props: DRatingProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   return (
     <div
@@ -75,8 +76,8 @@ export function DRating(props: DRatingProps): JSX.Element | null {
         .map((v, i) => (
           <DStar
             key={i + 1}
-            name={name ?? uniqueId}
-            disabled={disabled || dReadOnly}
+            dName={dName ?? uniqueId}
+            dDisabled={disabled || dReadOnly}
             dFormControl={dFormControl}
             dValue={i + 1}
             dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : dCustomIcon ?? <StarFilled />}

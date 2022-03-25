@@ -50,9 +50,6 @@ const TTANSITION_DURING = 116;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' });
 export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdownProps<ID, T>): JSX.Element | null {
   const {
-    id,
-    className,
-    style,
     children,
     dOptions,
     dVisible,
@@ -64,11 +61,15 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
     onVisibleChange,
     afterVisibleChange,
     onOptionClick,
-    onClick,
+
+    id,
+    className,
+    style,
     onMouseEnter,
     onMouseLeave,
     onMouseDown,
     onMouseUp,
+    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -298,8 +299,8 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
           <React.Fragment key={optionId}>
             {optionType === 'item' ? (
               <DDropdownItem
-                id={id}
-                disabled={optionDisabled}
+                dId={id}
+                dDisabled={optionDisabled}
                 dFocusVisible={isFocusVisible && isFocus}
                 dIcon={optionIcon}
                 dLevel={level}
@@ -308,13 +309,13 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                 {optionLabel}
               </DDropdownItem>
             ) : optionType === 'group' ? (
-              <DDropdownGroup id={id} dOptions={children && getNodes(children, level + 1, _subParents)} dEmpty={isEmpty} dLevel={level}>
+              <DDropdownGroup dId={id} dOptions={children && getNodes(children, level + 1, _subParents)} dEmpty={isEmpty} dLevel={level}>
                 {optionLabel}
               </DDropdownGroup>
             ) : (
               <DDropdownSub
-                id={id}
-                disabled={optionDisabled}
+                dId={id}
+                dDisabled={optionDisabled}
                 dFocusVisible={isFocusVisible && isFocus}
                 dPopup={children && getNodes(children, 0, _subParents)}
                 dPopupVisible={!isUndefined(popupState)}

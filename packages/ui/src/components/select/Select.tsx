@@ -81,8 +81,6 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null;
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     dFormControl,
     dOptions,
     dModel,
@@ -94,6 +92,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     dCustomSearch,
     dLoading = false,
     dMultiple = false,
+    dDisabled = false,
     dMaxSelectNum,
     dSize,
     dPopupClassName,
@@ -104,6 +103,8 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     onClear,
     onSearch,
     onExceed,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -174,7 +175,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
   );
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
@@ -388,7 +389,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
       {...restProps}
       {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}select`)}
-      disabled={disabled}
+      dDisabled={disabled}
       dVisible={visible}
       dContent={hasSelected && selectedNode}
       dSuffix={suffixNode}
@@ -567,7 +568,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
                     {item[IS_CREATE] ? (
                       <PlusOutlined dTheme="primary" />
                     ) : dMultiple ? (
-                      <DCheckbox disabled={optionDisabled} dModel={[isSelected]}></DCheckbox>
+                      <DCheckbox dDisabled={optionDisabled} dModel={[isSelected]}></DCheckbox>
                     ) : null}
                     <div className={`${dPrefix}select__option-content`}>{dCustomOption ? dCustomOption(item) : optionLabel}</div>
                   </li>

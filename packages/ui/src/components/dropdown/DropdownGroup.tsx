@@ -1,15 +1,15 @@
 import { usePrefixConfig, useTranslation } from '../../hooks';
 
 export interface DDropdownGroupProps {
-  id: string;
   children: React.ReactNode;
+  dId: string;
   dOptions: React.ReactNode;
   dEmpty: boolean;
   dLevel?: number;
 }
 
 export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
-  const { id, children, dOptions, dEmpty, dLevel = 0 } = props;
+  const { children, dId, dOptions, dEmpty, dLevel = 0 } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -18,8 +18,8 @@ export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
   const [t] = useTranslation('Common');
 
   return (
-    <ul className={`${dPrefix}dropdown-group`} role="group" aria-labelledby={id}>
-      <li id={id} className={`${dPrefix}dropdown-group__label`} style={{ paddingLeft: 12 + dLevel * 16 }} role="presentation">
+    <ul className={`${dPrefix}dropdown-group`} role="group" aria-labelledby={dId}>
+      <li id={dId} className={`${dPrefix}dropdown-group__label`} style={{ paddingLeft: 12 + dLevel * 16 }} role="presentation">
         {children}
       </li>
       {dEmpty ? (

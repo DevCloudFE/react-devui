@@ -5,9 +5,9 @@ import { getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
 export interface DMenuItemProps {
-  id: string;
-  disabled?: boolean;
   children: React.ReactNode;
+  dId: string;
+  dDisabled?: boolean;
   dPosinset: [number, number];
   dMode: DMenuMode;
   dInNav: boolean;
@@ -21,7 +21,7 @@ export interface DMenuItemProps {
 }
 
 export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
-  const { id, disabled, children, dPosinset, dMode, dInNav, dActive, dFocusVisible, dIcon, dStep, dSpace, dLevel = 0, onClick } = props;
+  const { children, dId, dDisabled, dPosinset, dMode, dInNav, dActive, dFocusVisible, dIcon, dStep, dSpace, dLevel = 0, onClick } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -31,16 +31,16 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
 
   const liNode = (
     <li
-      id={id}
+      id={dId}
       className={getClassName(`${dPrefix}menu-item`, {
         [`${dPrefix}menu-item--horizontal`]: inHorizontalNav,
         [`${dPrefix}menu-item--icon`]: dMode === 'icon' && dInNav,
         'is-active': dActive,
-        'is-disabled': disabled,
+        'is-disabled': dDisabled,
       })}
       style={{ paddingLeft: dSpace + dLevel * dStep }}
       role="menuitem"
-      aria-disabled={disabled}
+      aria-disabled={dDisabled}
       onClick={onClick}
     >
       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
@@ -58,7 +58,7 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
   );
 
   return (
-    <DTooltip disabled={!(dMode === 'icon' && dInNav)} dTitle={children} dPlacement="right">
+    <DTooltip dDisabled={!(dMode === 'icon' && dInNav)} dTitle={children} dPlacement="right">
       {liNode}
     </DTooltip>
   );

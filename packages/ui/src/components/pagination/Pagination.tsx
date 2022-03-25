@@ -31,7 +31,6 @@ export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPagination' });
 export function DPagination(props: DPaginationProps): JSX.Element | null {
   const {
-    className,
     dActive,
     dTotal,
     dPageSize,
@@ -41,6 +40,8 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     dMini = false,
     onActiveChange,
     onPageSizeChange,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -190,10 +191,10 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           className={getClassName(`${dPrefix}pagination__jump-input`, {
             [`${dPrefix}pagination__jump-input--mini`]: dMini,
           })}
-          type="number"
-          max={lastPage}
-          min={1}
-          step={1}
+          dType="number"
+          dMax={lastPage}
+          dMin={1}
+          dStep={1}
           dModel={[jumpValue, setJumpValue]}
           dNumbetButton={!dMini}
           dInputProps={{

@@ -23,57 +23,58 @@ import { useCompose } from '../compose';
 
 export type DExtendsSelectboxProps = Pick<
   DSelectboxProps,
-  'placeholder' | 'disabled' | 'dSearchable' | 'dSize' | 'dLoading' | 'onClear' | 'onVisibleChange'
+  'dPlaceholder' | 'dDisabled' | 'dSearchable' | 'dSize' | 'dLoading' | 'onClear' | 'onVisibleChange'
 >;
 
 export interface DSelectboxRenderProps {
   'data-selectbox-popupid': string;
-  sStyle: React.CSSProperties;
   sOnMouseDown: React.MouseEventHandler;
   sOnMouseUp: React.MouseEventHandler;
+  sStyle: React.CSSProperties;
 }
 
 export interface DSelectboxProps extends React.HTMLAttributes<HTMLDivElement> {
-  placeholder?: string;
-  disabled?: boolean;
   children: (props: DSelectboxRenderProps) => JSX.Element | null;
   dVisible?: boolean;
   dContent?: React.ReactNode;
-  dSuffix?: React.ReactNode;
-  dShowClear?: boolean;
-  dSearchable?: boolean;
-  dSize?: DSize;
   dContentTitle?: string;
-  dLoading?: boolean;
-  dCustomWidth?: boolean;
+  dPlaceholder?: string;
+  dSuffix?: React.ReactNode;
   dAutoMaxWidth?: boolean;
+  dCustomWidth?: boolean;
+  dSize?: DSize;
+  dSearchable?: boolean;
+  dShowClear?: boolean;
+  dDisabled?: boolean;
+  dLoading?: boolean;
   dInputProps: React.InputHTMLAttributes<HTMLInputElement> & { 'aria-controls': string };
-  onClear?: () => void;
   onVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
+  onClear?: () => void;
 }
 
 const TTANSITION_DURING = 116;
 export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
   const {
-    className,
-    placeholder,
-    disabled: _disabled,
     children,
     dVisible = false,
     dContent,
-    dSuffix,
-    dShowClear = false,
-    dSearchable = false,
-    dSize,
     dContentTitle,
-    dLoading = false,
-    dCustomWidth = false,
+    dPlaceholder,
+    dSuffix,
     dAutoMaxWidth = false,
+    dCustomWidth = false,
+    dSize,
+    dSearchable = false,
+    dShowClear = false,
+    dLoading = false,
+    dDisabled = false,
     dInputProps,
-    onClear,
     onVisibleChange,
     onFocusVisibleChange,
+    onClear,
+
+    className,
     onMouseDown,
     onMouseUp,
     onClick,
@@ -100,7 +101,7 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
   const [isFocus, setIsFocus] = useState(false);
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled;
+  const disabled = dDisabled || gDisabled;
 
   const showClear = !dVisible && !dLoading && !disabled && dShowClear;
 
@@ -277,9 +278,9 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
             }}
           />
           {!(dSearchable && dVisible) && dContent && <div className={`${dPrefix}selectbox__content`}>{dContent}</div>}
-          {!(dSearchable && dVisible) && !dContent && placeholder && (
+          {!(dSearchable && dVisible) && !dContent && dPlaceholder && (
             <div className={`${dPrefix}selectbox__placeholder-wrapper`}>
-              <div className={`${dPrefix}selectbox__placeholder`}>{placeholder}</div>
+              <div className={`${dPrefix}selectbox__placeholder`}>{dPlaceholder}</div>
             </div>
           )}
         </div>

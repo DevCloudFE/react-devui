@@ -6,24 +6,25 @@ import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
-export interface DFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dAlign?: 'left' | 'center' | 'right';
   dButtons?: React.ReactNode[];
-  dOkButtonProps?: DButtonProps;
-  dCancelButtonProps?: DButtonProps;
-  onOkClick?: () => void;
+  dCancelProps?: DButtonProps;
+  dOkProps?: DButtonProps;
   onCancelClick?: () => void;
+  onOkClick?: () => void;
 }
 
 export function DFooter(props: DFooterProps): JSX.Element | null {
   const {
-    className,
     dAlign = 'right',
     dButtons = ['cancel', 'ok'],
-    dOkButtonProps,
-    dCancelButtonProps,
-    onOkClick,
+    dCancelProps,
+    dOkProps,
     onCancelClick,
+    onOkClick,
+
+    className,
     ...restProps
   } = props;
 
@@ -39,7 +40,7 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
         button === 'cancel' ? (
           <DButton
             key="cancel"
-            {...dCancelButtonProps}
+            {...dCancelProps}
             dType="secondary"
             onClick={() => {
               onCancelClick?.();
@@ -50,7 +51,7 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
         ) : button === 'ok' ? (
           <DButton
             key="ok"
-            {...dOkButtonProps}
+            {...dOkProps}
             onClick={() => {
               onOkClick?.();
             }}

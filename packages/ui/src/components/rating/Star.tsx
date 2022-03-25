@@ -9,8 +9,8 @@ import { DTrigger } from '../_trigger';
 import { DTooltip } from '../tooltip';
 
 export interface DStarProps {
-  name: string;
-  disabled?: boolean;
+  dName?: string;
+  dDisabled?: boolean;
   dFormControl?: DFormControl;
   dValue: number;
   dIcon: React.ReactNode;
@@ -23,7 +23,7 @@ export interface DStarProps {
 }
 
 export function DStar(props: DStarProps): JSX.Element | null {
-  const { name, disabled, dFormControl, dValue, dIcon, dChecked, dHoverValue, dHalf, dTooltip, onCheck, onHoverChange } = props;
+  const { dName, dDisabled, dFormControl, dValue, dIcon, dChecked, dHoverValue, dHalf, dTooltip, onCheck, onHoverChange } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -41,7 +41,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
-    <DTooltip disabled={isUndefined(dTooltip)} dTitle={dTooltip?.(tooltipValue)}>
+    <DTooltip dDisabled={isUndefined(dTooltip)} dTitle={dTooltip?.(tooltipValue)}>
       <div
         className={getClassName(`${dPrefix}rating-star`, {
           'is-focus': isFocus,
@@ -50,7 +50,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
         {dHalf && (
           <>
             <DTrigger
-              disabled={isUndefined(dTooltip)}
+              dDisabled={isUndefined(dTooltip)}
               dTrigger="hover"
               onTrigger={(visible) => {
                 if (visible) {
@@ -64,9 +64,9 @@ export function DStar(props: DStarProps): JSX.Element | null {
                   id={halfInputId}
                   className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
                   type="radio"
-                  name={name}
+                  name={dName}
                   checked={halfChecked}
-                  disabled={disabled}
+                  disabled={dDisabled}
                   aria-checked={halfChecked}
                   onChange={() => {
                     onCheck(halfValue);
@@ -111,7 +111,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
           })}
         >
           <DTrigger
-            disabled={isUndefined(dTooltip)}
+            dDisabled={isUndefined(dTooltip)}
             dTrigger="hover"
             onTrigger={(visible) => {
               if (visible) {
@@ -124,9 +124,9 @@ export function DStar(props: DStarProps): JSX.Element | null {
                 {...(checked ? { ...dFormControl?.inputAttrs, id: dFormControl?.controlId } : undefined)}
                 className={`${dPrefix}rating-star__input`}
                 type="radio"
-                name={name}
+                name={dName}
                 checked={checked}
-                disabled={disabled}
+                disabled={dDisabled}
                 aria-checked={checked}
                 onChange={() => {
                   onCheck(dValue);

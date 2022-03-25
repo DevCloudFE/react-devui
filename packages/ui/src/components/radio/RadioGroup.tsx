@@ -18,9 +18,9 @@ export interface DRadioOption<V extends DId> {
 }
 
 export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  name?: string;
-  disabled?: boolean;
   dFormControl?: DFormControl;
+  dName?: string;
+  dDisabled?: boolean;
   dOptions: DRadioOption<V>[];
   dModel?: [V | null, DUpdater<V>?];
   dType?: 'outline' | 'fill';
@@ -32,9 +32,8 @@ export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttribut
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadioGroup' });
 export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Element | null {
   const {
-    className,
-    name,
-    disabled: _disabled,
+    dName,
+    dDisabled = false,
     dFormControl,
     dOptions,
     dModel,
@@ -42,6 +41,8 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
     dSize,
     dVertical = false,
     onModelChange,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -81,7 +82,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   };
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   return (
     <DCompose
@@ -91,7 +92,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
       className={getClassName(className, `${dPrefix}radio-group`, {
         [`${dPrefix}radio-group--default`]: isUndefined(dType),
       })}
-      disabled={disabled}
+      dDisabled={disabled}
       role="radiogroup"
       dSize={size}
       dVertical={dVertical}
@@ -101,11 +102,11 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
           DRadio,
           {
             key: option.value,
-            disabled: option.disabled,
+            dDisabled: option.disabled,
             dModel: [option.value === value],
             dInputProps: {
               ...(option.value === value ? { ...dFormControl?.inputAttrs, id: dFormControl?.controlId } : undefined),
-              name: name ?? uniqueId,
+              name: dName ?? uniqueId,
               value: option.value,
             },
             onModelChange: () => {

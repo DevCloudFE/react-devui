@@ -3,9 +3,9 @@ import { CloseOutlined } from '../../icons';
 import { getClassName } from '../../utils';
 
 export interface DTabProps {
-  id: string;
-  panelId: string;
-  disabled?: boolean;
+  dId: string;
+  dPanelId: string;
+  dDisabled?: boolean;
   children: React.ReactNode;
   dActive: boolean;
   dClosable?: boolean;
@@ -15,7 +15,7 @@ export interface DTabProps {
 }
 
 export function DTab(props: DTabProps): JSX.Element | null {
-  const { id, panelId, disabled, children, dActive, dClosable = false, onActive, onClose, onKeyDown } = props;
+  const { dId, dPanelId, dDisabled, children, dActive, dClosable = false, onActive, onClose, onKeyDown } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -25,21 +25,21 @@ export function DTab(props: DTabProps): JSX.Element | null {
 
   return (
     <div
-      id={id}
+      id={dId}
       className={getClassName(`${dPrefix}tab`, {
         'is-active': dActive,
-        'is-disabled': disabled,
+        'is-disabled': dDisabled,
       })}
-      tabIndex={dActive && !disabled ? 0 : -1}
+      tabIndex={dActive && !dDisabled ? 0 : -1}
       role="tab"
-      aria-controls={panelId}
+      aria-controls={dPanelId}
       aria-selected={dActive}
-      aria-disabled={disabled}
+      aria-disabled={dDisabled}
       onClick={onActive}
       onKeyDown={onKeyDown}
     >
       {children}
-      {!disabled && dClosable && (
+      {!dDisabled && dClosable && (
         <button
           className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tab__close`)}
           aria-label={t('Close')}

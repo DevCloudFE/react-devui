@@ -8,9 +8,9 @@ import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../..
 import { useCompose } from '../compose';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
-  disabled?: boolean;
   dFormControl?: DFormControl;
   dModel?: [boolean, DUpdater<boolean>?];
+  dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (checked: boolean) => void;
@@ -23,16 +23,17 @@ export interface DRadioPropsWithPrivate extends DRadioProps {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' });
 export function DRadio(props: DRadioProps): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     children,
     dFormControl,
     dModel,
+    dDisabled = false,
     dInputProps,
     dInputRef,
     onModelChange,
-    onClick,
     __type,
+
+    className,
+    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DRadioPropsWithPrivate);
 
@@ -50,7 +51,7 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const composeDataAttrs = useCompose(checked || isFocusVisible, disabled);
 

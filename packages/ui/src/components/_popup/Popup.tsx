@@ -5,7 +5,7 @@ import { filter } from 'rxjs';
 
 import { useAsync, useContentScrollViewChange, useEventCallback } from '../../hooks';
 
-export type DExtendsPopupProps = Pick<DPopupProps, 'disabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable'>;
+export type DExtendsPopupProps = Pick<DPopupProps, 'dDisabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable'>;
 
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;
@@ -24,12 +24,12 @@ export interface DPopupRenderProps {
 }
 
 export interface DPopupProps {
-  disabled?: boolean;
-  dVisible: boolean;
   children: (props: DPopupRenderProps) => JSX.Element | null;
+  dVisible: boolean;
   dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
   dContainer?: HTMLElement | null;
   dTrigger?: 'hover' | 'focus' | 'click';
+  dDisabled?: boolean;
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
@@ -39,12 +39,12 @@ export interface DPopupProps {
 
 export function DPopup(props: DPopupProps) {
   const {
-    disabled,
     children,
     dVisible,
     dPopup,
     dContainer,
     dTrigger = 'hover',
+    dDisabled = false,
     dEscClosable = true,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
@@ -97,7 +97,7 @@ export function DPopup(props: DPopupProps) {
 
   const clickOut = useRef(true);
   useEffect(() => {
-    if (!disabled && dVisible && dTrigger === 'click') {
+    if (!dDisabled && dVisible && dTrigger === 'click') {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
       asyncGroup.fromEvent(window, 'click').subscribe({
@@ -113,10 +113,10 @@ export function DPopup(props: DPopupProps) {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleTrigger, dTrigger, dVisible, disabled]);
+  }, [asyncCapture, handleTrigger, dTrigger, dVisible, dDisabled]);
 
   useEffect(() => {
-    if (!disabled && dVisible && dEscClosable) {
+    if (!dDisabled && dVisible && dEscClosable) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
       asyncGroup
@@ -132,11 +132,11 @@ export function DPopup(props: DPopupProps) {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleTrigger, dEscClosable, dVisible, disabled]);
+  }, [asyncCapture, handleTrigger, dEscClosable, dVisible, dDisabled]);
 
-  useContentScrollViewChange(!disabled && dVisible ? onUpdate : undefined);
+  useContentScrollViewChange(!dDisabled && dVisible ? onUpdate : undefined);
   useEffect(() => {
-    if (!disabled && dVisible) {
+    if (!dDisabled && dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
       const triggerEl = document.querySelector(`[data-popup-triggerid="${uniqueId}"]`) as HTMLElement | null;
@@ -161,10 +161,10 @@ export function DPopup(props: DPopupProps) {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, disabled, dVisible, onUpdate, uniqueId]);
+  }, [asyncCapture, dVisible, onUpdate, uniqueId, dDisabled]);
 
   const childProps: DPopupRenderProps = { 'data-popup-triggerid': uniqueId };
-  if (!disabled) {
+  if (!dDisabled) {
     switch (dTrigger) {
       case 'hover':
         childProps.pOnMouseEnter = () => {
@@ -198,7 +198,7 @@ export function DPopup(props: DPopupProps) {
   const child = children(childProps);
 
   const popupProps: DPopupPopupRenderProps = { 'data-popup-popupid': uniqueId };
-  if (!disabled && dVisible) {
+  if (!dDisabled && dVisible) {
     switch (dTrigger) {
       case 'hover':
         popupProps.pOnMouseEnter = () => {
@@ -224,7 +224,7 @@ export function DPopup(props: DPopupProps) {
   return (
     <>
       {child}
-      {!disabled && dContainer && ReactDOM.createPortal(popupNode, dContainer)}
+      {!dDisabled && dContainer && ReactDOM.createPortal(popupNode, dContainer)}
     </>
   );
 }

@@ -12,10 +12,10 @@ export interface DCheckboxOption<V extends DId> {
   disabled?: boolean;
 }
 export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  disabled?: boolean;
   dFormControl?: DFormControl;
   dOptions: DCheckboxOption<V>[];
   dModel?: [V[], DUpdater<V[]>?];
+  dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: V[]) => void;
 }
@@ -23,13 +23,14 @@ export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttri
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckboxGroup' });
 export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     dFormControl,
     dOptions,
     dModel,
+    dDisabled = false,
     dVertical = false,
     onModelChange,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -42,7 +43,7 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   return (
     <div
@@ -55,7 +56,7 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
       {dOptions.map((option, index) => (
         <DCheckbox
           key={option.value}
-          disabled={option.disabled || disabled}
+          dDisabled={option.disabled || disabled}
           dInputProps={
             index === 0
               ? {

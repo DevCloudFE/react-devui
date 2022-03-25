@@ -13,8 +13,8 @@ export interface DTriggerRenderProps {
 }
 
 export interface DTriggerProps {
-  disabled?: boolean;
   children: (props: DTriggerRenderProps) => JSX.Element | null;
+  dDisabled?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
 }
@@ -22,7 +22,7 @@ export function DTrigger(props: DTriggerProps & { dTrigger: 'click'; onTrigger?:
 export function DTrigger(props: DTriggerProps & { dTrigger: 'hover' | 'focus'; onTrigger?: (state: boolean) => void }): JSX.Element | null;
 export function DTrigger(props: DTriggerProps & { dTrigger: DTriggerType; onTrigger?: (state?: boolean) => void }): JSX.Element | null;
 export function DTrigger(props: DTriggerProps & { dTrigger: DTriggerType; onTrigger?: (state?: any) => void }): JSX.Element | null {
-  const { disabled, children, dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, onTrigger } = props;
+  const { children, dDisabled = false, dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, onTrigger } = props;
 
   const dataRef = useRef<{
     clearTid?: () => void;
@@ -31,7 +31,7 @@ export function DTrigger(props: DTriggerProps & { dTrigger: DTriggerType; onTrig
   const asyncCapture = useAsync();
 
   const childProps: DTriggerRenderProps = {};
-  if (!disabled) {
+  if (!dDisabled) {
     switch (dTrigger) {
       case 'hover':
         childProps.sOnMouseEnter = () => {

@@ -10,11 +10,11 @@ import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../..
 import { DTransition } from '../_transition';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
-  disabled?: boolean;
   dFormControl?: DFormControl;
   dModel?: [boolean, DUpdater<boolean>?];
   dLabelPlacement?: 'left' | 'right';
   dStateContent?: [React.ReactNode, React.ReactNode];
+  dDisabled?: boolean;
   dLoading?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
@@ -25,17 +25,18 @@ const TTANSITION_DURING = 133;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSwitch' });
 export function DSwitch(props: DSwitchProps): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     children,
     dFormControl,
     dModel,
     dLabelPlacement = 'right',
     dStateContent,
     dLoading = false,
+    dDisabled = false,
     dInputProps,
     dInputRef,
     onModelChange,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -50,7 +51,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { left: 2 },

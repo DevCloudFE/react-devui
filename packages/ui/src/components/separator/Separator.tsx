@@ -14,11 +14,12 @@ export interface DSeparatorProps extends React.HTMLAttributes<HTMLElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSeparator' });
 export function DSeparator(props: DSeparatorProps): JSX.Element | null {
   const {
-    className,
     children,
     dTag = 'hr',
     dTextAlign = 'left',
     dVertical = false,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 

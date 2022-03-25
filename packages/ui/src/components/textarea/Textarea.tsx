@@ -21,17 +21,18 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTextarea' });
 function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) {
   const {
-    id,
-    className,
-    style,
-    maxLength,
-    disabled: _disabled,
     dFormControl,
     dModel,
     dRows,
     dResizable = true,
     dShowCount = false,
     onModelChange,
+
+    id,
+    className,
+    style,
+    maxLength,
+    disabled: _disabled,
     onChange,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);

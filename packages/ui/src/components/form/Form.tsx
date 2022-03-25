@@ -44,8 +44,6 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm' });
 export function DForm(props: DFormProps): JSX.Element | null {
   const {
-    className,
-    autoComplete = 'off',
     children,
     dForm,
     dLabelWidth,
@@ -56,6 +54,9 @@ export function DForm(props: DFormProps): JSX.Element | null {
     dFeedbackIcon = false,
     dSize,
     dResponsiveProps,
+
+    className,
+    autoComplete = 'off',
     onSubmit,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);

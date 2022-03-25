@@ -2,17 +2,17 @@ import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 
 export interface DDropdownItemProps {
-  id: string;
-  disabled?: boolean;
   children: React.ReactNode;
+  dId: string;
   dFocusVisible: boolean;
   dIcon?: React.ReactNode;
   dLevel?: number;
+  dDisabled?: boolean;
   onClick: () => void;
 }
 
 export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
-  const { id, disabled, children, dFocusVisible, dIcon, dLevel = 0, onClick } = props;
+  const { children, dId, dDisabled, dFocusVisible, dIcon, dLevel = 0, onClick } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -20,13 +20,13 @@ export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
 
   return (
     <li
-      id={id}
+      id={dId}
       className={getClassName(`${dPrefix}dropdown-item`, {
-        'is-disabled': disabled,
+        'is-disabled': dDisabled,
       })}
       style={{ paddingLeft: 12 + dLevel * 16 }}
       role="menuitem"
-      aria-disabled={disabled}
+      aria-disabled={dDisabled}
       onClick={onClick}
     >
       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}

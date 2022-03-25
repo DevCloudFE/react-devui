@@ -7,9 +7,8 @@ import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 
 export interface DDropdownSubProps {
-  id: string;
-  disabled?: boolean;
   children: React.ReactNode;
+  dId: string;
   dFocusVisible: boolean;
   dPopup: React.ReactNode;
   dPopupVisible: boolean;
@@ -18,15 +17,15 @@ export interface DDropdownSubProps {
   dTrigger: 'hover' | 'click';
   dIcon?: React.ReactNode;
   dLevel?: number;
+  dDisabled?: boolean;
   onVisibleChange: (visible: boolean) => void;
 }
 
 const TTANSITION_DURING = 116;
 export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   const {
-    id,
-    disabled,
     children,
+    dId,
     dFocusVisible,
     dPopup,
     dPopupVisible,
@@ -35,6 +34,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
     dTrigger,
     dIcon,
     dLevel = 0,
+    dDisabled,
     onVisibleChange,
   } = props;
 
@@ -113,7 +113,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
 
         return (
           <DPopup
-            disabled={disabled}
+            dDisabled={dDisabled}
             dVisible={dPopupState}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
               <ul
@@ -126,7 +126,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                   zIndex: maxZIndex,
                 }}
                 role="menu"
-                aria-labelledby={id}
+                aria-labelledby={dId}
                 onClick={() => {
                   pOnClick?.();
                 }}
@@ -155,16 +155,16 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
               <li
                 {...restPCProps}
                 ref={liRef}
-                id={id}
+                id={dId}
                 className={getClassName(`${dPrefix}dropdown-sub`, {
                   'is-expand': dPopupVisible,
-                  'is-disabled': disabled,
+                  'is-disabled': dDisabled,
                 })}
                 style={{ paddingLeft: 12 + dLevel * 16 }}
                 role="menuitem"
                 aria-haspopup={true}
                 aria-expanded={dPopupVisible}
-                aria-disabled={disabled}
+                aria-disabled={dDisabled}
                 onClick={() => {
                   pOnClick?.();
                 }}

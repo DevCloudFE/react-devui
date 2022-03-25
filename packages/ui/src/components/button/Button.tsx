@@ -25,9 +25,6 @@ const TTANSITION_DURING = 300;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
 function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
   const {
-    className,
-    type = 'button',
-    disabled: _disabled,
     children,
     dType = 'primary',
     dTheme = 'primary',
@@ -37,6 +34,10 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
     dSize,
     dIcon,
     dIconRight = false,
+
+    className,
+    type = 'button',
+    disabled: _disabled,
     onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);

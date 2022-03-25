@@ -28,7 +28,17 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' });
 function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>) {
-  const { className, style, children, dTarget, dTop = 0, dBottom, dZIndex, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    children,
+    dTarget,
+    dTop = 0,
+    dBottom,
+    dZIndex,
+
+    className,
+    style,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

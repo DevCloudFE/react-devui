@@ -76,8 +76,6 @@ const TTANSITION_DURING = { enter: 133, leave: 166 };
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DToast' });
 export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element | null {
   const {
-    className,
-    style,
     dVisible,
     dType,
     dIcon,
@@ -87,6 +85,9 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
     dEscClosable = true,
     onClose,
     afterVisibleChange,
+
+    className,
+    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 

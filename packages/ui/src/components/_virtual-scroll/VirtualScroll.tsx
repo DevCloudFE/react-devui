@@ -46,6 +46,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     dHorizontal = false,
     dEmpty,
     onScrollEnd,
+
     onScroll,
     ...restProps
   } = props;

@@ -18,7 +18,7 @@ export interface DDrawerFooterPropsWithPrivate extends DDrawerFooterProps {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerFooter' });
 export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
-  const { className, dOkButtonProps, dCancelButtonProps, onOkClick, onCancelClick, __onClose, ...restProps } = useComponentConfig(
+  const { className, dOkProps, dCancelProps, onOkClick, onCancelClick, __onClose, ...restProps } = useComponentConfig(
     COMPONENT_NAME,
     props as DDrawerFooterPropsWithPrivate
   );
@@ -30,22 +30,22 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
   const [okLoading, setOkLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
-  const okButtonProps = (() => {
-    if (isBoolean(dOkButtonProps?.dLoading)) {
-      return dOkButtonProps;
+  const okProps = (() => {
+    if (isBoolean(dOkProps?.dLoading)) {
+      return dOkProps;
     } else {
       return {
-        ...dOkButtonProps,
+        ...dOkProps,
         dLoading: okLoading,
       };
     }
   })();
-  const cancelButtonProps = (() => {
-    if (isBoolean(dCancelButtonProps?.dLoading)) {
-      return dCancelButtonProps;
+  const cancelProps = (() => {
+    if (isBoolean(dCancelProps?.dLoading)) {
+      return dCancelProps;
     } else {
       return {
-        ...dCancelButtonProps,
+        ...dCancelProps,
         dLoading: cancelLoading,
       };
     }
@@ -55,8 +55,8 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
     <DFooter
       {...restProps}
       className={getClassName(className, `${dPrefix}drawer-footer`)}
-      dOkButtonProps={okButtonProps}
-      dCancelButtonProps={cancelButtonProps}
+      dOkProps={okProps}
+      dCancelProps={cancelProps}
       onOkClick={() => {
         const shouldClose = onOkClick?.();
         if (shouldClose instanceof Promise) {

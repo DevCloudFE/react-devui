@@ -17,7 +17,15 @@ export interface DColProps extends DColBaseProps {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' });
 export function DCol(props: DColProps): JSX.Element | null {
-  const { className, style, children, dSpan, dResponsiveProps, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    children,
+    dSpan,
+    dResponsiveProps,
+
+    className,
+    style,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

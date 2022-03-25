@@ -43,13 +43,14 @@ const LINE_INDICATOR = Symbol('line');
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' });
 function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>) {
   const {
-    className,
     dLinks,
     dPage,
     dDistance = 0,
     dScrollBehavior = 'instant',
     dIndicator = DOT_INDICATOR,
     onLinkClick,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 

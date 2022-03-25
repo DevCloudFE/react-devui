@@ -16,8 +16,6 @@ export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTag' });
 export function DTag(props: DTagProps): JSX.Element | null {
   const {
-    className,
-    style,
     children,
     dType = 'primary',
     dTheme,
@@ -25,6 +23,9 @@ export function DTag(props: DTagProps): JSX.Element | null {
     dSize,
     dClosable = false,
     onCloseClick,
+
+    className,
+    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 

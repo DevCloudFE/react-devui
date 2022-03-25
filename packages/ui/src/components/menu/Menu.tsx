@@ -38,8 +38,6 @@ const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
 export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>): JSX.Element | null {
   const {
-    className,
-    style,
     dOptions,
     dActive,
     dExpands,
@@ -48,11 +46,14 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
     dExpandTrigger,
     onActiveChange,
     onExpandsChange,
-    onMouseDown,
-    onMouseUp,
+
+    className,
+    style,
+    onKeyDown,
     onFocus,
     onBlur,
-    onKeyDown,
+    onMouseDown,
+    onMouseUp,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -355,8 +356,8 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
           <React.Fragment key={optionId}>
             {optionType === 'item' ? (
               <DMenuItem
-                id={id}
-                disabled={optionDisabled}
+                dId={id}
+                dDisabled={optionDisabled}
                 dPosinset={posinset.get(optionId)!}
                 dMode={dMode}
                 dInNav={inNav}
@@ -372,7 +373,7 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
               </DMenuItem>
             ) : optionType === 'group' ? (
               <DMenuGroup
-                id={id}
+                dId={id}
                 dOptions={children && getNodes(children, level + 1, _subParents)}
                 dEmpty={isEmpty}
                 dStep={step}
@@ -383,8 +384,8 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
               </DMenuGroup>
             ) : (
               <DMenuSub
-                id={id}
-                disabled={optionDisabled}
+                dId={id}
+                dDisabled={optionDisabled}
                 dPosinset={posinset.get(optionId)!}
                 dMode={dMode}
                 dInNav={inNav}

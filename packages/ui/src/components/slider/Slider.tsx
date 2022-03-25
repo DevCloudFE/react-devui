@@ -19,11 +19,11 @@ import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../..
 import { DTooltip } from '../tooltip';
 
 export interface DSliderBaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  max?: number;
-  min?: number;
-  step?: number | null;
-  disabled?: boolean;
   dFormControl?: DFormControl;
+  dMax?: number;
+  dMin?: number;
+  dStep?: number | null;
+  dDisabled?: boolean;
   dMarks?: number | ({ value: number; label: React.ReactNode } | number)[];
   dVertical?: boolean;
   dReverse?: boolean;
@@ -68,11 +68,10 @@ export function DSlider(props: DSliderRangeProps): JSX.Element | null;
 export function DSlider(props: DSliderProps): JSX.Element | null;
 export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
-    className,
-    max = 100,
-    min = 0,
-    step = 1,
-    disabled: _disabled,
+    dMax = 100,
+    dMin = 0,
+    dStep = 1,
+    dDisabled = false,
     dFormControl,
     dModel,
     dMarks,
@@ -86,6 +85,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     dReverse = false,
     dCustomTooltip,
     onModelChange,
+
+    className,
     onMouseDown,
     onMouseUp,
     onTouchStart,
@@ -136,7 +137,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   });
 
   const [valueLeft, valueRight = 0] = (dRange ? _value : [_value]) as [number, number?];
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const [visibleLeft, visibleRight] = [
     (dRange ? dTooltipVisible?.[0] : dTooltipVisible) ?? (mouseenterDot === 'left' ? true : !!(focusDot === 'left' || thumbPoint)),
@@ -151,9 +152,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   const getValue = (value: number, func: 'round' | 'ceil' | 'floor' = 'round') => {
     let newValue: number | null = null;
-    if (step) {
-      const n = Math[func](value / step);
-      newValue = Math.min(max, Math.max(min, n * step));
+    if (dStep) {
+      const n = Math[func](value / dStep);
+      newValue = Math.min(dMax, Math.max(dMin, n * dStep));
     }
 
     if (isArray(dMarks)) {
@@ -172,7 +173,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     }
 
-    return newValue ?? min;
+    return newValue ?? dMin;
   };
 
   const handleMove = useEventCallback((e: { clientX: number; clientY: number }, isLeft?: boolean) => {
@@ -180,7 +181,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     if (sliderRef.current) {
       const rect = sliderRef.current.getBoundingClientRect();
       const newValue = getValue(
-        (max - min) *
+        (dMax - dMin) *
           (dVertical
             ? (dReverse ? e.clientY - rect.top : rect.bottom - e.clientY) / rect.height
             : (dReverse ? rect.right - e.clientX : e.clientX - rect.left) / rect.width)
@@ -209,30 +210,30 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   });
 
   const handleThumbMove = useEventCallback((e: { clientX: number; clientY: number }) => {
-    if (step && thumbPoint && sliderRef.current) {
+    if (dStep && thumbPoint && sliderRef.current) {
       const rect = sliderRef.current.getBoundingClientRect();
       const offset =
         Math.round(
-          ((max - min) *
+          ((dMax - dMin) *
             (dVertical
               ? (dReverse ? e.clientY - thumbPoint.clientY : thumbPoint.clientY - e.clientY) / rect.height
               : (dReverse ? thumbPoint.clientX - e.clientX : e.clientX - thumbPoint.clientX) / rect.width)) /
-            step
-        ) * step;
+            dStep
+        ) * dStep;
       const value: [number, number] = [0, 0];
       let index = -1;
 
       for (const v of [thumbPoint.left + offset, thumbPoint.right + offset]) {
         index += 1;
         const _index = index === 0 ? 1 : 0;
-        if (v < min) {
-          value[index] = min;
-          value[_index] = min + Math.abs(thumbPoint.left - thumbPoint.right);
+        if (v < dMin) {
+          value[index] = dMin;
+          value[_index] = dMin + Math.abs(thumbPoint.left - thumbPoint.right);
           break;
         }
-        if (v > max) {
-          value[index] = max;
-          value[_index] = max - Math.abs(thumbPoint.left - thumbPoint.right);
+        if (v > dMax) {
+          value[index] = dMax;
+          value[_index] = dMax - Math.abs(thumbPoint.left - thumbPoint.right);
           break;
         }
         value[index] = v;
@@ -410,7 +411,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   const marks = (() => {
     const marks: React.ReactNode[] = [];
     const getNode = (value: number, label: React.ReactNode = null) => {
-      let percentage = (value / (max - min)) * 100;
+      let percentage = (value / (dMax - dMin)) * 100;
       if (dReverse) {
         percentage = 100 - percentage;
       }
@@ -418,7 +419,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         <div
           key={value}
           className={getClassName(`${dPrefix}slider__mark`, {
-            [`${dPrefix}slider__mark--hidden`]: value === min || value === max,
+            [`${dPrefix}slider__mark--hidden`]: value === dMin || value === dMax,
           })}
           style={{
             left: dVertical ? undefined : `${percentage}%`,
@@ -446,7 +447,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         getNode(value, isNumber(mark) ? null : mark.label);
       });
     } else if (isNumber(dMarks)) {
-      for (let index = 0; index < (max - min) / dMarks; index++) {
+      for (let index = 0; index < (dMax - dMin) / dMarks; index++) {
         const value = index * dMarks;
         getNode(value);
       }
@@ -501,12 +502,12 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           style={
             dVertical
               ? {
-                  bottom: `calc(${Math.min(valueLeft, valueRight)} / ${max - min} * 100%)`,
-                  top: `calc(${max - Math.max(valueLeft, valueRight)} / ${max - min} * 100%)`,
+                  bottom: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  top: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
                 }
               : {
-                  left: `calc(${Math.min(valueLeft, valueRight)} / ${max - min} * 100%)`,
-                  right: `calc(${max - Math.max(valueLeft, valueRight)} / ${max - min} * 100%)`,
+                  left: `calc(${Math.min(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
+                  right: `calc(${dMax - Math.max(valueLeft, valueRight)} / ${dMax - dMin} * 100%)`,
                 }
           }
         ></div>
@@ -525,8 +526,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
               'is-focus': focusDot === 'left',
             })}
             style={{
-              left: dVertical ? undefined : `calc(${valueLeft} / ${max - min} * 100% - 7px)`,
-              bottom: dVertical ? `calc(${valueLeft} / ${max - min} * 100% - 7px)` : undefined,
+              left: dVertical ? undefined : `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)`,
+              bottom: dVertical ? `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)` : undefined,
             }}
           >
             <input
@@ -538,9 +539,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
               type="range"
               value={valueLeft}
               disabled={disabled}
-              max={max}
-              min={min}
-              step={step ?? undefined}
+              max={dMax}
+              min={dMin}
+              step={dStep ?? undefined}
               aria-orientation={dVertical ? 'vertical' : 'horizontal'}
               aria-describedby={mergeAriaDescribedby(inputPropsLeft?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
               onChange={handleChange}
@@ -573,8 +574,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                 'is-focus': focusDot === 'right',
               })}
               style={{
-                left: dVertical ? undefined : `calc(${valueRight} / ${max - min} * 100% - 7px)`,
-                bottom: dVertical ? `calc(${valueRight} / ${max - min} * 100% - 7px)` : undefined,
+                left: dVertical ? undefined : `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)`,
+                bottom: dVertical ? `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)` : undefined,
               }}
             >
               <input
@@ -586,9 +587,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                 type="range"
                 value={valueRight}
                 disabled={disabled}
-                max={max}
-                min={min}
-                step={step ?? undefined}
+                max={dMax}
+                min={dMin}
+                step={dStep ?? undefined}
                 aria-orientation={dVertical ? 'vertical' : 'horizontal'}
                 aria-describedby={mergeAriaDescribedby(
                   inputPropsRight?.['aria-describedby'],

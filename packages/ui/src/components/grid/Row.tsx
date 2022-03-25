@@ -22,7 +22,15 @@ export interface DRowProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRow' });
 export function DRow(props: DRowProps): JSX.Element | null {
-  const { className, style, children, dGutter = 0, dResponsiveGutter, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    children,
+    dGutter = 0,
+    dResponsiveGutter,
+
+    className,
+    style,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

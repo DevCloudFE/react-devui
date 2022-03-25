@@ -9,20 +9,21 @@ import { registerComponentMate, getClassName } from '../../utils';
 export type DComposeRef = HTMLDivElement;
 
 export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
-  disabled?: boolean;
   dSize?: DSize;
   dVertical?: boolean;
+  dDisabled?: boolean;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCompose' });
 function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
   const {
-    className,
-    role = 'group',
-    disabled: _disabled,
     children,
     dSize,
     dVertical = false,
+    dDisabled = false,
+
+    className,
+    role = 'group',
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -38,7 +39,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
   const combineElRef = useForkRef(elRef, ref);
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled;
+  const disabled = dDisabled || gDisabled;
 
   const generalStateContextValue = useMemo<DGeneralState>(
     () => ({

@@ -59,8 +59,6 @@ export function DFormItem(props: DFormItemBaseProps): JSX.Element | null;
 export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemWithControlsProps<T>): JSX.Element | null;
 export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>): JSX.Element | null {
   const {
-    className,
-    style,
     children,
     dFormControls = {} as { [index: string]: DErrorInfo },
     dLabel,
@@ -69,6 +67,9 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     dShowRequired,
     dSpan,
     dResponsiveProps,
+
+    className,
+    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 

@@ -14,8 +14,8 @@ import { DCheckbox } from '../checkbox';
 import { getText, TREE_NODE_KEY } from './utils';
 
 interface DSearchListProps<ID extends DId, T> {
-  listId?: string;
-  getOptionId: (value: ID) => string;
+  dListId?: string;
+  dGetOptionId: (value: ID) => string;
   dOptions: DSearchOption<ID, T>[];
   dSelected: ID | null | ID[];
   dFocusOption: DSearchOption<ID, T> | undefined;
@@ -31,8 +31,8 @@ interface DSearchListProps<ID extends DId, T> {
 
 export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
   const {
-    listId,
-    getOptionId,
+    dListId,
+    dGetOptionId,
     dOptions,
     dSelected,
     dFocusOption,
@@ -134,11 +134,11 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
   return (
     <DVirtualScroll
       ref={dVSRef}
-      id={listId}
+      id={dListId}
       className={`${dPrefix}cascader-search-list`}
       role="listbox"
       aria-multiselectable={dMultiple}
-      aria-activedescendant={dFocusOption ? getOptionId(dFocusOption.value) : undefined}
+      aria-activedescendant={dFocusOption ? dGetOptionId(dFocusOption.value) : undefined}
       dList={dOptions}
       dItemRender={(item, index, renderProps) => {
         const node = item[TREE_NODE_KEY];
@@ -158,7 +158,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
           <li
             {...renderProps}
             key={item.value}
-            id={getOptionId(item.value)}
+            id={dGetOptionId(item.value)}
             className={getClassName(`${dPrefix}cascader-search-list__option`, {
               'is-selected': !dMultiple && inSelected,
               'is-disabled': node.disabled,
@@ -173,7 +173,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
             }}
           >
             {dFocusVisible && dFocusOption?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
-            {dMultiple && <DCheckbox disabled={node.disabled} dModel={[node.checked]}></DCheckbox>}
+            {dMultiple && <DCheckbox dDisabled={node.disabled} dModel={[node.checked]}></DCheckbox>}
             <div className={`${dPrefix}cascader-search-list__option-content`}>
               {dCustomOption ? dCustomOption(node.origin) : getText(node)}
             </div>

@@ -5,9 +5,9 @@ import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState 
 import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
-  disabled?: boolean;
   dFormControl?: DFormControl;
   dModel?: [boolean, DUpdater<boolean>?];
+  dDisabled?: boolean;
   dIndeterminate?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
@@ -17,15 +17,16 @@ export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' });
 export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     children,
     dFormControl,
     dModel,
+    dDisabled = false,
     dIndeterminate = false,
     dInputProps,
     dInputRef,
     onModelChange,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -38,7 +39,7 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   return (
     <label

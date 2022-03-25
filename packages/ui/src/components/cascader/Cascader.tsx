@@ -75,8 +75,6 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
 export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderProps<V, T>): JSX.Element | null;
 export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderProps<V, T>): JSX.Element | null {
   const {
-    className,
-    disabled: _disabled,
     dFormControl,
     dOptions,
     dModel,
@@ -88,6 +86,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
     dCustomSearch,
     dLoading = false,
     dMultiple = false,
+    dDisabled = false,
     dSize,
     dAutoMaxWidth = true,
     dPopupClassName,
@@ -96,6 +95,8 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
     onModelChange,
     onClear,
     onSearch,
+
+    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -158,7 +159,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
   );
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
@@ -342,7 +343,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
       {...restProps}
       {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}cascader`)}
-      disabled={disabled}
+      dDisabled={disabled}
       dVisible={visible}
       dContent={hasSelected && selectedNode}
       dSuffix={suffixNode}
@@ -396,8 +397,8 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
           )}
           {hasSearch ? (
             <DSearchList
-              listId={listId}
-              getOptionId={getOptionId}
+              dListId={listId}
+              dGetOptionId={getOptionId}
               dOptions={searchOptions}
               dSelected={select}
               dFocusOption={searchFocusOption}
@@ -416,8 +417,8 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
             ></DSearchList>
           ) : (
             <DList
-              listId={listId}
-              getOptionId={getOptionId}
+              dListId={listId}
+              dGetOptionId={getOptionId}
               dNodes={renderNodes}
               dSelected={select}
               dFocusNode={noSearchFocusNode}

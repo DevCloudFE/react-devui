@@ -9,9 +9,9 @@ import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
 
 export interface DMenuSubProps {
-  id: string;
-  disabled?: boolean;
   children: React.ReactNode;
+  dId: string;
+  dDisabled?: boolean;
   dPosinset: [number, number];
   dMode: DMenuMode;
   dInNav: boolean;
@@ -35,9 +35,9 @@ const POPUP_TTANSITION_DURING = 116;
 const COLLAPSE_TTANSITION_DURING = 200;
 export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   const {
-    id,
-    disabled,
     children,
+    dId,
+    dDisabled,
     dPosinset,
     dMode,
     dInNav,
@@ -168,7 +168,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
               return (
                 <DPopup
-                  disabled={disabled || dMode === 'vertical'}
+                  dDisabled={dDisabled || dMode === 'vertical'}
                   dVisible={dPopupState}
                   dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
                     <ul
@@ -182,7 +182,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                         zIndex: maxZIndex,
                       }}
                       role="menu"
-                      aria-labelledby={id}
+                      aria-labelledby={dId}
                       onClick={() => {
                         pOnClick?.();
                       }}
@@ -211,19 +211,19 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                     <li
                       {...restPCProps}
                       ref={liRef}
-                      id={id}
+                      id={dId}
                       className={getClassName(`${dPrefix}menu-sub`, {
                         [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
                         [`${dPrefix}menu-sub--icon`]: dMode === 'icon' && dInNav,
                         'is-active': dActive,
                         'is-expand': dMode === 'vertical' ? dExpand : dPopupVisible,
-                        'is-disabled': disabled,
+                        'is-disabled': dDisabled,
                       })}
                       style={{ paddingLeft: dSpace + dLevel * dStep }}
                       role="menuitem"
                       aria-haspopup={true}
                       aria-expanded={dMode === 'vertical' ? dExpand : dPopupVisible}
-                      aria-disabled={disabled}
+                      aria-disabled={dDisabled}
                       onClick={(e) => {
                         pOnClick?.();
 
@@ -261,7 +261,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
             }}
           </DTransition>
           {dMode !== 'vertical' && (collapseState === 'leaved' || !dInNav) ? null : (
-            <ul ref={collapseRef} className={`${dPrefix}menu-sub__list`} style={collapseStyle} role="menu" aria-labelledby={id}>
+            <ul ref={collapseRef} className={`${dPrefix}menu-sub__list`} style={collapseStyle} role="menu" aria-labelledby={dId}>
               {dEmpty ? (
                 <div className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
                   {t('No Data')}

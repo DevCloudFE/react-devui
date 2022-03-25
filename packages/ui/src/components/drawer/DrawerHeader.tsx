@@ -13,7 +13,13 @@ export interface DDrawerHeaderPropsWithPrivate extends DDrawerHeaderProps {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerHeader' });
 export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
-  const { className, __id, __onClose, ...restProps } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
+  const {
+    __id,
+    __onClose,
+
+    className,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
 
   //#region Context
   const dPrefix = usePrefixConfig();

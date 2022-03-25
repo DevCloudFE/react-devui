@@ -10,7 +10,13 @@ export interface DEmptyProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DEmpty' });
 export function DEmpty(props: DEmptyProps): JSX.Element | null {
-  const { className, children, dIcon, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    children,
+    dIcon,
+
+    className,
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

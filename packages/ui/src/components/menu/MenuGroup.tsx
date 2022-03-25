@@ -1,8 +1,8 @@
 import { usePrefixConfig, useTranslation } from '../../hooks';
 
 export interface DMenuGroupProps {
-  id: string;
   children: React.ReactNode;
+  dId: string;
   dOptions: React.ReactNode;
   dEmpty: boolean;
   dStep: number;
@@ -11,7 +11,7 @@ export interface DMenuGroupProps {
 }
 
 export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
-  const { id, children, dOptions, dEmpty, dStep, dSpace, dLevel = 0 } = props;
+  const { children, dId, dOptions, dEmpty, dStep, dSpace, dLevel = 0 } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -20,8 +20,8 @@ export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
   const [t] = useTranslation('Common');
 
   return (
-    <ul className={`${dPrefix}menu-group`} role="group" aria-labelledby={id}>
-      <li id={id} className={`${dPrefix}menu-group__label`} style={{ paddingLeft: dSpace + dLevel * dStep }} role="presentation">
+    <ul className={`${dPrefix}menu-group`} role="group" aria-labelledby={dId}>
+      <li id={dId} className={`${dPrefix}menu-group__label`} style={{ paddingLeft: dSpace + dLevel * dStep }} role="presentation">
         {children}
       </li>
       {dEmpty ? (

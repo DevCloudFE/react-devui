@@ -12,7 +12,16 @@ export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
 
 const TTANSITION_DURING = 100;
 export function DMask(props: DMaskProps): JSX.Element | null {
-  const { className, style, dVisible, onClose, afterVisibleChange, onClick, ...restProps } = props;
+  const {
+    dVisible,
+    onClose,
+    afterVisibleChange,
+
+    className,
+    style,
+    onClick,
+    ...restProps
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();

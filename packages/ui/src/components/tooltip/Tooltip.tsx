@@ -33,10 +33,6 @@ const TTANSITION_DURING = { enter: 86, leave: 100 };
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTooltip' });
 function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
   const {
-    id,
-    className,
-    style,
-    disabled,
     children,
     dVisible,
     dTitle,
@@ -47,13 +43,18 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
     dEscClosable,
     dPlacement = 'top',
     dArrow = true,
+    dDisabled = false,
     dDistance = 10,
     dZIndex,
     onVisibleChange,
     afterVisibleChange,
-    onClick,
+
+    id,
+    className,
+    style,
     onMouseEnter,
     onMouseLeave,
+    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -254,7 +255,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
 
         return (
           <DPopup
-            disabled={disabled}
+            dDisabled={dDisabled}
             dVisible={visible}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
               <div
