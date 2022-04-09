@@ -1,4 +1,4 @@
-import type { FormGroup } from './form';
+import type { FormGroup } from './form-control';
 
 import { useMemo, useState } from 'react';
 

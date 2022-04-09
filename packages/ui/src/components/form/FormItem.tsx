@@ -1,5 +1,5 @@
 import type { DBreakpoints } from '../../types';
-import type { AbstractControl } from './form';
+import type { AbstractControl } from './form-control';
 
 import { isBoolean, isFunction, isNull, isNumber, isString, isUndefined } from 'lodash';
 import React, { useContext, useEffect, useId, useRef } from 'react';
@@ -11,7 +11,7 @@ import { DTooltip } from '../tooltip';
 import { DError } from './Error';
 import { DFormContext } from './Form';
 import { DFormGroupContext } from './FormGroup';
-import { Validators } from './form';
+import { Validators } from './form-control';
 
 type DErrors = { key: string; formControlName: string; message: string; status: 'warning' | 'error'; hidden?: true }[];
 
