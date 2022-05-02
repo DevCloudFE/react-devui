@@ -36,7 +36,7 @@
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "marked": "^4.0.12",
-    "react": "18.0.0-rc.2",
+    "react": "18.1.0",
     "react-dom": "18.0.0-rc.2",
     "react-i18next": "^11.16.1",
     "react-router-dom": "^6.2.2",
