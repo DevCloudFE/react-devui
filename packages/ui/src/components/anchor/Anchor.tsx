@@ -9,7 +9,6 @@ import {
   useComponentConfig,
   useElement,
   useAsync,
-  useContentScrollViewChange,
   useIsomorphicLayoutEffect,
   useEventCallback,
   useImmer,
@@ -33,7 +32,7 @@ export interface DAnchorProps<T = DAnchorOption> extends Omit<React.HTMLAttribut
   dPage?: DElementSelector;
   dDistance?: number;
   dScrollBehavior?: 'instant' | 'smooth';
-  dIndicator?: React.ReactNode | symbol;
+  dIndicator?: React.ReactNode | typeof DOT_INDICATOR | typeof LINE_INDICATOR;
   onLinkClick?: (href: string, link: DNestedChildren<T>) => void;
 }
 
@@ -123,7 +122,6 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useContentScrollViewChange(updateAnchor);
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 

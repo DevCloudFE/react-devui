@@ -36,7 +36,6 @@ import type {
 } from '../../components';
 import type { DIconBaseProps } from '../../icons';
 import type { DBreakpoints, DLang, DTheme } from '../../types';
-import type { Subject } from 'rxjs';
 
 import React from 'react';
 
@@ -93,6 +92,5 @@ export interface DConfigContextData {
     lang?: DLang;
     resources?: Resources;
   };
-  onScrollViewChange$?: Subject<void>;
 }
-export const DConfigContext = React.createContext<DConfigContextData>({});
+export const DConfigContext = React.createContext<DConfigContextData | undefined>(undefined);

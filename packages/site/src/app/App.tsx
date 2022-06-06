@@ -74,7 +74,7 @@ export function App() {
   );
 
   return (
-    <DRoot dContext={rootContext} dContentSelector="main">
+    <DRoot dContext={rootContext}>
       <AppContext.Provider value={contextValue}>
         <AppLayout />
       </AppContext.Provider>

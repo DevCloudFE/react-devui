@@ -5,7 +5,15 @@ import type { DDropdownOption } from '../dropdown';
 import { isNull, nth } from 'lodash';
 import { useEffect, useId, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useAsync, useTranslation, useEventCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useTwoWayBinding,
+  useAsync,
+  useTranslation,
+  useEventCallback,
+  useIsomorphicLayoutEffect,
+} from '../../hooks';
 import { EllipsisOutlined, PlusOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DDropdown } from '../dropdown';
@@ -121,73 +129,65 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
     updateIndicatorPosition(id);
   };
 
-  const debounceRef = useRef<() => void>();
-  const refreshTabs = useEventCallback((debounce = true) => {
-    debounceRef.current?.();
+  const refreshTabs = useEventCallback(() => {
+    const tablistWrapperEl = tablistWrapperRef.current;
+    if (tablistWrapperEl) {
+      const isOverflow = isHorizontal
+        ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
+        : tablistWrapperEl.scrollHeight > tablistWrapperEl.clientHeight;
+      setListOverflow(isOverflow);
+      setScrollEnd(
+        Math.abs(
+          isHorizontal
+            ? tablistWrapperEl.scrollWidth - tablistWrapperEl.scrollLeft - tablistWrapperEl.clientWidth
+            : tablistWrapperEl.scrollHeight - tablistWrapperEl.scrollTop - tablistWrapperEl.clientHeight
+        ) < 1
+      );
 
-    const fn = () => {
-      const tablistWrapperEl = tablistWrapperRef.current;
-      if (tablistWrapperEl) {
-        const isOverflow = isHorizontal
-          ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
-          : tablistWrapperEl.scrollHeight > tablistWrapperEl.clientHeight;
-        setListOverflow(isOverflow);
-        setScrollEnd(
-          Math.abs(
-            isHorizontal
-              ? tablistWrapperEl.scrollWidth - tablistWrapperEl.scrollLeft - tablistWrapperEl.clientWidth
-              : tablistWrapperEl.scrollHeight - tablistWrapperEl.scrollTop - tablistWrapperEl.clientHeight
-          ) < 1
-        );
-
-        if (isOverflow) {
-          const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
-          const dropdownList: T[] = [];
-          dTabs.forEach((tab) => {
-            const el = document.getElementById(getTabId(tab.id));
-            if (el) {
-              const rect = el.getBoundingClientRect();
-              if (isHorizontal) {
-                if (rect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || rect.left < tablistWrapperRect.left) {
-                  dropdownList.push(tab);
-                }
-              } else {
-                if (rect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || rect.top < tablistWrapperRect.top) {
-                  dropdownList.push(tab);
-                }
+      if (isOverflow) {
+        const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
+        const dropdownList: T[] = [];
+        dTabs.forEach((tab) => {
+          const el = document.getElementById(getTabId(tab.id));
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (isHorizontal) {
+              if (rect.right + 52 + (onAddClick ? 52 : 0) > tablistWrapperRect.right || rect.left < tablistWrapperRect.left) {
+                dropdownList.push(tab);
+              }
+            } else {
+              if (rect.bottom + 36 + (onAddClick ? 36 : 0) > tablistWrapperRect.bottom || rect.top < tablistWrapperRect.top) {
+                dropdownList.push(tab);
               }
             }
-          });
+          }
+        });
 
-          setDropdownList(dropdownList);
-        }
+        setDropdownList(dropdownList);
       }
+    }
 
-      if (!isNull(activeId)) {
-        updateIndicatorPosition(activeId);
-      }
-    };
-
-    if (debounce) {
-      debounceRef.current = asyncCapture.setTimeout(() => {
-        fn();
-      }, 200);
-    } else {
-      fn();
+    if (!isNull(activeId)) {
+      updateIndicatorPosition(activeId);
     }
   });
-
-  useEffect(() => {
-    refreshTabs(false);
+  useIsomorphicLayoutEffect(() => {
+    refreshTabs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dPlacement, dCenter, dType, dSize]);
+  }, []);
 
   useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
     if (tablistRef.current) {
-      asyncCapture.onResize(tablistRef.current, () => {
+      asyncGroup.onResize(tablistRef.current, () => {
         refreshTabs();
       });
     }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
   }, [asyncCapture, refreshTabs]);
 
   return (

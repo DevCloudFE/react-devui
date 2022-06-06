@@ -6,15 +6,7 @@ import { isArray, isNumber, toNumber } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useGeneralState,
-  useTwoWayBinding,
-  useAsync,
-  useThrottle,
-  useEventCallback,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralState, useTwoWayBinding, useAsync, useEventCallback } from '../../hooks';
 import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
 import { DTooltip } from '../tooltip';
 
@@ -108,7 +100,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   //#endregion
 
   const asyncCapture = useAsync();
-  const { throttleByAnimationFrame } = useThrottle();
 
   const [focusDot, setFocusDot] = useState<'left' | 'right' | null>(null);
   const [mouseenterDot, setMouseenterDot] = useState<'left' | 'right' | null>(null);
@@ -338,9 +329,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientY = e.touches[0].clientY;
           clientX = e.touches[0].clientX;
 
-          throttleByAnimationFrame.run(() => {
-            handleMove({ clientX, clientY });
-          });
+          handleMove({ clientX, clientY });
         },
       });
 
@@ -350,9 +339,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientX = e.clientX;
           clientY = e.clientY;
 
-          throttleByAnimationFrame.run(() => {
-            handleMove({ clientX, clientY });
-          });
+          handleMove({ clientX, clientY });
         },
       });
 
@@ -360,7 +347,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, draggableDot, handleMove, throttleByAnimationFrame]);
+  }, [asyncCapture, draggableDot, handleMove]);
 
   useEffect(() => {
     if (thumbPoint) {
@@ -384,9 +371,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientY = e.touches[0].clientY;
           clientX = e.touches[0].clientX;
 
-          throttleByAnimationFrame.run(() => {
-            handleThumbMove({ clientX, clientY });
-          });
+          handleThumbMove({ clientX, clientY });
         },
       });
 
@@ -396,9 +381,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientX = e.clientX;
           clientY = e.clientY;
 
-          throttleByAnimationFrame.run(() => {
-            handleThumbMove({ clientX, clientY });
-          });
+          handleThumbMove({ clientX, clientY });
         },
       });
 
@@ -406,7 +389,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleThumbMove, throttleByAnimationFrame, thumbPoint]);
+  }, [asyncCapture, handleThumbMove, thumbPoint]);
 
   const marks = (() => {
     const marks: React.ReactNode[] = [];

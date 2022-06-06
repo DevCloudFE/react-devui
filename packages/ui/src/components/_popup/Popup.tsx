@@ -3,7 +3,7 @@ import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, useContentScrollViewChange, useEventCallback } from '../../hooks';
+import { useAsync, useEventCallback } from '../../hooks';
 
 export type DExtendsPopupProps = Pick<DPopupProps, 'dDisabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable'>;
 
@@ -134,7 +134,6 @@ export function DPopup(props: DPopupProps) {
     }
   }, [asyncCapture, handleTrigger, dEscClosable, dVisible, dDisabled]);
 
-  useContentScrollViewChange(!dDisabled && dVisible ? onUpdate : undefined);
   useEffect(() => {
     if (!dDisabled && dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();

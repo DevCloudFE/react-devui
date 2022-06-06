@@ -8,15 +8,7 @@ import type { DFormControl } from '../form';
 import { isArray, isNull, isNumber, isUndefined } from 'lodash';
 import { useState, useId, useCallback, useMemo, useRef } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTwoWayBinding,
-  useTranslation,
-  useGeneralState,
-  useEventCallback,
-  useMemoWithUpdate,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useGeneralState, useEventCallback } from '../../hooks';
 import { LoadingOutlined, PlusOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -126,7 +118,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 
   const [searchValue, setSearchValue] = useState('');
 
-  const canSelectOption = (option: DNestedChildren<T>) => !option.disabled && !option.children;
+  const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
 
   const [isFocusVisible, setIsFocusVisible] = useState(false);
 
@@ -242,11 +234,18 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     return searchOptions;
   }, [dCreateOption, dOptions, filterFn, hasSearch, searchValue, sortFn]);
 
-  const [noSearchFocusOption, setNoSearchFocusOption] = useState(() => {
+  const [_noSearchFocusOption, setNoSearchFocusOption] = useState<DNestedChildren<T> | undefined>();
+  const noSearchFocusOption = useMemo(() => {
+    if (_noSearchFocusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _noSearchFocusOption.value)) {
+      return _noSearchFocusOption;
+    }
+
     let option: DNestedChildren<T> | undefined;
 
     if (dMultiple) {
-      option = findNested(dOptions, (o) => canSelectOption(o) && (select as V[]).includes(o.value));
+      if ((select as V[]).length > 0) {
+        option = findNested(dOptions, (o) => canSelectOption(o) && (select as V[]).includes(o.value));
+      }
     } else {
       if (!isNull(select)) {
         option = findNested(dOptions, (o) => canSelectOption(o) && (select as V) === o.value);
@@ -258,14 +257,18 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     }
 
     return option;
-  });
+  }, [_noSearchFocusOption, canSelectOption, dMultiple, dOptions, select]);
 
-  const [searchFocusOption, setSearchFocusOption] = useMemoWithUpdate(() => {
+  const [_searchFocusOption, setSearchFocusOption] = useState<(T & { [IS_CREATE]?: boolean | undefined }) | undefined>();
+  const searchFocusOption = useMemo(() => {
+    if (_searchFocusOption && findNested(searchOptions, (o) => canSelectOption(o) && o.value === _searchFocusOption.value)) {
+      return _searchFocusOption;
+    }
+
     if (hasSearch) {
       return findNested(searchOptions, (o) => canSelectOption(o));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  }, [_searchFocusOption, canSelectOption, hasSearch, searchOptions]);
 
   const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
   const changeFocusOption = (option?: DNestedChildren<T>) => {
@@ -408,51 +411,46 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
           onSearch?.(value);
         },
         onKeyDown: (e) => {
-          if (visible) {
-            if (!isUndefined(focusOption)) {
-              switch (e.code) {
-                case 'ArrowUp':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollByStep(-1));
-                  break;
+          if (visible && !isUndefined(focusOption)) {
+            switch (e.code) {
+              case 'ArrowUp':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollByStep(-1));
+                break;
 
-                case 'ArrowDown':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollByStep(1));
-                  break;
+              case 'ArrowDown':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollByStep(1));
+                break;
 
-                case 'Home':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollToStart());
-                  break;
+              case 'Home':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollToStart());
+                break;
 
-                case 'End':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollToEnd());
-                  break;
+              case 'End':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollToEnd());
+                break;
 
-                case 'Enter':
-                  e.preventDefault();
-                  if (focusOption[IS_CREATE]) {
-                    createOption(focusOption);
-                  }
-                  changeSelectByClick(focusOption.value, false);
-                  break;
+              case 'Enter':
+                e.preventDefault();
+                if (focusOption[IS_CREATE]) {
+                  createOption(focusOption);
+                }
+                changeSelectByClick(focusOption.value, false);
+                break;
 
-                case 'Space':
-                  e.preventDefault();
-                  if (focusOption[IS_CREATE]) {
-                    createOption(focusOption);
-                  }
-                  changeSelectByClick(focusOption.value, dMultiple);
-                  break;
+              case 'Space':
+                e.preventDefault();
+                if (focusOption[IS_CREATE]) {
+                  createOption(focusOption);
+                }
+                changeSelectByClick(focusOption.value, dMultiple);
+                break;
 
-                default:
-                  break;
-              }
-            } else if (e.code === 'ArrowDown') {
-              e.preventDefault();
-              changeFocusOption(dVSRef.current?.scrollToStart());
+              default:
+                break;
             }
           }
         },

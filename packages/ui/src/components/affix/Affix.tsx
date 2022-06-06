@@ -3,15 +3,7 @@ import type { DElementSelector } from '../../hooks/ui/useElement';
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useAsync,
-  useElement,
-  useContentScrollViewChange,
-  useIsomorphicLayoutEffect,
-  useEventCallback,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useAsync, useElement, useIsomorphicLayoutEffect, useEventCallback } from '../../hooks';
 import { getClassName, registerComponentMate, toPx } from '../../utils';
 
 export interface DAffixRef {
@@ -103,7 +95,6 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useContentScrollViewChange(updatePosition);
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 

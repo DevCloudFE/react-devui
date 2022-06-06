@@ -4,9 +4,9 @@ import type { DFormControl } from '../form';
 import type { DRadioPropsWithPrivate } from './Radio';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useId, useRef } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DCompose } from '../compose';
 import { DRadio } from './Radio';
@@ -51,35 +51,19 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   const { gSize, gDisabled } = useGeneralState();
   //#endregion
 
-  //#region Ref
-  const groupRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
-  const dataRef = useRef<{
-    clearTid?: () => void;
-  }>({});
-
-  const asyncCapture = useAsync();
-
   const uniqueId = useId();
 
-  const [value, _changeValue] = useTwoWayBinding<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, {
+  const [value, changeValue] = useTwoWayBinding<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, {
     formControl: dFormControl?.control,
   });
-  const changeValue = (val: V) => {
-    _changeValue(val);
 
-    if (groupRef.current) {
-      groupRef.current.classList.toggle('is-change', true);
-
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = asyncCapture.afterNextAnimationFrame(() => {
-        if (groupRef.current) {
-          groupRef.current.classList.toggle('is-change', false);
-        }
-      });
+  const [isChange, setIsChange] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (isChange) {
+      setIsChange(false);
     }
-  };
+  });
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || dFormControl?.disabled;
@@ -88,9 +72,9 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
     <DCompose
       {...restProps}
       {...dFormControl?.dataAttrs}
-      ref={groupRef}
       className={getClassName(className, `${dPrefix}radio-group`, {
         [`${dPrefix}radio-group--default`]: isUndefined(dType),
+        'is-change': isChange,
       })}
       dDisabled={disabled}
       role="radiogroup"
@@ -111,6 +95,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
             },
             onModelChange: () => {
               changeValue(option.value);
+              setIsChange(true);
             },
             __type: dType,
           },

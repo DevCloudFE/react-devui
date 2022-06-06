@@ -44,7 +44,7 @@ export interface DFormItemBaseProps extends Omit<React.HTMLAttributes<HTMLDivEle
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemBaseProps, 'dLabelWidth' | 'dSpan'>>;
 }
 
-export interface DFormItemWithControlsProps<T extends { [index: string]: DErrorInfo }> extends DFormItemBaseProps {
+export interface DFormItemWithControlsProps<T extends { [index: string]: DErrorInfo }> extends Omit<DFormItemBaseProps, 'children'> {
   children: (formControls: { [N in keyof T]: DFormControl }) => React.ReactNode;
   dFormControls: T;
 }
@@ -97,7 +97,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     Object.keys(dFormControls).forEach((formControlName: keyof T) => {
       const formControl = formGroup.get(formControlName as string);
       if (isNull(formControl)) {
-        throw new Error(`Cant find '${formControlName}', please check if name exists!`);
+        throw new Error(`Cant find '${formControlName as string}', please check if name exists!`);
       }
       obj[formControlName] = {
         control: formControl,

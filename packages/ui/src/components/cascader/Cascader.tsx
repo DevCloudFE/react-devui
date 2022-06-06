@@ -10,7 +10,7 @@ import { isArray, isNull } from 'lodash';
 import React, { useCallback, useMemo, useState, useId, useRef } from 'react';
 import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useEventCallback, useMemoWithUpdate } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useEventCallback } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -233,17 +233,36 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
 
   const [isFocusVisible, setIsFocusVisible] = useState(false);
 
-  const [noSearchFocusNode, setNoSearchFocusNode] = useState(() => {
-    if ((isArray(select) && select.length > 0) || !isNull(select)) {
-      return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.checked);
+  const [_noSearchFocusNode, setNoSearchFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
+  const noSearchFocusNode = useMemo(() => {
+    if (
+      _noSearchFocusNode &&
+      findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.id === _noSearchFocusNode.id)
+    ) {
+      return _noSearchFocusNode;
     }
-  });
-  const [searchFocusOption, setSearchFocusOption] = useMemoWithUpdate(() => {
+
+    if (isArray(select)) {
+      if (select.length > 0) {
+        return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
+      }
+    } else {
+      if (!isNull(select)) {
+        return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
+      }
+    }
+  }, [_noSearchFocusNode, renderNodes, select]);
+
+  const [_searchFocusOption, setSearchFocusOption] = useState<DSearchOption<V, T> | undefined>();
+  const searchFocusOption = useMemo(() => {
+    if (_searchFocusOption && findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled && o.value === _searchFocusOption.value)) {
+      return _searchFocusOption;
+    }
+
     if (hasSearch) {
-      return findNested(searchOptions, (node) => node[TREE_NODE_KEY].enabled);
+      return findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  }, [_searchFocusOption, hasSearch, searchOptions]);
 
   const handleClear = () => {
     onClear?.();

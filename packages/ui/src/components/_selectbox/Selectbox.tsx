@@ -13,7 +13,6 @@ import {
   useEventCallback,
   useElement,
   useMaxIndex,
-  useContentScrollViewChange,
   useFocusVisible,
 } from '../../hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
@@ -33,7 +32,7 @@ export interface DSelectboxRenderProps {
   sStyle: React.CSSProperties;
 }
 
-export interface DSelectboxProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: (props: DSelectboxRenderProps) => JSX.Element | null;
   dVisible?: boolean;
   dContent?: React.ReactNode;
@@ -144,7 +143,6 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
     }
   });
 
-  useContentScrollViewChange(dVisible ? updatePosition : undefined);
   useEffect(() => {
     if (dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
