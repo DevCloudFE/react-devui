@@ -32,7 +32,7 @@
     "@ant-design/icons-svg": "^4.2.1",
     "core-js": "^3.22.7",
     "highlight.js": "^11.5.1",
-    "i18next": "^21.8.5",
+    "i18next": "^21.8.9",
     "immer": "^9.0.14",
     "lodash": "^4.17.21",
     "marked": "^4.0.16",
