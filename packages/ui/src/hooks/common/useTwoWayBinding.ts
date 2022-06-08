@@ -1,5 +1,5 @@
 import type { AbstractControl } from '../../components/form';
-import type { Updater } from '../state/useImmer';
+import type { Updater } from './useImmer';
 
 import { freeze, produce } from 'immer';
 import { isArray, isFunction, isUndefined } from 'lodash';

@@ -1,4 +1,4 @@
-import { toNumber } from 'lodash';
+import { isObject, isString, toNumber } from 'lodash';
 
 export function toPx(str: string): string;
 export function toPx(str: string, toNum: true): number;
@@ -37,4 +37,53 @@ export function getNoTransformSize(el: HTMLElement) {
   height = height + borderTopWidth + borderBottomWidth;
 
   return { width, height };
+}
+
+export function getClassName(...args: unknown[]) {
+  const className: string[] = [];
+
+  args.forEach((item) => {
+    if (isString(item)) {
+      className.push(item);
+    } else if (isObject(item)) {
+      Object.keys(item).forEach((key) => {
+        if (item[key]) {
+          className.push(key);
+        }
+      });
+    }
+  });
+
+  return className.join(' ');
+}
+
+export function getPositionedParent(el: HTMLElement) {
+  const loop = (_el: HTMLElement): HTMLElement => {
+    if (_el.parentElement) {
+      const { position } = getComputedStyle(_el.parentElement);
+      if (position !== 'static') {
+        return _el.parentElement;
+      } else {
+        return loop(_el.parentElement);
+      }
+    } else {
+      return document.body;
+    }
+  };
+  return loop(el);
+}
+
+export function copy(str: string) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(str);
+  } else {
+    let el: HTMLTextAreaElement | null = document.createElement('textarea');
+    el.style.cssText = 'position:fixed;opacity:0;';
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    el = null;
+  }
 }

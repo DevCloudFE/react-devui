@@ -1,8 +1,10 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId } from '../../types';
+import type { DId } from '../../utils/global';
 import type { DFormControl } from '../form';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { useId } from 'react';
+
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DCheckbox } from './Checkbox';
 
@@ -36,14 +38,17 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
+
+  const uniqueId = useId();
+  const getId = (value: V) => `${dPrefix}checkbox-group-${value}-${uniqueId}`;
 
   const [value, changeValue] = useTwoWayBinding<V[]>([], dModel, onModelChange, {
     formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
     <div
@@ -59,10 +64,7 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
           dDisabled={option.disabled || disabled}
           dInputProps={
             index === 0
-              ? {
-                  ...dFormControl?.inputAttrs,
-                  id: dFormControl?.controlId,
-                }
+              ? ({ id: getId(option.value), 'data-form-support-input': true } as React.InputHTMLAttributes<HTMLInputElement>)
               : undefined
           }
           dModel={[value.includes(option.value)]}

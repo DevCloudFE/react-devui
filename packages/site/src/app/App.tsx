@@ -1,4 +1,4 @@
-import type { DLang, DTheme } from '@react-devui/ui/types';
+import type { DLang, DTheme } from '@react-devui/ui/utils/global';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

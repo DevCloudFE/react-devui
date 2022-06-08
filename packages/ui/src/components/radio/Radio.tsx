@@ -3,9 +3,10 @@ import type { DFormControl } from '../form';
 
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useWave, useGeneralState, useFocusVisible } from '../../hooks';
-import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
-import { useCompose } from '../compose';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useWave, useGeneralContext, useFocusVisible } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
+import { DBaseSupport } from '../_base-support';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
@@ -39,7 +40,7 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   const [waveNode, wave] = useWave();
@@ -51,63 +52,60 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
-
-  const composeDataAttrs = useCompose(checked || isFocusVisible, disabled);
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
-    <label
-      {...restProps}
-      {...composeDataAttrs}
-      className={getClassName(className, `${dPrefix}radio`, {
-        [`${dPrefix}radio--button`]: __type,
-        [`${dPrefix}radio--button-${__type}`]: __type,
-        [`${dPrefix}radio--${gSize}`]: gSize,
-        'is-checked': checked,
-        'is-focus-visible': isFocusVisible,
-        'is-disabled': disabled,
-      })}
-      onClick={(e) => {
-        onClick?.(e);
+    <DBaseSupport dCompose={{ active: checked || isFocusVisible, disabled: disabled }}>
+      <label
+        {...restProps}
+        className={getClassName(className, `${dPrefix}radio`, {
+          [`${dPrefix}radio--button`]: __type,
+          [`${dPrefix}radio--button-${__type}`]: __type,
+          [`${dPrefix}radio--${gSize}`]: gSize,
+          'is-checked': checked,
+          'is-focus-visible': isFocusVisible,
+          'is-disabled': disabled,
+        })}
+        onClick={(e) => {
+          onClick?.(e);
 
-        if (__type === 'fill' || __type === 'outline') {
-          wave(`var(--${dPrefix}color-primary)`);
-        }
-      }}
-    >
-      <div className={`${dPrefix}radio__input-wrapper`}>
-        <input
-          {...dInputProps}
-          {...dFormControl?.inputAttrs}
-          id={dInputProps?.id ?? dFormControl?.controlId}
-          ref={dInputRef}
-          className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
-          type="radio"
-          checked={checked}
-          disabled={disabled}
-          aria-checked={checked}
-          aria-describedby={mergeAriaDescribedby(dInputProps?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
-          onChange={(e) => {
-            dInputProps?.onChange?.(e);
+          if (__type === 'fill' || __type === 'outline') {
+            wave(`var(--${dPrefix}color-primary)`);
+          }
+        }}
+      >
+        <div className={`${dPrefix}radio__input-wrapper`}>
+          <DBaseInput
+            {...dInputProps}
+            ref={dInputRef}
+            className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
+            type="radio"
+            checked={checked}
+            disabled={disabled}
+            aria-checked={checked}
+            dFormControl={dFormControl}
+            onChange={(e) => {
+              dInputProps?.onChange?.(e);
 
-            changeChecked(true);
-          }}
-          onFocus={(e) => {
-            dInputProps?.onFocus?.(e);
-            fvOnFocus();
-          }}
-          onBlur={(e) => {
-            dInputProps?.onBlur?.(e);
-            fvOnBlur();
-          }}
-          onKeyDown={(e) => {
-            dInputProps?.onKeyDown?.(e);
-            fvOnKeyDown(e);
-          }}
-        />
-      </div>
-      {children && <div className={`${dPrefix}radio__label`}>{children}</div>}
-      {waveNode}
-    </label>
+              changeChecked(true);
+            }}
+            onFocus={(e) => {
+              dInputProps?.onFocus?.(e);
+              fvOnFocus();
+            }}
+            onBlur={(e) => {
+              dInputProps?.onBlur?.(e);
+              fvOnBlur();
+            }}
+            onKeyDown={(e) => {
+              dInputProps?.onKeyDown?.(e);
+              fvOnKeyDown(e);
+            }}
+          />
+        </div>
+        {children && <div className={`${dPrefix}radio__label`}>{children}</div>}
+        {waveNode}
+      </label>
+    </DBaseSupport>
   );
 }

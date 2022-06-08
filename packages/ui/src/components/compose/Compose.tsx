@@ -1,10 +1,15 @@
-import type { DGeneralState, DSize } from '../../types';
+import type { DSize } from '../../utils/global';
 
 import React, { useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralState, useForkRef } from '../../hooks';
-import { DGeneralStateContext } from '../../hooks/state/useGeneralState';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useForkRef } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
+
+export interface DComposeContextData {
+  gSize?: DSize;
+  gDisabled?: boolean;
+}
+export const DComposeContext = React.createContext<DComposeContextData | null>(null);
 
 export type DComposeRef = HTMLDivElement;
 
@@ -29,7 +34,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -41,7 +46,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled;
 
-  const generalStateContextValue = useMemo<DGeneralState>(
+  const generalStateContextValue = useMemo<DComposeContextData>(
     () => ({
       gSize: size,
       gDisabled: disabled,
@@ -50,7 +55,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
   );
 
   return (
-    <DGeneralStateContext.Provider value={generalStateContextValue}>
+    <DComposeContext.Provider value={generalStateContextValue}>
       <div
         {...restProps}
         ref={combineElRef}
@@ -61,7 +66,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
       >
         {children}
       </div>
-    </DGeneralStateContext.Provider>
+    </DComposeContext.Provider>
   );
 }
 

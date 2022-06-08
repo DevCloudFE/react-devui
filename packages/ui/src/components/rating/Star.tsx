@@ -30,6 +30,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
   //#endregion
 
   const uniqueId = useId();
+  const inputId = `${dPrefix}rating-star-input-${uniqueId}`;
   const halfInputId = `${dPrefix}rating-star-half-input-${uniqueId}`;
 
   const checked = dValue === dChecked;
@@ -60,7 +61,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
             >
               {({ sOnClick, sOnFocus, sOnBlur, sOnMouseEnter, sOnMouseLeave }) => (
                 <input
-                  {...(halfChecked ? dFormControl?.inputAttrs : undefined)}
+                  {...dFormControl?.inputAttrs}
                   id={halfInputId}
                   className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
                   type="radio"
@@ -68,6 +69,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
                   checked={halfChecked}
                   disabled={dDisabled}
                   aria-checked={halfChecked}
+                  data-form-support-input={halfChecked}
                   onChange={() => {
                     onCheck(halfValue);
                   }}
@@ -121,13 +123,15 @@ export function DStar(props: DStarProps): JSX.Element | null {
           >
             {({ sOnClick, sOnFocus, sOnBlur, sOnMouseEnter, sOnMouseLeave }) => (
               <input
-                {...(checked ? { ...dFormControl?.inputAttrs, id: dFormControl?.controlId } : undefined)}
+                {...dFormControl?.inputAttrs}
+                id={inputId}
                 className={`${dPrefix}rating-star__input`}
                 type="radio"
                 name={dName}
                 checked={checked}
                 disabled={dDisabled}
                 aria-checked={checked}
+                data-form-support-input={checked}
                 onChange={() => {
                   onCheck(dValue);
                 }}

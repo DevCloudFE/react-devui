@@ -1,14 +1,14 @@
 /* stylelint-disable no-descending-specificity */
 @include b(compose) {
-  $compose-support: '[data-compose-support]';
-  $compose-support--active: '[data-compose-support-active]';
-  $compose-support--disabled: '[data-compose-support-disabled]';
+  $compose-support: "[data-compose-support='true']";
+  $compose-support--active: "[data-compose-support-active='true']";
+  $compose-support--disabled: "[data-compose-support-disabled='true']";
 
   display: inline-flex;
   align-items: stretch;
   vertical-align: top;
 
-  & > #{$compose-support} {
+  #{$compose-support} {
     &#{$compose-support--disabled} {
       z-index: 0;
     }
@@ -20,11 +20,11 @@
         z-index: 5;
       }
 
-      @include form-warning {
+      &[data-form-support-warning='true'] {
         z-index: 6;
       }
 
-      @include form-error {
+      &[data-form-support-error='true'] {
         z-index: 7;
       }
 
@@ -36,7 +36,7 @@
   }
 
   &:not(#{&}--vertical) {
-    & > #{$compose-support} {
+    #{$compose-support} {
       & + #{$compose-support} {
         margin-left: -1px !important;
       }
@@ -60,7 +60,7 @@
   @include m(vertical) {
     flex-direction: column;
 
-    & > #{$compose-support} {
+    #{$compose-support} {
       & + #{$compose-support} {
         margin-top: -1px !important;
       }

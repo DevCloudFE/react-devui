@@ -1,12 +1,12 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DSize, DId } from '../../types';
+import type { DId, DSize } from '../../utils/global';
 import type { DFormControl } from '../form';
 import type { DRadioPropsWithPrivate } from './Radio';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useEffect, useId, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DCompose } from '../compose';
 import { DRadio } from './Radio';
@@ -48,10 +48,11 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   const uniqueId = useId();
+  const getId = (value: V) => `${dPrefix}radio-group-${value}-${uniqueId}`;
 
   const [value, changeValue] = useTwoWayBinding<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, {
     formControl: dFormControl?.control,
@@ -66,12 +67,11 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   });
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
     <DCompose
       {...restProps}
-      {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}radio-group`, {
         [`${dPrefix}radio-group--default`]: isUndefined(dType),
         'is-change': isChange,
@@ -89,7 +89,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
             dDisabled: option.disabled,
             dModel: [option.value === value],
             dInputProps: {
-              ...(option.value === value ? { ...dFormControl?.inputAttrs, id: dFormControl?.controlId } : undefined),
+              ...(option.value === value ? { id: getId(option.value), 'data-form-support-input': true } : undefined),
               name: dName ?? uniqueId,
               value: option.value,
             },

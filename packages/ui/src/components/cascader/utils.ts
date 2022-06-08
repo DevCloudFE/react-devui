@@ -1,4 +1,4 @@
-import type { DId } from '../../types';
+import type { DId } from '../../utils/global';
 import type { AbstractTreeNode } from '../tree';
 
 export const SEPARATOR = ' / ';

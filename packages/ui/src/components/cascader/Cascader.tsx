@@ -1,8 +1,7 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DId, DNestedChildren } from '../../utils/global';
 import type { DExtendsSelectboxProps } from '../_selectbox';
 import type { DDropdownOption } from '../dropdown';
-import type { DFormControl } from '../form';
 import type { DSelectOption } from '../select';
 import type { AbstractTreeNode } from '../tree';
 
@@ -10,7 +9,7 @@ import { isArray, isNull } from 'lodash';
 import React, { useCallback, useMemo, useState, useId, useRef } from 'react';
 import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useEventCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext, useEventCallback } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -34,7 +33,6 @@ export interface DCascaderOption<V extends DId> {
 export interface DCascaderBaseProps<V extends DId, T extends DCascaderOption<V>>
   extends React.HTMLAttributes<HTMLDivElement>,
     DExtendsSelectboxProps {
-  dFormControl?: DFormControl;
   dOptions: DNestedChildren<T>[];
   dVisible?: [boolean, DUpdater<boolean>?];
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
@@ -75,7 +73,6 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
 export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderProps<V, T>): JSX.Element | null;
 export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderProps<V, T>): JSX.Element | null {
   const {
-    dFormControl,
     dOptions,
     dModel,
     dVisible,
@@ -84,17 +81,19 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
     dClearable = false,
     dOnlyLeafSelectable = true,
     dCustomSearch,
-    dLoading = false,
     dMultiple = false,
-    dDisabled = false,
-    dSize,
     dAutoMaxWidth = true,
     dPopupClassName,
-    onVisibleChange,
     onFocusChange,
     onModelChange,
-    onClear,
     onSearch,
+
+    dFormControl,
+    dLoading,
+    dDisabled,
+    dSize,
+    onVisibleChange,
+    onClear,
 
     className,
     ...restProps
@@ -102,7 +101,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -111,7 +110,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
 
   const uniqueId = useId();
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
-  const getOptionId = (val: V) => `${dPrefix}cascader-option-${uniqueId}-${val}`;
+  const getOptionId = (val: V) => `${dPrefix}cascader-option-${val}-${uniqueId}`;
 
   const [searchValue, setSearchValue] = useState('');
 
@@ -159,7 +158,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
   );
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
@@ -360,19 +359,17 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
   return (
     <DSelectbox
       {...restProps}
-      {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}cascader`)}
-      dDisabled={disabled}
+      dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}
+      dContentTitle={selectedLabel}
+      dDisabled={disabled}
       dSuffix={suffixNode}
       dShowClear={dClearable && hasSelected}
-      dContentTitle={selectedLabel}
       dLoading={dLoading}
       dSize={size}
       dInputProps={{
-        ...dFormControl?.inputAttrs,
-        id: dFormControl?.controlId,
         'aria-controls': listId,
         onChange: (e) => {
           const value = e.currentTarget.value;

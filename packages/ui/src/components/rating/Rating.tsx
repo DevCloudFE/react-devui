@@ -4,7 +4,7 @@ import type { DFormControl } from '../form';
 import { isFunction } from 'lodash';
 import { useId, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
 import { StarFilled } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DStar } from './Star';
@@ -43,7 +43,7 @@ export function DRating(props: DRatingProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
 
   const uniqueId = useId();
@@ -54,12 +54,11 @@ export function DRating(props: DRatingProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
     <div
       {...restProps}
-      {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}rating`, {
         [`${dPrefix}rating--read-only`]: dReadOnly,
         'is-disabled': disabled,

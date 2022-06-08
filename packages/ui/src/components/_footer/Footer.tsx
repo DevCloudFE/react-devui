@@ -11,8 +11,6 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dButtons?: React.ReactNode[];
   dCancelProps?: DButtonProps;
   dOkProps?: DButtonProps;
-  onCancelClick?: () => void;
-  onOkClick?: () => void;
 }
 
 export function DFooter(props: DFooterProps): JSX.Element | null {
@@ -21,8 +19,6 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
     dButtons = ['cancel', 'ok'],
     dCancelProps,
     dOkProps,
-    onCancelClick,
-    onOkClick,
 
     className,
     ...restProps
@@ -38,24 +34,11 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
       {dButtons.map((button, index) =>
         button === 'cancel' ? (
-          <DButton
-            key="cancel"
-            {...dCancelProps}
-            dType="secondary"
-            onClick={() => {
-              onCancelClick?.();
-            }}
-          >
+          <DButton key="cancel" {...dCancelProps} dType="secondary">
             {t('Cancel')}
           </DButton>
         ) : button === 'ok' ? (
-          <DButton
-            key="ok"
-            {...dOkProps}
-            onClick={() => {
-              onOkClick?.();
-            }}
-          >
+          <DButton key="ok" {...dOkProps}>
             {t('OK')}
           </DButton>
         ) : (

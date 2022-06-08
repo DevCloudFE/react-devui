@@ -1,7 +1,7 @@
 import { isNull, isString } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { SSR_ENV } from '../../utils';
+import { SSR_ENV } from '../../utils/global';
 
 export type DElementSelector = HTMLElement | null | string | (() => HTMLElement | null);
 

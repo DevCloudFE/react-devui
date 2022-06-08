@@ -1,5 +1,5 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useId, useRef, useState } from 'react';
@@ -66,7 +66,7 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
   //#endregion
 
   const uniqueId = useId();
-  const getOptionId = (id: ID) => `${dPrefix}menu-option-${uniqueId}-${id}`;
+  const getOptionId = (id: ID) => `${dPrefix}menu-option-${id}-${uniqueId}`;
 
   const [activeId, changeActiveId] = useTwoWayBinding<ID | null, ID>(null, dActive, (id) => {
     if (onActiveChange) {

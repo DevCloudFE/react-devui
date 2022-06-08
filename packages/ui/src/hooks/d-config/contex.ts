@@ -34,8 +34,9 @@ import type {
   DToastProps,
   DTooltipProps,
 } from '../../components';
+import type { DBreakpoints } from '../../components/grid';
 import type { DIconBaseProps } from '../../icons';
-import type { DBreakpoints, DLang, DTheme } from '../../types';
+import type { DLang, DTheme } from '../../utils/global';
 
 import React from 'react';
 

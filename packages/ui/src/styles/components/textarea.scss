@@ -21,7 +21,6 @@
   caret-color: var(--#{$variable-prefix}color-primary);
 
   @include utils-disabled(true, ':disabled');
-  @include form-validate;
 
   &:hover {
     border-color: var(--#{$variable-prefix}color-primary-lighter);

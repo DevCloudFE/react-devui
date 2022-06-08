@@ -1,6 +1,6 @@
-import type { DSize } from '../../types';
+import type { DSize } from '../../utils/global';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralState, useThemeConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useThemeConfig } from '../../hooks';
 import { CloseOutlined } from '../../icons';
 import { convertHex, registerComponentMate, getClassName, pSBC } from '../../utils';
 
@@ -32,7 +32,7 @@ export function DTag(props: DTagProps): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const theme = useThemeConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
 
   const size = dSize ?? gDisabled;

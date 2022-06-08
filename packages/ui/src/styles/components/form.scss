@@ -55,6 +55,22 @@
     --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
   }
+
+  [data-form-support-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+
+    [data-form-support-input] {
+      caret-color: var(--#{$variable-prefix}color-warning) !important;
+    }
+  }
+
+  [data-form-support-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+
+    [data-form-support-input] {
+      caret-color: var(--#{$variable-prefix}color-danger) !important;
+    }
+  }
 }
 
 @include b(form-item) {

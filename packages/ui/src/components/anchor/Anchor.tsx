@@ -1,5 +1,5 @@
 import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DNestedChildren } from '../../types';
+import type { DNestedChildren } from '../../utils/global';
 
 import { isArray, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';

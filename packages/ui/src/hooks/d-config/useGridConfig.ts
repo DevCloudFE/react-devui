@@ -1,4 +1,4 @@
-import type { DBreakpoints } from '../../types';
+import type { DBreakpoints } from '../../components/grid';
 
 import { useContext } from 'react';
 

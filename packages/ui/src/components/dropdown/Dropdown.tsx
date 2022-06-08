@@ -1,5 +1,5 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useId, useRef } from 'react';
@@ -87,7 +87,7 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
   const buttonId = children.props.id ?? `${dPrefix}dropdown-button-${uniqueId}`;
-  const getOptionId = (id: ID) => `${dPrefix}dropdown-option-${uniqueId}-${id}`;
+  const getOptionId = (id: ID) => `${dPrefix}dropdown-option-${id}-${uniqueId}`;
 
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);

@@ -1,14 +1,13 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DNestedChildren, DId } from '../../utils/global';
 import type { DExtendsSelectboxProps } from '../_selectbox';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { DDropdownOption } from '../dropdown';
-import type { DFormControl } from '../form';
 
 import { isArray, isNull, isNumber, isUndefined } from 'lodash';
 import { useState, useId, useCallback, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useGeneralState, useEventCallback } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useGeneralContext, useEventCallback } from '../../hooks';
 import { LoadingOutlined, PlusOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -28,7 +27,6 @@ export interface DSelectOption<V extends DId> {
 export interface DSelectBaseProps<V extends DId, T extends DSelectOption<V>>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
     DExtendsSelectboxProps {
-  dFormControl?: DFormControl;
   dOptions: DNestedChildren<T>[];
   dVisible?: [boolean, DUpdater<boolean>?];
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
@@ -73,7 +71,6 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null;
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null {
   const {
-    dFormControl,
     dOptions,
     dModel,
     dVisible,
@@ -82,19 +79,21 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     dCreateOption,
     dClearable = false,
     dCustomSearch,
-    dLoading = false,
     dMultiple = false,
-    dDisabled = false,
     dMaxSelectNum,
-    dSize,
     dPopupClassName,
-    onVisibleChange,
     onModelChange,
     onScrollBottom,
     onCreateOption,
-    onClear,
     onSearch,
     onExceed,
+
+    dFormControl,
+    dLoading,
+    dDisabled,
+    dSize,
+    onVisibleChange,
+    onClear,
 
     className,
     ...restProps
@@ -102,7 +101,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -113,8 +112,8 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 
   const uniqueId = useId();
   const listId = `${dPrefix}select-list-${uniqueId}`;
-  const getOptionId = (val: V) => `${dPrefix}select-option-${uniqueId}-${val}`;
-  const getGroupId = (val: V) => `${dPrefix}select-group-${uniqueId}-${val}`;
+  const getOptionId = (val: V) => `${dPrefix}select-option-${val}-${uniqueId}`;
+  const getGroupId = (val: V) => `${dPrefix}select-group-${val}-${uniqueId}`;
 
   const [searchValue, setSearchValue] = useState('');
 
@@ -167,7 +166,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
   );
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
@@ -390,19 +389,17 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
   return (
     <DSelectbox
       {...restProps}
-      {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}select`)}
-      dDisabled={disabled}
+      dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}
+      dContentTitle={selectedLabel}
+      dDisabled={disabled}
       dSuffix={suffixNode}
       dShowClear={hasSelected && dClearable}
-      dContentTitle={selectedLabel}
       dLoading={dLoading}
       dSize={size}
       dInputProps={{
-        ...dFormControl?.inputAttrs,
-        id: dFormControl?.controlId,
         'aria-controls': listId,
         onChange: (e) => {
           const value = e.currentTarget.value;
@@ -510,8 +507,8 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
                     >
                       <li
                         key={optionValue}
-                        className={`${dPrefix}select__option-group-label`}
                         id={getGroupId(optionValue)}
+                        className={`${dPrefix}select__option-group-label`}
                         role="presentation"
                       >
                         <div className={`${dPrefix}select__option-content`}>{optionLabel}</div>

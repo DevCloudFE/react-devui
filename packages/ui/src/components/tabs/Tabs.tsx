@@ -1,5 +1,5 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DSize } from '../../types';
+import type { DId, DSize } from '../../utils/global';
 import type { DDropdownOption } from '../dropdown';
 
 import { isNull, nth } from 'lodash';
@@ -69,8 +69,8 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
   const [t] = useTranslation('Common');
 
   const uniqueId = useId();
-  const getTabId = (id: ID) => `${dPrefix}tabs-tab-${uniqueId}-${id}`;
-  const getPanelId = (id: ID) => `${dPrefix}tabs-panel-${uniqueId}-${id}`;
+  const getTabId = (id: ID) => `${dPrefix}tabs-tab-${id}-${uniqueId}`;
+  const getPanelId = (id: ID) => `${dPrefix}tabs-panel-${id}-${uniqueId}`;
 
   const asyncCapture = useAsync();
   const [listOverflow, setListOverflow] = useState(false);

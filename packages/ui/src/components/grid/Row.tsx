@@ -1,11 +1,11 @@
-import type { DBreakpoints } from '../../types';
-
 import { isArray, isNumber } from 'lodash';
 import React, { useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { useMediaMatch } from './hooks';
+
+export type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 export interface DRowContextData {
   gMediaMatch: DBreakpoints[];

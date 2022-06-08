@@ -4,8 +4,10 @@ import type { DFormControl } from '../form';
 import { isFunction, isNumber, isUndefined } from 'lodash';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState, useForkRef } from '../../hooks';
-import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext, useForkRef } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
+import { DBaseSupport } from '../_base-support';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
@@ -28,7 +30,6 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
     dShowCount = false,
     onModelChange,
 
-    id,
     className,
     style,
     maxLength,
@@ -39,7 +40,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize } = useGeneralState();
+  const { gSize } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -54,7 +55,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
     formControl: dFormControl?.control,
   });
 
-  const disabled = _disabled || dFormControl?.disabled;
+  const disabled = _disabled || dFormControl?.control.disabled;
 
   const resizable = dResizable && isUndefined(dRows);
 
@@ -99,32 +100,31 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
 
   return (
     <>
-      <textarea
-        {...restProps}
-        {...dFormControl?.dataAttrs}
-        {...dFormControl?.inputAttrs}
-        id={id ?? dFormControl?.controlId}
-        ref={combineTextareaRef}
-        className={getClassName(className, `${dPrefix}textarea`, {
-          [`${dPrefix}textarea--${gSize}`]: gSize,
-        })}
-        style={{
-          ...style,
-          ...heightStyle,
-          resize: resizable ? undefined : 'none',
-        }}
-        maxLength={maxLength}
-        value={value}
-        disabled={disabled}
-        aria-disabled={disabled}
-        aria-describedby={mergeAriaDescribedby(restProps['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
-        onChange={(e) => {
-          onChange?.(e);
+      <DBaseSupport dFormControl={dFormControl}>
+        <DBaseInput
+          {...restProps}
+          ref={combineTextareaRef}
+          className={getClassName(className, `${dPrefix}textarea`, {
+            [`${dPrefix}textarea--${gSize}`]: gSize,
+          })}
+          style={{
+            ...style,
+            ...heightStyle,
+            resize: resizable ? undefined : 'none',
+          }}
+          maxLength={maxLength}
+          value={value}
+          disabled={disabled}
+          dTag="textarea"
+          dFormControl={dFormControl}
+          onChange={(e) => {
+            onChange?.(e);
 
-          changeValue(e.currentTarget.value);
-          getRowNum();
-        }}
-      />
+            changeValue(e.currentTarget.value);
+            getRowNum();
+          }}
+        />
+      </DBaseSupport>
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
           {isFunction(dShowCount) ? dShowCount(value.length) : isUndefined(maxLength) ? value.length : `${value.length} / ${maxLength}`}

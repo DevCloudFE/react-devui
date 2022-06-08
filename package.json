@@ -6,7 +6,7 @@
   "homepage": "https://github.com/xiejay97/react-devui",
   "private": true,
   "engines": {
-    "node": "12.x || 14.x || 16.x",
+    "node": "14.x || 16.x",
     "yarn": ">=1.22.4 <2",
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
