@@ -1,6 +1,6 @@
-import { usePrefixConfig, useComponentConfig, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
-import { useCompose } from './hooks';
+import { DBaseSupport } from '../_base-support';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dGray?: boolean;
@@ -12,22 +12,21 @@ export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
-  const composeDataAttrs = useCompose(false, true);
-
   return (
-    <div
-      {...restProps}
-      {...composeDataAttrs}
-      className={getClassName(className, `${dPrefix}compose-item`, {
-        [`${dPrefix}compose-item--${gSize}`]: gSize,
-        [`${dPrefix}compose-item--gray`]: dGray,
-        'is-disabled': gDisabled,
-      })}
-    >
-      {children}
-    </div>
+    <DBaseSupport dCompose={{ disabled: true }}>
+      <div
+        {...restProps}
+        className={getClassName(className, `${dPrefix}compose-item`, {
+          [`${dPrefix}compose-item--${gSize}`]: gSize,
+          [`${dPrefix}compose-item--gray`]: dGray,
+          'is-disabled': gDisabled,
+        })}
+      >
+        {children}
+      </div>
+    </DBaseSupport>
   );
 }

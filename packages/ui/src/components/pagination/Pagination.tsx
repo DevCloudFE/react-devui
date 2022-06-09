@@ -1,9 +1,9 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 
 import { isNull } from 'lodash';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation } from '../../hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DInput } from '../input';
@@ -53,28 +53,21 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
   const navRef = useRef<HTMLElement>(null);
   //#endregion
 
-  const dataRef = useRef<{
-    clearTid?: () => void;
-  }>({});
-
-  const asyncCapture = useAsync();
   const [t] = useTranslation('DPagination');
 
   const [active, _changeActive] = useTwoWayBinding<number>(1, dActive, onActiveChange);
   const changeActive = (active: number, max = lastPage) => {
     _changeActive(Math.max(Math.min(active, max), 1));
-
-    if (navRef.current) {
-      navRef.current.classList.toggle('is-change', true);
-
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = asyncCapture.afterNextAnimationFrame(() => {
-        if (navRef.current) {
-          navRef.current.classList.toggle('is-change', false);
-        }
-      });
-    }
+    setIsChange(true);
   };
+
+  const [isChange, setIsChange] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (isChange) {
+      setIsChange(false);
+    }
+  });
 
   const [pageSize, _changePageSize] = useTwoWayBinding<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
   const changePageSize = (size: number) => {
@@ -216,7 +209,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
         return dCustomRender.jump(jumpInput);
       } else {
         return (
-          <div>
+          <div className={`${dPrefix}pagination__jump-wrapper`}>
             {t('Go')} {jumpInput} {t('Page')}
           </div>
         );
@@ -231,6 +224,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
       ref={navRef}
       className={getClassName(className, `${dPrefix}pagination`, {
         [`${dPrefix}pagination--mini`]: dMini,
+        'is-change': isChange,
       })}
       role="navigation"
       aria-label="Pagination Navigation"

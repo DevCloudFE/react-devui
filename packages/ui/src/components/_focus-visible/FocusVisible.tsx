@@ -1,14 +1,16 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { useAsync } from '../../hooks';
 
 const FOCUS_KEY = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', 'Space'];
 
-export function useFocusVisible(onFocusVisible?: (visible: boolean) => void): {
-  fvOnFocus: () => void;
-  fvOnBlur: () => void;
-  fvOnKeyDown: React.KeyboardEventHandler;
-} {
+export interface DFocusVisibleProps {
+  children: React.ReactElement;
+  onFocusVisibleChange?: (visible: boolean) => void;
+}
+export function DFocusVisible(props: DFocusVisibleProps): JSX.Element | null {
+  const { children, onFocusVisibleChange } = props;
+
   const dataRef = useRef({
     focusByKeydown: false,
     focusVisible: false,
@@ -33,21 +35,28 @@ export function useFocusVisible(onFocusVisible?: (visible: boolean) => void): {
     };
   }, [asyncCapture]);
 
-  return {
-    fvOnFocus: () => {
+  return React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
+    ...children.props,
+    onFocus: (e) => {
+      children.props.onFocus?.(e);
+
       if (dataRef.current.focusByKeydown) {
-        onFocusVisible?.(true);
+        onFocusVisibleChange?.(true);
         dataRef.current.focusVisible = true;
       }
     },
-    fvOnBlur: () => {
-      onFocusVisible?.(false);
+    onBlur: (e) => {
+      children.props.onBlur?.(e);
+
+      onFocusVisibleChange?.(false);
       dataRef.current.focusVisible = false;
     },
-    fvOnKeyDown: (e) => {
+    onKeyDown: (e) => {
+      children.props.onKeyDown?.(e);
+
       if (!dataRef.current.focusVisible && FOCUS_KEY.includes(e.code)) {
-        onFocusVisible?.(true);
+        onFocusVisibleChange?.(true);
       }
     },
-  };
+  });
 }

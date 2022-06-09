@@ -1,5 +1,5 @@
 import type { DMenuOption } from '@react-devui/ui/components/menu';
-import type { DNestedChildren } from '@react-devui/ui/types';
+import type { DNestedChildren } from '@react-devui/ui/utils/global';
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

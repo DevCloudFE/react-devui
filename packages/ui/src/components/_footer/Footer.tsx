@@ -1,6 +1,6 @@
 import type { DButtonProps } from '../button';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -11,8 +11,9 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dButtons?: React.ReactNode[];
   dCancelProps?: DButtonProps;
   dOkProps?: DButtonProps;
-  onCancelClick?: () => void;
-  onOkClick?: () => void;
+  onCancelClick?: () => void | boolean | Promise<void | boolean>;
+  onOkClick?: () => void | boolean | Promise<void | boolean>;
+  onClose?: () => void;
 }
 
 export function DFooter(props: DFooterProps): JSX.Element | null {
@@ -23,6 +24,7 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
     dOkProps,
     onCancelClick,
     onOkClick,
+    onClose,
 
     className,
     ...restProps
@@ -34,28 +36,56 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
 
   const [t] = useTranslation('DFooter');
 
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [okLoading, setOkLoading] = useState(false);
+
+  const cancelProps: DFooterProps['dCancelProps'] = {
+    ...dCancelProps,
+    dLoading: dCancelProps?.dLoading || cancelLoading,
+    onClick: () => {
+      const shouldClose = onCancelClick?.();
+      if (shouldClose instanceof Promise) {
+        setCancelLoading(true);
+        shouldClose.then((val) => {
+          setCancelLoading(false);
+          if (val !== false) {
+            onClose?.();
+          }
+        });
+      } else if (shouldClose !== false) {
+        onClose?.();
+      }
+    },
+  };
+
+  const okProps: DFooterProps['dOkProps'] = {
+    ...dOkProps,
+    dLoading: dOkProps?.dLoading || okLoading,
+    onClick: () => {
+      const shouldClose = onOkClick?.();
+      if (shouldClose instanceof Promise) {
+        setOkLoading(true);
+        shouldClose.then((val) => {
+          setOkLoading(false);
+          if (val !== false) {
+            onClose?.();
+          }
+        });
+      } else if (shouldClose !== false) {
+        onClose?.();
+      }
+    },
+  };
+
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
       {dButtons.map((button, index) =>
         button === 'cancel' ? (
-          <DButton
-            key="cancel"
-            {...dCancelProps}
-            dType="secondary"
-            onClick={() => {
-              onCancelClick?.();
-            }}
-          >
+          <DButton key="cancel" {...cancelProps} dType="secondary">
             {t('Cancel')}
           </DButton>
         ) : button === 'ok' ? (
-          <DButton
-            key="ok"
-            {...dOkProps}
-            onClick={() => {
-              onOkClick?.();
-            }}
-          >
+          <DButton key="ok" {...okProps}>
             {t('OK')}
           </DButton>
         ) : (

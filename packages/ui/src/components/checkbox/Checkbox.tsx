@@ -1,8 +1,9 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DFormControl } from '../form';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
-import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
@@ -32,14 +33,14 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
 
   const [checked, changeChecked] = useTwoWayBinding<boolean | undefined, boolean>(false, dIndeterminate ? [false] : dModel, onModelChange, {
     formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
     <label
@@ -51,16 +52,14 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
       })}
     >
       <div className={`${dPrefix}checkbox__state-container`}>
-        <input
+        <DBaseInput
           {...dInputProps}
-          {...dFormControl?.inputAttrs}
-          id={dInputProps?.id ?? dFormControl?.controlId}
           ref={dInputRef}
           className={getClassName(dInputProps?.className, `${dPrefix}checkbox__input`)}
           type="checkbox"
           disabled={disabled}
           aria-checked={dIndeterminate ? 'mixed' : checked}
-          aria-describedby={mergeAriaDescribedby(dInputProps?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
+          dFormControl={dFormControl}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 

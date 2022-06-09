@@ -8,7 +8,7 @@
         "react-hooks/exhaustive-deps": [
           "warn",
           {
-            "additionalHooks": "(useIsomorphicLayoutEffect|useMemoWithUpdate)"
+            "additionalHooks": "(useIsomorphicLayoutEffect)"
           }
         ]
       }

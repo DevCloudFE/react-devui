@@ -1,11 +1,12 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useId, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useFocusVisible } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding } from '../../hooks';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
+import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { DMenuGroup } from './MenuGroup';
@@ -66,7 +67,7 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
   //#endregion
 
   const uniqueId = useId();
-  const getOptionId = (id: ID) => `${dPrefix}menu-option-${uniqueId}-${id}`;
+  const getOptionId = (id: ID) => `${dPrefix}menu-option-${id}-${uniqueId}`;
 
   const [activeId, changeActiveId] = useTwoWayBinding<ID | null, ID>(null, dActive, (id) => {
     if (onActiveChange) {
@@ -124,7 +125,6 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
   const [focusIds, setFocusIds] = useState<ID[]>([]);
   const [isFocus, setIsFocus] = useState(false);
   const [isFocusVisible, setIsFocusVisible] = useState(false);
-  const { fvOnFocus, fvOnBlur, fvOnKeyDown } = useFocusVisible(setIsFocusVisible);
   const focusId = (() => {
     if (isFocus) {
       if (dMode === 'vertical') {
@@ -447,52 +447,51 @@ export function DMenu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuPro
       }}
     >
       {(collapseStyle) => (
-        <nav
-          {...restProps}
-          ref={navRef}
-          className={getClassName(className, `${dPrefix}menu`, {
-            [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-          })}
-          style={{
-            ...style,
-            ...collapseStyle,
-          }}
-          tabIndex={0}
-          role="menubar"
-          aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-          aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
-          onMouseDown={(e) => {
-            onMouseDown?.(e);
+        <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
+          <nav
+            {...restProps}
+            ref={navRef}
+            className={getClassName(className, `${dPrefix}menu`, {
+              [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+            })}
+            style={{
+              ...style,
+              ...collapseStyle,
+            }}
+            tabIndex={0}
+            role="menubar"
+            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+            aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
+            onMouseDown={(e) => {
+              onMouseDown?.(e);
 
-            preventBlur(e);
-          }}
-          onMouseUp={(e) => {
-            onMouseUp?.(e);
+              preventBlur(e);
+            }}
+            onMouseUp={(e) => {
+              onMouseUp?.(e);
 
-            preventBlur(e);
-          }}
-          onFocus={(e) => {
-            onFocus?.(e);
-            fvOnFocus();
+              preventBlur(e);
+            }}
+            onFocus={(e) => {
+              onFocus?.(e);
 
-            setIsFocus(true);
-            initFocus();
-          }}
-          onBlur={(e) => {
-            onBlur?.(e);
-            fvOnBlur();
+              setIsFocus(true);
+              initFocus();
+            }}
+            onBlur={(e) => {
+              onBlur?.(e);
 
-            setIsFocus(false);
-          }}
-          onKeyDown={(e) => {
-            onKeyDown?.(e);
-            fvOnKeyDown(e);
+              setIsFocus(false);
+            }}
+            onKeyDown={(e) => {
+              onKeyDown?.(e);
 
-            handleKeyDown?.(e);
-          }}
-        >
-          {optionNodes}
-        </nav>
+              handleKeyDown?.(e);
+            }}
+          >
+            {optionNodes}
+          </nav>
+        </DFocusVisible>
       )}
     </DCollapseTransition>
   );

@@ -5,7 +5,6 @@ import { useId, useState } from 'react';
 
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DTrigger } from '../_trigger';
 import { DTooltip } from '../tooltip';
 
 export interface DStarProps {
@@ -30,6 +29,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
   //#endregion
 
   const uniqueId = useId();
+  const inputId = `${dPrefix}rating-star-input-${uniqueId}`;
   const halfInputId = `${dPrefix}rating-star-half-input-${uniqueId}`;
 
   const checked = dValue === dChecked;
@@ -49,52 +49,33 @@ export function DStar(props: DStarProps): JSX.Element | null {
       >
         {dHalf && (
           <>
-            <DTrigger
-              dDisabled={isUndefined(dTooltip)}
-              dTrigger="hover"
-              onTrigger={(visible) => {
-                if (visible) {
+            <input
+              {...dFormControl?.inputAttrs}
+              id={halfInputId}
+              className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
+              type="radio"
+              name={dName}
+              checked={halfChecked}
+              disabled={dDisabled}
+              aria-checked={halfChecked}
+              data-form-support-input={halfChecked}
+              onChange={() => {
+                onCheck(halfValue);
+              }}
+              onFocus={() => {
+                setIsFocus(true);
+              }}
+              onBlur={() => {
+                setIsFocus(false);
+              }}
+              onMouseEnter={() => {
+                if (!isUndefined(dTooltip)) {
                   setTooltipValue(halfValue);
                 }
+
+                onHoverChange(halfValue);
               }}
-            >
-              {({ sOnClick, sOnFocus, sOnBlur, sOnMouseEnter, sOnMouseLeave }) => (
-                <input
-                  {...(halfChecked ? dFormControl?.inputAttrs : undefined)}
-                  id={halfInputId}
-                  className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
-                  type="radio"
-                  name={dName}
-                  checked={halfChecked}
-                  disabled={dDisabled}
-                  aria-checked={halfChecked}
-                  onChange={() => {
-                    onCheck(halfValue);
-                  }}
-                  onClick={() => {
-                    sOnClick?.();
-                  }}
-                  onFocus={() => {
-                    sOnFocus?.();
-
-                    setIsFocus(true);
-                  }}
-                  onBlur={() => {
-                    sOnBlur?.();
-
-                    setIsFocus(false);
-                  }}
-                  onMouseEnter={() => {
-                    sOnMouseEnter?.();
-
-                    onHoverChange(halfValue);
-                  }}
-                  onMouseLeave={() => {
-                    sOnMouseLeave?.();
-                  }}
-                />
-              )}
-            </DTrigger>
+            />
             <label
               className={getClassName(`${dPrefix}rating-star__icon`, `${dPrefix}rating-star__icon--half`, {
                 'is-checked': halfValue <= (dHoverValue ?? dChecked ?? 0),
@@ -110,51 +91,33 @@ export function DStar(props: DStarProps): JSX.Element | null {
             'is-checked': dValue <= (dHoverValue ?? dChecked ?? 0),
           })}
         >
-          <DTrigger
-            dDisabled={isUndefined(dTooltip)}
-            dTrigger="hover"
-            onTrigger={(visible) => {
-              if (visible) {
+          <input
+            {...dFormControl?.inputAttrs}
+            id={inputId}
+            className={`${dPrefix}rating-star__input`}
+            type="radio"
+            name={dName}
+            checked={checked}
+            disabled={dDisabled}
+            aria-checked={checked}
+            data-form-support-input={checked}
+            onChange={() => {
+              onCheck(dValue);
+            }}
+            onFocus={() => {
+              setIsFocus(true);
+            }}
+            onBlur={() => {
+              setIsFocus(false);
+            }}
+            onMouseEnter={() => {
+              if (!isUndefined(dTooltip)) {
                 setTooltipValue(dValue);
               }
+
+              onHoverChange(dValue);
             }}
-          >
-            {({ sOnClick, sOnFocus, sOnBlur, sOnMouseEnter, sOnMouseLeave }) => (
-              <input
-                {...(checked ? { ...dFormControl?.inputAttrs, id: dFormControl?.controlId } : undefined)}
-                className={`${dPrefix}rating-star__input`}
-                type="radio"
-                name={dName}
-                checked={checked}
-                disabled={dDisabled}
-                aria-checked={checked}
-                onChange={() => {
-                  onCheck(dValue);
-                }}
-                onClick={() => {
-                  sOnClick?.();
-                }}
-                onFocus={() => {
-                  sOnFocus?.();
-
-                  setIsFocus(true);
-                }}
-                onBlur={() => {
-                  sOnBlur?.();
-
-                  setIsFocus(false);
-                }}
-                onMouseEnter={() => {
-                  sOnMouseEnter?.();
-
-                  onHoverChange(dValue);
-                }}
-                onMouseLeave={() => {
-                  sOnMouseLeave?.();
-                }}
-              />
-            )}
-          </DTrigger>
+          />
           {dIcon}
         </label>
       </div>

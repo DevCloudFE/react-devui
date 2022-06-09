@@ -1,22 +1,13 @@
 import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-import type { DId, DNestedChildren } from '../../types';
+import type { DNestedChildren, DId } from '../../utils/global';
 import type { DExtendsSelectboxProps } from '../_selectbox';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { DDropdownOption } from '../dropdown';
-import type { DFormControl } from '../form';
 
 import { isArray, isNull, isNumber, isUndefined } from 'lodash';
 import { useState, useId, useCallback, useMemo, useRef } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTwoWayBinding,
-  useTranslation,
-  useGeneralState,
-  useEventCallback,
-  useMemoWithUpdate,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation, useGeneralContext, useEventCallback } from '../../hooks';
 import { LoadingOutlined, PlusOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -36,7 +27,6 @@ export interface DSelectOption<V extends DId> {
 export interface DSelectBaseProps<V extends DId, T extends DSelectOption<V>>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
     DExtendsSelectboxProps {
-  dFormControl?: DFormControl;
   dOptions: DNestedChildren<T>[];
   dVisible?: [boolean, DUpdater<boolean>?];
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
@@ -81,7 +71,6 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null;
 export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>): JSX.Element | null {
   const {
-    dFormControl,
     dOptions,
     dModel,
     dVisible,
@@ -90,19 +79,21 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     dCreateOption,
     dClearable = false,
     dCustomSearch,
-    dLoading = false,
     dMultiple = false,
-    dDisabled = false,
     dMaxSelectNum,
-    dSize,
     dPopupClassName,
-    onVisibleChange,
     onModelChange,
     onScrollBottom,
     onCreateOption,
-    onClear,
     onSearch,
     onExceed,
+
+    dFormControl,
+    dLoading,
+    dDisabled,
+    dSize,
+    onVisibleChange,
+    onClear,
 
     className,
     ...restProps
@@ -110,7 +101,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -121,12 +112,12 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
 
   const uniqueId = useId();
   const listId = `${dPrefix}select-list-${uniqueId}`;
-  const getOptionId = (val: V) => `${dPrefix}select-option-${uniqueId}-${val}`;
-  const getGroupId = (val: V) => `${dPrefix}select-group-${uniqueId}-${val}`;
+  const getOptionId = (val: V) => `${dPrefix}select-option-${val}-${uniqueId}`;
+  const getGroupId = (val: V) => `${dPrefix}select-group-${val}-${uniqueId}`;
 
   const [searchValue, setSearchValue] = useState('');
 
-  const canSelectOption = (option: DNestedChildren<T>) => !option.disabled && !option.children;
+  const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
 
   const [isFocusVisible, setIsFocusVisible] = useState(false);
 
@@ -175,7 +166,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
   );
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
@@ -242,11 +233,18 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     return searchOptions;
   }, [dCreateOption, dOptions, filterFn, hasSearch, searchValue, sortFn]);
 
-  const [noSearchFocusOption, setNoSearchFocusOption] = useState(() => {
+  const [_noSearchFocusOption, setNoSearchFocusOption] = useState<DNestedChildren<T> | undefined>();
+  const noSearchFocusOption = useMemo(() => {
+    if (_noSearchFocusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _noSearchFocusOption.value)) {
+      return _noSearchFocusOption;
+    }
+
     let option: DNestedChildren<T> | undefined;
 
     if (dMultiple) {
-      option = findNested(dOptions, (o) => canSelectOption(o) && (select as V[]).includes(o.value));
+      if ((select as V[]).length > 0) {
+        option = findNested(dOptions, (o) => canSelectOption(o) && (select as V[]).includes(o.value));
+      }
     } else {
       if (!isNull(select)) {
         option = findNested(dOptions, (o) => canSelectOption(o) && (select as V) === o.value);
@@ -258,14 +256,18 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     }
 
     return option;
-  });
+  }, [_noSearchFocusOption, canSelectOption, dMultiple, dOptions, select]);
 
-  const [searchFocusOption, setSearchFocusOption] = useMemoWithUpdate(() => {
+  const [_searchFocusOption, setSearchFocusOption] = useState<(T & { [IS_CREATE]?: boolean | undefined }) | undefined>();
+  const searchFocusOption = useMemo(() => {
+    if (_searchFocusOption && findNested(searchOptions, (o) => canSelectOption(o) && o.value === _searchFocusOption.value)) {
+      return _searchFocusOption;
+    }
+
     if (hasSearch) {
       return findNested(searchOptions, (o) => canSelectOption(o));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  }, [_searchFocusOption, canSelectOption, hasSearch, searchOptions]);
 
   const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
   const changeFocusOption = (option?: DNestedChildren<T>) => {
@@ -387,19 +389,17 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
   return (
     <DSelectbox
       {...restProps}
-      {...dFormControl?.dataAttrs}
       className={getClassName(className, `${dPrefix}select`)}
-      dDisabled={disabled}
+      dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}
+      dContentTitle={selectedLabel}
+      dDisabled={disabled}
       dSuffix={suffixNode}
       dShowClear={hasSelected && dClearable}
-      dContentTitle={selectedLabel}
       dLoading={dLoading}
       dSize={size}
       dInputProps={{
-        ...dFormControl?.inputAttrs,
-        id: dFormControl?.controlId,
         'aria-controls': listId,
         onChange: (e) => {
           const value = e.currentTarget.value;
@@ -408,51 +408,46 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
           onSearch?.(value);
         },
         onKeyDown: (e) => {
-          if (visible) {
-            if (!isUndefined(focusOption)) {
-              switch (e.code) {
-                case 'ArrowUp':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollByStep(-1));
-                  break;
+          if (visible && !isUndefined(focusOption)) {
+            switch (e.code) {
+              case 'ArrowUp':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollByStep(-1));
+                break;
 
-                case 'ArrowDown':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollByStep(1));
-                  break;
+              case 'ArrowDown':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollByStep(1));
+                break;
 
-                case 'Home':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollToStart());
-                  break;
+              case 'Home':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollToStart());
+                break;
 
-                case 'End':
-                  e.preventDefault();
-                  changeFocusOption(dVSRef.current?.scrollToEnd());
-                  break;
+              case 'End':
+                e.preventDefault();
+                changeFocusOption(dVSRef.current?.scrollToEnd());
+                break;
 
-                case 'Enter':
-                  e.preventDefault();
-                  if (focusOption[IS_CREATE]) {
-                    createOption(focusOption);
-                  }
-                  changeSelectByClick(focusOption.value, false);
-                  break;
+              case 'Enter':
+                e.preventDefault();
+                if (focusOption[IS_CREATE]) {
+                  createOption(focusOption);
+                }
+                changeSelectByClick(focusOption.value, false);
+                break;
 
-                case 'Space':
-                  e.preventDefault();
-                  if (focusOption[IS_CREATE]) {
-                    createOption(focusOption);
-                  }
-                  changeSelectByClick(focusOption.value, dMultiple);
-                  break;
+              case 'Space':
+                e.preventDefault();
+                if (focusOption[IS_CREATE]) {
+                  createOption(focusOption);
+                }
+                changeSelectByClick(focusOption.value, dMultiple);
+                break;
 
-                default:
-                  break;
-              }
-            } else if (e.code === 'ArrowDown') {
-              e.preventDefault();
-              changeFocusOption(dVSRef.current?.scrollToStart());
+              default:
+                break;
             }
           }
         },
@@ -512,8 +507,8 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
                     >
                       <li
                         key={optionValue}
-                        className={`${dPrefix}select__option-group-label`}
                         id={getGroupId(optionValue)}
+                        className={`${dPrefix}select__option-group-label`}
                         role="presentation"
                       >
                         <div className={`${dPrefix}select__option-content`}>{optionLabel}</div>

@@ -1,4 +1,4 @@
-import type { DId } from '../../types';
+import type { DId } from '../../utils/global';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderOption, DSearchOption } from './Cascader';
@@ -113,9 +113,6 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
         default:
           break;
       }
-    } else if (e.code === 'ArrowDown') {
-      e.preventDefault();
-      focusOption(dVSRef.current?.scrollToStart());
     }
   });
 

@@ -1,19 +1,10 @@
 import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DNestedChildren } from '../../types';
+import type { DNestedChildren } from '../../utils/global';
 
 import { isArray, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useElement,
-  useAsync,
-  useContentScrollViewChange,
-  useIsomorphicLayoutEffect,
-  useEventCallback,
-  useImmer,
-} from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useElement, useAsync, useIsomorphicLayoutEffect, useEventCallback } from '../../hooks';
 import { getClassName, registerComponentMate, scrollTo } from '../../utils';
 import { DLink } from './Link';
 
@@ -33,7 +24,7 @@ export interface DAnchorProps<T = DAnchorOption> extends Omit<React.HTMLAttribut
   dPage?: DElementSelector;
   dDistance?: number;
   dScrollBehavior?: 'instant' | 'smooth';
-  dIndicator?: React.ReactNode | symbol;
+  dIndicator?: React.ReactNode | typeof DOT_INDICATOR | typeof LINE_INDICATOR;
   onLinkClick?: (href: string, link: DNestedChildren<T>) => void;
 }
 
@@ -60,6 +51,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 
   //#region Ref
   const anchorRef = useRef<HTMLUListElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const dataRef = useRef<{
@@ -71,7 +63,6 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   const pageEl = useElement(dPage ?? null);
 
   const [activeHref, setActiveHref] = useState<string | null>(null);
-  const [indicatorStyle, setIndicatorStyle] = useImmer<React.CSSProperties>({ opacity: 0 });
 
   const updateAnchor = useEventCallback(() => {
     let pageTop = 0;
@@ -107,32 +98,42 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 
     const newHref = nearestEl ? nearestEl[0] : null;
     setActiveHref(newHref);
-    setIndicatorStyle((draft) => {
-      draft.opacity = nearestEl ? 1 : 0;
-      if (newHref && anchorRef.current) {
-        const el = anchorRef.current.querySelector(`.${dPrefix}anchor-link[href="${newHref}"]`);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          draft.top = rect.top - anchorRef.current.getBoundingClientRect().top + rect.height / 2;
-        }
-      }
-    });
   });
   useIsomorphicLayoutEffect(() => {
     updateAnchor();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useContentScrollViewChange(updateAnchor);
   useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (pageEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    asyncGroup.onGlobalScroll(updateAnchor);
+      asyncGroup.fromEvent(pageEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updateAnchor();
+        },
+      });
 
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, updateAnchor]);
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, pageEl, updateAnchor]);
+
+  useEffect(() => {
+    if (anchorRef.current && indicatorRef.current) {
+      if (activeHref) {
+        const el = anchorRef.current.querySelector(`.${dPrefix}anchor-link.is-active`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const top = rect.top - anchorRef.current.getBoundingClientRect().top + rect.height / 2;
+          indicatorRef.current.style.cssText = `opacity:1;top:${top}px;`;
+        }
+      } else {
+        indicatorRef.current.style.cssText += 'opacity:0;';
+      }
+    }
+  });
 
   useImperativeHandle(
     ref,
@@ -170,6 +171,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
       });
     }
   };
+
   const linkNodes = (() => {
     const getNodes = (arr: DNestedChildren<T>[], level = 0): JSX.Element[] =>
       arr.map((link) => {
@@ -200,7 +202,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   return (
     <ul {...restProps} ref={anchorRef} className={getClassName(className, `${dPrefix}anchor`)}>
       <div className={`${dPrefix}anchor__indicator-track`}>
-        <div className={`${dPrefix}anchor__indicator-wrapper`} style={indicatorStyle}>
+        <div ref={indicatorRef} className={`${dPrefix}anchor__indicator-wrapper`}>
           {dIndicator === DOT_INDICATOR ? (
             <div className={`${dPrefix}anchor__dot-indicator`}></div>
           ) : dIndicator === LINE_INDICATOR ? (

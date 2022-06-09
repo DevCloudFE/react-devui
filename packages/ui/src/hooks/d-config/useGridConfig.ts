@@ -1,4 +1,4 @@
-import type { DBreakpoints } from '../../types';
+import type { DBreakpoints } from '../../components/grid';
 
 import { useContext } from 'react';
 
@@ -13,7 +13,7 @@ const BREAKPOINTS = new Map<DBreakpoints, number>([
   ['xxl', 1400],
 ]);
 export function useGridConfig() {
-  const grid = useContext(DConfigContext).grid;
+  const grid = useContext(DConfigContext)?.grid;
   const breakpoints = grid?.breakpoints ?? BREAKPOINTS;
   const colNum = grid?.colNum ?? 12;
 

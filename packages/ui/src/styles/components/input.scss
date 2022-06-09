@@ -5,13 +5,13 @@
   padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   font-size: var(--#{$variable-prefix}font-size);
   color: var(--#{$variable-prefix}text-color);
+  vertical-align: top;
   background-color: var(--#{$variable-prefix}background-color-input);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
 
   @include utils-disabled(true);
-  @include form-validate;
 
   &:hover {
     border-color: var(--#{$variable-prefix}color-primary-lighter);

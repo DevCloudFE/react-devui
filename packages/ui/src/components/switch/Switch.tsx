@@ -4,9 +4,10 @@ import type { DFormControl } from '../form';
 
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
-import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
 import { DTransition } from '../_transition';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
@@ -42,7 +43,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
 
   const [isFocus, setIsFocus] = useState(false);
@@ -51,7 +52,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     formControl: dFormControl?.control,
   });
 
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { left: 2 },
@@ -83,17 +84,15 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
             {dStateContent[1]}
           </div>
         )}
-        <input
+        <DBaseInput
           {...dInputProps}
-          {...dFormControl?.inputAttrs}
-          id={dInputProps?.id ?? dFormControl?.controlId}
           ref={dInputRef}
           className={getClassName(dInputProps?.className, `${dPrefix}switch__input`)}
           type="checkbox"
           disabled={disabled || dLoading}
           role="switch"
           aria-checked={checked}
-          aria-describedby={mergeAriaDescribedby(dInputProps?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
+          dFormControl={dFormControl}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 

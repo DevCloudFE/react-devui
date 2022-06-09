@@ -1,14 +1,12 @@
-import type { DSize } from '../../types';
+import type { DSize } from '../../utils/global';
 
 import React, { useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useWave, useGeneralState } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseSupport } from '../_base-support';
 import { DCollapseTransition } from '../_transition';
-import { useCompose } from '../compose';
-
-export type DButtonRef = HTMLButtonElement;
 
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';
@@ -23,7 +21,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 
 const TTANSITION_DURING = 300;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
-function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
+function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
     children,
     dType = 'primary',
@@ -44,7 +42,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralState();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -68,53 +66,51 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<DButtonRef>) {
     </div>
   );
 
-  const composeDataAttrs = useCompose(false, disabled);
-
   return (
-    <button
-      {...restProps}
-      {...composeDataAttrs}
-      ref={ref}
-      className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
-        [`${dPrefix}button--${dShape}`]: dShape,
-        [`${dPrefix}button--${size}`]: size,
-        [`${dPrefix}button--block`]: dBlock,
-        [`${dPrefix}button--icon`]: !children,
-        'is-loading': dLoading,
-      })}
-      type={type}
-      disabled={disabled}
-      aria-disabled={disabled}
-      onClick={(e) => {
-        onClick?.(e);
+    <DBaseSupport dCompose={{ disabled: disabled }}>
+      <button
+        {...restProps}
+        ref={ref}
+        className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
+          [`${dPrefix}button--${dShape}`]: dShape,
+          [`${dPrefix}button--${size}`]: size,
+          [`${dPrefix}button--block`]: dBlock,
+          [`${dPrefix}button--icon`]: !children,
+          'is-loading': dLoading,
+        })}
+        type={type}
+        disabled={disabled}
+        onClick={(e) => {
+          onClick?.(e);
 
-        if (dType === 'primary' || dType === 'secondary' || dType === 'outline' || dType === 'dashed') {
-          wave(`var(--${dPrefix}color-${dTheme})`);
-        }
-      }}
-    >
-      {dIconRight && children}
-      {dIcon ? (
-        buttonIcon(dLoading)
-      ) : (
-        <DCollapseTransition
-          dRef={iconRef}
-          dSize={0}
-          dIn={dLoading}
-          dDuring={TTANSITION_DURING}
-          dHorizontal
-          dStyles={{
-            entering: { transition: `width ${TTANSITION_DURING}ms linear` },
-            leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
-            leaved: { display: 'none' },
-          }}
-        >
-          {(collapseStyle) => buttonIcon(true, collapseStyle)}
-        </DCollapseTransition>
-      )}
-      {!dIconRight && children}
-      {waveNode}
-    </button>
+          if (dType === 'primary' || dType === 'secondary' || dType === 'outline' || dType === 'dashed') {
+            wave(`var(--${dPrefix}color-${dTheme})`);
+          }
+        }}
+      >
+        {dIconRight && children}
+        {dIcon ? (
+          buttonIcon(dLoading)
+        ) : (
+          <DCollapseTransition
+            dRef={iconRef}
+            dSize={0}
+            dIn={dLoading}
+            dDuring={TTANSITION_DURING}
+            dHorizontal
+            dStyles={{
+              entering: { transition: `width ${TTANSITION_DURING}ms linear` },
+              leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
+              leaved: { display: 'none' },
+            }}
+          >
+            {(collapseStyle) => buttonIcon(true, collapseStyle)}
+          </DCollapseTransition>
+        )}
+        {!dIconRight && children}
+        {waveNode}
+      </button>
+    </DBaseSupport>
   );
 }
 

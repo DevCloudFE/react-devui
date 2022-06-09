@@ -1,4 +1,4 @@
-import type { DBreakpoints } from '../../types';
+import type { DBreakpoints } from './Row';
 
 import { isNumber, isObject } from 'lodash';
 

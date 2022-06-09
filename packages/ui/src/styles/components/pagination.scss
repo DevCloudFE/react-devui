@@ -25,6 +25,10 @@
       gap: 4px 2px;
     }
 
+    .#{$variable-prefix}pagination__jump-wrapper {
+      gap: 0 2px;
+    }
+
     .#{$variable-prefix}pagination__item--button:not(.is-active) {
       border: none;
     }
@@ -125,6 +129,12 @@
       height: 26px;
       padding: 0 6px;
     }
+  }
+
+  @include e(jump-wrapper) {
+    display: flex;
+    gap: 0 4px;
+    align-items: center;
   }
 
   @include e(jump-input, true) {

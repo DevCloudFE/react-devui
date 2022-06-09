@@ -1,4 +1,4 @@
-import type { DBreakpoints } from '../../types';
+import type { DBreakpoints } from '../grid';
 import type { AbstractControl } from './form-control';
 
 import { isBoolean, isFunction, isNull, isNumber, isString, isUndefined } from 'lodash';
@@ -17,11 +17,8 @@ type DErrors = { key: string; formControlName: string; message: string; status: 
 
 export interface DFormControl {
   control: AbstractControl;
-  controlId: string;
-  disabled: boolean;
-  dataAttrs: { [index: string]: boolean };
+  wrapperAttrs: { [index: string]: boolean };
   inputAttrs: {
-    'data-form-item-input': true;
     'aria-invalid'?: boolean;
     'aria-describedby'?: string;
   };
@@ -44,7 +41,7 @@ export interface DFormItemBaseProps extends Omit<React.HTMLAttributes<HTMLDivEle
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemBaseProps, 'dLabelWidth' | 'dSpan'>>;
 }
 
-export interface DFormItemWithControlsProps<T extends { [index: string]: DErrorInfo }> extends DFormItemBaseProps {
+export interface DFormItemWithControlsProps<T extends { [index: string]: DErrorInfo }> extends Omit<DFormItemBaseProps, 'children'> {
   children: (formControls: { [N in keyof T]: DFormControl }) => React.ReactNode;
   dFormControls: T;
 }
@@ -89,23 +86,19 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   const [t] = useTranslation('DForm');
 
   const uniqueId = useId();
-  const getErrorId = (formControlName: string) => `${dPrefix}form-item-error-${uniqueId}-${formControlName}`;
-  const getControlId = (formControlName: string) => `${dPrefix}form-item-control-${uniqueId}-${formControlName}`;
+  const getErrorId = (formControlName: string) => `${dPrefix}form-item-error-${formControlName}-${uniqueId}`;
 
   const formControls = (() => {
     const obj = {} as { [N in keyof T]: DFormControl };
     Object.keys(dFormControls).forEach((formControlName: keyof T) => {
       const formControl = formGroup.get(formControlName as string);
       if (isNull(formControl)) {
-        throw new Error(`Cant find '${formControlName}', please check if name exists!`);
+        throw new Error(`Cant find '${formControlName as string}', please check if name exists!`);
       }
       obj[formControlName] = {
         control: formControl,
-        controlId: getControlId(formControlName as string),
-        disabled: formControl.disabled,
-        dataAttrs: {},
+        wrapperAttrs: {},
         inputAttrs: {
-          'data-form-item-input': true,
           'aria-invalid': formControl.enabled && formControl.dirty && formControl.invalid,
         },
       };
@@ -199,7 +192,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
         }
 
         if (status !== 'success') {
-          formControls[formControlName].dataAttrs[`data-form-item-${status}`] = true;
+          formControls[formControlName].wrapperAttrs[`data-form-support-${status}`] = true;
         }
       }
     });
@@ -287,7 +280,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   useEffect(() => {
     if (labelRef.current && contentRef.current) {
-      const el = contentRef.current.querySelector(`[data-form-item-input="true"]`);
+      const el = contentRef.current.querySelector(`[data-form-support-input="true"]`);
       if (el) {
         labelRef.current.setAttribute('for', el.id);
       }

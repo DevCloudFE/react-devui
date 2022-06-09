@@ -1,4 +1,4 @@
-import type { DId } from '../../types';
+import type { DId } from '../../utils/global';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderOption } from './Cascader';

@@ -1,5 +1,4 @@
-import { toPx } from './measure';
-import { getPositionedParent } from './selector';
+import { getPositionedParent, toPx } from './other';
 
 export function getFillingPosition(
   el: HTMLElement,

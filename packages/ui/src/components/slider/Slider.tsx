@@ -6,16 +6,9 @@ import { isArray, isNumber, toNumber } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useGeneralState,
-  useTwoWayBinding,
-  useAsync,
-  useThrottle,
-  useEventCallback,
-} from '../../hooks';
-import { registerComponentMate, getClassName, mergeAriaDescribedby } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useTwoWayBinding, useAsync, useEventCallback } from '../../hooks';
+import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
 import { DTooltip } from '../tooltip';
 
 export interface DSliderBaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -96,7 +89,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralState();
+  const { gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
@@ -108,7 +101,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   //#endregion
 
   const asyncCapture = useAsync();
-  const { throttleByAnimationFrame } = useThrottle();
 
   const [focusDot, setFocusDot] = useState<'left' | 'right' | null>(null);
   const [mouseenterDot, setMouseenterDot] = useState<'left' | 'right' | null>(null);
@@ -137,7 +129,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   });
 
   const [valueLeft, valueRight = 0] = (dRange ? _value : [_value]) as [number, number?];
-  const disabled = dDisabled || gDisabled || dFormControl?.disabled;
+  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const [visibleLeft, visibleRight] = [
     (dRange ? dTooltipVisible?.[0] : dTooltipVisible) ?? (mouseenterDot === 'left' ? true : !!(focusDot === 'left' || thumbPoint)),
@@ -338,9 +330,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientY = e.touches[0].clientY;
           clientX = e.touches[0].clientX;
 
-          throttleByAnimationFrame.run(() => {
-            handleMove({ clientX, clientY });
-          });
+          handleMove({ clientX, clientY });
         },
       });
 
@@ -350,9 +340,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientX = e.clientX;
           clientY = e.clientY;
 
-          throttleByAnimationFrame.run(() => {
-            handleMove({ clientX, clientY });
-          });
+          handleMove({ clientX, clientY });
         },
       });
 
@@ -360,7 +348,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, draggableDot, handleMove, throttleByAnimationFrame]);
+  }, [asyncCapture, draggableDot, handleMove]);
 
   useEffect(() => {
     if (thumbPoint) {
@@ -384,9 +372,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientY = e.touches[0].clientY;
           clientX = e.touches[0].clientX;
 
-          throttleByAnimationFrame.run(() => {
-            handleThumbMove({ clientX, clientY });
-          });
+          handleThumbMove({ clientX, clientY });
         },
       });
 
@@ -396,9 +382,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
           clientX = e.clientX;
           clientY = e.clientY;
 
-          throttleByAnimationFrame.run(() => {
-            handleThumbMove({ clientX, clientY });
-          });
+          handleThumbMove({ clientX, clientY });
         },
       });
 
@@ -406,7 +390,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleThumbMove, throttleByAnimationFrame, thumbPoint]);
+  }, [asyncCapture, handleThumbMove, thumbPoint]);
 
   const marks = (() => {
     const marks: React.ReactNode[] = [];
@@ -459,7 +443,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      {...dFormControl?.dataAttrs}
       ref={sliderRef}
       className={getClassName(className, `${dPrefix}slider`, `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`, {
         'is-disabled': disabled,
@@ -530,10 +513,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
               bottom: dVertical ? `calc(${valueLeft} / ${dMax - dMin} * 100% - 7px)` : undefined,
             }}
           >
-            <input
+            <DBaseInput
               {...inputPropsLeft}
-              {...dFormControl?.inputAttrs}
-              id={inputPropsLeft?.id ?? dFormControl?.controlId}
               ref={inputRefLeft}
               className={getClassName(inputPropsLeft?.className, `${dPrefix}slider__input`)}
               type="range"
@@ -543,7 +524,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
               min={dMin}
               step={dStep ?? undefined}
               aria-orientation={dVertical ? 'vertical' : 'horizontal'}
-              aria-describedby={mergeAriaDescribedby(inputPropsLeft?.['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby'])}
+              dFormControl={dFormControl}
               onChange={handleChange}
               onFocus={(e) => {
                 inputPropsLeft?.onFocus?.(e);
@@ -555,7 +536,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
                 setFocusDot(null);
               }}
-            ></input>
+            />
           </div>
         </DTooltip>
         {dRange && (
@@ -578,10 +559,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                 bottom: dVertical ? `calc(${valueRight} / ${dMax - dMin} * 100% - 7px)` : undefined,
               }}
             >
-              <input
+              <DBaseInput
                 {...inputPropsRight}
-                {...dFormControl?.inputAttrs}
-                id={inputPropsRight?.id ?? dFormControl?.controlId}
                 ref={inputRefRight}
                 className={getClassName(inputPropsRight?.className, `${dPrefix}slider__input`)}
                 type="range"
@@ -591,10 +570,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                 min={dMin}
                 step={dStep ?? undefined}
                 aria-orientation={dVertical ? 'vertical' : 'horizontal'}
-                aria-describedby={mergeAriaDescribedby(
-                  inputPropsRight?.['aria-describedby'],
-                  dFormControl?.inputAttrs?.['aria-describedby']
-                )}
+                dFormControl={dFormControl}
                 onChange={(e) => {
                   handleChange(e, false);
                 }}
@@ -608,7 +584,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
                   setFocusDot(null);
                 }}
-              ></input>
+              />
             </div>
           </DTooltip>
         )}
