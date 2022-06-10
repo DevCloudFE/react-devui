@@ -16,7 +16,7 @@ import { DTransition } from '../_transition';
 
 export type DExtendsSelectboxProps = Pick<
   DSelectboxProps,
-  'dFormControl' | 'dPlaceholder' | 'dDisabled' | 'dSearchable' | 'dSize' | 'dLoading' | 'onClear' | 'onVisibleChange'
+  'dFormControl' | 'dPlaceholder' | 'dDisabled' | 'dSearchable' | 'dSize' | 'dLoading' | 'onClear' | 'onSearch' | 'onVisibleChange'
 >;
 
 export interface DSelectboxRenderProps {
@@ -44,6 +44,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dInputProps: React.InputHTMLAttributes<HTMLInputElement> & { 'aria-controls': string };
   onVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
+  onSearch?: (value: string) => void;
   onClear?: () => void;
 }
 
@@ -67,6 +68,7 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
     dInputProps,
     onVisibleChange,
     onFocusVisibleChange,
+    onSearch,
     onClear,
 
     className,
@@ -242,7 +244,10 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
                 onChange={(e) => {
                   dInputProps?.onChange?.(e);
 
-                  setSearchValue(e.currentTarget.value);
+                  if (dSearchable && dVisible) {
+                    setSearchValue(e.currentTarget.value);
+                    onSearch?.(e.currentTarget.value);
+                  }
                 }}
                 onKeyDown={(e) => {
                   dInputProps?.onKeyDown?.(e);

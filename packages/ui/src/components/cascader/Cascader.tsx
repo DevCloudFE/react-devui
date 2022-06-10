@@ -46,7 +46,6 @@ export interface DCascaderBaseProps<V extends DId, T extends DCascaderOption<V>>
   dAutoMaxWidth?: boolean;
   dPopupClassName?: string;
   onFocusChange?: (value: V, option: DNestedChildren<T>) => void;
-  onSearch?: (value: string) => void;
 }
 
 export interface DCascaderSingleProps<V extends DId, T extends DCascaderOption<V>> extends DCascaderBaseProps<V, T> {
@@ -86,7 +85,6 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
     dPopupClassName,
     onFocusChange,
     onModelChange,
-    onSearch,
 
     dFormControl,
     dLoading,
@@ -94,6 +92,7 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
     dSize,
     onVisibleChange,
     onClear,
+    onSearch,
 
     className,
     ...restProps
@@ -371,12 +370,6 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
       dSize={size}
       dInputProps={{
         'aria-controls': listId,
-        onChange: (e) => {
-          const value = e.currentTarget.value;
-          setSearchValue(value);
-
-          onSearch?.(value);
-        },
         onKeyDown: (e) => {
           if (visible) {
             onKeyDown$.next(e);
@@ -386,6 +379,11 @@ export function DCascader<V extends DId, T extends DCascaderOption<V>>(props: DC
       dCustomWidth
       dAutoMaxWidth={dAutoMaxWidth}
       onClear={handleClear}
+      onSearch={(value) => {
+        onSearch?.(value);
+
+        setSearchValue(value);
+      }}
       onVisibleChange={changeVisible}
       onFocusVisibleChange={setIsFocusVisible}
     >

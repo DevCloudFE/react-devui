@@ -40,7 +40,6 @@ export interface DSelectBaseProps<V extends DId, T extends DSelectOption<V>>
   dPopupClassName?: string;
   onScrollBottom?: () => void;
   onCreateOption?: (option: DNestedChildren<T>) => void;
-  onSearch?: (value: string) => void;
 }
 
 export interface DSelectSingleProps<V extends DId, T extends DSelectOption<V>> extends DSelectBaseProps<V, T> {
@@ -85,7 +84,6 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     onModelChange,
     onScrollBottom,
     onCreateOption,
-    onSearch,
     onExceed,
 
     dFormControl,
@@ -94,6 +92,7 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
     dSize,
     onVisibleChange,
     onClear,
+    onSearch,
 
     className,
     ...restProps
@@ -401,12 +400,6 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
       dSize={size}
       dInputProps={{
         'aria-controls': listId,
-        onChange: (e) => {
-          const value = e.currentTarget.value;
-          setSearchValue(value);
-
-          onSearch?.(value);
-        },
         onKeyDown: (e) => {
           if (visible && !isUndefined(focusOption)) {
             switch (e.code) {
@@ -460,6 +453,11 @@ export function DSelect<V extends DId, T extends DSelectOption<V>>(props: DSelec
         } else {
           changeSelect(null);
         }
+      }}
+      onSearch={(value) => {
+        onSearch?.(value);
+
+        setSearchValue(value);
       }}
       onVisibleChange={changeVisible}
       onFocusVisibleChange={setIsFocusVisible}
