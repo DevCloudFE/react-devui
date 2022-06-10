@@ -10,7 +10,7 @@
     display: flex;
 
     @include e(content) {
-      max-height: calc(100vh - 40px);
+      max-height: calc(100% - 40px);
       margin: auto;
     }
   }

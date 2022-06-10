@@ -235,7 +235,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
                   ...transitionStyle,
                   width: dWidth,
                   top: dTop === 'center' ? undefined : dTop,
-                  maxHeight: dTop === 'center' ? undefined : `calc(100vh - ${topStyle} - 20px)`,
+                  maxHeight: dTop === 'center' ? undefined : `calc(100% - ${topStyle} - 20px)`,
                 }}
                 tabIndex={-1}
                 onKeyDown={(e) => {
