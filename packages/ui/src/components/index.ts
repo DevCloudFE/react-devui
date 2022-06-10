@@ -37,6 +37,9 @@ export { DInput } from './input';
 export type { DMenuProps } from './menu';
 export { DMenu } from './menu';
 
+export type { DModalProps, DModalHeaderProps, DModalFooterProps } from './modal';
+export { DModal, DModalHeader, DModalFooter } from './modal';
+
 export type { DNotificationProps } from './notification';
 export { NotificationService } from './notification';
 

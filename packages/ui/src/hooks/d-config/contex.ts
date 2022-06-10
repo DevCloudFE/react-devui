@@ -19,6 +19,9 @@ import type {
   DColProps,
   DInputProps,
   DMenuProps,
+  DModalProps,
+  DModalHeaderProps,
+  DModalFooterProps,
   DNotificationProps,
   DPaginationProps,
   DRadioProps,
@@ -65,6 +68,9 @@ export type DComponentConfig = {
   DCol: DColProps;
   DInput: DInputProps;
   DMenu: DMenuProps<any, any>;
+  DModal: DModalProps;
+  DModalHeader: DModalHeaderProps;
+  DModalFooter: DModalFooterProps;
   DNotification: DNotificationProps;
   DPagination: DPaginationProps;
   DRadio: DRadioProps;

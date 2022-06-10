@@ -195,7 +195,8 @@ h3 {
   section[id^='Button'],
   section[id^='Dropdown'],
   section[id^='Notification'],
-  section[id^='Toast'] {
+  section[id^='Toast'],
+  section[id^='Modal'] {
     .d-button {
       margin-right: 8px;
       margin-bottom: 12px;

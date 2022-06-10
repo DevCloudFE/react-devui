@@ -189,13 +189,13 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
                 )}
               </div>
             )}
-            <div id={contentId} className={getClassName(`${dPrefix}notification__content`)}>
+            <div id={contentId} className={`${dPrefix}notification__content`}>
               {!isUndefined(dTitle) && (
                 <div id={headerId} className={`${dPrefix}notification__title`}>
                   {dTitle}
                 </div>
               )}
-              <div className={`${dPrefix}notification__description`}>{dDescription}</div>
+              {!isUndefined(dDescription) && <div className={`${dPrefix}notification__description`}>{dDescription}</div>}
               {dClosable && (
                 <button
                   className={getClassName(`${dPrefix}icon-button`, `${dPrefix}notification__close`)}

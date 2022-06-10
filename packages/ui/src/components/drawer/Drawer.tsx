@@ -12,6 +12,7 @@ import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxI
 import { registerComponentMate, getClassName, toPx } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
+import { DDrawerHeader } from './DrawerHeader';
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: [boolean, DUpdater<boolean>?];
@@ -23,7 +24,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
-  dHeader?: React.ReactElement<DDrawerHeaderProps>;
+  dHeader?: React.ReactElement<DDrawerHeaderProps> | string;
   dFooter?: React.ReactElement<DDrawerFooterProps>;
   dChildDrawer?: React.ReactElement<DDrawerProps>;
   onClose?: () => void;
@@ -205,6 +206,17 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     return null;
   })();
 
+  const headerNode = (() => {
+    if (dHeader) {
+      const node = isString(dHeader) ? <DDrawerHeader>{dHeader}</DDrawerHeader> : dHeader;
+      return React.cloneElement<DDrawerHeaderPropsWithPrivate>(node, {
+        ...node.props,
+        __id: headerId,
+        __onClose: closeDrawer,
+      });
+    }
+  })();
+
   const drawerNode = (
     <>
       <DTransition
@@ -231,7 +243,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
             }}
             role="dialog"
             aria-modal="true"
-            aria-labelledby={dHeader ? headerId : undefined}
+            aria-labelledby={headerNode ? headerId : undefined}
             aria-describedby={contentId}
           >
             {dMask && (
@@ -260,12 +272,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
                 }
               }}
             >
-              {dHeader &&
-                React.cloneElement<DDrawerHeaderPropsWithPrivate>(dHeader, {
-                  ...dHeader.props,
-                  __id: headerId,
-                  __onClose: closeDrawer,
-                })}
+              {headerNode}
               <div className={`${dPrefix}drawer__body`}>{children}</div>
               {dFooter &&
                 React.cloneElement<DDrawerFooterPropsWithPrivate>(dFooter, {
