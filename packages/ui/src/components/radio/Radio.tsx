@@ -1,17 +1,17 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DFormControl } from '../form';
 
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useWave, useGeneralContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
-import { DBaseSupport } from '../_base-support';
 import { DFocusVisible } from '../_focus-visible';
+import { useFormControl } from '../form';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
-  dModel?: [boolean, DUpdater<boolean>?];
+  dModel?: boolean;
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
@@ -23,7 +23,7 @@ export interface DRadioPropsWithPrivate extends DRadioProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' });
-export function DRadio(props: DRadioProps): JSX.Element | null {
+export function DRadio(props: DRadioProps) {
   const {
     children,
     dFormControl,
@@ -48,14 +48,13 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
 
   const [isFocusVisible, setIsFocusVisible] = useState(false);
 
-  const [checked, changeChecked] = useTwoWayBinding<boolean>(false, dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [checked, changeChecked] = useDValue<boolean>(false, dModel, onModelChange, undefined, formControlInject);
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
-    <DBaseSupport dCompose={{ active: checked || isFocusVisible, disabled: disabled }}>
+    <DBaseDesign dCompose={{ active: checked || isFocusVisible, disabled: disabled }}>
       <label
         {...restProps}
         className={getClassName(className, `${dPrefix}radio`, {
@@ -96,6 +95,6 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
         {children && <div className={`${dPrefix}radio__label`}>{children}</div>}
         {waveNode}
       </label>
-    </DBaseSupport>
+    </DBaseDesign>
   );
 }

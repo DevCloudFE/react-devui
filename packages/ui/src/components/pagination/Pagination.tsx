@@ -1,18 +1,16 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
-
 import { isNull } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useTranslation } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DInput } from '../input';
 import { DSelect } from '../select';
 
 export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
-  dActive?: [number, DUpdater<number>?];
+  dActive?: number;
   dTotal: number;
-  dPageSize?: [number, DUpdater<number>?];
+  dPageSize?: number;
   dPageSizeOptions?: number[];
   dCompose?: ('total' | 'pages' | 'size' | 'jump')[];
   dCustomRender?: {
@@ -29,7 +27,7 @@ export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPagination' });
-export function DPagination(props: DPaginationProps): JSX.Element | null {
+export function DPagination(props: DPaginationProps) {
   const {
     dActive,
     dTotal,
@@ -55,7 +53,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
   const [t] = useTranslation('DPagination');
 
-  const [active, _changeActive] = useTwoWayBinding<number>(1, dActive, onActiveChange);
+  const [active, _changeActive] = useDValue<number>(1, dActive, onActiveChange);
   const changeActive = (active: number, max = lastPage) => {
     _changeActive(Math.max(Math.min(active, max), 1));
     setIsChange(true);
@@ -69,7 +67,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     }
   });
 
-  const [pageSize, _changePageSize] = useTwoWayBinding<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
+  const [pageSize, _changePageSize] = useDValue<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
   const changePageSize = (size: number) => {
     _changePageSize(size);
 
@@ -165,7 +163,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           [`${dPrefix}pagination__size-select--mini`]: dMini,
         })}
         dOptions={options}
-        dModel={[pageSize]}
+        dModel={pageSize}
         dCustomOption={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.value) : option.label)}
         dCustomSelected={(select) => `${select.label}${t(' / Page')}`}
         onModelChange={(value) => {
@@ -188,7 +186,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           dMax={lastPage}
           dMin={1}
           dStep={1}
-          dModel={[jumpValue, setJumpValue]}
+          dModel={jumpValue}
           dNumbetButton={!dMini}
           dInputProps={{
             onKeyDown: (e) => {
@@ -202,6 +200,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
               }
             },
           }}
+          onModelChange={setJumpValue}
         />
       );
 

@@ -53,21 +53,6 @@ class BaseAsyncCapture {
     this.tids.set(tid, clear);
     return clear;
   }
-
-  onGlobalScroll(cb: (e: UIEvent) => void) {
-    const observer = fromEvent<UIEvent>(window, 'scroll', { capture: true, passive: true }).subscribe({
-      next: (e) => {
-        cb(e);
-      },
-    });
-    const tid = Symbol();
-    const clear = () => {
-      observer.unsubscribe();
-      this.tids.delete(tid);
-    };
-    this.tids.set(tid, clear);
-    return clear;
-  }
 }
 
 export class AsyncCapture extends BaseAsyncCapture {

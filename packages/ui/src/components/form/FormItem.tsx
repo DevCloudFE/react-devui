@@ -31,30 +31,19 @@ export type DErrorInfo =
   | { message: string; status: 'warning' | 'error' }
   | { [index: string]: string | { message: string; status: 'warning' | 'error' } };
 
-export interface DFormItemBaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children: React.ReactNode;
+export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children: React.ReactNode | ((formControls: { [N in keyof T]: DFormControl }) => React.ReactNode);
+  dFormControls?: T;
   dLabel?: React.ReactNode;
   dLabelWidth?: number | string;
   dLabelExtra?: ({ title: string; icon?: React.ReactElement } | string)[];
   dShowRequired?: boolean;
   dSpan?: number | string | true;
-  dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemBaseProps, 'dLabelWidth' | 'dSpan'>>;
-}
-
-export interface DFormItemWithControlsProps<T extends { [index: string]: DErrorInfo }> extends Omit<DFormItemBaseProps, 'children'> {
-  children: (formControls: { [N in keyof T]: DFormControl }) => React.ReactNode;
-  dFormControls: T;
-}
-
-export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> extends DFormItemBaseProps {
-  children: any;
-  dFormControls?: T;
+  dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFormItem' });
-export function DFormItem(props: DFormItemBaseProps): JSX.Element | null;
-export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemWithControlsProps<T>): JSX.Element | null;
-export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>): JSX.Element | null {
+export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>) {
   const {
     children,
     dFormControls = {} as { [index: string]: DErrorInfo },
@@ -192,7 +181,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
         }
 
         if (status !== 'success') {
-          formControls[formControlName].wrapperAttrs[`data-form-support-${status}`] = true;
+          formControls[formControlName].wrapperAttrs[`data-form-invalid-${status}`] = true;
         }
       }
     });
@@ -280,7 +269,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   useEffect(() => {
     if (labelRef.current && contentRef.current) {
-      const el = contentRef.current.querySelector(`[data-form-support-input="true"]`);
+      const el = contentRef.current.querySelector(`[data-form-label-for="true"]`);
       if (el) {
         labelRef.current.setAttribute('for', el.id);
       }

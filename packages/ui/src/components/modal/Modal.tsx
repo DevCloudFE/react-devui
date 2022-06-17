@@ -1,4 +1,3 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DModalFooterProps, DModalFooterPropsWithPrivate } from './ModalFooter';
 import type { DModalHeaderProps, DModalHeaderPropsWithPrivate } from './ModalHeader';
 
@@ -6,7 +5,7 @@ import { isNumber, isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useEventCallback, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DMask } from '../_mask';
@@ -14,7 +13,7 @@ import { DTransition } from '../_transition';
 import { DModalHeader } from './ModalHeader';
 
 export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
-  dVisible: [boolean, DUpdater<boolean>?];
+  dVisible: boolean;
   dWidth?: number | string;
   dTop?: number | string;
   dZIndex?: number | string;
@@ -29,13 +28,13 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   };
   dHeader?: React.ReactElement<DModalHeaderProps> | string;
   dFooter?: React.ReactElement<DModalFooterProps>;
-  onClose?: () => void;
+  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' });
-export function DModal(props: DModalProps): JSX.Element | null {
+export function DModal(props: DModalProps) {
   const {
     children,
     dVisible,
@@ -48,7 +47,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
     dType,
     dHeader,
     dFooter,
-    onClose,
+    onVisibleChange,
     afterVisibleChange,
 
     className,
@@ -80,7 +79,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
 
   const topStyle = dTop + (isNumber(dTop) ? 'px' : '');
 
-  const [visible, setVisible] = dVisible;
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {
@@ -98,11 +97,6 @@ export function DModal(props: DModalProps): JSX.Element | null {
       document.body.appendChild(el);
     }
     return el;
-  });
-
-  const closeModal = useEventCallback(() => {
-    setVisible?.(false);
-    onClose?.();
   });
 
   useLockScroll(visible);
@@ -145,7 +139,9 @@ export function DModal(props: DModalProps): JSX.Element | null {
       return React.cloneElement<DModalHeaderPropsWithPrivate>(node, {
         ...node.props,
         __id: headerId,
-        __onClose: closeModal,
+        __onClose: () => {
+          changeVisible(false);
+        },
       });
     }
   })();
@@ -222,7 +218,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
                   dVisible={visible}
                   onClose={() => {
                     if (dMaskClosable) {
-                      closeModal();
+                      changeVisible(false);
                     }
                   }}
                 />
@@ -240,7 +236,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
                 tabIndex={-1}
                 onKeyDown={(e) => {
                   if (dEscClosable && e.code === 'Escape') {
-                    closeModal();
+                    changeVisible(false);
                   }
                 }}
               >
@@ -273,7 +269,9 @@ export function DModal(props: DModalProps): JSX.Element | null {
                 {dFooter &&
                   React.cloneElement<DModalFooterPropsWithPrivate>(dFooter, {
                     ...dFooter.props,
-                    __onClose: closeModal,
+                    __onClose: () => {
+                      changeVisible(false);
+                    },
                   })}
               </div>
             </div>

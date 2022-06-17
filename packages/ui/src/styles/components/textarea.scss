@@ -20,6 +20,16 @@
   appearance: none;
   caret-color: var(--#{$variable-prefix}color-primary);
 
+  &[data-form-invalid-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+    caret-color: var(--#{$variable-prefix}color-warning) !important;
+  }
+
+  &[data-form-invalid-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+    caret-color: var(--#{$variable-prefix}color-danger) !important;
+  }
+
   @include utils-disabled(true, ':disabled');
 
   &:hover {
@@ -32,7 +42,6 @@
 
   &::placeholder {
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
-    transform: translateX(1px);
   }
 
   &:disabled::placeholder {

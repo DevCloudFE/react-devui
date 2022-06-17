@@ -1,29 +1,53 @@
 import type { DSize } from '../../utils/global';
 import type { DFormControl } from '../form';
 
-import React, { useId, useRef, useState } from 'react';
+import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, usePrefixConfig, useTranslation, useEventCallback, useElement, useMaxIndex, useGeneralContext } from '../../hooks';
+import {
+  useAsync,
+  usePrefixConfig,
+  useTranslation,
+  useEventCallback,
+  useElement,
+  useMaxIndex,
+  useUpdatePosition,
+  useForkRef,
+} from '../../hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
-import { getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { getClassName } from '../../utils';
+import { ICON_SIZE } from '../../utils/global';
+import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
-import { DBaseSupport } from '../_base-support';
 import { DFocusVisible } from '../_focus-visible';
 import { DTransition } from '../_transition';
 
 export type DExtendsSelectboxProps = Pick<
   DSelectboxProps,
-  'dFormControl' | 'dPlaceholder' | 'dDisabled' | 'dSearchable' | 'dSize' | 'dLoading' | 'onClear' | 'onSearch' | 'onVisibleChange'
+  | 'dFormControl'
+  | 'dPlaceholder'
+  | 'dSize'
+  | 'dLoading'
+  | 'dSearchable'
+  | 'dClearable'
+  | 'dDisabled'
+  | 'dInputProps'
+  | 'dInputRef'
+  | 'onClear'
+  | 'onVisibleChange'
 >;
 
+export interface DSelectboxRef {
+  updatePosition: () => void;
+}
+
 export interface DSelectboxRenderProps {
+  sStyle: React.CSSProperties;
   'data-selectbox-popupid': string;
   sOnMouseDown: React.MouseEventHandler;
   sOnMouseUp: React.MouseEventHandler;
-  sStyle: React.CSSProperties;
 }
 
 export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -34,22 +58,21 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dContentTitle?: string;
   dPlaceholder?: string;
   dSuffix?: React.ReactNode;
-  dAutoMaxWidth?: boolean;
-  dCustomWidth?: boolean;
   dSize?: DSize;
-  dSearchable?: boolean;
-  dShowClear?: boolean;
-  dDisabled?: boolean;
   dLoading?: boolean;
-  dInputProps: React.InputHTMLAttributes<HTMLInputElement> & { 'aria-controls': string };
+  dSearchable?: boolean;
+  dClearable?: boolean;
+  dDisabled?: boolean;
+  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  dInputRef?: React.Ref<HTMLInputElement>;
+  onUpdatePosition: (el: HTMLDivElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
   onVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
-  onSearch?: (value: string) => void;
   onClear?: () => void;
 }
 
 const TTANSITION_DURING = 116;
-export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
+function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef>) {
   const {
     children,
     dFormControl,
@@ -58,17 +81,16 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
     dContentTitle,
     dPlaceholder,
     dSuffix,
-    dAutoMaxWidth = false,
-    dCustomWidth = false,
     dSize,
-    dSearchable = false,
-    dShowClear = false,
     dLoading = false,
+    dSearchable = false,
+    dClearable = false,
     dDisabled = false,
     dInputProps,
+    dInputRef,
+    onUpdatePosition,
     onVisibleChange,
     onFocusVisibleChange,
-    onSearch,
     onClear,
 
     className,
@@ -80,28 +102,26 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
   const boxRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   //#endregion
+
+  const combineInputRef = useForkRef(dInputRef, inputRef);
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
   const uniqueId = useId();
 
-  const [searchValue, setSearchValue] = useState('');
   const [isFocus, setIsFocus] = useState(false);
 
-  const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled;
+  const inputable = dSearchable && dVisible;
+  const clearable = dClearable && !dVisible && !dLoading && !dDisabled && dContent;
 
-  const showClear = !dVisible && !dLoading && !disabled && dShowClear;
-
-  const iconSize = size === 'smaller' ? 12 : size === 'larger' ? 16 : 14;
+  const iconSize = ICON_SIZE(dSize);
 
   const containerEl = useElement(() => {
     let el = document.getElementById(`${dPrefix}selectbox-root`);
@@ -115,30 +135,22 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
 
   const maxZIndex = useMaxIndex(dVisible);
 
-  const changeVisible = useEventCallback((visible: boolean) => {
-    onVisibleChange?.(visible);
-  });
-
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const popupEl = document.querySelector(`[data-selectbox-popupid="${uniqueId}"]`) as HTMLElement | null;
-    if (boxRef.current && popupEl) {
-      const width = boxRef.current.getBoundingClientRect().width;
-      const { height } = getNoTransformSize(popupEl);
-      const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, 'bottom-left', 8);
-      setPopupPositionStyle({
-        top,
-        left,
-        width: dCustomWidth ? undefined : width,
-        maxWidth: dAutoMaxWidth ? window.innerWidth - left - 20 : undefined,
-      });
-      setTransformOrigin(transformOrigin);
+    if (boxRef.current) {
+      const res = onUpdatePosition(boxRef.current);
+      if (res) {
+        setPopupPositionStyle(res.position);
+        setTransformOrigin(res.transformOrigin);
+      }
     }
   });
+
+  useUpdatePosition(updatePosition, dVisible);
 
   useEffect(() => {
     if (dVisible) {
@@ -157,10 +169,6 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
         });
       }
 
-      asyncGroup.onGlobalScroll(() => {
-        updatePosition();
-      });
-
       return () => {
         asyncCapture.deleteGroup(asyncId);
       };
@@ -176,7 +184,7 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
         .pipe(filter((e) => e.code === 'Escape'))
         .subscribe({
           next: () => {
-            changeVisible(false);
+            onVisibleChange?.(false);
           },
         });
 
@@ -184,25 +192,33 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, changeVisible, dVisible]);
+  }, [asyncCapture, onVisibleChange, dVisible]);
 
   const preventBlur: React.MouseEventHandler = (e) => {
-    if (e.button === 0) {
+    if (e.target !== inputRef.current && e.button === 0) {
       e.preventDefault();
     }
   };
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      updatePosition,
+    }),
+    [updatePosition]
+  );
+
   return (
     <>
-      <DBaseSupport dCompose={{ active: isFocus, disabled: disabled }} dFormControl={dFormControl}>
+      <DBaseDesign dCompose={{ active: isFocus, disabled: dDisabled }} dFormControl={dFormControl}>
         <div
           {...restProps}
           ref={boxRef}
           className={getClassName(className, `${dPrefix}selectbox`, {
-            [`${dPrefix}selectbox--${size}`]: size,
+            [`${dPrefix}selectbox--${dSize}`]: dSize,
             'is-expanded': dVisible,
-            'is-disabled': disabled,
             'is-focus': isFocus,
+            'is-disabled': dDisabled,
           })}
           onMouseDown={(e) => {
             onMouseDown?.(e);
@@ -217,36 +233,34 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
           onClick={(e) => {
             onClick?.(e);
 
-            changeVisible(!dVisible);
-            searchRef.current?.focus({ preventScroll: true });
+            onVisibleChange?.(dSearchable ? true : !dVisible);
+            inputRef.current?.focus({ preventScroll: true });
           }}
         >
           <div className={`${dPrefix}selectbox__container`} title={dContentTitle}>
             <DFocusVisible onFocusVisibleChange={onFocusVisibleChange}>
               <DBaseInput
                 {...dInputProps}
-                ref={searchRef}
+                ref={combineInputRef}
                 className={getClassName(`${dPrefix}selectbox__search`, dInputProps?.className)}
                 style={{
                   ...dInputProps?.style,
-                  opacity: dSearchable && dVisible ? undefined : 0,
-                  zIndex: dSearchable && dVisible ? undefined : -1,
+                  opacity: inputable ? undefined : 0,
+                  zIndex: inputable ? undefined : -1,
                 }}
                 type="text"
                 autoComplete="off"
-                value={searchValue}
-                disabled={disabled}
+                disabled={dDisabled}
                 role="combobox"
                 aria-haspopup="listbox"
                 aria-expanded={dVisible}
-                aria-controls={dInputProps['aria-controls']}
+                aria-controls={dInputProps?.['aria-controls']}
                 dFormControl={dFormControl}
                 onChange={(e) => {
                   dInputProps?.onChange?.(e);
 
-                  if (dSearchable && dVisible) {
-                    setSearchValue(e.currentTarget.value);
-                    onSearch?.(e.currentTarget.value);
+                  if (dSearchable) {
+                    onVisibleChange?.(true);
                   }
                 }}
                 onKeyDown={(e) => {
@@ -256,7 +270,7 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
                     if (e.code === 'Space' || e.code === 'Enter') {
                       e.preventDefault();
 
-                      changeVisible(true);
+                      onVisibleChange?.(true);
                     }
                   }
                 }}
@@ -269,16 +283,18 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
                   dInputProps?.onBlur?.(e);
 
                   setIsFocus(false);
-                  changeVisible(false);
+                  onVisibleChange?.(false);
                 }}
               />
             </DFocusVisible>
-            {!(dSearchable && dVisible) && dContent && <div className={`${dPrefix}selectbox__content`}>{dContent}</div>}
-            {!(dSearchable && dVisible) && !dContent && dPlaceholder && (
-              <div className={`${dPrefix}selectbox__placeholder-wrapper`}>
-                <div className={`${dPrefix}selectbox__placeholder`}>{dPlaceholder}</div>
-              </div>
-            )}
+            {!inputable &&
+              (dContent ? (
+                <div className={`${dPrefix}selectbox__content`}>{dContent}</div>
+              ) : dPlaceholder ? (
+                <div className={`${dPrefix}selectbox__placeholder-wrapper`}>
+                  <div className={`${dPrefix}selectbox__placeholder`}>{dPlaceholder}</div>
+                </div>
+              ) : null)}
           </div>
           {dSuffix && (
             <div
@@ -290,29 +306,33 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
               {dSuffix}
             </div>
           )}
-          {showClear && (
+          {clearable && (
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}selectbox__clear`)}
               style={{ width: iconSize, height: iconSize }}
               aria-label={t('Common', 'Clear')}
-              onClick={onClear}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                onClear?.();
+              }}
             >
-              <CloseCircleFilled dSize="0.8em" />
+              <CloseCircleFilled dSize={iconSize} />
             </button>
           )}
           <div
             className={getClassName(`${dPrefix}selectbox__icon`, {
-              'is-expand': !dLoading && !dSearchable && dVisible,
+              'is-arrow-up': !dLoading && !inputable && dVisible,
             })}
             style={{
               fontSize: iconSize,
-              opacity: showClear ? 0 : 1,
+              opacity: clearable ? 0 : 1,
             }}
           >
-            {dLoading ? <LoadingOutlined dSpin /> : dSearchable && dVisible ? <SearchOutlined /> : <DownOutlined />}
+            {dLoading ? <LoadingOutlined dSpin /> : inputable ? <SearchOutlined /> : <DownOutlined />}
           </div>
         </div>
-      </DBaseSupport>
+      </DBaseDesign>
       {containerEl &&
         ReactDOM.createPortal(
           <DTransition dIn={dVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
@@ -354,12 +374,8 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
                   ...transitionStyle,
                   zIndex: maxZIndex,
                 },
-                sOnMouseDown: (e) => {
-                  preventBlur(e);
-                },
-                sOnMouseUp: (e) => {
-                  preventBlur(e);
-                },
+                sOnMouseDown: preventBlur,
+                sOnMouseUp: preventBlur,
               });
             }}
           </DTransition>,
@@ -368,3 +384,5 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
     </>
   );
 }
+
+export const DSelectbox = React.forwardRef(Selectbox);

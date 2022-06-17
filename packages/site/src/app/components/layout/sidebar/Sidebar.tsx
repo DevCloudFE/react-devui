@@ -69,8 +69,9 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
                 to: child.to,
               })),
       }))}
-      dActive={[activeId, setActiveId]}
+      dActive={activeId}
       onActiveChange={(id, option) => {
+        setActiveId(id);
         if (option.to) {
           navigate(option.to, { replace: true });
           onMenuOpenChange(false);
@@ -86,7 +87,7 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
   ) : (
     <DDrawer
       className="app-sidebar__drawer"
-      dVisible={[aMenuOpen]}
+      dVisible={aMenuOpen}
       dHeader={
         <DDrawerHeader>
           <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
@@ -94,7 +95,7 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
         </DDrawerHeader>
       }
       dWidth={280}
-      onClose={() => onMenuOpenChange(false)}
+      onVisibleChange={onMenuOpenChange}
     >
       {menuNode}
     </DDrawer>

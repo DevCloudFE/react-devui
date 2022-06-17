@@ -20,10 +20,7 @@
 
   &::after {
     position: absolute;
-    top: -#{$border};
-    right: -#{$border};
-    bottom: -#{$border};
-    left: -#{$border};
+    inset: -#{$border};
     content: '';
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     background-color: rgb(255 255 255 / 30%);

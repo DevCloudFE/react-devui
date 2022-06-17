@@ -1,4 +1,3 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DId, DSize } from '../../utils/global';
 import type { DFormControl } from '../form';
 import type { DRadioPropsWithPrivate } from './Radio';
@@ -6,9 +5,10 @@ import type { DRadioPropsWithPrivate } from './Radio';
 import { isUndefined, nth } from 'lodash';
 import React, { useEffect, useId, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DCompose } from '../compose';
+import { useFormControl } from '../form';
 import { DRadio } from './Radio';
 
 export interface DRadioOption<V extends DId> {
@@ -19,10 +19,10 @@ export interface DRadioOption<V extends DId> {
 
 export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
+  dModel?: V | null;
   dName?: string;
   dDisabled?: boolean;
   dOptions: DRadioOption<V>[];
-  dModel?: [V | null, DUpdater<V>?];
   dType?: 'outline' | 'fill';
   dSize?: DSize;
   dVertical?: boolean;
@@ -30,13 +30,13 @@ export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttribut
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadioGroup' });
-export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Element | null {
+export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>) {
   const {
+    dFormControl,
+    dModel,
     dName,
     dDisabled = false,
-    dFormControl,
     dOptions,
-    dModel,
     dType,
     dSize,
     dVertical = false,
@@ -54,9 +54,8 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   const uniqueId = useId();
   const getId = (value: V) => `${dPrefix}radio-group-${value}-${uniqueId}`;
 
-  const [value, changeValue] = useTwoWayBinding<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [value, changeValue] = useDValue<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, undefined, formControlInject);
 
   const [isChange, setIsChange] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,10 +85,10 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
           DRadio,
           {
             key: option.value,
+            dModel: option.value === value,
             dDisabled: option.disabled,
-            dModel: [option.value === value],
             dInputProps: {
-              ...(option.value === value ? { id: getId(option.value), 'data-form-support-input': true } : undefined),
+              ...(option.value === value ? { id: getId(option.value), 'data-form-label-for': true } : undefined),
               name: dName ?? uniqueId,
               value: option.value,
             },

@@ -8,7 +8,7 @@ export interface DDropdownGroupProps {
   dLevel?: number;
 }
 
-export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
+export function DDropdownGroup(props: DDropdownGroupProps) {
   const { children, dId, dOptions, dEmpty, dLevel = 0 } = props;
 
   //#region Context

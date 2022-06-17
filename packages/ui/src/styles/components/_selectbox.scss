@@ -17,6 +17,22 @@
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
   appearance: none;
 
+  &[data-form-invalid-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+
+    @include e(search, true) {
+      caret-color: var(--#{$variable-prefix}color-warning) !important;
+    }
+  }
+
+  &[data-form-invalid-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+
+    @include e(search, true) {
+      caret-color: var(--#{$variable-prefix}color-danger) !important;
+    }
+  }
+
   @include utils-disabled(true);
 
   &:hover {
@@ -74,10 +90,7 @@
 
   @include e(search) {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     z-index: 5;
     padding: 0;
     margin: 0;
@@ -98,10 +111,7 @@
 
   @include e(placeholder-wrapper) {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     display: flex;
     align-items: center;
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
@@ -126,7 +136,7 @@
     transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
       color var(--#{$variable-prefix}animation-duration-base) linear;
 
-    @include when(expand) {
+    @include when(arrow-up) {
       color: var(--#{$variable-prefix}color-primary);
       transform: rotate(180deg);
     }

@@ -106,7 +106,7 @@ class GenerateSite {
     generateComponentDemo(file, outDir) {
         var _a, _b, _c;
         const meta = yamlFront.loadFront(file.data);
-        const fileNameRegExp = new RegExp(String.raw `(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)`, 'g');
+        const fileNameRegExp = new RegExp(String.raw `(?<=^[0-9]+.)[a-zA-Z0-9]+(?=.md$)`, 'g');
         const fileName = (_a = file.name.match(fileNameRegExp)) === null || _a === void 0 ? void 0 : _a[0];
         const id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
         const tsx = (_b = meta.__content.match(/(?<=```tsx)[\s\S]*?(?=```)/g)) === null || _b === void 0 ? void 0 : _b[0];

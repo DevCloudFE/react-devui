@@ -1,19 +1,19 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DFormControl } from '../form';
 
 import { isFunction } from 'lodash';
 import { useId, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { StarFilled } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
+import { useFormControl } from '../form';
 import { DStar } from './Star';
 
 export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dFormControl?: DFormControl;
+  dModel?: number;
   dName?: string;
   dDisabled?: boolean;
-  dFormControl?: DFormControl;
-  dModel?: [number, DUpdater<number>?];
   dTotal?: number;
   dHalf?: boolean;
   dReadOnly?: boolean;
@@ -23,12 +23,12 @@ export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRating' });
-export function DRating(props: DRatingProps): JSX.Element | null {
+export function DRating(props: DRatingProps) {
   const {
-    dName,
-    dDisabled = false,
     dFormControl,
     dModel,
+    dName,
+    dDisabled = false,
     dTotal = 5,
     dHalf = false,
     dReadOnly = false,
@@ -50,9 +50,8 @@ export function DRating(props: DRatingProps): JSX.Element | null {
 
   const [hoverValue, setHoverValue] = useState<number | null>(null);
 
-  const [value, changeValue] = useTwoWayBinding<number | null, number>(null, dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [value, changeValue] = useDValue<number | null, number>(null, dModel, onModelChange, undefined, formControlInject);
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
@@ -75,9 +74,9 @@ export function DRating(props: DRatingProps): JSX.Element | null {
         .map((v, i) => (
           <DStar
             key={i + 1}
+            dFormControl={dFormControl}
             dName={dName ?? uniqueId}
             dDisabled={disabled || dReadOnly}
-            dFormControl={dFormControl}
             dValue={i + 1}
             dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : dCustomIcon ?? <StarFilled />}
             dChecked={value}

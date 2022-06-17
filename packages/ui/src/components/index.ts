@@ -76,6 +76,9 @@ export { DTag } from './tag';
 export type { DTextareaProps } from './textarea';
 export { DTextarea } from './textarea';
 
+export type { DTimePickerProps } from './time-picker';
+export { DTimePicker } from './time-picker';
+
 export type { DToastProps } from './toast';
 export { ToastService } from './toast';
 

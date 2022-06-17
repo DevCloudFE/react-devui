@@ -216,7 +216,17 @@ h3 {
     }
   }
 
-  @each $id, $selector in ('Tag': 'tag', 'Select': 'select', 'Cascader': 'cascader', 'Radio': 'radio', 'Input': 'input', 'Switch': 'switch')
+  @each $id,
+    $selector
+      in (
+        'Tag': 'tag',
+        'Select': 'select',
+        'Cascader': 'cascader',
+        'Radio': 'radio',
+        'Input': 'input',
+        'Switch': 'switch',
+        'Time-picker': 'time-picker'
+      )
   {
     section[id^='#{$id}'] {
       .d-#{$selector} {

@@ -40,6 +40,7 @@ import type {
 import type { DBreakpoints } from '../../components/grid';
 import type { DIconBaseProps } from '../../icons';
 import type { DLang, DTheme } from '../../utils/global';
+import type { DElementSelector } from '../ui/useElement';
 
 import React from 'react';
 
@@ -98,6 +99,10 @@ export interface DConfigContextData {
   i18n?: {
     lang?: DLang;
     resources?: Resources;
+  };
+  updatePosition?: {
+    scroll?: DElementSelector[];
+    resize?: DElementSelector[];
   };
 }
 export const DConfigContext = React.createContext<DConfigContextData | undefined>(undefined);

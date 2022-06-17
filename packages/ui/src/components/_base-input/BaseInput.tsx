@@ -7,12 +7,13 @@ import { usePrefixConfig } from '../../hooks';
 import { DFormContext } from '../form';
 
 export interface DBaseInputProps extends React.InputHTMLAttributes<any> {
-  dTag?: string;
   dFormControl?: DFormControl;
+  dTag?: string;
+  dFor?: boolean;
 }
 
 function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>) {
-  const { dTag = 'input', dFormControl, ...restProps } = props;
+  const { dFormControl, dTag = 'input', dFor = true, ...restProps } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -26,7 +27,7 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>) {
 
   const attrs = supportForm
     ? {
-        'data-form-support-input': true,
+        'data-form-label-for': dFor,
         ...dFormControl.inputAttrs,
       }
     : {};

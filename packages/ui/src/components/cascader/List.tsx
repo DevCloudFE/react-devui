@@ -30,7 +30,7 @@ export interface DListProps<ID extends DId, T> {
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>): JSX.Element | null {
+export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>) {
   const {
     dListId,
     dGetOptionId,
@@ -76,14 +76,9 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
     }
   })();
 
-  const changeSelectByClick = useEventCallback((option: AbstractTreeNode<ID, T>, isSwitch?: boolean) => {
+  const changeSelectByClick = useEventCallback((option: AbstractTreeNode<ID, T>) => {
     if (dMultiple) {
-      isSwitch = isSwitch ?? true;
-
-      const checkeds = (option as MultipleTreeNode<ID, T>).changeStatus(
-        isSwitch ? (option.checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED',
-        dSelected as ID[]
-      );
+      const checkeds = (option as MultipleTreeNode<ID, T>).changeStatus(option.checked ? 'UNCHECKED' : 'CHECKED', dSelected as ID[]);
       onSelectedChange(checkeds);
     } else {
       if (!dOnlyLeafSelectable || option.isLeaf) {
@@ -107,12 +102,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
       switch (e.code) {
         case 'Enter':
           e.preventDefault();
-          changeSelectByClick(inFocusNode, false);
-          break;
-
-        case 'Space':
-          e.preventDefault();
-          changeSelectByClick(inFocusNode, dMultiple);
+          changeSelectByClick(inFocusNode);
           break;
 
         case 'ArrowLeft':
@@ -209,8 +199,8 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
               {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
               {dMultiple && (
                 <DCheckbox
+                  dModel={item.checked}
                   dDisabled={item.disabled}
-                  dModel={[item.checked]}
                   dIndeterminate={item.indeterminate}
                   onClick={(e) => {
                     e.stopPropagation();

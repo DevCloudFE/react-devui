@@ -41,14 +41,14 @@ export function scrollTo(
       const speed = ease(elapsed);
 
       let isFinish = true;
-      if (top) {
+      if (!isUndefined(top)) {
         const currentTop = startTop + (top - startTop) * speed;
         el.scrollTop = currentTop;
         if (currentTop !== top) {
           isFinish = false;
         }
       }
-      if (left) {
+      if (!isUndefined(left)) {
         const currentLeft = startLeft + (left - startLeft) * speed;
         el.scrollLeft = currentLeft;
         if (currentLeft !== left) {

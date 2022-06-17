@@ -10,7 +10,7 @@ export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> 
   onClose?: () => void;
 }
 
-export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
+export function DAlertDialog(props: DAlertDialogProps) {
   const {
     children,
     dDuration,

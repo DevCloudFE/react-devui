@@ -5,7 +5,7 @@ import React, { useContext } from 'react';
 import { DComposeContext } from '../compose';
 import { DFormContext } from '../form';
 
-export interface DBaseSupportProps {
+export interface DBaseDesignProps {
   children: React.ReactElement;
   dCompose?: {
     active?: boolean;
@@ -14,7 +14,7 @@ export interface DBaseSupportProps {
   dFormControl?: DFormControl;
 }
 
-export function DBaseSupport(props: DBaseSupportProps): JSX.Element | null {
+export function DBaseDesign(props: DBaseDesignProps) {
   const { children, dCompose, dFormControl } = props;
 
   const composeContext = useContext(DComposeContext);

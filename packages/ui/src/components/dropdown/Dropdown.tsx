@@ -1,18 +1,18 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useId, useRef } from 'react';
+import React, { useId, useImperativeHandle, useRef } from 'react';
 import { useState } from 'react';
+import { Subject } from 'rxjs';
 
 import {
   usePrefixConfig,
   useComponentConfig,
-  useTwoWayBinding,
   useTranslation,
   useEventCallback,
-  useElement,
   useMaxIndex,
+  useDValue,
+  useIsomorphicLayoutEffect,
 } from '../../hooks';
 import { registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition, scrollElementToView } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
@@ -22,6 +22,10 @@ import { DDropdownGroup } from './DropdownGroup';
 import { DDropdownItem } from './DropdownItem';
 import { DDropdownSub } from './DropdownSub';
 import { checkEnableOption, getOptions } from './utils';
+
+export interface DDropdownRef {
+  updatePosition: () => void;
+}
 
 export interface DDropdownOption<ID extends DId> {
   id: ID;
@@ -35,7 +39,7 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownOption<ID>>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactElement;
   dOptions: DNestedChildren<T>[];
-  dVisible?: [boolean, DUpdater<boolean>?];
+  dVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dTrigger?: 'hover' | 'click';
   dArrow?: boolean;
@@ -48,7 +52,7 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownOption<ID>>
 
 const TTANSITION_DURING = 116;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' });
-export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdownProps<ID, T>): JSX.Element | null {
+function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdownProps<ID, T>, ref: React.ForwardedRef<DDropdownRef>) {
   const {
     children,
     dOptions,
@@ -83,6 +87,8 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
   //#endregion
 
   const [t] = useTranslation('Common');
+
+  const [updatePosition$] = useState(() => new Subject<void>());
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
@@ -125,14 +131,12 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
     setFocusIds(ids);
   };
 
-  const [visible, _changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
-  const changeVisible = useEventCallback((visible: boolean) => {
-    _changeVisible(visible);
-
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  useIsomorphicLayoutEffect(() => {
     if (!visible) {
       setPopupIds([]);
     }
-  });
+  }, [setPopupIds, visible]);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {
@@ -143,16 +147,6 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
     }
   })();
 
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}dropdown-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}dropdown-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
-
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
     left: -9999,
@@ -160,10 +154,10 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const [arrowPosition, setArrowPosition] = useState<React.CSSProperties>();
   const updatePosition = useEventCallback(() => {
-    const targetEl = document.getElementById(buttonId);
-    if (targetEl && dropdownRef.current) {
+    const triggerEl = document.getElementById(buttonId);
+    if (triggerEl && dropdownRef.current) {
       const { width, height } = getNoTransformSize(dropdownRef.current);
-      const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(targetEl, { width, height }, dPlacement, 8);
+      const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(triggerEl, { width, height }, dPlacement, 8);
       setPopupPositionStyle({ top, left });
       setTransformOrigin(transformOrigin);
       setArrowPosition(arrowPosition);
@@ -334,6 +328,7 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                     removePopupId(optionId);
                   }
                 }}
+                updatePosition$={updatePosition$}
               >
                 {optionLabel}
               </DDropdownSub>
@@ -344,6 +339,17 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
 
     return getNodes(dOptions, 0, []);
   })();
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      updatePosition: () => {
+        updatePosition();
+        updatePosition$.next();
+      },
+    }),
+    [updatePosition, updatePosition$]
+  );
 
   return (
     <DTransition
@@ -405,15 +411,15 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                 }}
                 onClick={(e) => {
                   onClick?.(e);
-                  pOnClick?.();
+                  pOnClick?.(e);
                 }}
                 onMouseEnter={(e) => {
                   onMouseEnter?.(e);
-                  pOnMouseEnter?.();
+                  pOnMouseEnter?.(e);
                 }}
                 onMouseLeave={(e) => {
                   onMouseLeave?.(e);
-                  pOnMouseLeave?.();
+                  pOnMouseLeave?.(e);
                 }}
                 onMouseDown={(e) => {
                   onMouseDown?.(e);
@@ -440,10 +446,9 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                 {dArrow && <div className={`${dPrefix}dropdown__arrow`} style={arrowPosition}></div>}
               </div>
             )}
-            dContainer={containerEl}
             dTrigger={dTrigger}
             onVisibleChange={changeVisible}
-            onUpdate={updatePosition}
+            onUpdatePosition={updatePosition}
           >
             {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
               <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
@@ -458,18 +463,18 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                   'aria-controls': _id,
                   onClick: (e) => {
                     children.props.onClick?.(e);
-                    pOnClick?.();
+                    pOnClick?.(e);
                   },
                   onFocus: (e) => {
                     children.props.onFocus?.(e);
-                    pOnFocus?.();
+                    pOnFocus?.(e);
 
                     setIsFocus(true);
                     initFocus();
                   },
                   onBlur: (e) => {
                     children.props.onBlur?.(e);
-                    pOnBlur?.();
+                    pOnBlur?.(e);
 
                     setIsFocus(false);
                     changeVisible(false);
@@ -486,11 +491,11 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
                   },
                   onMouseEnter: (e) => {
                     children.props.onMouseEnter?.(e);
-                    pOnMouseEnter?.();
+                    pOnMouseEnter?.(e);
                   },
                   onMouseLeave: (e) => {
                     children.props.onMouseLeave?.(e);
-                    pOnMouseLeave?.();
+                    pOnMouseLeave?.(e);
                   },
                 })}
               </DFocusVisible>
@@ -501,3 +506,7 @@ export function DDropdown<ID extends DId, T extends DDropdownOption<ID>>(props: 
     </DTransition>
   );
 }
+
+export const DDropdown: <ID extends DId, T extends DDropdownOption<ID>>(
+  props: DDropdownProps<ID, T> & { ref?: React.ForwardedRef<DDropdownRef> }
+) => ReturnType<typeof Dropdown> = React.forwardRef(Dropdown) as any;

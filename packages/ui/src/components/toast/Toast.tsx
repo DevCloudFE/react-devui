@@ -74,7 +74,7 @@ export class ToastService {
 
 const TTANSITION_DURING = { enter: 133, leave: 166 };
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DToast' });
-export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element | null {
+export function DToast(props: DToastProps & { dVisible: boolean }) {
   const {
     dVisible,
     dType,

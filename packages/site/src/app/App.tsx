@@ -1,3 +1,4 @@
+import type { DConfigContextData } from '@react-devui/ui/hooks/d-config/contex';
 import type { DLang, DTheme } from '@react-devui/ui/utils/global';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -54,10 +55,11 @@ export function App() {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  const rootContext = useMemo(
+  const rootContext = useMemo<DConfigContextData>(
     () => ({
       theme,
       i18n: { lang: i18n.language as DLang },
+      updatePosition: { scroll: ['main.app-main'], resize: ['article.app-route-article'] },
     }),
     [i18n.language, theme]
   );

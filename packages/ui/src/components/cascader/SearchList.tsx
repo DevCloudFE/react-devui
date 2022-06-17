@@ -29,7 +29,7 @@ interface DSearchListProps<ID extends DId, T> {
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
+export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>) {
   const {
     dListId,
     dGetOptionId,
@@ -56,12 +56,10 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
 
   const [t] = useTranslation('Common');
 
-  const changeSelectByClick = useEventCallback((option: DSearchOption<ID, T>, isSwitch?: boolean) => {
+  const changeSelectByClick = useEventCallback((option: DSearchOption<ID, T>) => {
     if (dMultiple) {
-      isSwitch = isSwitch ?? true;
-
       const checkeds = (option[TREE_NODE_KEY] as MultipleTreeNode<ID, T>).changeStatus(
-        isSwitch ? (option[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED') : 'CHECKED',
+        option[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
         dSelected as ID[]
       );
       onSelectedChange(checkeds);
@@ -82,12 +80,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
       switch (e.code) {
         case 'Enter':
           e.preventDefault();
-          changeSelectByClick(dFocusOption, false);
-          break;
-
-        case 'Space':
-          e.preventDefault();
-          changeSelectByClick(dFocusOption, dMultiple);
+          changeSelectByClick(dFocusOption);
           break;
 
         case 'ArrowUp':
@@ -170,7 +163,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
             }}
           >
             {dFocusVisible && dFocusOption?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
-            {dMultiple && <DCheckbox dDisabled={node.disabled} dModel={[node.checked]}></DCheckbox>}
+            {dMultiple && <DCheckbox dModel={node.checked} dDisabled={node.disabled}></DCheckbox>}
             <div className={`${dPrefix}cascader-search-list__option-content`}>
               {dCustomOption ? dCustomOption(node.origin) : getText(node)}
             </div>

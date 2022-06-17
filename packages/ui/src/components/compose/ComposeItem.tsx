@@ -1,13 +1,13 @@
 import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
-import { DBaseSupport } from '../_base-support';
+import { DBaseDesign } from '../_base-design';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dGray?: boolean;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DComposeItem' });
-export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
+export function DComposeItem(props: DComposeItemProps) {
   const { className, children, dGray = false, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
@@ -16,7 +16,7 @@ export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
   //#endregion
 
   return (
-    <DBaseSupport dCompose={{ disabled: true }}>
+    <DBaseDesign dCompose={{ disabled: true }}>
       <div
         {...restProps}
         className={getClassName(className, `${dPrefix}compose-item`, {
@@ -27,6 +27,6 @@ export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
       >
         {children}
       </div>
-    </DBaseSupport>
+    </DBaseDesign>
   );
 }

@@ -5,13 +5,14 @@ import { useId, useState } from 'react';
 
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
+import { DBaseInput } from '../_base-input';
 import { DTooltip } from '../tooltip';
 
 export interface DStarProps {
-  dName?: string;
-  dDisabled?: boolean;
   dFormControl?: DFormControl;
   dValue: number;
+  dName?: string;
+  dDisabled?: boolean;
   dIcon: React.ReactNode;
   dChecked: number | null;
   dHoverValue: number | null;
@@ -21,8 +22,8 @@ export interface DStarProps {
   onHoverChange: (value: number) => void;
 }
 
-export function DStar(props: DStarProps): JSX.Element | null {
-  const { dName, dDisabled, dFormControl, dValue, dIcon, dChecked, dHoverValue, dHalf, dTooltip, onCheck, onHoverChange } = props;
+export function DStar(props: DStarProps) {
+  const { dFormControl, dValue, dName, dDisabled, dIcon, dChecked, dHoverValue, dHalf, dTooltip, onCheck, onHoverChange } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -49,8 +50,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
       >
         {dHalf && (
           <>
-            <input
-              {...dFormControl?.inputAttrs}
+            <DBaseInput
               id={halfInputId}
               className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
               type="radio"
@@ -58,7 +58,8 @@ export function DStar(props: DStarProps): JSX.Element | null {
               checked={halfChecked}
               disabled={dDisabled}
               aria-checked={halfChecked}
-              data-form-support-input={halfChecked}
+              dFormControl={dFormControl}
+              dFor={halfChecked}
               onChange={() => {
                 onCheck(halfValue);
               }}
@@ -91,8 +92,7 @@ export function DStar(props: DStarProps): JSX.Element | null {
             'is-checked': dValue <= (dHoverValue ?? dChecked ?? 0),
           })}
         >
-          <input
-            {...dFormControl?.inputAttrs}
+          <DBaseInput
             id={inputId}
             className={`${dPrefix}rating-star__input`}
             type="radio"
@@ -100,7 +100,8 @@ export function DStar(props: DStarProps): JSX.Element | null {
             checked={checked}
             disabled={dDisabled}
             aria-checked={checked}
-            data-form-support-input={checked}
+            dFormControl={dFormControl}
+            dFor={checked}
             onChange={() => {
               onCheck(dValue);
             }}

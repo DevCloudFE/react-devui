@@ -1,13 +1,13 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DFormControl } from '../form';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DBaseInput } from '../_base-input';
+import { useFormControl } from '../form';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
-  dModel?: [boolean, DUpdater<boolean>?];
+  dModel?: boolean;
   dDisabled?: boolean;
   dIndeterminate?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -16,7 +16,7 @@ export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' });
-export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
+export function DCheckbox(props: DCheckboxProps) {
   const {
     children,
     dFormControl,
@@ -36,9 +36,14 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
   const { gDisabled } = useGeneralContext();
   //#endregion
 
-  const [checked, changeChecked] = useTwoWayBinding<boolean | undefined, boolean>(false, dIndeterminate ? [false] : dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [checked, changeChecked] = useDValue<boolean | undefined, boolean>(
+    false,
+    dIndeterminate ? false : dModel,
+    onModelChange,
+    undefined,
+    formControlInject
+  );
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 

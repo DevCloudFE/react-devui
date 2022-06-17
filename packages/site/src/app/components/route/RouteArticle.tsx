@@ -23,7 +23,9 @@ export function AppRouteArticle(props: AppRouteArticleProps) {
 
   const mediaMatch = useMediaMatch();
 
-  const [links, setLinks] = useImmer<{ title: string; href: string }[]>(props.links ?? []);
+  const [_links, setLinks] = useImmer<{ title: string; href: string }[]>([]);
+  const links = isUndefined(props.links) ? _links : [...props.links, { title: 'API', href: '#API' }];
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const icon = (top: boolean) => (
@@ -59,11 +61,6 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
         arr.push({ title: el.id, href: `#${el.id}` });
       });
       setLinks(arr);
-      return () => {
-        setLinks([]);
-      };
-    } else {
-      setLinks([...props.links, { title: 'API', href: '#API' }]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

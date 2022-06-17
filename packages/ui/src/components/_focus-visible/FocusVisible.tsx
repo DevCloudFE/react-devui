@@ -8,7 +8,7 @@ export interface DFocusVisibleProps {
   children: React.ReactElement;
   onFocusVisibleChange?: (visible: boolean) => void;
 }
-export function DFocusVisible(props: DFocusVisibleProps): JSX.Element | null {
+export function DFocusVisible(props: DFocusVisibleProps) {
   const { children, onFocusVisibleChange } = props;
 
   const dataRef = useRef({

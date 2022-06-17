@@ -12,7 +12,7 @@ export interface DDrawerHeaderPropsWithPrivate extends DDrawerHeaderProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerHeader' });
-export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
+export function DDrawerHeader(props: DDrawerHeaderProps) {
   const {
     __id,
     __onClose,

@@ -1,8 +1,9 @@
 import type { DMenuMode } from './Menu';
+import type { Subject } from 'rxjs';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-import { usePrefixConfig, useTranslation, useElement, useEventCallback, useMaxIndex } from '../../hooks';
+import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { CaretDownOutlined } from '../../icons';
 import { getClassName, getHorizontalSidePosition, getVerticalSidePosition, getNoTransformSize } from '../../utils';
 import { DPopup } from '../_popup';
@@ -29,11 +30,12 @@ export interface DMenuSubProps {
   dLevel?: number;
   onVisibleChange: (visible: boolean) => void;
   onClick: React.MouseEventHandler<HTMLLIElement>;
+  updatePosition$: Subject<void>;
 }
 
 const POPUP_TTANSITION_DURING = 116;
 const COLLAPSE_TTANSITION_DURING = 200;
-export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
+export function DMenuSub(props: DMenuSubProps) {
   const {
     children,
     dId,
@@ -55,6 +57,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     dLevel = 0,
     onVisibleChange,
     onClick,
+    updatePosition$,
   } = props;
 
   //#region Context
@@ -70,16 +73,6 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   const [t] = useTranslation('Common');
 
   const inHorizontalNav = dMode === 'horizontal' && dInNav;
-
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}menu-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}menu-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
@@ -119,6 +112,18 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     }
     return undefined;
   })();
+
+  useEffect(() => {
+    const ob = updatePosition$.subscribe({
+      next: () => {
+        updatePosition();
+      },
+    });
+
+    return () => {
+      ob.unsubscribe();
+    };
+  }, [updatePosition, updatePosition$]);
 
   return (
     <DCollapseTransition
@@ -183,15 +188,9 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       }}
                       role="menu"
                       aria-labelledby={dId}
-                      onClick={() => {
-                        pOnClick?.();
-                      }}
-                      onMouseEnter={() => {
-                        pOnMouseEnter?.();
-                      }}
-                      onMouseLeave={() => {
-                        pOnMouseLeave?.();
-                      }}
+                      onClick={pOnClick}
+                      onMouseEnter={pOnMouseEnter}
+                      onMouseLeave={pOnMouseLeave}
                     >
                       {dEmpty ? (
                         <div className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: dSpace + dLevel * dStep }}>
@@ -202,10 +201,9 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       )}
                     </ul>
                   )}
-                  dContainer={containerEl}
                   dTrigger={dTrigger}
                   onVisibleChange={onVisibleChange}
-                  onUpdate={updatePosition}
+                  onUpdatePosition={updatePosition}
                 >
                   {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
                     <li
@@ -225,22 +223,14 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       aria-expanded={dMode === 'vertical' ? dExpand : dPopupVisible}
                       aria-disabled={dDisabled}
                       onClick={(e) => {
-                        pOnClick?.();
+                        pOnClick?.(e);
 
                         onClick(e);
                       }}
-                      onFocus={() => {
-                        pOnFocus?.();
-                      }}
-                      onBlur={() => {
-                        pOnBlur?.();
-                      }}
-                      onMouseEnter={() => {
-                        pOnMouseEnter?.();
-                      }}
-                      onMouseLeave={() => {
-                        pOnMouseLeave?.();
-                      }}
+                      onFocus={pOnFocus}
+                      onBlur={pOnBlur}
+                      onMouseEnter={pOnMouseEnter}
+                      onMouseLeave={pOnMouseLeave}
                     >
                       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
                       <div

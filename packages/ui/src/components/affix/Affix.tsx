@@ -3,7 +3,15 @@ import type { DElementSelector } from '../../hooks/ui/useElement';
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useAsync, useElement, useIsomorphicLayoutEffect, useEventCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useAsync,
+  useElement,
+  useIsomorphicLayoutEffect,
+  useEventCallback,
+  useUpdatePosition,
+} from '../../hooks';
 import { getClassName, registerComponentMate, toPx } from '../../utils';
 
 export interface DAffixRef {
@@ -95,15 +103,23 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useUpdatePosition(updatePosition);
+
   useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+    if (targetEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-    asyncGroup.onGlobalScroll(updatePosition);
+      asyncGroup.fromEvent(targetEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
 
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, updatePosition]);
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, targetEl, updatePosition]);
 
   useImperativeHandle(
     ref,

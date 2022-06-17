@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
+import type { Subject } from 'rxjs';
 
-import { usePrefixConfig, useTranslation, useEventCallback, useElement, useMaxIndex } from '../../hooks';
+import { useEffect, useRef, useState } from 'react';
+
+import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { RightOutlined } from '../../icons';
 import { getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
 import { DPopup } from '../_popup';
@@ -19,10 +21,11 @@ export interface DDropdownSubProps {
   dLevel?: number;
   dDisabled?: boolean;
   onVisibleChange: (visible: boolean) => void;
+  updatePosition$: Subject<void>;
 }
 
 const TTANSITION_DURING = 116;
-export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
+export function DDropdownSub(props: DDropdownSubProps) {
   const {
     children,
     dId,
@@ -36,6 +39,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
     dLevel = 0,
     dDisabled,
     onVisibleChange,
+    updatePosition$,
   } = props;
 
   //#region Context
@@ -48,16 +52,6 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   //#endregion
 
   const [t] = useTranslation('Common');
-
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}dropdown-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}dropdown-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
@@ -77,6 +71,18 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   });
 
   const maxZIndex = useMaxIndex(dPopupVisible);
+
+  useEffect(() => {
+    const ob = updatePosition$.subscribe({
+      next: () => {
+        updatePosition();
+      },
+    });
+
+    return () => {
+      ob.unsubscribe();
+    };
+  }, [updatePosition, updatePosition$]);
 
   return (
     <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
@@ -127,15 +133,9 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 }}
                 role="menu"
                 aria-labelledby={dId}
-                onClick={() => {
-                  pOnClick?.();
-                }}
-                onMouseEnter={() => {
-                  pOnMouseEnter?.();
-                }}
-                onMouseLeave={() => {
-                  pOnMouseLeave?.();
-                }}
+                onClick={pOnClick}
+                onMouseEnter={pOnMouseEnter}
+                onMouseLeave={pOnMouseLeave}
               >
                 {dEmpty ? (
                   <div className={`${dPrefix}dropdown-sub__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
@@ -146,10 +146,9 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 )}
               </ul>
             )}
-            dContainer={containerEl}
             dTrigger={dTrigger}
             onVisibleChange={onVisibleChange}
-            onUpdate={updatePosition}
+            onUpdatePosition={updatePosition}
           >
             {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
               <li
@@ -165,21 +164,11 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 aria-haspopup={true}
                 aria-expanded={dPopupVisible}
                 aria-disabled={dDisabled}
-                onClick={() => {
-                  pOnClick?.();
-                }}
-                onFocus={() => {
-                  pOnFocus?.();
-                }}
-                onBlur={() => {
-                  pOnBlur?.();
-                }}
-                onMouseEnter={() => {
-                  pOnMouseEnter?.();
-                }}
-                onMouseLeave={() => {
-                  pOnMouseLeave?.();
-                }}
+                onClick={pOnClick}
+                onFocus={pOnFocus}
+                onBlur={pOnBlur}
+                onMouseEnter={pOnMouseEnter}
+                onMouseLeave={pOnMouseLeave}
               >
                 {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
                 {dIcon && <div className={`${dPrefix}dropdown-sub__icon`}>{dIcon}</div>}

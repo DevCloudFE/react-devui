@@ -11,6 +11,22 @@
   border-radius: var(--#{$variable-prefix}border-radius);
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
 
+  &[data-form-invalid-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+
+    @include e(input, true) {
+      caret-color: var(--#{$variable-prefix}color-warning) !important;
+    }
+  }
+
+  &[data-form-invalid-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+
+    @include e(input, true) {
+      caret-color: var(--#{$variable-prefix}color-danger) !important;
+    }
+  }
+
   @include utils-disabled(true);
 
   &:hover {
@@ -73,7 +89,6 @@
 
     &::placeholder {
       color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
-      transform: translateX(1px);
     }
 
     &:disabled::placeholder {

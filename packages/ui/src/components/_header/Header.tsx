@@ -9,7 +9,7 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
 }
 
-export function DHeader(props: DHeaderProps): JSX.Element | null {
+export function DHeader(props: DHeaderProps) {
   const {
     children,
     dClosable = true,

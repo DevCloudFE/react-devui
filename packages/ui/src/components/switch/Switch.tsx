@@ -1,18 +1,18 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DTransitionState } from '../_transition';
 import type { DFormControl } from '../form';
 
 import { useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { DTransition } from '../_transition';
+import { useFormControl } from '../form';
 
 export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
-  dModel?: [boolean, DUpdater<boolean>?];
+  dModel?: boolean;
   dLabelPlacement?: 'left' | 'right';
   dStateContent?: [React.ReactNode, React.ReactNode];
   dDisabled?: boolean;
@@ -24,7 +24,7 @@ export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
 
 const TTANSITION_DURING = 133;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSwitch' });
-export function DSwitch(props: DSwitchProps): JSX.Element | null {
+export function DSwitch(props: DSwitchProps) {
   const {
     children,
     dFormControl,
@@ -48,9 +48,8 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
 
   const [isFocus, setIsFocus] = useState(false);
 
-  const [checked, changeChecked] = useTwoWayBinding<boolean, boolean>(false, dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [checked, changeChecked] = useDValue<boolean, boolean>(false, dModel, onModelChange, undefined, formControlInject);
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 

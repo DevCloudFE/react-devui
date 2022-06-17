@@ -12,7 +12,7 @@ export interface DErrorProps {
 }
 
 const TTANSITION_DURING = 133;
-export function DError(props: DErrorProps): JSX.Element | null {
+export function DError(props: DErrorProps) {
   const { dVisible, dMessage, dStatus = 'error', onHidden } = props;
 
   //#region Context

@@ -85,7 +85,7 @@ ${'```'}
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, id, setActive]);
+  }, [asyncCapture, id]);
 
   return (
     <section
@@ -132,9 +132,12 @@ ${'```'}
                 title: code,
                 panel: <div dangerouslySetInnerHTML={{ __html: code === 'tsx' ? tsx : scss }} />,
               }))}
-              dActive={[tab, setTab]}
+              dActive={tab}
               dSize="smaller"
               dCenter
+              onActiveChange={(id) => {
+                setTab(id);
+              }}
             />
           )}
         </div>

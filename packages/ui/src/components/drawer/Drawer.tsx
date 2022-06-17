@@ -1,4 +1,3 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DTransitionState } from '../_transition';
 import type { DDrawerFooterProps, DDrawerFooterPropsWithPrivate } from './DrawerFooter';
@@ -8,14 +7,14 @@ import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useEventCallback, useAsync } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName, toPx } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DDrawerHeader } from './DrawerHeader';
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
-  dVisible: [boolean, DUpdater<boolean>?];
+  dVisible: boolean;
   dContainer?: DElementSelector | false;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dWidth?: number | string;
@@ -27,7 +26,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dHeader?: React.ReactElement<DDrawerHeaderProps> | string;
   dFooter?: React.ReactElement<DDrawerFooterProps>;
   dChildDrawer?: React.ReactElement<DDrawerProps>;
-  onClose?: () => void;
+  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -38,7 +37,7 @@ export interface DDrawerPropsWithPrivate extends DDrawerProps {
 
 const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
-export function DDrawer(props: DDrawerProps): JSX.Element | null {
+export function DDrawer(props: DDrawerProps) {
   const {
     children,
     dVisible,
@@ -53,7 +52,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     dHeader,
     dFooter,
     dChildDrawer,
-    onClose,
+    onVisibleChange,
     afterVisibleChange,
     __zIndex,
     __onVisibleChange,
@@ -97,7 +96,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
         : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
   };
 
-  const [visible, setVisible] = dVisible;
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
   const isFixed = isUndefined(dContainer);
 
@@ -134,11 +133,6 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
         }
       : dContainer
   );
-
-  const closeDrawer = useEventCallback(() => {
-    setVisible?.(false);
-    onClose?.();
-  });
 
   useLockScroll(isFixed && visible);
 
@@ -212,7 +206,9 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
       return React.cloneElement<DDrawerHeaderPropsWithPrivate>(node, {
         ...node.props,
         __id: headerId,
-        __onClose: closeDrawer,
+        __onClose: () => {
+          changeVisible(false);
+        },
       });
     }
   })();
@@ -251,7 +247,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
                 dVisible={visible}
                 onClose={() => {
                   if (dMaskClosable) {
-                    closeDrawer();
+                    changeVisible(false);
                   }
                 }}
               />
@@ -268,7 +264,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
               tabIndex={-1}
               onKeyDown={(e) => {
                 if (dEscClosable && e.code === 'Escape') {
-                  closeDrawer();
+                  changeVisible(false);
                 }
               }}
             >
@@ -277,7 +273,9 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
               {dFooter &&
                 React.cloneElement<DDrawerFooterPropsWithPrivate>(dFooter, {
                   ...dFooter.props,
-                  __onClose: closeDrawer,
+                  __onClose: () => {
+                    changeVisible(false);
+                  },
                 })}
             </div>
           </div>

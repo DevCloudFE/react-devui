@@ -11,7 +11,7 @@ export interface DDrawerFooterPropsWithPrivate extends DDrawerFooterProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerFooter' });
-export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
+export function DDrawerFooter(props: DDrawerFooterProps) {
   const {
     __onClose,
 

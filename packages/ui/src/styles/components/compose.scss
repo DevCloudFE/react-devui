@@ -20,11 +20,11 @@
         z-index: 5;
       }
 
-      &[data-form-support-warning='true'] {
+      &[data-form-invalid-warning='true'] {
         z-index: 6;
       }
 
-      &[data-form-support-error='true'] {
+      &[data-form-invalid-error='true'] {
         z-index: 7;
       }
 

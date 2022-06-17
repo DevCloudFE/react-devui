@@ -16,7 +16,7 @@ export interface DColProps extends DColBaseProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' });
-export function DCol(props: DColProps): JSX.Element | null {
+export function DCol(props: DColProps) {
   const {
     children,
     dSpan,

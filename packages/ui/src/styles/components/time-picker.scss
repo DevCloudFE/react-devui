@@ -1,0 +1,63 @@
+$time-picker-cell-height: 28px;
+
+@include b(time-picker) {
+  @include e(popup) {
+    position: fixed;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
+  }
+
+  @include e(footer) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+}
+
+@include b(time-picker-panel) {
+  @include e(column) {
+    position: relative;
+    display: inline-block;
+    height: calc(8px + #{$time-picker-cell-height} * 8);
+    padding: 4px 0;
+    margin: 0;
+    overflow: hidden auto;
+    vertical-align: top;
+    list-style: none;
+
+    &::after {
+      display: block;
+      height: calc(#{$time-picker-cell-height} * 7);
+      content: '';
+    }
+  }
+
+  @include e(cell) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: $time-picker-cell-height;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    list-style: none;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:not(.is-active):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(active) {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
+  }
+}

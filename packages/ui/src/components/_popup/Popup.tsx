@@ -3,24 +3,27 @@ import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, useEventCallback } from '../../hooks';
+import { useAsync, useElement, useEventCallback, usePrefixConfig, useUpdatePosition } from '../../hooks';
 
-export type DExtendsPopupProps = Pick<DPopupProps, 'dDisabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable'>;
+export type DExtendsPopupProps = Pick<
+  DPopupProps,
+  'dDisabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable' | 'onVisibleChange'
+>;
 
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;
-  pOnMouseEnter?: () => void;
-  pOnMouseLeave?: () => void;
-  pOnClick?: () => void;
+  pOnMouseEnter?: React.MouseEventHandler;
+  pOnMouseLeave?: React.MouseEventHandler;
+  pOnClick?: React.MouseEventHandler;
 }
 
 export interface DPopupRenderProps {
   'data-popup-triggerid': string;
-  pOnMouseEnter?: () => void;
-  pOnMouseLeave?: () => void;
-  pOnFocus?: () => void;
-  pOnBlur?: () => void;
-  pOnClick?: () => void;
+  pOnMouseEnter?: React.MouseEventHandler;
+  pOnMouseLeave?: React.MouseEventHandler;
+  pOnFocus?: React.FocusEventHandler;
+  pOnBlur?: React.FocusEventHandler;
+  pOnClick?: React.MouseEventHandler;
 }
 
 export interface DPopupProps {
@@ -34,7 +37,7 @@ export interface DPopupProps {
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   onVisibleChange?: (visible: boolean) => void;
-  onUpdate?: () => void;
+  onUpdatePosition?: () => void;
 }
 
 export function DPopup(props: DPopupProps) {
@@ -49,8 +52,12 @@ export function DPopup(props: DPopupProps) {
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     onVisibleChange,
-    onUpdate,
+    onUpdatePosition,
   } = props;
+
+  //#region Context
+  const dPrefix = usePrefixConfig();
+  //#endregion
 
   const dataRef = useRef<{
     clearTid?: () => void;
@@ -59,6 +66,20 @@ export function DPopup(props: DPopupProps) {
   const asyncCapture = useAsync();
 
   const uniqueId = useId();
+
+  const containerEl = useElement(
+    isUndefined(dContainer)
+      ? () => {
+          let el = document.getElementById(`${dPrefix}popup-root`);
+          if (!el) {
+            el = document.createElement('div');
+            el.id = `${dPrefix}popup-root`;
+            document.body.appendChild(el);
+          }
+          return el;
+        }
+      : dContainer
+  );
 
   const changeVisible = (visible?: boolean) => {
     if (isUndefined(visible)) {
@@ -134,6 +155,10 @@ export function DPopup(props: DPopupProps) {
     }
   }, [asyncCapture, handleTrigger, dEscClosable, dVisible, dDisabled]);
 
+  useUpdatePosition(() => {
+    onUpdatePosition?.();
+  }, !dDisabled && dVisible);
+
   useEffect(() => {
     if (!dDisabled && dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -141,26 +166,44 @@ export function DPopup(props: DPopupProps) {
       const triggerEl = document.querySelector(`[data-popup-triggerid="${uniqueId}"]`) as HTMLElement | null;
       if (triggerEl) {
         asyncGroup.onResize(triggerEl, () => {
-          onUpdate?.();
+          onUpdatePosition?.();
         });
       }
 
       const popupEl = document.querySelector(`[data-popup-popupid="${uniqueId}"]`) as HTMLElement | null;
       if (popupEl) {
         asyncGroup.onResize(popupEl, () => {
-          onUpdate?.();
+          onUpdatePosition?.();
         });
       }
 
-      asyncGroup.onGlobalScroll(() => {
-        onUpdate?.();
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asyncCapture, dVisible, uniqueId, dDisabled]);
+
+  useEffect(() => {
+    if (!dDisabled && dVisible && dContainer) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(dContainer, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          onUpdatePosition?.();
+        },
+      });
+
+      asyncGroup.onResize(dContainer, () => {
+        onUpdatePosition?.();
       });
 
       return () => {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dVisible, onUpdate, uniqueId, dDisabled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asyncCapture, dContainer, dDisabled, dVisible]);
 
   const childProps: DPopupRenderProps = { 'data-popup-triggerid': uniqueId };
   if (!dDisabled) {
@@ -223,7 +266,7 @@ export function DPopup(props: DPopupProps) {
   return (
     <>
       {child}
-      {!dDisabled && dContainer && ReactDOM.createPortal(popupNode, dContainer)}
+      {!dDisabled && containerEl && ReactDOM.createPortal(popupNode, containerEl)}
     </>
   );
 }

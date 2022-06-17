@@ -84,7 +84,7 @@ class GenerateSite {
   private generateComponentDemo(file: FileMeta & { component: string }, outDir: string) {
     const meta: DemoMeta = yamlFront.loadFront(file.data);
 
-    const fileNameRegExp = new RegExp(String.raw`(?<=^[0-9]+.)[a-zA-Z]+(?=.md$)`, 'g');
+    const fileNameRegExp = new RegExp(String.raw`(?<=^[0-9]+.)[a-zA-Z0-9]+(?=.md$)`, 'g');
     const fileName = file.name.match(fileNameRegExp)?.[0];
     const id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
     const tsx = meta.__content.match(/(?<=```tsx)[\s\S]*?(?=```)/g)?.[0];

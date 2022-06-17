@@ -37,7 +37,7 @@ export interface DIconProps extends Omit<DIconBaseProps, 'children'> {
   dTwoToneColor?: string | [string, string];
 }
 
-export function DIcon(props: DIconProps): JSX.Element | null {
+export function DIcon(props: DIconProps) {
   const { dIcon, dTwoToneColor, dTheme, ...restProps } = useComponentConfig('DIcon', props);
 
   //#region Context

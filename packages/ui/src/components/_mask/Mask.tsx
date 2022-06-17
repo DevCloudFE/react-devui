@@ -11,7 +11,7 @@ export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
 }
 
 const TTANSITION_DURING = 100;
-export function DMask(props: DMaskProps): JSX.Element | null {
+export function DMask(props: DMaskProps) {
   const {
     dVisible,
     onClose,

@@ -1,4 +1,3 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DId, DSize } from '../../utils/global';
 import type { DDropdownOption } from '../dropdown';
 
@@ -8,11 +7,11 @@ import { useEffect, useId, useRef, useState } from 'react';
 import {
   usePrefixConfig,
   useComponentConfig,
-  useTwoWayBinding,
   useAsync,
   useTranslation,
   useEventCallback,
   useIsomorphicLayoutEffect,
+  useDValue,
 } from '../../hooks';
 import { EllipsisOutlined, PlusOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
@@ -29,7 +28,7 @@ export interface DTabsOption<ID extends DId> {
 
 export interface DTabsProps<ID extends DId, T extends DTabsOption<ID>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dTabs: T[];
-  dActive?: [ID, DUpdater<ID>?];
+  dActive?: ID;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
@@ -40,7 +39,7 @@ export interface DTabsProps<ID extends DId, T extends DTabsOption<ID>> extends O
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
-export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
+export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>) {
   const {
     dTabs,
     dActive,
@@ -78,8 +77,10 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
   const [dropdownList, setDropdownList] = useState<T[]>([]);
   const [scrollEnd, setScrollEnd] = useState(false);
 
+  const iconSize = dSize === 'smaller' ? 16 : dSize === 'larger' ? 20 : 18;
+
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
-  const [activeId, changeActiveId] = useTwoWayBinding<ID, ID>(
+  const [activeId, changeActiveId] = useDValue<ID, ID>(
     () => {
       for (const tab of dTabs) {
         if (!tab.disabled) {
@@ -361,7 +362,7 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
                     }}
                     aria-label={t('More')}
                   >
-                    <EllipsisOutlined dSize={18} />
+                    <EllipsisOutlined dSize={iconSize} />
                   </div>
                 </DDropdown>
               )}
@@ -373,7 +374,7 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
                     onAddClick?.();
                   }}
                 >
-                  <PlusOutlined dSize={18} />
+                  <PlusOutlined dSize={iconSize} />
                 </button>
               )}
             </div>

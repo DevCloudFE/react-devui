@@ -93,10 +93,7 @@
 
     &::before {
       position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+      inset: 0;
       content: '';
       border: 1px solid var(--#{$variable-prefix}color-primary);
       border-radius: var(--#{$variable-prefix}border-radius);
@@ -105,10 +102,7 @@
 
     &::after {
       position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+      inset: 0;
       content: '';
       background-color: var(--#{$variable-prefix}color-primary);
       border-radius: var(--#{$variable-prefix}border-radius);
@@ -120,10 +114,7 @@
 
   @include e(tick) {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     z-index: 1;
     overflow: hidden;
     border-radius: var(--#{$variable-prefix}border-radius);
@@ -154,11 +145,8 @@
 
   @include e(input) {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     z-index: 5;
-    width: 100%;
-    height: 100%;
     margin: 0;
     cursor: inherit;
     border: 1px solid var(--#{$variable-prefix}color-border);

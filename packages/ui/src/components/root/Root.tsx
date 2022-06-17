@@ -11,7 +11,7 @@ export interface DRootProps {
   dContext?: DConfigContextData;
 }
 
-export function DRoot(props: DRootProps): JSX.Element | null {
+export function DRoot(props: DRootProps) {
   const { children, dContext } = props;
 
   const lang = dContext?.i18n?.lang ?? 'zh-Hant';

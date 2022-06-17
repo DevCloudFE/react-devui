@@ -14,7 +14,7 @@ export interface DTabProps {
   onKeyDown: React.KeyboardEventHandler<HTMLDivElement>;
 }
 
-export function DTab(props: DTabProps): JSX.Element | null {
+export function DTab(props: DTabProps) {
   const { dId, dPanelId, dDisabled, children, dActive, dClosable = false, onActive, onClose, onKeyDown } = props;
 
   //#region Context

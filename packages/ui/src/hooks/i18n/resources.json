@@ -100,5 +100,23 @@
       "en-US": "(optional)",
       "zh-Hant": "(可选)"
     }
+  },
+  "DTimePicker": {
+    "Select time": {
+      "en-US": "Select time",
+      "zh-Hant": "请选择时间"
+    },
+    "Start time": {
+      "en-US": "Start time",
+      "zh-Hant": "开始时间"
+    },
+    "End time": {
+      "en-US": "End time",
+      "zh-Hant": "结束时间"
+    },
+    "Now": {
+      "en-US": "Now",
+      "zh-Hant": "此刻"
+    }
   }
 }

@@ -5,7 +5,7 @@ import React, { useRef } from 'react';
 import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
-import { DBaseSupport } from '../_base-support';
+import { DBaseDesign } from '../_base-design';
 import { DCollapseTransition } from '../_transition';
 
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -67,7 +67,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
   );
 
   return (
-    <DBaseSupport dCompose={{ disabled: disabled }}>
+    <DBaseDesign dCompose={{ disabled: disabled }}>
       <button
         {...restProps}
         ref={ref}
@@ -110,7 +110,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
         {!dIconRight && children}
         {waveNode}
       </button>
-    </DBaseSupport>
+    </DBaseDesign>
   );
 }
 

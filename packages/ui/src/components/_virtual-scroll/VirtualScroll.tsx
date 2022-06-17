@@ -32,7 +32,7 @@ export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLEl
   onScrollEnd?: () => void;
 }
 
-function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
+function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>) {
   const {
     dList,
     dItemRender,

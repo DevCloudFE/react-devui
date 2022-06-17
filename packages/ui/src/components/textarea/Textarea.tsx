@@ -1,19 +1,19 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useGeneralContext, useForkRef } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useForkRef, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
+import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
-import { DBaseSupport } from '../_base-support';
+import { useFormControl } from '../form';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
 export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   dFormControl?: DFormControl;
-  dModel?: [string, DUpdater<string>?];
+  dModel?: string;
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
   dResizable?: boolean;
   dShowCount?: boolean | ((num: number) => React.ReactNode);
@@ -51,9 +51,8 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
 
   const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
-  const [value, changeValue] = useTwoWayBinding<string>('', dModel, onModelChange, {
-    formControl: dFormControl?.control,
-  });
+  const formControlInject = useFormControl(dFormControl);
+  const [value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
 
   const disabled = _disabled || dFormControl?.control.disabled;
 
@@ -100,7 +99,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
 
   return (
     <>
-      <DBaseSupport dFormControl={dFormControl}>
+      <DBaseDesign dFormControl={dFormControl}>
         <DBaseInput
           {...restProps}
           ref={combineTextareaRef}
@@ -124,7 +123,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>) 
             getRowNum();
           }}
         />
-      </DBaseSupport>
+      </DBaseDesign>
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
           {isFunction(dShowCount) ? dShowCount(value.length) : isUndefined(maxLength) ? value.length : `${value.length} / ${maxLength}`}

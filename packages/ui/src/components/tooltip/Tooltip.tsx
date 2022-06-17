@@ -1,4 +1,3 @@
-import type { DUpdater } from '../../hooks/common/useTwoWayBinding';
 import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DExtendsPopupProps } from '../_popup';
 import type { DPlacement } from './utils';
@@ -6,7 +5,7 @@ import type { DPlacement } from './utils';
 import { isUndefined } from 'lodash';
 import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTwoWayBinding, useEventCallback, useElement, useMaxIndex } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
@@ -18,14 +17,13 @@ export interface DTooltipRef {
 
 export interface DTooltipProps extends DExtendsPopupProps, React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactElement;
-  dVisible?: [boolean, DUpdater<boolean>?];
+  dVisible?: boolean;
   dTitle: React.ReactNode;
   dContainer?: DElementSelector | false;
   dPlacement?: DPlacement;
   dArrow?: boolean;
   dDistance?: number;
   dZIndex?: number | string;
-  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -41,7 +39,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
     dArrow = true,
     dDistance = 10,
     dZIndex,
-    onVisibleChange,
     afterVisibleChange,
 
     dTrigger,
@@ -49,6 +46,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
     dMouseLeaveDelay,
     dEscClosable,
     dDisabled,
+    onVisibleChange,
 
     id,
     className,
@@ -70,7 +68,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}tooltip-${uniqueId}`;
 
-  const [visible, changeVisible] = useTwoWayBinding<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
   const isFixed = isUndefined(dContainer);
 
@@ -90,18 +88,11 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
   const containerEl = useElement(
     isUndefined(dContainer) || dContainer === false
       ? () => {
-          if (isUndefined(dContainer)) {
-            let el = document.getElementById(`${dPrefix}tooltip-root`);
-            if (!el) {
-              el = document.createElement('div');
-              el.id = `${dPrefix}tooltip-root`;
-              document.body.appendChild(el);
-            }
-            return el;
-          } else {
+          if (dContainer === false) {
             const triggerEl = document.querySelector(`[aria-describedby="${_id}"]`) as HTMLElement | null;
             return triggerEl?.parentElement ?? null;
           }
+          return null;
         }
       : dContainer
   );
@@ -115,11 +106,11 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
   const updatePosition = useEventCallback(() => {
     const triggerEl = document.querySelector(`[aria-describedby="${_id}"]`) as HTMLElement | null;
 
-    if (popupRef.current && triggerEl && containerEl) {
+    if (popupRef.current && triggerEl) {
       let currentPlacement = dPlacement;
 
       let space: [number, number, number, number] = [0, 0, 0, 0];
-      if (!isFixed) {
+      if (!isFixed && containerEl) {
         const containerRect = containerEl.getBoundingClientRect();
         space = [
           containerRect.top,
@@ -274,28 +265,28 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
                 role="tooltip"
                 onClick={(e) => {
                   onClick?.(e);
-                  pOnClick?.();
+                  pOnClick?.(e);
                 }}
                 onMouseEnter={(e) => {
                   onMouseEnter?.(e);
-                  pOnMouseEnter?.();
+                  pOnMouseEnter?.(e);
                 }}
                 onMouseLeave={(e) => {
                   onMouseLeave?.(e);
-                  pOnMouseLeave?.();
+                  pOnMouseLeave?.(e);
                 }}
               >
                 {dArrow && <div className={`${dPrefix}tooltip__arrow`}></div>}
                 {dTitle}
               </div>
             )}
-            dContainer={containerEl}
+            dContainer={isFixed ? undefined : containerEl}
             dTrigger={dTrigger}
             dMouseEnterDelay={dMouseEnterDelay}
             dMouseLeaveDelay={dMouseLeaveDelay}
             dEscClosable={dEscClosable}
             onVisibleChange={changeVisible}
-            onUpdate={updatePosition}
+            onUpdatePosition={updatePosition}
           >
             {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) =>
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
@@ -304,23 +295,23 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
                 'aria-describedby': _id,
                 onClick: (e) => {
                   children.props.onClick?.(e);
-                  pOnClick?.();
+                  pOnClick?.(e);
                 },
                 onFocus: (e) => {
                   children.props.onFocus?.(e);
-                  pOnFocus?.();
+                  pOnFocus?.(e);
                 },
                 onBlur: (e) => {
                   children.props.onBlur?.(e);
-                  pOnBlur?.();
+                  pOnBlur?.(e);
                 },
                 onMouseEnter: (e) => {
                   children.props.onMouseEnter?.(e);
-                  pOnMouseEnter?.();
+                  pOnMouseEnter?.(e);
                 },
                 onMouseLeave: (e) => {
                   children.props.onMouseLeave?.(e);
-                  pOnMouseLeave?.();
+                  pOnMouseLeave?.(e);
                 },
               })
             }
