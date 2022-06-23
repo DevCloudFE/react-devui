@@ -8,21 +8,31 @@ dayjs.extend(customParseFormat);
 
 export default dayjs;
 
-export function deepCompareDate(a: Date | null | [Date | null, Date | null], b: Date | null | [Date | null, Date | null], format: string) {
-  const isSame = (t1: Date | null, t2: Date | null) =>
-    (isNull(t1) && isNull(t2)) || (isDate(t1) && isDate(t2) && dayjs(t1).format(format) === dayjs(t2).format(format));
+export function deepCompareDate(a: Date | null | [Date, Date], b: Date | null | [Date, Date], format: string) {
+  const isSame = (t1: Date, t2: Date) => dayjs(t1).format(format) === dayjs(t2).format(format);
+
+  if (isDate(a) && isDate(b)) {
+    return isSame(a, b);
+  }
+  if (isNull(a) && isNull(b)) {
+    return true;
+  }
   if (isArray(a) && isArray(b)) {
     return isSame(a[0], b[0]) && isSame(a[1], b[1]);
-  } else if (!isArray(a) && !isArray(b)) {
-    return isSame(a, b);
+  }
+  return false;
+}
+
+function _orderTime(time: [dayjs.Dayjs, dayjs.Dayjs], order: 'ascend' | 'descend' | null): boolean {
+  if ((order === 'ascend' && time[0].isAfter(time[1])) || (order === 'descend' && time[0].isBefore(time[1]))) {
+    return true;
   }
   return false;
 }
 
 export function orderTime(time: [Date, Date], order: 'ascend' | 'descend' | null): boolean {
-  if ((order === 'ascend' && dayjs(time[0]).isAfter(dayjs(time[1]))) || (order === 'descend' && dayjs(time[0]).isBefore(dayjs(time[1])))) {
-    time.reverse();
-    return true;
-  }
-  return false;
+  const t1 = dayjs(time[0]).set('year', 2000).set('month', 0).set('date', 1);
+  const t2 = dayjs(time[1]).set('year', 2000).set('month', 0).set('date', 1);
+
+  return _orderTime([t1, t2], order);
 }

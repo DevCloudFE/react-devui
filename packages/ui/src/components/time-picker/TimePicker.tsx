@@ -114,6 +114,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
         if (dataRef.current.time.every((v) => !isNull(v))) {
           dataRef.current.focusAnother = orderTime(dataRef.current.time as [Date, Date], dOrder);
           if (dataRef.current.focusAnother) {
+            dataRef.current.time.reverse();
             dataRef.current.inputValue.reverse();
           }
           _changeValue(dataRef.current.time as [Date, Date]);
@@ -123,6 +124,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
           (draft as [Date, Date])[position === 'start' ? 0 : 1] = time;
           dataRef.current.focusAnother = orderTime(draft as [Date, Date], dOrder);
           if (dataRef.current.focusAnother) {
+            (draft as [Date, Date]).reverse();
             dataRef.current.inputValue.reverse();
           }
         });
