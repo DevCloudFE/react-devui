@@ -87,7 +87,7 @@
     "jest": "^28.1.1",
     "postcss-html": "^1.4.1",
     "postcss-markdown": "^1.2.0",
-    "prettier": "^2.7.0",
+    "prettier": "^2.7.1",
     "react-test-renderer": "^18.2.0",
     "rxjs-for-await": "^1.0.0",
     "sass": "^1.52.3",
