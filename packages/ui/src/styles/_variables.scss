@@ -66,6 +66,7 @@ $colors: (
   --#{$variable-prefix}background-color-input: #fff;
   --#{$variable-prefix}background-color-indicator: #dfe1e6;
   --#{$variable-prefix}background-color-disabled: #f5f5f5;
+  --#{$variable-prefix}background-color-gray: hsl(0deg 0% 98%);
   --#{$variable-prefix}color-divider: #eee;
   --#{$variable-prefix}color-border: #d9d9d9;
   --#{$variable-prefix}color-disabled: #d5d5d5;
@@ -96,5 +97,5 @@ $colors: (
   --#{$variable-prefix}empty-color: #a8afbc;
   --#{$variable-prefix}switch-background-color: #d4d6d9;
   --#{$variable-prefix}tag-background-color: rgb(0 0 0 / 6%);
-  --#{$variable-prefix}compose-item-gray-background-color: hsl(0deg 0% 98%);
+  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 97%);
 }

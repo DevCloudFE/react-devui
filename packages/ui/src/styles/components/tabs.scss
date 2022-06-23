@@ -230,6 +230,7 @@
   $selector: &;
 
   --#{$variable-prefix}tabs-tab-size: 44px;
+  --#{$variable-prefix}tabs-slider-tab-size: 36px;
   --#{$variable-prefix}tabs-tab-gap: 0 32px;
   --#{$variable-prefix}tabs-tab-padding: 16px;
 
@@ -260,6 +261,7 @@
 
   @include m(larger) {
     --#{$variable-prefix}tabs-tab-size: 52px;
+    --#{$variable-prefix}tabs-slider-tab-size: 44px;
     --#{$variable-prefix}tabs-tab-gap: 36px;
     --#{$variable-prefix}tabs-tab-padding: 20px;
 
@@ -270,6 +272,7 @@
 
   @include m(smaller) {
     --#{$variable-prefix}tabs-tab-size: 36px;
+    --#{$variable-prefix}tabs-slider-tab-size: 32px;
     --#{$variable-prefix}tabs-tab-gap: 20px;
     --#{$variable-prefix}tabs-tab-padding: 12px;
 
@@ -279,6 +282,8 @@
   }
 
   @include m(slider) {
+    --#{$variable-prefix}tabs-tab-size: var(--#{$variable-prefix}tabs-slider-tab-size);
+
     &#{$selector}--top,
     &#{$selector}--bottom {
       .#{$variable-prefix}tab {
@@ -288,11 +293,13 @@
 
     @include e(tablist-wrapper) {
       padding: 0;
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      border-radius: var(--#{$variable-prefix}border-radius);
     }
 
     @include e(tablist) {
       gap: 0;
+      min-width: unset;
+      background-color: var(--#{$variable-prefix}tabs-slider-background-color);
 
       &::after {
         content: none;
@@ -386,7 +393,7 @@
     position: absolute;
     z-index: 1;
     pointer-events: none;
-    background-color: var(--#{$variable-prefix}background-color-primary);
+    background-color: var(--#{$variable-prefix}background-color-gray);
     border: 1px solid var(--#{$variable-prefix}background-color-indicator);
     opacity: 0;
   }

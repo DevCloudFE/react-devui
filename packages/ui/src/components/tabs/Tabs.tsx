@@ -146,6 +146,12 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
+    if (tablistWrapperRef.current) {
+      asyncGroup.onResize(tablistWrapperRef.current, () => {
+        refreshTabs();
+      });
+    }
+
     if (tablistRef.current) {
       asyncGroup.onResize(tablistRef.current, () => {
         refreshTabs();

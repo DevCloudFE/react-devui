@@ -96,7 +96,7 @@
   @include utils-disabled(true);
 
   @include m(gray) {
-    background-color: var(--#{$variable-prefix}compose-item-gray-background-color);
+    background-color: var(--#{$variable-prefix}background-color-gray);
   }
 
   @include m(smaller) {

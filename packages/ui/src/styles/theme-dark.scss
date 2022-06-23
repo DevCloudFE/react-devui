@@ -27,6 +27,7 @@ body.dark {
   --#{$variable-prefix}background-color-input: #121212;
   --#{$variable-prefix}background-color-indicator: #3d3e40;
   --#{$variable-prefix}background-color-disabled: #2c2c2c;
+  --#{$variable-prefix}background-color-gray: hsl(0deg 0% 0%);
   --#{$variable-prefix}color-divider: #303030;
   --#{$variable-prefix}color-border: #434343;
   --#{$variable-prefix}color-disabled: #4e4e50;
@@ -57,5 +58,5 @@ body.dark {
   --#{$variable-prefix}empty-color: #868a93;
   --#{$variable-prefix}switch-background-color: #5f6164;
   --#{$variable-prefix}tag-background-color: rgb(255 255 255 / 10%);
-  --#{$variable-prefix}compose-item-gray-background-color: hsl(0deg 0% 2%);
+  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 0%);
 }
