@@ -73,12 +73,12 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
   //#endregion
 
   const dataRef = useRef<{
-    hasOrder: boolean;
+    focusAnother: boolean;
     clearTid?: () => void;
     inputValue: [string, string];
     time: [Date | null, Date | null];
   }>({
-    hasOrder: true,
+    focusAnother: false,
     inputValue: ['', ''],
     time: [null, null],
   });
@@ -112,8 +112,8 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       if (isNull(_value)) {
         dataRef.current.time[position === 'start' ? 0 : 1] = time;
         if (dataRef.current.time.every((v) => !isNull(v))) {
-          dataRef.current.hasOrder = orderTime(dataRef.current.time as [Date, Date], dOrder);
-          if (dataRef.current.hasOrder) {
+          dataRef.current.focusAnother = orderTime(dataRef.current.time as [Date, Date], dOrder);
+          if (dataRef.current.focusAnother) {
             dataRef.current.inputValue.reverse();
           }
           _changeValue(dataRef.current.time as [Date, Date]);
@@ -121,8 +121,8 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       } else {
         _changeValue((draft) => {
           (draft as [Date, Date])[position === 'start' ? 0 : 1] = time;
-          dataRef.current.hasOrder = orderTime(draft as [Date, Date], dOrder);
-          if (dataRef.current.hasOrder) {
+          dataRef.current.focusAnother = orderTime(draft as [Date, Date], dOrder);
+          if (dataRef.current.focusAnother) {
             dataRef.current.inputValue.reverse();
           }
         });
@@ -168,7 +168,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
   ) as [string?, string?];
 
   useEffect(() => {
-    if (dataRef.current.hasOrder && document.activeElement) {
+    if (dataRef.current.focusAnother && document.activeElement) {
       const el = document.activeElement.parentElement as HTMLElement;
       for (let index = 0; index < el.childElementCount; index++) {
         const element = el.children.item(index) as HTMLElement;
@@ -178,7 +178,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
         }
       }
     }
-    dataRef.current.hasOrder = false;
+    dataRef.current.focusAnother = false;
   });
 
   const getInputProps = (isLeft: boolean): React.InputHTMLAttributes<HTMLInputElement> => {
@@ -210,8 +210,20 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       onKeyDown: (e) => {
         inputProps?.onKeyDown?.(e);
 
-        if (e.code === 'Enter' && !dayjs(dataRef.current.inputValue[index], format, true).isValid()) {
-          dataRef.current.inputValue[index] = isNull(value) ? '' : dayjs(value).format(format);
+        if (e.code === 'Enter') {
+          if (dayjs(dataRef.current.inputValue[index], format, true).isValid()) {
+            if (dRange) {
+              if (isNull(isLeft ? valueRight : valueLeft)) {
+                dataRef.current.focusAnother = true;
+              } else {
+                changeVisible(false);
+              }
+            } else {
+              changeVisible(false);
+            }
+          } else {
+            dataRef.current.inputValue[index] = isNull(value) ? '' : dayjs(value).format(format);
+          }
           forceUpdate();
         }
       },

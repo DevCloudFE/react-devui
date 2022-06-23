@@ -241,12 +241,6 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
 
               onVisibleChange?.(true);
             }
-          } else {
-            if (e.code === 'Enter') {
-              e.preventDefault();
-
-              onVisibleChange?.(false);
-            }
           }
         }}
         onFocus={(e) => {

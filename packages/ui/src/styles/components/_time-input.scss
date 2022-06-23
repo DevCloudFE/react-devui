@@ -52,6 +52,10 @@
   }
 
   @include when(disabled) {
+    @include e(input) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+
     @include e(icon) {
       color: var(--#{$variable-prefix}color-disabled);
     }
