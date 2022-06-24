@@ -1,7 +1,7 @@
-import type { DNestedChildren, DId } from '../../utils/global';
-import type { DExtendsSelectboxProps } from '../_selectbox';
+import type { DNestedChildren, DId, DSize } from '../../utils/global';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { DDropdownOption } from '../dropdown';
+import type { DFormControl } from '../form';
 
 import { isArray, isNull, isNumber, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
@@ -28,12 +28,17 @@ export interface DSelectOption<V extends DId> {
   disabled?: boolean;
 }
 
-export interface DSelectProps<V extends DId, T extends DSelectOption<V>>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
-    DExtendsSelectboxProps {
+export interface DSelectProps<V extends DId, T extends DSelectOption<V>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dFormControl?: DFormControl;
   dModel?: V | null | V[];
   dOptions: DNestedChildren<T>[];
   dVisible?: boolean;
+  dPlaceholder?: string;
+  dSize?: DSize;
+  dLoading?: boolean;
+  dSearchable?: boolean;
+  dClearable?: boolean;
+  dDisabled?: boolean;
   dMultiple?: boolean;
   dMaxSelectNum?: number;
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
@@ -44,19 +49,30 @@ export interface DSelectProps<V extends DId, T extends DSelectOption<V>>
   };
   dCreateOption?: (value: string) => DNestedChildren<T> | undefined;
   dPopupClassName?: string;
+  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (value: any, option: any) => void;
+  onVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
-  onScrollBottom?: () => void;
+  onClear?: () => void;
   onCreateOption?: (option: DNestedChildren<T>) => void;
+  onScrollBottom?: () => void;
   onExceed?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' });
 function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>, ref: React.ForwardedRef<DSelectRef>) {
   const {
+    dFormControl,
     dModel,
     dOptions,
     dVisible,
+    dPlaceholder,
+    dSize,
+    dLoading = false,
+    dSearchable = false,
+    dClearable = false,
+    dDisabled = false,
     dMultiple = false,
     dMaxSelectNum,
     dCustomOption,
@@ -64,20 +80,15 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
     dCustomSearch,
     dCreateOption,
     dPopupClassName,
-    onModelChange,
-    onSearch,
-    onScrollBottom,
-    onCreateOption,
-    onExceed,
-
-    dFormControl,
-    dLoading = false,
-    dSearchable = false,
-    dDisabled,
-    dSize,
     dInputProps,
+    dInputRef,
+    onModelChange,
     onVisibleChange,
     onClear,
+    onSearch,
+    onCreateOption,
+    onScrollBottom,
+    onExceed,
 
     className,
     ...restProps
@@ -380,10 +391,12 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
       dVisible={visible}
       dContent={hasSelected && selectedNode}
       dContentTitle={selectedLabel}
+      dPlaceholder={dPlaceholder}
       dSuffix={suffixNode}
       dSize={size}
       dLoading={dLoading}
       dSearchable={dSearchable}
+      dClearable={dClearable}
       dDisabled={disabled}
       dInputProps={{
         ...dInputProps,
@@ -437,6 +450,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
           }
         },
       }}
+      dInputRef={dInputRef}
       onUpdatePosition={(boxEl) => {
         const popupEl = popupRef.current;
         if (popupEl) {

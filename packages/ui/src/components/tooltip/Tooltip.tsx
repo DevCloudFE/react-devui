@@ -1,5 +1,4 @@
 import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DExtendsPopupProps } from '../_popup';
 import type { DPlacement } from './utils';
 
 import { isUndefined } from 'lodash';
@@ -15,15 +14,21 @@ export interface DTooltipRef {
   updatePosition: () => void;
 }
 
-export interface DTooltipProps extends DExtendsPopupProps, React.HTMLAttributes<HTMLDivElement> {
+export interface DTooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactElement;
   dVisible?: boolean;
+  dTrigger?: 'hover' | 'focus' | 'click';
   dTitle: React.ReactNode;
   dContainer?: DElementSelector | false;
   dPlacement?: DPlacement;
+  dEscClosable?: boolean;
   dArrow?: boolean;
+  dDisabled?: boolean;
   dDistance?: number;
+  dMouseEnterDelay?: number;
+  dMouseLeaveDelay?: number;
   dZIndex?: number | string;
+  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -33,20 +38,19 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
   const {
     children,
     dVisible,
+    dTrigger = 'hover',
     dTitle,
     dContainer,
     dPlacement = 'top',
+    dEscClosable = true,
     dArrow = true,
+    dDisabled = false,
     dDistance = 10,
+    dMouseEnterDelay = 150,
+    dMouseLeaveDelay = 200,
     dZIndex,
-    afterVisibleChange,
-
-    dTrigger,
-    dMouseEnterDelay,
-    dMouseLeaveDelay,
-    dEscClosable,
-    dDisabled,
     onVisibleChange,
+    afterVisibleChange,
 
     id,
     className,
@@ -247,7 +251,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
 
         return (
           <DPopup
-            dDisabled={dDisabled}
             dVisible={visible}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
               <div
@@ -282,9 +285,10 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>) {
             )}
             dContainer={isFixed ? undefined : containerEl}
             dTrigger={dTrigger}
+            dDisabled={dDisabled}
+            dEscClosable={dEscClosable}
             dMouseEnterDelay={dMouseEnterDelay}
             dMouseLeaveDelay={dMouseLeaveDelay}
-            dEscClosable={dEscClosable}
             onVisibleChange={changeVisible}
             onUpdatePosition={updatePosition}
           >

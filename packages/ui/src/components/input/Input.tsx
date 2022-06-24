@@ -81,6 +81,7 @@ export function DInput(props: DInputProps) {
   const combineInputRef = useForkRef(inputRef, dInputRef);
 
   const dataRef = useRef<{
+    loopFn?: (isIncrease: boolean) => void;
     clearLoop?: () => void;
     clearTid?: () => void;
   }>({});
@@ -114,9 +115,12 @@ export function DInput(props: DInputProps) {
     changeValue(Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, val)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
   });
 
+  dataRef.current.loopFn = (isIncrease) => {
+    changeNumber(isIncrease);
+  };
   const handleNumberMouseDown = (isIncrease = true) => {
     const loop = () => {
-      changeNumber(isIncrease);
+      dataRef.current.loopFn?.(isIncrease);
       dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
     };
     dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);

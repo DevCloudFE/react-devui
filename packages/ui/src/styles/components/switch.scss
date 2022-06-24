@@ -52,6 +52,10 @@
     flex-direction: row-reverse;
   }
 
+  @include e(label) {
+    white-space: nowrap;
+  }
+
   @include e(input) {
     position: absolute;
     inset: 0;

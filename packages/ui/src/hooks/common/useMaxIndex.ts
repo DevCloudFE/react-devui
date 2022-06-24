@@ -21,7 +21,7 @@ const MAX_INDEX_MANAGER = {
   },
 };
 
-export function useMaxIndex(condition: boolean) {
+export function useMaxIndex(condition?: boolean) {
   const dPrefix = usePrefixConfig();
 
   const prevIndex = useRef<string>();

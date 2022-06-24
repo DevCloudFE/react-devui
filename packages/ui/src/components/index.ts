@@ -16,6 +16,9 @@ export { DCheckbox, DCheckboxGroup } from './checkbox';
 export type { DComposeProps, DComposeItemProps } from './compose';
 export { DCompose, DComposeItem } from './compose';
 
+export type { DDatePickerProps } from './date-picker';
+export { DDatePicker } from './date-picker';
+
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
 export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
 
@@ -84,3 +87,5 @@ export { ToastService } from './toast';
 
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
+
+export { dayjs } from './dayjs';

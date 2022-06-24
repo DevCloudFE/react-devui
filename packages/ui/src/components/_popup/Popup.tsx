@@ -5,11 +5,6 @@ import { filter } from 'rxjs';
 
 import { useAsync, useElement, useEventCallback, usePrefixConfig, useUpdatePosition } from '../../hooks';
 
-export type DExtendsPopupProps = Pick<
-  DPopupProps,
-  'dDisabled' | 'dTrigger' | 'dMouseEnterDelay' | 'dMouseLeaveDelay' | 'dEscClosable' | 'onVisibleChange'
->;
-
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;
   pOnMouseEnter?: React.MouseEventHandler;
@@ -31,7 +26,7 @@ export interface DPopupProps {
   dVisible: boolean;
   dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
   dContainer?: HTMLElement | null;
-  dTrigger?: 'hover' | 'focus' | 'click';
+  dTrigger: 'hover' | 'focus' | 'click';
   dDisabled?: boolean;
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
@@ -46,9 +41,9 @@ export function DPopup(props: DPopupProps) {
     dVisible,
     dPopup,
     dContainer,
-    dTrigger = 'hover',
-    dDisabled = false,
-    dEscClosable = true,
+    dTrigger,
+    dDisabled,
+    dEscClosable,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     onVisibleChange,

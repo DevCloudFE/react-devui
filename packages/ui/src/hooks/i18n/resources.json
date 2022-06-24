@@ -118,5 +118,43 @@
       "en-US": "Now",
       "zh-Hant": "此刻"
     }
+  },
+  "DDatePicker": {
+    "Select date": {
+      "en-US": "Select date",
+      "zh-Hant": "请选择日期"
+    },
+    "Start date": {
+      "en-US": "Start date",
+      "zh-Hant": "开始日期"
+    },
+    "End date": {
+      "en-US": "End date",
+      "zh-Hant": "结束日期"
+    },
+    "Today": {
+      "en-US": "Today",
+      "zh-Hant": "今天"
+    },
+    "Now": {
+      "en-US": "Now",
+      "zh-Hant": "此刻"
+    },
+    "Previous year": {
+      "en-US": "Previous year",
+      "zh-Hant": "上一年"
+    },
+    "Next year": {
+      "en-US": "Next year",
+      "zh-Hant": "下一年"
+    },
+    "Previous month": {
+      "en-US": "Previous month",
+      "zh-Hant": "上月"
+    },
+    "Next month": {
+      "en-US": "Next month",
+      "zh-Hant": "下月"
+    }
   }
 }

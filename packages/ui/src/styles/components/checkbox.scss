@@ -83,6 +83,10 @@
     }
   }
 
+  @include e(label) {
+    white-space: nowrap;
+  }
+
   @include e(state-container) {
     position: relative;
     width: 16px;

@@ -6,6 +6,7 @@
   align-items: center;
   height: var(--#{$variable-prefix}tag-size);
   padding: 0 var(--#{$variable-prefix}tag-padding-size);
+  white-space: nowrap;
   vertical-align: top;
   border-radius: var(--#{$variable-prefix}border-radius);
 

@@ -1,0 +1,119 @@
+@include b(date-picker) {
+  @include e(popup) {
+    position: fixed;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
+  }
+
+  @include e(footer) {
+    display: flex;
+    gap: 0 4px;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--#{$variable-prefix}color-divider);
+
+    @include m(custom) {
+      justify-content: flex-start;
+      padding: 4px;
+    }
+  }
+
+  @include e(tag-button) {
+    cursor: pointer;
+  }
+}
+
+@include b(date-picker-panel) {
+  display: inline-block;
+  vertical-align: top;
+
+  & + .#{$variable-prefix}time-picker-panel {
+    border-left: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(header) {
+    display: flex;
+    align-items: center;
+    height: 41px;
+    padding: 0 8px;
+    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(header-content) {
+    margin: 0 auto;
+  }
+
+  @include e(button) {
+    width: 24px;
+    height: 100%;
+  }
+
+  @include e(content) {
+    width: calc(7 * 36px);
+    margin: 4px;
+    table-layout: fixed;
+    border-collapse: collapse;
+
+    tr {
+      height: 32px;
+    }
+  }
+
+  @include e(cell) {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 26px;
+    cursor: pointer;
+
+    @include utils-disabled(true);
+
+    &:not(.is-active, .is-hover, .is-another, .is-between, .is-between-hover):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include m(out-month) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+
+    @include m(today) {
+      &::after {
+        position: absolute;
+        inset: 2px;
+        content: '';
+        border: 1px solid var(--#{$variable-prefix}color-primary);
+      }
+    }
+
+    @include when(active) {
+      color: map.get($colors, 'white');
+      background-color: var(--#{$variable-prefix}color-primary);
+    }
+
+    @include when(hover) {
+      color: map.get($colors, 'white');
+      background-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    @include when(another) {
+      color: map.get($colors, 'white');
+      background-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    @include when(between) {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
+
+    @include when(between-hover) {
+      &::before {
+        position: absolute;
+        inset: 0;
+        content: '';
+        background-color: var(--#{$variable-prefix}background-color-primary);
+      }
+    }
+  }
+}

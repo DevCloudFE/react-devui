@@ -1,4 +1,4 @@
-@include b(time-input) {
+@include b(date-input) {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -105,8 +105,6 @@
     flex-shrink: 0;
     margin-left: 4px;
     color: var(--#{$variable-prefix}color-icon-decorator);
-    transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
-      color var(--#{$variable-prefix}animation-duration-base) linear;
   }
 
   @include e(separator) {

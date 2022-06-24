@@ -7,6 +7,7 @@ import type {
   DCheckboxGroupProps,
   DComposeProps,
   DComposeItemProps,
+  DDatePickerProps,
   DDrawerProps,
   DDrawerHeaderProps,
   DDrawerFooterProps,
@@ -34,6 +35,7 @@ import type {
   DTabsProps,
   DTagProps,
   DTextareaProps,
+  DTimePickerProps,
   DToastProps,
   DTooltipProps,
 } from '../../components';
@@ -56,6 +58,7 @@ export type DComponentConfig = {
   DCheckbox: DCheckboxProps;
   DCheckboxGroup: DCheckboxGroupProps<any>;
   DCompose: DComposeProps;
+  DDatePicker: DDatePickerProps;
   DComposeItem: DComposeItemProps;
   DDrawer: DDrawerProps;
   DDrawerHeader: DDrawerHeaderProps;
@@ -84,6 +87,7 @@ export type DComponentConfig = {
   DTabs: DTabsProps<any, any>;
   DTag: DTagProps;
   DTextarea: DTextareaProps;
+  DTimePicker: DTimePickerProps;
   DToast: DToastProps;
   DTooltip: DTooltipProps;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };

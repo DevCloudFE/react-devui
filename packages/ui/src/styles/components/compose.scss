@@ -90,6 +90,7 @@
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
   font-size: var(--#{$variable-prefix}font-size);
+  white-space: nowrap;
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 

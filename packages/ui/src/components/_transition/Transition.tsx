@@ -15,7 +15,7 @@ const [T_ENTER, T_ENTERING, T_ENTERED, T_LEAVE, T_LEAVING, T_LEAVED] = [
 
 export interface DTransitionProps {
   children: (state: DTransitionState) => JSX.Element | null;
-  dIn: boolean;
+  dIn?: boolean;
   dDuring: number | { enter: number; leave: number };
   dMountBeforeFirstEnter?: boolean;
   dSkipFirstTransition?: boolean | [boolean, boolean];
@@ -27,7 +27,7 @@ export interface DTransitionProps {
 export function DTransition(props: DTransitionProps) {
   const {
     children,
-    dIn,
+    dIn = false,
     dDuring,
     dMountBeforeFirstEnter = true,
     dSkipFirstTransition = true,

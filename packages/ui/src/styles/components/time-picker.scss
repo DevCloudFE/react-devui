@@ -17,6 +17,17 @@ $time-picker-cell-height: 28px;
 }
 
 @include b(time-picker-panel) {
+  display: inline-block;
+  vertical-align: top;
+
+  @include e(header) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 41px;
+    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
   @include e(column) {
     position: relative;
     display: inline-block;
@@ -45,7 +56,8 @@ $time-picker-cell-height: 28px;
     font-variant-numeric: tabular-nums;
     list-style: none;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include utils-disabled;
 
     &:not(.is-active):hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
@@ -53,11 +65,6 @@ $time-picker-cell-height: 28px;
 
     @include when(active) {
       background-color: var(--#{$variable-prefix}background-color-primary);
-    }
-
-    @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
-      pointer-events: none;
     }
   }
 }

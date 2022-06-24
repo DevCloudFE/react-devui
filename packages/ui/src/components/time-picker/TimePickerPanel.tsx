@@ -1,10 +1,10 @@
 import { freeze } from 'immer';
 import { isUndefined } from 'lodash';
-import React, { useImperativeHandle, useRef } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback, useForceUpdate, usePrefixConfig } from '../../hooks';
+import { useEventCallback, usePrefixConfig } from '../../hooks';
 import { getClassName, scrollTo } from '../../utils';
-import dayjs from './utils';
+import { dayjs } from '../dayjs';
 
 const H12 = freeze([
   '12',
@@ -22,18 +22,31 @@ const [H24, M60, S60] = [24, 60, 60].map((num) =>
 );
 
 export interface DTimePickerPanelRef {
-  scrollToTime: (time: Date) => void;
+  updateView: (time: Date) => void;
 }
 
 export interface DTimePickerPanelProps {
   dTime: Date | null;
-  dConfigOptions?: (unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean };
+  dCols: ('hour' | 'minute' | 'second')[];
   d12Hour?: boolean;
-  onCellClick?: (time: Date) => void;
+  dConfigOptions?: (unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean };
+  onTimeChange?: (time: Date) => void;
+}
+
+export interface DTimePickerPanelPropsWithPrivate extends DTimePickerPanelProps {
+  __header?: boolean;
 }
 
 function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>) {
-  const { dTime, dConfigOptions, d12Hour = false, onCellClick } = props;
+  const {
+    __header = false,
+
+    dTime,
+    dCols,
+    d12Hour = false,
+    dConfigOptions,
+    onTimeChange,
+  } = props as DTimePickerPanelPropsWithPrivate;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -49,15 +62,28 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
     clearHTid?: () => void;
     clearMTid?: () => void;
     clearSTid?: () => void;
-    A: 'AM' | 'PM';
-  }>({ A: 'AM' });
+  }>({});
 
-  const forceUpdate = useForceUpdate();
+  const [saveA, setSaveA] = useState<'AM' | 'PM'>('AM');
 
-  const time = dTime ? dayjs(dTime) : dayjs('00:00:00', 'HH:mm:ss');
-  const activeA = dTime ? (time.get('hour') < 12 ? 'AM' : 'PM') : dataRef.current.A;
+  const activeTime = dTime ? dayjs(dTime) : dayjs('00:00:00', 'HH:mm:ss');
+  const activeA = dTime ? (activeTime.get('hour') < 12 ? 'AM' : 'PM') : saveA;
 
-  const scrollToTime = useEventCallback((t: Date, unit?: 'hour' | 'minute' | 'second') => {
+  const format = (() => {
+    const unit = [];
+    if (dCols.includes('hour')) {
+      unit.push('HH');
+    }
+    if (dCols.includes('minute')) {
+      unit.push('mm');
+    }
+    if (dCols.includes('second')) {
+      unit.push('ss');
+    }
+    return unit.join(':');
+  })();
+
+  const updateView = useEventCallback((t: Date, unit?: 'hour' | 'minute' | 'second') => {
     if (unit === 'hour' || isUndefined(unit)) {
       let hour = t.getHours();
       if (d12Hour) {
@@ -104,93 +130,100 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
   useImperativeHandle(
     ref,
     () => ({
-      scrollToTime,
+      updateView,
     }),
-    [scrollToTime]
+    [updateView]
   );
 
   return (
-    <>
-      <ul ref={ulHRef} className={`${dPrefix}time-picker-panel__column`}>
-        {(d12Hour ? H12 : H24).map((_h) => {
-          let h = Number(_h);
-          if (d12Hour) {
-            if (activeA === 'AM' && h === 12) {
-              h = 0;
+    <div className={`${dPrefix}time-picker-panel`}>
+      {__header && <div className={`${dPrefix}time-picker-panel__header`}>{activeTime.format(format)}</div>}
+      {dCols.includes('hour') && (
+        <ul ref={ulHRef} className={`${dPrefix}time-picker-panel__column`}>
+          {(d12Hour ? H12 : H24).map((_h) => {
+            let h = Number(_h);
+            if (d12Hour) {
+              if (activeA === 'AM' && h === 12) {
+                h = 0;
+              }
+              if (activeA === 'PM' && h !== 12) {
+                h += 12;
+              }
             }
-            if (activeA === 'PM' && h !== 12) {
-              h += 12;
-            }
-          }
-          const { disabled, hidden } = dConfigOptions?.('hour', h) ?? {};
+            const { disabled, hidden } = dConfigOptions?.('hour', h) ?? {};
 
-          return hidden ? null : (
-            <li
-              key={h}
-              className={getClassName(`${dPrefix}time-picker-panel__cell`, {
-                'is-active': dTime && time.get('hour') === h,
-                'is-disabled': disabled,
-              })}
-              data-h={h}
-              onClick={() => {
-                const newT = time.set('hour', h).toDate();
-                scrollToTime(newT, 'hour');
-                onCellClick?.(newT);
-              }}
-            >
-              {_h}
-            </li>
-          );
-        })}
-      </ul>
-      <ul ref={ulMRef} className={`${dPrefix}time-picker-panel__column`}>
-        {M60.map((_m) => {
-          const m = Number(_m);
-          const { disabled, hidden } = dConfigOptions?.('minute', m) ?? {};
+            return hidden ? null : (
+              <li
+                key={h}
+                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                  'is-active': dTime && activeTime.get('hour') === h,
+                  'is-disabled': disabled,
+                })}
+                data-h={h}
+                onClick={() => {
+                  const newT = activeTime.set('hour', h).toDate();
+                  updateView(newT, 'hour');
+                  onTimeChange?.(newT);
+                }}
+              >
+                {_h}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {dCols.includes('minute') && (
+        <ul ref={ulMRef} className={`${dPrefix}time-picker-panel__column`}>
+          {M60.map((_m) => {
+            const m = Number(_m);
+            const { disabled, hidden } = dConfigOptions?.('minute', m) ?? {};
 
-          return hidden ? null : (
-            <li
-              key={m}
-              className={getClassName(`${dPrefix}time-picker-panel__cell`, {
-                'is-active': dTime && time.get('minute') === m,
-                'is-disabled': disabled,
-              })}
-              data-m={m}
-              onClick={() => {
-                const newT = time.set('minute', m).toDate();
-                scrollToTime(newT, 'minute');
-                onCellClick?.(newT);
-              }}
-            >
-              {_m}
-            </li>
-          );
-        })}
-      </ul>
-      <ul ref={ulSRef} className={`${dPrefix}time-picker-panel__column`}>
-        {S60.map((_s) => {
-          const s = Number(_s);
-          const { disabled, hidden } = dConfigOptions?.('second', s) ?? {};
+            return hidden ? null : (
+              <li
+                key={m}
+                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                  'is-active': dTime && activeTime.get('minute') === m,
+                  'is-disabled': disabled,
+                })}
+                data-m={m}
+                onClick={() => {
+                  const newT = activeTime.set('minute', m).toDate();
+                  updateView(newT, 'minute');
+                  onTimeChange?.(newT);
+                }}
+              >
+                {_m}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {dCols.includes('second') && (
+        <ul ref={ulSRef} className={`${dPrefix}time-picker-panel__column`}>
+          {S60.map((_s) => {
+            const s = Number(_s);
+            const { disabled, hidden } = dConfigOptions?.('second', s) ?? {};
 
-          return hidden ? null : (
-            <li
-              key={s}
-              className={getClassName(`${dPrefix}time-picker-panel__cell`, {
-                'is-active': dTime && time.get('second') === s,
-                'is-disabled': disabled,
-              })}
-              data-s={s}
-              onClick={() => {
-                const newT = time.set('second', s).toDate();
-                scrollToTime(newT, 'second');
-                onCellClick?.(newT);
-              }}
-            >
-              {_s}
-            </li>
-          );
-        })}
-      </ul>
+            return hidden ? null : (
+              <li
+                key={s}
+                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                  'is-active': dTime && activeTime.get('second') === s,
+                  'is-disabled': disabled,
+                })}
+                data-s={s}
+                onClick={() => {
+                  const newT = activeTime.set('second', s).toDate();
+                  updateView(newT, 'second');
+                  onTimeChange?.(newT);
+                }}
+              >
+                {_s}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       {d12Hour && (
         <ul className={`${dPrefix}time-picker-panel__column`}>
           {(['AM', 'PM'] as const).map((A) => (
@@ -202,12 +235,11 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
               onClick={() => {
                 if (dTime) {
                   if (activeA !== A) {
-                    const newT = time.set('hour', time.get('hour') + (A === 'AM' ? -12 : 12)).toDate();
-                    onCellClick?.(newT);
+                    const newT = activeTime.set('hour', activeTime.get('hour') + (A === 'AM' ? -12 : 12)).toDate();
+                    onTimeChange?.(newT);
                   }
                 } else {
-                  dataRef.current.A = A;
-                  forceUpdate();
+                  setSaveA(A);
                 }
               }}
             >
@@ -216,7 +248,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }
 

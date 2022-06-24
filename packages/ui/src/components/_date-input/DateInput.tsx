@@ -15,34 +15,30 @@ import {
   useElement,
   useUpdatePosition,
 } from '../../hooks';
-import { ClockCircleOutlined, CloseCircleFilled, SwapRightOutlined } from '../../icons';
+import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
 import { getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DTransition } from '../_transition';
 
-export type DExtendsTimeInputProps = Pick<
-  DTimeInputProps,
-  'dFormControl' | 'dPlacement' | 'dSize' | 'dRange' | 'dClearable' | 'dDisabled' | 'onClear' | 'onVisibleChange'
->;
-
-export interface DTimeInputRef {
+export interface DDateInputRef {
   updatePosition: () => void;
 }
 
-export interface DTimeInputRenderProps {
-  tiStyle: React.CSSProperties;
-  'data-time-input-popupid': string;
-  tiOnMouseDown: React.MouseEventHandler;
-  tiOnMouseUp: React.MouseEventHandler;
+export interface DDateInputRenderProps {
+  diStyle: React.CSSProperties;
+  'data-date-input-popupid': string;
+  diOnMouseDown: React.MouseEventHandler;
+  diOnMouseUp: React.MouseEventHandler;
 }
 
-export interface DTimeInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children: (props: DTimeInputRenderProps) => JSX.Element | null;
+export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children: (props: DDateInputRenderProps) => JSX.Element | null;
   dFormControl?: DFormControl;
   dVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
+  dSuffix?: React.ReactNode;
   dSize?: DSize;
   dRange?: boolean;
   dClearable?: boolean;
@@ -54,16 +50,17 @@ export interface DTimeInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 }
 
 const TTANSITION_DURING = 116;
-function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef>) {
+function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>) {
   const {
     children,
     dFormControl,
-    dVisible = false,
+    dVisible,
+    dSuffix,
     dPlacement = 'bottom-left',
     dSize,
-    dRange = false,
-    dClearable = false,
-    dDisabled = false,
+    dRange,
+    dClearable,
+    dDisabled,
     dInputProps,
     dInputRef,
     onVisibleChange,
@@ -117,10 +114,10 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
   const clearable = dClearable && !dVisible && !dDisabled;
 
   const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}time-input-root`);
+    let el = document.getElementById(`${dPrefix}date-input-root`);
     if (!el) {
       el = document.createElement('div');
-      el.id = `${dPrefix}time-input-root`;
+      el.id = `${dPrefix}date-input-root`;
       document.body.appendChild(el);
     }
     return el;
@@ -134,7 +131,7 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const popupEl = document.querySelector(`[data-time-input-popupid="${uniqueId}"]`) as HTMLElement | null;
+    const popupEl = document.querySelector(`[data-date-input-popupid="${uniqueId}"]`) as HTMLElement | null;
     if (boxRef.current && popupEl) {
       const { width, height } = getNoTransformSize(popupEl);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, dPlacement, 8);
@@ -155,7 +152,7 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
         });
       }
 
-      const popupEl = document.querySelector(`[data-time-input-popupid="${uniqueId}"]`) as HTMLElement | null;
+      const popupEl = document.querySelector(`[data-date-input-popupid="${uniqueId}"]`) as HTMLElement | null;
       if (popupEl) {
         asyncGroup.onResize(popupEl, () => {
           updatePosition();
@@ -221,7 +218,7 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
       <DBaseInput
         {...inputProps}
         ref={isLeft ? combineInputRefLeft : combineInputRefRight}
-        className={getClassName(inputProps?.className, `${dPrefix}time-input__input`)}
+        className={getClassName(inputProps?.className, `${dPrefix}date-input__input`)}
         type="text"
         autoComplete="off"
         disabled={dDisabled}
@@ -271,8 +268,8 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
         <div
           {...restProps}
           ref={boxRef}
-          className={getClassName(className, `${dPrefix}time-input`, {
-            [`${dPrefix}time-input--${dSize}`]: dSize,
+          className={getClassName(className, `${dPrefix}date-input`, {
+            [`${dPrefix}date-input--${dSize}`]: dSize,
             'is-disabled': dDisabled,
             'is-focus': isFocus,
           })}
@@ -298,14 +295,14 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
           {getInputNode(true)}
           {dRange && (
             <>
-              <div ref={indicatorRef} className={`${dPrefix}time-input__indicator`}></div>
-              <SwapRightOutlined className={`${dPrefix}time-input__separator`} />
+              <div ref={indicatorRef} className={`${dPrefix}date-input__indicator`}></div>
+              <SwapRightOutlined className={`${dPrefix}date-input__separator`} />
               {getInputNode(false)}
             </>
           )}
           {clearable && (
             <button
-              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}time-input__clear`)}
+              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-input__clear`)}
               style={{ width: iconSize, height: iconSize }}
               aria-label={t('Common', 'Clear')}
               onClick={(e) => {
@@ -317,7 +314,11 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
               <CloseCircleFilled dSize={iconSize} />
             </button>
           )}
-          <ClockCircleOutlined className={`${dPrefix}time-input__icon`} style={{ opacity: clearable ? 0 : 1 }} dSize={iconSize} />
+          {dSuffix && (
+            <div className={`${dPrefix}date-input__icon`} style={{ opacity: clearable ? 0 : 1, fontSize: iconSize }}>
+              {dSuffix}
+            </div>
+          )}
         </div>
       </DBaseDesign>
       {containerEl &&
@@ -355,14 +356,14 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
               }
 
               return children({
-                tiStyle: {
+                diStyle: {
                   ...popupPositionStyle,
                   ...transitionStyle,
                   zIndex: maxZIndex,
                 },
-                'data-time-input-popupid': uniqueId,
-                tiOnMouseDown: preventBlur,
-                tiOnMouseUp: preventBlur,
+                'data-date-input-popupid': uniqueId,
+                diOnMouseDown: preventBlur,
+                diOnMouseUp: preventBlur,
               });
             }}
           </DTransition>,
@@ -372,4 +373,4 @@ function TimeInput(props: DTimeInputProps, ref: React.ForwardedRef<DTimeInputRef
   );
 }
 
-export const DTimeInput = React.forwardRef(TimeInput);
+export const DDateInput = React.forwardRef(DateInput);

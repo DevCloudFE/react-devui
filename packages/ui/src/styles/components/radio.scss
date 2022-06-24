@@ -120,6 +120,10 @@
     --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
   }
 
+  @include e(label) {
+    white-space: nowrap;
+  }
+
   @include e(input-wrapper) {
     position: relative;
     width: 16px;

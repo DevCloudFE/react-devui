@@ -24,21 +24,6 @@ import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';
 import { DTransition } from '../_transition';
 
-export type DExtendsSelectboxProps = Pick<
-  DSelectboxProps,
-  | 'dFormControl'
-  | 'dPlaceholder'
-  | 'dSize'
-  | 'dLoading'
-  | 'dSearchable'
-  | 'dClearable'
-  | 'dDisabled'
-  | 'dInputProps'
-  | 'dInputRef'
-  | 'onClear'
-  | 'onVisibleChange'
->;
-
 export interface DSelectboxRef {
   updatePosition: () => void;
 }
@@ -76,16 +61,16 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const {
     children,
     dFormControl,
-    dVisible = false,
+    dVisible,
     dContent,
     dContentTitle,
     dPlaceholder,
     dSuffix,
     dSize,
-    dLoading = false,
-    dSearchable = false,
-    dClearable = false,
-    dDisabled = false,
+    dLoading,
+    dSearchable,
+    dClearable,
+    dDisabled,
     dInputProps,
     dInputRef,
     onUpdatePosition,
