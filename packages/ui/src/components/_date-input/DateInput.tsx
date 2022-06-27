@@ -135,7 +135,11 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     if (boxRef.current && popupEl) {
       const { width, height } = getNoTransformSize(popupEl);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, dPlacement, 8);
-      setPopupPositionStyle({ top, left });
+      setPopupPositionStyle({
+        top,
+        left,
+        maxWidth: window.innerWidth - left - 20,
+      });
       setTransformOrigin(transformOrigin);
     }
   });
