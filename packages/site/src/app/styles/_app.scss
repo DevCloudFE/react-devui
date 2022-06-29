@@ -271,6 +271,14 @@ h3 {
       min-width: 800px;
     }
   }
+
+  section[id^='Progress'] {
+    .d-progress--dashboard,
+    .d-progress--circle {
+      margin-right: 8px;
+      margin-bottom: 12px;
+    }
+  }
 }
 
 .app-demo-col {

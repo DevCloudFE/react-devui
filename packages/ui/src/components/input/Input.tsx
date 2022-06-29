@@ -81,7 +81,6 @@ export function DInput(props: DInputProps) {
   const combineInputRef = useForkRef(inputRef, dInputRef);
 
   const dataRef = useRef<{
-    loopFn?: (isIncrease: boolean) => void;
     clearLoop?: () => void;
     clearTid?: () => void;
   }>({});
@@ -100,27 +99,25 @@ export function DInput(props: DInputProps) {
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const changeNumber = useEventCallback((isIncrease = true) => {
-    const stepVal = dStep ?? 1;
-    let val = (() => {
-      if (isNumber(value)) {
-        return value;
-      }
-      const num = value ? Number(value) : 0;
-      if (Number.isNaN(num)) {
-        return 0;
-      }
-      return num;
-    })();
-    val = isIncrease ? val + stepVal : val - stepVal;
-    changeValue(Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, val)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
+    changeValue((val) => {
+      const stepVal = dStep ?? 1;
+      const newVal = (() => {
+        if (isNumber(val)) {
+          return val;
+        }
+        const num = val ? Number(val) : 0;
+        if (Number.isNaN(num)) {
+          return 0;
+        }
+        return isIncrease ? num + stepVal : num - stepVal;
+      })();
+      return Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, newVal)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0);
+    });
   });
 
-  dataRef.current.loopFn = (isIncrease) => {
-    changeNumber(isIncrease);
-  };
   const handleNumberMouseDown = (isIncrease = true) => {
     const loop = () => {
-      dataRef.current.loopFn?.(isIncrease);
+      changeNumber(isIncrease);
       dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
     };
     dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);

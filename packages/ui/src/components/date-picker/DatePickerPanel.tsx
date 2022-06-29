@@ -26,7 +26,6 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
   //#endregion
 
   const dataRef = useRef<{
-    loopFn?: (unit: UnitType, value: number) => void;
     clearLoop?: () => void;
     clearTid?: () => void;
     clearHoverTid?: () => void;
@@ -45,12 +44,9 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
     setShowDate(dayjs(t));
   });
 
-  dataRef.current.loopFn = (unit, value) => {
-    updateView(showDate.set(unit, showDate.get(unit) + value).toDate());
-  };
   const handleButtonDown = (unit: UnitType, value: number) => {
     const loop = () => {
-      dataRef.current.loopFn?.(unit, value);
+      setShowDate((d) => d.set(unit, d.get(unit) + value));
       dataRef.current.clearLoop = asyncCapture.setTimeout(() => loop(), 50);
     };
     dataRef.current.clearTid = asyncCapture.setTimeout(() => loop(), 400);

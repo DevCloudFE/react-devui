@@ -57,10 +57,10 @@ export function scrollTo(
       }
 
       if (!isFinish) {
-        tid = window.setTimeout(() => {
+        tid = window.requestAnimationFrame(() => {
           tid = null;
           step();
-        }, 12);
+        });
       } else {
         onEnd?.();
       }

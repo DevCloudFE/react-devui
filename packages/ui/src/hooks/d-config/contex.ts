@@ -25,6 +25,7 @@ import type {
   DModalFooterProps,
   DNotificationProps,
   DPaginationProps,
+  DProgressProps,
   DRadioProps,
   DRadioGroupProps,
   DRatingProps,
@@ -41,7 +42,7 @@ import type {
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
 import type { DIconBaseProps } from '../../icons';
-import type { DLang, DTheme } from '../../utils/global';
+import type { DLang } from '../../utils/global';
 import type { DElementSelector } from '../ui/useElement';
 
 import React from 'react';
@@ -77,6 +78,7 @@ export type DComponentConfig = {
   DModalFooter: DModalFooterProps;
   DNotification: DNotificationProps;
   DPagination: DPaginationProps;
+  DProgress: DProgressProps;
   DRadio: DRadioProps;
   DRadioGroup: DRadioGroupProps<any>;
   DRating: DRatingProps;
@@ -94,7 +96,6 @@ export type DComponentConfig = {
 
 export interface DConfigContextData {
   prefix?: string;
-  theme?: DTheme;
   grid?: {
     breakpoints?: Map<DBreakpoints, number>;
     colNum?: number;

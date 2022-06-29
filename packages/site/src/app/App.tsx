@@ -1,5 +1,5 @@
 import type { DConfigContextData } from '@react-devui/ui/hooks/d-config/contex';
-import type { DLang, DTheme } from '@react-devui/ui/utils/global';
+import type { DLang } from '@react-devui/ui/utils/global';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,8 @@ import { useAsync, useMount } from '@react-devui/ui/hooks';
 import { environment } from '../environments/environment';
 import { AppLayout } from './components';
 import { AppRoutes } from './routes/Routes';
+
+type DTheme = 'light' | 'dark';
 
 export interface AppContextData {
   gTheme: DTheme;
@@ -55,13 +57,23 @@ export function App() {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
+  useEffect(() => {
+    document.body.classList.toggle('dark', theme === 'dark');
+    if (theme === 'dark') {
+      const colorScheme = document.documentElement.style.colorScheme;
+      document.documentElement.style.colorScheme = 'dark';
+      return () => {
+        document.documentElement.style.colorScheme = colorScheme;
+      };
+    }
+  }, [theme]);
+
   const rootContext = useMemo<DConfigContextData>(
     () => ({
-      theme,
       i18n: { lang: i18n.language as DLang },
       updatePosition: { scroll: ['main.app-main'], resize: ['article.app-route-article'] },
     }),
-    [i18n.language, theme]
+    [i18n.language]
   );
 
   const contextValue = useMemo<AppContextData>(

@@ -1,5 +1,4 @@
 export type DLang = 'en-US' | 'zh-Hant';
-export type DTheme = 'light' | 'dark';
 
 export type DId = string | number;
 

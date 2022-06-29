@@ -38,15 +38,7 @@ export interface DTimePickerPanelPropsWithPrivate extends DTimePickerPanelProps 
 }
 
 function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>) {
-  const {
-    __header = false,
-
-    dTime,
-    dCols,
-    d12Hour = false,
-    dConfigOptions,
-    onTimeChange,
-  } = props as DTimePickerPanelPropsWithPrivate;
+  const { dTime, dCols, d12Hour = false, dConfigOptions, onTimeChange, __header = false } = props as DTimePickerPanelPropsWithPrivate;
 
   //#region Context
   const dPrefix = usePrefixConfig();

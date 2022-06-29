@@ -35,6 +35,16 @@ class BaseAsyncCapture {
     return clear;
   }
 
+  requestAnimationFrame(...args: Parameters<typeof requestAnimationFrame>) {
+    const tid = requestAnimationFrame(...args);
+    const clear = () => {
+      cancelAnimationFrame(tid);
+      this.tids.delete(tid);
+    };
+    this.tids.set(tid, clear);
+    return clear;
+  }
+
   onResize(el: HTMLElement, fn: () => any) {
     let isFirst = true;
     const observer = new ResizeObserver(() => {

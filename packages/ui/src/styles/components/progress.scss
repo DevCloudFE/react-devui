@@ -1,0 +1,58 @@
+@mixin progress-circle {
+  --#{$variable-prefix}progress-font-size: 22px;
+
+  justify-content: center;
+
+  @include e(label) {
+    position: absolute;
+
+    .#{$variable-prefix}icon {
+      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.5);
+    }
+  }
+}
+
+@include b(progress) {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: top;
+
+  @include e(label) {
+    font-size: var(--#{$variable-prefix}progress-font-size);
+
+    @include m(success) {
+      color: var(--#{$variable-prefix}color-success);
+    }
+
+    @include m(warning) {
+      color: var(--#{$variable-prefix}color-warning);
+    }
+
+    @include m(error) {
+      color: var(--#{$variable-prefix}color-danger);
+    }
+  }
+
+  @include m(line) {
+    --#{$variable-prefix}progress-font-size: 14px;
+
+    @include e(label) {
+      flex-shrink: 0;
+      min-width: 4em;
+      padding-left: 8px;
+      line-height: 1.25;
+
+      .#{$variable-prefix}icon {
+        font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.25);
+      }
+    }
+  }
+
+  @include m(circle) {
+    @include progress-circle;
+  }
+
+  @include m(dashboard) {
+    @include progress-circle;
+  }
+}

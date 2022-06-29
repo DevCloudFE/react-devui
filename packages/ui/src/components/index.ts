@@ -49,6 +49,9 @@ export { NotificationService } from './notification';
 export type { DPaginationProps } from './pagination';
 export { DPagination } from './pagination';
 
+export type { DProgressProps } from './progress';
+export { DProgress } from './progress';
+
 export type { DRadioProps, DRadioGroupProps } from './radio';
 export { DRadio, DRadioGroup } from './radio';
 

@@ -1,6 +1,6 @@
 import type { DSize } from '../../utils/global';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useThemeConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext } from '../../hooks';
 import { CloseOutlined } from '../../icons';
 import { convertHex, registerComponentMate, getClassName, pSBC } from '../../utils';
 
@@ -31,7 +31,6 @@ export function DTag(props: DTagProps) {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const theme = useThemeConfig();
   const { gDisabled } = useGeneralContext();
   //#endregion
 
@@ -52,7 +51,7 @@ export function DTag(props: DTagProps) {
           ? {
               [`--${dPrefix}tag-color`]: dColor,
               [`--${dPrefix}tag-border-color`]: pSBC(0.3, dColor),
-              [`--${dPrefix}tag-background-color`]: convertHex(dColor, theme === 'light' ? 0.1 : 0.16),
+              [`--${dPrefix}tag-background-color`]: convertHex(dColor, 0.1),
             }
           : {}),
       }}
