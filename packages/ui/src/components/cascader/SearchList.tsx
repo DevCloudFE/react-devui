@@ -54,7 +54,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
   const dVSRef = useRef<DVirtualScrollRef<DSearchOption<ID, T>>>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const changeSelectByClick = useEventCallback((option: DSearchOption<ID, T>) => {
     if (dMultiple) {
@@ -125,7 +125,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
     <DVirtualScroll
       ref={dVSRef}
       id={dListId}
-      className={`${dPrefix}cascader-search-list`}
+      className={`${dPrefix}cascader__list`}
       role="listbox"
       aria-multiselectable={dMultiple}
       aria-activedescendant={dFocusOption ? dGetOptionId(dFocusOption.value) : undefined}
@@ -149,7 +149,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
             {...renderProps}
             key={item.value}
             id={dGetOptionId(item.value)}
-            className={getClassName(`${dPrefix}cascader-search-list__option`, {
+            className={getClassName(`${dPrefix}cascader__option`, {
               'is-selected': !dMultiple && inSelected,
               'is-disabled': node.disabled,
             })}
@@ -164,9 +164,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
           >
             {dFocusVisible && dFocusOption?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
             {dMultiple && <DCheckbox dModel={node.checked} dDisabled={node.disabled}></DCheckbox>}
-            <div className={`${dPrefix}cascader-search-list__option-content`}>
-              {dCustomOption ? dCustomOption(node.origin) : getText(node)}
-            </div>
+            <div className={`${dPrefix}cascader__option-content`}>{dCustomOption ? dCustomOption(node.origin) : getText(node)}</div>
           </li>
         );
       }}
@@ -177,8 +175,8 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
       dSize={264}
       dPadding={4}
       dEmpty={
-        <li className={`${dPrefix}cascader-search-list__empty`}>
-          <div className={`${dPrefix}cascader-search-list__option-content`}>{t('No Data')}</div>
+        <li className={`${dPrefix}cascader__empty`}>
+          <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
         </li>
       }
     />

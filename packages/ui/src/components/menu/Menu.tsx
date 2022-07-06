@@ -1,11 +1,12 @@
 import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isNull, isUndefined, nth } from 'lodash';
-import React, { useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useId, useImperativeHandle, useState } from 'react';
 import { Subject } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
+import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -39,7 +40,6 @@ export interface DMenuProps<ID extends DId, T extends DMenuOption<ID>> extends O
   onExpandsChange?: (ids: ID[], options: DNestedChildren<T>[]) => void;
 }
 
-const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
 function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>) {
   const {
@@ -64,10 +64,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  //#endregion
-
-  //#region Ref
-  const navRef = useRef<HTMLElement>(null);
   //#endregion
 
   const [updatePosition$] = useState(() => new Subject<void>());
@@ -453,17 +449,16 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
   return (
     <DCollapseTransition
-      dRef={navRef}
       dSize={80}
       dIn={dMode !== 'icon'}
-      dDuring={TTANSITION_DURING}
+      dDuring={TTANSITION_DURING_BASE}
       dHorizontal
       dStyles={{
-        entering: { transition: `width ${TTANSITION_DURING}ms linear` },
-        leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
+        entering: { transition: `width ${TTANSITION_DURING_BASE}ms linear` },
+        leaving: { transition: `width ${TTANSITION_DURING_BASE}ms linear` },
       }}
     >
-      {(collapseStyle) => (
+      {(navRef, collapseStyle) => (
         <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
           <nav
             {...restProps}

@@ -2,6 +2,7 @@ import type { DTransitionState } from '../_transition';
 
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
+import { TTANSITION_DURING_FAST } from '../../utils/global';
 import { DTransition } from '../_transition';
 
 export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -10,7 +11,6 @@ export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const TTANSITION_DURING = 100;
 export function DMask(props: DMaskProps) {
   const {
     dVisible,
@@ -29,15 +29,15 @@ export function DMask(props: DMaskProps) {
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { opacity: 0 },
-    entering: { transition: `opacity ${TTANSITION_DURING}ms linear` },
-    leaving: { opacity: 0, transition: `opacity ${TTANSITION_DURING}ms linear` },
+    entering: { transition: `opacity ${TTANSITION_DURING_FAST}ms linear` },
+    leaving: { opacity: 0, transition: `opacity ${TTANSITION_DURING_FAST}ms linear` },
     leaved: { display: 'none' },
   };
 
   return (
     <DTransition
       dIn={dVisible}
-      dDuring={TTANSITION_DURING}
+      dDuring={TTANSITION_DURING_FAST}
       afterEnter={() => {
         afterVisibleChange?.(true);
       }}

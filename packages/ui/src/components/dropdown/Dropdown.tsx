@@ -15,6 +15,7 @@ import {
   useIsomorphicLayoutEffect,
 } from '../../hooks';
 import { registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition, scrollElementToView } from '../../utils';
+import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
@@ -50,7 +51,6 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownOption<ID>>
   onOptionClick?: (id: ID, option: DNestedChildren<T>) => void;
 }
 
-const TTANSITION_DURING = 116;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' });
 function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdownProps<ID, T>, ref: React.ForwardedRef<DDropdownRef>) {
   const {
@@ -86,7 +86,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
   const ulRef = useRef<HTMLUListElement>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const [updatePosition$] = useState(() => new Subject<void>());
 
@@ -354,7 +354,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
   return (
     <DTransition
       dIn={visible}
-      dDuring={TTANSITION_DURING}
+      dDuring={TTANSITION_DURING_POPUP}
       onEnterRendered={updatePosition}
       afterEnter={() => {
         afterVisibleChange?.(true);
@@ -372,7 +372,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
               transformOrigin,
             };
             break;
@@ -381,7 +381,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
             transitionStyle = {
               transform: 'scaleY(0.7)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
               transformOrigin,
             };
             break;

@@ -55,28 +55,27 @@
     --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
   }
-}
 
-@include b(form-item) {
-  position: relative;
+  @include e(item) {
+    position: relative;
+    @include m(vertical) {
+      .#{$variable-prefix}form__item-container {
+        flex-direction: column;
+      }
 
-  @include m(vertical) {
-    @include e(container) {
-      flex-direction: column;
-    }
-
-    @include e(label) {
-      justify-content: flex-start;
+      .#{$variable-prefix}form__item-label {
+        justify-content: flex-start;
+      }
     }
   }
 
-  @include e(container) {
+  @include e(item-container) {
     display: flex;
     align-items: flex-start;
     width: 100%;
   }
 
-  @include e(label) {
+  @include e(item-label) {
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
@@ -104,7 +103,7 @@
     }
   }
 
-  @include e(extra) {
+  @include e(item-label-extra) {
     display: inline-flex;
     gap: 0 4px;
     align-items: center;
@@ -114,9 +113,10 @@
     color: var(--#{$variable-prefix}color-icon-decorator);
   }
 
-  @include e(content) {
+  @include e(item-content) {
     position: relative;
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     min-height: var(--#{$variable-prefix}size);
 
@@ -234,22 +234,22 @@
     }
   }
 
-  @include e(errors) {
+  @include e(error-container) {
     float: right;
     min-height: calc(1.5em + 5px);
     padding: 2px 0;
     font-size: 0.9em;
   }
-}
 
-@include b(form-error) {
-  @include utils-ellipsis;
+  @include e(error) {
+    @include utils-ellipsis;
 
-  @include m(error) {
-    color: var(--#{$variable-prefix}color-danger);
-  }
+    @include m(error) {
+      color: var(--#{$variable-prefix}color-danger);
+    }
 
-  @include m(warning) {
-    color: var(--#{$variable-prefix}color-warning);
+    @include m(warning) {
+      color: var(--#{$variable-prefix}color-warning);
+    }
   }
 }

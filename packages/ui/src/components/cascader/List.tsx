@@ -56,7 +56,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
   const dVSRef = useRef<DVirtualScrollRef<AbstractTreeNode<ID, T>>>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const isFocus = dFocusNode && dNodes.findIndex((node) => node.id === dFocusNode.id) !== -1;
   const inFocusNode = (() => {
@@ -169,7 +169,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
       <DVirtualScroll
         ref={dVSRef}
         id={dListId}
-        className={`${dPrefix}cascader-list`}
+        className={`${dPrefix}cascader__list`}
         role="listbox"
         aria-multiselectable={dMultiple}
         aria-activedescendant={dRoot && dFocusNode ? dGetOptionId(dFocusNode.id) : undefined}
@@ -180,7 +180,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
               {...renderProps}
               key={item.id}
               id={dGetOptionId(item.id)}
-              className={getClassName(`${dPrefix}cascader-list__option`, {
+              className={getClassName(`${dPrefix}cascader__option`, {
                 'is-focus': item.id === inFocusNode?.id,
                 'is-selected': !dMultiple && item.checked,
                 'is-disabled': item.disabled,
@@ -209,11 +209,11 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
                   }}
                 ></DCheckbox>
               )}
-              <div className={`${dPrefix}cascader-list__option-content`}>
-                {dCustomOption ? dCustomOption(item.origin) : item.origin.label}
-              </div>
+              <div className={`${dPrefix}cascader__option-content`}>{dCustomOption ? dCustomOption(item.origin) : item.origin.label}</div>
               {!item.isLeaf && (
-                <div className={`${dPrefix}cascader-list__icon`}>{item.origin.loading ? <LoadingOutlined dSpin /> : <RightOutlined />}</div>
+                <div className={`${dPrefix}cascader__option-icon`}>
+                  {item.origin.loading ? <LoadingOutlined dSpin /> : <RightOutlined />}
+                </div>
               )}
             </li>
           );
@@ -225,8 +225,8 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
         dSize={264}
         dPadding={4}
         dEmpty={
-          <li className={`${dPrefix}cascader-list__empty`}>
-            <div className={`${dPrefix}cascader-list__option-content`}>{t('No Data')}</div>
+          <li className={`${dPrefix}cascader__empty`}>
+            <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
           </li>
         }
       />

@@ -1,10 +1,11 @@
 import type { DSize } from '../../utils/global';
 
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
+import { TTANSITION_DURING_SLOW } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DCollapseTransition } from '../_transition';
 
@@ -19,7 +20,6 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconRight?: boolean;
 }
 
-const TTANSITION_DURING = 300;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
 function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
@@ -45,16 +45,12 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
   const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
-  //#region Ref
-  const iconRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
   const [waveNode, wave] = useWave();
 
   const size = dSize ?? gSize;
   const disabled = _disabled || dLoading || gDisabled;
 
-  const buttonIcon = (loading: boolean, style?: React.CSSProperties) => (
+  const buttonIcon = (loading: boolean, iconRef?: React.RefObject<HTMLDivElement>, style?: React.CSSProperties) => (
     <div
       ref={iconRef}
       className={getClassName(`${dPrefix}button__icon`, {
@@ -93,18 +89,17 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
           buttonIcon(dLoading)
         ) : (
           <DCollapseTransition
-            dRef={iconRef}
             dSize={0}
             dIn={dLoading}
-            dDuring={TTANSITION_DURING}
+            dDuring={TTANSITION_DURING_SLOW}
             dHorizontal
             dStyles={{
-              entering: { transition: `width ${TTANSITION_DURING}ms linear` },
-              leaving: { transition: `width ${TTANSITION_DURING}ms linear` },
+              entering: { transition: `width ${TTANSITION_DURING_SLOW}ms linear` },
+              leaving: { transition: `width ${TTANSITION_DURING_SLOW}ms linear` },
               leaved: { display: 'none' },
             }}
           >
-            {(collapseStyle) => buttonIcon(true, collapseStyle)}
+            {(iconRef, collapseStyle) => buttonIcon(true, iconRef, collapseStyle)}
           </DCollapseTransition>
         )}
         {!dIconRight && children}

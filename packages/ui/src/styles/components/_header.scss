@@ -6,15 +6,17 @@
   border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
 
   @include e(title) {
-    display: inline-flex;
+    flex: 1 0 0;
     align-items: center;
     font-size: 1.15em;
+
+    @include utils-ellipsis;
   }
 
   @include e(buttons) {
     display: inline-flex;
+    flex-shrink: 0;
     gap: 0 8px;
     align-items: center;
-    margin-left: auto;
   }
 }

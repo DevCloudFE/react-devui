@@ -32,9 +32,9 @@ export function DMenuItem(props: DMenuItemProps) {
   const liNode = (
     <li
       id={dId}
-      className={getClassName(`${dPrefix}menu-item`, {
-        [`${dPrefix}menu-item--horizontal`]: inHorizontalNav,
-        [`${dPrefix}menu-item--icon`]: dMode === 'icon' && dInNav,
+      className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--basic`, {
+        [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
+        [`${dPrefix}menu__item--icon`]: dMode === 'icon' && dInNav,
         'is-active': dActive,
         'is-disabled': dDisabled,
       })}
@@ -45,15 +45,15 @@ export function DMenuItem(props: DMenuItemProps) {
     >
       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
       <div
-        className={getClassName(`${dPrefix}menu-item__indicator`, {
-          [`${dPrefix}menu-item__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
-          [`${dPrefix}menu-item__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
+        className={getClassName(`${dPrefix}menu__indicator`, {
+          [`${dPrefix}menu__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
+          [`${dPrefix}menu__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
         })}
       >
         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
       </div>
-      {dIcon && <div className={`${dPrefix}menu-item__icon`}>{dIcon}</div>}
-      <div className={`${dPrefix}menu-item__title`}>{children}</div>
+      {dIcon && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
+      <div className={`${dPrefix}menu__item-content`}>{children}</div>
     </li>
   );
 

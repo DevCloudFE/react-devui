@@ -17,15 +17,15 @@ export function DMenuGroup(props: DMenuGroupProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   return (
-    <ul className={`${dPrefix}menu-group`} role="group" aria-labelledby={dId}>
-      <li id={dId} className={`${dPrefix}menu-group__label`} style={{ paddingLeft: dSpace + dLevel * dStep }} role="presentation">
+    <ul className={`${dPrefix}menu__group-list`} role="group" aria-labelledby={dId}>
+      <li id={dId} className={`${dPrefix}menu__group-title`} style={{ paddingLeft: dSpace + dLevel * dStep }} role="presentation">
         {children}
       </li>
       {dEmpty ? (
-        <div className={`${dPrefix}menu-group__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
+        <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
           {t('No Data')}
         </div>
       ) : (

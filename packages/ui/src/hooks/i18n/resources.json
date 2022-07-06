@@ -29,7 +29,7 @@
       "zh-Hant": "无数据"
     }
   },
-  "DFooter": {
+  "Footer": {
     "Cancel": {
       "en-US": "Cancel",
       "zh-Hant": "取 消"
@@ -39,7 +39,7 @@
       "zh-Hant": "确 定"
     }
   },
-  "DInput": {
+  "Input": {
     "Password is visible": {
       "en-US": "Password is visible",
       "zh-Hant": "密码可见"
@@ -57,7 +57,7 @@
       "zh-Hant": "数字减"
     }
   },
-  "DPagination": {
+  "Pagination": {
     "Total": {
       "en-US": "Total",
       "zh-Hant": "共"
@@ -101,7 +101,7 @@
       "zh-Hant": "(可选)"
     }
   },
-  "DTimePicker": {
+  "TimePicker": {
     "Select time": {
       "en-US": "Select time",
       "zh-Hant": "请选择时间"
@@ -119,7 +119,7 @@
       "zh-Hant": "此刻"
     }
   },
-  "DDatePicker": {
+  "DatePicker": {
     "Select date": {
       "en-US": "Select date",
       "zh-Hant": "请选择日期"
@@ -155,6 +155,28 @@
     "Next month": {
       "en-US": "Next month",
       "zh-Hant": "下月"
+    }
+  },
+  "Upload": {
+    "Preview file": {
+      "en-US": "Preview file",
+      "zh-Hant": "预览文件"
+    },
+    "Download file": {
+      "en-US": "Download file",
+      "zh-Hant": "下载文件"
+    },
+    "Remove file": {
+      "en-US": "Remove file",
+      "zh-Hant": "移除文件"
+    },
+    "Upload": {
+      "en-US": "Upload",
+      "zh-Hant": "上传"
+    },
+    "Uploading": {
+      "en-US": "Uploading...",
+      "zh-Hant": "上传中..."
     }
   }
 }

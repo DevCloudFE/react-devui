@@ -1,0 +1,262 @@
+@include b(upload) {
+  display: none;
+
+  @include e(picture-preview) {
+    width: 100%;
+    height: 100%;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+  }
+
+  @include e(item-action) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 16px;
+    color: var(--#{$variable-prefix}upload-action-color);
+    text-decoration: none;
+    vertical-align: top;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    appearance: none;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}upload-action-color-lighter);
+      background-color: var(--#{$variable-prefix}upload-action-background-color);
+    }
+
+    &:disabled,
+    &.is-disabled {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
+  }
+
+  @include e(list) {
+    --#{$variable-prefix}upload-action-color: var(--#{$variable-prefix}color-icon-decorator);
+    --#{$variable-prefix}upload-action-color-lighter: var(--#{$variable-prefix}text-color);
+    --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px 0;
+    width: 100%;
+    padding: 0;
+    margin: 8px 0 0;
+    list-style: none;
+  }
+
+  @include e(list-item) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 24px;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+
+      @include e(list-actions) {
+        opacity: 1;
+      }
+    }
+
+    @include m(picture) {
+      --#{$variable-prefix}upload-picture-list-item-border-color: var(--#{$variable-prefix}color-border);
+
+      height: 66px;
+      padding: 8px;
+      border: 1px solid var(--#{$variable-prefix}upload-picture-list-item-border-color);
+
+      @include e(list-icon) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-right: 8px;
+        /* stylelint-disable-next-line declaration-property-value-allowed-list */
+        font-size: 32px;
+      }
+
+      @include e(list-link) {
+        line-height: 48px;
+
+        @include font-size(1rem);
+      }
+
+      @include e(list-progress-wrapper) {
+        bottom: 16px;
+        left: 64px;
+        width: calc(100% - 74px);
+      }
+    }
+
+    @include m(error) {
+      --#{$variable-prefix}upload-action-color: var(--#{$variable-prefix}color-danger);
+      --#{$variable-prefix}upload-action-color-lighter: var(--#{$variable-prefix}color-danger);
+      --#{$variable-prefix}upload-picture-list-item-border-color: var(--#{$variable-prefix}color-danger);
+
+      @include e(list-icon) {
+        color: var(--#{$variable-prefix}color-danger);
+      }
+
+      @include e(list-link) {
+        color: var(--#{$variable-prefix}color-danger);
+      }
+    }
+  }
+
+  @include e(list-icon) {
+    width: 24px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 16px;
+    color: var(--#{$variable-prefix}upload-action-color);
+  }
+
+  @include e(list-link) {
+    display: inline-block;
+    flex: 1 0 0;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+    color: var(--#{$variable-prefix}text-color);
+    text-decoration: none;
+
+    @include utils-ellipsis;
+
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include e(list-actions) {
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(list-progress-wrapper) {
+    position: absolute;
+    bottom: -4px;
+    left: 24px;
+    width: calc(100% - 24px);
+    height: 2px;
+  }
+
+  @include e(picture) {
+    --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
+    --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
+    --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include e(picture-item) {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 104px;
+    height: 104px;
+    padding: 8px;
+    margin: 0;
+    vertical-align: top;
+    background-color: var(--#{$variable-prefix}background-color-hover);
+    border: 1px solid var(--#{$variable-prefix}color-border);
+
+    &:hover {
+      @include e(picture-actions) {
+        opacity: 1;
+      }
+    }
+
+    @include when(disabled) {
+      pointer-events: none;
+    }
+
+    @include m(button) {
+      --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
+      --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
+      --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+
+      cursor: pointer;
+      border-style: dashed;
+      outline: none;
+      transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+      &:not(.#{$variable-prefix}upload__picture-item--error):hover,
+      &:not(.#{$variable-prefix}upload__picture-item--error):focus {
+        border-color: var(--#{$variable-prefix}color-primary);
+      }
+    }
+
+    @include m(load) {
+      background-color: transparent;
+    }
+
+    @include m(error) {
+      border-color: var(--#{$variable-prefix}color-danger);
+
+      @include e(picture-name) {
+        color: var(--#{$variable-prefix}color-danger);
+      }
+    }
+  }
+
+  @include e(picture-name) {
+    max-width: 100%;
+    margin-top: 8px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(picture-text) {
+    margin-bottom: 8px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+  }
+
+  @include e(picture-actions) {
+    position: absolute;
+    inset: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--#{$variable-prefix}mask-background-color);
+    opacity: 0;
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(picture-button-icon) {
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 18px;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+  }
+
+  @include e(picture-button-text) {
+    margin-top: 8px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+  }
+}

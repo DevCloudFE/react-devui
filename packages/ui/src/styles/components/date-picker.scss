@@ -8,32 +8,6 @@
     box-shadow: var(--#{$variable-prefix}shadow-popup);
   }
 
-  @include e(footer) {
-    display: flex;
-    gap: 0 4px;
-    align-items: center;
-    justify-content: center;
-    border-top: 1px solid var(--#{$variable-prefix}color-divider);
-
-    @include m(custom) {
-      justify-content: flex-start;
-      padding: 4px;
-    }
-  }
-
-  @include e(tag-button) {
-    cursor: pointer;
-  }
-}
-
-@include b(date-picker-panel) {
-  display: inline-block;
-  vertical-align: top;
-
-  & + .#{$variable-prefix}time-picker-panel {
-    border-left: 1px solid var(--#{$variable-prefix}color-divider);
-  }
-
   @include e(header) {
     display: flex;
     align-items: center;
@@ -46,9 +20,18 @@
     margin: 0 auto;
   }
 
-  @include e(button) {
+  @include e(header-button) {
     width: 24px;
     height: 100%;
+  }
+
+  @include e(panel) {
+    display: inline-block;
+    vertical-align: top;
+
+    & + .#{$variable-prefix}time-picker__panel {
+      border-left: 1px solid var(--#{$variable-prefix}color-divider);
+    }
   }
 
   @include e(content) {
@@ -117,5 +100,22 @@
         background-color: var(--#{$variable-prefix}background-color-primary);
       }
     }
+  }
+
+  @include e(footer) {
+    display: flex;
+    gap: 0 4px;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--#{$variable-prefix}color-divider);
+
+    @include m(custom) {
+      justify-content: flex-start;
+      padding: 4px;
+    }
+  }
+
+  @include e(footer-button) {
+    cursor: pointer;
   }
 }

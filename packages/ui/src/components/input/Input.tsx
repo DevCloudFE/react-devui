@@ -194,7 +194,7 @@ export function DInput(props: DInputProps) {
             className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__clear`)}
             style={{ opacity: value.length > 0 ? 1 : 0 }}
             tabIndex={value.length > 0 ? 0 : -1}
-            aria-label={t('Common', 'Clear')}
+            aria-label={t('Clear')}
             onClick={() => {
               changeValue('');
             }}
@@ -206,7 +206,7 @@ export function DInput(props: DInputProps) {
           <button
             className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__password`)}
             tabIndex={dPasswordToggle ? 0 : -1}
-            aria-label={t('DInput', password ? 'Password is not visible' : 'Password is visible')}
+            aria-label={t('Input', password ? 'Password is not visible' : 'Password is visible')}
             onClick={() => {
               if (dPasswordToggle) {
                 setPassword(!password);
@@ -221,7 +221,7 @@ export function DInput(props: DInputProps) {
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__number`)}
               tabIndex={-1}
-              aria-label={t('DInput', 'Increase number')}
+              aria-label={t('Input', 'Increase number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
                   handleNumberMouseDown();
@@ -249,7 +249,7 @@ export function DInput(props: DInputProps) {
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__number`)}
               tabIndex={-1}
-              aria-label={t('DInput', 'Decrease number')}
+              aria-label={t('Input', 'Decrease number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
                   handleNumberMouseDown(false);

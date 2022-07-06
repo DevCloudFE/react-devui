@@ -51,7 +51,7 @@ export function DPagination(props: DPaginationProps) {
   const navRef = useRef<HTMLElement>(null);
   //#endregion
 
-  const [t] = useTranslation('DPagination');
+  const [t] = useTranslation();
 
   const [active, _changeActive] = useDValue<number>(1, dActive, onActiveChange);
   const changeActive = (active: number, max = lastPage) => {
@@ -87,7 +87,7 @@ export function DPagination(props: DPaginationProps) {
       } else {
         return (
           <div>
-            {t('Total')} {dTotal} {t('items')}
+            {t('Pagination', 'Total')} {dTotal} {t('Pagination', 'items')}
           </div>
         );
       }
@@ -109,7 +109,7 @@ export function DPagination(props: DPaginationProps) {
               [`${dPrefix}pagination__item--border`]: !(dCustomRender && dCustomRender.prev),
             }
           )}
-          title={t('Previous page')}
+          title={t('Pagination', 'Previous page')}
           role="button"
           aria-disabled={active === 1}
           onClick={() => {
@@ -126,7 +126,7 @@ export function DPagination(props: DPaginationProps) {
             'is-disabled': active === lastPage,
             [`${dPrefix}pagination__item--border`]: !(dCustomRender && dCustomRender.next),
           })}
-          title={t('Next page')}
+          title={t('Pagination', 'Next page')}
           role="button"
           aria-disabled={active === lastPage}
           onClick={() => {
@@ -165,7 +165,7 @@ export function DPagination(props: DPaginationProps) {
         dOptions={options}
         dModel={pageSize}
         dCustomOption={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.value) : option.label)}
-        dCustomSelected={(select) => `${select.label}${t(' / Page')}`}
+        dCustomSelected={(select) => `${select.label}${t('Pagination', ' / Page')}`}
         onModelChange={(value) => {
           if (!isNull(value)) {
             changePageSize(value);
@@ -209,7 +209,7 @@ export function DPagination(props: DPaginationProps) {
       } else {
         return (
           <div className={`${dPrefix}pagination__jump-wrapper`}>
-            {t('Go')} {jumpInput} {t('Page')}
+            {t('Pagination', 'Go')} {jumpInput} {t('Pagination', 'Page')}
           </div>
         );
       }
@@ -279,7 +279,7 @@ export function DPagination(props: DPaginationProps) {
                         `${dPrefix}pagination__item--button`,
                         `${dPrefix}pagination__item--jump5`
                       )}
-                      title={t('5 pages forward')}
+                      title={t('Pagination', '5 pages forward')}
                       role="button"
                       onClick={() => {
                         changeActive(active - 5);
@@ -298,7 +298,7 @@ export function DPagination(props: DPaginationProps) {
                         `${dPrefix}pagination__item--button`,
                         `${dPrefix}pagination__item--jump5`
                       )}
-                      title={t('5 pages backward')}
+                      title={t('Pagination', '5 pages backward')}
                       role="button"
                       onClick={() => {
                         changeActive(active + 5);

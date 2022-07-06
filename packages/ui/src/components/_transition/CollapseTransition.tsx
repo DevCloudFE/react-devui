@@ -5,15 +5,14 @@ import { useRef } from 'react';
 import { DTransition } from './Transition';
 
 export interface DCollapseTransitionProps extends Omit<DTransitionProps, 'children'> {
-  children: (style: React.CSSProperties, state: DTransitionState) => JSX.Element | null;
-  dRef: React.RefObject<HTMLElement>;
+  children: (ref: React.RefObject<any>, style: React.CSSProperties, state: DTransitionState) => JSX.Element | null;
   dSize: string | number;
   dHorizontal?: boolean;
   dStyles: Partial<Record<DTransitionState, React.CSSProperties>>;
 }
 
 export function DCollapseTransition(props: DCollapseTransitionProps) {
-  const { children, dRef, dSize, dHorizontal = false, dStyles, onEnterRendered, ...restProps } = props;
+  const { children, dSize, dHorizontal = false, dStyles, onEnterRendered, ...restProps } = props;
 
   const dataRef = useRef<{
     width: number;
@@ -23,26 +22,28 @@ export function DCollapseTransition(props: DCollapseTransitionProps) {
     height: 0,
   });
 
+  const ref = useRef<HTMLElement>(null);
+
   return (
     <DTransition
       {...restProps}
       onEnterRendered={() => {
         onEnterRendered?.();
 
-        if (dRef.current) {
-          const cssText = dRef.current.style.cssText;
+        if (ref.current) {
+          const cssText = ref.current.style.cssText;
 
           if (dHorizontal) {
-            dRef.current.style.width = '';
-            const { width } = dRef.current.getBoundingClientRect();
+            ref.current.style.width = '';
+            const { width } = ref.current.getBoundingClientRect();
             dataRef.current.width = width;
           } else {
-            dRef.current.style.height = '';
-            const { height } = dRef.current.getBoundingClientRect();
+            ref.current.style.height = '';
+            const { height } = ref.current.getBoundingClientRect();
             dataRef.current.height = height;
           }
 
-          dRef.current.style.cssText = cssText;
+          ref.current.style.cssText = cssText;
         }
       }}
     >
@@ -64,8 +65,8 @@ export function DCollapseTransition(props: DCollapseTransitionProps) {
             break;
 
           case 'leave':
-            if (dRef.current) {
-              const { width, height } = dRef.current.getBoundingClientRect();
+            if (ref.current) {
+              const { width, height } = ref.current.getBoundingClientRect();
               dataRef.current.width = width;
               dataRef.current.height = height;
             }
@@ -93,7 +94,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps) {
             break;
         }
 
-        return children(transitionStyle, state);
+        return children(ref, transitionStyle, state);
       }}
     </DTransition>
   );

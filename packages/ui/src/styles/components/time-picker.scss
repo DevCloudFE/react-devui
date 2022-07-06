@@ -8,24 +8,17 @@ $time-picker-cell-height: 28px;
     box-shadow: var(--#{$variable-prefix}shadow-popup);
   }
 
-  @include e(footer) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 1px solid var(--#{$variable-prefix}color-divider);
-  }
-}
-
-@include b(time-picker-panel) {
-  display: inline-block;
-  vertical-align: top;
-
   @include e(header) {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 41px;
     border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(panel) {
+    display: inline-block;
+    vertical-align: top;
   }
 
   @include e(column) {
@@ -66,5 +59,12 @@ $time-picker-cell-height: 28px;
     @include when(active) {
       background-color: var(--#{$variable-prefix}background-color-primary);
     }
+  }
+
+  @include e(footer) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--#{$variable-prefix}color-divider);
   }
 }

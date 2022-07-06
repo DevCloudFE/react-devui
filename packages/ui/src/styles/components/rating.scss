@@ -15,18 +15,18 @@
   @include m(read-only) {
     pointer-events: none;
   }
-}
 
-@include b(rating-star) {
-  position: relative;
-  transition: transform var(--#{$variable-prefix}animation-duration-fast) linear;
+  @include e(star) {
+    position: relative;
+    transition: transform var(--#{$variable-prefix}animation-duration-fast) linear;
 
-  &:hover {
-    transform: scale(1.2);
-  }
+    &:hover {
+      transform: scale(1.2);
+    }
 
-  @include when(focus) {
-    transform: scale(1.2);
+    @include when(focus) {
+      transform: scale(1.2);
+    }
   }
 
   @include e(icon) {

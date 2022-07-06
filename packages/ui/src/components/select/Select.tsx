@@ -104,7 +104,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
   const dVSRef = useRef<DVirtualScrollRef<T>>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const uniqueId = useId();
   const listId = `${dPrefix}select-list-${uniqueId}`;
@@ -361,7 +361,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
           className={`${dPrefix}select__multiple-tag`}
           dSize={size}
           dClosable={!(option.disabled || disabled)}
-          onCloseClick={(e) => {
+          onClose={(e) => {
             e.stopPropagation();
 
             changeSelectByClick(option.value);

@@ -17,6 +17,7 @@ import {
 } from '../../hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
 import { getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
@@ -49,7 +50,6 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onClear?: () => void;
 }
 
-const TTANSITION_DURING = 116;
 function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>) {
   const {
     children,
@@ -308,7 +308,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-input__clear`)}
               style={{ width: iconSize, height: iconSize }}
-              aria-label={t('Common', 'Clear')}
+              aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
 
@@ -327,7 +327,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       </DBaseDesign>
       {containerEl &&
         ReactDOM.createPortal(
-          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
+          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
             {(state) => {
               let transitionStyle: React.CSSProperties = {};
               switch (state) {
@@ -337,7 +337,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
                 case 'entering':
                   transitionStyle = {
-                    transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
                     transformOrigin,
                   };
                   break;
@@ -346,7 +346,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                   transitionStyle = {
                     transform: 'scaleY(0.7)',
                     opacity: 0,
-                    transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
                     transformOrigin,
                   };
                   break;

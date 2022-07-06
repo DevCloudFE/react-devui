@@ -4,4 +4,4 @@ export { COMPONENT_MATES, registerComponentMate } from './component-mate';
 export { getFillingPosition, getHorizontalSidePosition, getVerticalSidePosition } from './position';
 export { scrollTo, scrollElementToView } from './scroll';
 
-export { toPx, getNoTransformSize, getClassName, getPositionedParent, copy } from './other';
+export { toPx, getNoTransformSize, getClassName, getPositionedParent, copy, getUID } from './other';

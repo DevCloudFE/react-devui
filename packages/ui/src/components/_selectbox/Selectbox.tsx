@@ -18,6 +18,7 @@ import {
 } from '../../hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
 import { getClassName } from '../../utils';
+import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
@@ -56,7 +57,6 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onClear?: () => void;
 }
 
-const TTANSITION_DURING = 116;
 function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef>) {
   const {
     children,
@@ -94,7 +94,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const inputRef = useRef<HTMLInputElement>(null);
   //#endregion
 
-  const combineInputRef = useForkRef(dInputRef, inputRef);
+  const combineInputRef = useForkRef(inputRef, dInputRef);
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
@@ -295,7 +295,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}selectbox__clear`)}
               style={{ width: iconSize, height: iconSize }}
-              aria-label={t('Common', 'Clear')}
+              aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
 
@@ -320,7 +320,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
       </DBaseDesign>
       {containerEl &&
         ReactDOM.createPortal(
-          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
+          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
             {(state) => {
               let transitionStyle: React.CSSProperties = {};
               switch (state) {
@@ -330,7 +330,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
 
                 case 'entering':
                   transitionStyle = {
-                    transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
                     transformOrigin,
                   };
                   break;
@@ -339,7 +339,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                   transitionStyle = {
                     transform: 'scaleY(0.7)',
                     opacity: 0,
-                    transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
                     transformOrigin,
                   };
                   break;

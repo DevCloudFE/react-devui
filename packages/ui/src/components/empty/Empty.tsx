@@ -22,7 +22,7 @@ export function DEmpty(props: DEmptyProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}empty`)}>

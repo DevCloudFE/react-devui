@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
+import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DModalHeader } from './ModalHeader';
@@ -32,7 +33,6 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' });
 export function DModal(props: DModalProps) {
   const {
@@ -151,7 +151,7 @@ export function DModal(props: DModalProps) {
     ReactDOM.createPortal(
       <DTransition
         dIn={visible}
-        dDuring={TTANSITION_DURING}
+        dDuring={TTANSITION_DURING_BASE}
         onEnterRendered={() => {
           if (isUndefined(dataRef.current.clearTid)) {
             dataRef.current.transformOrigin = undefined;
@@ -177,7 +177,7 @@ export function DModal(props: DModalProps) {
 
             case 'entering':
               transitionStyle = {
-                transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+                transition: `transform ${TTANSITION_DURING_BASE}ms ease-out, opacity ${TTANSITION_DURING_BASE}ms ease-out`,
                 transformOrigin: dataRef.current.transformOrigin,
               };
               break;
@@ -186,7 +186,7 @@ export function DModal(props: DModalProps) {
               transitionStyle = {
                 transform: 'scale(0.3)',
                 opacity: 0,
-                transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+                transition: `transform ${TTANSITION_DURING_BASE}ms ease-in, opacity ${TTANSITION_DURING_BASE}ms ease-in`,
                 transformOrigin: dataRef.current.transformOrigin,
               };
               break;

@@ -90,7 +90,7 @@ interface DTransitionStateList {
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | dAlign | 设置按钮的水平位置 | 'left' \| 'center' \| 'right' | 'right' |
-| dButtons | 自定义按钮，`'cancel'` 代表取消按钮，`'ok'` 代表确定按钮 | React.ReactNode[] | `['cancel', 'ok']` |
+| dActions | 自定义按钮，`'cancel'` 代表取消按钮，`'ok'` 代表确定按钮 | React.ReactNode[] | `['cancel', 'ok']` |
 | dOkButtonProps | 为确定按钮提供额外的 `Props` | [DButtonProps](/components/Button#DButtonProps) | - |
 | dCancelButtonProps | 为取消按钮提供额外的 `Props` | [DButtonProps](/components/Button#DButtonProps) | - |
 | onOkClick | 点击确定按钮的回调 | `() => void` | - |

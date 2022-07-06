@@ -1,7 +1,6 @@
-import { useRef } from 'react';
-
 import { usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
+import { TTANSITION_DURING_FAST } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
 
 export interface DErrorProps {
@@ -11,7 +10,6 @@ export interface DErrorProps {
   onHidden: () => void;
 }
 
-const TTANSITION_DURING = 133;
 export function DError(props: DErrorProps) {
   const { dVisible, dMessage, dStatus = 'error', onHidden } = props;
 
@@ -19,31 +17,26 @@ export function DError(props: DErrorProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  //#region Ref
-  const elRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
   return (
     <DCollapseTransition
-      dRef={elRef}
       dSize={0}
       dIn={dVisible}
-      dDuring={TTANSITION_DURING}
+      dDuring={TTANSITION_DURING_FAST}
       dStyles={{
         enter: { opacity: 0 },
-        entering: { transition: `height ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out` },
-        leaving: { opacity: 0, transition: `height ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in` },
+        entering: { transition: `height ${TTANSITION_DURING_FAST}ms ease-out, opacity ${TTANSITION_DURING_FAST}ms ease-out` },
+        leaving: { opacity: 0, transition: `height ${TTANSITION_DURING_FAST}ms ease-in, opacity ${TTANSITION_DURING_FAST}ms ease-in` },
         leaved: { display: 'none' },
       }}
       dSkipFirstTransition={false}
       afterLeave={onHidden}
     >
-      {(collapseStyle) => (
+      {(ref, collapseStyle) => (
         <div
-          ref={elRef}
-          className={getClassName(`${dPrefix}form-error`, {
-            [`${dPrefix}form-error--error`]: dStatus === 'error',
-            [`${dPrefix}form-error--warning`]: dStatus === 'warning',
+          ref={ref}
+          className={getClassName(`${dPrefix}form__error`, {
+            [`${dPrefix}form__error--error`]: dStatus === 'error',
+            [`${dPrefix}form__error--warning`]: dStatus === 'warning',
           })}
           style={collapseStyle}
           title={dMessage}

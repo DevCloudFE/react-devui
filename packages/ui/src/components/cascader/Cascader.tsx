@@ -328,7 +328,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
           className={`${dPrefix}cascader__multiple-tag`}
           dSize={size}
           dClosable={!(node.disabled || disabled)}
-          onCloseClick={(e) => {
+          onClose={(e) => {
             e.stopPropagation();
 
             const checkeds = (node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as V[]);

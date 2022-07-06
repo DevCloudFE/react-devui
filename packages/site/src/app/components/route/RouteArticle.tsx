@@ -7,6 +7,7 @@ import { DAnchor, useMediaMatch } from '@react-devui/ui';
 import { DTransition } from '@react-devui/ui/components/_transition';
 import { useImmer } from '@react-devui/ui/hooks';
 import { DCustomIcon } from '@react-devui/ui/icons';
+import { TTANSITION_DURING_BASE } from '@react-devui/ui/utils/global';
 
 import './RouteArticle.scss';
 import marked, { toString } from './utils';
@@ -17,7 +18,6 @@ export interface AppRouteArticleProps {
   children?: React.ReactNode;
 }
 
-const TTANSITION_DURING = 200;
 export function AppRouteArticle(props: AppRouteArticleProps) {
   const html = props.html ? marked(toString(props.html)) : undefined;
 
@@ -78,11 +78,11 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { opacity: 0, transform: 'translateY(120px)' },
-    entering: { transition: `opacity ${TTANSITION_DURING}ms linear, transform ${TTANSITION_DURING}ms ease-out` },
+    entering: { transition: `opacity ${TTANSITION_DURING_BASE}ms ease-out, transform ${TTANSITION_DURING_BASE}ms ease-out` },
     leaving: {
       opacity: 0,
       transform: 'translateY(120px)',
-      transition: `opacity ${TTANSITION_DURING}ms linear, transform ${TTANSITION_DURING}ms ease-in`,
+      transition: `opacity ${TTANSITION_DURING_BASE}ms ease-in, transform ${TTANSITION_DURING_BASE}ms ease-in`,
     },
     leaved: { display: 'none' },
   };
@@ -93,7 +93,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       {!mediaMatch.includes('md') && (
         <>
           {links.length > 0 && (
-            <DTransition dIn={menuOpen} dDuring={TTANSITION_DURING}>
+            <DTransition dIn={menuOpen} dDuring={TTANSITION_DURING_BASE}>
               {(state) => (
                 <div className="app-route-article__anchor-conatiner" style={transitionStyles[state]}>
                   <DAnchor dLinks={links} dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR} onLinkClick={() => setMenuOpen(false)} />

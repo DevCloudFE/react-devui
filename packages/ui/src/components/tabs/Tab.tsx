@@ -21,12 +21,12 @@ export function DTab(props: DTabProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   return (
     <div
       id={dId}
-      className={getClassName(`${dPrefix}tab`, {
+      className={getClassName(`${dPrefix}tabs__tab`, {
         'is-active': dActive,
         'is-disabled': dDisabled,
       })}
@@ -41,7 +41,7 @@ export function DTab(props: DTabProps) {
       {children}
       {!dDisabled && dClosable && (
         <button
-          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tab__close`)}
+          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tabs__close`)}
           aria-label={t('Close')}
           onClick={(e) => {
             e.stopPropagation();

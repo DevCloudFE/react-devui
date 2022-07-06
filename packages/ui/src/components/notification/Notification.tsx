@@ -103,7 +103,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
   const dialogRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const uniqueId = useId();
   const headerId = `${dPrefix}notification-header-${uniqueId}`;

@@ -20,7 +20,7 @@ export function DLink(props: DLinkProps) {
   return (
     <li>
       <a
-        className={getClassName(`${dPrefix}anchor-link`, {
+        className={getClassName(`${dPrefix}anchor__link`, {
           'is-active': dActive,
         })}
         style={{ paddingLeft: 16 + dLevel * 16 }}

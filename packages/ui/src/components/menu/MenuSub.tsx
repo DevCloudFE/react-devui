@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { CaretDownOutlined } from '../../icons';
 import { getClassName, getHorizontalSidePosition, getVerticalSidePosition, getNoTransformSize } from '../../utils';
+import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
 
@@ -33,8 +34,6 @@ export interface DMenuSubProps {
   updatePosition$: Subject<void>;
 }
 
-const POPUP_TTANSITION_DURING = 116;
-const COLLAPSE_TTANSITION_DURING = 200;
 export function DMenuSub(props: DMenuSubProps) {
   const {
     children,
@@ -66,11 +65,10 @@ export function DMenuSub(props: DMenuSubProps) {
 
   //#region Ref
   const popupRef = useRef<HTMLUListElement>(null);
-  const collapseRef = useRef<HTMLUListElement>(null);
   const liRef = useRef<HTMLLIElement>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const inHorizontalNav = dMode === 'horizontal' && dInNav;
 
@@ -127,19 +125,18 @@ export function DMenuSub(props: DMenuSubProps) {
 
   return (
     <DCollapseTransition
-      dRef={collapseRef}
       dSize={0}
       dIn={dMode === 'vertical' || !dInNav ? dExpand : false}
-      dDuring={COLLAPSE_TTANSITION_DURING}
+      dDuring={TTANSITION_DURING_BASE}
       dStyles={{
-        entering: { transition: `height ${COLLAPSE_TTANSITION_DURING}ms ease-out` },
-        leaving: { transition: `height ${COLLAPSE_TTANSITION_DURING}ms ease-in` },
+        entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
+        leaving: { transition: `height ${TTANSITION_DURING_BASE}ms ease-in` },
         leaved: { display: 'none' },
       }}
     >
-      {(collapseStyle, collapseState) => (
+      {(collapseRef, collapseStyle, collapseState) => (
         <>
-          <DTransition dIn={dPopupVisible} dDuring={POPUP_TTANSITION_DURING} onEnterRendered={updatePosition}>
+          <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
             {(popupState) => {
               let popupTransitionStyle: React.CSSProperties = {};
               switch (popupState) {
@@ -149,7 +146,7 @@ export function DMenuSub(props: DMenuSubProps) {
 
                 case 'entering':
                   popupTransitionStyle = {
-                    transition: `transform ${POPUP_TTANSITION_DURING}ms ease-out, opacity ${POPUP_TTANSITION_DURING}ms ease-out`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
                     transformOrigin,
                   };
                   break;
@@ -158,7 +155,7 @@ export function DMenuSub(props: DMenuSubProps) {
                   popupTransitionStyle = {
                     transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)',
                     opacity: 0,
-                    transition: `transform ${POPUP_TTANSITION_DURING}ms ease-in, opacity ${POPUP_TTANSITION_DURING}ms ease-in`,
+                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
                     transformOrigin,
                   };
                   break;
@@ -179,7 +176,7 @@ export function DMenuSub(props: DMenuSubProps) {
                     <ul
                       {...restPCProps}
                       ref={popupRef}
-                      className={getClassName(`${dPrefix}menu-sub__list`, `${dPrefix}menu-sub__list--popup`)}
+                      className={getClassName(`${dPrefix}menu__sub-list`, `${dPrefix}menu__sub-list--popup`)}
                       style={{
                         ...popupPositionStyle,
                         ...popupTransitionStyle,
@@ -193,7 +190,7 @@ export function DMenuSub(props: DMenuSubProps) {
                       onMouseLeave={pOnMouseLeave}
                     >
                       {dEmpty ? (
-                        <div className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: dSpace + dLevel * dStep }}>
+                        <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + dLevel * dStep }}>
                           {t('No Data')}
                         </div>
                       ) : (
@@ -210,9 +207,9 @@ export function DMenuSub(props: DMenuSubProps) {
                       {...restPCProps}
                       ref={liRef}
                       id={dId}
-                      className={getClassName(`${dPrefix}menu-sub`, {
-                        [`${dPrefix}menu-sub--horizontal`]: inHorizontalNav,
-                        [`${dPrefix}menu-sub--icon`]: dMode === 'icon' && dInNav,
+                      className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--sub`, {
+                        [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
+                        [`${dPrefix}menu__item--icon`]: dMode === 'icon' && dInNav,
                         'is-active': dActive,
                         'is-expand': dMode === 'vertical' ? dExpand : dPopupVisible,
                         'is-disabled': dDisabled,
@@ -234,16 +231,16 @@ export function DMenuSub(props: DMenuSubProps) {
                     >
                       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
                       <div
-                        className={getClassName(`${dPrefix}menu-sub__indicator`, {
-                          [`${dPrefix}menu-sub__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
-                          [`${dPrefix}menu-sub__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
+                        className={getClassName(`${dPrefix}menu__indicator`, {
+                          [`${dPrefix}menu__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
+                          [`${dPrefix}menu__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
                         })}
                       >
                         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
                       </div>
-                      {dIcon && <div className={`${dPrefix}menu-sub__icon`}>{dIcon}</div>}
-                      <div className={`${dPrefix}menu-sub__title`}>{children}</div>
-                      {!inHorizontalNav && <CaretDownOutlined className={`${dPrefix}menu-sub__arrow`} dSize={14} dRotate={iconRotate} />}
+                      {dIcon && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
+                      <div className={`${dPrefix}menu__item-content`}>{children}</div>
+                      {!inHorizontalNav && <CaretDownOutlined className={`${dPrefix}menu__sub-arrow`} dSize={14} dRotate={iconRotate} />}
                     </li>
                   )}
                 </DPopup>
@@ -251,9 +248,9 @@ export function DMenuSub(props: DMenuSubProps) {
             }}
           </DTransition>
           {dMode !== 'vertical' && (collapseState === 'leaved' || !dInNav) ? null : (
-            <ul ref={collapseRef} className={`${dPrefix}menu-sub__list`} style={collapseStyle} role="menu" aria-labelledby={dId}>
+            <ul ref={collapseRef} className={`${dPrefix}menu__sub-list`} style={collapseStyle} role="menu" aria-labelledby={dId}>
               {dEmpty ? (
-                <div className={`${dPrefix}menu-sub__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
+                <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
                   {t('No Data')}
                 </div>
               ) : (

@@ -91,4 +91,7 @@ export { ToastService } from './toast';
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';
 
+export type { DUploadProps } from './upload';
+export { DUpload } from './upload';
+
 export { dayjs } from './dayjs';

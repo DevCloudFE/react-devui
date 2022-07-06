@@ -64,7 +64,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
       : `YYYY-MM-DD`
     : dFormat;
 
-  const [placeholderLeft = t('DDatePicker', dRange ? 'Start date' : 'Select date'), placeholderRight = t('DDatePicker', 'End date')] = (
+  const [placeholderLeft = t('DatePicker', dRange ? 'Start date' : 'Select date'), placeholderRight = t('DatePicker', 'End date')] = (
     dRange ? dPlaceholder ?? [] : [dPlaceholder]
   ) as [string?, string?];
 
@@ -119,7 +119,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
               Object.keys(dPresetOptions).map((name) => (
                 <DTag
                   key={name}
-                  className={`${dPrefix}date-picker__tag-button`}
+                  className={`${dPrefix}date-picker__footer-button`}
                   dTheme="primary"
                   onClick={() => {
                     const d = dPresetOptions[name]();
@@ -141,7 +141,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
                   dTPPRef.current?.updateView(now);
                 }}
               >
-                {t('DDatePicker', dShowTime ? 'Now' : 'Today')}
+                {t('DatePicker', dShowTime ? 'Now' : 'Today')}
               </DButton>
             )}
           </div>

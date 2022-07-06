@@ -72,7 +72,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   const contentRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  const [t] = useTranslation('DForm');
+  const [t] = useTranslation();
 
   const uniqueId = useId();
   const getErrorId = (formControlName: string) => `${dPrefix}form-item-error-${formControlName}-${uniqueId}`;
@@ -279,8 +279,8 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}form-item`, {
-        [`${dPrefix}form-item--vertical`]: gLayout === 'vertical',
+      className={getClassName(className, `${dPrefix}form__item`, {
+        [`${dPrefix}form__item--vertical`]: gLayout === 'vertical',
       })}
       style={{
         ...style,
@@ -289,42 +289,42 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
         width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,
       }}
     >
-      <div className={`${dPrefix}form-item__container`}>
+      <div className={`${dPrefix}form__item-container`}>
         {labelWidth !== 0 &&
           (dLabel ? (
             <label
               ref={labelRef}
-              className={getClassName(`${dPrefix}form-item__label`, {
-                [`${dPrefix}form-item__label--required`]: gRequiredType === 'required' && required,
-                [`${dPrefix}form-item__label--colon`]: gLabelColon,
+              className={getClassName(`${dPrefix}form__item-label`, {
+                [`${dPrefix}form__item-label--required`]: gRequiredType === 'required' && required,
+                [`${dPrefix}form__item-label--colon`]: gLabelColon,
               })}
               style={{ width: gLayout === 'vertical' ? undefined : labelWidth }}
             >
               {dLabel}
               {(extraNode || (gRequiredType === 'optional' && !required)) && (
-                <div className={`${dPrefix}form-item__extra`}>
+                <div className={`${dPrefix}form__item-label-extra`}>
                   {extraNode}
-                  {gRequiredType === 'optional' && !required && <div>{t('Optional')}</div>}
+                  {gRequiredType === 'optional' && !required && <div>{t('Form', 'Optional')}</div>}
                 </div>
               )}
             </label>
           ) : (
             <div style={{ width: labelWidth }}></div>
           ))}
-        <div ref={contentRef} className={`${dPrefix}form-item__content`} style={{ width: contentWidth }}>
+        <div ref={contentRef} className={`${dPrefix}form__item-content`} style={{ width: contentWidth }}>
           {formItemStatus === 'pending' && (
             <>
-              <div className={`${dPrefix}form-item__pending`}></div>
-              <div className={`${dPrefix}form-item__pending`}></div>
-              <div className={`${dPrefix}form-item__pending`}></div>
-              <div className={`${dPrefix}form-item__pending`}></div>
+              <div className={`${dPrefix}form__pending`}></div>
+              <div className={`${dPrefix}form__pending`}></div>
+              <div className={`${dPrefix}form__pending`}></div>
+              <div className={`${dPrefix}form__pending`}></div>
             </>
           )}
           {isFunction(children) ? children(formControls) : children}
         </div>
         {gFeedbackIcon && (
           <div
-            className={getClassName(`${dPrefix}form-item__feedback-icon`, {
+            className={getClassName(`${dPrefix}form__feedback-icon`, {
               [`is-${formItemStatus}`]: formItemStatus,
             })}
           >
@@ -332,7 +332,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
           </div>
         )}
       </div>
-      <div className={`${dPrefix}form-item__errors`} style={{ width: contentWidth }}>
+      <div className={`${dPrefix}form__error-container`} style={{ width: contentWidth }}>
         {errorNodes}
       </div>
     </div>

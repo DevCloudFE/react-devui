@@ -28,8 +28,8 @@ export interface DAnchorProps<T = DAnchorOption> extends Omit<React.HTMLAttribut
   onLinkClick?: (href: string, link: DNestedChildren<T>) => void;
 }
 
-const DOT_INDICATOR = Symbol('dot');
-const LINE_INDICATOR = Symbol('line');
+const DOT_INDICATOR = Symbol();
+const LINE_INDICATOR = Symbol();
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' });
 function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>) {
@@ -123,7 +123,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   useEffect(() => {
     if (anchorRef.current && indicatorRef.current) {
       if (activeHref) {
-        const el = anchorRef.current.querySelector(`.${dPrefix}anchor-link.is-active`);
+        const el = anchorRef.current.querySelector(`.${dPrefix}anchor__link.is-active`);
         if (el) {
           const rect = el.getBoundingClientRect();
           const top = rect.top - anchorRef.current.getBoundingClientRect().top + rect.height / 2;
@@ -219,8 +219,8 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 
 export const DAnchor: {
   <T extends DAnchorOption>(props: DAnchorProps<T> & { ref?: React.ForwardedRef<DAnchorRef> }): ReturnType<typeof Anchor>;
-  DOT_INDICATOR?: typeof DOT_INDICATOR;
-  LINE_INDICATOR?: typeof LINE_INDICATOR;
+  DOT_INDICATOR: typeof DOT_INDICATOR;
+  LINE_INDICATOR: typeof LINE_INDICATOR;
 } = React.forwardRef(Anchor) as any;
 
 DAnchor.DOT_INDICATOR = DOT_INDICATOR;

@@ -1,31 +1,5 @@
 $dropdown-item-height: 32px;
 
-@mixin dropdown-item() {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: $dropdown-item-height;
-  margin: 0;
-  list-style: none;
-  cursor: pointer;
-  transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
-
-  &:hover {
-    background-color: var(--#{$variable-prefix}background-color-hover);
-  }
-
-  @include utils-disabled;
-
-  @include e(icon) {
-    width: calc(1.05rem + 8px);
-    font-size: var(--#{$variable-prefix}icon-size);
-  }
-
-  @include e(title) {
-    @include utils-ellipsis;
-  }
-}
-
 @mixin dropdown-popup() {
   position: fixed;
   background-color: var(--#{$variable-prefix}background-color);
@@ -33,15 +7,13 @@ $dropdown-item-height: 32px;
   box-shadow: var(--#{$variable-prefix}shadow-popup);
 }
 
-@mixin dropdown-empty() {
-  @include e(empty) {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: $dropdown-item-height;
-    padding: 0 12px;
-    color: var(--#{$variable-prefix}color-disabled);
-  }
+@mixin dropdown-list() {
+  min-width: 120px;
+  max-height: calc(8px + #{$dropdown-item-height} * 6);
+  padding: 4px 0;
+  margin: 0;
+  overflow: hidden auto;
+  list-style: none;
 }
 
 @include b(dropdown) {
@@ -56,40 +28,68 @@ $dropdown-item-height: 32px;
   }
 
   @include e(list) {
-    min-width: 120px;
-    max-height: calc(8px + #{$dropdown-item-height} * 6);
-    padding: 4px 0;
-    margin: 0;
-    overflow: hidden auto;
-    list-style: none;
+    @include dropdown-list;
   }
 
-  @include dropdown-empty;
-}
+  @include e(empty) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: $dropdown-item-height;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-disabled);
+  }
 
-@include b(dropdown-item) {
-  padding: 0 12px;
+  @include e(item) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: $dropdown-item-height;
+    margin: 0;
+    list-style: none;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  @include dropdown-item;
-}
+    &:hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
 
-@include b(dropdown-sub) {
-  padding: 0 24px 0 12px;
+    @include utils-disabled;
 
-  @include dropdown-item;
-  @include dropdown-empty;
+    @include m(basic) {
+      padding: 0 12px;
+    }
 
-  @include when(disabled) {
-    @include e(arrow) {
-      color: inherit;
+    @include m(sub) {
+      padding: 0 24px 0 12px;
+
+      @include when(disabled) {
+        .#{$variable-prefix}dropdown__sub-arrow {
+          color: inherit;
+        }
+      }
+
+      @include when(expand) {
+        background-color: var(--#{$variable-prefix}background-color-hover);
+      }
     }
   }
 
-  @include when(expand) {
-    background-color: var(--#{$variable-prefix}background-color-hover);
+  @include e(item-icon) {
+    width: calc(1.05rem + 8px);
+    font-size: var(--#{$variable-prefix}icon-size);
   }
 
-  @include e(arrow) {
+  @include e(item-content) {
+    @include utils-ellipsis;
+  }
+
+  @include e(sub-popup) {
+    @include dropdown-popup;
+    @include dropdown-list;
+  }
+
+  @include e(sub-arrow) {
     position: absolute;
     right: 6px;
     display: inline-flex;
@@ -98,22 +98,13 @@ $dropdown-item-height: 32px;
     color: var(--#{$variable-prefix}color-icon-decorator);
   }
 
-  @include e(list) {
-    min-width: 120px;
-    padding: 4px 0;
+  @include e(group-list) {
+    padding: 0;
     margin: 0;
     list-style: none;
-
-    @include dropdown-popup;
   }
-}
 
-@include b(dropdown-group) {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  @include e(label) {
+  @include e(group-title) {
     position: relative;
     display: flex;
     align-items: center;
@@ -124,6 +115,5 @@ $dropdown-item-height: 32px;
     color: var(--#{$variable-prefix}text-color-sub);
 
     @include utils-ellipsis;
-    @include dropdown-empty;
   }
 }

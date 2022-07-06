@@ -66,7 +66,7 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
   const indicatorRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const uniqueId = useId();
   const getTabId = (id: ID) => `${dPrefix}tabs-tab-${id}-${uniqueId}`;

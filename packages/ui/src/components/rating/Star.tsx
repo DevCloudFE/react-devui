@@ -44,7 +44,7 @@ export function DStar(props: DStarProps) {
   return (
     <DTooltip dDisabled={isUndefined(dTooltip)} dTitle={dTooltip?.(tooltipValue)}>
       <div
-        className={getClassName(`${dPrefix}rating-star`, {
+        className={getClassName(`${dPrefix}rating__star`, {
           'is-focus': isFocus,
         })}
       >
@@ -52,7 +52,7 @@ export function DStar(props: DStarProps) {
           <>
             <DBaseInput
               id={halfInputId}
-              className={getClassName(`${dPrefix}rating-star__input`, `${dPrefix}rating-star__input--half`)}
+              className={getClassName(`${dPrefix}rating__input`, `${dPrefix}rating__input--half`)}
               type="radio"
               name={dName}
               checked={halfChecked}
@@ -78,7 +78,7 @@ export function DStar(props: DStarProps) {
               }}
             />
             <label
-              className={getClassName(`${dPrefix}rating-star__icon`, `${dPrefix}rating-star__icon--half`, {
+              className={getClassName(`${dPrefix}rating__icon`, `${dPrefix}rating__icon--half`, {
                 'is-checked': halfValue <= (dHoverValue ?? dChecked ?? 0),
               })}
               htmlFor={halfInputId}
@@ -88,13 +88,13 @@ export function DStar(props: DStarProps) {
           </>
         )}
         <label
-          className={getClassName(`${dPrefix}rating-star__icon`, {
+          className={getClassName(`${dPrefix}rating__icon`, {
             'is-checked': dValue <= (dHoverValue ?? dChecked ?? 0),
           })}
         >
           <DBaseInput
             id={inputId}
-            className={`${dPrefix}rating-star__input`}
+            className={`${dPrefix}rating__input`}
             type="radio"
             name={dName}
             checked={checked}

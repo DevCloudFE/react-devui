@@ -10,7 +10,7 @@ export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
   dColor?: string;
   dSize?: DSize;
   dClosable?: boolean;
-  onCloseClick?: React.MouseEventHandler<HTMLSpanElement>;
+  onClose?: React.MouseEventHandler<HTMLSpanElement>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTag' });
@@ -22,7 +22,7 @@ export function DTag(props: DTagProps) {
     dColor,
     dSize,
     dClosable = false,
-    onCloseClick,
+    onClose,
 
     className,
     style,
@@ -36,7 +36,7 @@ export function DTag(props: DTagProps) {
 
   const size = dSize ?? gDisabled;
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   return (
     <div
@@ -58,7 +58,7 @@ export function DTag(props: DTagProps) {
     >
       {children}
       {dClosable && (
-        <button className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tag__close`)} aria-label={t('Close')} onClick={onCloseClick}>
+        <button className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tag__close`)} aria-label={t('Close')} onClick={onClose}>
           <CloseOutlined />
         </button>
       )}

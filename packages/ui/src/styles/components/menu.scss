@@ -1,116 +1,175 @@
 $menu-item-height: 40px;
 
-@mixin menu-empty() {
+@include b(menu) {
+  position: relative;
+  padding: 8px 0;
+  outline: none;
+
+  &:not(&--horizontal) {
+    overflow: hidden auto;
+  }
+
+  @include m(horizontal) {
+    display: inline-block;
+    min-width: 100%;
+    white-space: nowrap;
+
+    &::after {
+      position: absolute;
+      right: 4px;
+      bottom: 10px;
+      left: 4px;
+      height: 1px;
+      pointer-events: none;
+      content: '';
+      background-color: var(--#{$variable-prefix}background-color-indicator);
+    }
+  }
+
   @include e(empty) {
     display: flex;
     align-items: center;
     height: $menu-item-height;
     color: var(--#{$variable-prefix}color-disabled);
   }
-}
 
-@mixin menu-item() {
-  $selector: &;
+  @include e(item) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: $menu-item-height;
+    margin: 0;
+    list-style: none;
+    cursor: pointer;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: $menu-item-height;
-  margin: 0;
-  list-style: none;
-  cursor: pointer;
-  transition: color var(--#{$variable-prefix}animation-duration-base) linear,
-    background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+    }
 
-  &:hover {
-    color: var(--#{$variable-prefix}color-primary);
-  }
+    &:not(.#{$variable-prefix}menu__item--horizontal):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover-primary);
+    }
 
-  &:not(#{$selector}--horizontal):hover {
-    background-color: var(--#{$variable-prefix}background-color-hover-primary);
-  }
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
 
-  @include when(active) {
-    color: var(--#{$variable-prefix}color-primary);
+      &:not(.#{$variable-prefix}menu__item--horizontal) {
+        .#{$variable-prefix}menu__indicator {
+          & > div::before {
+            transform: scaleY(1);
+          }
+        }
+      }
+    }
 
-    &:not(#{$selector}--horizontal) {
-      @include e(indicator) {
-        & > div::before {
-          transform: scaleY(1);
+    @include when(disabled) {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
+
+    @include m(horizontal) {
+      display: inline-flex;
+      min-width: unset;
+      padding: 0 20px;
+
+      &::after {
+        position: absolute;
+        right: 20px;
+        bottom: -5px;
+        left: 20px;
+        z-index: 1;
+        height: 2px;
+        content: '';
+        background-color: transparent;
+        transition: background-color var(--#{$variable-prefix}animation-duration-base) linear,
+          transform var(--#{$variable-prefix}animation-duration-base) linear;
+        transform: scaleX(0.8);
+      }
+
+      @include when(active) {
+        &::after {
+          background-color: var(--#{$variable-prefix}color-primary);
+          transform: scaleX(1);
+        }
+      }
+
+      .#{$variable-prefix}menu__item-content {
+        flex-shrink: 0;
+      }
+    }
+
+    @include m(icon) {
+      height: 52px;
+
+      .#{$variable-prefix}menu__item-icon {
+        width: 64px;
+        padding-right: 16px;
+
+        & > .#{$variable-prefix}icon {
+          transform: translateX(12px) scale(1.5);
+        }
+      }
+    }
+
+    @include m(basic) {
+      padding: 0 16px;
+
+      &.#{$variable-prefix}menu__item--horizontal {
+        &:hover::after {
+          background-color: var(--#{$variable-prefix}color-primary);
+          transform: scaleX(1);
+        }
+      }
+    }
+
+    @include m(sub) {
+      padding-right: 32px;
+
+      &:hover {
+        .#{$variable-prefix}menu__sub-arrow {
+          color: inherit;
+        }
+      }
+
+      &.#{$variable-prefix}menu__item--horizontal {
+        @include when(expand) {
+          &::after {
+            background-color: var(--#{$variable-prefix}color-primary);
+            transform: scaleX(1);
+          }
+        }
+      }
+
+      &.#{$variable-prefix}menu__item--icon {
+        .#{$variable-prefix}menu__sub-arrow {
+          opacity: 0;
+        }
+      }
+
+      @include when(active) {
+        .#{$variable-prefix}menu__sub-arrow {
+          color: inherit;
+        }
+      }
+
+      @include when(expand) {
+        color: var(--#{$variable-prefix}color-primary);
+
+        .#{$variable-prefix}menu__sub-arrow {
+          color: inherit;
+        }
+      }
+
+      @include when(disabled) {
+        .#{$variable-prefix}menu__sub-arrow {
+          color: inherit;
         }
       }
     }
   }
 
-  @include when(disabled) {
-    pointer-events: none;
-    filter: opacity(50%);
-  }
-
-  @include m(horizontal) {
-    display: inline-flex;
-    min-width: unset;
-    padding: 0 20px;
-
-    &::after {
-      position: absolute;
-      right: 20px;
-      bottom: -5px;
-      left: 20px;
-      z-index: 1;
-      height: 2px;
-      content: '';
-      background-color: transparent;
-      transition: background-color var(--#{$variable-prefix}animation-duration-base) linear,
-        transform var(--#{$variable-prefix}animation-duration-base) linear;
-      transform: scaleX(0.8);
-    }
-
-    @include when(active) {
-      &::after {
-        background-color: var(--#{$variable-prefix}color-primary);
-        transform: scaleX(1);
-      }
-    }
-
-    @include e(title) {
-      flex-shrink: 0;
-    }
-  }
-
-  @include m(icon) {
-    height: 52px;
-
-    @include e(icon) {
-      width: 64px;
-      padding-right: 16px;
-
-      & > .#{$variable-prefix}icon {
-        transform: translateX(12px) scale(1.5);
-      }
-    }
-  }
-
-  @include e(icon) {
-    flex-shrink: 0;
-    width: calc(1.05rem + 12px);
-    font-size: 1.1em;
-    transition: height var(--#{$variable-prefix}animation-duration-base) linear;
-
-    & > .#{$variable-prefix}icon {
-      transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
-        width var(--#{$variable-prefix}animation-duration-base) linear;
-    }
-  }
-
-  @include e(title) {
-    min-width: 1em;
-
-    @include utils-ellipsis;
-  }
-}
-
-@mixin menu-indicator() {
   @include e(indicator) {
     position: relative;
     width: 0;
@@ -163,105 +222,26 @@ $menu-item-height: 40px;
       }
     }
   }
-}
 
-@include b(menu) {
-  position: relative;
-  padding: 8px 0;
-  outline: none;
+  @include e(item-icon) {
+    flex-shrink: 0;
+    width: calc(1.05rem + 12px);
+    font-size: 1.1em;
+    transition: height var(--#{$variable-prefix}animation-duration-base) linear;
 
-  &:not(&--horizontal) {
-    overflow: hidden auto;
-  }
-
-  @include m(horizontal) {
-    display: inline-block;
-    min-width: 100%;
-    white-space: nowrap;
-
-    &::after {
-      position: absolute;
-      right: 4px;
-      bottom: 10px;
-      left: 4px;
-      height: 1px;
-      pointer-events: none;
-      content: '';
-      background-color: var(--#{$variable-prefix}background-color-indicator);
+    & > .#{$variable-prefix}icon {
+      transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
+        width var(--#{$variable-prefix}animation-duration-base) linear;
     }
   }
-}
 
-@include b(menu-group) {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  @include e(label) {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: $menu-item-height;
-    padding: 0 16px;
-    margin: 0;
-    font-size: 0.9em;
-    color: var(--#{$variable-prefix}text-color-sub);
+  @include e(item-content) {
+    min-width: 1em;
 
     @include utils-ellipsis;
   }
 
-  @include menu-empty;
-}
-
-@include b(menu-sub) {
-  padding-right: 32px;
-
-  &:hover {
-    @include e(arrow) {
-      color: inherit;
-    }
-  }
-
-  @include menu-item;
-  @include menu-indicator;
-  @include menu-empty;
-
-  @include m(horizontal) {
-    @include when(expand) {
-      &::after {
-        background-color: var(--#{$variable-prefix}color-primary);
-        transform: scaleX(1);
-      }
-    }
-  }
-
-  @include m(icon) {
-    @include e(arrow) {
-      opacity: 0;
-    }
-  }
-
-  @include when(active) {
-    @include e(arrow) {
-      color: inherit;
-    }
-  }
-
-  @include when(expand) {
-    color: var(--#{$variable-prefix}color-primary);
-
-    @include e(arrow) {
-      color: inherit;
-    }
-  }
-
-  @include when(disabled) {
-    @include e(arrow) {
-      color: inherit;
-    }
-  }
-
-  @include e(arrow) {
+  @include e(sub-arrow) {
     position: absolute;
     right: 12px;
     display: inline-flex;
@@ -272,7 +252,7 @@ $menu-item-height: 40px;
       transform var(--#{$variable-prefix}animation-duration-base) linear;
   }
 
-  @include e(list) {
+  @include e(sub-list) {
     position: relative;
     padding: 0;
     margin: 0;
@@ -286,32 +266,37 @@ $menu-item-height: 40px;
       box-shadow: var(--#{$variable-prefix}shadow-popup);
 
       $padding-size: 8px;
-      .#{$variable-prefix}menu-item {
+      .#{$variable-prefix}menu__item {
         padding: 0 $padding-size;
       }
-      .#{$variable-prefix}menu-sub {
+      .#{$variable-prefix}menu__item--sub {
         padding: 0 24px 0 $padding-size;
       }
-      .#{$variable-prefix}menu-sub__arrow {
+      .#{$variable-prefix}menu__sub-arrow {
         right: 6px;
       }
-      .#{$variable-prefix}menu-group__label {
+      .#{$variable-prefix}menu__group-title {
         padding: 0 $padding-size;
       }
     }
   }
-}
 
-@include b(menu-item) {
-  padding: 0 16px;
+  @include e(group-list) {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
 
-  @include menu-item;
-  @include menu-indicator;
+  @include e(group-title) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: $menu-item-height;
+    padding: 0 16px;
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}text-color-sub);
 
-  @include m(horizontal) {
-    &:hover::after {
-      background-color: var(--#{$variable-prefix}color-primary);
-      transform: scaleX(1);
-    }
+    @include utils-ellipsis;
   }
 }

@@ -128,10 +128,10 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
   );
 
   return (
-    <div className={`${dPrefix}time-picker-panel`}>
-      {__header && <div className={`${dPrefix}time-picker-panel__header`}>{activeTime.format(format)}</div>}
+    <div className={`${dPrefix}time-picker__panel`}>
+      {__header && <div className={`${dPrefix}time-picker__header`}>{activeTime.format(format)}</div>}
       {dCols.includes('hour') && (
-        <ul ref={ulHRef} className={`${dPrefix}time-picker-panel__column`}>
+        <ul ref={ulHRef} className={`${dPrefix}time-picker__column`}>
           {(d12Hour ? H12 : H24).map((_h) => {
             let h = Number(_h);
             if (d12Hour) {
@@ -147,7 +147,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
             return hidden ? null : (
               <li
                 key={h}
-                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                className={getClassName(`${dPrefix}time-picker__cell`, {
                   'is-active': dTime && activeTime.get('hour') === h,
                   'is-disabled': disabled,
                 })}
@@ -165,7 +165,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
         </ul>
       )}
       {dCols.includes('minute') && (
-        <ul ref={ulMRef} className={`${dPrefix}time-picker-panel__column`}>
+        <ul ref={ulMRef} className={`${dPrefix}time-picker__column`}>
           {M60.map((_m) => {
             const m = Number(_m);
             const { disabled, hidden } = dConfigOptions?.('minute', m) ?? {};
@@ -173,7 +173,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
             return hidden ? null : (
               <li
                 key={m}
-                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                className={getClassName(`${dPrefix}time-picker__cell`, {
                   'is-active': dTime && activeTime.get('minute') === m,
                   'is-disabled': disabled,
                 })}
@@ -191,7 +191,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
         </ul>
       )}
       {dCols.includes('second') && (
-        <ul ref={ulSRef} className={`${dPrefix}time-picker-panel__column`}>
+        <ul ref={ulSRef} className={`${dPrefix}time-picker__column`}>
           {S60.map((_s) => {
             const s = Number(_s);
             const { disabled, hidden } = dConfigOptions?.('second', s) ?? {};
@@ -199,7 +199,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
             return hidden ? null : (
               <li
                 key={s}
-                className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+                className={getClassName(`${dPrefix}time-picker__cell`, {
                   'is-active': dTime && activeTime.get('second') === s,
                   'is-disabled': disabled,
                 })}
@@ -217,11 +217,11 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
         </ul>
       )}
       {d12Hour && (
-        <ul className={`${dPrefix}time-picker-panel__column`}>
+        <ul className={`${dPrefix}time-picker__column`}>
           {(['AM', 'PM'] as const).map((A) => (
             <li
               key={A}
-              className={getClassName(`${dPrefix}time-picker-panel__cell`, {
+              className={getClassName(`${dPrefix}time-picker__cell`, {
                 'is-active': activeA === A,
               })}
               onClick={() => {

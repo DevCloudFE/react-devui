@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName, toPx } from '../../utils';
+import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DDrawerHeader } from './DrawerHeader';
@@ -35,7 +36,6 @@ export interface DDrawerPropsWithPrivate extends DDrawerProps {
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
 }
 
-const TTANSITION_DURING = 200;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
 export function DDrawer(props: DDrawerProps) {
   const {
@@ -181,8 +181,8 @@ export function DDrawer(props: DDrawerProps) {
 
     return {
       enter: { transform },
-      entering: { transition: `transform ${TTANSITION_DURING}ms ease-out` },
-      leaving: { transform, transition: `transform ${TTANSITION_DURING}ms ease-in` },
+      entering: { transition: `transform ${TTANSITION_DURING_BASE}ms ease-out` },
+      leaving: { transform, transition: `transform ${TTANSITION_DURING_BASE}ms ease-in` },
       leaved: { transform },
     };
   })();
@@ -217,7 +217,7 @@ export function DDrawer(props: DDrawerProps) {
     <>
       <DTransition
         dIn={visible}
-        dDuring={TTANSITION_DURING}
+        dDuring={TTANSITION_DURING_BASE}
         afterEnter={() => {
           afterVisibleChange?.(true);
         }}

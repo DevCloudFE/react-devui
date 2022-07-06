@@ -90,7 +90,7 @@ Extend `React.HTMLAttributes<HTMLDivElement>`.
 | Property | Description | Type | Default | 
 | --- | --- | --- | --- | 
 | dAlign | Set the horizontal position of the button | 'left' \| 'center' \| 'right' | 'right' |
-| dButtons | Custom button, `'cancel'` stands for cancel button, `'ok'` stands for OK button | React.ReactNode[] | `['cancel', 'ok']` |
+| dActions | Custom button, `'cancel'` stands for cancel button, `'ok'` stands for OK button | React.ReactNode[] | `['cancel', 'ok']` |
 | dOkButtonProps | Provide additional `Props` for the OK button | [DButtonProps](/components/Button#DButtonProps) | - |
 | dCancelButtonProps | Provide additional `Props` for the cancel button | [DButtonProps](/components/Button#DButtonProps) | - |
 | onOkClick | The callback of clicking the OK button | `() => void` | - |

@@ -114,16 +114,6 @@
     flex-direction: row-reverse;
   }
 
-  .#{$variable-prefix}tab {
-    padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
-
-    @if $direction == left {
-      justify-content: flex-end;
-    } @else {
-      justify-content: flex-start;
-    }
-  }
-
   @include e(tabpanel) {
     flex-grow: 1;
 
@@ -131,6 +121,16 @@
       margin-left: 20px;
     } @else {
       margin-right: 20px;
+    }
+  }
+
+  @include e(tab) {
+    padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+
+    @if $direction == left {
+      justify-content: flex-end;
+    } @else {
+      justify-content: flex-start;
     }
   }
 
@@ -403,30 +403,30 @@
       color: var(--#{$variable-prefix}color-primary);
     }
   }
-}
 
-@include b(tab) {
-  position: relative;
-  z-index: 5;
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  height: var(--#{$variable-prefix}tabs-tab-size);
-  cursor: pointer;
-  transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+  @include e(tab) {
+    position: relative;
+    z-index: 5;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: var(--#{$variable-prefix}tabs-tab-size);
+    cursor: pointer;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  &:focus,
-  &:hover {
-    color: var(--#{$variable-prefix}color-primary-lighter);
-  }
+    &:focus,
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
 
-  @include when(active) {
-    color: var(--#{$variable-prefix}color-primary);
-  }
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
 
-  @include when(disabled) {
-    pointer-events: none;
-    filter: opacity(50%);
+    @include when(disabled) {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
   }
 
   @include e(close) {

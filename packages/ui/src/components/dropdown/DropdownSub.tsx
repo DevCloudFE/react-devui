@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { RightOutlined } from '../../icons';
 import { getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
+import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 
@@ -24,7 +25,6 @@ export interface DDropdownSubProps {
   updatePosition$: Subject<void>;
 }
 
-const TTANSITION_DURING = 116;
 export function DDropdownSub(props: DDropdownSubProps) {
   const {
     children,
@@ -51,7 +51,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
   const liRef = useRef<HTMLLIElement>(null);
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
@@ -85,7 +85,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
   }, [updatePosition, updatePosition$]);
 
   return (
-    <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING} onEnterRendered={updatePosition}>
+    <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
       {(state) => {
         let transitionStyle: React.CSSProperties = {};
         switch (state) {
@@ -95,7 +95,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING}ms ease-out, opacity ${TTANSITION_DURING}ms ease-out`,
+              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
               transformOrigin,
             };
             break;
@@ -104,7 +104,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
             transitionStyle = {
               transform: 'scale(0)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING}ms ease-in, opacity ${TTANSITION_DURING}ms ease-in`,
+              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
               transformOrigin,
             };
             break;
@@ -125,7 +125,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
               <ul
                 {...restPCProps}
                 ref={ulRef}
-                className={`${dPrefix}dropdown-sub__list`}
+                className={`${dPrefix}dropdown__sub-popup`}
                 style={{
                   ...popupPositionStyle,
                   ...transitionStyle,
@@ -138,7 +138,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
                 onMouseLeave={pOnMouseLeave}
               >
                 {dEmpty ? (
-                  <div className={`${dPrefix}dropdown-sub__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
+                  <div className={`${dPrefix}dropdown__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
                     {t('No Data')}
                   </div>
                 ) : (
@@ -155,7 +155,7 @@ export function DDropdownSub(props: DDropdownSubProps) {
                 {...restPCProps}
                 ref={liRef}
                 id={dId}
-                className={getClassName(`${dPrefix}dropdown-sub`, {
+                className={getClassName(`${dPrefix}dropdown__item`, `${dPrefix}dropdown__item--sub`, {
                   'is-expand': dPopupVisible,
                   'is-disabled': dDisabled,
                 })}
@@ -171,9 +171,9 @@ export function DDropdownSub(props: DDropdownSubProps) {
                 onMouseLeave={pOnMouseLeave}
               >
                 {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
-                {dIcon && <div className={`${dPrefix}dropdown-sub__icon`}>{dIcon}</div>}
-                <div className={`${dPrefix}dropdown-sub__title`}>{children}</div>
-                <RightOutlined className={`${dPrefix}dropdown-sub__arrow`} dSize={14} />
+                {dIcon && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
+                <div className={`${dPrefix}dropdown__item-content`}>{children}</div>
+                <RightOutlined className={`${dPrefix}dropdown__sub-arrow`} dSize={14} />
               </li>
             )}
           </DPopup>

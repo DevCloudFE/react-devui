@@ -56,7 +56,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
 
   const format = isUndefined(dFormat) ? (d12Hour ? 'hh:mm:ss A' : 'HH:mm:ss') : dFormat;
 
-  const [placeholderLeft = t('DTimePicker', dRange ? 'Start time' : 'Select time'), placeholderRight = t('DTimePicker', 'End time')] = (
+  const [placeholderLeft = t('TimePicker', dRange ? 'Start time' : 'Select time'), placeholderRight = t('TimePicker', 'End time')] = (
     dRange ? dPlaceholder ?? [] : [dPlaceholder]
   ) as [string?, string?];
 
@@ -94,7 +94,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
                 dTPPRef.current?.updateView(now);
               }}
             >
-              {t('DTimePicker', 'Now')}
+              {t('TimePicker', 'Now')}
             </DButton>
           </div>
         </>

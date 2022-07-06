@@ -15,15 +15,15 @@ export function DDropdownGroup(props: DDropdownGroupProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [t] = useTranslation('Common');
+  const [t] = useTranslation();
 
   return (
-    <ul className={`${dPrefix}dropdown-group`} role="group" aria-labelledby={dId}>
-      <li id={dId} className={`${dPrefix}dropdown-group__label`} style={{ paddingLeft: 12 + dLevel * 16 }} role="presentation">
+    <ul className={`${dPrefix}dropdown__group-list`} role="group" aria-labelledby={dId}>
+      <li id={dId} className={`${dPrefix}dropdown__group-title`} style={{ paddingLeft: 12 + dLevel * 16 }} role="presentation">
         {children}
       </li>
       {dEmpty ? (
-        <div className={`${dPrefix}dropdown-group__empty`} style={{ paddingLeft: 12 + (dLevel + 1) * 16 }}>
+        <div className={`${dPrefix}dropdown__empty`} style={{ paddingLeft: 12 + (dLevel + 1) * 16 }}>
           {t('No Data')}
         </div>
       ) : (

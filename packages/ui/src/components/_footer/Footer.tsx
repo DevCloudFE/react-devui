@@ -8,7 +8,7 @@ import { DButton } from '../button';
 
 export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dAlign?: 'left' | 'center' | 'right';
-  dButtons?: React.ReactNode[];
+  dActions?: React.ReactNode[];
   dCancelProps?: DButtonProps;
   dOkProps?: DButtonProps;
   onCancelClick?: () => void | boolean | Promise<void | boolean>;
@@ -19,7 +19,7 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 export function DFooter(props: DFooterProps) {
   const {
     dAlign = 'right',
-    dButtons = ['cancel', 'ok'],
+    dActions = ['cancel', 'ok'],
     dCancelProps,
     dOkProps,
     onCancelClick,
@@ -34,7 +34,7 @@ export function DFooter(props: DFooterProps) {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [t] = useTranslation('DFooter');
+  const [t] = useTranslation();
 
   const [cancelLoading, setCancelLoading] = useState(false);
   const [okLoading, setOkLoading] = useState(false);
@@ -79,14 +79,14 @@ export function DFooter(props: DFooterProps) {
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
-      {dButtons.map((button, index) =>
+      {dActions.map((button, index) =>
         button === 'cancel' ? (
           <DButton key="cancel" {...cancelProps} dType="secondary">
-            {t('Cancel')}
+            {t('Footer', 'Cancel')}
           </DButton>
         ) : button === 'ok' ? (
           <DButton key="ok" {...okProps}>
-            {t('OK')}
+            {t('Footer', 'OK')}
           </DButton>
         ) : (
           <React.Fragment key={index}>{button}</React.Fragment>

@@ -1,5 +1,5 @@
 import type { DFormControlInject } from '../../components/form';
-import type { Updater } from './useImmer';
+import type { DraftFunction } from './useImmer';
 
 import { freeze, produce } from 'immer';
 import { isFunction, isUndefined } from 'lodash';
@@ -13,7 +13,7 @@ export function useDValue<T, S = T>(
   onChange?: (value: S) => void,
   deepCompare?: (previous: T, current: S) => boolean,
   formControlInject?: DFormControlInject
-): [T, Updater<S>] {
+): [T, (arg: S | DraftFunction<S>) => S] {
   const [_value, setValue] = useState(initialValue);
   const currentValue: T = isUndefined(formControlInject) ? (isUndefined(value) ? _value : value) : formControlInject[0];
 
@@ -27,6 +27,7 @@ export function useDValue<T, S = T>(
         formControlInject[1](newValue);
       }
     }
+    return newValue;
   });
 
   return [currentValue, changeValue];

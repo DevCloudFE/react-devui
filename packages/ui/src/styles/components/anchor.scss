@@ -38,25 +38,25 @@
     height: 20px;
     background-color: var(--#{$variable-prefix}color-primary);
   }
-}
 
-@include b(anchor-link) {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  min-height: 28px;
-  padding-left: 4px;
-  color: var(--#{$variable-prefix}text-color);
-  text-decoration: none;
-  transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+  @include e(link) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 28px;
+    padding-left: 4px;
+    color: var(--#{$variable-prefix}text-color);
+    text-decoration: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
-  &:hover {
-    color: var(--#{$variable-prefix}color-primary);
-  }
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+    }
 
-  @include utils-break-word;
+    @include utils-break-word;
 
-  @include when(active) {
-    color: var(--#{$variable-prefix}color-primary);
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
   }
 }
