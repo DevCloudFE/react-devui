@@ -30,7 +30,7 @@ export interface DDatePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' });
-function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePickerRef>) {
+function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePickerRef>): JSX.Element | null {
   const {
     dFormat,
     dPlaceholder,

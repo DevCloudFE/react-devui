@@ -18,7 +18,7 @@ export interface DDatePickerPanelProps {
   onDateChange?: (time: Date) => void;
 }
 
-function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<DDatePickerPanelRef>) {
+function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<DDatePickerPanelRef>): JSX.Element | null {
   const { dDate, dAnotherDate, dConfigOptions, onDateChange } = props;
 
   //#region Context

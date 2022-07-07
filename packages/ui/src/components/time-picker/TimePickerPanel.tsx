@@ -37,7 +37,7 @@ export interface DTimePickerPanelPropsWithPrivate extends DTimePickerPanelProps 
   __header?: boolean;
 }
 
-function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>) {
+function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>): JSX.Element | null {
   const { dTime, dCols, d12Hour = false, dConfigOptions, onTimeChange, __header = false } = props as DTimePickerPanelPropsWithPrivate;
 
   //#region Context

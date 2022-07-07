@@ -20,7 +20,7 @@ export interface DMenuItemProps {
   onClick: () => void;
 }
 
-export function DMenuItem(props: DMenuItemProps) {
+export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
   const { children, dId, dDisabled, dPosinset, dMode, dInNav, dActive, dFocusVisible, dIcon, dStep, dSpace, dLevel = 0, onClick } = props;
 
   //#region Context

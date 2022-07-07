@@ -34,7 +34,7 @@ export interface DSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlider' });
-export function DSlider(props: DSliderProps) {
+export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
     dFormControl,
     dModel,

@@ -3,7 +3,6 @@ import type { DNestedChildren, DId } from '../../utils/global';
 import { isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useRef } from 'react';
 import { useState } from 'react';
-import { Subject } from 'rxjs';
 
 import {
   usePrefixConfig,
@@ -13,6 +12,7 @@ import {
   useMaxIndex,
   useDValue,
   useIsomorphicLayoutEffect,
+  useEventNotify,
 } from '../../hooks';
 import { registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition, scrollElementToView } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
@@ -52,7 +52,10 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownOption<ID>>
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' });
-function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdownProps<ID, T>, ref: React.ForwardedRef<DDropdownRef>) {
+function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
+  props: DDropdownProps<ID, T>,
+  ref: React.ForwardedRef<DDropdownRef>
+): JSX.Element | null {
   const {
     children,
     dOptions,
@@ -87,8 +90,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
   //#endregion
 
   const [t] = useTranslation();
-
-  const [updatePosition$] = useState(() => new Subject<void>());
+  const updatePosition$ = useEventNotify<void>();
 
   const uniqueId = useId();
   const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
@@ -98,7 +100,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);
   const [isFocus, setIsFocus] = useState(false);
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
   const focusId = (() => {
     if (isFocus) {
       let id: ID | undefined;
@@ -294,7 +296,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
               <DDropdownItem
                 dId={id}
                 dDisabled={optionDisabled}
-                dFocusVisible={isFocusVisible && isFocus}
+                dFocusVisible={focusVisible && isFocus}
                 dIcon={optionIcon}
                 dLevel={level}
                 onClick={handleItemClick}
@@ -309,7 +311,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
               <DDropdownSub
                 dId={id}
                 dDisabled={optionDisabled}
-                dFocusVisible={isFocusVisible && isFocus}
+                dFocusVisible={focusVisible && isFocus}
                 dPopup={children && getNodes(children, 0, _subParents)}
                 dPopupVisible={!isUndefined(popupState)}
                 dPopupState={popupState?.visible ?? false}
@@ -451,53 +453,58 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(props: DDropdow
             onUpdatePosition={updatePosition}
           >
             {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
-              <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
-                {React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-                  ...children.props,
-                  ...restPCProps,
-                  id: buttonId,
-                  tabIndex: 0,
-                  role: 'button',
-                  'aria-haspopup': 'menu',
-                  'aria-expanded': visible,
-                  'aria-controls': _id,
-                  onClick: (e) => {
-                    children.props.onClick?.(e);
-                    pOnClick?.(e);
-                  },
-                  onFocus: (e) => {
-                    children.props.onFocus?.(e);
-                    pOnFocus?.(e);
+              <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+                {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) =>
+                  React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
+                    ...children.props,
+                    ...restPCProps,
+                    id: buttonId,
+                    tabIndex: 0,
+                    role: 'button',
+                    'aria-haspopup': 'menu',
+                    'aria-expanded': visible,
+                    'aria-controls': _id,
+                    onClick: (e) => {
+                      children.props.onClick?.(e);
+                      pOnClick?.(e);
+                    },
+                    onFocus: (e) => {
+                      children.props.onFocus?.(e);
+                      pOnFocus?.(e);
+                      fvOnFocus(e);
 
-                    setIsFocus(true);
-                    initFocus();
-                  },
-                  onBlur: (e) => {
-                    children.props.onBlur?.(e);
-                    pOnBlur?.(e);
+                      setIsFocus(true);
+                      initFocus();
+                    },
+                    onBlur: (e) => {
+                      children.props.onBlur?.(e);
+                      pOnBlur?.(e);
+                      fvOnBlur(e);
 
-                    setIsFocus(false);
-                    changeVisible(false);
-                  },
-                  onKeyDown: (e) => {
-                    children.props.onKeyDown?.(e);
+                      setIsFocus(false);
+                      changeVisible(false);
+                    },
+                    onKeyDown: (e) => {
+                      children.props.onKeyDown?.(e);
+                      fvOnKeyDown(e);
 
-                    if (visible) {
-                      handleKeyDown?.(e);
-                    } else if (e.code === 'Enter' || e.code === 'Space') {
-                      e.preventDefault();
-                      changeVisible(true);
-                    }
-                  },
-                  onMouseEnter: (e) => {
-                    children.props.onMouseEnter?.(e);
-                    pOnMouseEnter?.(e);
-                  },
-                  onMouseLeave: (e) => {
-                    children.props.onMouseLeave?.(e);
-                    pOnMouseLeave?.(e);
-                  },
-                })}
+                      if (visible) {
+                        handleKeyDown?.(e);
+                      } else if (e.code === 'Enter' || e.code === 'Space') {
+                        e.preventDefault();
+                        changeVisible(true);
+                      }
+                    },
+                    onMouseEnter: (e) => {
+                      children.props.onMouseEnter?.(e);
+                      pOnMouseEnter?.(e);
+                    },
+                    onMouseLeave: (e) => {
+                      children.props.onMouseLeave?.(e);
+                      pOnMouseLeave?.(e);
+                    },
+                  })
+                }
               </DFocusVisible>
             )}
           </DPopup>

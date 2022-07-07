@@ -4,6 +4,9 @@ export { DAffix } from './affix';
 export type { DAnchorProps } from './anchor';
 export { DAnchor } from './anchor';
 
+export type { DAutoCompleteProps } from './auto-complete';
+export { DAutoComplete } from './auto-complete';
+
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 

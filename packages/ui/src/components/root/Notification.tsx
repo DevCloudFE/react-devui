@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import { useElement, useImmer, usePrefixConfig } from '../../hooks';
 import { DNotification, NotificationService, notificationSubject } from '../notification';
 
-export function Notification() {
+export function Notification(): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion

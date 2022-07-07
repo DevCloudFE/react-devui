@@ -20,7 +20,7 @@ export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCompose' });
-function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>) {
+function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JSX.Element | null {
   const {
     children,
     dSize,

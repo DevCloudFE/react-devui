@@ -23,7 +23,7 @@ export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttri
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckboxGroup' });
-export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>) {
+export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,
     dOptions,

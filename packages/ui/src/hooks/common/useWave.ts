@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Subject } from 'rxjs';
 
 import { usePrefixConfig } from '../d-config';
+import { useEventNotify } from '../side-effect';
 
 export function useWave(): [React.ReactNode, (color: string, animation?: string) => void] {
   const dPrefix = usePrefixConfig();
 
+  const wave$ = useEventNotify<{ color: string; animation?: string }>();
+
   const [node, setNode] = useState<React.ReactNode>(null);
-  const [wave$] = useState(() => new Subject<{ color: string; animation?: string }>());
 
   useEffect(() => {
     const ob = wave$.subscribe({

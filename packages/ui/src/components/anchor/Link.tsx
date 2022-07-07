@@ -10,7 +10,7 @@ export interface DLinkProps {
   onClick: () => void;
 }
 
-export function DLink(props: DLinkProps) {
+export function DLink(props: DLinkProps): JSX.Element | null {
   const { children, dHref, dActive, dTarget, dLevel = 0, onClick } = props;
 
   //#region Context

@@ -42,7 +42,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' });
-export function DInput(props: DInputProps) {
+export function DInput(props: DInputProps): JSX.Element | null {
   const {
     dType,
     dMax,

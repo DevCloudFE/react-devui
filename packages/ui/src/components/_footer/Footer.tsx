@@ -16,7 +16,7 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   onClose?: () => void;
 }
 
-export function DFooter(props: DFooterProps) {
+export function DFooter(props: DFooterProps): JSX.Element | null {
   const {
     dAlign = 'right',
     dActions = ['cancel', 'ok'],

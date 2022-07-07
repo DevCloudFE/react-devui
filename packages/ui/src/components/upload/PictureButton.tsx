@@ -15,7 +15,7 @@ export interface DPictureButtonProps extends React.HTMLAttributes<HTMLDivElement
   onRemove?: () => void;
 }
 
-export function DPictureButton(props: DPictureButtonProps) {
+export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
   const {
     dFile,
     dActions = ['preview', 'remove'],

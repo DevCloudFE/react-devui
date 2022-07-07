@@ -11,7 +11,7 @@ export interface DCollapseTransitionProps extends Omit<DTransitionProps, 'childr
   dStyles: Partial<Record<DTransitionState, React.CSSProperties>>;
 }
 
-export function DCollapseTransition(props: DCollapseTransitionProps) {
+export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Element | null {
   const { children, dSize, dHorizontal = false, dStyles, onEnterRendered, ...restProps } = props;
 
   const dataRef = useRef<{

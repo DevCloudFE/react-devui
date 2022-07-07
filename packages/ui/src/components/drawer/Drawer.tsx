@@ -1,7 +1,7 @@
 import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DTransitionState } from '../_transition';
-import type { DDrawerFooterProps, DDrawerFooterPropsWithPrivate } from './DrawerFooter';
-import type { DDrawerHeaderProps, DDrawerHeaderPropsWithPrivate } from './DrawerHeader';
+import type { DDrawerFooterPropsWithPrivate } from './DrawerFooter';
+import type { DDrawerHeaderPropsWithPrivate } from './DrawerHeader';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef, useState } from 'react';
@@ -24,9 +24,9 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
-  dHeader?: React.ReactElement<DDrawerHeaderProps> | string;
-  dFooter?: React.ReactElement<DDrawerFooterProps>;
-  dChildDrawer?: React.ReactElement<DDrawerProps>;
+  dHeader?: React.ReactElement | string;
+  dFooter?: React.ReactElement;
+  dChildDrawer?: React.ReactElement;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
@@ -37,7 +37,7 @@ export interface DDrawerPropsWithPrivate extends DDrawerProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
-export function DDrawer(props: DDrawerProps) {
+export function DDrawer(props: DDrawerProps): JSX.Element | null {
   const {
     children,
     dVisible,

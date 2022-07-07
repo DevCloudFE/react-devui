@@ -3,7 +3,6 @@ import type { DFormControl } from '../form';
 
 import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { filter } from 'rxjs';
 
 import {
   usePrefixConfig,
@@ -43,6 +42,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dSize?: DSize;
   dRange?: boolean;
   dClearable?: boolean;
+  dEscClosable?: boolean;
   dDisabled?: boolean;
   dInputProps?: [React.InputHTMLAttributes<HTMLInputElement>?, React.InputHTMLAttributes<HTMLInputElement>?];
   dInputRef?: [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
@@ -50,7 +50,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onClear?: () => void;
 }
 
-function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>) {
+function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>): JSX.Element | null {
   const {
     children,
     dFormControl,
@@ -60,6 +60,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     dSize,
     dRange,
     dClearable,
+    dEscClosable = true,
     dDisabled,
     dInputProps,
     dInputRef,
@@ -169,25 +170,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     }
   }, [asyncCapture, dVisible, uniqueId, updatePosition]);
 
-  useEffect(() => {
-    if (dVisible) {
-      const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
-      asyncGroup
-        .fromEvent<KeyboardEvent>(window, 'keydown')
-        .pipe(filter((e) => e.code === 'Escape'))
-        .subscribe({
-          next: () => {
-            onVisibleChange?.(false);
-          },
-        });
-
-      return () => {
-        asyncCapture.deleteGroup(asyncId);
-      };
-    }
-  }, [asyncCapture, onVisibleChange, dVisible]);
-
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.target !== inputRefLeft.current && e.target !== inputRefRight.current && e.button === 0) {
       e.preventDefault();
@@ -236,7 +218,11 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         onKeyDown={(e) => {
           inputProps?.onKeyDown?.(e);
 
-          if (!dVisible) {
+          if (dVisible) {
+            if (dEscClosable && e.code === 'Escape') {
+              onVisibleChange?.(false);
+            }
+          } else {
             if (e.code === 'Space' || e.code === 'Enter') {
               e.preventDefault();
 

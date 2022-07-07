@@ -30,7 +30,7 @@ export interface DTimePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimePicker' });
-function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePickerRef>) {
+function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePickerRef>): JSX.Element | null {
   const {
     dFormat,
     dPlaceholder,

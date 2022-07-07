@@ -4,7 +4,6 @@ import type { DFormControl } from '../form';
 import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { filter } from 'rxjs';
 
 import {
   useAsync,
@@ -48,6 +47,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dLoading?: boolean;
   dSearchable?: boolean;
   dClearable?: boolean;
+  dEscClosable?: boolean;
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
@@ -57,7 +57,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onClear?: () => void;
 }
 
-function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef>) {
+function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef>): JSX.Element | null {
   const {
     children,
     dFormControl,
@@ -70,6 +70,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     dLoading,
     dSearchable,
     dClearable,
+    dEscClosable = true,
     dDisabled,
     dInputProps,
     dInputRef,
@@ -160,25 +161,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     }
   }, [asyncCapture, dVisible, uniqueId, updatePosition]);
 
-  useEffect(() => {
-    if (dVisible) {
-      const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
-      asyncGroup
-        .fromEvent<KeyboardEvent>(window, 'keydown')
-        .pipe(filter((e) => e.code === 'Escape'))
-        .subscribe({
-          next: () => {
-            onVisibleChange?.(false);
-          },
-        });
-
-      return () => {
-        asyncCapture.deleteGroup(asyncId);
-      };
-    }
-  }, [asyncCapture, onVisibleChange, dVisible]);
-
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.target !== inputRef.current && e.button === 0) {
       e.preventDefault();
@@ -224,53 +206,63 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         >
           <div className={`${dPrefix}selectbox__container`} title={dContentTitle}>
             <DFocusVisible onFocusVisibleChange={onFocusVisibleChange}>
-              <DBaseInput
-                {...dInputProps}
-                ref={combineInputRef}
-                className={getClassName(`${dPrefix}selectbox__search`, dInputProps?.className)}
-                style={{
-                  ...dInputProps?.style,
-                  opacity: inputable ? undefined : 0,
-                  zIndex: inputable ? undefined : -1,
-                }}
-                type="text"
-                autoComplete="off"
-                disabled={dDisabled}
-                role="combobox"
-                aria-haspopup="listbox"
-                aria-expanded={dVisible}
-                aria-controls={dInputProps?.['aria-controls']}
-                dFormControl={dFormControl}
-                onChange={(e) => {
-                  dInputProps?.onChange?.(e);
+              {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
+                <DBaseInput
+                  {...dInputProps}
+                  ref={combineInputRef}
+                  className={getClassName(`${dPrefix}selectbox__search`, dInputProps?.className)}
+                  style={{
+                    ...dInputProps?.style,
+                    opacity: inputable ? undefined : 0,
+                    zIndex: inputable ? undefined : -1,
+                  }}
+                  type="text"
+                  autoComplete="off"
+                  disabled={dDisabled}
+                  role="combobox"
+                  aria-haspopup="listbox"
+                  aria-expanded={dVisible}
+                  dFormControl={dFormControl}
+                  onChange={(e) => {
+                    dInputProps?.onChange?.(e);
 
-                  if (dSearchable) {
-                    onVisibleChange?.(true);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  dInputProps?.onKeyDown?.(e);
-
-                  if (!dVisible) {
-                    if (e.code === 'Space' || e.code === 'Enter') {
-                      e.preventDefault();
-
+                    if (dSearchable) {
                       onVisibleChange?.(true);
                     }
-                  }
-                }}
-                onFocus={(e) => {
-                  dInputProps?.onFocus?.(e);
+                  }}
+                  onKeyDown={(e) => {
+                    dInputProps?.onKeyDown?.(e);
+                    fvOnKeyDown(e);
 
-                  setIsFocus(true);
-                }}
-                onBlur={(e) => {
-                  dInputProps?.onBlur?.(e);
+                    if (dVisible) {
+                      if (dEscClosable && e.code === 'Escape') {
+                        e.preventDefault();
 
-                  setIsFocus(false);
-                  onVisibleChange?.(false);
-                }}
-              />
+                        onVisibleChange?.(false);
+                      }
+                    } else {
+                      if (e.code === 'Space' || e.code === 'Enter') {
+                        e.preventDefault();
+
+                        onVisibleChange?.(true);
+                      }
+                    }
+                  }}
+                  onFocus={(e) => {
+                    dInputProps?.onFocus?.(e);
+                    fvOnFocus(e);
+
+                    setIsFocus(true);
+                  }}
+                  onBlur={(e) => {
+                    dInputProps?.onBlur?.(e);
+                    fvOnBlur(e);
+
+                    setIsFocus(false);
+                    onVisibleChange?.(false);
+                  }}
+                />
+              )}
             </DFocusVisible>
             {!inputable &&
               (dContent ? (

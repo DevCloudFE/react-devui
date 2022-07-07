@@ -22,7 +22,7 @@ export interface DStarProps {
   onHoverChange: (value: number) => void;
 }
 
-export function DStar(props: DStarProps) {
+export function DStar(props: DStarProps): JSX.Element | null {
   const { dFormControl, dValue, dName, dDisabled, dIcon, dChecked, dHoverValue, dHalf, dTooltip, onCheck, onHoverChange } = props;
 
   //#region Context

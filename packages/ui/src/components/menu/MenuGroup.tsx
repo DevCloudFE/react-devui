@@ -10,7 +10,7 @@ export interface DMenuGroupProps {
   dLevel?: number;
 }
 
-export function DMenuGroup(props: DMenuGroupProps) {
+export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
   const { children, dId, dOptions, dEmpty, dStep, dSpace, dLevel = 0 } = props;
 
   //#region Context

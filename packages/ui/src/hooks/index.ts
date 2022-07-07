@@ -3,5 +3,5 @@ export { useContextOptional, useContextRequired, useGeneralContext } from './con
 export { usePrefixConfig, useGridConfig, useComponentConfig, useUpdatePosition } from './d-config';
 export { useTranslation } from './i18n';
 export { useIsomorphicLayoutEffect, useMount, useUnmount } from './lifecycle';
-export { useAsync } from './side-effect';
+export { useAsync, useEventNotify } from './side-effect';
 export { useElement, useLockScroll } from './ui';

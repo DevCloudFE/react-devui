@@ -11,7 +11,7 @@ export interface DDropdownItemProps {
   onClick: () => void;
 }
 
-export function DDropdownItem(props: DDropdownItemProps) {
+export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
   const { children, dId, dDisabled, dFocusVisible, dIcon, dLevel = 0, onClick } = props;
 
   //#region Context

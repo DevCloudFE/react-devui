@@ -47,7 +47,7 @@ export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivEl
   onUpdatePanel?: (date: Date) => void;
 }
 
-function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPickerBuilderRef>) {
+function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPickerBuilderRef>): JSX.Element | null {
   const {
     children,
     dFormControl,

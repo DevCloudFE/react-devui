@@ -18,7 +18,7 @@ export interface DActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   onRemove?: (file: DUploadFile) => void;
 }
 
-export function DActions(props: DActionsProps) {
+export function DActions(props: DActionsProps): JSX.Element | null {
   const {
     dFile,
     dActions = ['preview', 'remove'],

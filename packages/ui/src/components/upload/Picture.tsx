@@ -26,7 +26,7 @@ export interface DPictureProps {
   onRemove: (file: DUploadFile) => void;
 }
 
-export function DPicture(props: DPictureProps) {
+export function DPicture(props: DPictureProps): JSX.Element | null {
   const { children, dFileList, dDefaultActions, dActions, onRemove } = props;
 
   //#region Context

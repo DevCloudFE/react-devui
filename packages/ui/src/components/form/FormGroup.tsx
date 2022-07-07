@@ -14,7 +14,7 @@ export interface DFormGroupProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFormGroup' });
-export function DFormGroup(props: DFormGroupProps) {
+export function DFormGroup(props: DFormGroupProps): JSX.Element | null {
   const { children, dFormGroup, dTitle } = useComponentConfig(COMPONENT_NAME, props);
 
   return (

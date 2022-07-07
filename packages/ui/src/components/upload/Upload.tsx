@@ -64,7 +64,7 @@ export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement
 const UID_KEY = Symbol();
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload' });
-function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>) {
+function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element | null {
   const {
     children,
     dFormControl,

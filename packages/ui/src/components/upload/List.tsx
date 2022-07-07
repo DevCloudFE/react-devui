@@ -25,7 +25,7 @@ export interface DListProps {
   onRemove: (file: DUploadFile) => void;
 }
 
-export function DList(props: DListProps) {
+export function DList(props: DListProps): JSX.Element | null {
   const { dFileList, dDefaultActions, dActions, onRemove } = props;
 
   //#region Context

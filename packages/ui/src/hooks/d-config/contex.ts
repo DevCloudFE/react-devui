@@ -1,6 +1,7 @@
 import type {
   DAffixProps,
   DAnchorProps,
+  DAutoCompleteProps,
   DButtonProps,
   DCascaderProps,
   DCheckboxProps,
@@ -55,6 +56,7 @@ interface Resources {
 export type DComponentConfig = {
   DAffix: DAffixProps;
   DAnchor: DAnchorProps;
+  DAutoComplete: DAutoCompleteProps<any>;
   DButton: DButtonProps;
   DCascader: DCascaderProps<any, any>;
   DCheckbox: DCheckboxProps;

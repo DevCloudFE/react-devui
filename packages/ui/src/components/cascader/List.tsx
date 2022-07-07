@@ -30,7 +30,7 @@ export interface DListProps<ID extends DId, T> {
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>) {
+export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>): JSX.Element | null {
   const {
     dListId,
     dGetOptionId,

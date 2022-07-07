@@ -21,7 +21,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
-function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
+function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>): JSX.Element | null {
   const {
     children,
     dType = 'primary',

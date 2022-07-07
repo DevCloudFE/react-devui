@@ -27,7 +27,7 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' });
-function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>) {
+function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Element | null {
   const {
     children,
     dTarget,

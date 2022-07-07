@@ -23,7 +23,7 @@ export interface DRadioPropsWithPrivate extends DRadioProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' });
-export function DRadio(props: DRadioProps) {
+export function DRadio(props: DRadioProps): JSX.Element | null {
   const {
     children,
     dFormControl,
@@ -46,7 +46,7 @@ export function DRadio(props: DRadioProps) {
 
   const [waveNode, wave] = useWave();
 
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const formControlInject = useFormControl(dFormControl);
   const [checked, changeChecked] = useDValue<boolean>(false, dModel, onModelChange, undefined, formControlInject);
@@ -54,7 +54,7 @@ export function DRadio(props: DRadioProps) {
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
-    <DBaseDesign dCompose={{ active: checked || isFocusVisible, disabled: disabled }}>
+    <DBaseDesign dCompose={{ active: checked || focusVisible, disabled: disabled }}>
       <label
         {...restProps}
         className={getClassName(className, `${dPrefix}radio`, {
@@ -62,7 +62,7 @@ export function DRadio(props: DRadioProps) {
           [`${dPrefix}radio--button-${__type}`]: __type,
           [`${dPrefix}radio--${gSize}`]: gSize,
           'is-checked': checked,
-          'is-focus-visible': isFocusVisible,
+          'is-focus-visible': focusVisible,
           'is-disabled': disabled,
         })}
         onClick={(e) => {
@@ -74,22 +74,36 @@ export function DRadio(props: DRadioProps) {
         }}
       >
         <div className={`${dPrefix}radio__input-wrapper`}>
-          <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
-            <DBaseInput
-              {...dInputProps}
-              ref={dInputRef}
-              className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
-              type="radio"
-              checked={checked}
-              disabled={disabled}
-              aria-checked={checked}
-              dFormControl={dFormControl}
-              onChange={(e) => {
-                dInputProps?.onChange?.(e);
+          <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+            {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
+              <DBaseInput
+                {...dInputProps}
+                ref={dInputRef}
+                className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
+                type="radio"
+                checked={checked}
+                disabled={disabled}
+                aria-checked={checked}
+                dFormControl={dFormControl}
+                onChange={(e) => {
+                  dInputProps?.onChange?.(e);
 
-                changeChecked(true);
-              }}
-            />
+                  changeChecked(true);
+                }}
+                onFocus={(e) => {
+                  dInputProps?.onFocus?.(e);
+                  fvOnFocus(e);
+                }}
+                onBlur={(e) => {
+                  dInputProps?.onBlur?.(e);
+                  fvOnBlur(e);
+                }}
+                onKeyDown={(e) => {
+                  dInputProps?.onKeyDown?.(e);
+                  fvOnKeyDown(e);
+                }}
+              />
+            )}
           </DFocusVisible>
         </div>
         {children && <div className={`${dPrefix}radio__label`}>{children}</div>}

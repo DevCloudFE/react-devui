@@ -35,7 +35,7 @@ export interface DPopupProps {
   onUpdatePosition?: () => void;
 }
 
-export function DPopup(props: DPopupProps) {
+export function DPopup(props: DPopupProps): JSX.Element | null {
   const {
     children,
     dVisible,

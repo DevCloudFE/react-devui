@@ -24,7 +24,7 @@ export interface DTransitionProps {
   afterLeave?: () => void;
 }
 
-export function DTransition(props: DTransitionProps) {
+export function DTransition(props: DTransitionProps): JSX.Element | null {
   const {
     children,
     dIn = false,

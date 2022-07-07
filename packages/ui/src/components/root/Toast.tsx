@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import { useElement, useImmer, usePrefixConfig } from '../../hooks';
 import { DToast, ToastService, toastSubject } from '../toast';
 
-export function Toast() {
+export function Toast(): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion

@@ -25,7 +25,7 @@ export interface DDropdownSubProps {
   updatePosition$: Subject<void>;
 }
 
-export function DDropdownSub(props: DDropdownSubProps) {
+export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   const {
     children,
     dId,

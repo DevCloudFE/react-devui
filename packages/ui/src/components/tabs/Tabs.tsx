@@ -39,7 +39,7 @@ export interface DTabsProps<ID extends DId, T extends DTabsOption<ID>> extends O
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
-export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>) {
+export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
   const {
     dTabs,
     dActive,

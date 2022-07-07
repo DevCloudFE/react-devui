@@ -76,7 +76,7 @@ export class NotificationService {
 
 const TTANSITION_DURING = { enter: 133, leave: 166 };
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DNotification' });
-export function DNotification(props: DNotificationProps & { dVisible: boolean }) {
+export function DNotification(props: DNotificationProps & { dVisible: boolean }): JSX.Element | null {
   const {
     dVisible,
     dType,

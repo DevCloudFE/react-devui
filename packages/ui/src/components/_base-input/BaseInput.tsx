@@ -12,7 +12,7 @@ export interface DBaseInputProps extends React.InputHTMLAttributes<any> {
   dFor?: boolean;
 }
 
-function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>) {
+function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.Element | null {
   const { dFormControl, dTag = 'input', dFor = true, ...restProps } = props;
 
   //#region Context

@@ -34,7 +34,7 @@ export interface DMenuSubProps {
   updatePosition$: Subject<void>;
 }
 
-export function DMenuSub(props: DMenuSubProps) {
+export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   const {
     children,
     dId,

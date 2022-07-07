@@ -2,9 +2,8 @@ import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useState } from 'react';
-import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useDValue, useEventNotify } from '../../hooks';
 import { findNested, registerComponentMate, getClassName } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
@@ -41,7 +40,7 @@ export interface DMenuProps<ID extends DId, T extends DMenuOption<ID>> extends O
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
-function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>) {
+function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>): JSX.Element | null {
   const {
     dOptions,
     dActive,
@@ -66,7 +65,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [updatePosition$] = useState(() => new Subject<void>());
+  const updatePosition$ = useEventNotify<void>();
 
   const uniqueId = useId();
   const getOptionId = (id: ID) => `${dPrefix}menu-option-${id}-${uniqueId}`;
@@ -126,7 +125,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);
   const [isFocus, setIsFocus] = useState(false);
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
   const focusId = (() => {
     if (isFocus) {
       if (dMode === 'vertical') {
@@ -364,7 +363,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
                 dMode={dMode}
                 dInNav={inNav}
                 dActive={activeId === optionId}
-                dFocusVisible={isFocusVisible && isFocus}
+                dFocusVisible={focusVisible && isFocus}
                 dIcon={optionIcon}
                 dStep={step}
                 dSpace={space}
@@ -393,7 +392,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
                 dInNav={inNav}
                 dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(optionId)}
                 dExpand={isExpand}
-                dFocusVisible={isFocusVisible && isFocus}
+                dFocusVisible={focusVisible && isFocus}
                 dList={children && getNodes(children, dMode === 'vertical' ? level + 1 : 0, _subParents)}
                 dPopupVisible={dMode === 'vertical' ? false : !isUndefined(popupState)}
                 dPopupState={popupState?.visible ?? false}
@@ -459,50 +458,55 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
       }}
     >
       {(navRef, collapseStyle) => (
-        <DFocusVisible onFocusVisibleChange={setIsFocusVisible}>
-          <nav
-            {...restProps}
-            ref={navRef}
-            className={getClassName(className, `${dPrefix}menu`, {
-              [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-            })}
-            style={{
-              ...style,
-              ...collapseStyle,
-            }}
-            tabIndex={0}
-            role="menubar"
-            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-            aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
-            onMouseDown={(e) => {
-              onMouseDown?.(e);
+        <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+          {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
+            <nav
+              {...restProps}
+              ref={navRef}
+              className={getClassName(className, `${dPrefix}menu`, {
+                [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+              })}
+              style={{
+                ...style,
+                ...collapseStyle,
+              }}
+              tabIndex={0}
+              role="menubar"
+              aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+              aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
+              onMouseDown={(e) => {
+                onMouseDown?.(e);
 
-              preventBlur(e);
-            }}
-            onMouseUp={(e) => {
-              onMouseUp?.(e);
+                preventBlur(e);
+              }}
+              onMouseUp={(e) => {
+                onMouseUp?.(e);
 
-              preventBlur(e);
-            }}
-            onFocus={(e) => {
-              onFocus?.(e);
+                preventBlur(e);
+              }}
+              onFocus={(e) => {
+                onFocus?.(e);
+                fvOnFocus(e);
 
-              setIsFocus(true);
-              initFocus();
-            }}
-            onBlur={(e) => {
-              onBlur?.(e);
+                setIsFocus(true);
+                initFocus();
+              }}
+              onBlur={(e) => {
+                onBlur?.(e);
+                fvOnBlur(e);
 
-              setIsFocus(false);
-            }}
-            onKeyDown={(e) => {
-              onKeyDown?.(e);
+                setIsFocus(false);
+              }}
+              onKeyDown={(e) => {
+                onKeyDown?.(e);
+                fvOnKeyDown(e);
 
-              handleKeyDown?.(e);
-            }}
-          >
-            {optionNodes}
-          </nav>
+                handleKeyDown?.(e);
+              }}
+            >
+              {optionNodes}
+            </nav>
+          )}
         </DFocusVisible>
       )}
     </DCollapseTransition>

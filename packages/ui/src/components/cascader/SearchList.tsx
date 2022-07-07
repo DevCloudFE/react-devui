@@ -29,7 +29,7 @@ interface DSearchListProps<ID extends DId, T> {
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>) {
+export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
   const {
     dListId,
     dGetOptionId,

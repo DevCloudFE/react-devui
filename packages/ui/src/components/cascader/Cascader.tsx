@@ -6,9 +6,8 @@ import type { AbstractTreeNode } from '../tree';
 
 import { isArray, isNull } from 'lodash';
 import React, { useCallback, useMemo, useState, useId, useRef } from 'react';
-import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { DSelectbox } from '../_selectbox';
@@ -64,7 +63,10 @@ export interface DCascaderProps<V extends DId, T extends DCascaderOption<V>> ext
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' });
-function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderProps<V, T>, ref: React.ForwardedRef<DCascaderRef>) {
+function Cascader<V extends DId, T extends DCascaderOption<V>>(
+  props: DCascaderProps<V, T>,
+  ref: React.ForwardedRef<DCascaderRef>
+): JSX.Element | null {
   const {
     dFormControl,
     dModel,
@@ -102,6 +104,8 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
   //#region Ref
   const popupRef = useRef<HTMLDivElement>(null);
   //#endregion
+
+  const onKeyDown$ = useEventNotify<React.KeyboardEvent<HTMLInputElement>>();
 
   const uniqueId = useId();
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
@@ -227,7 +231,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
     return searchOptions;
   }, [dMultiple, dOnlyLeafSelectable, filterFn, hasSearch, renderNodes, sortFn]);
 
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const [_noSearchFocusNode, setNoSearchFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
   const noSearchFocusNode = useMemo(() => {
@@ -269,8 +273,6 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
       changeSelect(null);
     }
   };
-
-  const [onKeyDown$] = useState(() => new Subject<React.KeyboardEvent<HTMLInputElement>>());
 
   const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
     let selectedNode: React.ReactNode = null;
@@ -406,7 +408,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
         }
       }}
       onVisibleChange={changeVisible}
-      onFocusVisibleChange={setIsFocusVisible}
+      onFocusVisibleChange={setFocusVisible}
       onClear={handleClear}
     >
       {({ sStyle, sOnMouseDown, sOnMouseUp, ...restSProps }) => (
@@ -437,7 +439,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
               dCustomOption={dCustomOption}
               dMultiple={dMultiple}
               dOnlyLeafSelectable={dOnlyLeafSelectable}
-              dFocusVisible={isFocusVisible}
+              dFocusVisible={focusVisible}
               onSelectedChange={changeSelectByCache}
               onClose={() => {
                 changeVisible(false);
@@ -459,7 +461,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(props: DCascaderP
               dCustomOption={dCustomOption}
               dMultiple={dMultiple}
               dOnlyLeafSelectable={dOnlyLeafSelectable}
-              dFocusVisible={isFocusVisible}
+              dFocusVisible={focusVisible}
               dRoot
               onSelectedChange={changeSelectByCache}
               onClose={() => {

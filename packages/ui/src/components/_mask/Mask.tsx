@@ -11,7 +11,7 @@ export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-export function DMask(props: DMaskProps) {
+export function DMask(props: DMaskProps): JSX.Element | null {
   const {
     dVisible,
     onClose,

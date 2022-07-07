@@ -67,6 +67,8 @@ $cascader-option-height: 32px;
   }
 
   @include e(option-content) {
+    flex-grow: 1;
+
     @include utils-ellipsis;
   }
 

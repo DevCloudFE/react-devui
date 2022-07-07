@@ -1,5 +1,5 @@
-import type { DModalFooterProps, DModalFooterPropsWithPrivate } from './ModalFooter';
-import type { DModalHeaderProps, DModalHeaderPropsWithPrivate } from './ModalHeader';
+import type { DModalFooterPropsWithPrivate } from './ModalFooter';
+import type { DModalHeaderPropsWithPrivate } from './ModalHeader';
 
 import { isNumber, isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef } from 'react';
@@ -27,14 +27,14 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
     description?: React.ReactNode;
     icon?: React.ReactNode;
   };
-  dHeader?: React.ReactElement<DModalHeaderProps> | string;
-  dFooter?: React.ReactElement<DModalFooterProps>;
+  dHeader?: React.ReactElement | string;
+  dFooter?: React.ReactElement;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' });
-export function DModal(props: DModalProps) {
+export function DModal(props: DModalProps): JSX.Element | null {
   const {
     children,
     dVisible,

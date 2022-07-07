@@ -12,7 +12,7 @@ export interface DModalHeaderPropsWithPrivate extends DModalHeaderProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModalHeader' });
-export function DModalHeader(props: DModalHeaderProps) {
+export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
   const {
     __id,
     __onClose,

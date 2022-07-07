@@ -30,7 +30,7 @@ export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttribut
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadioGroup' });
-export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>) {
+export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,
     dModel,

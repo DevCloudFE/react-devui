@@ -32,7 +32,7 @@ const DOT_INDICATOR = Symbol();
 const LINE_INDICATOR = Symbol();
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' });
-function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>) {
+function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>): JSX.Element | null {
   const {
     dLinks,
     dPage,

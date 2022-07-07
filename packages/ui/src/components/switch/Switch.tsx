@@ -24,7 +24,7 @@ export interface DSwitchProps extends React.HTMLAttributes<HTMLElement> {
 
 const TTANSITION_DURING = 133;
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSwitch' });
-export function DSwitch(props: DSwitchProps) {
+export function DSwitch(props: DSwitchProps): JSX.Element | null {
   const {
     children,
     dFormControl,

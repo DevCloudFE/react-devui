@@ -61,7 +61,10 @@ export interface DSelectProps<V extends DId, T extends DSelectOption<V>> extends
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' });
-function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V, T>, ref: React.ForwardedRef<DSelectRef>) {
+function Select<V extends DId, T extends DSelectOption<V>>(
+  props: DSelectProps<V, T>,
+  ref: React.ForwardedRef<DSelectRef>
+): JSX.Element | null {
   const {
     dFormControl,
     dModel,
@@ -115,7 +118,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
 
   const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
 
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
@@ -470,7 +473,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
         }
       }}
       onVisibleChange={changeVisible}
-      onFocusVisibleChange={setIsFocusVisible}
+      onFocusVisibleChange={setFocusVisible}
       onClear={() => {
         onClear?.();
 
@@ -510,6 +513,8 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
             dItemRender={(item, index, renderProps, parent) => {
               const { label: optionLabel, value: optionValue, disabled: optionDisabled, children } = item;
 
+              const optionNode = dCustomOption ? dCustomOption(item) : optionLabel;
+
               if (children) {
                 return (
                   <ul key={optionValue} className={`${dPrefix}select__option-group`} role="group" aria-labelledby={getGroupId(optionValue)}>
@@ -519,7 +524,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
                       className={`${dPrefix}select__option-group-label`}
                       role="presentation"
                     >
-                      <div className={`${dPrefix}select__option-content`}>{optionLabel}</div>
+                      <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
                     </li>
                     {children.length === 0 ? (
                       <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>
@@ -567,13 +572,13 @@ function Select<V extends DId, T extends DSelectOption<V>>(props: DSelectProps<V
                     }
                   }}
                 >
-                  {isFocusVisible && focusOption?.value === optionValue && <div className={`${dPrefix}focus-outline`}></div>}
+                  {focusVisible && focusOption?.value === optionValue && <div className={`${dPrefix}focus-outline`}></div>}
                   {item[IS_CREATE] ? (
                     <PlusOutlined dTheme="primary" />
                   ) : dMultiple ? (
                     <DCheckbox dDisabled={optionDisabled} dModel={isSelected}></DCheckbox>
                   ) : null}
-                  <div className={`${dPrefix}select__option-content`}>{dCustomOption ? dCustomOption(item) : optionLabel}</div>
+                  <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
                 </li>
               );
             }}
