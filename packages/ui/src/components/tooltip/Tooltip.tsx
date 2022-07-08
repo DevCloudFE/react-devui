@@ -252,10 +252,10 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
         return (
           <DPopup
             dVisible={visible}
-            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <div
                 {...restProps}
-                {...restPCProps}
+                {...restPProps}
                 ref={popupRef}
                 id={_id}
                 className={getClassName(className, `${dPrefix}tooltip`, `${dPrefix}tooltip--` + placement)}
@@ -289,13 +289,13 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
             dEscClosable={dEscClosable}
             dMouseEnterDelay={dMouseEnterDelay}
             dMouseLeaveDelay={dMouseLeaveDelay}
+            dUpdatePosition={updatePosition}
             onVisibleChange={changeVisible}
-            onUpdatePosition={updatePosition}
           >
-            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) =>
+            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) =>
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                 ...children.props,
-                ...restPCProps,
+                ...restPProps,
                 'aria-describedby': _id,
                 onClick: (e) => {
                   children.props.onClick?.(e);

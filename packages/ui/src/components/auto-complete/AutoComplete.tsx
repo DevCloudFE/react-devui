@@ -40,7 +40,7 @@ export interface DAutoCompleteProps<T extends DAutoCompleteOption> extends React
   dLoading?: boolean;
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
   onVisibleChange?: (visible: boolean) => void;
-  onSelectChange?: (value: string, option: T) => void;
+  onOptionClick?: (value: string, option: T) => void;
   onScrollBottom?: () => void;
 }
 
@@ -56,7 +56,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
     dLoading = false,
     dCustomOption,
     onVisibleChange,
-    onSelectChange,
+    onOptionClick,
     onScrollBottom,
 
     className,
@@ -227,7 +227,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
 
           case 'Enter':
             e.preventDefault();
-            onSelectChange?.(focusOption.value, focusOption);
+            onOptionClick?.(focusOption.value, focusOption);
             break;
 
           default:
@@ -368,7 +368,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
                           onClick={() => {
                             if (!optionDisabled) {
                               changeFocusOption(item);
-                              onSelectChange?.(optionValue, item);
+                              onOptionClick?.(optionValue, item);
                             }
                           }}
                         >

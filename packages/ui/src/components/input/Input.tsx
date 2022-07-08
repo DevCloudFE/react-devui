@@ -16,7 +16,6 @@ import {
 } from '../../hooks';
 import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
-import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
@@ -95,7 +94,6 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const [password, setPassword] = useState(true);
 
   const size = dSize ?? gSize;
-  const iconSize = ICON_SIZE(size);
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const changeNumber = useEventCallback((isIncrease = true) => {
@@ -199,7 +197,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
               changeValue('');
             }}
           >
-            <CloseCircleFilled dSize={iconSize} />
+            <CloseCircleFilled />
           </button>
         )}
         {dType === 'password' && !disabled && (
@@ -213,7 +211,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
               }
             }}
           >
-            {password ? <EyeInvisibleOutlined dSize={iconSize} /> : <EyeOutlined dSize={iconSize} />}
+            {password ? <EyeInvisibleOutlined /> : <EyeOutlined />}
           </button>
         )}
         {dType === 'number' && dNumbetButton && !disabled && (
@@ -242,7 +240,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
                 changeNumber();
               }}
             >
-              <DCustomIcon viewBox="0 0 24 24" dSize={iconSize}>
+              <DCustomIcon viewBox="0 0 24 24">
                 <path d="M19.637 16.4369C19.0513 17.0227 18.1015 17.0227 17.5157 16.4369L11.8589 10.7801L6.20202 16.4369C5.61623 17.0227 4.66648 17.0227 4.0807 16.4369C3.49491 15.8511 3.49491 14.9014 4.0807 14.3156L10.7982 7.59809C11.384 7.01231 12.3337 7.01231 12.9195 7.59809L19.637 14.3156C20.2228 14.9014 20.2228 15.8511 19.637 16.4369Z"></path>
               </DCustomIcon>
             </button>
@@ -270,7 +268,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
                 changeNumber(false);
               }}
             >
-              <DCustomIcon viewBox="0 0 24 24" dSize={iconSize}>
+              <DCustomIcon viewBox="0 0 24 24">
                 <path d="M4.08045 7.59809C4.66624 7.01231 5.61599 7.01231 6.20177 7.59809L11.8586 13.2549L17.5155 7.59809C18.1013 7.01231 19.051 7.01231 19.6368 7.59809C20.2226 8.18388 20.2226 9.13363 19.6368 9.71941L12.9193 16.4369C12.3335 17.0227 11.3838 17.0227 10.798 16.4369L4.08045 9.71941C3.49467 9.13363 3.49467 8.18388 4.08045 7.59809Z"></path>
               </DCustomIcon>
             </button>

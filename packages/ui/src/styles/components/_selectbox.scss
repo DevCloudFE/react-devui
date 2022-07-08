@@ -4,18 +4,12 @@
   align-items: center;
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
-  font-family: inherit;
-  font-size: var(--#{$variable-prefix}font-size);
-  text-align: unset;
-  text-transform: none;
-  white-space: nowrap;
   vertical-align: top;
   cursor: pointer;
   background-color: var(--#{$variable-prefix}background-color-input);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
-  appearance: none;
 
   &[data-form-invalid-warning='true'] {
     border-color: var(--#{$variable-prefix}color-warning) !important;
@@ -59,14 +53,16 @@
 
   @include m(smaller) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+
+    @include font-size(0.9rem);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+
+    @include font-size(1.15rem);
   }
 
   @include e(container) {
@@ -126,12 +122,14 @@
     position: absolute;
     right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
     z-index: 5;
+    font-size: 0.9em;
   }
 
   @include e(icon) {
     z-index: 1;
     flex-shrink: 0;
     margin-left: 4px;
+    font-size: 0.9em;
     color: var(--#{$variable-prefix}color-icon-decorator);
     transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
       color var(--#{$variable-prefix}animation-duration-base) linear;

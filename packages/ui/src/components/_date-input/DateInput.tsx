@@ -17,7 +17,6 @@ import {
 import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
 import { getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
-import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DTransition } from '../_transition';
@@ -27,8 +26,8 @@ export interface DDateInputRef {
 }
 
 export interface DDateInputRenderProps {
+  diPopupRef: React.MutableRefObject<any>;
   diStyle: React.CSSProperties;
-  'data-date-input-popupid': string;
   diOnMouseDown: React.MouseEventHandler;
   diOnMouseUp: React.MouseEventHandler;
 }
@@ -80,6 +79,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
   //#region Ref
   const boxRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLElement>(null);
   const inputRefLeft = useRef<HTMLInputElement>(null);
   const inputRefRight = useRef<HTMLInputElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -111,7 +111,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     }
   };
 
-  const iconSize = ICON_SIZE(dSize);
   const clearable = dClearable && !dVisible && !dDisabled;
 
   const containerEl = useElement(() => {
@@ -132,9 +131,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const popupEl = document.querySelector(`[data-date-input-popupid="${uniqueId}"]`) as HTMLElement | null;
-    if (boxRef.current && popupEl) {
-      const { width, height } = getNoTransformSize(popupEl);
+    if (boxRef.current && popupRef.current) {
+      const { width, height } = getNoTransformSize(popupRef.current);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, dPlacement, 8);
       setPopupPositionStyle({
         top,
@@ -157,9 +155,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         });
       }
 
-      const popupEl = document.querySelector(`[data-date-input-popupid="${uniqueId}"]`) as HTMLElement | null;
-      if (popupEl) {
-        asyncGroup.onResize(popupEl, () => {
+      if (popupRef.current) {
+        asyncGroup.onResize(popupRef.current, () => {
           updatePosition();
         });
       }
@@ -293,7 +290,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           {clearable && (
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-input__clear`)}
-              style={{ width: iconSize, height: iconSize }}
               aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
@@ -301,11 +297,11 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                 onClear?.();
               }}
             >
-              <CloseCircleFilled dSize={iconSize} />
+              <CloseCircleFilled />
             </button>
           )}
           {dSuffix && (
-            <div className={`${dPrefix}date-input__icon`} style={{ opacity: clearable ? 0 : 1, fontSize: iconSize }}>
+            <div className={`${dPrefix}date-input__icon`} style={{ opacity: clearable ? 0 : 1 }}>
               {dSuffix}
             </div>
           )}
@@ -346,12 +342,12 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
               }
 
               return children({
+                diPopupRef: popupRef,
                 diStyle: {
                   ...popupPositionStyle,
                   ...transitionStyle,
                   zIndex: maxZIndex,
                 },
-                'data-date-input-popupid': uniqueId,
                 diOnMouseDown: preventBlur,
                 diOnMouseUp: preventBlur,
               });

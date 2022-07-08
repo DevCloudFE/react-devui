@@ -5,7 +5,7 @@ import { useEventCallback, useForceUpdate, useIsomorphicLayoutEffect } from '../
 export function useTreeData<R>(
   select: any,
   getOptions: (select: any) => R,
-  onSelectChange?: (value: any) => void
+  onOptionClick?: (value: any) => void
 ): [R, (value: any) => void] {
   const prevOptions = useRef<any>();
 
@@ -20,7 +20,7 @@ export function useTreeData<R>(
   }, [getOptions, select]);
 
   const changeSelect = useEventCallback((value: any) => {
-    onSelectChange?.(value);
+    onOptionClick?.(value);
 
     prevOptions.current = [].concat(options);
     forceUpdate();

@@ -172,9 +172,9 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                 <DPopup
                   dDisabled={dDisabled || dMode === 'vertical'}
                   dVisible={dPopupState}
-                  dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+                  dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
                     <ul
-                      {...restPCProps}
+                      {...restPProps}
                       ref={popupRef}
                       className={getClassName(`${dPrefix}menu__sub-list`, `${dPrefix}menu__sub-list--popup`)}
                       style={{
@@ -199,12 +199,12 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                     </ul>
                   )}
                   dTrigger={dTrigger}
+                  dUpdatePosition={updatePosition}
                   onVisibleChange={onVisibleChange}
-                  onUpdatePosition={updatePosition}
                 >
-                  {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+                  {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
                     <li
-                      {...restPCProps}
+                      {...restPProps}
                       ref={liRef}
                       id={dId}
                       className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--sub`, {

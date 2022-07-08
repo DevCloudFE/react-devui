@@ -265,9 +265,7 @@
     --#{$variable-prefix}tabs-tab-gap: 36px;
     --#{$variable-prefix}tabs-tab-padding: 20px;
 
-    .#{$variable-prefix}tabs__tablist {
-      @include font-size(1.1rem);
-    }
+    @include font-size(1.15rem);
   }
 
   @include m(smaller) {
@@ -276,9 +274,7 @@
     --#{$variable-prefix}tabs-tab-gap: 20px;
     --#{$variable-prefix}tabs-tab-padding: 12px;
 
-    .#{$variable-prefix}tabs__tablist {
-      @include font-size(0.85rem);
-    }
+    @include font-size(0.9rem);
   }
 
   @include m(slider) {
@@ -286,7 +282,7 @@
 
     &#{$selector}--top,
     &#{$selector}--bottom {
-      .#{$variable-prefix}tab {
+      @include e(tab) {
         padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
       }
     }
@@ -310,7 +306,7 @@
   @include m(wrap) {
     &#{$selector}--top,
     &#{$selector}--bottom {
-      .#{$variable-prefix}tab {
+      @include e(tab) {
         padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
       }
     }
@@ -327,8 +323,6 @@
   @include e(tablist) {
     position: relative;
     display: inline-flex;
-
-    @include font-size(1rem);
 
     &::after {
       position: absolute;

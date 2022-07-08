@@ -3,8 +3,7 @@
   display: inline-flex;
   gap: 0 0.35em;
   align-items: center;
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
-  font-size: 20px;
+  font-size: 1.2em;
   color: var(--#{$variable-prefix}color-warning);
 
   @include when(disabled) {

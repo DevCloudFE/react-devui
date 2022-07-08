@@ -31,8 +31,8 @@ export interface DPopupProps {
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
+  dUpdatePosition?: () => void;
   onVisibleChange?: (visible: boolean) => void;
-  onUpdatePosition?: () => void;
 }
 
 export function DPopup(props: DPopupProps): JSX.Element | null {
@@ -46,8 +46,8 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
     dEscClosable,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
+    dUpdatePosition,
     onVisibleChange,
-    onUpdatePosition,
   } = props;
 
   //#region Context
@@ -151,7 +151,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
   }, [asyncCapture, handleTrigger, dEscClosable, dVisible, dDisabled]);
 
   useUpdatePosition(() => {
-    onUpdatePosition?.();
+    dUpdatePosition?.();
   }, !dDisabled && dVisible);
 
   useEffect(() => {
@@ -161,14 +161,14 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
       const triggerEl = document.querySelector(`[data-popup-triggerid="${uniqueId}"]`) as HTMLElement | null;
       if (triggerEl) {
         asyncGroup.onResize(triggerEl, () => {
-          onUpdatePosition?.();
+          dUpdatePosition?.();
         });
       }
 
       const popupEl = document.querySelector(`[data-popup-popupid="${uniqueId}"]`) as HTMLElement | null;
       if (popupEl) {
         asyncGroup.onResize(popupEl, () => {
-          onUpdatePosition?.();
+          dUpdatePosition?.();
         });
       }
 
@@ -185,12 +185,12 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
       asyncGroup.fromEvent(dContainer, 'scroll', { passive: true }).subscribe({
         next: () => {
-          onUpdatePosition?.();
+          dUpdatePosition?.();
         },
       });
 
       asyncGroup.onResize(dContainer, () => {
-        onUpdatePosition?.();
+        dUpdatePosition?.();
       });
 
       return () => {

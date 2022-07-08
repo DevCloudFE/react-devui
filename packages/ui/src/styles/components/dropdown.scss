@@ -77,7 +77,7 @@ $dropdown-item-height: 32px;
 
   @include e(item-icon) {
     width: calc(1.05rem + 8px);
-    font-size: var(--#{$variable-prefix}icon-size);
+    font-size: 1.1em;
   }
 
   @include e(item-content) {

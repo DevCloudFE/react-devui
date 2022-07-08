@@ -121,9 +121,9 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
           <DPopup
             dDisabled={dDisabled}
             dVisible={dPopupState}
-            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <ul
-                {...restPCProps}
+                {...restPProps}
                 ref={ulRef}
                 className={`${dPrefix}dropdown__sub-popup`}
                 style={{
@@ -147,12 +147,12 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
               </ul>
             )}
             dTrigger={dTrigger}
+            dUpdatePosition={updatePosition}
             onVisibleChange={onVisibleChange}
-            onUpdatePosition={updatePosition}
           >
-            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <li
-                {...restPCProps}
+                {...restPProps}
                 ref={liRef}
                 id={dId}
                 className={getClassName(`${dPrefix}dropdown__item`, `${dPrefix}dropdown__item--sub`, {

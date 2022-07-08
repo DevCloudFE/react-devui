@@ -7,7 +7,6 @@
   padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   margin: 0;
   font: inherit;
-  font-size: var(--#{$variable-prefix}font-size);
   line-height: var(--#{$variable-prefix}textarea-line-height);
   color: var(--#{$variable-prefix}text-color);
   letter-spacing: inherit;
@@ -50,14 +49,16 @@
 
   @include m(smaller) {
     --#{$variable-prefix}textarea-line-height: 20px;
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+
+    @include font-size(0.9rem);
   }
 
   @include m(larger) {
     --#{$variable-prefix}textarea-line-height: 28px;
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+
+    @include font-size(1.15rem);
   }
 
   @include e(count) {

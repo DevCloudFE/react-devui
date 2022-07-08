@@ -3,7 +3,6 @@
   align-items: center;
   height: var(--#{$variable-prefix}size);
   padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
-  font-size: var(--#{$variable-prefix}font-size);
   color: var(--#{$variable-prefix}text-color);
   vertical-align: top;
   background-color: var(--#{$variable-prefix}background-color-input);
@@ -48,14 +47,16 @@
 
   @include m(smaller) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-smaller);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+
+    @include font-size(0.9rem);
   }
 
   @include m(larger) {
     --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}font-size: var(--#{$variable-prefix}font-size-larger);
     --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+
+    @include font-size(1.15rem);
   }
 
   @include e(input) {
@@ -109,6 +110,7 @@
   @include e(clear) {
     flex-shrink: 0;
     margin-left: 4px;
+    font-size: 0.9em;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       opacity var(--#{$variable-prefix}animation-duration-fast) linear;
   }
@@ -116,6 +118,7 @@
   @include e(password) {
     flex-shrink: 0;
     margin-left: 4px;
+    font-size: 0.9em;
   }
 
   @include e(number-container) {
@@ -123,6 +126,7 @@
     flex-direction: column;
     height: 100%;
     margin-left: 4px;
+    font-size: 0.9em;
   }
 
   @include e(number) {

@@ -35,10 +35,6 @@ $colors: (
   --#{$variable-prefix}margin-size: 8px;
   --#{$variable-prefix}margin-size-smaller: 6px;
   --#{$variable-prefix}margin-size-larger: 10px;
-  --#{$variable-prefix}icon-size: 1.1em;
-  @include rfs(1rem, --#{$variable-prefix}font-size);
-  @include rfs(0.85rem, --#{$variable-prefix}font-size-smaller);
-  @include rfs(1.1rem, --#{$variable-prefix}font-size-larger);
 
   /** animation **/
   --#{$variable-prefix}animation-duration-slow: 300ms;

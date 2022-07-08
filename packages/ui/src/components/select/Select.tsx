@@ -103,7 +103,6 @@ function Select<V extends DId, T extends DSelectOption<V>>(
   //#endregion
 
   //#region Ref
-  const popupRef = useRef<HTMLDivElement>(null);
   const dVSRef = useRef<DVirtualScrollRef<T>>(null);
   //#endregion
 
@@ -454,23 +453,20 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         },
       }}
       dInputRef={dInputRef}
-      onUpdatePosition={(boxEl) => {
-        const popupEl = popupRef.current;
-        if (popupEl) {
-          const width = boxEl.getBoundingClientRect().width;
-          const { height } = getNoTransformSize(popupEl);
-          const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+      dUpdatePosition={(boxEl, popupEl) => {
+        const width = boxEl.getBoundingClientRect().width;
+        const { height } = getNoTransformSize(popupEl);
+        const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
 
-          return {
-            position: {
-              top,
-              left,
-              width,
-              maxWidth: window.innerWidth - left - 20,
-            },
-            transformOrigin,
-          };
-        }
+        return {
+          position: {
+            top,
+            left,
+            width,
+            maxWidth: window.innerWidth - left - 20,
+          },
+          transformOrigin,
+        };
       }}
       onVisibleChange={changeVisible}
       onFocusVisibleChange={setFocusVisible}
@@ -484,10 +480,9 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         }
       }}
     >
-      {({ sStyle, sOnMouseDown, sOnMouseUp, ...restSProps }) => (
+      {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
         <div
-          {...restSProps}
-          ref={popupRef}
+          ref={sPopupRef}
           className={getClassName(dPopupClassName, `${dPrefix}select__popup`)}
           style={sStyle}
           onMouseDown={sOnMouseDown}

@@ -74,7 +74,6 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
   } = props;
 
   //#region Ref
-  const popupRef = useRef<HTMLDivElement>(null);
   const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
@@ -273,8 +272,8 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
         _changeValue(null);
       }}
     >
-      {({ diStyle, diOnMouseDown, diOnMouseUp, ...restSProps }) => (
-        <div {...restSProps} ref={popupRef} className={dPopupClassName} style={diStyle} onMouseDown={diOnMouseDown} onMouseUp={diOnMouseUp}>
+      {({ diPopupRef, diStyle, diOnMouseDown, diOnMouseUp }) => (
+        <div ref={diPopupRef} className={dPopupClassName} style={diStyle} onMouseDown={diOnMouseDown} onMouseUp={diOnMouseUp}>
           {children({
             pbDate: latestFocus.current === 'start' ? valueLeft : valueRight,
             pbCurrentDate: dRange ? (isNull(_value) ? dataRef.current.rangeDate : (_value as [Date, Date])) : [valueLeft, null],

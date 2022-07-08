@@ -77,7 +77,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
   const [jumpValue, setJumpValue] = useState('');
   const lastPage = Math.max(Math.ceil(dTotal / pageSize), 1);
-  const iconSize = '0.9em';
 
   const totalNode = (() => {
     if (dCompose.includes('total')) {
@@ -116,7 +115,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
             changeActive(active - 1);
           }}
         >
-          {dCustomRender && dCustomRender.prev ? dCustomRender.prev : <LeftOutlined dSize={iconSize} />}
+          {dCustomRender && dCustomRender.prev ? dCustomRender.prev : <LeftOutlined />}
         </li>
       );
 
@@ -133,7 +132,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
             changeActive(active + 1);
           }}
         >
-          {dCustomRender && dCustomRender.next ? dCustomRender.next : <RightOutlined dSize={iconSize} />}
+          {dCustomRender && dCustomRender.next ? dCustomRender.next : <RightOutlined />}
         </li>
       );
     }
@@ -190,7 +189,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           dNumbetButton={!dMini}
           dInputProps={{
             onKeyDown: (e) => {
-              if (e.code === 'Space' || e.code === 'Enter') {
+              if (e.code === 'Enter') {
                 e.preventDefault();
 
                 const val = Number(jumpValue);
@@ -285,7 +284,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         changeActive(active - 5);
                       }}
                     >
-                      <DoubleLeftOutlined dSize={iconSize} />
+                      <DoubleLeftOutlined />
                       <div className={`${dPrefix}pagination__ellipsis`}>•••</div>
                     </li>
                   );
@@ -304,7 +303,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         changeActive(active + 5);
                       }}
                     >
-                      <DoubleRightOutlined dSize={iconSize} />
+                      <DoubleRightOutlined />
                       <div className={`${dPrefix}pagination__ellipsis`}>•••</div>
                     </li>
                   );

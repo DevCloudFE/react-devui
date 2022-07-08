@@ -399,11 +399,11 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
         return (
           <DPopup
             dVisible={visible}
-            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <div
                 ref={dropdownRef}
                 {...restProps}
-                {...restPCProps}
+                {...restPProps}
                 className={getClassName(className, `${dPrefix}dropdown`)}
                 style={{
                   ...style,
@@ -449,15 +449,15 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
               </div>
             )}
             dTrigger={dTrigger}
+            dUpdatePosition={updatePosition}
             onVisibleChange={changeVisible}
-            onUpdatePosition={updatePosition}
           >
-            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPCProps }) => (
+            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <DFocusVisible onFocusVisibleChange={setFocusVisible}>
                 {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) =>
                   React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                     ...children.props,
-                    ...restPCProps,
+                    ...restPProps,
                     id: buttonId,
                     tabIndex: 0,
                     role: 'button',

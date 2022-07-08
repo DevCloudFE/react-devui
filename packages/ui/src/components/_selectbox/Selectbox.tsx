@@ -1,7 +1,7 @@
 import type { DSize } from '../../utils/global';
 import type { DFormControl } from '../form';
 
-import React, { useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -18,7 +18,6 @@ import {
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
 import { getClassName } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
-import { ICON_SIZE } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';
@@ -29,8 +28,8 @@ export interface DSelectboxRef {
 }
 
 export interface DSelectboxRenderProps {
+  sPopupRef: React.MutableRefObject<any>;
   sStyle: React.CSSProperties;
-  'data-selectbox-popupid': string;
   sOnMouseDown: React.MouseEventHandler;
   sOnMouseUp: React.MouseEventHandler;
 }
@@ -51,7 +50,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
-  onUpdatePosition: (el: HTMLDivElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
+  dUpdatePosition: (boxEl: HTMLElement, popupEl: HTMLElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
   onVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
@@ -74,7 +73,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     dDisabled,
     dInputProps,
     dInputRef,
-    onUpdatePosition,
+    dUpdatePosition,
     onVisibleChange,
     onFocusVisibleChange,
     onClear,
@@ -92,6 +91,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
 
   //#region Ref
   const boxRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   //#endregion
 
@@ -100,14 +100,10 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
-  const uniqueId = useId();
-
   const [isFocus, setIsFocus] = useState(false);
 
   const inputable = dSearchable && dVisible;
   const clearable = dClearable && !dVisible && !dLoading && !dDisabled && dContent;
-
-  const iconSize = ICON_SIZE(dSize);
 
   const containerEl = useElement(() => {
     let el = document.getElementById(`${dPrefix}selectbox-root`);
@@ -127,8 +123,8 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    if (boxRef.current) {
-      const res = onUpdatePosition(boxRef.current);
+    if (boxRef.current && popupRef.current) {
+      const res = dUpdatePosition(boxRef.current, popupRef.current);
       if (res) {
         setPopupPositionStyle(res.position);
         setTransformOrigin(res.transformOrigin);
@@ -148,9 +144,8 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         });
       }
 
-      const popupEl = document.querySelector(`[data-selectbox-popupid="${uniqueId}"]`) as HTMLElement | null;
-      if (popupEl) {
-        asyncGroup.onResize(popupEl, () => {
+      if (popupRef.current) {
+        asyncGroup.onResize(popupRef.current, () => {
           updatePosition();
         });
       }
@@ -159,7 +154,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dVisible, uniqueId, updatePosition]);
+  }, [asyncCapture, dVisible, updatePosition]);
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.target !== inputRef.current && e.button === 0) {
@@ -286,7 +281,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
           {clearable && (
             <button
               className={getClassName(`${dPrefix}icon-button`, `${dPrefix}selectbox__clear`)}
-              style={{ width: iconSize, height: iconSize }}
               aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
@@ -294,7 +288,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                 onClear?.();
               }}
             >
-              <CloseCircleFilled dSize={iconSize} />
+              <CloseCircleFilled />
             </button>
           )}
           <div
@@ -302,7 +296,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
               'is-arrow-up': !dLoading && !inputable && dVisible,
             })}
             style={{
-              fontSize: iconSize,
               opacity: clearable ? 0 : 1,
             }}
           >
@@ -345,7 +338,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
               }
 
               return children({
-                'data-selectbox-popupid': uniqueId,
+                sPopupRef: popupRef,
                 sStyle: {
                   ...popupPositionStyle,
                   ...transitionStyle,

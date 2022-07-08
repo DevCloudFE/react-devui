@@ -101,10 +101,6 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
   const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
-  //#region Ref
-  const popupRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
   const onKeyDown$ = useEventNotify<React.KeyboardEvent<HTMLInputElement>>();
 
   const uniqueId = useId();
@@ -390,31 +386,27 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
         },
       }}
       dInputRef={dInputRef}
-      onUpdatePosition={(boxEl) => {
-        const popupEl = popupRef.current;
-        if (popupEl) {
-          const width = boxEl.getBoundingClientRect().width;
-          const { height } = getNoTransformSize(popupEl);
-          const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+      dUpdatePosition={(boxEl, popupEl) => {
+        const width = boxEl.getBoundingClientRect().width;
+        const { height } = getNoTransformSize(popupEl);
+        const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
 
-          return {
-            position: {
-              top,
-              left,
-              maxWidth: window.innerWidth - left - 20,
-            },
-            transformOrigin,
-          };
-        }
+        return {
+          position: {
+            top,
+            left,
+            maxWidth: window.innerWidth - left - 20,
+          },
+          transformOrigin,
+        };
       }}
       onVisibleChange={changeVisible}
       onFocusVisibleChange={setFocusVisible}
       onClear={handleClear}
     >
-      {({ sStyle, sOnMouseDown, sOnMouseUp, ...restSProps }) => (
+      {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
         <div
-          {...restSProps}
-          ref={popupRef}
+          ref={sPopupRef}
           className={getClassName(dPopupClassName, `${dPrefix}cascader__popup`)}
           style={sStyle}
           onMouseDown={sOnMouseDown}
