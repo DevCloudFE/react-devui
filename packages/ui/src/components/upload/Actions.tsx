@@ -36,62 +36,60 @@ export function DActions(props: DActionsProps): JSX.Element | null {
 
   return (
     <div {...restProps}>
-      {dActions.map((action, index) =>
-        action === 'preview' ? (
-          <a
-            key="preview"
-            className={getClassName(`${dPrefix}upload__item-action`, {
-              'is-disabled': isUndefined(dFile.url),
-            })}
-            target="_blank"
-            href={dFile.url}
-            rel="noreferrer"
-            title={t('Upload', 'Preview file')}
-            onClick={(e) => {
-              if (!isUndefined(dDefaultActions?.preview)) {
-                e.preventDefault();
+      {dActions.map((action, index) => (
+        <React.Fragment key={index}>
+          {action === 'preview' ? (
+            <a
+              className={getClassName(`${dPrefix}upload__item-action`, {
+                'is-disabled': isUndefined(dFile.url),
+              })}
+              target="_blank"
+              href={dFile.url}
+              rel="noreferrer"
+              title={t('Upload', 'Preview file')}
+              onClick={(e) => {
+                if (!isUndefined(dDefaultActions?.preview)) {
+                  e.preventDefault();
 
-                dDefaultActions!.preview(dFile);
-              }
-            }}
-          >
-            <EyeOutlined />
-          </a>
-        ) : action === 'download' ? (
-          <button
-            key="download"
-            className={`${dPrefix}upload__item-action`}
-            title={t('Upload', 'Download file')}
-            disabled={isUndefined(dFile.url)}
-            onClick={() => {
-              if (!isUndefined(dDefaultActions?.download)) {
-                dDefaultActions!.download(dFile);
-              } else {
-                saveFile(dFile.url!, dFile.name);
-              }
-            }}
-          >
-            <DownloadOutlined />
-          </button>
-        ) : action === 'remove' ? (
-          <button
-            key="remove"
-            className={`${dPrefix}upload__item-action`}
-            title={t('Upload', 'Remove file')}
-            onClick={() => {
-              onRemove?.(dFile);
-            }}
-          >
-            <DeleteOutlined />
-          </button>
-        ) : (
-          React.cloneElement(action, {
-            ...action.props,
-            key: index,
-            className: getClassName(action.props.className, `${dPrefix}upload__item-action`),
-          })
-        )
-      )}
+                  dDefaultActions!.preview(dFile);
+                }
+              }}
+            >
+              <EyeOutlined />
+            </a>
+          ) : action === 'download' ? (
+            <button
+              className={`${dPrefix}upload__item-action`}
+              title={t('Upload', 'Download file')}
+              disabled={isUndefined(dFile.url)}
+              onClick={() => {
+                if (!isUndefined(dDefaultActions?.download)) {
+                  dDefaultActions!.download(dFile);
+                } else {
+                  saveFile(dFile.url!, dFile.name);
+                }
+              }}
+            >
+              <DownloadOutlined />
+            </button>
+          ) : action === 'remove' ? (
+            <button
+              className={`${dPrefix}upload__item-action`}
+              title={t('Upload', 'Remove file')}
+              onClick={() => {
+                onRemove?.(dFile);
+              }}
+            >
+              <DeleteOutlined />
+            </button>
+          ) : (
+            React.cloneElement(action, {
+              ...action.props,
+              className: getClassName(action.props.className, `${dPrefix}upload__item-action`),
+            })
+          )}
+        </React.Fragment>
+      ))}
     </div>
   );
 }

@@ -251,7 +251,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
 
         return (
           <DPopup
-            dVisible={visible}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <div
                 {...restProps}
@@ -283,6 +282,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
                 {dTitle}
               </div>
             )}
+            dVisible={visible}
             dContainer={isFixed ? undefined : containerEl}
             dTrigger={dTrigger}
             dDisabled={dDisabled}

@@ -398,7 +398,6 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
 
         return (
           <DPopup
-            dVisible={visible}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <div
                 ref={dropdownRef}
@@ -448,6 +447,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                 {dArrow && <div className={`${dPrefix}dropdown__arrow`} style={arrowPosition}></div>}
               </div>
             )}
+            dVisible={visible}
             dTrigger={dTrigger}
             dUpdatePosition={updatePosition}
             onVisibleChange={changeVisible}

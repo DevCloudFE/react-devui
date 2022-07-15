@@ -40,6 +40,7 @@ import type {
   DTimePickerProps,
   DToastProps,
   DTooltipProps,
+  DTransferProps,
   DUploadProps,
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
@@ -95,6 +96,7 @@ export type DComponentConfig = {
   DTimePicker: DTimePickerProps;
   DToast: DToastProps;
   DTooltip: DTooltipProps;
+  DTransfer: DTransferProps<any, any>;
   DUpload: DUploadProps;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };
 

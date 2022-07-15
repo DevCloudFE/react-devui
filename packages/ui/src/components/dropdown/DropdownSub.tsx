@@ -119,8 +119,6 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
 
         return (
           <DPopup
-            dDisabled={dDisabled}
-            dVisible={dPopupState}
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <ul
                 {...restPProps}
@@ -146,6 +144,8 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 )}
               </ul>
             )}
+            dVisible={dPopupState}
+            dDisabled={dDisabled}
             dTrigger={dTrigger}
             dUpdatePosition={updatePosition}
             onVisibleChange={onVisibleChange}

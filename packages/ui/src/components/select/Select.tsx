@@ -232,6 +232,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
     return searchOptions;
   }, [dCreateOption, dOptions, filterFn, hasSearch, searchValue, sortFn]);
+  const options = hasSearch ? searchOptions : dOptions;
 
   const [_noSearchFocusOption, setNoSearchFocusOption] = useState<DNestedChildren<T> | undefined>();
   const noSearchFocusOption = useMemo(() => {
@@ -491,10 +492,10 @@ function Select<V extends DId, T extends DSelectOption<V>>(
           {dLoading && (
             <div
               className={getClassName(`${dPrefix}select__loading`, {
-                [`${dPrefix}select__loading--empty`]: dOptions.length === 0,
+                [`${dPrefix}select__loading--empty`]: options.length === 0,
               })}
             >
-              <LoadingOutlined dSize={dOptions.length === 0 ? 18 : 24} dSpin />
+              <LoadingOutlined dSize={options.length === 0 ? 18 : 24} dSpin />
             </div>
           )}
           <DVirtualScroll
@@ -504,7 +505,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
             role="listbox"
             aria-multiselectable={dMultiple}
             aria-activedescendant={isUndefined(focusOption) ? undefined : getOptionId(focusOption.value)}
-            dList={hasSearch ? searchOptions : dOptions}
+            dList={options}
             dItemRender={(item, index, renderProps, parent) => {
               const { label: optionLabel, value: optionValue, disabled: optionDisabled, children } = item;
 

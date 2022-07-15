@@ -199,30 +199,32 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
   );
   const sortFn = dCustomSearch?.sort;
   const searchOptions = useMemo(() => {
-    const searchOptions: DSearchOption<V, T>[] = [];
-    if (hasSearch) {
-      const reduceNodes = (nodes: AbstractTreeNode<V, T>[]) => {
-        nodes.forEach((node) => {
-          if ((!dMultiple && !dOnlyLeafSelectable) || node.isLeaf) {
-            if (filterFn(node.origin)) {
-              searchOptions.push({
-                label: getText(node),
-                value: node.id,
-                disabled: node.disabled,
-                [TREE_NODE_KEY]: node,
-              });
-            }
-          }
-          if (node.children) {
-            reduceNodes(node.children);
-          }
-        });
-      };
-      reduceNodes(renderNodes);
+    if (!hasSearch) {
+      return [];
+    }
 
-      if (sortFn) {
-        searchOptions.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
-      }
+    const searchOptions: DSearchOption<V, T>[] = [];
+    const reduceNodes = (nodes: AbstractTreeNode<V, T>[]) => {
+      nodes.forEach((node) => {
+        if ((!dMultiple && !dOnlyLeafSelectable) || node.isLeaf) {
+          if (filterFn(node.origin)) {
+            searchOptions.push({
+              label: getText(node),
+              value: node.id,
+              disabled: node.disabled,
+              [TREE_NODE_KEY]: node,
+            });
+          }
+        }
+        if (node.children) {
+          reduceNodes(node.children);
+        }
+      });
+    };
+    reduceNodes(renderNodes);
+
+    if (sortFn) {
+      searchOptions.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
     }
     return searchOptions;
   }, [dMultiple, dOnlyLeafSelectable, filterFn, hasSearch, renderNodes, sortFn]);

@@ -5,7 +5,7 @@ import { getClassName } from '../../utils';
 
 export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> {
   dDuration: number;
-  dEscClosable: boolean;
+  dEscClosable?: boolean;
   dDialogRef?: React.Ref<HTMLDivElement>;
   onClose?: () => void;
 }

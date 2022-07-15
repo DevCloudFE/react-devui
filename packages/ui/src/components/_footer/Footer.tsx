@@ -79,19 +79,19 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
 
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
-      {dActions.map((button, index) =>
-        button === 'cancel' ? (
-          <DButton key="cancel" {...cancelProps} dType="secondary">
-            {t('Footer', 'Cancel')}
-          </DButton>
-        ) : button === 'ok' ? (
-          <DButton key="ok" {...okProps}>
-            {t('Footer', 'OK')}
-          </DButton>
-        ) : (
-          <React.Fragment key={index}>{button}</React.Fragment>
-        )
-      )}
+      {dActions.map((action, index) => (
+        <React.Fragment key={index}>
+          {action === 'cancel' ? (
+            <DButton {...cancelProps} dType="secondary">
+              {t('Footer', 'Cancel')}
+            </DButton>
+          ) : action === 'ok' ? (
+            <DButton {...okProps}>{t('Footer', 'OK')}</DButton>
+          ) : (
+            action
+          )}
+        </React.Fragment>
+      ))}
     </div>
   );
 }

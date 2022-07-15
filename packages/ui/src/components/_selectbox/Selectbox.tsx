@@ -50,7 +50,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
-  dUpdatePosition: (boxEl: HTMLElement, popupEl: HTMLElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
+  dUpdatePosition?: (boxEl: HTMLElement, popupEl: HTMLElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
   onVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
@@ -60,17 +60,17 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const {
     children,
     dFormControl,
-    dVisible,
+    dVisible = false,
     dContent,
     dContentTitle,
     dPlaceholder,
     dSuffix,
     dSize,
-    dLoading,
-    dSearchable,
-    dClearable,
+    dLoading = false,
+    dSearchable = false,
+    dClearable = false,
     dEscClosable = true,
-    dDisabled,
+    dDisabled = false,
     dInputProps,
     dInputRef,
     dUpdatePosition,
@@ -124,7 +124,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (boxRef.current && popupRef.current) {
-      const res = dUpdatePosition(boxRef.current, popupRef.current);
+      const res = dUpdatePosition?.(boxRef.current, popupRef.current);
       if (res) {
         setPopupPositionStyle(res.position);
         setTransformOrigin(res.transformOrigin);

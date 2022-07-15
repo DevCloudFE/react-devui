@@ -30,21 +30,22 @@ export function DHeader(props: DHeaderProps): JSX.Element | null {
     <div {...restProps} className={getClassName(className, `${dPrefix}header`)}>
       <div className={`${dPrefix}header__title`}>{children}</div>
       <div className={`${dPrefix}header__buttons`}>
-        {dActions.map((action, index) =>
-          action === 'close' ? (
-            <DButton
-              key="close"
-              aria-label={t('Close')}
-              dType="text"
-              dIcon={<CloseOutlined />}
-              onClick={() => {
-                onClose?.();
-              }}
-            ></DButton>
-          ) : (
-            <React.Fragment key={index}>{action}</React.Fragment>
-          )
-        )}
+        {dActions.map((action, index) => (
+          <React.Fragment key={index}>
+            {action === 'close' ? (
+              <DButton
+                aria-label={t('Close')}
+                dType="text"
+                dIcon={<CloseOutlined />}
+                onClick={() => {
+                  onClose?.();
+                }}
+              ></DButton>
+            ) : (
+              action
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

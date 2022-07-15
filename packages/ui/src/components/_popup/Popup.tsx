@@ -23,10 +23,10 @@ export interface DPopupRenderProps {
 
 export interface DPopupProps {
   children: (props: DPopupRenderProps) => JSX.Element | null;
-  dVisible: boolean;
   dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
+  dVisible?: boolean;
   dContainer?: HTMLElement | null;
-  dTrigger: 'hover' | 'focus' | 'click';
+  dTrigger?: 'hover' | 'focus' | 'click';
   dDisabled?: boolean;
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
@@ -38,12 +38,12 @@ export interface DPopupProps {
 export function DPopup(props: DPopupProps): JSX.Element | null {
   const {
     children,
-    dVisible,
     dPopup,
+    dVisible = false,
     dContainer,
-    dTrigger,
-    dDisabled,
-    dEscClosable,
+    dTrigger = 'hover',
+    dDisabled = false,
+    dEscClosable = true,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     dUpdatePosition,

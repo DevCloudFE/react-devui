@@ -1,0 +1,118 @@
+$transfer-option-height: 32px;
+
+@include b(transfer) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &[data-form-invalid-warning='true'] {
+    @include e(panel, true) {
+      border-color: var(--#{$variable-prefix}color-warning) !important;
+    }
+  }
+
+  &[data-form-invalid-error='true'] {
+    @include e(panel, true) {
+      border-color: var(--#{$variable-prefix}color-danger) !important;
+    }
+  }
+
+  @include when(disabled) {
+    pointer-events: none;
+    filter: opacity(50%);
+  }
+
+  @include e(actions) {
+    --d-size: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px 0;
+    margin: 0 8px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 12px;
+  }
+
+  @include e(panel) {
+    flex: 1 0 0;
+    overflow: hidden;
+    border: 1px solid var(--#{$variable-prefix}color-border);
+    border-radius: var(--#{$variable-prefix}border-radius);
+  }
+
+  @include e(header) {
+    display: flex;
+    align-items: center;
+    height: 41px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(header-statistic) {
+    margin-left: 8px;
+  }
+
+  @include e(header-title) {
+    flex-grow: 1;
+    text-align: right;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(search) {
+    display: flex;
+    margin: 10px 12px;
+  }
+
+  @include e(list-container) {
+    position: relative;
+  }
+
+  @include e(loading) {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--#{$variable-prefix}color-primary);
+    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+  }
+
+  @include e(list) {
+    position: relative;
+    height: 192px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden auto;
+    list-style: none;
+  }
+
+  @include e(option) {
+    position: relative;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+    height: $transfer-option-height;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include utils-disabled;
+
+    &:hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+  }
+
+  @include e(option-content) {
+    flex-grow: 1;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(empty) {
+    justify-content: center;
+    height: 100%;
+  }
+}
