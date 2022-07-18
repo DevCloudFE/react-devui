@@ -12,14 +12,22 @@
 
   @include font-size(0.9rem);
 
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      --#{$variable-prefix}tag-color: var(--#{$variable-prefix}color-#{$theme});
+      --#{$variable-prefix}tag-border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
+      --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}background-color-#{$theme});
+    }
+  }
+
   @include m(primary) {
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
-    background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}tag-background-color));
+    background-color: var(--#{$variable-prefix}tag-background-color);
   }
 
   @include m(fill) {
     color: map.get($colors, 'white');
-    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-icon-decorator));
+    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}tag-fill-background-color));
 
     @include e(close) {
       color: map.get($colors, 'white');
@@ -37,16 +45,8 @@
 
   @include m(outline) {
     padding: 0 calc(var(--#{$variable-prefix}tag-padding-size) - 1px);
-    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-icon-decorator));
+    color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
     border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}color-border));
-  }
-
-  @each $theme, $rgb in $themes {
-    @include theme(#{$theme}) {
-      --#{$variable-prefix}tag-color: var(--#{$variable-prefix}color-#{$theme});
-      --#{$variable-prefix}tag-border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
-      --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}background-color-#{$theme});
-    }
   }
 
   @include m(smaller) {
@@ -61,6 +61,10 @@
     --#{$variable-prefix}tag-size: 32px;
 
     @include font-size(1rem);
+  }
+
+  @include e(icon) {
+    margin-right: 4px;
   }
 
   @include e(close) {

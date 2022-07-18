@@ -1,0 +1,49 @@
+@include b(badge) {
+  position: absolute;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      --#{$variable-prefix}badge-color: var(--#{$variable-prefix}color-#{$theme});
+    }
+  }
+
+  @include m(dot) {
+    @include e(wrapper) {
+      min-width: 6px;
+      height: 6px;
+      padding: 0;
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      border-radius: 3px;
+    }
+  }
+
+  @include e(container) {
+    position: relative;
+    display: inline-block;
+  }
+
+  @include e(wrapper) {
+    display: flex;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    overflow: hidden;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 12px;
+    line-height: 20px;
+    color: map.get($colors, 'white');
+    background-color: var(--#{$variable-prefix}badge-color);
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    border-radius: 10px;
+  }
+
+  @include e(number-container) {
+    display: inline-flex;
+    flex-direction: column;
+    transition: transform var(--#{$variable-prefix}animation-duration-base) ease-out;
+  }
+}

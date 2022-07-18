@@ -7,6 +7,9 @@ export { DAnchor } from './anchor';
 export type { DAutoCompleteProps } from './auto-complete';
 export { DAutoComplete } from './auto-complete';
 
+export type { DBadgeProps } from './badge';
+export { DBadge } from './badge';
+
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 

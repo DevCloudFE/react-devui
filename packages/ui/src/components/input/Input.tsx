@@ -127,7 +127,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
   };
 
   const preventBlur: React.MouseEventHandler = (e) => {
-    if (e.button === 0) {
+    if (e.target !== inputRef.current && e.button === 0) {
       e.preventDefault();
     }
   };

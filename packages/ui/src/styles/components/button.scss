@@ -24,6 +24,16 @@
     pointer-events: none;
   }
 
+  @each $theme, $rgb in $themes {
+    @include theme(#{$theme}) {
+      --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
+      --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
+      --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
+      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-hover-#{$theme});
+      --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
+    }
+  }
+
   @include m(primary) {
     padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
     color: map.get($colors, 'white');
@@ -213,22 +223,16 @@
     }
   }
 
-  @each $theme, $rgb in $themes {
-    @include theme(#{$theme}) {
-      --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
-      --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
-      --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
-      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-hover-#{$theme});
-      --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
+  @include m(icon-right) {
+    flex-direction: row-reverse;
+
+    @include e(icon) {
+      justify-content: flex-end;
     }
   }
 
   @include e(icon) {
     display: inline-flex;
     width: calc(1em + 8px);
-
-    @include m(right) {
-      justify-content: flex-end;
-    }
   }
 }

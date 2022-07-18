@@ -91,6 +91,7 @@ $colors: (
   --#{$variable-prefix}tooltip-background-color: #464d6e;
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}switch-background-color: #d4d6d9;
-  --#{$variable-prefix}tag-background-color: rgb(0 0 0 / 6%);
+  --#{$variable-prefix}tag-background-color: hsl(0deg 0% 94%);
+  --#{$variable-prefix}tag-fill-background-color: hsl(0deg 0% 58%);
   --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 97%);
 }

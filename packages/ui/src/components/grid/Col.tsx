@@ -55,7 +55,7 @@ export function DCol(props: DColProps): JSX.Element | null {
     return [span, responsiveProps];
   })();
 
-  return (
+  return dSpan === 0 ? null : (
     <div
       {...restProps}
       {...responsiveProps}

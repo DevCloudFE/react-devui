@@ -51,13 +51,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
   const disabled = _disabled || dLoading || gDisabled;
 
   const buttonIcon = (loading: boolean, iconRef?: React.RefObject<HTMLDivElement>, style?: React.CSSProperties) => (
-    <div
-      ref={iconRef}
-      className={getClassName(`${dPrefix}button__icon`, {
-        [`${dPrefix}button__icon--right`]: dIconRight,
-      })}
-      style={style}
-    >
+    <div ref={iconRef} className={`${dPrefix}button__icon`} style={style}>
       {loading ? <LoadingOutlined dSpin /> : dIcon}
     </div>
   );
@@ -72,6 +66,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
           [`${dPrefix}button--${size}`]: size,
           [`${dPrefix}button--block`]: dBlock,
           [`${dPrefix}button--icon`]: !children,
+          [`${dPrefix}button--icon-right`]: dIconRight,
           'is-loading': dLoading,
         })}
         type={type}
@@ -84,7 +79,6 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
           }
         }}
       >
-        {dIconRight && children}
         {dIcon ? (
           buttonIcon(dLoading)
         ) : (
@@ -102,7 +96,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
             {(iconRef, collapseStyle) => buttonIcon(true, iconRef, collapseStyle)}
           </DCollapseTransition>
         )}
-        {!dIconRight && children}
+        <div>{children}</div>
         {waveNode}
       </button>
     </DBaseDesign>
