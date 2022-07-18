@@ -3,7 +3,7 @@ import type { DNestedChildren } from '@react-devui/ui/utils/global';
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { DDrawer, DDrawerHeader, DMenu, useMediaMatch } from '@react-devui/ui';
 import { useMount } from '@react-devui/ui/hooks';
@@ -15,7 +15,6 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
   const { aMenuOpen, onMenuOpenChange } = props;
 
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -39,6 +38,7 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
 
   const menuNode = (
     <DMenu
+      className="app-sidebar__menu"
       dOptions={menu.map<DNestedChildren<DMenuOption<string> & { to?: string }>>((group) => ({
         id: group.title,
         title: t(`menu-group.${group.title}`),
@@ -49,33 +49,28 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
                 {
                   id: 'Interface',
                   title: (
-                    <>
+                    <Link to="/components/Interface">
                       Interface{i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`Documentation.Interface`)}</span>}
-                    </>
+                    </Link>
                   ),
                   type: 'item',
-                  to: '/components/Interface',
                 },
               ]
             : group.children.map((child) => ({
                 id: child.title,
                 title: (
-                  <>
+                  <Link to={child.to}>
                     {child.title}
                     {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
-                  </>
+                  </Link>
                 ),
                 type: 'item',
-                to: child.to,
               })),
       }))}
       dActive={activeId}
-      onActiveChange={(id, option) => {
+      onActiveChange={(id) => {
         setActiveId(id);
-        if (option.to) {
-          navigate(option.to, { replace: true });
-          onMenuOpenChange(false);
-        }
+        onMenuOpenChange(false);
       }}
     ></DMenu>
   );

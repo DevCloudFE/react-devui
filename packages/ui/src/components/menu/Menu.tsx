@@ -56,8 +56,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
     onKeyDown,
     onFocus,
     onBlur,
-    onMouseDown,
-    onMouseUp,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -166,12 +164,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
     };
     reduceArr(dOptions);
     setFocusIds(ids.length === 0 ? (isUndefined(firstId) ? [] : [firstId]) : ids);
-  };
-
-  const preventBlur: React.MouseEventHandler<HTMLElement> = (e) => {
-    if (isFocus && e.button === 0) {
-      e.preventDefault();
-    }
   };
 
   let handleKeyDown: React.KeyboardEventHandler<HTMLElement> | undefined;
@@ -474,16 +466,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
               role="menubar"
               aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
               aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
-              onMouseDown={(e) => {
-                onMouseDown?.(e);
-
-                preventBlur(e);
-              }}
-              onMouseUp={(e) => {
-                onMouseUp?.(e);
-
-                preventBlur(e);
-              }}
               onFocus={(e) => {
                 onFocus?.(e);
                 fvOnFocus(e);
