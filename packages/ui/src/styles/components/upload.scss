@@ -238,7 +238,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}mask-background-color);
+    background-color: var(--#{$variable-prefix}upload-mask-background-color);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }

@@ -87,12 +87,13 @@ $colors: (
   }
 
   /** component **/
-  --#{$variable-prefix}tooltip-text-color: #dfe1e6;
-  --#{$variable-prefix}tooltip-background-color: #464d6e;
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}avatar-background-color: #bdbdbd;
   --#{$variable-prefix}switch-background-color: #d4d6d9;
+  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 97%);
   --#{$variable-prefix}tag-background-color: hsl(0deg 0% 94%);
   --#{$variable-prefix}tag-fill-background-color: hsl(0deg 0% 58%);
-  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 97%);
-  --#{$variable-prefix}avatar-background-color: #bdbdbd;
+  --#{$variable-prefix}tooltip-text-color: #dfe1e6;
+  --#{$variable-prefix}tooltip-background-color: #464d6e;
+  --#{$variable-prefix}upload-mask-background-color: rgb(0 0 0 / 20%);
 }

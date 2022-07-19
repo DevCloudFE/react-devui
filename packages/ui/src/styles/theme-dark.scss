@@ -52,12 +52,13 @@ body.dark {
   }
 
   /** component **/
-  --#{$variable-prefix}tooltip-text-color: #d0d2d7;
-  --#{$variable-prefix}tooltip-background-color: #686a72;
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 40%);
+  --#{$variable-prefix}avatar-background-color: #666;
   --#{$variable-prefix}switch-background-color: #5f6164;
+  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 26%);
   --#{$variable-prefix}tag-background-color: hsl(0deg 0% 20%);
   --#{$variable-prefix}tag-fill-background-color: hsl(0deg 0% 50%);
-  --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 26%);
-  --#{$variable-prefix}avatar-background-color: #666;
+  --#{$variable-prefix}tooltip-text-color: #d0d2d7;
+  --#{$variable-prefix}tooltip-background-color: #686a72;
+  --#{$variable-prefix}upload-mask-background-color: rgb(255 255 255 / 20%);
 }

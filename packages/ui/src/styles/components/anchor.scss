@@ -50,7 +50,7 @@
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$variable-prefix}color-primary-lighter);
     }
 
     @include utils-break-word;

@@ -29,7 +29,7 @@ export function DHeader(props: DHeaderProps): JSX.Element | null {
   return (
     <div {...restProps} className={getClassName(className, `${dPrefix}header`)}>
       <div className={`${dPrefix}header__title`}>{children}</div>
-      <div className={`${dPrefix}header__buttons`}>
+      <div className={`${dPrefix}header__actions`}>
         {dActions.map((action, index) => (
           <React.Fragment key={index}>
             {action === 'close' ? (

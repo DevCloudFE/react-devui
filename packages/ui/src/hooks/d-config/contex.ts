@@ -5,6 +5,10 @@ import type {
   DAvatarProps,
   DBadgeProps,
   DButtonProps,
+  DCardProps,
+  DCardHeaderProps,
+  DCardContentProps,
+  DCardActionsProps,
   DCascaderProps,
   DCheckboxProps,
   DCheckboxGroupProps,
@@ -63,6 +67,10 @@ export type DComponentConfig = {
   DAvatar: DAvatarProps;
   DBadge: DBadgeProps;
   DButton: DButtonProps;
+  DCard: DCardProps;
+  DCardHeader: DCardHeaderProps;
+  DCardContent: DCardContentProps;
+  DCardActions: DCardActionsProps;
   DCascader: DCascaderProps<any, any>;
   DCheckbox: DCheckboxProps;
   DCheckboxGroup: DCheckboxGroupProps<any>;

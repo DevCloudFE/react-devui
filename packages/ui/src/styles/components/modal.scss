@@ -56,6 +56,7 @@
 
   @include e(title) {
     margin-bottom: 8px;
-    font-size: 1.15em;
+
+    @include utils-title;
   }
 }

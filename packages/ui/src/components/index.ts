@@ -16,6 +16,9 @@ export { DBadge } from './badge';
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 
+export type { DCardProps, DCardHeaderProps, DCardContentProps, DCardActionsProps } from './card';
+export { DCard, DCardHeader, DCardContent, DCardActions } from './card';
+
 export type { DCascaderProps } from './cascader';
 export { DCascader } from './cascader';
 

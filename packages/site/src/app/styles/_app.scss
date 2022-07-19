@@ -40,7 +40,7 @@ body {
   color: var(--d-color-icon-decorator);
   cursor: pointer;
   user-select: none;
-  transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+  transition: color var(--d-animation-duration-base) linear;
 
   &:hover {
     color: var(--d-color-primary);
@@ -59,7 +59,7 @@ h6 {
     color: var(--d-color-primary);
     text-decoration: none;
     opacity: 0;
-    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: opacity var(--d-animation-duration-base) linear;
 
     &:focus-visible {
       opacity: 1;
@@ -316,4 +316,21 @@ h3 {
   background: var(--d-background-color-primary);
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   border-radius: 6px;
+}
+
+.app-demo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+}
+
+.app-demo-link {
+  color: var(--d-color-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--d-animation-duration-base) linear;
+
+  &:hover {
+    color: var(--d-color-primary-lighter);
+  }
 }
