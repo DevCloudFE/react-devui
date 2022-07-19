@@ -7,6 +7,9 @@ export { DAnchor } from './anchor';
 export type { DAutoCompleteProps } from './auto-complete';
 export { DAutoComplete } from './auto-complete';
 
+export type { DAvatarProps } from './avatar';
+export { DAvatar } from './avatar';
+
 export type { DBadgeProps } from './badge';
 export { DBadge } from './badge';
 

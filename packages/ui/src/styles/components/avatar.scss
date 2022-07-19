@@ -1,0 +1,30 @@
+@include b(avatar) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: top;
+
+  @include m(circular) {
+    border-radius: 50%;
+  }
+
+  @include m(square) {
+    border-radius: var(--#{$variable-prefix}border-radius);
+  }
+
+  @include m(icon) {
+    color: map.get($colors, 'white');
+    background-color: var(--#{$variable-prefix}avatar-background-color);
+  }
+
+  @include m(text) {
+    color: map.get($colors, 'white');
+    background-color: var(--#{$variable-prefix}avatar-background-color);
+  }
+
+  @include e(img) {
+    width: 100%;
+    height: 100%;
+  }
+}

@@ -2,6 +2,7 @@ import type {
   DAffixProps,
   DAnchorProps,
   DAutoCompleteProps,
+  DAvatarProps,
   DBadgeProps,
   DButtonProps,
   DCascaderProps,
@@ -59,6 +60,7 @@ export type DComponentConfig = {
   DAffix: DAffixProps;
   DAnchor: DAnchorProps;
   DAutoComplete: DAutoCompleteProps<any>;
+  DAvatar: DAvatarProps;
   DBadge: DBadgeProps;
   DButton: DButtonProps;
   DCascader: DCascaderProps<any, any>;

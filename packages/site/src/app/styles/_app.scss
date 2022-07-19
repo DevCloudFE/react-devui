@@ -9,9 +9,7 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
-  line-height: 1.5;
   color: var(--d-text-color);
-  text-align: null;
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   background-color: #fff;
   text-size-adjust: 100%;
@@ -283,6 +281,13 @@ h3 {
 
   section[id^='Badge'] {
     .d-badge__container {
+      margin-right: 24px;
+      margin-bottom: 12px;
+    }
+  }
+
+  section[id^='Avatar'] {
+    .d-avatar {
       margin-right: 24px;
       margin-bottom: 12px;
     }
