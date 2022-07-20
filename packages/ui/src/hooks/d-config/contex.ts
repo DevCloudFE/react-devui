@@ -39,6 +39,8 @@ import type {
   DSelectProps,
   DSeparatorProps,
   DSliderProps,
+  DSlidesProps,
+  DSlideProps,
   DSwitchProps,
   DTabsProps,
   DTagProps,
@@ -101,6 +103,8 @@ export type DComponentConfig = {
   DSelect: DSelectProps<any, any>;
   DSeparator: DSeparatorProps;
   DSlider: DSliderProps;
+  DSlides: DSlidesProps;
+  DSlide: DSlideProps;
   DSwitch: DSwitchProps;
   DTabs: DTabsProps<any, any>;
   DTag: DTagProps;

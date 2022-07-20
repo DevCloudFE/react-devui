@@ -1,0 +1,69 @@
+@include b(slides) {
+  --swiper-theme-color: var(--#{$variable-prefix}color-primary);
+
+  .swiper-button-prev {
+    top: 50%;
+    right: unset;
+    bottom: unset;
+    left: 12px;
+    transform: translateY(-50%);
+  }
+
+  .swiper-button-next {
+    top: 50%;
+    right: 12px;
+    bottom: unset;
+    left: unset;
+    transform: translateY(-50%);
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 18px;
+    color: var(--#{$variable-prefix}text-color);
+    text-decoration: none;
+    vertical-align: top;
+    background-color: var(--#{$variable-prefix}background-color);
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    box-shadow: 0 1px 4px 0 var(--#{$variable-prefix}shadow-color);
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear,
+      color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    appearance: none;
+
+    &::after {
+      content: none;
+    }
+
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+      background-color: var(--#{$variable-prefix}slides-navigation-background-color-hover);
+    }
+  }
+
+  @include m(vertical) {
+    .swiper-button-prev {
+      top: 12px;
+      right: unset;
+      bottom: unset;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+    }
+
+    .swiper-button-next {
+      top: unset;
+      right: unset;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+    }
+  }
+}

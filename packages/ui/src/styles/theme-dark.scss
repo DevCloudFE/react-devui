@@ -54,6 +54,7 @@ body.dark {
   /** component **/
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 40%);
   --#{$variable-prefix}avatar-background-color: #666;
+  --#{$variable-prefix}slides-navigation-background-color-hover: rgb(45 45 45);
   --#{$variable-prefix}switch-background-color: #5f6164;
   --#{$variable-prefix}tabs-slider-background-color: hsl(0deg 0% 26%);
   --#{$variable-prefix}tag-background-color: hsl(0deg 0% 20%);

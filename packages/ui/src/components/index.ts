@@ -82,6 +82,9 @@ export { DSeparator } from './separator';
 export type { DSliderProps } from './slider';
 export { DSlider } from './slider';
 
+export type { DSlidesProps, DSlideProps } from './slides';
+export { DSlides, DSlide } from './slides';
+
 export type { DSwitchProps } from './switch';
 export { DSwitch } from './switch';
 

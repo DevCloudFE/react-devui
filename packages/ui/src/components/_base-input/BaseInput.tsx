@@ -13,7 +13,14 @@ export interface DBaseInputProps extends React.InputHTMLAttributes<any> {
 }
 
 function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.Element | null {
-  const { dFormControl, dTag = 'input', dFor = true, ...restProps } = props;
+  const {
+    dFormControl,
+    dTag = 'input',
+    dFor = true,
+
+    id,
+    ...restProps
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -21,7 +28,7 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
   //#endregion
 
   const uniqueId = useId();
-  const id = `${dPrefix}base-input-${uniqueId}`;
+  const _id = id ?? `${dPrefix}base-input-${uniqueId}`;
 
   const supportForm = formContext && dFormControl;
 
@@ -36,7 +43,7 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
     ...restProps,
     ...attrs,
     ref: ref,
-    id: props.id ?? id,
+    id: _id,
     'aria-describedby': [props['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby']]
       .filter((describedby) => isString(describedby))
       .join(' '),
