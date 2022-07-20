@@ -184,7 +184,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
     inputProps?: React.InputHTMLAttributes<HTMLInputElement>
   ): React.InputHTMLAttributes<HTMLInputElement> => ({
     role: 'combobox',
-    'aria-haspopup': 'listbox',
+    'aria-autocomplete': 'list',
     'aria-expanded': visible,
     'aria-controls': listId,
     onFocus: (e) => {

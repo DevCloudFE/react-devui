@@ -49,8 +49,7 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
       className={getClassName(className, `${dPrefix}alert-dialog`)}
       ref={dDialogRef}
       tabIndex={-1}
-      role="alertdialog"
-      aria-modal="true"
+      role="alert"
       onMouseEnter={(e) => {
         onMouseEnter?.(e);
 

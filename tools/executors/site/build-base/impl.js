@@ -154,10 +154,11 @@ class GenerateSite {
         }
     }
     generateComponentRoute(file, outDir) {
-        var _a;
+        var _a, _b;
         const enMeta = yamlFront.loadFront((0, fs_extra_1.readFileSync)(path_1.default.join(file.path, 'README.md')));
         const zhMeta = yamlFront.loadFront((0, fs_extra_1.readFileSync)(path_1.default.join(file.path, 'README.zh-Hant.md')));
         const meta = {
+            aria: (_a = enMeta.aria) !== null && _a !== void 0 ? _a : '',
             title: {
                 'en-US': enMeta.title,
                 'zh-Hant': zhMeta.title,
@@ -192,7 +193,7 @@ class GenerateSite {
             let importStr = '';
             const demoList = [];
             for (const demoFile of (0, fs_extra_1.readdirSync)(path_1.default.join(file.path, 'demos'))) {
-                const order = (_a = demoFile.match(/^[0-9]+/)) === null || _a === void 0 ? void 0 : _a[0];
+                const order = (_b = demoFile.match(/^[0-9]+/)) === null || _b === void 0 ? void 0 : _b[0];
                 if (order) {
                     const demo = this.generateComponentDemo({
                         name: demoFile,
@@ -241,6 +242,7 @@ class GenerateSite {
   title: '__title__',
   subtitle: '__subtitle__',
   description: [__description__],
+  aria: '__aria__',
   api: [__api__],
   demos: (
     <>
@@ -252,6 +254,7 @@ class GenerateSite {
 `;
                 routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
                 routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
+                routeArticleProps = routeArticleProps.replace(/__aria__/g, meta.aria);
                 routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
                 const article = meta.__content[lang];
                 const description = (_a = article.match(/^[\s\S]*(?=## API)/g)) === null || _a === void 0 ? void 0 : _a[0];

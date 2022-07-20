@@ -29,6 +29,7 @@ interface ComponentMeta {
   group?: string;
   title: string;
   img?: string;
+  aria?: string;
   __content: string;
 }
 
@@ -157,6 +158,7 @@ class GenerateSite {
     const enMeta: ComponentMeta = yamlFront.loadFront(readFileSync(path.join(file.path, 'README.md')));
     const zhMeta: ComponentMeta = yamlFront.loadFront(readFileSync(path.join(file.path, 'README.zh-Hant.md')));
     const meta = {
+      aria: enMeta.aria ?? '',
       title: {
         'en-US': enMeta.title,
         'zh-Hant': zhMeta.title,
@@ -254,6 +256,7 @@ class GenerateSite {
   title: '__title__',
   subtitle: '__subtitle__',
   description: [__description__],
+  aria: '__aria__',
   api: [__api__],
   demos: (
     <>
@@ -265,6 +268,7 @@ class GenerateSite {
 `;
         routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
         routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
+        routeArticleProps = routeArticleProps.replace(/__aria__/g, meta.aria);
         routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
 
         const article = meta.__content[lang];
