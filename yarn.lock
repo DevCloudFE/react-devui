@@ -2941,14 +2941,14 @@
   dependencies:
     "@typescript-eslint/utils" "5.10.2"
 
-"@typescript-eslint/parser@^5.28.0":
-  version "5.28.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.28.0.tgz#639b101cad2bfb7ae16e69710ac95c42bd4eae33"
-  integrity sha512-ekqoNRNK1lAcKhZESN/PdpVsWbP9jtiNqzFWkp/yAUdZvJalw2heCYuqRmM5eUJSIYEkgq5sGOjq+ZqsLMjtRA==
+"@typescript-eslint/parser@^5.30.7":
+  version "5.30.7"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.30.7.tgz#99d09729392aec9e64b1de45cd63cb81a4ddd980"
+  integrity sha512-Rg5xwznHWWSy7v2o0cdho6n+xLhK2gntImp0rJroVVFkcYFYQ8C8UJTSuTw/3CnExBmPjycjmUJkxVmjXsld6A==
   dependencies:
-    "@typescript-eslint/scope-manager" "5.28.0"
-    "@typescript-eslint/types" "5.28.0"
-    "@typescript-eslint/typescript-estree" "5.28.0"
+    "@typescript-eslint/scope-manager" "5.30.7"
+    "@typescript-eslint/types" "5.30.7"
+    "@typescript-eslint/typescript-estree" "5.30.7"
     debug "^4.3.4"
 
 "@typescript-eslint/scope-manager@5.10.2":
@@ -2966,6 +2966,14 @@
   dependencies:
     "@typescript-eslint/types" "5.28.0"
     "@typescript-eslint/visitor-keys" "5.28.0"
+
+"@typescript-eslint/scope-manager@5.30.7":
+  version "5.30.7"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-5.30.7.tgz#8269a931ef1e5ae68b5eb80743cc515c4ffe3dd7"
+  integrity sha512-7BM1bwvdF1UUvt+b9smhqdc/eniOnCKxQT/kj3oXtj3LqnTWCAM0qHRHfyzCzhEfWX0zrW7KqXXeE4DlchZBKw==
+  dependencies:
+    "@typescript-eslint/types" "5.30.7"
+    "@typescript-eslint/visitor-keys" "5.30.7"
 
 "@typescript-eslint/type-utils@5.28.0":
   version "5.28.0"
@@ -2985,6 +2993,11 @@
   version "5.28.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-5.28.0.tgz#cffd9bcdce28db6daaa146e48a0be4387a6f4e9d"
   integrity sha512-2OOm8ZTOQxqkPbf+DAo8oc16sDlVR5owgJfKheBkxBKg1vAfw2JsSofH9+16VPlN9PWtv8Wzhklkqw3k/zCVxA==
+
+"@typescript-eslint/types@5.30.7":
+  version "5.30.7"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-5.30.7.tgz#18331487cc92d0f1fb1a6f580c8ec832528079d0"
+  integrity sha512-ocVkETUs82+U+HowkovV6uxf1AnVRKCmDRNUBUUo46/5SQv1owC/EBFkiu4MOHeZqhKz2ktZ3kvJJ1uFqQ8QPg==
 
 "@typescript-eslint/typescript-estree@5.10.2":
   version "5.10.2"
@@ -3006,6 +3019,19 @@
   dependencies:
     "@typescript-eslint/types" "5.28.0"
     "@typescript-eslint/visitor-keys" "5.28.0"
+    debug "^4.3.4"
+    globby "^11.1.0"
+    is-glob "^4.0.3"
+    semver "^7.3.7"
+    tsutils "^3.21.0"
+
+"@typescript-eslint/typescript-estree@5.30.7":
+  version "5.30.7"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-5.30.7.tgz#05da9f1b281985bfedcf62349847f8d168eecc07"
+  integrity sha512-tNslqXI1ZdmXXrHER83TJ8OTYl4epUzJC0aj2i4DMDT4iU+UqLT3EJeGQvJ17BMbm31x5scSwo3hPM0nqQ1AEA==
+  dependencies:
+    "@typescript-eslint/types" "5.30.7"
+    "@typescript-eslint/visitor-keys" "5.30.7"
     debug "^4.3.4"
     globby "^11.1.0"
     is-glob "^4.0.3"
@@ -3050,6 +3076,14 @@
   integrity sha512-BtfP1vCor8cWacovzzPFOoeW4kBQxzmhxGoOpt0v1SFvG+nJ0cWaVdJk7cky1ArTcFHHKNIxyo2LLr3oNkSuXA==
   dependencies:
     "@typescript-eslint/types" "5.28.0"
+    eslint-visitor-keys "^3.3.0"
+
+"@typescript-eslint/visitor-keys@5.30.7":
+  version "5.30.7"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-5.30.7.tgz#c093abae75b4fd822bfbad9fc337f38a7a14909a"
+  integrity sha512-KrRXf8nnjvcpxDFOKej4xkD7657+PClJs5cJVSG7NNoCNnjEdc46juNAQt7AyuWctuCgs6mVRc1xGctEqrjxWw==
+  dependencies:
+    "@typescript-eslint/types" "5.30.7"
     eslint-visitor-keys "^3.3.0"
 
 "@webassemblyjs/ast@1.11.1":
@@ -4709,10 +4743,10 @@ debug@2.6.9, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@^4.0.0, debug@^4.1.0, debug@^4.1.1, debug@^4.3.2, debug@^4.3.3:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
-  integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
+debug@4, debug@^4.0.0, debug@^4.1.0, debug@^4.1.1, debug@^4.3.2, debug@^4.3.3, debug@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
+  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
 
@@ -4722,13 +4756,6 @@ debug@^3.1.1, debug@^3.2.7:
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
-
-debug@^4.3.4:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
-  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
-  dependencies:
-    ms "2.1.2"
 
 debug@~3.1.0:
   version "3.1.0"
@@ -4932,6 +4959,13 @@ dom-serializer@^1.0.1:
     domelementtype "^2.0.1"
     domhandler "^4.2.0"
     entities "^2.0.0"
+
+dom7@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/dom7/-/dom7-4.0.4.tgz#8b68c5d8e5e2ed0fddb1cb93e433bc9060c8f3fb"
+  integrity sha512-DSSgBzQ4rJWQp1u6o+3FVwMNnT5bzQbMb+o31TjYYeRi05uAcpF8koxdfzeoe5ElzPmua7W7N28YJhF7iEKqIw==
+  dependencies:
+    ssr-window "^4.0.0"
 
 domelementtype@^2.0.1, domelementtype@^2.2.0:
   version "2.2.0"
@@ -10247,6 +10281,11 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
+ssr-window@^4.0.0, ssr-window@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/ssr-window/-/ssr-window-4.0.2.tgz#dc6b3ee37be86ac0e3ddc60030f7b3bc9b8553be"
+  integrity sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==
+
 stable@^0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/stable/-/stable-0.1.8.tgz#836eb3c8382fe2936feaf544631017ce7d47a3cf"
@@ -10665,6 +10704,14 @@ svgo@^2.5.0, svgo@^2.7.0:
     csso "^4.2.0"
     picocolors "^1.0.0"
     stable "^0.1.8"
+
+swiper@^8.3.1:
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.3.1.tgz#ad744c38b86b48c2207d169807e995e70cbce6be"
+  integrity sha512-oASYsulsERlbQVTZ8FjlTDJSN4YZwhp+AkvepOj8EOhgpvxzKoMpWpBPrk7ypkMioQUx6x2NPvkRU0Qv9mpS0A==
+  dependencies:
+    dom7 "^4.0.4"
+    ssr-window "^4.0.2"
 
 symbol-tree@^3.2.4:
   version "3.2.4"
