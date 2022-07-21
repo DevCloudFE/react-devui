@@ -43,6 +43,7 @@ export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivEl
   dInputRef?: React.Ref<HTMLInputElement> | [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
   onModelChange?: (date: any) => void;
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
   onUpdatePanel?: (date: Date) => void;
 }
@@ -67,6 +68,7 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
     dInputRef,
     onModelChange,
     onVisibleChange,
+    afterVisibleChange,
     onClear,
     onUpdatePanel,
 
@@ -266,6 +268,7 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
       dInputProps={[getInputProps(true), getInputProps(false)]}
       dInputRef={[dInputRefLeft, dInputRefRight]}
       onVisibleChange={changeVisible}
+      afterVisibleChange={afterVisibleChange}
       onClear={() => {
         onClear?.();
 

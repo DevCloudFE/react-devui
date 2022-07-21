@@ -57,6 +57,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderOption<V>> ext
   dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (value: any, option: any) => void;
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
   onFocusChange?: (value: V, option: DNestedChildren<T>) => void;
@@ -88,6 +89,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     dInputRef,
     onModelChange,
     onVisibleChange,
+    afterVisibleChange,
     onSearch,
     onClear,
     onFocusChange,
@@ -403,6 +405,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
         };
       }}
       onVisibleChange={changeVisible}
+      afterVisibleChange={afterVisibleChange}
       onFocusVisibleChange={setFocusVisible}
       onClear={handleClear}
     >

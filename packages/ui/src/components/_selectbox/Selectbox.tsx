@@ -52,6 +52,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dInputRef?: React.Ref<HTMLInputElement>;
   dUpdatePosition?: (boxEl: HTMLElement, popupEl: HTMLElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
 }
@@ -75,6 +76,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     dInputRef,
     dUpdatePosition,
     onVisibleChange,
+    afterVisibleChange,
     onFocusVisibleChange,
     onClear,
 
@@ -236,7 +238,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                         onVisibleChange?.(false);
                       }
                     } else {
-                      if (e.code === 'Space' || e.code === 'Enter') {
+                      if (e.code === 'Enter' || e.code === 'Space') {
                         e.preventDefault();
 
                         onVisibleChange?.(true);
@@ -305,7 +307,17 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
       </DBaseDesign>
       {containerEl &&
         ReactDOM.createPortal(
-          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
+          <DTransition
+            dIn={dVisible}
+            dDuring={TTANSITION_DURING_POPUP}
+            onEnterRendered={updatePosition}
+            afterEnter={() => {
+              afterVisibleChange?.(true);
+            }}
+            afterLeave={() => {
+              afterVisibleChange?.(false);
+            }}
+          >
             {(state) => {
               let transitionStyle: React.CSSProperties = {};
               switch (state) {

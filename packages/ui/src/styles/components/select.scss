@@ -64,7 +64,7 @@ $select-option-height: 32px;
   }
 
   @include e(option-content) {
-    flex-grow: 1;
+    flex: 1 0 0;
 
     @include utils-ellipsis;
   }

@@ -3,7 +3,7 @@ import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { DDropdownOption } from '../dropdown';
 import type { DFormControl } from '../form';
 
-import { isArray, isNull, isNumber, isUndefined } from 'lodash';
+import { isNull, isNumber, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useEventCallback, useDValue } from '../../hooks';
@@ -53,6 +53,7 @@ export interface DSelectProps<V extends DId, T extends DSelectOption<V>> extends
   dInputRef?: React.Ref<HTMLInputElement>;
   onModelChange?: (value: any, option: any) => void;
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
   onCreateOption?: (option: DNestedChildren<T>) => void;
@@ -87,6 +88,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     dInputRef,
     onModelChange,
     onVisibleChange,
+    afterVisibleChange,
     onClear,
     onSearch,
     onCreateOption,
@@ -126,8 +128,8 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     dModel,
     (value) => {
       if (onModelChange) {
-        if (isArray(value)) {
-          let length = value.length;
+        if (dMultiple) {
+          let length = (value as V[]).length;
           const options: DNestedChildren<T>[] = [];
           const reduceArr = (arr: DNestedChildren<T>[]) => {
             for (const item of arr) {
@@ -138,7 +140,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
               if (item.children) {
                 reduceArr(item.children);
               } else {
-                const index = value.findIndex((v) => v === item.value);
+                const index = (value as V[]).findIndex((v) => v === item.value);
                 if (index !== -1) {
                   options[index] = item;
                   length -= 1;
@@ -150,14 +152,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
           onModelChange(value, options);
         } else {
-          if (isNull(value)) {
-            onModelChange(value, null);
-          } else {
-            onModelChange(
-              value,
-              findNested(dOptions, (option) => option.value === value)
-            );
-          }
+          onModelChange(value, isNull(value) ? null : findNested(dOptions, (option) => option.value === value));
         }
       }
     },
@@ -470,6 +465,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         };
       }}
       onVisibleChange={changeVisible}
+      afterVisibleChange={afterVisibleChange}
       onFocusVisibleChange={setFocusVisible}
       onClear={() => {
         onClear?.();

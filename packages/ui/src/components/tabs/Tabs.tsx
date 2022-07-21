@@ -13,12 +13,11 @@ import {
   useIsomorphicLayoutEffect,
   useDValue,
 } from '../../hooks';
-import { EllipsisOutlined, PlusOutlined } from '../../icons';
+import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DDropdown } from '../dropdown';
-import { DTab } from './Tab';
 
-export interface DTabsOption<ID extends DId> {
+export interface DTabOption<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   panel: React.ReactNode;
@@ -26,20 +25,20 @@ export interface DTabsOption<ID extends DId> {
   closable?: boolean;
 }
 
-export interface DTabsProps<ID extends DId, T extends DTabsOption<ID>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DTabsProps<ID extends DId, T extends DTabOption<ID>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dTabs: T[];
   dActive?: ID;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
   dSize?: DSize;
-  onActiveChange?: (id: ID, tab: T) => void;
+  onActiveChange?: (id: ID, option: T) => void;
   onAddClick?: () => void;
-  onClose?: (id: ID, tab: T) => void;
+  onClose?: (id: ID, option: T) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
-export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
+export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
   const {
     dTabs,
     dActive,
@@ -80,14 +79,13 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
   const iconSize = dSize === 'smaller' ? 16 : dSize === 'larger' ? 20 : 18;
 
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
-  const [activeId, changeActiveId] = useDValue<ID, ID>(
+  const [activeId, changeActiveId] = useDValue<ID | undefined, ID>(
     () => {
       for (const tab of dTabs) {
         if (!tab.disabled) {
           return tab.id;
         }
       }
-      return dTabs[0].id;
     },
     dActive,
     (id) => {
@@ -252,18 +250,24 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
               onClose?.(tabId, tab);
             };
 
+            const active = tabId === activeId;
+
             return (
-              <DTab
+              <div
                 key={tabId}
-                dId={getTabId(tabId)}
-                dPanelId={getPanelId(tabId)}
-                dDisabled={tabDisabled}
-                dActive={tabId === activeId}
-                dClosable={tabClosable}
-                onActive={() => {
+                id={getTabId(tabId)}
+                className={getClassName(`${dPrefix}tabs__tab`, {
+                  'is-active': active,
+                  'is-disabled': tabDisabled,
+                })}
+                tabIndex={active && !tabDisabled ? 0 : -1}
+                role="tab"
+                aria-controls={getPanelId(tabId)}
+                aria-selected={active}
+                aria-disabled={tabDisabled}
+                onClick={() => {
                   changeActiveId(tabId);
                 }}
-                onClose={closeTab}
                 onKeyDown={(e) => {
                   switch (e.code) {
                     case 'Delete':
@@ -327,7 +331,20 @@ export function DTabs<ID extends DId, T extends DTabsOption<ID>>(props: DTabsPro
                 }}
               >
                 {tabTitle}
-              </DTab>
+                {!tabDisabled && tabClosable && (
+                  <button
+                    className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tabs__close`)}
+                    aria-label={t('Close')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      closeTab();
+                    }}
+                  >
+                    <CloseOutlined dSize={14} />
+                  </button>
+                )}
+              </div>
             );
           })}
           {(listOverflow || onAddClick) && (

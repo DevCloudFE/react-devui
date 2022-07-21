@@ -1,3 +1,6 @@
+export type { DAccordionProps } from './accordion';
+export { DAccordion } from './accordion';
+
 export type { DAffixProps } from './affix';
 export { DAffix } from './affix';
 

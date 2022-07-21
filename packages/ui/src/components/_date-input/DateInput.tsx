@@ -46,6 +46,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dInputProps?: [React.InputHTMLAttributes<HTMLInputElement>?, React.InputHTMLAttributes<HTMLInputElement>?];
   dInputRef?: [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
 }
 
@@ -64,6 +65,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     dInputProps,
     dInputRef,
     onVisibleChange,
+    afterVisibleChange,
     onClear,
 
     className,
@@ -220,7 +222,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
               onVisibleChange?.(false);
             }
           } else {
-            if (e.code === 'Space' || e.code === 'Enter') {
+            if (e.code === 'Enter' || e.code === 'Space') {
               e.preventDefault();
 
               onVisibleChange?.(true);
@@ -309,7 +311,17 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       </DBaseDesign>
       {containerEl &&
         ReactDOM.createPortal(
-          <DTransition dIn={dVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
+          <DTransition
+            dIn={dVisible}
+            dDuring={TTANSITION_DURING_POPUP}
+            onEnterRendered={updatePosition}
+            afterEnter={() => {
+              afterVisibleChange?.(true);
+            }}
+            afterLeave={() => {
+              afterVisibleChange?.(false);
+            }}
+          >
             {(state) => {
               let transitionStyle: React.CSSProperties = {};
               switch (state) {

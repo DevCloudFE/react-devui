@@ -40,6 +40,7 @@ export interface DAutoCompleteProps<T extends DAutoCompleteOption> extends React
   dLoading?: boolean;
   dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
   onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
   onOptionClick?: (value: string, option: T) => void;
   onScrollBottom?: () => void;
 }
@@ -56,6 +57,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
     dLoading = false,
     dCustomOption,
     onVisibleChange,
+    afterVisibleChange,
     onOptionClick,
     onScrollBottom,
 
@@ -255,7 +257,17 @@ function AutoComplete<T extends DAutoCompleteOption>(
       </DFocusVisible>
       {containerEl &&
         ReactDOM.createPortal(
-          <DTransition dIn={visible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
+          <DTransition
+            dIn={visible}
+            dDuring={TTANSITION_DURING_POPUP}
+            onEnterRendered={updatePosition}
+            afterEnter={() => {
+              afterVisibleChange?.(true);
+            }}
+            afterLeave={() => {
+              afterVisibleChange?.(false);
+            }}
+          >
             {(state) => {
               let transitionStyle: React.CSSProperties = {};
               switch (state) {

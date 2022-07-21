@@ -1,4 +1,5 @@
 import type {
+  DAccordionProps,
   DAffixProps,
   DAnchorProps,
   DAutoCompleteProps,
@@ -63,6 +64,7 @@ interface Resources {
 }
 
 export type DComponentConfig = {
+  DAccordion: DAccordionProps<any, any>;
   DAffix: DAffixProps;
   DAnchor: DAnchorProps;
   DAutoComplete: DAutoCompleteProps<any>;

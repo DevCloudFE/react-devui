@@ -1,0 +1,43 @@
+@include b(accordion) {
+  @include e(container) {
+    border: 1px solid var(--#{$variable-prefix}color-border);
+
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+  }
+
+  @include e(button) {
+    display: flex;
+    gap: 0 10px;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    background-color: var(--#{$variable-prefix}background-color-gray);
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
+
+    @include m(arrow-left) {
+      flex-direction: row-reverse;
+    }
+  }
+
+  @include e(title) {
+    flex: 1 0 0;
+
+    @include utils-ellipsis;
+  }
+
+  @include e(arrow) {
+    font-size: 0.9em;
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(region) {
+    padding: 16px;
+    border-top: 1px solid var(--#{$variable-prefix}color-border);
+  }
+}

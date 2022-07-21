@@ -6,7 +6,6 @@ import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useElement, useAsync, useIsomorphicLayoutEffect, useEventCallback } from '../../hooks';
 import { getClassName, registerComponentMate, scrollTo } from '../../utils';
-import { DLink } from './Link';
 
 export interface DAnchorOption {
   title: React.ReactNode;
@@ -178,19 +177,24 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
         const { title: linkTitle, href: linkHref, target: linkTarget, children } = link;
         return (
           <React.Fragment key={`${linkHref}-${level}`}>
-            <DLink
-              dHref={linkHref}
-              dActive={linkHref === activeHref}
-              dTarget={linkTarget}
-              dLevel={level}
-              onClick={() => {
-                onLinkClick?.(linkHref, link);
+            <li>
+              <a
+                className={getClassName(`${dPrefix}anchor__link`, {
+                  'is-active': linkHref === activeHref,
+                })}
+                style={{ paddingLeft: 16 + level * 16 }}
+                href={linkHref}
+                target={linkTarget}
+                onClick={(e) => {
+                  e.preventDefault();
 
-                handleLinkClick(linkHref);
-              }}
-            >
-              {linkTitle}
-            </DLink>
+                  onLinkClick?.(linkHref, link);
+                  handleLinkClick(linkHref);
+                }}
+              >
+                {linkTitle}
+              </a>
+            </li>
             {children && getNodes(children, level + 1)}
           </React.Fragment>
         );
