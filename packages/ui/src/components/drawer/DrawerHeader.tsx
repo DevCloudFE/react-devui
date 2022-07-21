@@ -17,7 +17,6 @@ export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
     __id,
     __onClose,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
 
@@ -25,5 +24,12 @@ export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  return <DHeader {...restProps} id={__id} className={getClassName(className, `${dPrefix}drawer-header`)} onClose={__onClose}></DHeader>;
+  return (
+    <DHeader
+      {...restProps}
+      id={restProps.id ?? __id}
+      className={getClassName(restProps.className, `${dPrefix}drawer-header`)}
+      onClose={__onClose}
+    ></DHeader>
+  );
 }

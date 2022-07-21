@@ -50,8 +50,6 @@ export function DModal(props: DModalProps): JSX.Element | null {
     onVisibleChange,
     afterVisibleChange,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -199,19 +197,19 @@ export function DModal(props: DModalProps): JSX.Element | null {
             <div
               {...restProps}
               ref={modalRef}
-              className={getClassName(className, `${dPrefix}modal`, {
+              className={getClassName(restProps.className, `${dPrefix}modal`, {
                 [`${dPrefix}modal--center`]: dTop === 'center',
                 [`${dPrefix}modal--type`]: dType,
               })}
               style={{
-                ...style,
+                ...restProps.style,
                 display: state === 'leaved' ? 'none' : undefined,
                 zIndex,
               }}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={headerNode ? headerId : undefined}
-              aria-describedby={contentId}
+              role={restProps.role ?? 'dialog'}
+              aria-modal={restProps['aria-modal'] ?? 'true'}
+              aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+              aria-describedby={restProps['aria-describedby'] ?? contentId}
             >
               {dMask && (
                 <DMask

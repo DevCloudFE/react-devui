@@ -54,11 +54,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     dCustomTooltip,
     onModelChange,
 
-    className,
-    onMouseDown,
-    onMouseUp,
-    onTouchStart,
-    onTouchEnd,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -478,11 +473,11 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     <div
       {...restProps}
       ref={sliderRef}
-      className={getClassName(className, `${dPrefix}slider`, `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`, {
+      className={getClassName(restProps.className, `${dPrefix}slider`, `${dPrefix}slider--${dVertical ? 'vertical' : 'horizontal'}`, {
         'is-disabled': disabled,
       })}
       onMouseDown={(e) => {
-        onMouseDown?.(e);
+        restProps.onMouseDown?.(e);
 
         preventBlur(e);
         if (e.button === 0) {
@@ -490,17 +485,17 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         }
       }}
       onMouseUp={(e) => {
-        onMouseUp?.(e);
+        restProps.onMouseUp?.(e);
 
         preventBlur(e);
       }}
       onTouchStart={(e) => {
-        onTouchStart?.(e);
+        restProps.onTouchStart?.(e);
 
         startDrag({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
       }}
       onTouchEnd={(e) => {
-        onTouchEnd?.(e);
+        restProps.onTouchEnd?.(e);
 
         setDraggableDot(null);
         setThumbPoint(null);

@@ -13,7 +13,6 @@ export function DCard(props: DCardProps): JSX.Element | null {
     dBorder = true,
     dShadow = false,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -24,7 +23,7 @@ export function DCard(props: DCardProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}card`, {
+      className={getClassName(restProps.className, `${dPrefix}card`, {
         [`${dPrefix}card--border`]: dBorder,
         [`${dPrefix}card--shadow`]: dShadow === true,
         [`${dPrefix}card--shadow-hover`]: dShadow === 'hover',

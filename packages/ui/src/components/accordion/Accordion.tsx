@@ -37,7 +37,6 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
     onActiveChange,
     afterActiveChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -77,7 +76,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
   });
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}accordion`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}accordion`)}>
       {dAccordions.map((accordion, index) => {
         const {
           id: accordionId,

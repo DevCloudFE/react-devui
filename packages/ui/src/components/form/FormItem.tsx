@@ -54,8 +54,6 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     dSpan,
     dResponsiveProps,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -279,11 +277,11 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}form__item`, {
+      className={getClassName(restProps.className, `${dPrefix}form__item`, {
         [`${dPrefix}form__item--vertical`]: gLayout === 'vertical',
       })}
       style={{
-        ...style,
+        ...restProps.style,
         flexGrow: span === true ? 1 : undefined,
         flexShrink: span === true ? undefined : 0,
         width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,

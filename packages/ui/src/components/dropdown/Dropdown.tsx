@@ -69,14 +69,6 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
     afterVisibleChange,
     onOptionClick,
 
-    id,
-    className,
-    style,
-    onMouseEnter,
-    onMouseLeave,
-    onMouseDown,
-    onMouseUp,
-    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -93,7 +85,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
   const updatePosition$ = useEventNotify<void>();
 
   const uniqueId = useId();
-  const _id = id ?? `${dPrefix}dropdown-${uniqueId}`;
+  const id = restProps.id ?? `${dPrefix}dropdown-${uniqueId}`;
   const buttonId = children.props.id ?? `${dPrefix}dropdown-button-${uniqueId}`;
   const getOptionId = (id: ID) => `${dPrefix}dropdown-option-${id}-${uniqueId}`;
 
@@ -403,39 +395,39 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                 ref={dropdownRef}
                 {...restProps}
                 {...restPProps}
-                className={getClassName(className, `${dPrefix}dropdown`)}
+                className={getClassName(restProps.className, `${dPrefix}dropdown`)}
                 style={{
-                  ...style,
+                  ...restProps.style,
                   ...popupPositionStyle,
                   ...transitionStyle,
                   zIndex,
                 }}
                 onClick={(e) => {
-                  onClick?.(e);
+                  restProps.onClick?.(e);
                   pOnClick?.(e);
                 }}
                 onMouseEnter={(e) => {
-                  onMouseEnter?.(e);
+                  restProps.onMouseEnter?.(e);
                   pOnMouseEnter?.(e);
                 }}
                 onMouseLeave={(e) => {
-                  onMouseLeave?.(e);
+                  restProps.onMouseLeave?.(e);
                   pOnMouseLeave?.(e);
                 }}
                 onMouseDown={(e) => {
-                  onMouseDown?.(e);
+                  restProps.onMouseDown?.(e);
 
                   preventBlur(e);
                 }}
                 onMouseUp={(e) => {
-                  onMouseUp?.(e);
+                  restProps.onMouseUp?.(e);
 
                   preventBlur(e);
                 }}
               >
                 <ul
                   ref={ulRef}
-                  id={_id}
+                  id={id}
                   className={`${dPrefix}dropdown__list`}
                   tabIndex={-1}
                   role="menu"
@@ -463,7 +455,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                     role: 'button',
                     'aria-haspopup': 'menu',
                     'aria-expanded': visible,
-                    'aria-controls': _id,
+                    'aria-controls': id,
                     onClick: (e) => {
                       children.props.onClick?.(e);
                       pOnClick?.(e);

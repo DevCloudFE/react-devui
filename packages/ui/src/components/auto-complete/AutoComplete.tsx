@@ -61,10 +61,6 @@ function AutoComplete<T extends DAutoCompleteOption>(
     onOptionClick,
     onScrollBottom,
 
-    className,
-    style,
-    onMouseDown,
-    onMouseUp,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -303,15 +299,15 @@ function AutoComplete<T extends DAutoCompleteOption>(
                 <div
                   {...restProps}
                   ref={popupRef}
-                  className={getClassName(className, `${dPrefix}select__popup`)}
-                  style={{ ...style, ...popupPositionStyle, ...transitionStyle, zIndex: maxZIndex }}
+                  className={getClassName(restProps.className, `${dPrefix}select__popup`)}
+                  style={{ ...restProps.style, ...popupPositionStyle, ...transitionStyle, zIndex: maxZIndex }}
                   onMouseDown={(e) => {
-                    onMouseDown?.(e);
+                    restProps.onMouseDown?.(e);
 
                     preventBlur(e);
                   }}
                   onMouseUp={(e) => {
-                    onMouseUp?.(e);
+                    restProps.onMouseUp?.(e);
 
                     preventBlur(e);
                   }}

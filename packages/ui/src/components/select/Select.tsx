@@ -95,7 +95,6 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     onScrollBottom,
     onExceed,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -384,7 +383,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     <DSelectbox
       {...restProps}
       ref={ref}
-      className={getClassName(className, `${dPrefix}select`)}
+      className={getClassName(restProps.className, `${dPrefix}select`)}
       dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}

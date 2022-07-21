@@ -32,7 +32,6 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
     dVertical = false,
     onModelChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -52,10 +51,10 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}checkbox-group`, {
+      className={getClassName(restProps.className, `${dPrefix}checkbox-group`, {
         [`${dPrefix}checkbox-group--vertical`]: dVertical,
       })}
-      role="group"
+      role={restProps.role ?? 'group'}
     >
       {dOptions.map((option, index) => (
         <DCheckbox

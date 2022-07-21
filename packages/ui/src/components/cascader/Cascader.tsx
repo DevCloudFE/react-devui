@@ -94,7 +94,6 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     onClear,
     onFocusChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -356,7 +355,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     <DSelectbox
       {...restProps}
       ref={ref}
-      className={getClassName(className, `${dPrefix}cascader`)}
+      className={getClassName(restProps.className, `${dPrefix}cascader`)}
       dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}

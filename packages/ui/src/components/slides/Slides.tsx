@@ -46,7 +46,6 @@ export function DSlides(props: DSlidesProps): JSX.Element | null {
     pagination: _pagination,
     direction = 'horizontal',
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -84,7 +83,7 @@ export function DSlides(props: DSlidesProps): JSX.Element | null {
   return (
     <Swiper
       {...restProps}
-      className={getClassName(className, `${dPrefix}slides`, {
+      className={getClassName(restProps.className, `${dPrefix}slides`, {
         [`${dPrefix}slides--vertical`]: direction === 'vertical',
       })}
       direction={direction}

@@ -8,7 +8,6 @@ export function DCardContent(props: DCardContentProps): JSX.Element | null {
   const {
     children,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -17,7 +16,7 @@ export function DCardContent(props: DCardContentProps): JSX.Element | null {
   //#endregion
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}card__content`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}card__content`)}>
       {children}
     </div>
   );

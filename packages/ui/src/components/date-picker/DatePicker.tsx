@@ -41,7 +41,6 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     dPopupClassName,
     dShowTime = false,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -76,7 +75,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     <DPickerBuilder
       {...restProps}
       ref={ref}
-      className={getClassName(className, `${dPrefix}date-picker`)}
+      className={getClassName(restProps.className, `${dPrefix}date-picker`)}
       dFormat={format}
       dSuffix={<CalendarOutlined />}
       dPlaceholder={[placeholderLeft, placeholderRight]}

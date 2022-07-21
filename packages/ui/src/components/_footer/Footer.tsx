@@ -26,7 +26,6 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
     onOkClick,
     onClose,
 
-    className,
     ...restProps
   } = props;
 
@@ -78,7 +77,7 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
   };
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
       {dActions.map((action, index) => (
         <React.Fragment key={index}>
           {action === 'cancel' ? (

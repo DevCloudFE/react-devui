@@ -68,10 +68,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     afterVisibleChange,
     onClear,
 
-    className,
-    onMouseDown,
-    onMouseUp,
-    onClick,
     ...restProps
   } = props;
 
@@ -257,23 +253,23 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         <div
           {...restProps}
           ref={boxRef}
-          className={getClassName(className, `${dPrefix}date-input`, {
+          className={getClassName(restProps.className, `${dPrefix}date-input`, {
             [`${dPrefix}date-input--${dSize}`]: dSize,
             'is-disabled': dDisabled,
             'is-focus': isFocus,
           })}
           onMouseDown={(e) => {
-            onMouseDown?.(e);
+            restProps.onMouseDown?.(e);
 
             preventBlur(e);
           }}
           onMouseUp={(e) => {
-            onMouseUp?.(e);
+            restProps.onMouseUp?.(e);
 
             preventBlur(e);
           }}
           onClick={(e) => {
-            onClick?.(e);
+            restProps.onClick?.(e);
 
             onVisibleChange?.(true);
             if (!isFocus) {

@@ -50,7 +50,6 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
     onAddClick,
     onClose,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -184,7 +183,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
     <div
       {...restProps}
       ref={tabsRef}
-      className={getClassName(className, `${dPrefix}tabs`, `${dPrefix}tabs--${dPlacement}`, {
+      className={getClassName(restProps.className, `${dPrefix}tabs`, `${dPrefix}tabs--${dPlacement}`, {
         [`${dPrefix}tabs--${dType}`]: dType,
         [`${dPrefix}tabs--${dSize}`]: dSize,
         [`${dPrefix}tabs--center`]: dCenter,

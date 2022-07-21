@@ -36,8 +36,6 @@ export function DRating(props: DRatingProps): JSX.Element | null {
     dTooltip,
     onModelChange,
 
-    className,
-    onMouseLeave,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -58,13 +56,13 @@ export function DRating(props: DRatingProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}rating`, {
+      className={getClassName(restProps.className, `${dPrefix}rating`, {
         [`${dPrefix}rating--read-only`]: dReadOnly,
         'is-disabled': disabled,
       })}
-      role="radiogroup"
+      role={restProps.role ?? 'radiogroup'}
       onMouseLeave={(e) => {
-        onMouseLeave?.(e);
+        restProps.onMouseLeave?.(e);
 
         setHoverValue(null);
       }}

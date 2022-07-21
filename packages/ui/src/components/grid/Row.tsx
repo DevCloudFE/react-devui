@@ -27,8 +27,6 @@ export function DRow(props: DRowProps): JSX.Element | null {
     dGutter = 0,
     dResponsiveGutter,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -73,9 +71,9 @@ export function DRow(props: DRowProps): JSX.Element | null {
     <DRowContext.Provider value={contextValue}>
       <div
         {...restProps}
-        className={getClassName(className, `${dPrefix}row`)}
+        className={getClassName(restProps.className, `${dPrefix}row`)}
         style={{
-          ...style,
+          ...restProps.style,
           rowGap: gap[0],
           marginLeft: isNumber(space) ? -space : `calc(${space} * -1)`,
           marginRight: isNumber(space) ? -space : `calc(${space} * -1)`,

@@ -27,7 +27,6 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
     dInputRef,
     onModelChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -50,7 +49,7 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
   return (
     <label
       {...restProps}
-      className={getClassName(className, `${dPrefix}checkbox`, {
+      className={getClassName(restProps.className, `${dPrefix}checkbox`, {
         'is-indeterminate': dIndeterminate,
         'is-checked': checked,
         'is-disabled': disabled,

@@ -18,10 +18,6 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
     dDialogRef,
     onClose,
 
-    className,
-    onMouseEnter,
-    onMouseLeave,
-    onKeyDown,
     ...restProps
   } = props;
 
@@ -46,17 +42,17 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}alert-dialog`)}
+      className={getClassName(restProps.className, `${dPrefix}alert-dialog`)}
       ref={dDialogRef}
-      tabIndex={-1}
-      role="alert"
+      tabIndex={restProps.tabIndex ?? -1}
+      role={restProps.role ?? 'alert'}
       onMouseEnter={(e) => {
-        onMouseEnter?.(e);
+        restProps.onMouseEnter?.(e);
 
         dataRef.current.clearTid?.();
       }}
       onMouseLeave={(e) => {
-        onMouseLeave?.(e);
+        restProps.onMouseLeave?.(e);
 
         if (dDuration > 0) {
           dataRef.current.clearTid = asyncCapture.setTimeout(() => {
@@ -65,7 +61,7 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
         }
       }}
       onKeyDown={(e) => {
-        onKeyDown?.(e);
+        restProps.onKeyDown?.(e);
 
         if (dEscClosable && e.code === 'Escape') {
           dataRef.current.clearTid?.();

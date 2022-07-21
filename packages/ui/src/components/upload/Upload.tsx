@@ -80,8 +80,6 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
     onModelChange,
     onRemove,
 
-    className,
-    onChange,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -300,10 +298,10 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
       <input
         {...restProps}
         ref={combineInputRef}
-        className={getClassName(className, `${dPrefix}upload`)}
-        type="file"
+        className={getClassName(restProps.className, `${dPrefix}upload`)}
+        type={restProps.type ?? 'file'}
         onChange={(e) => {
-          onChange?.(e);
+          restProps.onChange?.(e);
 
           const files = e.currentTarget.files;
           if (files) {

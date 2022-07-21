@@ -13,7 +13,6 @@ export function DEmpty(props: DEmptyProps): JSX.Element | null {
     children,
     dIcon,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -24,7 +23,7 @@ export function DEmpty(props: DEmptyProps): JSX.Element | null {
   const [t] = useTranslation();
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}empty`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}empty`)}>
       {isUndefined(dIcon) ? null : dIcon}
       {isUndefined(children) ? <div className={`${dPrefix}empty__description`}>{t('No Data')}</div> : children}
     </div>

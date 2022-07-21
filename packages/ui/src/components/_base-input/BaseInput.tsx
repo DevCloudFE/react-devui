@@ -18,7 +18,6 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
     dTag = 'input',
     dFor = true,
 
-    id,
     ...restProps
   } = props;
 
@@ -28,7 +27,7 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
   //#endregion
 
   const uniqueId = useId();
-  const _id = id ?? `${dPrefix}base-input-${uniqueId}`;
+  const id = restProps.id ?? `${dPrefix}base-input-${uniqueId}`;
 
   const supportForm = formContext && dFormControl;
 
@@ -42,8 +41,8 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
   return React.createElement(dTag, {
     ...restProps,
     ...attrs,
-    ref: ref,
-    id: _id,
+    ref,
+    id,
     'aria-describedby': [props['aria-describedby'], dFormControl?.inputAttrs?.['aria-describedby']]
       .filter((describedby) => isString(describedby))
       .join(' '),

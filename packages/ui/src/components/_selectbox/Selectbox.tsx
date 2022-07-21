@@ -80,10 +80,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     onFocusVisibleChange,
     onClear,
 
-    className,
-    onMouseDown,
-    onMouseUp,
-    onClick,
     ...restProps
   } = props;
 
@@ -178,24 +174,24 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         <div
           {...restProps}
           ref={boxRef}
-          className={getClassName(className, `${dPrefix}selectbox`, {
+          className={getClassName(restProps.className, `${dPrefix}selectbox`, {
             [`${dPrefix}selectbox--${dSize}`]: dSize,
             'is-expanded': dVisible,
             'is-focus': isFocus,
             'is-disabled': dDisabled,
           })}
           onMouseDown={(e) => {
-            onMouseDown?.(e);
+            restProps.onMouseDown?.(e);
 
             preventBlur(e);
           }}
           onMouseUp={(e) => {
-            onMouseUp?.(e);
+            restProps.onMouseUp?.(e);
 
             preventBlur(e);
           }}
           onClick={(e) => {
-            onClick?.(e);
+            restProps.onClick?.(e);
 
             onVisibleChange?.(dSearchable ? true : !dVisible);
             inputRef.current?.focus({ preventScroll: true });

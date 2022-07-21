@@ -61,10 +61,6 @@ export function DInput(props: DInputProps): JSX.Element | null {
     dInputRef,
     onModelChange,
 
-    className,
-    onMouseDown,
-    onMouseUp,
-    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -136,24 +132,24 @@ export function DInput(props: DInputProps): JSX.Element | null {
     <DBaseDesign dCompose={{ active: isFocus, disabled: disabled }} dFormControl={dFormControl}>
       <div
         {...restProps}
-        className={getClassName(className, `${dPrefix}input`, {
+        className={getClassName(restProps.className, `${dPrefix}input`, {
           [`${dPrefix}input--${size}`]: size,
           [`${dPrefix}input--number`]: dType === 'number',
           'is-disabled': disabled,
           'is-focus': isFocus,
         })}
         onMouseDown={(e) => {
-          onMouseDown?.(e);
+          restProps.onMouseDown?.(e);
 
           preventBlur(e);
         }}
         onMouseUp={(e) => {
-          onMouseUp?.(e);
+          restProps.onMouseUp?.(e);
 
           preventBlur(e);
         }}
         onClick={(e) => {
-          onClick?.(e);
+          restProps.onClick?.(e);
 
           inputRef.current?.focus({ preventScroll: true });
         }}

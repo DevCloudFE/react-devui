@@ -42,7 +42,6 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
     dVertical = false,
     onModelChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -71,12 +70,12 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   return (
     <DCompose
       {...restProps}
-      className={getClassName(className, `${dPrefix}radio-group`, {
+      className={getClassName(restProps.className, `${dPrefix}radio-group`, {
         [`${dPrefix}radio-group--default`]: isUndefined(dType),
         'is-change': isChange,
       })}
       dDisabled={disabled}
-      role="radiogroup"
+      role={restProps.role ?? 'radiogroup'}
       dSize={size}
       dVertical={dVertical}
     >

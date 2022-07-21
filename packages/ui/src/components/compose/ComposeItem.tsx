@@ -8,7 +8,12 @@ export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> 
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DComposeItem' });
 export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
-  const { className, children, dGray = false, ...restProps } = useComponentConfig(COMPONENT_NAME, props);
+  const {
+    children,
+    dGray = false,
+
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -19,7 +24,7 @@ export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
     <DBaseDesign dCompose={{ disabled: true }}>
       <div
         {...restProps}
-        className={getClassName(className, `${dPrefix}compose-item`, {
+        className={getClassName(restProps.className, `${dPrefix}compose-item`, {
           [`${dPrefix}compose-item--${gSize}`]: gSize,
           [`${dPrefix}compose-item--gray`]: dGray,
           'is-disabled': gDisabled,

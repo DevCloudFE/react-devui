@@ -13,7 +13,6 @@ export function DCardActions(props: DCardActionsProps): JSX.Element | null {
   const {
     dActions,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -22,7 +21,7 @@ export function DCardActions(props: DCardActionsProps): JSX.Element | null {
   //#endregion
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}card__actions`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}card__actions`)}>
       {dActions.map((action, index) => (
         <React.Fragment key={index}>
           {React.cloneElement(action, {

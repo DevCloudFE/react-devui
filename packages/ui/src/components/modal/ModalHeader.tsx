@@ -17,7 +17,6 @@ export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
     __id,
     __onClose,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DModalHeaderPropsWithPrivate);
 
@@ -25,5 +24,12 @@ export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  return <DHeader {...restProps} id={__id} className={getClassName(className, `${dPrefix}modal-header`)} onClose={__onClose}></DHeader>;
+  return (
+    <DHeader
+      {...restProps}
+      id={restProps.id ?? __id}
+      className={getClassName(restProps.className, `${dPrefix}modal-header`)}
+      onClose={__onClose}
+    ></DHeader>
+  );
 }

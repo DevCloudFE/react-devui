@@ -86,8 +86,6 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
     onClose,
     afterVisibleChange,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -158,12 +156,12 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
         return (
           <DAlertDialog
             {...restProps}
-            className={getClassName(className, `${dPrefix}toast`)}
+            className={getClassName(restProps.className, `${dPrefix}toast`)}
             style={{
-              ...style,
+              ...restProps.style,
               ...transitionStyle,
             }}
-            aria-describedby={contentId}
+            aria-describedby={restProps['aria-describedby'] ?? contentId}
             dDuration={dDuration}
             dEscClosable={dEscClosable}
             dDialogRef={dialogRef}

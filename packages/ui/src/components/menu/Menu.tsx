@@ -51,11 +51,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
     onActiveChange,
     onExpandsChange,
 
-    className,
-    style,
-    onKeyDown,
-    onFocus,
-    onBlur,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -452,35 +447,36 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
       {(navRef, collapseStyle) => (
         <DFocusVisible onFocusVisibleChange={setFocusVisible}>
           {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
+            // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
             <nav
               {...restProps}
               ref={navRef}
-              className={getClassName(className, `${dPrefix}menu`, {
+              className={getClassName(restProps.className, `${dPrefix}menu`, {
                 [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
               })}
               style={{
-                ...style,
+                ...restProps.style,
                 ...collapseStyle,
               }}
-              tabIndex={0}
-              role="menubar"
-              aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-              aria-activedescendant={isUndefined(focusId) ? undefined : getOptionId(focusId)}
+              tabIndex={restProps.tabIndex ?? 0}
+              role={restProps.role ?? 'menubar'}
+              aria-orientation={restProps['aria-orientation'] ?? (dMode === 'horizontal' ? 'horizontal' : 'vertical')}
+              aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusId) ? undefined : getOptionId(focusId))}
               onFocus={(e) => {
-                onFocus?.(e);
+                restProps.onFocus?.(e);
                 fvOnFocus(e);
 
                 setIsFocus(true);
                 initFocus();
               }}
               onBlur={(e) => {
-                onBlur?.(e);
+                restProps.onBlur?.(e);
                 fvOnBlur(e);
 
                 setIsFocus(false);
               }}
               onKeyDown={(e) => {
-                onKeyDown?.(e);
+                restProps.onKeyDown?.(e);
                 fvOnKeyDown(e);
 
                 handleKeyDown?.(e);

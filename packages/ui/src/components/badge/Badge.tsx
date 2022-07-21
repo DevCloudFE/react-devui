@@ -28,7 +28,6 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
     dDot = false,
     dOffset = [0, '100%'],
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -89,8 +88,8 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
         return (
           <div
             {...restProps}
-            className={getClassName(className, `${dPrefix}badge__container`)}
-            title={dDot ? undefined : dValue.toString()}
+            className={getClassName(restProps.className, `${dPrefix}badge__container`)}
+            title={restProps.title ?? (dDot ? undefined : dValue.toString())}
           >
             {children}
             {state === 'leaved' ? null : (

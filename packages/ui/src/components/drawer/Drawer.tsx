@@ -57,8 +57,6 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     __zIndex,
     __onVisibleChange,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerPropsWithPrivate);
 
@@ -229,18 +227,18 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
           <div
             {...restProps}
             ref={drawerRef}
-            className={getClassName(className, `${dPrefix}drawer`)}
+            className={getClassName(restProps.className, `${dPrefix}drawer`)}
             style={{
-              ...style,
+              ...restProps.style,
               ...nestedStyle,
               display: state === 'leaved' ? 'none' : undefined,
               position: isFixed ? undefined : 'absolute',
               zIndex,
             }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={headerNode ? headerId : undefined}
-            aria-describedby={contentId}
+            role={restProps.role ?? 'dialog'}
+            aria-modal={restProps['aria-modal'] ?? 'true'}
+            aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+            aria-describedby={restProps['aria-describedby'] ?? contentId}
           >
             {dMask && (
               <DMask

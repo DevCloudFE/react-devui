@@ -36,8 +36,6 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
     dSize,
     dLineWidth = 8,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -302,13 +300,13 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}progress`, `${dPrefix}progress--${dType}`)}
+      className={getClassName(restProps.className, `${dPrefix}progress`, `${dPrefix}progress--${dType}`)}
       style={{
-        ...style,
+        ...restProps.style,
         width: dType === 'line' && isUndefined(dSize) ? '100%' : undefined,
       }}
-      role="progressbar"
-      aria-valuenow={dPercent}
+      role={restProps.role ?? 'progressbar'}
+      aria-valuenow={restProps['aria-valuenow'] ?? dPercent}
       aria-valuemin={restProps['aria-valuemin'] ?? 0}
       aria-valuemax={restProps['aria-valuemax'] ?? 100}
     >

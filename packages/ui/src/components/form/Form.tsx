@@ -56,9 +56,6 @@ export function DForm(props: DFormProps): JSX.Element | null {
     dSize,
     dResponsiveProps,
 
-    className,
-    autoComplete = 'off',
-    onSubmit,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -107,13 +104,13 @@ export function DForm(props: DFormProps): JSX.Element | null {
       <DFormGroupContext.Provider value={dForm.form}>
         <form
           {...restProps}
-          className={getClassName(className, `${dPrefix}form`, {
+          className={getClassName(restProps.className, `${dPrefix}form`, {
             [`${dPrefix}form--${dSize}`]: dSize,
             [`${dPrefix}form--${dLayout}`]: dLayout,
           })}
-          autoComplete={autoComplete}
+          autoComplete={restProps.autoComplete ?? 'off'}
           onSubmit={(e) => {
-            onSubmit?.(e);
+            restProps.onSubmit?.(e);
 
             e.preventDefault();
             e.stopPropagation();

@@ -15,7 +15,6 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
   const {
     __onClose,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerFooterPropsWithPrivate);
 
@@ -23,5 +22,5 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  return <DFooter {...restProps} className={getClassName(className, `${dPrefix}drawer-footer`)} onClose={__onClose}></DFooter>;
+  return <DFooter {...restProps} className={getClassName(restProps.className, `${dPrefix}drawer-footer`)} onClose={__onClose}></DFooter>;
 }

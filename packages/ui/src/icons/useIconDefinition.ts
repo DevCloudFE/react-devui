@@ -18,14 +18,7 @@ export function useIconDefinition(props: DIconBaseProps) {
     dRotate,
     dSpin,
     dSpinSpeed = 1,
-    className,
-    style,
-    version = '1.1',
-    xmlns = 'http://www.w3.org/2000/svg',
-    xmlnsXlink = 'http://www.w3.org/1999/xlink',
-    fill = 'currentColor',
-    width,
-    height,
+
     ...restProps
   } = props;
 
@@ -33,20 +26,20 @@ export function useIconDefinition(props: DIconBaseProps) {
 
   const svgProps: React.SVGAttributes<SVGElement> = {
     ...restProps,
-    className: getClassName(className, `${dPrefix}icon`, {
+    className: getClassName(restProps.className, `${dPrefix}icon`, {
       [`t-${dTheme}`]: dTheme,
     }),
     style: {
-      ...style,
+      ...restProps.style,
       transform: isUndefined(dRotate) ? undefined : `rotate(${dRotate}deg)`,
       animation: dSpin ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
     },
-    version,
-    xmlns,
-    xmlnsXlink,
-    fill,
-    width: width ?? dSize,
-    height: height ?? dSize,
+    version: restProps.version ?? '1.1',
+    xmlns: restProps.xmlns ?? 'http://www.w3.org/2000/svg',
+    xmlnsXlink: restProps.xmlnsXlink ?? 'http://www.w3.org/1999/xlink',
+    fill: restProps.fill ?? 'currentColor',
+    width: restProps.width ?? dSize,
+    height: restProps.height ?? dSize,
   };
 
   return svgProps;

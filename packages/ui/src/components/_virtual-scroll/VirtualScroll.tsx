@@ -47,7 +47,6 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     dEmpty,
     onScrollEnd,
 
-    onScroll,
     ...restProps
   } = props;
 
@@ -313,24 +312,26 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     [scrollByStep, scrollToEnd, scrollToStart, scrollToItem]
   );
 
-  const handleScroll: React.UIEventHandler<HTMLUListElement> = (e) => {
-    onScroll?.(e);
-
-    if (listRef.current) {
-      setScrollPosition(listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop']);
-
-      if (
-        dHorizontal
-          ? listRef.current.scrollLeft + listRef.current.clientWidth === listRef.current.scrollWidth
-          : listRef.current.scrollTop + listRef.current.clientHeight === listRef.current.scrollHeight
-      ) {
-        onScrollEnd?.();
-      }
-    }
-  };
-
   return (
-    <ul {...restProps} ref={listRef} onScroll={handleScroll}>
+    <ul
+      {...restProps}
+      ref={listRef}
+      onScroll={(e) => {
+        restProps.onScroll?.(e);
+
+        if (listRef.current) {
+          setScrollPosition(listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop']);
+
+          if (
+            dHorizontal
+              ? listRef.current.scrollLeft + listRef.current.clientWidth === listRef.current.scrollWidth
+              : listRef.current.scrollTop + listRef.current.clientHeight === listRef.current.scrollHeight
+          ) {
+            onScrollEnd?.();
+          }
+        }
+      }}
+    >
       {dList.length === 0 ? (
         dEmpty
       ) : (

@@ -22,8 +22,6 @@ export function DCol(props: DColProps): JSX.Element | null {
     dSpan,
     dResponsiveProps,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -59,9 +57,9 @@ export function DCol(props: DColProps): JSX.Element | null {
     <div
       {...restProps}
       {...responsiveProps}
-      className={getClassName(className, responsiveProps?.className, `${dPrefix}col`)}
+      className={getClassName(restProps.className, responsiveProps?.className, `${dPrefix}col`)}
       style={{
-        ...style,
+        ...restProps.style,
         ...responsiveProps?.style,
         width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
         flexGrow: span === true ? 1 : undefined,

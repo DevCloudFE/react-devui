@@ -40,7 +40,6 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
     dIndicator = DOT_INDICATOR,
     onLinkClick,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -204,7 +203,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   })();
 
   return (
-    <ul {...restProps} ref={anchorRef} className={getClassName(className, `${dPrefix}anchor`)}>
+    <ul {...restProps} ref={anchorRef} className={getClassName(restProps.className, `${dPrefix}anchor`)}>
       <div className={`${dPrefix}anchor__indicator-track`}>
         <div ref={indicatorRef} className={`${dPrefix}anchor__indicator-wrapper`}>
           {dIndicator === DOT_INDICATOR ? (

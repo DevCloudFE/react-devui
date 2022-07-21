@@ -90,8 +90,6 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     onClose,
     afterVisibleChange,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -162,9 +160,9 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
         return (
           <DAlertDialog
             {...restProps}
-            className={getClassName(className, `${dPrefix}notification`)}
+            className={getClassName(restProps.className, `${dPrefix}notification`)}
             style={{
-              ...style,
+              ...restProps.style,
               ...transitionStyle,
             }}
             aria-labelledby={isUndefined(dTitle) ? undefined : headerId}

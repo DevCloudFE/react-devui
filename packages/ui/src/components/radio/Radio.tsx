@@ -34,8 +34,6 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
     onModelChange,
     __type,
 
-    className,
-    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DRadioPropsWithPrivate);
 
@@ -57,7 +55,7 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
     <DBaseDesign dCompose={{ active: checked || focusVisible, disabled: disabled }}>
       <label
         {...restProps}
-        className={getClassName(className, `${dPrefix}radio`, {
+        className={getClassName(restProps.className, `${dPrefix}radio`, {
           [`${dPrefix}radio--button`]: __type,
           [`${dPrefix}radio--button-${__type}`]: __type,
           [`${dPrefix}radio--${gSize}`]: gSize,
@@ -66,7 +64,7 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
           'is-disabled': disabled,
         })}
         onClick={(e) => {
-          onClick?.(e);
+          restProps.onClick?.(e);
 
           if (__type === 'fill' || __type === 'outline') {
             wave(`var(--${dPrefix}color-primary)`);

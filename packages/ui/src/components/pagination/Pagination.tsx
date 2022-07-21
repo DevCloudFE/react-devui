@@ -39,7 +39,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     onActiveChange,
     onPageSizeChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -220,12 +219,12 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     <nav
       {...restProps}
       ref={navRef}
-      className={getClassName(className, `${dPrefix}pagination`, {
+      className={getClassName(restProps.className, `${dPrefix}pagination`, {
         [`${dPrefix}pagination--mini`]: dMini,
         'is-change': isChange,
       })}
-      role="navigation"
-      aria-label="Pagination Navigation"
+      role={restProps.role ?? 'navigation'}
+      aria-label={restProps['aria-label'] ?? 'Pagination Navigation'}
     >
       {dCompose.map((item) => {
         if (item === 'total') {

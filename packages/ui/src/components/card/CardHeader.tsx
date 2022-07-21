@@ -11,7 +11,6 @@ export function DCardHeader(props: DCardHeaderProps): JSX.Element | null {
     children,
     dAction,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -20,7 +19,7 @@ export function DCardHeader(props: DCardHeaderProps): JSX.Element | null {
   //#endregion
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}card__header`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}card__header`)}>
       <div className={`${dPrefix}card__header-title`}>{children}</div>
       <div className={`${dPrefix}card__header-action`}>{dAction}</div>
     </div>

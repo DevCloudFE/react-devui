@@ -38,7 +38,13 @@ export interface DIconProps extends Omit<DIconBaseProps, 'children'> {
 }
 
 export function DIcon(props: DIconProps): JSX.Element | null {
-  const { dIcon, dTwoToneColor, dTheme, ...restProps } = useComponentConfig('DIcon', props);
+  const {
+    dIcon,
+    dTwoToneColor,
+    dTheme,
+
+    ...restProps
+  } = useComponentConfig('DIcon', props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

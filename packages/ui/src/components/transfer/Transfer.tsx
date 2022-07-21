@@ -60,7 +60,6 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     onSearch,
     onScrollBottom,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -258,7 +257,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     <DBaseDesign dFormControl={dFormControl}>
       <div
         {...restProps}
-        className={getClassName(className, `${dPrefix}transfer`, {
+        className={getClassName(restProps.className, `${dPrefix}transfer`, {
           'is-disabled': disabled,
         })}
       >

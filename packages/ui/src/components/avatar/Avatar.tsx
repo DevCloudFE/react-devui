@@ -20,8 +20,6 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
     dText,
     dSize = 40,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -48,11 +46,11 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}avatar`, `${dPrefix}avatar--${type}`, {
+      className={getClassName(restProps.className, `${dPrefix}avatar`, `${dPrefix}avatar--${type}`, {
         [`${dPrefix}avatar--${dShape}`]: dShape === 'circular' || dShape === 'square',
       })}
       style={{
-        ...style,
+        ...restProps.style,
         width: dSize,
         height: dSize,
         fontSize: type === 'icon' ? dSize / 2 : type === 'text' ? dSize * 0.45 : undefined,

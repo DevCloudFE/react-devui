@@ -19,7 +19,6 @@ export function DSeparator(props: DSeparatorProps): JSX.Element | null {
     dTextAlign = 'left',
     dVertical = false,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -31,13 +30,13 @@ export function DSeparator(props: DSeparatorProps): JSX.Element | null {
     children && dTag === 'hr' ? 'div' : dTag,
     {
       ...restProps,
-      className: getClassName(className, `${dPrefix}separator`, {
+      className: getClassName(restProps.className, `${dPrefix}separator`, {
         [`${dPrefix}separator--text`]: children,
         [`${dPrefix}separator--text-${dTextAlign}`]: children,
         [`${dPrefix}separator--vertical`]: dVertical,
       }),
-      role: 'separator',
-      'aria-orientation': dVertical ? 'vertical' : 'horizontal',
+      role: restProps.role ?? 'separator',
+      'aria-orientation': restProps['aria-orientation'] ?? (dVertical ? 'vertical' : 'horizontal'),
     },
     children ? <div className={`${dPrefix}separator__text`}>{children}</div> : null
   );

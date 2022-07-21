@@ -22,8 +22,6 @@ export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
     dDefaultActions,
     onRemove,
 
-    className,
-    tabIndex = 0,
     ...restProps
   } = props;
 
@@ -38,8 +36,8 @@ export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      tabIndex={tabIndex}
-      className={getClassName(className, `${dPrefix}upload__picture-item`, `${dPrefix}upload__picture-item--button`, {
+      tabIndex={restProps.tabIndex ?? 0}
+      className={getClassName(restProps.className, `${dPrefix}upload__picture-item`, `${dPrefix}upload__picture-item--button`, {
         'is-disabled': isLoading,
         [`${dPrefix}upload__picture-item--${dFile?.status}`]: dFile,
       })}

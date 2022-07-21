@@ -27,8 +27,6 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
     dVertical = false,
     dDisabled = false,
 
-    className,
-    role = 'group',
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -59,10 +57,10 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
       <div
         {...restProps}
         ref={combineElRef}
-        className={getClassName(className, `${dPrefix}compose`, {
+        className={getClassName(restProps.className, `${dPrefix}compose`, {
           [`${dPrefix}compose--vertical`]: dVertical,
         })}
-        role={role}
+        role={restProps.role ?? 'group'}
       >
         {children}
       </div>

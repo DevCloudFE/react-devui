@@ -37,7 +37,6 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     dInputRef,
     onModelChange,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -65,7 +64,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
   return (
     <label
       {...restProps}
-      className={getClassName(className, `${dPrefix}switch`, {
+      className={getClassName(restProps.className, `${dPrefix}switch`, {
         [`${dPrefix}switch--label-left`]: dLabelPlacement === 'left',
         'is-checked': checked,
         'is-disabled': disabled,

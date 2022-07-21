@@ -17,9 +17,6 @@ export function DMask(props: DMaskProps): JSX.Element | null {
     onClose,
     afterVisibleChange,
 
-    className,
-    style,
-    onClick,
     ...restProps
   } = props;
 
@@ -48,13 +45,13 @@ export function DMask(props: DMaskProps): JSX.Element | null {
       {(state) => (
         <div
           {...restProps}
-          className={getClassName(className, `${dPrefix}mask`)}
+          className={getClassName(restProps.className, `${dPrefix}mask`)}
           style={{
-            ...style,
+            ...restProps.style,
             ...transitionStyles[state],
           }}
           onClick={(e) => {
-            onClick?.(e);
+            restProps.onClick?.(e);
 
             onClose?.();
           }}

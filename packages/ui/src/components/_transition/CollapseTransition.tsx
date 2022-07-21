@@ -12,7 +12,15 @@ export interface DCollapseTransitionProps extends Omit<DTransitionProps, 'childr
 }
 
 export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Element | null {
-  const { children, dSize, dHorizontal = false, dStyles, onEnterRendered, ...restProps } = props;
+  const {
+    children,
+    dSize,
+    dHorizontal = false,
+    dStyles,
+    onEnterRendered,
+
+    ...restProps
+  } = props;
 
   const dataRef = useRef<{
     width: number;

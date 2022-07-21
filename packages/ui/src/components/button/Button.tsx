@@ -33,10 +33,6 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
     dIcon,
     dIconRight = false,
 
-    className,
-    type = 'button',
-    disabled: _disabled,
-    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -48,7 +44,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
   const [waveNode, wave] = useWave();
 
   const size = dSize ?? gSize;
-  const disabled = _disabled || dLoading || gDisabled;
+  const disabled = restProps.disabled || dLoading || gDisabled;
 
   const buttonIcon = (loading: boolean, iconRef?: React.RefObject<HTMLDivElement>, style?: React.CSSProperties) => (
     <div ref={iconRef} className={`${dPrefix}button__icon`} style={style}>
@@ -61,7 +57,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
       <button
         {...restProps}
         ref={ref}
-        className={getClassName(className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
+        className={getClassName(restProps.className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
           [`${dPrefix}button--${dShape}`]: dShape,
           [`${dPrefix}button--${size}`]: size,
           [`${dPrefix}button--block`]: dBlock,
@@ -69,10 +65,10 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
           [`${dPrefix}button--icon-right`]: dIconRight,
           'is-loading': dLoading,
         })}
-        type={type}
+        type={restProps.type ?? 'button'}
         disabled={disabled}
         onClick={(e) => {
-          onClick?.(e);
+          restProps.onClick?.(e);
 
           if (dType === 'primary' || dType === 'secondary' || dType === 'outline' || dType === 'dashed') {
             wave(`var(--${dPrefix}color-${dTheme})`);

@@ -30,11 +30,6 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
     dShowCount = false,
     onModelChange,
 
-    className,
-    style,
-    maxLength,
-    disabled: _disabled,
-    onChange,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -54,7 +49,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
   const formControlInject = useFormControl(dFormControl);
   const [value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
 
-  const disabled = _disabled || dFormControl?.control.disabled;
+  const disabled = restProps.disabled || dFormControl?.control.disabled;
 
   const resizable = dResizable && isUndefined(dRows);
 
@@ -103,21 +98,20 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
         <DBaseInput
           {...restProps}
           ref={combineTextareaRef}
-          className={getClassName(className, `${dPrefix}textarea`, {
+          className={getClassName(restProps.className, `${dPrefix}textarea`, {
             [`${dPrefix}textarea--${gSize}`]: gSize,
           })}
           style={{
-            ...style,
+            ...restProps.style,
             ...heightStyle,
             resize: resizable ? undefined : 'none',
           }}
-          maxLength={maxLength}
           value={value}
           disabled={disabled}
           dTag="textarea"
           dFormControl={dFormControl}
           onChange={(e) => {
-            onChange?.(e);
+            restProps.onChange?.(e);
 
             changeValue(e.currentTarget.value);
             getRowNum();
@@ -126,7 +120,11 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
       </DBaseDesign>
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
-          {isFunction(dShowCount) ? dShowCount(value.length) : isUndefined(maxLength) ? value.length : `${value.length} / ${maxLength}`}
+          {isFunction(dShowCount)
+            ? dShowCount(value.length)
+            : isUndefined(restProps.maxLength)
+            ? value.length
+            : `${value.length} / ${restProps.maxLength}`}
         </div>
       )}
     </>

@@ -15,7 +15,6 @@ export function DModalFooter(props: DModalFooterProps): JSX.Element | null {
   const {
     __onClose,
 
-    className,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DModalFooterPropsWithPrivate);
 
@@ -23,5 +22,5 @@ export function DModalFooter(props: DModalFooterProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  return <DFooter {...restProps} className={getClassName(className, `${dPrefix}modal-footer`)} onClose={__onClose}></DFooter>;
+  return <DFooter {...restProps} className={getClassName(restProps.className, `${dPrefix}modal-footer`)} onClose={__onClose}></DFooter>;
 }

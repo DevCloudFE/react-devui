@@ -35,8 +35,6 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
     dBottom,
     dZIndex,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -136,9 +134,9 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
         <div
           {...restProps}
           ref={referenceRef}
-          className={getClassName(className, `${dPrefix}affix`)}
+          className={getClassName(restProps.className, `${dPrefix}affix`)}
           style={{
-            ...style,
+            ...restProps.style,
             ...referenceStyle,
             visibility: 'hidden',
           }}
@@ -148,9 +146,9 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
       <div
         {...restProps}
         ref={affixRef}
-        className={getClassName(className, `${dPrefix}affix`)}
+        className={getClassName(restProps.className, `${dPrefix}affix`)}
         style={{
-          ...style,
+          ...restProps.style,
           ...(fixed ? fixedStyle : {}),
         }}
       >

@@ -16,7 +16,6 @@ export function DHeader(props: DHeaderProps): JSX.Element | null {
     dActions = ['close'],
     onClose,
 
-    className,
     ...restProps
   } = props;
 
@@ -27,7 +26,7 @@ export function DHeader(props: DHeaderProps): JSX.Element | null {
   const [t] = useTranslation();
 
   return (
-    <div {...restProps} className={getClassName(className, `${dPrefix}header`)}>
+    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}header`)}>
       <div className={`${dPrefix}header__title`}>{children}</div>
       <div className={`${dPrefix}header__actions`}>
         {dActions.map((action, index) => (

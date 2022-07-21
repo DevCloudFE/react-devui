@@ -26,8 +26,6 @@ export function DTag(props: DTagProps): JSX.Element | null {
     dClosable = false,
     onClose,
 
-    className,
-    style,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -43,12 +41,12 @@ export function DTag(props: DTagProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(className, `${dPrefix}tag`, `${dPrefix}tag--${dType}`, {
+      className={getClassName(restProps.className, `${dPrefix}tag`, `${dPrefix}tag--${dType}`, {
         [`${dPrefix}tag--${size}`]: size,
         [`t-${dTheme}`]: dTheme,
       })}
       style={{
-        ...style,
+        ...restProps.style,
         ...(dColor
           ? {
               [`--${dPrefix}tag-color`]: dColor,

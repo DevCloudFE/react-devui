@@ -52,12 +52,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     onVisibleChange,
     afterVisibleChange,
 
-    id,
-    className,
-    style,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
@@ -70,7 +64,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   //#endregion
 
   const uniqueId = useId();
-  const _id = id ?? `${dPrefix}tooltip-${uniqueId}`;
+  const id = restProps.id ?? `${dPrefix}tooltip-${uniqueId}`;
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
@@ -93,7 +87,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     isUndefined(dContainer) || dContainer === false
       ? () => {
           if (dContainer === false) {
-            const triggerEl = document.querySelector(`[aria-describedby="${_id}"]`) as HTMLElement | null;
+            const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
             return triggerEl?.parentElement ?? null;
           }
           return null;
@@ -108,7 +102,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   const [placement, setPlacement] = useState<DPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const triggerEl = document.querySelector(`[aria-describedby="${_id}"]`) as HTMLElement | null;
+    const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
 
     if (popupRef.current && triggerEl) {
       let currentPlacement = dPlacement;
@@ -256,25 +250,25 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
                 {...restProps}
                 {...restPProps}
                 ref={popupRef}
-                id={_id}
-                className={getClassName(className, `${dPrefix}tooltip`, `${dPrefix}tooltip--` + placement)}
+                id={id}
+                className={getClassName(restProps.className, `${dPrefix}tooltip`, `${dPrefix}tooltip--` + placement)}
                 style={{
-                  ...style,
+                  ...restProps.style,
                   ...popupPositionStyle,
                   ...transitionStyle,
                   zIndex,
                 }}
-                role="tooltip"
+                role={restProps.role ?? 'tooltip'}
                 onClick={(e) => {
-                  onClick?.(e);
+                  restProps.onClick?.(e);
                   pOnClick?.(e);
                 }}
                 onMouseEnter={(e) => {
-                  onMouseEnter?.(e);
+                  restProps.onMouseEnter?.(e);
                   pOnMouseEnter?.(e);
                 }}
                 onMouseLeave={(e) => {
-                  onMouseLeave?.(e);
+                  restProps.onMouseLeave?.(e);
                   pOnMouseLeave?.(e);
                 }}
               >
@@ -296,7 +290,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                 ...children.props,
                 ...restPProps,
-                'aria-describedby': _id,
+                'aria-describedby': id,
                 onClick: (e) => {
                   children.props.onClick?.(e);
                   pOnClick?.(e);
