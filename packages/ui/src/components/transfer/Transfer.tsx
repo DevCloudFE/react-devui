@@ -26,7 +26,7 @@ export interface DTransferProps<V extends DId, T extends DTransferOption<V>>
   dSelected?: V[];
   dOptions: T[];
   dTitle?: [React.ReactNode?, React.ReactNode?];
-  dActions?: (React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>> | 'right' | 'left')[];
+  dActions?: React.ReactNode[];
   dLoading?: [boolean?, boolean?];
   dSearchable?: boolean;
   dDisabled?: boolean;

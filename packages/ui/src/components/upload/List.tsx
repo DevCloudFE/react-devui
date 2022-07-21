@@ -1,5 +1,6 @@
 import type { DId } from '../../utils/global';
 import type { DUploadFile } from './Upload';
+import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import { isNumber, isUndefined } from 'lodash';
 import React, { useState } from 'react';
@@ -10,7 +11,6 @@ import { getClassName } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
-import { DActions } from './Actions';
 
 export interface DListProps {
   dFileList: DUploadFile[];
@@ -18,10 +18,7 @@ export interface DListProps {
     preview?: (file: DUploadFile) => void;
     download?: (file: DUploadFile) => void;
   };
-  dActions: (
-    file: DUploadFile,
-    index: number
-  ) => (React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>> | 'preview' | 'download' | 'remove')[];
+  dActions: (file: DUploadFile, index: number) => React.ReactNode[];
   onRemove: (file: DUploadFile) => void;
 }
 
@@ -93,17 +90,20 @@ export function DList(props: DListProps): JSX.Element | null {
                 >
                   {file.name}
                 </a>
-                <DActions
-                  className={`${dPrefix}upload__list-actions`}
-                  dFile={file}
-                  dDefaultActions={dDefaultActions}
-                  dActions={actions}
-                  onRemove={() => {
-                    setRemoveUIDs((draft) => {
-                      draft.push(file.uid);
-                    });
-                  }}
-                ></DActions>
+                <div className={`${dPrefix}upload__list-actions`}>
+                  {React.Children.map(actions, (action: any) =>
+                    React.cloneElement<DUploadActionPropsWithPrivate>(action, {
+                      ...action.props,
+                      __file: file,
+                      __defaultActions: dDefaultActions,
+                      __onRemove: () => {
+                        setRemoveUIDs((draft) => {
+                          draft.push(file.uid);
+                        });
+                      },
+                    })
+                  )}
+                </div>
                 <div className={`${dPrefix}upload__list-progress-wrapper`}>
                   {isNumber(file.percent) && <DProgress dPercent={file.percent} dLineWidth={2} dLabel={false}></DProgress>}
                 </div>

@@ -19,8 +19,8 @@ export { DBadge } from './badge';
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 
-export type { DCardProps, DCardHeaderProps, DCardContentProps, DCardActionsProps } from './card';
-export { DCard, DCardHeader, DCardContent, DCardActions } from './card';
+export type { DCardProps, DCardHeaderProps, DCardContentProps } from './card';
+export { DCard, DCardHeader, DCardContent } from './card';
 
 export type { DCascaderProps } from './cascader';
 export { DCascader } from './cascader';
@@ -112,7 +112,7 @@ export { DTooltip } from './tooltip';
 export type { DTransferProps } from './transfer';
 export { DTransfer } from './transfer';
 
-export type { DUploadProps } from './upload';
-export { DUpload } from './upload';
+export type { DUploadProps, DUploadActionProps } from './upload';
+export { DUpload, DUploadAction } from './upload';
 
 export { dayjs } from './dayjs';

@@ -1,9 +1,12 @@
 import type { DUploadFile } from './Upload';
+import type { DUploadActionPropsWithPrivate } from './UploadAction';
+
+import React from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { FileTwoTone, LoadingOutlined, PlusOutlined } from '../../icons';
 import { getClassName } from '../../utils';
-import { DActions } from './Actions';
+import { DUploadAction } from './UploadAction';
 
 export interface DPictureButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   dFile?: DUploadFile;
@@ -11,14 +14,14 @@ export interface DPictureButtonProps extends React.HTMLAttributes<HTMLDivElement
     preview?: (file: DUploadFile) => void;
     download?: (file: DUploadFile) => void;
   };
-  dActions?: (React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>> | 'preview' | 'download' | 'remove')[];
+  dActions?: React.ReactNode[];
   onRemove?: () => void;
 }
 
 export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
   const {
     dFile,
-    dActions = ['preview', 'remove'],
+    dActions = [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />],
     dDefaultActions,
     onRemove,
 
@@ -52,16 +55,21 @@ export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
               <div className={`${dPrefix}upload__picture-name`}>{dFile.name}</div>
             </>
           )}
-          <DActions
-            className={`${dPrefix}upload__picture-actions`}
-            dFile={dFile}
-            dDefaultActions={dDefaultActions}
-            dActions={dActions}
-            onRemove={onRemove}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          ></DActions>
+          <div className={`${dPrefix}upload__picture-actions`}>
+            {React.Children.map(dActions as any[], (action) =>
+              React.cloneElement<DUploadActionPropsWithPrivate>(action, {
+                ...action.props,
+                onClick: (e) => {
+                  action.props.onClick?.(e);
+
+                  e.stopPropagation();
+                },
+                __file: dFile,
+                __defaultActions: dDefaultActions,
+                __onRemove: onRemove,
+              })
+            )}
+          </div>
         </>
       ) : (
         <>

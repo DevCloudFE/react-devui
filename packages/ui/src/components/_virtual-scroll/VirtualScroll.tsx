@@ -1,6 +1,5 @@
 import { isUndefined, nth } from 'lodash';
-import React, { useImperativeHandle, useRef } from 'react';
-import { useState } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 
 import { useEventCallback } from '../../hooks';
 

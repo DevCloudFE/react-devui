@@ -81,11 +81,11 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
       {dActions.map((action, index) => (
         <React.Fragment key={index}>
           {action === 'cancel' ? (
-            <DButton {...cancelProps} dType="secondary">
-              {t('Footer', 'Cancel')}
+            <DButton {...cancelProps} dType={cancelProps.dType ?? 'secondary'}>
+              {cancelProps.children ?? t('Footer', 'Cancel')}
             </DButton>
           ) : action === 'ok' ? (
-            <DButton {...okProps}>{t('Footer', 'OK')}</DButton>
+            <DButton {...okProps}>{okProps.children ?? t('Footer', 'OK')}</DButton>
           ) : (
             action
           )}

@@ -11,6 +11,7 @@ import { DList } from './List';
 import { DPicture } from './Picture';
 import { DPictureButton } from './PictureButton';
 import { DPictureList } from './PictureList';
+import { DUploadAction } from './UploadAction';
 
 export type DUploadFileStatus = 'load' | 'error' | 'progress' | null;
 
@@ -45,10 +46,7 @@ export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement
     preview?: (file: DUploadFile) => void;
     download?: (file: DUploadFile) => void;
   };
-  dActions?: (
-    file: DUploadFile,
-    index: number
-  ) => (React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>> | 'preview' | 'download' | 'remove')[];
+  dActions?: (file: DUploadFile, index: number) => React.ReactNode[];
   dCustomUpload?: (files: FileList) => void;
   dBeforeUpload?: (file: File, files: FileList) => boolean | string | Blob | Promise<boolean | string | Blob>;
   onModelChange?: (
@@ -314,16 +312,16 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
       {dListType === 'list' ? (
         <>
           {child}
-          <DList {...listProps} dActions={dActions ?? (() => ['remove'])}></DList>
+          <DList {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="remove" />])}></DList>
         </>
       ) : dListType === 'picture' ? (
-        <DPicture {...listProps} dActions={dActions ?? (() => ['preview', 'remove'])}>
+        <DPicture {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />])}>
           {child}
         </DPicture>
       ) : dListType === 'picture-list' ? (
         <>
           {child}
-          <DPictureList {...listProps} dActions={dActions ?? (() => ['remove'])}></DPictureList>
+          <DPictureList {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="remove" />])}></DPictureList>
         </>
       ) : (
         child

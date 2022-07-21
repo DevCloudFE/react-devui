@@ -1,8 +1,7 @@
 import type { DNestedChildren, DId } from '../../utils/global';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useId, useImperativeHandle, useRef } from 'react';
-import { useState } from 'react';
+import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   usePrefixConfig,

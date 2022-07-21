@@ -4,8 +4,7 @@ import type { MultipleTreeNode, SingleTreeNode } from '../tree';
 import type { DCascaderOption, DSearchOption } from './Cascader';
 import type { Subject } from 'rxjs';
 
-import React from 'react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';

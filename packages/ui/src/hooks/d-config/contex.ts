@@ -9,7 +9,6 @@ import type {
   DCardProps,
   DCardHeaderProps,
   DCardContentProps,
-  DCardActionsProps,
   DCascaderProps,
   DCheckboxProps,
   DCheckboxGroupProps,
@@ -51,6 +50,7 @@ import type {
   DTooltipProps,
   DTransferProps,
   DUploadProps,
+  DUploadActionProps,
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
 import type { DIconBaseProps } from '../../icons';
@@ -74,7 +74,6 @@ export type DComponentConfig = {
   DCard: DCardProps;
   DCardHeader: DCardHeaderProps;
   DCardContent: DCardContentProps;
-  DCardActions: DCardActionsProps;
   DCascader: DCascaderProps<any, any>;
   DCheckbox: DCheckboxProps;
   DCheckboxGroup: DCheckboxGroupProps<any>;
@@ -116,6 +115,7 @@ export type DComponentConfig = {
   DTooltip: DTooltipProps;
   DTransfer: DTransferProps<any, any>;
   DUpload: DUploadProps;
+  DUploadAction: DUploadActionProps;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };
 
 export interface DConfigContextData {

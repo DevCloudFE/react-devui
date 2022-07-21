@@ -1,5 +1,6 @@
 import type { DId } from '../../utils/global';
 import type { DUploadFile } from './Upload';
+import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import { isNumber } from 'lodash';
 import React, { useState } from 'react';
@@ -10,7 +11,6 @@ import { getClassName } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DTransition } from '../_transition';
 import { DProgress } from '../progress';
-import { DActions } from './Actions';
 
 export interface DPictureProps {
   children: React.ReactNode;
@@ -19,10 +19,7 @@ export interface DPictureProps {
     preview?: (file: DUploadFile) => void;
     download?: (file: DUploadFile) => void;
   };
-  dActions: (
-    file: DUploadFile,
-    index: number
-  ) => (React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>> | 'preview' | 'download' | 'remove')[];
+  dActions: (file: DUploadFile, index: number) => React.ReactNode[];
   onRemove: (file: DUploadFile) => void;
 }
 
@@ -111,20 +108,25 @@ export function DPicture(props: DPictureProps): JSX.Element | null {
                           <div className={`${dPrefix}upload__picture-name`}>{file.name}</div>
                         </>
                       )}
-                      <DActions
-                        className={`${dPrefix}upload__picture-actions`}
-                        dFile={file}
-                        dDefaultActions={dDefaultActions}
-                        dActions={actions}
-                        onRemove={() => {
-                          setRemoveUIDs((draft) => {
-                            draft.push(file.uid);
-                          });
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      ></DActions>
+                      <div className={`${dPrefix}upload__picture-actions`}>
+                        {React.Children.map(actions, (action: any) =>
+                          React.cloneElement<DUploadActionPropsWithPrivate>(action, {
+                            ...action.props,
+                            onClick: (e) => {
+                              action.props.onClick?.(e);
+
+                              e.stopPropagation();
+                            },
+                            __file: file,
+                            __defaultActions: dDefaultActions,
+                            __onRemove: () => {
+                              setRemoveUIDs((draft) => {
+                                draft.push(file.uid);
+                              });
+                            },
+                          })
+                        )}
+                      </div>
                     </>
                   ) : (
                     <>
