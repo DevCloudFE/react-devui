@@ -1,10 +1,10 @@
 import type { DFooterProps } from '../_footer';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DFooter } from '../_footer';
 
-export type DModalFooterProps = Omit<DFooterProps, 'onClose'>;
+export type DModalFooterProps = Omit<DFooterProps, 'dClassNamePrefix' | 'onClose'>;
 
 export interface DModalFooterPropsWithPrivate extends DModalFooterProps {
   __onClose?: () => void;
@@ -18,9 +18,5 @@ export function DModalFooter(props: DModalFooterProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DModalFooterPropsWithPrivate);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
-  return <DFooter {...restProps} className={getClassName(restProps.className, `${dPrefix}modal-footer`)} onClose={__onClose}></DFooter>;
+  return <DFooter {...restProps} dClassNamePrefix="modal" onClose={__onClose}></DFooter>;
 }

@@ -1,8 +1,8 @@
 import type { DSize } from '../../utils/global';
 import type { DFormControl } from '../form';
 
-import { isNumber } from 'lodash';
-import { useRef, useState } from 'react';
+import { isUndefined } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   usePrefixConfig,
@@ -13,6 +13,7 @@ import {
   useEventCallback,
   useGeneralContext,
   useDValue,
+  useForceUpdate,
 } from '../../hooks';
 import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
@@ -33,6 +34,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dMax?: number;
   dMin?: number;
   dStep?: number;
+  dInteger?: boolean;
   dPlaceholder?: string;
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
@@ -47,6 +49,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
     dMax,
     dMin,
     dStep,
+    dInteger = false,
     dPlaceholder,
     dDisabled = false,
     dFormControl,
@@ -76,15 +79,21 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const combineInputRef = useForkRef(inputRef, dInputRef);
 
   const dataRef = useRef<{
+    showValue: string;
+    prevValue: string;
     clearLoop?: () => void;
     clearTid?: () => void;
-  }>({});
+  }>({ showValue: '', prevValue: '' });
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();
+  const forceUpdate = useForceUpdate();
 
   const formControlInject = useFormControl(dFormControl);
-  const [value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
+  const [_value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
+  if (_value !== dataRef.current.prevValue) {
+    dataRef.current.showValue = dataRef.current.prevValue = _value;
+  }
 
   const [isFocus, setIsFocus] = useState(false);
   const [password, setPassword] = useState(true);
@@ -93,20 +102,18 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const changeNumber = useEventCallback((isIncrease = true) => {
-    changeValue((val) => {
-      const stepVal = dStep ?? 1;
-      const newVal = (() => {
-        if (isNumber(val)) {
-          return val;
-        }
-        const num = val ? Number(val) : 0;
-        if (Number.isNaN(num)) {
-          return 0;
-        }
-        return isIncrease ? num + stepVal : num - stepVal;
-      })();
-      return Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, newVal)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0);
-    });
+    const stepVal = dStep ?? 1;
+    const newVal = (() => {
+      let val = Number(dataRef.current.showValue);
+      if (Number.isNaN(val)) {
+        return 0;
+      }
+      if (dInteger && !Number.isInteger(val)) {
+        val = Math.round(val);
+      }
+      return isIncrease ? val + stepVal : val - stepVal;
+    })();
+    changeValue(Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, newVal)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
   });
 
   const handleNumberMouseDown = (isIncrease = true) => {
@@ -127,6 +134,20 @@ export function DInput(props: DInputProps): JSX.Element | null {
       e.preventDefault();
     }
   };
+
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
+      next: () => {
+        handleNumberMouseUp();
+      },
+    });
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture]);
 
   return (
     <DBaseDesign dCompose={{ active: isFocus, disabled: disabled }} dFormControl={dFormControl}>
@@ -160,7 +181,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
           ref={combineInputRef}
           className={getClassName(dInputProps?.className, `${dPrefix}input__input`)}
           placeholder={dPlaceholder}
-          value={value}
+          value={dataRef.current.showValue}
           type={dType === 'password' ? (password ? 'password' : 'text') : dType}
           max={dMax}
           min={dMin}
@@ -170,7 +191,13 @@ export function DInput(props: DInputProps): JSX.Element | null {
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 
-            changeValue(e.currentTarget.value);
+            dataRef.current.showValue = e.currentTarget.value;
+            forceUpdate();
+            const val = Number(dataRef.current.showValue);
+            if ((!isUndefined(dMax) && val > dMax) || (!isUndefined(dMin) && val < dMin) || (dInteger && !Number.isInteger(val))) {
+              return;
+            }
+            changeValue(dataRef.current.showValue);
           }}
           onFocus={(e) => {
             dInputProps?.onFocus?.(e);
@@ -180,14 +207,32 @@ export function DInput(props: DInputProps): JSX.Element | null {
           onBlur={(e) => {
             dInputProps?.onBlur?.(e);
 
+            if (dType === 'number') {
+              if (dataRef.current.showValue) {
+                let val = Number(dataRef.current.showValue);
+                if (!isUndefined(dMax) && val > dMax) {
+                  val = dMax;
+                }
+                if (!isUndefined(dMin) && val < dMin) {
+                  val = dMin;
+                }
+                if (dInteger && !Number.isInteger(val)) {
+                  val = Math.round(val);
+                }
+                changeValue(val.toString());
+              } else {
+                changeValue('');
+              }
+            }
+            dataRef.current.showValue = _value;
             setIsFocus(false);
           }}
         />
         {dClearable && !disabled && (
           <button
-            className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__clear`)}
-            style={{ opacity: value.length > 0 ? 1 : 0 }}
-            tabIndex={value.length > 0 ? 0 : -1}
+            className={`${dPrefix}input__clear`}
+            style={{ opacity: dataRef.current.showValue.length > 0 ? 1 : 0 }}
+            tabIndex={dataRef.current.showValue.length > 0 ? 0 : -1}
             aria-label={t('Clear')}
             onClick={() => {
               changeValue('');
@@ -198,7 +243,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
         )}
         {dType === 'password' && !disabled && (
           <button
-            className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__password`)}
+            className={`${dPrefix}input__password`}
             tabIndex={dPasswordToggle ? 0 : -1}
             aria-label={t('Input', password ? 'Password is not visible' : 'Password is visible')}
             onClick={() => {
@@ -213,17 +258,12 @@ export function DInput(props: DInputProps): JSX.Element | null {
         {dType === 'number' && dNumbetButton && !disabled && (
           <div className={`${dPrefix}input__number-container`}>
             <button
-              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__number`)}
+              className={`${dPrefix}input__number`}
               tabIndex={-1}
               aria-label={t('Input', 'Increase number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
                   handleNumberMouseDown();
-                }
-              }}
-              onMouseUp={(e) => {
-                if (e.button === 0) {
-                  handleNumberMouseUp();
                 }
               }}
               onTouchStart={() => {
@@ -241,17 +281,12 @@ export function DInput(props: DInputProps): JSX.Element | null {
               </DCustomIcon>
             </button>
             <button
-              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}input__number`)}
+              className={`${dPrefix}input__number`}
               tabIndex={-1}
               aria-label={t('Input', 'Decrease number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
                   handleNumberMouseDown(false);
-                }
-              }}
-              onMouseUp={(e) => {
-                if (e.button === 0) {
-                  handleNumberMouseUp();
                 }
               }}
               onTouchStart={() => {

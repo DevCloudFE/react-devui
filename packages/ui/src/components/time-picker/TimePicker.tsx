@@ -63,7 +63,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
     <DPickerBuilder
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}time-picker`)}
+      dClassNamePrefix="time-picker"
       dFormat={format}
       dSuffix={<ClockCircleOutlined />}
       dPlaceholder={[placeholderLeft, placeholderRight]}

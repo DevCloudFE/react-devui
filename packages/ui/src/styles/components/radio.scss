@@ -4,8 +4,6 @@
   gap: 0 8px;
   align-items: center;
 
-  @include utils-disabled;
-
   &:hover {
     @include e(input) {
       border-color: var(--#{$variable-prefix}color-primary-lighter);
@@ -13,6 +11,9 @@
   }
 
   @include when(disabled) {
+    color: var(--#{$variable-prefix}color-disabled);
+    pointer-events: none;
+
     @include e(input-wrapper) {
       background-color: var(--#{$variable-prefix}background-color-disabled);
 

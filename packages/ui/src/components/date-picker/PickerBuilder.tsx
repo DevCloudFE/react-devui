@@ -24,6 +24,7 @@ export interface DPickerBuilderRenderProps {
 
 export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: (props: DPickerBuilderRenderProps) => React.ReactNode;
+  dClassNamePrefix: string;
   dFormControl?: DFormControl;
   dModel?: Date | null | [Date, Date];
   dFormat: string;
@@ -51,6 +52,7 @@ export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivEl
 function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPickerBuilderRef>): JSX.Element | null {
   const {
     children,
+    dClassNamePrefix,
     dFormControl,
     dModel,
     dFormat,
@@ -257,6 +259,7 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
     <DDateInput
       {...restProps}
       ref={ref}
+      dClassNamePrefix={dClassNamePrefix}
       dFormControl={dFormControl}
       dVisible={visible}
       dPlacement={dPlacement}

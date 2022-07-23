@@ -34,6 +34,7 @@ export interface DDateInputRenderProps {
 
 export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: (props: DDateInputRenderProps) => JSX.Element | null;
+  dClassNamePrefix: string;
   dFormControl?: DFormControl;
   dVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
@@ -53,6 +54,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>): JSX.Element | null {
   const {
     children,
+    dClassNamePrefix,
     dFormControl,
     dVisible,
     dPlacement = 'bottom-left',
@@ -87,6 +89,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     clearTid?: () => void;
   }>({});
 
+  const prefix = `${dPrefix}${dClassNamePrefix}`;
+
   const [dInputRefLeft, dInputRefRight] = dInputRef ?? [];
   const combineInputRefLeft = useForkRef(inputRefLeft, dInputRefLeft);
   const combineInputRefRight = useForkRef(inputRefRight, dInputRefRight);
@@ -112,10 +116,10 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const clearable = dClearable && !dVisible && !dDisabled;
 
   const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}date-input-root`);
+    let el = document.getElementById(`${prefix}-root`);
     if (!el) {
       el = document.createElement('div');
-      el.id = `${dPrefix}date-input-root`;
+      el.id = `${prefix}-root`;
       document.body.appendChild(el);
     }
     return el;
@@ -199,7 +203,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       <DBaseInput
         {...inputProps}
         ref={isLeft ? combineInputRefLeft : combineInputRefRight}
-        className={getClassName(inputProps?.className, `${dPrefix}date-input__input`)}
+        className={getClassName(inputProps?.className, `${prefix}__input`)}
         type="text"
         autoComplete="off"
         disabled={dDisabled}
@@ -253,8 +257,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         <div
           {...restProps}
           ref={boxRef}
-          className={getClassName(restProps.className, `${dPrefix}date-input`, {
-            [`${dPrefix}date-input--${dSize}`]: dSize,
+          className={getClassName(restProps.className, prefix, {
+            [`${prefix}--${dSize}`]: dSize,
             'is-disabled': dDisabled,
             'is-focus': isFocus,
           })}
@@ -280,14 +284,14 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           {getInputNode(true)}
           {dRange && (
             <>
-              <div ref={indicatorRef} className={`${dPrefix}date-input__indicator`}></div>
-              <SwapRightOutlined className={`${dPrefix}date-input__separator`} />
+              <div ref={indicatorRef} className={`${prefix}__indicator`}></div>
+              <SwapRightOutlined className={`${prefix}__separator`} />
               {getInputNode(false)}
             </>
           )}
           {clearable && (
             <button
-              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-input__clear`)}
+              className={`${prefix}__clear`}
               aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
@@ -299,7 +303,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
             </button>
           )}
           {dSuffix && (
-            <div className={`${dPrefix}date-input__icon`} style={{ opacity: clearable ? 0 : 1 }}>
+            <div className={`${prefix}__icon`} style={{ opacity: clearable ? 0 : 1 }}>
               {dSuffix}
             </div>
           )}

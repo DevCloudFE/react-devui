@@ -355,7 +355,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     <DSelectbox
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}cascader`)}
+      dClassNamePrefix="cascader"
       dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}

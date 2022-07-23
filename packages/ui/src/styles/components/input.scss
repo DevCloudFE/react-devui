@@ -10,6 +10,10 @@
   border-radius: var(--#{$variable-prefix}border-radius);
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
 
+  &:hover {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
   &[data-form-invalid-warning='true'] {
     border-color: var(--#{$variable-prefix}color-warning) !important;
 
@@ -26,10 +30,10 @@
     }
   }
 
-  @include utils-disabled(true);
-
-  &:hover {
-    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  @include when(disabled) {
+    color: var(--#{$variable-prefix}color-disabled);
+    pointer-events: none;
+    background-color: var(--#{$variable-prefix}background-color-disabled);
   }
 
   @include when(focus) {
@@ -60,6 +64,8 @@
   }
 
   @include e(input) {
+    @include utils-input;
+
     display: inline-block;
     flex-grow: 1;
     width: 100%;
@@ -67,14 +73,9 @@
     height: 100%;
     padding: 0;
     margin: 0;
-    font: inherit;
     color: inherit;
-    letter-spacing: inherit;
     background-color: transparent;
     border: none;
-    outline: none;
-    appearance: none;
-    caret-color: var(--#{$variable-prefix}color-primary);
 
     &[type='number'] {
       appearance: textfield; /* Firefox */
@@ -108,17 +109,48 @@
   }
 
   @include e(clear) {
+    @include utils-button;
+
     flex-shrink: 0;
-    margin-left: 4px;
+    padding: 0;
+    margin: 0 0 0 4px;
     font-size: 0.9em;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    background-color: var(--#{$variable-prefix}background-color);
+    border: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
   }
 
   @include e(password) {
+    @include utils-button;
+
     flex-shrink: 0;
-    margin-left: 4px;
+    padding: 0;
+    margin: 0 0 0 4px;
     font-size: 0.9em;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    background-color: var(--#{$variable-prefix}background-color);
+    border: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
   }
 
   @include e(number-container) {
@@ -130,17 +162,26 @@
   }
 
   @include e(number) {
+    @include utils-button;
+
     flex-grow: 1;
     width: 24px;
+    padding: 0;
+    margin: 0;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    background-color: transparent;
+    border: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
       background-color: var(--#{$variable-prefix}background-color-hover-primary);
     }
 
     &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
       background-color: var(--#{$variable-prefix}background-color-primary);
     }
   }

@@ -38,13 +38,13 @@ export function DCard(props: DCardProps): JSX.Element | null {
       {dActions && (
         <div className={`${dPrefix}card__actions`}>
           {React.Children.map(dActions as any[], (action, index) => (
-            <React.Fragment>
+            <>
               {React.cloneElement(action, {
                 ...action.props,
                 className: getClassName(action.props.className, `${dPrefix}card__action`),
               })}
               {index !== dActions.length - 1 && <DSeparator className={`${dPrefix}card__action-separator`} dVertical></DSeparator>}
-            </React.Fragment>
+            </>
           ))}
         </div>
       )}

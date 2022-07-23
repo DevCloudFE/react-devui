@@ -332,7 +332,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                 {tabTitle}
                 {!tabDisabled && tabClosable && (
                   <button
-                    className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tabs__close`)}
+                    className={`${dPrefix}tabs__close`}
                     aria-label={t('Close')}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -375,7 +375,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                   }}
                 >
                   <div
-                    className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tabs__button`, `${dPrefix}tabs__button--more`, {
+                    className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--more`, {
                       'is-end': scrollEnd,
                     })}
                     style={{
@@ -390,7 +390,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
               )}
               {onAddClick && (
                 <button
-                  className={getClassName(`${dPrefix}icon-button`, `${dPrefix}tabs__button`, `${dPrefix}tabs__button--add`)}
+                  className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--add`)}
                   aria-label={t('Add')}
                   onClick={() => {
                     onAddClick?.();

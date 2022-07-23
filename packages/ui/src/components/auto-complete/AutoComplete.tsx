@@ -299,7 +299,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
                 <div
                   {...restProps}
                   ref={popupRef}
-                  className={getClassName(restProps.className, `${dPrefix}select__popup`)}
+                  className={getClassName(restProps.className, `${dPrefix}auto-complete`)}
                   style={{ ...restProps.style, ...popupPositionStyle, ...transitionStyle, zIndex: maxZIndex }}
                   onMouseDown={(e) => {
                     restProps.onMouseDown?.(e);
@@ -314,8 +314,8 @@ function AutoComplete<T extends DAutoCompleteOption>(
                 >
                   {dLoading && (
                     <div
-                      className={getClassName(`${dPrefix}select__loading`, {
-                        [`${dPrefix}select__loading--empty`]: dOptions.length === 0,
+                      className={getClassName(`${dPrefix}auto-complete__loading`, {
+                        [`${dPrefix}auto-complete__loading--empty`]: dOptions.length === 0,
                       })}
                     >
                       <LoadingOutlined dSize={dOptions.length === 0 ? 18 : 24} dSpin />
@@ -324,7 +324,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
                   <DVirtualScroll
                     ref={dVSRef}
                     id={listId}
-                    className={`${dPrefix}select__list`}
+                    className={`${dPrefix}auto-complete__list`}
                     role="listbox"
                     aria-activedescendant={isUndefined(focusOption) ? undefined : getOptionId(focusOption.value)}
                     dList={dOptions}
@@ -337,21 +337,21 @@ function AutoComplete<T extends DAutoCompleteOption>(
                         return (
                           <ul
                             key={optionValue}
-                            className={`${dPrefix}select__option-group`}
+                            className={`${dPrefix}auto-complete__option-group`}
                             role="group"
                             aria-labelledby={getGroupId(optionValue)}
                           >
                             <li
                               key={optionValue}
                               id={getGroupId(optionValue)}
-                              className={`${dPrefix}select__option-group-label`}
+                              className={`${dPrefix}auto-complete__option-group-label`}
                               role="presentation"
                             >
-                              <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
+                              <div className={`${dPrefix}auto-complete__option-content`}>{optionNode}</div>
                             </li>
                             {children.length === 0 ? (
-                              <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>
-                                <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
+                              <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: 12 + 8 }}>
+                                <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
                               </li>
                             ) : (
                               renderProps.children
@@ -365,13 +365,13 @@ function AutoComplete<T extends DAutoCompleteOption>(
                           {...renderProps}
                           key={optionValue}
                           id={getOptionId(optionValue)}
-                          className={getClassName(`${dPrefix}select__option`, {
+                          className={getClassName(`${dPrefix}auto-complete__option`, {
                             'is-disabled': optionDisabled,
                           })}
                           style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
                           title={optionValue}
                           role="option"
-                          aria-selected={false}
+                          aria-auto-completeed={false}
                           aria-disabled={optionDisabled}
                           onClick={() => {
                             if (!optionDisabled) {
@@ -381,7 +381,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
                           }}
                         >
                           {focusVisible && focusOption?.value === optionValue && <div className={`${dPrefix}focus-outline`}></div>}
-                          <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
+                          <div className={`${dPrefix}auto-complete__option-content`}>{optionNode}</div>
                         </li>
                       );
                     }}
@@ -398,8 +398,8 @@ function AutoComplete<T extends DAutoCompleteOption>(
                     dSize={264}
                     dPadding={4}
                     dEmpty={
-                      <li className={`${dPrefix}select__empty`}>
-                        <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
+                      <li className={`${dPrefix}auto-complete__empty`}>
+                        <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
                       </li>
                     }
                     onScrollEnd={onScrollBottom}

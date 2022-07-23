@@ -4,8 +4,8 @@ import { Subject } from 'rxjs';
 
 import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
-import { DAlertDialog } from '../_alert-dialog';
+import { registerComponentMate } from '../../utils';
+import { DAlert } from '../_alert';
 import { DTransition } from '../_transition';
 
 export interface DNotificationProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -98,7 +98,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
   //#endregion
 
   //#region Ref
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const [t] = useTranslation();
@@ -133,8 +133,8 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
             break;
 
           case 'leave':
-            if (dialogRef.current) {
-              const { height } = dialogRef.current.getBoundingClientRect();
+            if (alertRef.current) {
+              const { height } = alertRef.current.getBoundingClientRect();
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;
@@ -158,18 +158,18 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
         }
 
         return (
-          <DAlertDialog
+          <DAlert
             {...restProps}
-            className={getClassName(restProps.className, `${dPrefix}notification`)}
             style={{
               ...restProps.style,
               ...transitionStyle,
             }}
             aria-labelledby={isUndefined(dTitle) ? undefined : headerId}
             aria-describedby={contentId}
+            dClassNamePrefix="notification"
             dDuration={dDuration}
             dEscClosable={dEscClosable}
-            dDialogRef={dialogRef}
+            dAlertRef={alertRef}
             onClose={onClose}
           >
             {(!isUndefined(dType) || !isUndefined(dIcon)) && (
@@ -195,16 +195,12 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
               )}
               {!isUndefined(dDescription) && <div className={`${dPrefix}notification__description`}>{dDescription}</div>}
               {dClosable && (
-                <button
-                  className={getClassName(`${dPrefix}icon-button`, `${dPrefix}notification__close`)}
-                  aria-label={t('Close')}
-                  onClick={onClose}
-                >
+                <button className={`${dPrefix}notification__close`} aria-label={t('Close')} onClick={onClose}>
                   <CloseOutlined dSize={18} />
                 </button>
               )}
             </div>
-          </DAlertDialog>
+          </DAlert>
         );
       }}
     </DTransition>

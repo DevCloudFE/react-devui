@@ -110,7 +110,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
     } else if (prevActiveEl.current) {
       prevActiveEl.current.focus({ preventScroll: true });
     }
-  }, [asyncCapture, visible]);
+  }, [visible]);
 
   useEffect(() => {
     const [asyncGroup, asyncId] = asyncCapture.createGroup();

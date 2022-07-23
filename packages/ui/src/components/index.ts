@@ -49,6 +49,9 @@ export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validato
 export type { DRowProps, DColProps } from './grid';
 export { DRow, DCol, useMediaMatch } from './grid';
 
+export type { DImageProps, DImagePreviewProps } from './image';
+export { DImage, DImagePreview } from './image';
+
 export type { DInputProps } from './input';
 export { DInput } from './input';
 

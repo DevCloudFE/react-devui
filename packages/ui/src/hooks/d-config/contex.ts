@@ -25,6 +25,8 @@ import type {
   DFormGroupProps,
   DRowProps,
   DColProps,
+  DImageProps,
+  DImagePreviewProps,
   DInputProps,
   DMenuProps,
   DModalProps,
@@ -90,6 +92,8 @@ export type DComponentConfig = {
   DFormGroup: DFormGroupProps;
   DRow: DRowProps;
   DCol: DColProps;
+  DImage: DImageProps;
+  DImagePreview: DImagePreviewProps;
   DInput: DInputProps;
   DMenu: DMenuProps<any, any>;
   DModal: DModalProps;

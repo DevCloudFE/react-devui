@@ -1,4 +1,6 @@
 @include b(date-picker) {
+  @include component-date-input;
+
   @include e(popup) {
     position: fixed;
     overflow: auto hidden;
@@ -21,8 +23,25 @@
   }
 
   @include e(header-button) {
+    @include utils-button;
+
     width: 24px;
     height: 100%;
+    padding: 0;
+    margin: 0;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    background-color: transparent;
+    border: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
   }
 
   @include e(panel) {
@@ -54,10 +73,14 @@
     height: 26px;
     cursor: pointer;
 
-    @include utils-disabled(true);
-
     &:not(.is-active, .is-hover, .is-another, .is-between, .is-between-hover):hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+      background-color: var(--#{$variable-prefix}background-color-disabled);
     }
 
     @include m(out-month) {

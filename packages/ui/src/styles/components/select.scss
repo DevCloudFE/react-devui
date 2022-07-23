@@ -1,12 +1,20 @@
 $select-option-height: 32px;
 
 @include b(select) {
+  @include component-selectbox;
+
   @include when(disabled) {
     @include e(multiple-tag) {
       color: var(--#{$variable-prefix}color-disabled);
     }
     @include e(multiple-count) {
       color: var(--#{$variable-prefix}color-disabled);
+    }
+  }
+
+  @include e(multiple-tag) {
+    & + & {
+      margin-left: 8px;
     }
   }
 
@@ -37,10 +45,13 @@ $select-option-height: 32px;
     cursor: pointer;
     transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-    @include utils-disabled;
-
     &:not(.is-selected):hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
     }
 
     @include when(selected) {
@@ -64,9 +75,9 @@ $select-option-height: 32px;
   }
 
   @include e(option-content) {
-    flex: 1 0 0;
-
     @include utils-ellipsis;
+
+    flex: 1 0 0;
   }
 
   @include e(empty) {
@@ -91,12 +102,6 @@ $select-option-height: 32px;
     @include m(empty) {
       justify-content: flex-start;
       background-color: var(--#{$variable-prefix}background-color);
-    }
-  }
-
-  @include e(multiple-tag) {
-    & + & {
-      margin-left: 8px;
     }
   }
 }

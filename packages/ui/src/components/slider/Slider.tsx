@@ -285,7 +285,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       let clientX: number;
       let clientY: number;
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -293,7 +293,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         },
       });
 
-      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { passive: false }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -304,9 +304,10 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         },
       });
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove').subscribe({
         next: (e) => {
           e.preventDefault();
+
           clientX = e.clientX;
           clientY = e.clientY;
 
@@ -327,7 +328,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       let clientX: number;
       let clientY: number;
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup', { capture: true }).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -335,7 +336,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         },
       });
 
-      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { capture: true, passive: false }).subscribe({
+      asyncGroup.fromEvent<TouchEvent>(window, 'touchmove', { passive: false }).subscribe({
         next: (e) => {
           e.preventDefault();
 
@@ -346,9 +347,10 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         },
       });
 
-      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove', { capture: true }).subscribe({
+      asyncGroup.fromEvent<MouseEvent>(window, 'mousemove').subscribe({
         next: (e) => {
           e.preventDefault();
+
           clientX = e.clientX;
           clientY = e.clientY;
 

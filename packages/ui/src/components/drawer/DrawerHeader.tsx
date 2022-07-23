@@ -1,10 +1,10 @@
 import type { DHeaderProps } from '../_header';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DHeader } from '../_header';
 
-export type DDrawerHeaderProps = Omit<DHeaderProps, 'onClose'>;
+export type DDrawerHeaderProps = Omit<DHeaderProps, 'dClassNamePrefix' | 'onClose'>;
 
 export interface DDrawerHeaderPropsWithPrivate extends DDrawerHeaderProps {
   __id?: string;
@@ -20,16 +20,5 @@ export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
-  return (
-    <DHeader
-      {...restProps}
-      id={restProps.id ?? __id}
-      className={getClassName(restProps.className, `${dPrefix}drawer-header`)}
-      onClose={__onClose}
-    ></DHeader>
-  );
+  return <DHeader {...restProps} id={restProps.id ?? __id} dClassNamePrefix="drawer" onClose={__onClose}></DHeader>;
 }

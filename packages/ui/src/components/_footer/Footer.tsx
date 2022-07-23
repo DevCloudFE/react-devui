@@ -7,6 +7,7 @@ import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
 export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dClassNamePrefix: string;
   dAlign?: 'left' | 'center' | 'right';
   dActions?: React.ReactNode[];
   dCancelProps?: DButtonProps;
@@ -18,6 +19,7 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 
 export function DFooter(props: DFooterProps): JSX.Element | null {
   const {
+    dClassNamePrefix,
     dAlign = 'right',
     dActions = ['cancel', 'ok'],
     dCancelProps,
@@ -32,6 +34,8 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion
+
+  const prefix = `${dPrefix}${dClassNamePrefix}`;
 
   const [t] = useTranslation();
 
@@ -77,20 +81,20 @@ export function DFooter(props: DFooterProps): JSX.Element | null {
   };
 
   return (
-    <div {...restProps} className={getClassName(restProps.className, `${dPrefix}footer`, `${dPrefix}footer--${dAlign}`)}>
-      {dActions.map((action, index) => (
-        <React.Fragment key={index}>
-          {action === 'cancel' ? (
-            <DButton {...cancelProps} dType={cancelProps.dType ?? 'secondary'}>
-              {cancelProps.children ?? t('Footer', 'Cancel')}
-            </DButton>
-          ) : action === 'ok' ? (
-            <DButton {...okProps}>{okProps.children ?? t('Footer', 'OK')}</DButton>
-          ) : (
-            action
-          )}
-        </React.Fragment>
-      ))}
+    <div {...restProps} className={getClassName(restProps.className, `${prefix}__footer`, `${prefix}__footer--${dAlign}`)}>
+      {React.Children.map(dActions, (action) =>
+        action === 'cancel' ? (
+          <DButton {...cancelProps} key="$$cancel" dType={cancelProps.dType ?? 'secondary'}>
+            {cancelProps.children ?? t('Footer', 'Cancel')}
+          </DButton>
+        ) : action === 'ok' ? (
+          <DButton {...okProps} key="$$ok">
+            {okProps.children ?? t('Footer', 'OK')}
+          </DButton>
+        ) : (
+          action
+        )
+      )}
     </div>
   );
 }

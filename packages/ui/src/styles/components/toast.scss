@@ -21,6 +21,8 @@
 }
 
 @include b(toast) {
+  @include component-alert;
+
   position: relative;
   display: flex;
   align-items: center;
@@ -30,6 +32,7 @@
   pointer-events: all;
   background-color: var(--#{$variable-prefix}background-color);
   border-radius: var(--#{$variable-prefix}border-radius);
+  outline: none;
   box-shadow: var(--#{$variable-prefix}shadow-dialog);
 
   @include e(icon) {

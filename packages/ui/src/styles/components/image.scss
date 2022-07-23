@@ -1,0 +1,180 @@
+@include b(image) {
+  position: relative;
+  display: inline-flex;
+  vertical-align: top;
+
+  &:hover {
+    @include e(actions) {
+      opacity: 1;
+    }
+  }
+
+  @include e(actions) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--#{$variable-prefix}upload-mask-background-color);
+    opacity: 0;
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(action) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: #{map.get($colors, 'white')};
+    vertical-align: top;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    appearance: none;
+
+    &:hover,
+    &:focus {
+      background-color: var(--#{$variable-prefix}background-color-hover-light);
+    }
+
+    &:disabled {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
+  }
+}
+
+@include b(image-preview) {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 68px 68px 98px;
+  overflow: hidden;
+  outline: none;
+
+  @include e(navigation-button) {
+    @include utils-button;
+
+    position: absolute;
+    z-index: 5;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: 0;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 18px;
+    color: var(--#{$variable-prefix}text-color);
+    background-color: var(--#{$variable-prefix}background-color);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px 0 var(--#{$variable-prefix}shadow-color);
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover {
+      color: var(--#{$variable-prefix}color-primary);
+      background-color: var(--#{$variable-prefix}slides-navigation-background-color-hover);
+    }
+
+    @include m(prev) {
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+    }
+
+    @include m(next) {
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+    }
+  }
+
+  @include e(toolbar) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 48px;
+    padding: 0 10px;
+    margin: 0;
+    list-style: none;
+    background-color: var(--#{$variable-prefix}background-color);
+  }
+
+  @include e(toolbar-page) {
+    display: inline-flex;
+    gap: 0 8px;
+    align-items: center;
+    margin-right: auto;
+  }
+
+  @include e(toolbar-page-input) {
+    width: 60px;
+  }
+
+  @include e(toolbar-rotate) {
+    margin-right: 10px;
+  }
+
+  @include e(toolbar-zoom-input) {
+    width: 80px;
+    margin: 0 4px;
+  }
+
+  @include e(toolbar-close) {
+    margin-left: 10px;
+  }
+
+  @include e(img) {
+    z-index: 1;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    touch-action: none;
+    cursor: move;
+    user-select: none;
+    outline: none;
+  }
+
+  @include e(thumbnail-list) {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    z-index: 5;
+    display: flex;
+    gap: 0 8px;
+    padding: 8px;
+    margin: 0;
+    list-style: none;
+    background-color: var(--#{$variable-prefix}background-color);
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    border-radius: 8px;
+    transform: translateX(-50%);
+  }
+
+  @include e(thumbnail) {
+    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    background-color: var(--#{$variable-prefix}background-color-hover);
+
+    @include when(active) {
+      outline: 1px solid var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include e(thumbnail-img) {
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+  }
+}

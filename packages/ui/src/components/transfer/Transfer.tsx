@@ -282,31 +282,31 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
           }}
         ></DTransferPanel>
         <div className={`${dPrefix}transfer__actions`}>
-          {dActions.map((action, index) => (
-            <React.Fragment key={index}>
-              {action === 'right' ? (
-                <DButton
-                  disabled={stateLeft === false}
-                  dType="secondary"
-                  dIcon={<RightOutlined />}
-                  onClick={() => {
-                    handleButtonClick(true);
-                  }}
-                ></DButton>
-              ) : action === 'left' ? (
-                <DButton
-                  disabled={stateRight === false}
-                  dType="secondary"
-                  dIcon={<LeftOutlined />}
-                  onClick={() => {
-                    handleButtonClick(false);
-                  }}
-                ></DButton>
-              ) : (
-                action
-              )}
-            </React.Fragment>
-          ))}
+          {React.Children.map(dActions, (action) =>
+            action === 'right' ? (
+              <DButton
+                key="$$right"
+                disabled={stateLeft === false}
+                dType="secondary"
+                dIcon={<RightOutlined />}
+                onClick={() => {
+                  handleButtonClick(true);
+                }}
+              ></DButton>
+            ) : action === 'left' ? (
+              <DButton
+                key="$$left"
+                disabled={stateRight === false}
+                dType="secondary"
+                dIcon={<LeftOutlined />}
+                onClick={() => {
+                  handleButtonClick(false);
+                }}
+              ></DButton>
+            ) : (
+              action
+            )
+          )}
         </div>
         <DTransferPanel
           dOptions={optionsRight}

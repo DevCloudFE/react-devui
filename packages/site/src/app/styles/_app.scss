@@ -185,7 +185,8 @@ h3 {
   section[id^='Compose'],
   section[id^='Cascader'],
   section[id^='Select'] {
-    .d-selectbox {
+    .d-select,
+    .d-cascader {
       width: 400px;
     }
   }
@@ -225,7 +226,8 @@ h3 {
         'Switch': 'switch',
         'Time-picker': 'time-picker',
         'Date-picker': 'date-picker',
-        'Auto-complete': 'input'
+        'Auto-complete': 'input',
+        'Image': 'image'
       )
   {
     section[id^='#{$id}'] {

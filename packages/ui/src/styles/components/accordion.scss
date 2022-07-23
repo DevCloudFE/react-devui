@@ -26,9 +26,9 @@
   }
 
   @include e(title) {
-    flex: 1 0 0;
-
     @include utils-ellipsis;
+
+    flex: 1 0 0;
   }
 
   @include e(arrow) {

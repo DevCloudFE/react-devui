@@ -9,8 +9,10 @@
   margin: 0;
 
   @include when(change) {
-    .#{$variable-prefix}pagination__item--number {
-      transition: none;
+    @include e(item) {
+      @include m(number) {
+        transition: none;
+      }
     }
   }
 
@@ -21,16 +23,20 @@
 
     @include font-size(0.8rem);
 
-    .#{$variable-prefix}pagination__list {
+    @include e(list) {
       gap: 4px 2px;
     }
 
-    .#{$variable-prefix}pagination__jump-wrapper {
+    @include e(jump-wrapper) {
       gap: 0 2px;
     }
 
-    .#{$variable-prefix}pagination__item--button:not(.is-active) {
-      border: none;
+    @include e(item) {
+      @include m(button) {
+        &:not(.is-active) {
+          border: none;
+        }
+      }
     }
   }
 
@@ -59,12 +65,15 @@
       transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
         color var(--#{$variable-prefix}animation-duration-base) linear;
 
-      @include utils-disabled;
-
       &:hover,
       &:focus {
         color: var(--#{$variable-prefix}color-primary-lighter);
         border-color: var(--#{$variable-prefix}color-primary-lighter);
+      }
+
+      @include when(disabled) {
+        color: var(--#{$variable-prefix}color-disabled);
+        pointer-events: none;
       }
 
       @include when(active) {
@@ -88,20 +97,21 @@
     }
 
     @include m(jump5) {
-      .#{$variable-prefix}icon {
-        color: var(--#{$variable-prefix}color-primary);
-        opacity: 0;
-        transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
-      }
-
       &:hover,
       &:focus {
         .#{$variable-prefix}icon {
           opacity: 1;
         }
-        .#{$variable-prefix}pagination__ellipsis {
+
+        @include e(ellipsis) {
           opacity: 0;
         }
+      }
+
+      .#{$variable-prefix}icon {
+        color: var(--#{$variable-prefix}color-primary);
+        opacity: 0;
+        transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
       }
     }
   }

@@ -1,10 +1,10 @@
 import type { DFooterProps } from '../_footer';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DFooter } from '../_footer';
 
-export type DDrawerFooterProps = Omit<DFooterProps, 'onClose'>;
+export type DDrawerFooterProps = Omit<DFooterProps, 'dClassNamePrefix' | 'onClose'>;
 
 export interface DDrawerFooterPropsWithPrivate extends DDrawerFooterProps {
   __onClose?: () => void;
@@ -18,9 +18,5 @@ export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerFooterPropsWithPrivate);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
-  return <DFooter {...restProps} className={getClassName(restProps.className, `${dPrefix}drawer-footer`)} onClose={__onClose}></DFooter>;
+  return <DFooter {...restProps} dClassNamePrefix="drawer" onClose={__onClose}></DFooter>;
 }

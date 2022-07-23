@@ -8,29 +8,22 @@
   }
 
   @include e(item-action) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    @include utils-button;
+
     min-width: 24px;
     height: 24px;
     padding: 0;
     margin: 0;
-    font: inherit;
     color: var(--#{$variable-prefix}upload-action-color);
-    text-decoration: none;
-    vertical-align: top;
-    cursor: pointer;
     background-color: transparent;
     border: none;
-    outline: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       background-color var(--#{$variable-prefix}animation-duration-base) linear;
-    appearance: none;
 
     &:hover,
     &:focus {
       color: var(--#{$variable-prefix}upload-action-color-lighter);
-      background-color: var(--#{$variable-prefix}upload-action-background-color);
+      background-color: var(--#{$variable-prefix}upload-action-background-color-hover);
     }
 
     &:disabled,
@@ -38,12 +31,16 @@
       pointer-events: none;
       filter: opacity(50%);
     }
+
+    @include m(preview) {
+      text-decoration: none;
+    }
   }
 
   @include e(list) {
     --#{$variable-prefix}upload-action-color: var(--#{$variable-prefix}color-icon-decorator);
     --#{$variable-prefix}upload-action-color-lighter: var(--#{$variable-prefix}text-color);
-    --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+    --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover);
 
     display: flex;
     flex-direction: column;
@@ -125,13 +122,13 @@
   }
 
   @include e(list-link) {
+    @include utils-ellipsis;
+
     display: inline-block;
     flex: 1 0 0;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}text-color);
     text-decoration: none;
-
-    @include utils-ellipsis;
 
     @include when(active) {
       color: var(--#{$variable-prefix}color-primary);
@@ -155,7 +152,7 @@
   @include e(picture) {
     --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
     --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
-    --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+    --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover-light);
 
     display: flex;
     flex-wrap: wrap;
@@ -193,7 +190,7 @@
     @include m(button) {
       --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
       --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
-      --#{$variable-prefix}upload-action-background-color: var(--#{$variable-prefix}background-color-hover);
+      --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover-light);
 
       cursor: pointer;
       border-style: dashed;
@@ -220,11 +217,11 @@
   }
 
   @include e(picture-name) {
+    @include utils-ellipsis;
+
     max-width: 100%;
     margin-top: 8px;
     font-size: 0.9em;
-
-    @include utils-ellipsis;
   }
 
   @include e(picture-text) {

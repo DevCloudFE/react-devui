@@ -54,7 +54,10 @@ $dropdown-item-height: 32px;
       background-color: var(--#{$variable-prefix}background-color-hover);
     }
 
-    @include utils-disabled;
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
 
     @include m(basic) {
       padding: 0 12px;
@@ -64,7 +67,7 @@ $dropdown-item-height: 32px;
       padding: 0 24px 0 12px;
 
       @include when(disabled) {
-        .#{$variable-prefix}dropdown__sub-arrow {
+        @include e(sub-arrow) {
           color: inherit;
         }
       }
@@ -105,6 +108,8 @@ $dropdown-item-height: 32px;
   }
 
   @include e(group-title) {
+    @include utils-ellipsis;
+
     position: relative;
     display: flex;
     align-items: center;
@@ -113,7 +118,5 @@ $dropdown-item-height: 32px;
     margin: 0;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}text-color-sub);
-
-    @include utils-ellipsis;
   }
 }

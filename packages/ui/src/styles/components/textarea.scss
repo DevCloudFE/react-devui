@@ -1,23 +1,20 @@
 @include b(textarea) {
   --#{$variable-prefix}textarea-line-height: 24px;
 
+  @include utils-input;
+
   display: block;
   width: 100%;
   min-height: calc(var(--#{$variable-prefix}textarea-line-height) + 8px);
   padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   margin: 0;
-  font: inherit;
   line-height: var(--#{$variable-prefix}textarea-line-height);
   color: var(--#{$variable-prefix}text-color);
-  letter-spacing: inherit;
   resize: vertical;
   background-color: var(--#{$variable-prefix}background-color-input);
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
-  outline: none;
   transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
-  appearance: none;
-  caret-color: var(--#{$variable-prefix}color-primary);
 
   &[data-form-invalid-warning='true'] {
     border-color: var(--#{$variable-prefix}color-warning) !important;
@@ -28,8 +25,6 @@
     border-color: var(--#{$variable-prefix}color-danger) !important;
     caret-color: var(--#{$variable-prefix}color-danger) !important;
   }
-
-  @include utils-disabled(true, ':disabled');
 
   &:hover {
     border-color: var(--#{$variable-prefix}color-primary-lighter);
@@ -43,8 +38,14 @@
     color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
   }
 
-  &:disabled::placeholder {
-    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+  &:disabled {
+    color: var(--#{$variable-prefix}color-disabled);
+    pointer-events: none;
+    background-color: var(--#{$variable-prefix}background-color-disabled);
+
+    &::placeholder {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+    }
   }
 
   @include m(smaller) {

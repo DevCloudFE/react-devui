@@ -7,7 +7,7 @@ import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName, toPx } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
@@ -68,8 +68,6 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   const drawerRef = useRef<HTMLDivElement>(null);
   const drawerContentRef = useRef<HTMLDivElement>(null);
   //#endregion
-
-  const asyncCapture = useAsync();
 
   const uniqueId = useId();
   const headerId = `${dPrefix}drawer-header-${uniqueId}`;
@@ -165,7 +163,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     } else if (prevActiveEl.current) {
       prevActiveEl.current.focus({ preventScroll: true });
     }
-  }, [asyncCapture, visible]);
+  }, [visible]);
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = (() => {
     const transform =

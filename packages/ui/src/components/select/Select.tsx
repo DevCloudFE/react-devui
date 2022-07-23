@@ -383,7 +383,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     <DSelectbox
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}select`)}
+      dClassNamePrefix="select"
       dFormControl={dFormControl}
       dVisible={visible}
       dContent={hasSelected && selectedNode}

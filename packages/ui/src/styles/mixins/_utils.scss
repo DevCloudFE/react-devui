@@ -1,18 +1,27 @@
+@mixin utils-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  white-space: nowrap;
+  vertical-align: top;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+@mixin utils-input {
+  font: inherit;
+  letter-spacing: inherit;
+  outline: none;
+  appearance: none;
+  caret-color: var(--#{$variable-prefix}color-primary);
+}
+
 @mixin utils-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-@mixin utils-disabled($background: false, $disabled: '.is-disabled') {
-  &#{$disabled} {
-    color: var(--#{$variable-prefix}color-disabled);
-    pointer-events: none;
-
-    @if $background {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
-    }
-  }
 }
 
 @mixin utils-loading($border: '0') {

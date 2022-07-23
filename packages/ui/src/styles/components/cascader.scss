@@ -1,6 +1,8 @@
 $cascader-option-height: 32px;
 
 @include b(cascader) {
+  @include component-selectbox;
+
   @include when(disabled) {
     @include e(multiple-tag) {
       color: var(--#{$variable-prefix}color-disabled);
@@ -51,10 +53,13 @@ $cascader-option-height: 32px;
     cursor: pointer;
     transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-    @include utils-disabled;
-
     &:not(.is-selected):hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
     }
 
     @include when(selected) {
@@ -67,9 +72,9 @@ $cascader-option-height: 32px;
   }
 
   @include e(option-content) {
-    flex: 1 0 0;
-
     @include utils-ellipsis;
+
+    flex: 1 0 0;
   }
 
   @include e(option-icon) {

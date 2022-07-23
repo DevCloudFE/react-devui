@@ -1,4 +1,7 @@
 @include b(modal) {
+  @include component-header;
+  @include component-footer;
+
   position: fixed;
   top: 0;
   right: 0;
@@ -20,7 +23,7 @@
       display: flex;
     }
 
-    .#{$variable-prefix}modal-footer {
+    @include e(footer) {
       border: none;
     }
   }
@@ -55,8 +58,8 @@
   }
 
   @include e(title) {
-    margin-bottom: 8px;
-
     @include utils-title;
+
+    margin-bottom: 8px;
   }
 }

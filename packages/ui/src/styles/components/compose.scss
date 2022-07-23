@@ -93,7 +93,11 @@
   border: 1px solid var(--#{$variable-prefix}color-border);
   border-radius: var(--#{$variable-prefix}border-radius);
 
-  @include utils-disabled(true);
+  @include when(disabled) {
+    color: var(--#{$variable-prefix}color-disabled);
+    pointer-events: none;
+    background-color: var(--#{$variable-prefix}background-color-disabled);
+  }
 
   @include m(gray) {
     background-color: var(--#{$variable-prefix}background-color-gray);

@@ -56,7 +56,7 @@ $menu-item-height: 40px;
       color: var(--#{$variable-prefix}color-primary);
 
       &:not(.#{$variable-prefix}menu__item--horizontal) {
-        .#{$variable-prefix}menu__indicator {
+        @include e(indicator) {
           & > div::before {
             transform: scaleY(1);
           }
@@ -95,7 +95,7 @@ $menu-item-height: 40px;
         }
       }
 
-      .#{$variable-prefix}menu__item-content {
+      @include e(item-content) {
         flex-shrink: 0;
       }
     }
@@ -103,7 +103,7 @@ $menu-item-height: 40px;
     @include m(icon) {
       height: 52px;
 
-      .#{$variable-prefix}menu__item-icon {
+      @include e(item-icon) {
         width: 64px;
         padding-right: 16px;
 
@@ -128,7 +128,7 @@ $menu-item-height: 40px;
       padding-right: 32px;
 
       &:hover {
-        .#{$variable-prefix}menu__sub-arrow {
+        @include e(sub-arrow) {
           color: inherit;
         }
       }
@@ -143,13 +143,13 @@ $menu-item-height: 40px;
       }
 
       &.#{$variable-prefix}menu__item--icon {
-        .#{$variable-prefix}menu__sub-arrow {
+        @include e(sub-arrow) {
           opacity: 0;
         }
       }
 
       @include when(active) {
-        .#{$variable-prefix}menu__sub-arrow {
+        @include e(sub-arrow) {
           color: inherit;
         }
       }
@@ -157,13 +157,13 @@ $menu-item-height: 40px;
       @include when(expand) {
         color: var(--#{$variable-prefix}color-primary);
 
-        .#{$variable-prefix}menu__sub-arrow {
+        @include e(sub-arrow) {
           color: inherit;
         }
       }
 
       @include when(disabled) {
-        .#{$variable-prefix}menu__sub-arrow {
+        @include e(sub-arrow) {
           color: inherit;
         }
       }
@@ -236,9 +236,9 @@ $menu-item-height: 40px;
   }
 
   @include e(item-content) {
-    min-width: 1em;
-
     @include utils-ellipsis;
+
+    min-width: 1em;
   }
 
   @include e(sub-arrow) {
@@ -259,23 +259,27 @@ $menu-item-height: 40px;
     list-style: none;
 
     @include m(popup) {
+      $padding-size: 8px;
+
       position: fixed;
       padding: 4px;
       background-color: var(--#{$variable-prefix}background-color);
       border-radius: var(--#{$variable-prefix}border-radius);
       box-shadow: var(--#{$variable-prefix}shadow-popup);
 
-      $padding-size: 8px;
-      .#{$variable-prefix}menu__item {
+      @include e(item) {
         padding: 0 $padding-size;
+
+        @include m(sub) {
+          padding: 0 24px 0 $padding-size;
+        }
       }
-      .#{$variable-prefix}menu__item--sub {
-        padding: 0 24px 0 $padding-size;
-      }
-      .#{$variable-prefix}menu__sub-arrow {
+
+      @include e(sub-arrow) {
         right: 6px;
       }
-      .#{$variable-prefix}menu__group-title {
+
+      @include e(group-title) {
         padding: 0 $padding-size;
       }
     }
@@ -288,6 +292,8 @@ $menu-item-height: 40px;
   }
 
   @include e(group-title) {
+    @include utils-ellipsis;
+
     position: relative;
     display: flex;
     align-items: center;
@@ -296,7 +302,5 @@ $menu-item-height: 40px;
     margin: 0;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}text-color-sub);
-
-    @include utils-ellipsis;
   }
 }

@@ -1,5 +1,0 @@
-@include b(mask) {
-  position: absolute;
-  inset: 0;
-  background-color: var(--#{$variable-prefix}mask-background-color);
-}

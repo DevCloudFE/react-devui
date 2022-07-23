@@ -43,7 +43,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
 
   return dPreset === 'preview' ? (
     <a
-      className={getClassName(`${dPrefix}upload__item-action`, {
+      className={getClassName(`${dPrefix}upload__item-action`, `${dPrefix}upload__item-action--preview`, {
         'is-disabled': isUndefined(__file.url),
       })}
       target={restProps['target'] ?? '_blank'}

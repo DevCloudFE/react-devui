@@ -33,6 +33,8 @@
 }
 
 @include b(notification) {
+  @include component-alert;
+
   position: relative;
   display: flex;
   width: 380px;
@@ -42,6 +44,7 @@
   pointer-events: all;
   background-color: var(--#{$variable-prefix}background-color);
   border-radius: var(--#{$variable-prefix}border-radius);
+  outline: none;
   box-shadow: var(--#{$variable-prefix}shadow-dialog);
 
   @include e(icon) {
@@ -61,11 +64,28 @@
   }
 
   @include e(close) {
+    @include utils-button;
+
     position: absolute;
     top: 10px;
     right: 12px;
     z-index: 1;
     width: 28px;
     height: 28px;
+    padding: 0;
+    margin: 0;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    background-color: var(--#{$variable-prefix}background-color);
+    border: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
   }
 }

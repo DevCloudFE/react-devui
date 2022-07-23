@@ -40,6 +40,8 @@
   }
 
   @include e(link) {
+    @include utils-break-word;
+
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -52,8 +54,6 @@
     &:hover {
       color: var(--#{$variable-prefix}color-primary-lighter);
     }
-
-    @include utils-break-word;
 
     @include when(active) {
       color: var(--#{$variable-prefix}color-primary);

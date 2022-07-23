@@ -53,10 +53,10 @@ $transfer-option-height: 32px;
   }
 
   @include e(header-title) {
+    @include utils-ellipsis;
+
     flex: 1 0 0;
     text-align: right;
-
-    @include utils-ellipsis;
   }
 
   @include e(search) {
@@ -98,17 +98,20 @@ $transfer-option-height: 32px;
     cursor: pointer;
     transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
-    @include utils-disabled;
-
     &:hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
     }
   }
 
   @include e(option-content) {
-    flex: 1 0 0;
-
     @include utils-ellipsis;
+
+    flex: 1 0 0;
   }
 
   @include e(empty) {

@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
-import { DAlertDialog } from '../_alert-dialog';
+import { DAlert } from '../_alert';
 import { DTransition } from '../_transition';
 
 export interface DToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -94,7 +94,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
   //#endregion
 
   //#region Ref
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const uniqueId = useId();
@@ -129,8 +129,8 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
             break;
 
           case 'leave':
-            if (dialogRef.current) {
-              const { height } = dialogRef.current.getBoundingClientRect();
+            if (alertRef.current) {
+              const { height } = alertRef.current.getBoundingClientRect();
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;
@@ -154,17 +154,17 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
         }
 
         return (
-          <DAlertDialog
+          <DAlert
             {...restProps}
-            className={getClassName(restProps.className, `${dPrefix}toast`)}
             style={{
               ...restProps.style,
               ...transitionStyle,
             }}
             aria-describedby={restProps['aria-describedby'] ?? contentId}
+            dClassNamePrefix="toast"
             dDuration={dDuration}
             dEscClosable={dEscClosable}
-            dDialogRef={dialogRef}
+            dAlertRef={alertRef}
             onClose={onClose}
           >
             {(!isUndefined(dType) || !isUndefined(dIcon)) && (
@@ -185,7 +185,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
             <div id={contentId} className={getClassName(`${dPrefix}toast__content`)}>
               {dContent}
             </div>
-          </DAlertDialog>
+          </DAlert>
         );
       }}
     </DTransition>

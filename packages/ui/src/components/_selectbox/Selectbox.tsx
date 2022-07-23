@@ -36,6 +36,7 @@ export interface DSelectboxRenderProps {
 
 export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: (props: DSelectboxRenderProps) => JSX.Element | null;
+  dClassNamePrefix: string;
   dFormControl?: DFormControl;
   dVisible?: boolean;
   dContent?: React.ReactNode;
@@ -60,6 +61,7 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef>): JSX.Element | null {
   const {
     children,
+    dClassNamePrefix,
     dFormControl,
     dVisible = false,
     dContent,
@@ -93,6 +95,8 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const inputRef = useRef<HTMLInputElement>(null);
   //#endregion
 
+  const prefix = `${dPrefix}${dClassNamePrefix}`;
+
   const combineInputRef = useForkRef(inputRef, dInputRef);
 
   const asyncCapture = useAsync();
@@ -104,10 +108,10 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const clearable = dClearable && !dVisible && !dLoading && !dDisabled && dContent;
 
   const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}selectbox-root`);
+    let el = document.getElementById(`${prefix}-root`);
     if (!el) {
       el = document.createElement('div');
-      el.id = `${dPrefix}selectbox-root`;
+      el.id = `${prefix}-root`;
       document.body.appendChild(el);
     }
     return el;
@@ -174,8 +178,8 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         <div
           {...restProps}
           ref={boxRef}
-          className={getClassName(restProps.className, `${dPrefix}selectbox`, {
-            [`${dPrefix}selectbox--${dSize}`]: dSize,
+          className={getClassName(restProps.className, prefix, {
+            [`${prefix}--${dSize}`]: dSize,
             'is-expanded': dVisible,
             'is-focus': isFocus,
             'is-disabled': dDisabled,
@@ -197,13 +201,13 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
             inputRef.current?.focus({ preventScroll: true });
           }}
         >
-          <div className={`${dPrefix}selectbox__container`} title={dContentTitle}>
+          <div className={`${prefix}__container`} title={dContentTitle}>
             <DFocusVisible onFocusVisibleChange={onFocusVisibleChange}>
               {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
                 <DBaseInput
                   {...dInputProps}
                   ref={combineInputRef}
-                  className={getClassName(`${dPrefix}selectbox__search`, dInputProps?.className)}
+                  className={getClassName(`${prefix}__search`, dInputProps?.className)}
                   style={{
                     ...dInputProps?.style,
                     opacity: inputable ? undefined : 0,
@@ -259,16 +263,16 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
             </DFocusVisible>
             {!inputable &&
               (dContent ? (
-                <div className={`${dPrefix}selectbox__content`}>{dContent}</div>
+                <div className={`${prefix}__content`}>{dContent}</div>
               ) : dPlaceholder ? (
-                <div className={`${dPrefix}selectbox__placeholder-wrapper`}>
-                  <div className={`${dPrefix}selectbox__placeholder`}>{dPlaceholder}</div>
+                <div className={`${prefix}__placeholder-wrapper`}>
+                  <div className={`${prefix}__placeholder`}>{dPlaceholder}</div>
                 </div>
               ) : null)}
           </div>
           {dSuffix && (
             <div
-              className={`${dPrefix}selectbox__suffix`}
+              className={`${prefix}__suffix`}
               onClick={(e) => {
                 e.stopPropagation();
               }}
@@ -278,7 +282,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
           )}
           {clearable && (
             <button
-              className={getClassName(`${dPrefix}icon-button`, `${dPrefix}selectbox__clear`)}
+              className={`${prefix}__clear`}
               aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
@@ -290,7 +294,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
             </button>
           )}
           <div
-            className={getClassName(`${dPrefix}selectbox__icon`, {
+            className={getClassName(`${prefix}__icon`, {
               'is-arrow-up': !dLoading && !inputable && dVisible,
             })}
             style={{

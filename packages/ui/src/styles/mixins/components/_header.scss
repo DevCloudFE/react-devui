@@ -1,0 +1,23 @@
+@mixin component-header {
+  @include e(header) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  @include e(header-title) {
+    @include utils-title;
+    @include utils-ellipsis;
+
+    flex: 1 0 0;
+  }
+
+  @include e(header-actions) {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 0 8px;
+    align-items: center;
+  }
+}

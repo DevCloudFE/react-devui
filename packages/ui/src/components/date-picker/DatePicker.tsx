@@ -75,7 +75,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     <DPickerBuilder
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}date-picker`)}
+      dClassNamePrefix="date-picker"
       dFormat={format}
       dSuffix={<CalendarOutlined />}
       dPlaceholder={[placeholderLeft, placeholderRight]}

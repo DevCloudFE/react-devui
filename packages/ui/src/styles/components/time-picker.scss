@@ -1,6 +1,8 @@
 $time-picker-cell-height: 28px;
 
 @include b(time-picker) {
+  @include component-date-input;
+
   @include e(popup) {
     position: fixed;
     background-color: var(--#{$variable-prefix}background-color);
@@ -50,10 +52,13 @@ $time-picker-cell-height: 28px;
     list-style: none;
     cursor: pointer;
 
-    @include utils-disabled;
-
     &:not(.is-active):hover {
       background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
     }
 
     @include when(active) {

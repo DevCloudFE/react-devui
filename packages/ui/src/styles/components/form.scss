@@ -59,12 +59,13 @@
 
   @include e(item) {
     position: relative;
+
     @include m(vertical) {
-      .#{$variable-prefix}form__item-container {
+      @include e(item-container) {
         flex-direction: column;
       }
 
-      .#{$variable-prefix}form__item-label {
+      @include e(item-label) {
         justify-content: flex-start;
       }
     }
@@ -77,14 +78,14 @@
   }
 
   @include e(item-label) {
+    @include utils-ellipsis;
+
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
     justify-content: flex-end;
     min-height: var(--#{$variable-prefix}size);
     padding-right: var(--#{$variable-prefix}margin-size);
-
-    @include utils-ellipsis;
 
     @include m(required) {
       &::before {
@@ -120,7 +121,8 @@
     align-items: center;
     min-height: var(--#{$variable-prefix}size);
 
-    .#{$variable-prefix}selectbox,
+    .#{$variable-prefix}select,
+    .#{$variable-prefix}cascader,
     .#{$variable-prefix}compose,
     .#{$variable-prefix}input {
       width: 100%;

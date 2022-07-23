@@ -39,7 +39,7 @@
         height: unset;
       }
 
-      .#{$variable-prefix}separator__text {
+      @include e(text) {
         padding: 8px 0;
       }
     }

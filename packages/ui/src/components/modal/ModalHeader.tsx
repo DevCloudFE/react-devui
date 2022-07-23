@@ -1,10 +1,10 @@
 import type { DHeaderProps } from '../_header';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DHeader } from '../_header';
 
-export type DModalHeaderProps = Omit<DHeaderProps, 'onClose'>;
+export type DModalHeaderProps = Omit<DHeaderProps, 'dClassNamePrefix' | 'onClose'>;
 
 export interface DModalHeaderPropsWithPrivate extends DModalHeaderProps {
   __id?: string;
@@ -20,16 +20,5 @@ export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DModalHeaderPropsWithPrivate);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
-  return (
-    <DHeader
-      {...restProps}
-      id={restProps.id ?? __id}
-      className={getClassName(restProps.className, `${dPrefix}modal-header`)}
-      onClose={__onClose}
-    ></DHeader>
-  );
+  return <DHeader {...restProps} id={restProps.id ?? __id} dClassNamePrefix="modal" onClose={__onClose}></DHeader>;
 }

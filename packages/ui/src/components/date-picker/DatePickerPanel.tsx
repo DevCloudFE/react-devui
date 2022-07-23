@@ -1,6 +1,6 @@
 import type { Dayjs, UnitType } from 'dayjs';
 
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { useAsync, useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '../../icons';
@@ -64,11 +64,6 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
           handleButtonDown(unit, value);
         }
       },
-      onMouseUp: (e) => {
-        if (e.button === 0) {
-          handleButtonMouseUp();
-        }
-      },
       onTouchStart: () => {
         handleButtonDown(unit, value);
       },
@@ -94,6 +89,20 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
     return month;
   })();
 
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    asyncGroup.fromEvent<MouseEvent>(window, 'mouseup').subscribe({
+      next: () => {
+        handleButtonMouseUp();
+      },
+    });
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture]);
+
   useImperativeHandle(
     ref,
     () => ({
@@ -105,33 +114,21 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
   return (
     <div className={`${dPrefix}date-picker__panel`}>
       <div className={`${dPrefix}date-picker__header`}>
-        <button
-          title={t('DatePicker', 'Previous year')}
-          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-picker__header-button`)}
-          {...getButtonProps('year', -1)}
-        >
+        <button title={t('DatePicker', 'Previous year')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('year', -1)}>
           <DoubleLeftOutlined />
         </button>
         <button
           title={t('DatePicker', 'Previous month')}
-          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-picker__header-button`)}
+          className={`${dPrefix}date-picker__header-button`}
           {...getButtonProps('month', -1)}
         >
           <LeftOutlined />
         </button>
         <span className={`${dPrefix}date-picker__header-content`}>{showDate.format(lang === 'zh-Hant' ? 'YYYY年 M月' : 'MMM YYYY')}</span>
-        <button
-          title={t('DatePicker', 'Next month')}
-          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-picker__header-button`)}
-          {...getButtonProps('month', 1)}
-        >
+        <button title={t('DatePicker', 'Next month')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('month', 1)}>
           <RightOutlined />
         </button>
-        <button
-          title={t('DatePicker', 'Next year')}
-          className={getClassName(`${dPrefix}icon-button`, `${dPrefix}date-picker__header-button`)}
-          {...getButtonProps('year', 1)}
-        >
+        <button title={t('DatePicker', 'Next year')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('year', 1)}>
           <DoubleRightOutlined />
         </button>
       </div>

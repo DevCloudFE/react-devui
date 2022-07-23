@@ -3,19 +3,21 @@ import { useRef } from 'react';
 import { useAsync, useMount, usePrefixConfig } from '../../hooks';
 import { getClassName } from '../../utils';
 
-export interface DAlertDialogProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DAlertProps extends React.HTMLAttributes<HTMLDivElement> {
+  dClassNamePrefix: string;
   dDuration: number;
   dEscClosable?: boolean;
-  dDialogRef?: React.Ref<HTMLDivElement>;
+  dAlertRef?: React.Ref<HTMLDivElement>;
   onClose?: () => void;
 }
 
-export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
+export function DAlert(props: DAlertProps): JSX.Element | null {
   const {
     children,
+    dClassNamePrefix,
     dDuration,
     dEscClosable = true,
-    dDialogRef,
+    dAlertRef,
     onClose,
 
     ...restProps
@@ -28,6 +30,8 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
   const dataRef = useRef<{
     clearTid?: () => void;
   }>({});
+
+  const prefix = `${dPrefix}${dClassNamePrefix}`;
 
   const asyncCapture = useAsync();
 
@@ -42,8 +46,8 @@ export function DAlertDialog(props: DAlertDialogProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(restProps.className, `${dPrefix}alert-dialog`)}
-      ref={dDialogRef}
+      className={getClassName(restProps.className, prefix)}
+      ref={dAlertRef}
       tabIndex={restProps.tabIndex ?? -1}
       role={restProps.role ?? 'alert'}
       onMouseEnter={(e) => {
