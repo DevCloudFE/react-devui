@@ -324,11 +324,11 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
         >
           {dLabel ??
             (status === 'success'
-              ? React.createElement(dType === 'line' ? CheckCircleFilled : CheckOutlined)
+              ? React.createElement(dType === 'line' ? CheckCircleFilled : CheckOutlined, { className: `${dPrefix}progress__label-icon` })
               : status === 'warning'
-              ? React.createElement(dType === 'line' ? WarningFilled : ExclamationOutlined)
+              ? React.createElement(dType === 'line' ? WarningFilled : ExclamationOutlined, { className: `${dPrefix}progress__label-icon` })
               : status === 'error'
-              ? React.createElement(dType === 'line' ? CloseCircleFilled : CloseOutlined)
+              ? React.createElement(dType === 'line' ? CloseCircleFilled : CloseOutlined, { className: `${dPrefix}progress__label-icon` })
               : `${dPercent}%`)}
         </div>
       )}

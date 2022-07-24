@@ -99,7 +99,7 @@
     @include m(jump5) {
       &:hover,
       &:focus {
-        .#{$variable-prefix}icon {
+        @include e(jump5-icon) {
           opacity: 1;
         }
 
@@ -108,7 +108,7 @@
         }
       }
 
-      .#{$variable-prefix}icon {
+      @include e(jump5-icon) {
         color: var(--#{$variable-prefix}color-primary);
         opacity: 0;
         transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
@@ -122,10 +122,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9em;
     color: var(--#{$variable-prefix}color-disabled);
-    letter-spacing: 1.5px;
     transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+    transform: scale(1.5);
   }
 
   @include e(size-select, true) {

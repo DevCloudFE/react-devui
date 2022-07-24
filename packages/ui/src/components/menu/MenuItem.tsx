@@ -52,7 +52,11 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
       >
         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
       </div>
-      {dIcon && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
+      {dIcon && (
+        <div className={`${dPrefix}menu__item-icon-wrapper`}>
+          <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>
+        </div>
+      )}
       <div className={`${dPrefix}menu__item-content`}>{children}</div>
     </li>
   );

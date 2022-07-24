@@ -5,10 +5,10 @@
 
   @include e(label) {
     position: absolute;
+  }
 
-    .#{$variable-prefix}icon {
-      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.5);
-    }
+  @include e(label-icon) {
+    font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.5);
   }
 }
 
@@ -41,10 +41,10 @@
       min-width: 4em;
       padding-left: 8px;
       line-height: 1.25;
+    }
 
-      .#{$variable-prefix}icon {
-        font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.25);
-      }
+    @include e(label-icon) {
+      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.25);
     }
   }
 

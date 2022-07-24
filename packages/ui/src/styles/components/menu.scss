@@ -41,7 +41,8 @@ $menu-item-height: 40px;
     margin: 0;
     list-style: none;
     cursor: pointer;
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+    transition: height var(--#{$variable-prefix}animation-duration-base) linear,
+      color var(--#{$variable-prefix}animation-duration-base) linear,
       background-color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover {
@@ -77,7 +78,7 @@ $menu-item-height: 40px;
       &::after {
         position: absolute;
         right: 20px;
-        bottom: -5px;
+        bottom: -3px;
         left: 20px;
         z-index: 1;
         height: 2px;
@@ -103,13 +104,16 @@ $menu-item-height: 40px;
     @include m(icon) {
       height: 52px;
 
-      @include e(item-icon) {
+      @include e(item-icon-wrapper) {
+        display: inline-flex;
+        align-items: center;
         width: 64px;
+        height: 52px;
         padding-right: 16px;
+      }
 
-        & > .#{$variable-prefix}icon {
-          transform: translateX(12px) scale(1.5);
-        }
+      @include e(item-icon) {
+        transform: translateX(calc(24px - 50%)) scale(1.5);
       }
     }
 
@@ -223,16 +227,15 @@ $menu-item-height: 40px;
     }
   }
 
-  @include e(item-icon) {
+  @include e(item-icon-wrapper) {
     flex-shrink: 0;
     width: calc(1.05rem + 12px);
     font-size: 1.1em;
     transition: height var(--#{$variable-prefix}animation-duration-base) linear;
+  }
 
-    & > .#{$variable-prefix}icon {
-      transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
-        width var(--#{$variable-prefix}animation-duration-base) linear;
-    }
+  @include e(item-icon) {
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
   }
 
   @include e(item-content) {

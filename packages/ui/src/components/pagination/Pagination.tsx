@@ -2,7 +2,7 @@ import { isNull } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
-import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '../../icons';
+import { DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, LeftOutlined, RightOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DInput } from '../input';
 import { DSelect } from '../select';
@@ -283,8 +283,10 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         changeActive(active - 5);
                       }}
                     >
-                      <DoubleLeftOutlined />
-                      <div className={`${dPrefix}pagination__ellipsis`}>•••</div>
+                      <DoubleLeftOutlined className={`${dPrefix}pagination__jump5-icon`} />
+                      <div className={`${dPrefix}pagination__ellipsis`}>
+                        <EllipsisOutlined />
+                      </div>
                     </li>
                   );
                 } else if (n === 'next5') {
@@ -302,8 +304,10 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         changeActive(active + 5);
                       }}
                     >
-                      <DoubleRightOutlined />
-                      <div className={`${dPrefix}pagination__ellipsis`}>•••</div>
+                      <DoubleRightOutlined className={`${dPrefix}pagination__jump5-icon`} />
+                      <div className={`${dPrefix}pagination__ellipsis`}>
+                        <EllipsisOutlined />
+                      </div>
                     </li>
                   );
                 } else {
