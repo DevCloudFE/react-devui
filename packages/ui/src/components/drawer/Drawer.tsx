@@ -8,7 +8,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, toPx } from '../../utils';
+import { registerComponentMate, getClassName, toPx, handleModalKeyDown } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -66,12 +66,11 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
 
   //#region Ref
   const drawerRef = useRef<HTMLDivElement>(null);
-  const drawerContentRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const uniqueId = useId();
   const headerId = `${dPrefix}drawer-header-${uniqueId}`;
-  const contentId = `${dPrefix}drawer-content-${uniqueId}`;
+  const bodyId = `${dPrefix}drawer-content-${uniqueId}`;
 
   const [distance, setDistance] = useState<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
     visible: false,
@@ -157,8 +156,8 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
     if (visible) {
       prevActiveEl.current = document.activeElement as HTMLElement | null;
 
-      if (drawerContentRef.current) {
-        drawerContentRef.current.focus({ preventScroll: true });
+      if (drawerRef.current) {
+        drawerRef.current.focus({ preventScroll: true });
       }
     } else if (prevActiveEl.current) {
       prevActiveEl.current.focus({ preventScroll: true });
@@ -233,10 +232,20 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
               position: isFixed ? undefined : 'absolute',
               zIndex,
             }}
+            tabIndex={-1}
             role={restProps.role ?? 'dialog'}
             aria-modal={restProps['aria-modal'] ?? 'true'}
             aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
-            aria-describedby={restProps['aria-describedby'] ?? contentId}
+            aria-describedby={restProps['aria-describedby'] ?? bodyId}
+            onKeyDown={(e) => {
+              restProps.onKeyDown?.(e);
+
+              if (dEscClosable && e.code === 'Escape') {
+                changeVisible(false);
+              }
+
+              handleModalKeyDown(e);
+            }}
           >
             {dMask && (
               <DMask
@@ -249,23 +258,17 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
               />
             )}
             <div
-              ref={drawerContentRef}
-              id={contentId}
               className={getClassName(`${dPrefix}drawer__content`, `${dPrefix}drawer__content--${dPlacement}`)}
               style={{
                 width: dPlacement === 'left' || dPlacement === 'right' ? dWidth : undefined,
                 height: dPlacement === 'bottom' || dPlacement === 'top' ? dHeight : undefined,
                 ...transitionStyles[state],
               }}
-              tabIndex={-1}
-              onKeyDown={(e) => {
-                if (dEscClosable && e.code === 'Escape') {
-                  changeVisible(false);
-                }
-              }}
             >
               {headerNode}
-              <div className={`${dPrefix}drawer__body`}>{children}</div>
+              <div id={bodyId} className={`${dPrefix}drawer__body`}>
+                {children}
+              </div>
               {dFooter &&
                 React.cloneElement<DDrawerFooterPropsWithPrivate>(dFooter, {
                   ...dFooter.props,

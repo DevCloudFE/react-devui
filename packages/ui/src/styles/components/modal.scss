@@ -3,11 +3,9 @@
   @include component-footer;
 
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
   overflow: hidden;
+  outline: none;
 
   @include m(center) {
     display: flex;
@@ -24,6 +22,7 @@
     }
 
     @include e(footer) {
+      padding: 0 16px 12px;
       border: none;
     }
   }
@@ -37,7 +36,6 @@
     margin: 0 auto;
     background-color: var(--#{$variable-prefix}background-color);
     border-radius: var(--#{$variable-prefix}border-radius);
-    outline: none;
     box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
   }
 

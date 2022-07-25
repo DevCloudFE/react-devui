@@ -16,8 +16,6 @@ export interface DPopupRenderProps {
   'data-popup-triggerid': string;
   pOnMouseEnter?: React.MouseEventHandler;
   pOnMouseLeave?: React.MouseEventHandler;
-  pOnFocus?: React.FocusEventHandler;
-  pOnBlur?: React.FocusEventHandler;
   pOnClick?: React.MouseEventHandler;
 }
 
@@ -26,7 +24,7 @@ export interface DPopupProps {
   dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
   dVisible?: boolean;
   dContainer?: HTMLElement | null;
-  dTrigger?: 'hover' | 'focus' | 'click';
+  dTrigger?: 'hover' | 'click';
   dDisabled?: boolean;
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
@@ -209,15 +207,6 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         };
         childProps.pOnMouseLeave = () => {
           handleTrigger(false, 'hover');
-        };
-        break;
-
-      case 'focus':
-        childProps.pOnFocus = () => {
-          handleTrigger(true);
-        };
-        childProps.pOnBlur = () => {
-          handleTrigger(false);
         };
         break;
 

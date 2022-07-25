@@ -150,7 +150,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
             dUpdatePosition={updatePosition}
             onVisibleChange={onVisibleChange}
           >
-            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+            {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <li
                 {...restPProps}
                 ref={liRef}
@@ -165,8 +165,6 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 aria-expanded={dPopupVisible}
                 aria-disabled={dDisabled}
                 onClick={pOnClick}
-                onFocus={pOnFocus}
-                onBlur={pOnBlur}
                 onMouseEnter={pOnMouseEnter}
                 onMouseLeave={pOnMouseLeave}
               >

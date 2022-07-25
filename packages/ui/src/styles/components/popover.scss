@@ -1,0 +1,161 @@
+@mixin popover-arrow() {
+  @include e(arrow) {
+    @content;
+  }
+}
+
+@include b(popover) {
+  @include component-header;
+  @include component-footer;
+
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  outline: none;
+
+  @include m(top) {
+    @include popover-arrow {
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-left) {
+    @include popover-arrow {
+      bottom: 0;
+      left: 20px;
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(top-right) {
+    @include popover-arrow {
+      right: 20px;
+      bottom: 0;
+      transform: translate(0, 50%) rotate(45deg);
+    }
+  }
+
+  @include m(right) {
+    @include popover-arrow {
+      top: 50%;
+      left: 0;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(right-top) {
+    @include popover-arrow {
+      top: 12px;
+      left: 0;
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(right-bottom) {
+    @include popover-arrow {
+      bottom: 12px;
+      left: 0;
+      transform: translate(-50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(bottom) {
+    @include popover-arrow {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-left) {
+    @include popover-arrow {
+      top: 0;
+      left: 20px;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(bottom-right) {
+    @include popover-arrow {
+      top: 0;
+      right: 20px;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left) {
+    @include popover-arrow {
+      top: 50%;
+      right: 0;
+      transform: translate(50%, -50%) rotate(45deg);
+    }
+  }
+
+  @include m(left-top) {
+    @include popover-arrow {
+      top: 12px;
+      right: 0;
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+
+  @include m(left-bottom) {
+    @include popover-arrow {
+      right: 0;
+      bottom: 12px;
+      transform: translate(50%, 0) rotate(45deg);
+    }
+  }
+
+  @include e(content) {
+    position: absolute;
+    z-index: 1;
+    max-width: calc(100% - 32px);
+    pointer-events: all;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    outline: none;
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
+  }
+
+  @include e(header) {
+    padding: 6px 12px;
+  }
+
+  @include e(header-title) {
+    font-size: 1.05em;
+  }
+
+  @include e(header-actions) {
+    --#{$variable-prefix}size: 24px;
+  }
+
+  @include e(body) {
+    padding: 12px;
+  }
+
+  @include e(footer) {
+    --#{$variable-prefix}size: 28px;
+    --#{$variable-prefix}padding-size: 10px;
+
+    gap: 0 6px;
+    padding: 0 12px 10px;
+    border-top: none;
+  }
+
+  @include e(arrow) {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    background-color: inherit;
+  }
+
+  @include e(mask) {
+    position: absolute;
+    inset: 0;
+    pointer-events: all;
+  }
+}

@@ -1,53 +1,62 @@
 import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DPopupPlacement } from '../../utils/position';
+import type { DPopoverFooterPropsWithPrivate } from './PopoverFooter';
+import type { DPopoverHeaderPropsWithPrivate } from './PopoverHeader';
 
-import { isUndefined } from 'lodash';
-import React, { useId, useImperativeHandle, useRef, useState } from 'react';
+import { isString, isUndefined } from 'lodash';
+import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, getPopupPosition } from '../../utils';
+import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useMaxIndex, useDValue, useLockScroll } from '../../hooks';
+import { registerComponentMate, getClassName, getPopupPosition, handleModalKeyDown } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
+import { DPopoverHeader } from './PopoverHeader';
 
-export interface DTooltipRef {
+export interface DPopoverRef {
   updatePosition: () => void;
 }
 
-export interface DTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactElement;
   dVisible?: boolean;
   dTrigger?: 'hover' | 'click';
-  dTitle: React.ReactNode;
   dContainer?: DElementSelector | false;
   dPlacement?: DPopupPlacement;
   dEscClosable?: boolean;
   dArrow?: boolean;
+  dModal?: boolean;
   dDisabled?: boolean;
   dDistance?: number;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dZIndex?: number | string;
+  dHeader?: React.ReactElement | string;
+  dContent?: React.ReactNode;
+  dFooter?: React.ReactElement;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
 const TTANSITION_DURING = { enter: 86, leave: 100 };
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTooltip' });
-function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover' });
+function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JSX.Element | null {
   const {
     children,
     dVisible,
     dTrigger = 'hover',
-    dTitle,
     dContainer,
     dPlacement = 'top',
     dEscClosable = true,
     dArrow = true,
+    dModal = false,
     dDisabled = false,
     dDistance = 10,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     dZIndex,
+    dHeader,
+    dContent,
+    dFooter,
     onVisibleChange,
     afterVisibleChange,
 
@@ -59,11 +68,13 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   //#endregion
 
   //#region Ref
+  const popoverRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const uniqueId = useId();
-  const id = restProps.id ?? `${dPrefix}tooltip-${uniqueId}`;
+  const headerId = `${dPrefix}popover-header-${uniqueId}`;
+  const bodyId = `${dPrefix}popover-content-${uniqueId}`;
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
@@ -86,7 +97,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     isUndefined(dContainer) || dContainer === false
       ? () => {
           if (dContainer === false) {
-            const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
+            const triggerEl = document.querySelector(`[data-popover-triggerid="${uniqueId}"]`) as HTMLElement | null;
             return triggerEl?.parentElement ?? null;
           }
           return null;
@@ -101,7 +112,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   const [placement, setPlacement] = useState<DPopupPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
+    const triggerEl = document.querySelector(`[data-popover-triggerid="${uniqueId}"]`) as HTMLElement | null;
 
     if (popupRef.current && triggerEl) {
       let currentPlacement = dPlacement;
@@ -191,6 +202,36 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     }
   });
 
+  useLockScroll(dModal && visible);
+
+  const prevActiveEl = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (dModal) {
+      if (visible) {
+        prevActiveEl.current = document.activeElement as HTMLElement | null;
+
+        if (popoverRef.current) {
+          popoverRef.current.focus({ preventScroll: true });
+        }
+      } else if (prevActiveEl.current) {
+        prevActiveEl.current.focus({ preventScroll: true });
+      }
+    }
+  }, [dModal, visible]);
+
+  const headerNode = (() => {
+    if (dHeader) {
+      const node = isString(dHeader) ? <DPopoverHeader>{dHeader}</DPopoverHeader> : dHeader;
+      return React.cloneElement<DPopoverHeaderPropsWithPrivate>(node, {
+        ...node.props,
+        __id: headerId,
+        __onClose: () => {
+          changeVisible(false);
+        },
+      });
+    }
+  })();
+
   useImperativeHandle(
     ref,
     () => ({
@@ -234,10 +275,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
             };
             break;
 
-          case 'leaved':
-            transitionStyle = { display: 'none' };
-            break;
-
           default:
             break;
         }
@@ -247,32 +284,72 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
             dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <div
                 {...restProps}
-                {...restPProps}
-                ref={popupRef}
-                id={id}
-                className={getClassName(restProps.className, `${dPrefix}tooltip`, `${dPrefix}tooltip--` + placement)}
+                ref={popoverRef}
+                className={getClassName(restProps.className, `${dPrefix}popover`, `${dPrefix}popover--` + placement)}
                 style={{
                   ...restProps.style,
-                  ...popupPositionStyle,
-                  ...transitionStyle,
+                  display: state === 'leaved' ? 'none' : undefined,
                   zIndex,
                 }}
-                role={restProps.role ?? 'tooltip'}
-                onClick={(e) => {
-                  restProps.onClick?.(e);
-                  pOnClick?.(e);
-                }}
-                onMouseEnter={(e) => {
-                  restProps.onMouseEnter?.(e);
-                  pOnMouseEnter?.(e);
-                }}
-                onMouseLeave={(e) => {
-                  restProps.onMouseLeave?.(e);
-                  pOnMouseLeave?.(e);
+                tabIndex={-1}
+                role={restProps.role ?? (dModal ? 'alertdialog' : 'alert')}
+                aria-modal={restProps['aria-modal'] ?? dModal}
+                aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+                aria-describedby={restProps['aria-describedby'] ?? bodyId}
+                onKeyDown={(e) => {
+                  restProps.onKeyDown?.(e);
+
+                  if (dEscClosable && e.code === 'Escape') {
+                    changeVisible(false);
+                  }
+
+                  if (dModal) {
+                    handleModalKeyDown(e);
+                  }
                 }}
               >
-                {dArrow && <div className={`${dPrefix}tooltip__arrow`}></div>}
-                {dTitle}
+                {dModal && (
+                  <div
+                    className={`${dPrefix}popover__mask`}
+                    onClick={() => {
+                      changeVisible(false);
+                    }}
+                  ></div>
+                )}
+                <div
+                  {...restPProps}
+                  ref={popupRef}
+                  className={`${dPrefix}popover__content`}
+                  style={{
+                    ...popupPositionStyle,
+                    ...transitionStyle,
+                  }}
+                  onClick={(e) => {
+                    restProps.onClick?.(e);
+                    pOnClick?.(e);
+                  }}
+                  onMouseEnter={(e) => {
+                    restProps.onMouseEnter?.(e);
+                    pOnMouseEnter?.(e);
+                  }}
+                  onMouseLeave={(e) => {
+                    restProps.onMouseLeave?.(e);
+                    pOnMouseLeave?.(e);
+                  }}
+                >
+                  {dArrow && <div className={`${dPrefix}popover__arrow`}></div>}
+                  {headerNode}
+                  <div id={bodyId} className={`${dPrefix}popover__body`}>
+                    {dContent}
+                  </div>
+                  {dFooter &&
+                    React.cloneElement<DPopoverFooterPropsWithPrivate>(dFooter, {
+                      ...dFooter.props,
+                      __onClose: () => {
+                        changeVisible(false);
+                      },
+                    })}
+                </div>
               </div>
             )}
             dVisible={visible}
@@ -289,7 +366,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                 ...children.props,
                 ...restPProps,
-                'aria-describedby': id,
+                'data-popover-triggerid': uniqueId,
                 onClick: (e) => {
                   children.props.onClick?.(e);
                   pOnClick?.(e);
@@ -311,4 +388,4 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   );
 }
 
-export const DTooltip = React.forwardRef(Tooltip);
+export const DPopover = React.forwardRef(Popover);

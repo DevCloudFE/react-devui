@@ -67,6 +67,9 @@ export { NotificationService } from './notification';
 export type { DPaginationProps } from './pagination';
 export { DPagination } from './pagination';
 
+export type { DPopoverProps, DPopoverHeaderProps, DPopoverFooterProps } from './popover';
+export { DPopover, DPopoverHeader, DPopoverFooter } from './popover';
+
 export type { DProgressProps } from './progress';
 export { DProgress } from './progress';
 

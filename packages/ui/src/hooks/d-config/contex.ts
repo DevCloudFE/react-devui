@@ -34,6 +34,9 @@ import type {
   DModalFooterProps,
   DNotificationProps,
   DPaginationProps,
+  DPopoverProps,
+  DPopoverHeaderProps,
+  DPopoverFooterProps,
   DProgressProps,
   DRadioProps,
   DRadioGroupProps,
@@ -101,6 +104,9 @@ export type DComponentConfig = {
   DModalFooter: DModalFooterProps;
   DNotification: DNotificationProps;
   DPagination: DPaginationProps;
+  DPopover: DPopoverProps;
+  DPopoverHeader: DPopoverHeaderProps;
+  DPopoverFooter: DPopoverFooterProps;
   DProgress: DProgressProps;
   DRadio: DRadioProps;
   DRadioGroup: DRadioGroupProps<any>;

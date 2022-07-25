@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, handleModalKeyDown } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -73,7 +73,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
 
   const uniqueId = useId();
   const headerId = `${dPrefix}modal-header-${uniqueId}`;
-  const contentId = `${dPrefix}modal-content-${uniqueId}`;
+  const bodyId = `${dPrefix}modal-content-${uniqueId}`;
 
   const topStyle = dTop + (isNumber(dTop) ? 'px' : '');
 
@@ -104,8 +104,8 @@ export function DModal(props: DModalProps): JSX.Element | null {
     if (visible) {
       prevActiveEl.current = document.activeElement as HTMLElement | null;
 
-      if (modalContentRef.current) {
-        modalContentRef.current.focus({ preventScroll: true });
+      if (modalRef.current) {
+        modalRef.current.focus({ preventScroll: true });
       }
     } else if (prevActiveEl.current) {
       prevActiveEl.current.focus({ preventScroll: true });
@@ -206,10 +206,20 @@ export function DModal(props: DModalProps): JSX.Element | null {
                 display: state === 'leaved' ? 'none' : undefined,
                 zIndex,
               }}
+              tabIndex={-1}
               role={restProps.role ?? 'dialog'}
               aria-modal={restProps['aria-modal'] ?? 'true'}
               aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
-              aria-describedby={restProps['aria-describedby'] ?? contentId}
+              aria-describedby={restProps['aria-describedby'] ?? bodyId}
+              onKeyDown={(e) => {
+                restProps.onKeyDown?.(e);
+
+                if (dEscClosable && e.code === 'Escape') {
+                  changeVisible(false);
+                }
+
+                handleModalKeyDown(e);
+              }}
             >
               {dMask && (
                 <DMask
@@ -223,7 +233,6 @@ export function DModal(props: DModalProps): JSX.Element | null {
               )}
               <div
                 ref={modalContentRef}
-                id={contentId}
                 className={`${dPrefix}modal__content`}
                 style={{
                   ...transitionStyle,
@@ -231,15 +240,9 @@ export function DModal(props: DModalProps): JSX.Element | null {
                   top: dTop === 'center' ? undefined : dTop,
                   maxHeight: dTop === 'center' ? undefined : `calc(100% - ${topStyle} - 20px)`,
                 }}
-                tabIndex={-1}
-                onKeyDown={(e) => {
-                  if (dEscClosable && e.code === 'Escape') {
-                    changeVisible(false);
-                  }
-                }}
               >
                 {headerNode}
-                <div className={`${dPrefix}modal__body`}>
+                <div id={bodyId} className={`${dPrefix}modal__body`}>
                   {dType ? (
                     <>
                       <div className={`${dPrefix}modal__icon`}>

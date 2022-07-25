@@ -443,7 +443,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
             dUpdatePosition={updatePosition}
             onVisibleChange={changeVisible}
           >
-            {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+            {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
               <DFocusVisible onFocusVisibleChange={setFocusVisible}>
                 {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) =>
                   React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
@@ -461,7 +461,6 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                     },
                     onFocus: (e) => {
                       children.props.onFocus?.(e);
-                      pOnFocus?.(e);
                       fvOnFocus(e);
 
                       setIsFocus(true);
@@ -469,7 +468,6 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                     },
                     onBlur: (e) => {
                       children.props.onBlur?.(e);
-                      pOnBlur?.(e);
                       fvOnBlur(e);
 
                       setIsFocus(false);

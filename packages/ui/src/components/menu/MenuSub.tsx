@@ -202,7 +202,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                   dUpdatePosition={updatePosition}
                   onVisibleChange={onVisibleChange}
                 >
-                  {({ pOnClick, pOnFocus, pOnBlur, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+                  {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
                     <li
                       {...restPProps}
                       ref={liRef}
@@ -224,8 +224,6 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
                         onClick(e);
                       }}
-                      onFocus={pOnFocus}
-                      onBlur={pOnBlur}
                       onMouseEnter={pOnMouseEnter}
                       onMouseLeave={pOnMouseLeave}
                     >
