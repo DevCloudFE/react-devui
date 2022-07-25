@@ -242,7 +242,6 @@
 
   @include e(picture-button-icon) {
     font-size: 1.1em;
-    color: var(--#{$variable-prefix}color-icon-decorator);
   }
 
   @include e(picture-button-text) {

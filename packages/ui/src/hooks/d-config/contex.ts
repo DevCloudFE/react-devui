@@ -5,6 +5,7 @@ import type {
   DAutoCompleteProps,
   DAvatarProps,
   DBadgeProps,
+  DBreadcrumbProps,
   DButtonProps,
   DCardProps,
   DCardHeaderProps,
@@ -75,6 +76,7 @@ export type DComponentConfig = {
   DAutoComplete: DAutoCompleteProps<any>;
   DAvatar: DAvatarProps;
   DBadge: DBadgeProps;
+  DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
   DCard: DCardProps;
   DCardHeader: DCardHeaderProps;

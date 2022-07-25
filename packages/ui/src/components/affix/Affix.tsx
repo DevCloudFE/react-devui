@@ -140,7 +140,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
             ...referenceStyle,
             visibility: 'hidden',
           }}
-          aria-hidden={true}
+          aria-hidden
         ></div>
       )}
       <div

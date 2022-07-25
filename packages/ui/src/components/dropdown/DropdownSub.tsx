@@ -161,7 +161,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 })}
                 style={{ paddingLeft: 12 + dLevel * 16 }}
                 role="menuitem"
-                aria-haspopup={true}
+                aria-haspopup
                 aria-expanded={dPopupVisible}
                 aria-disabled={dDisabled}
                 onClick={pOnClick}

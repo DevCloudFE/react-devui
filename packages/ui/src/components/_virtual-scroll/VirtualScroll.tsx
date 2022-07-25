@@ -335,9 +335,9 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         dEmpty
       ) : (
         <>
-          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[0] }} aria-hidden={true}></div>
+          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[0] }} aria-hidden></div>
           {list}
-          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[1] }} aria-hidden={true}></div>
+          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[1] }} aria-hidden></div>
         </>
       )}
     </ul>

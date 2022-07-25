@@ -1,0 +1,62 @@
+import type { DId } from '../../utils/global';
+
+import React from 'react';
+
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { getClassName, registerComponentMate } from '../../utils';
+
+export interface DBreadcrumbOption<ID extends DId> {
+  id: ID;
+  title: React.ReactNode;
+  link?: boolean;
+  separator?: React.ReactNode;
+}
+
+export interface DBreadcrumbProps<ID extends DId, T extends DBreadcrumbOption<ID>>
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  dList: T[];
+  dSeparator?: React.ReactNode;
+  onItemClick?: (id: ID, link: T) => void;
+}
+
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBreadcrumb' });
+export function DBreadcrumb<ID extends DId, T extends DBreadcrumbOption<ID>>(props: DBreadcrumbProps<ID, T>): JSX.Element | null {
+  const {
+    dList,
+    dSeparator,
+    onItemClick,
+
+    ...restProps
+  } = useComponentConfig(COMPONENT_NAME, props);
+
+  //#region Context
+  const dPrefix = usePrefixConfig();
+  //#endregion
+
+  return (
+    <nav {...restProps} className={getClassName(restProps.className, `${dPrefix}breadcrumb`)}>
+      <ol className={`${dPrefix}breadcrumb__list`}>
+        {dList.map((item, index) => (
+          <React.Fragment key={item.id}>
+            <li
+              className={getClassName(`${dPrefix}breadcrumb__item`, {
+                [`${dPrefix}breadcrumb__item--link`]: item.link,
+                [`${dPrefix}breadcrumb__item--last`]: index === dList.length - 1,
+              })}
+              onClick={() => {
+                onItemClick?.(item.id, item);
+              }}
+            >
+              {item.title}
+            </li>
+            {index !== dList.length - 1 && (
+              <li className={`${dPrefix}breadcrumb__separator`} aria-hidden>
+                {item.separator ?? dSeparator ?? '/'}
+              </li>
+            )}
+          </React.Fragment>
+        ))}
+      </ol>
+    </nav>
+  );
+}

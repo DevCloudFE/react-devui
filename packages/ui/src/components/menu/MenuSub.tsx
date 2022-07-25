@@ -216,7 +216,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       })}
                       style={{ paddingLeft: dSpace + dLevel * dStep }}
                       role="menuitem"
-                      aria-haspopup={true}
+                      aria-haspopup
                       aria-expanded={dMode === 'vertical' ? dExpand : dPopupVisible}
                       aria-disabled={dDisabled}
                       onClick={(e) => {

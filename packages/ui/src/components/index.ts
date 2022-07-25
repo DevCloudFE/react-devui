@@ -16,6 +16,9 @@ export { DAvatar } from './avatar';
 export type { DBadgeProps } from './badge';
 export { DBadge } from './badge';
 
+export type { DBreadcrumbProps } from './breadcrumb';
+export { DBreadcrumb } from './breadcrumb';
+
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 

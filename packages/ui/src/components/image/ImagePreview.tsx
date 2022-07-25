@@ -324,12 +324,12 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                 <li className={`${dPrefix}image-preview__toolbar-page`}>
                   <DInput
                     className={`${dPrefix}image-preview__toolbar-page-input`}
+                    dModel={(activeIndex + 1).toString()}
                     dType="number"
                     dSize="smaller"
                     dMin={1}
                     dMax={dList.length}
-                    dInteger={true}
-                    dModel={(activeIndex + 1).toString()}
+                    dInteger
                     onModelChange={(val) => {
                       if (val) {
                         changeActiveIndex(Number(val) - 1);
@@ -366,12 +366,12 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                 <li className={`${dPrefix}image-preview__toolbar-zoom`}>
                   <DInput
                     className={`${dPrefix}image-preview__toolbar-zoom-input`}
+                    dModel={Math.round(activeScale * 100).toString()}
                     dType="number"
                     dSize="smaller"
                     dMin={100}
                     dStep={10}
-                    dInteger={true}
-                    dModel={Math.round(activeScale * 100).toString()}
+                    dInteger
                     onModelChange={(val) => {
                       if (val) {
                         setScale((draft) => {
@@ -435,6 +435,12 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                   onTouchEnd={() => {
                     setIsDragging(false);
                   }}
+                  onWheel={(e) => {
+                    setScale((draft) => {
+                      const oldScale = draft.get(activeSrc) ?? 1;
+                      draft.set(activeSrc, e.deltaY < 0 ? oldScale + 0.1 : Math.max(oldScale - 0.1, 1));
+                    });
+                  }}
                 />
               }
               <ul className={`${dPrefix}image-preview__thumbnail-list`}>
@@ -467,7 +473,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
               </ul>
               {dMask && (
                 <DMask
-                  dVisible={true}
+                  dVisible
                   onClose={() => {
                     if (dMaskClosable) {
                       changeVisible(false);

@@ -1,0 +1,32 @@
+@include b(breadcrumb) {
+  @include e(list) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include e(item) {
+    color: var(--#{$variable-prefix}breadcrumb-color);
+
+    @include m(link) {
+      cursor: pointer;
+      transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+      &:hover {
+        color: var(--#{$variable-prefix}text-color);
+      }
+    }
+
+    @include m(last) {
+      color: var(--#{$variable-prefix}text-color);
+    }
+  }
+
+  @include e(separator) {
+    color: var(--#{$variable-prefix}breadcrumb-color);
+  }
+}
