@@ -114,6 +114,20 @@ function Select<V extends DId, T extends DSelectOption<V>>(
   const getOptionId = (val: V) => `${dPrefix}select-option-${val}-${uniqueId}`;
   const getGroupId = (val: V) => `${dPrefix}select-group-${val}-${uniqueId}`;
 
+  const optionsMap = useMemo(() => {
+    const options = new Map<V, T>();
+    const reduceArr = (arr: DNestedChildren<T>[]) => {
+      for (const item of arr) {
+        options.set(item.value, item);
+        if (item.children) {
+          reduceArr(item.children);
+        }
+      }
+    };
+    reduceArr(dOptions);
+    return options;
+  }, [dOptions]);
+
   const [searchValue, setSearchValue] = useState('');
 
   const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
@@ -122,48 +136,31 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
-  const [select, changeSelect] = useDValue<V | null | V[]>(
+  const [_select, changeSelect] = useDValue<V | null | V[]>(
     dMultiple ? [] : null,
     dModel,
     (value) => {
       if (onModelChange) {
         if (dMultiple) {
-          let length = (value as V[]).length;
-          const options: DNestedChildren<T>[] = [];
-          const reduceArr = (arr: DNestedChildren<T>[]) => {
-            for (const item of arr) {
-              if (length === 0) {
-                break;
-              }
-
-              if (item.children) {
-                reduceArr(item.children);
-              } else {
-                const index = (value as V[]).findIndex((v) => v === item.value);
-                if (index !== -1) {
-                  options[index] = item;
-                  length -= 1;
-                }
-              }
-            }
-          };
-          reduceArr(dOptions);
-
-          onModelChange(value, options);
+          onModelChange(
+            value,
+            (value as V[]).map((v) => optionsMap.get(v))
+          );
         } else {
-          onModelChange(value, isNull(value) ? null : findNested(dOptions, (option) => option.value === value));
+          onModelChange(value, isNull(value) ? null : optionsMap.get(value as V));
         }
       }
     },
     undefined,
     formControlInject
   );
+  const select = useMemo(() => (dMultiple ? new Set(_select as V[]) : (_select as V | null)), [_select, dMultiple]);
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const hasSearch = searchValue.length > 0;
-  const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
+  const hasSelected = dMultiple ? (select as Set<V>).size > 0 : !isNull(select);
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
@@ -176,7 +173,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     [_filterFn]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchOptions = useMemo(() => {
+  const searchOptions = (() => {
     if (!hasSearch) {
       return [];
     }
@@ -201,17 +198,14 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         }
       } else {
         const groupOptions: T[] = [];
-        if (option.children) {
-          option.children.forEach((groupItem) => {
-            if (createOption && groupItem.value === createOption.value) {
-              createOption = undefined;
-            }
-            if (filterFn(searchValue, groupItem)) {
-              groupOptions.push(groupItem);
-            }
-          });
-        }
-
+        option.children.forEach((groupItem) => {
+          if (createOption && groupItem.value === createOption.value) {
+            createOption = undefined;
+          }
+          if (filterFn(searchValue, groupItem)) {
+            groupOptions.push(groupItem);
+          }
+        });
         searchOptions = searchOptions.concat(groupOptions);
       }
     });
@@ -225,25 +219,22 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     }
 
     return searchOptions;
-  }, [dCreateOption, dOptions, filterFn, hasSearch, searchValue, sortFn]);
+  })();
   const options = hasSearch ? searchOptions : dOptions;
 
   const [_noSearchFocusOption, setNoSearchFocusOption] = useState<DNestedChildren<T> | undefined>();
-  const noSearchFocusOption = useMemo(() => {
-    if (_noSearchFocusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _noSearchFocusOption.value)) {
-      return _noSearchFocusOption;
-    }
-
+  const noSearchFocusOption = (() => {
     let option: DNestedChildren<T> | undefined;
 
-    if (dMultiple) {
-      if ((select as V[]).length > 0) {
-        option = findNested(dOptions, (o) => canSelectOption(o) && (select as V[]).includes(o.value));
+    if (_noSearchFocusOption) {
+      option = optionsMap.get(_noSearchFocusOption.value);
+      if (option && canSelectOption(option)) {
+        return option;
       }
-    } else {
-      if (!isNull(select)) {
-        option = findNested(dOptions, (o) => canSelectOption(o) && (select as V) === o.value);
-      }
+    }
+
+    if (hasSelected) {
+      option = findNested(dOptions, (o) => (canSelectOption(o) && dMultiple ? (select as Set<V>).has(o.value) : (select as V) === o.value));
     }
 
     if (isUndefined(option)) {
@@ -251,10 +242,10 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     }
 
     return option;
-  }, [_noSearchFocusOption, canSelectOption, dMultiple, dOptions, select]);
+  })();
 
   const [_searchFocusOption, setSearchFocusOption] = useState<(T & { [IS_CREATE]?: boolean | undefined }) | undefined>();
-  const searchFocusOption = useMemo(() => {
+  const searchFocusOption = (() => {
     if (_searchFocusOption && findNested(searchOptions, (o) => canSelectOption(o) && o.value === _searchFocusOption.value)) {
       return _searchFocusOption;
     }
@@ -262,7 +253,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     if (hasSearch) {
       return findNested(searchOptions, (o) => canSelectOption(o));
     }
-  }, [_searchFocusOption, canSelectOption, hasSearch, searchOptions]);
+  })();
 
   const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
   const changeFocusOption = (option?: DNestedChildren<T>) => {
@@ -299,31 +290,12 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     }
   });
 
-  const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
+  const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selectedOptions: DNestedChildren<T>[] = [];
-      let length = (select as V[]).length;
-      const reduceArr = (arr: DNestedChildren<T>[]) => {
-        for (const item of arr) {
-          if (length === 0) {
-            break;
-          }
-
-          if (item.children) {
-            reduceArr(item.children);
-          } else {
-            const index = (select as V[]).findIndex((val) => val === item.value);
-            if (index !== -1) {
-              selectedOptions[index] = item;
-              length -= 1;
-            }
-          }
-        }
-      };
-      reduceArr(dOptions);
+      const selectedOptions: T[] = (_select as V[]).map((v) => optionsMap.get(v)!);
 
       suffixNode = (
         <DDropdown
@@ -346,9 +318,9 @@ function Select<V extends DId, T extends DSelectOption<V>>(
           <DTag
             className={`${dPrefix}select__multiple-count`}
             dSize={size}
-            dTheme={isNumber(dMaxSelectNum) && dMaxSelectNum === (select as V[]).length ? 'danger' : undefined}
+            dTheme={isNumber(dMaxSelectNum) && dMaxSelectNum === (select as Set<V>).size ? 'danger' : undefined}
           >
-            {(select as V[]).length}
+            {(select as Set<V>).size}
           </DTag>
         </DDropdown>
       );
@@ -369,15 +341,13 @@ function Select<V extends DId, T extends DSelectOption<V>>(
       ));
     } else {
       if (!isNull(select)) {
-        const option = findNested(dOptions, (o) => o.value === (select as V));
-        if (option) {
-          selectedLabel = option.label;
-          selectedNode = dCustomSelected ? dCustomSelected(option) : selectedLabel;
-        }
+        const option = optionsMap.get(select as V)!;
+        selectedLabel = option.label;
+        selectedNode = dCustomSelected ? dCustomSelected(option) : selectedLabel;
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [dCustomSelected, dMaxSelectNum, dMultiple, dOptions, dPrefix, disabled, changeSelectByClick, select, size]);
+  })();
 
   return (
     <DSelectbox
@@ -530,13 +500,9 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
               let isSelected = false;
               if (dMultiple) {
-                isSelected = (select as V[]).findIndex((v) => v === optionValue) !== -1;
+                isSelected = (select as Set<V>).has(optionValue);
               } else {
-                if (isNull(select)) {
-                  isSelected = false;
-                } else {
-                  isSelected = (select as V) === optionValue;
-                }
+                isSelected = (select as V | null) === optionValue;
               }
 
               return (

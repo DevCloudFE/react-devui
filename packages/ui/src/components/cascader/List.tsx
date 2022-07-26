@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/global';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
-import type { AbstractTreeNode, MultipleTreeNode, SingleTreeNode } from '../tree';
+import type { AbstractTreeNode, MultipleTreeNode } from '../tree';
 import type { DCascaderOption } from './Cascader';
 import type { Subject } from 'rxjs';
 
@@ -17,7 +17,7 @@ export interface DListProps<ID extends DId, T> {
   dListId?: string;
   dGetOptionId: (value: ID) => string;
   dNodes: AbstractTreeNode<ID, T>[];
-  dSelected: ID | null | ID[];
+  dSelected: ID | null | Set<ID>;
   dFocusNode: AbstractTreeNode<ID, T> | undefined;
   dCustomOption?: (option: T) => React.ReactNode;
   dMultiple: boolean;
@@ -78,11 +78,10 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
 
   const changeSelectByClick = useEventCallback((option: AbstractTreeNode<ID, T>) => {
     if (dMultiple) {
-      const checkeds = (option as MultipleTreeNode<ID, T>).changeStatus(option.checked ? 'UNCHECKED' : 'CHECKED', dSelected as ID[]);
-      onSelectedChange(checkeds);
+      const checkeds = (option as MultipleTreeNode<ID, T>).changeStatus(option.checked ? 'UNCHECKED' : 'CHECKED', dSelected as Set<ID>);
+      onSelectedChange(Array.from(checkeds.keys()));
     } else {
       if (!dOnlyLeafSelectable || option.isLeaf) {
-        (option as SingleTreeNode<ID, T>).setChecked();
         onSelectedChange(option.id);
       }
       if (option.isLeaf) {

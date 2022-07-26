@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { startTransition, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -140,18 +140,16 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
         if (initMove && currentMove) {
           const movementX = currentMove.x - initMove.x;
           const movementY = currentMove.y - initMove.y;
-          startTransition(() => {
-            setPosition((draft) => {
-              const oldPosition = draft.get(activeSrc) ?? { top: 0, left: 0 };
-              draft.set(activeSrc, {
-                top: oldPosition.top + movementY,
-                left: oldPosition.left + movementX,
-              });
+          setPosition((draft) => {
+            const oldPosition = draft.get(activeSrc) ?? { top: 0, left: 0 };
+            draft.set(activeSrc, {
+              top: oldPosition.top + movementY,
+              left: oldPosition.left + movementX,
             });
-
-            initMove = currentMove;
-            currentMove = undefined;
           });
+
+          initMove = currentMove;
+          currentMove = undefined;
         }
 
         if (initScale && currentScale) {

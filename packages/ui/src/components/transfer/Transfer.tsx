@@ -35,8 +35,8 @@ export interface DTransferProps<V extends DId, T extends DTransferOption<V>>
     filter?: (value: string, option: T) => boolean;
     sort?: (a: T, b: T) => number;
   };
-  onModelChange?: (value: V[], option: DTransferOption<V>[]) => void;
-  onSelectedChange?: (value: V[], option: DTransferOption<V>[]) => void;
+  onModelChange?: (value: V[], option: T[]) => void;
+  onSelectedChange?: (value: V[], option: T[]) => void;
   onSearch?: (value: string, direction: 'left' | 'right') => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
@@ -68,58 +68,34 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
   const { gDisabled } = useGeneralContext();
   //#endregion
 
+  const optionsMap = useMemo(() => new Map(dOptions.map((o) => [o.value, o])), [dOptions]);
+
   const formControlInject = useFormControl(dFormControl);
-  const [valueRight, changeValueRight] = useDValue<V[]>(
+  const [_valueRight, changeValueRight] = useDValue<V[]>(
     [],
     dModel,
     (value) => {
       if (onModelChange) {
-        let length = value.length;
-        const options: T[] = [];
-        const reduceArr = (arr: T[]) => {
-          for (const item of arr) {
-            if (length === 0) {
-              break;
-            }
-
-            const index = value.findIndex((v) => v === item.value);
-            if (index !== -1) {
-              options[index] = item;
-              length -= 1;
-            }
-          }
-        };
-        reduceArr(dOptions);
-
-        onModelChange(value, options);
+        onModelChange(
+          value,
+          value.map((v) => optionsMap.get(v)!)
+        );
       }
     },
     undefined,
     formControlInject
   );
+  const valueRight = useMemo(() => new Set(_valueRight), [_valueRight]);
 
-  const [selected, changeSelected] = useDValue<V[]>([], dSelected, (value) => {
+  const [_selected, changeSelected] = useDValue<V[]>([], dSelected, (value) => {
     if (onSelectedChange) {
-      let length = value.length;
-      const options: T[] = [];
-      const reduceArr = (arr: T[]) => {
-        for (const item of arr) {
-          if (length === 0) {
-            break;
-          }
-
-          const index = value.findIndex((v) => v === item.value);
-          if (index !== -1) {
-            options[index] = item;
-            length -= 1;
-          }
-        }
-      };
-      reduceArr(dOptions);
-
-      onSelectedChange(value, options);
+      onSelectedChange(
+        value,
+        value.map((v) => optionsMap.get(v)!)
+      );
     }
   });
+  const selected = useMemo(() => new Set(_selected), [_selected]);
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
@@ -137,7 +113,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     [_filterFn]
   );
   const sortFn = dCustomSearch?.sort;
-  const [optionsLeft, optionsRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = useMemo(() => {
+  const [optionsLeft, optionsRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = (() => {
     const optionsL: T[] = [];
     const optionsR: T[] = [];
     let selectedNumL = 0;
@@ -150,14 +126,13 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     let checkAllR = true;
 
     dOptions.forEach((option) => {
-      const index = valueRight.findIndex((v) => v === option.value);
-      const isLeft = index === -1;
+      const isLeft = !valueRight.has(option.value);
       const newOption = Object.assign({}, option);
 
       const searchValue = isLeft ? searchValueLeft : searchValueRight;
       if (!searchValue || filterFn(searchValue, option)) {
         newOption[IS_SELECTED] = false;
-        if (selected.includes(option.value)) {
+        if (selected.has(option.value)) {
           newOption[IS_SELECTED] = true;
           isLeft ? (selectedNumL += 1) : (selectedNumR += 1);
           if (!option.disabled) {
@@ -194,7 +169,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     const stateR: boolean | 'mixed' = noOptionsR ? false : checkAllR ? true : hasSelectedR ? 'mixed' : false;
 
     return [optionsL, optionsR, selectedNumL, selectedNumR, stateL, stateR];
-  }, [dOptions, filterFn, searchValueLeft, searchValueRight, selected, sortFn, valueRight]);
+  })();
 
   const handleSelectedChange = (val: V) => {
     changeSelected((draft) => {
@@ -207,49 +182,47 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     });
   };
 
-  const handleAllSelected = (selected: boolean, isLeft: boolean) => {
+  const handleAllSelected = (isSelected: boolean, isLeft: boolean) => {
     changeSelected((draft) => {
+      const newSelected = new Set(draft);
       for (const option of isLeft ? optionsLeft : optionsRight) {
         if (option.disabled) {
           continue;
         }
 
-        if (selected && !option[IS_SELECTED]) {
-          draft.push(option.value);
-        } else if (!selected && option[IS_SELECTED]) {
-          draft.splice(
-            draft.findIndex((v) => v === option.value),
-            1
-          );
+        if (isSelected && !option[IS_SELECTED]) {
+          newSelected.add(option.value);
+        } else if (!isSelected && option[IS_SELECTED]) {
+          newSelected.delete(option.value);
         }
       }
+      return Array.from(newSelected);
     });
   };
 
   const handleButtonClick = (isLeft: boolean) => {
     changeValueRight((draft) => {
+      const newValueRight = new Set(draft);
       (isLeft ? optionsLeft : optionsRight).forEach((option) => {
         if (option[IS_SELECTED]) {
           if (isLeft) {
-            draft.push(option.value);
+            newValueRight.add(option.value);
           } else {
-            draft.splice(
-              draft.findIndex((v) => v === option.value),
-              1
-            );
+            newValueRight.delete(option.value);
           }
         }
       });
+      return Array.from(newValueRight);
     });
+
     changeSelected((draft) => {
+      const newSelected = new Set(draft);
       (isLeft ? optionsLeft : optionsRight).forEach((option) => {
         if (option[IS_SELECTED]) {
-          draft.splice(
-            draft.findIndex((v) => v === option.value),
-            1
-          );
+          newSelected.delete(option.value);
         }
       });
+      return Array.from(newSelected);
     });
   };
 

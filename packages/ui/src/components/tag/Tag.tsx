@@ -56,7 +56,7 @@ export function DTag(props: DTagProps): JSX.Element | null {
           : {}),
       }}
     >
-      <div className={`${dPrefix}tag__icon`}>{dIcon}</div>
+      {dIcon && <div className={`${dPrefix}tag__icon`}>{dIcon}</div>}
       {children}
       {dClosable && (
         <button className={`${dPrefix}tag__close`} aria-label={t('Close')} onClick={onClose}>

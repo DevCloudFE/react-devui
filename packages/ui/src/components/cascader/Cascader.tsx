@@ -4,8 +4,8 @@ import type { DFormControl } from '../form';
 import type { DSelectOption } from '../select';
 import type { AbstractTreeNode } from '../tree';
 
-import { isArray, isNull } from 'lodash';
-import React, { useCallback, useMemo, useState, useId, useRef } from 'react';
+import { isNull } from 'lodash';
+import React, { useCallback, useState, useId, useMemo } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
@@ -14,8 +14,7 @@ import { DSelectbox } from '../_selectbox';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
 import { DTag } from '../tag';
-import { useTreeData } from '../tree';
-import { SingleTreeNode, MultipleTreeNode } from '../tree';
+import { MultipleTreeNode, SingleTreeNode } from '../tree';
 import { DList } from './List';
 import { DSearchList } from './SearchList';
 import { getText, TREE_NODE_KEY } from './utils';
@@ -108,86 +107,67 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
   const getOptionId = (val: V) => `${dPrefix}cascader-option-${val}-${uniqueId}`;
 
+  const renderNodes = useMemo(
+    () =>
+      dOptions.map((option) =>
+        dMultiple
+          ? new MultipleTreeNode(option, (o) => o.value, {
+              disabled: option.disabled,
+            })
+          : new SingleTreeNode(option, (o) => o.value, {
+              disabled: option.disabled,
+            })
+      ),
+    [dMultiple, dOptions]
+  );
+  const nodesMap = useMemo(() => {
+    const nodes = new Map<V, AbstractTreeNode<V, T>>();
+    const reduceArr = (arr: AbstractTreeNode<V, T>[]) => {
+      for (const item of arr) {
+        nodes.set(item.id, item);
+        if (item.children) {
+          reduceArr(item.children);
+        }
+      }
+    };
+    reduceArr(renderNodes);
+    return nodes;
+  }, [renderNodes]);
+
   const [searchValue, setSearchValue] = useState('');
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
-  const [select, changeSelect] = useDValue<V | null | V[]>(
+  const [_select, changeSelect] = useDValue<V | null | V[]>(
     dMultiple ? [] : null,
     dModel,
     (value) => {
       if (onModelChange) {
-        if (isArray(value)) {
-          let length = value.length;
-          const options: DNestedChildren<T>[] = [];
-          const reduceArr = (arr: DNestedChildren<T>[]) => {
-            for (const item of arr) {
-              if (length === 0) {
-                break;
-              }
-              if (item.children) {
-                reduceArr(item.children);
-              } else {
-                const index = value.findIndex((val) => val === item.value);
-                if (index !== -1) {
-                  options[index] = item;
-                  length -= 1;
-                }
-              }
-            }
-          };
-          reduceArr(dOptions);
-
-          onModelChange(value, options);
+        if (dMultiple) {
+          onModelChange(
+            value,
+            (value as V[]).map((v) => nodesMap.get(v)?.origin)
+          );
         } else {
-          if (isNull(value)) {
-            onModelChange(value, null);
-          } else {
-            onModelChange(
-              value,
-              findNested(dOptions, (option) => option.value === value)
-            );
-          }
+          onModelChange(value, isNull(value) ? null : nodesMap.get(value as V)?.origin);
         }
       }
     },
     undefined,
     formControlInject
   );
+  const select = useMemo(() => (dMultiple ? new Set(_select as V[]) : (_select as V | null)), [_select, dMultiple]);
+  renderNodes.forEach((node) => {
+    node.updateStatus(select);
+  });
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   const hasSearch = searchValue.length > 0;
-  const hasSelected = dMultiple ? (select as V[]).length > 0 : !isNull(select);
+  const hasSelected = dMultiple ? (select as Set<V>).size > 0 : !isNull(select);
 
-  const checkedRef = useRef<SingleTreeNode<V, T>>();
-  const getRenderNodes = useCallback(
-    (select: V | null | V[]) => {
-      let renderNodes: SingleTreeNode<V, T>[] | MultipleTreeNode<V, T>[] = [];
-      if (dMultiple) {
-        renderNodes = dOptions.map(
-          (option) =>
-            new MultipleTreeNode(option, (o) => o.value, {
-              checkeds: select as V[],
-              disabled: option.disabled,
-            })
-        );
-      } else {
-        renderNodes = dOptions.map(
-          (option) =>
-            new SingleTreeNode(option, (o) => o.value, {
-              checkedRef,
-              checked: select as V | null,
-              disabled: option.disabled,
-            })
-        );
-      }
-      return renderNodes;
-    },
-    [dMultiple, dOptions]
-  );
-  const [renderNodes, changeSelectByCache] = useTreeData(select, getRenderNodes, changeSelect);
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const filterFn = useCallback(
     (option: T, searchStr = searchValue) => {
@@ -199,7 +179,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     [dCustomSearch, searchValue]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchOptions = useMemo(() => {
+  const searchOptions = (() => {
     if (!hasSearch) {
       return [];
     }
@@ -228,32 +208,24 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
       searchOptions.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
     }
     return searchOptions;
-  }, [dMultiple, dOnlyLeafSelectable, filterFn, hasSearch, renderNodes, sortFn]);
-
-  const [focusVisible, setFocusVisible] = useState(false);
+  })();
 
   const [_noSearchFocusNode, setNoSearchFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
-  const noSearchFocusNode = useMemo(() => {
-    if (
-      _noSearchFocusNode &&
-      findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.id === _noSearchFocusNode.id)
-    ) {
-      return _noSearchFocusNode;
+  const noSearchFocusNode = (() => {
+    if (_noSearchFocusNode) {
+      const node = nodesMap.get(_noSearchFocusNode.id);
+      if (node && node.enabled) {
+        return node;
+      }
     }
 
-    if (isArray(select)) {
-      if (select.length > 0) {
-        return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
-      }
-    } else {
-      if (!isNull(select)) {
-        return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
-      }
+    if (hasSelected) {
+      return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
     }
-  }, [_noSearchFocusNode, renderNodes, select]);
+  })();
 
   const [_searchFocusOption, setSearchFocusOption] = useState<DSearchOption<V, T> | undefined>();
-  const searchFocusOption = useMemo(() => {
+  const searchFocusOption = (() => {
     if (_searchFocusOption && findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled && o.value === _searchFocusOption.value)) {
       return _searchFocusOption;
     }
@@ -261,7 +233,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     if (hasSearch) {
       return findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled);
     }
-  }, [_searchFocusOption, hasSearch, searchOptions]);
+  })();
 
   const handleClear = () => {
     onClear?.();
@@ -273,30 +245,12 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     }
   };
 
-  const [selectedNode, suffixNode, selectedLabel] = useMemo(() => {
+  const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selectedNodes: MultipleTreeNode<V, T>[] = [];
-      let length = (select as V[]).length;
-      const reduceArr = (arr: MultipleTreeNode<V, T>[]) => {
-        for (const item of arr) {
-          if (length === 0) {
-            break;
-          }
-          if (item.children) {
-            reduceArr(item.children);
-          } else {
-            const index = (select as V[]).findIndex((val) => val === item.id);
-            if (index !== -1) {
-              selectedNodes[index] = item;
-              length -= 1;
-            }
-          }
-        }
-      };
-      reduceArr(renderNodes as MultipleTreeNode<V, T>[]);
+      const selectedNodes = (_select as V[]).map((v) => nodesMap.get(v) as MultipleTreeNode<V, T>);
 
       suffixNode = (
         <DDropdown
@@ -314,12 +268,12 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
           })}
           dCloseOnClick={false}
           onOptionClick={(id, option) => {
-            const checkeds = (option.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as V[]);
-            changeSelectByCache(checkeds);
+            const checkeds = (option.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
+            changeSelect(Array.from(checkeds.keys()));
           }}
         >
           <DTag className={`${dPrefix}cascader__multiple-count`} dSize={size}>
-            {(select as V[]).length}
+            {(select as Set<V>).size}
           </DTag>
         </DDropdown>
       );
@@ -332,8 +286,8 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
           onClose={(e) => {
             e.stopPropagation();
 
-            const checkeds = (node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as V[]);
-            changeSelectByCache(checkeds);
+            const checkeds = (node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
+            changeSelect(Array.from(checkeds.keys()));
           }}
         >
           {dCustomSelected ? dCustomSelected(node.origin) : node.origin.label}
@@ -341,15 +295,13 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
       ));
     } else {
       if (!isNull(select)) {
-        const node = findNested(renderNodes as SingleTreeNode<V, T>[], (node) => node.id === (select as V));
-        if (node) {
-          selectedLabel = getText(node);
-          selectedNode = dCustomSelected ? dCustomSelected(node.origin) : selectedLabel;
-        }
+        const node = nodesMap.get(select as V)!;
+        selectedLabel = getText(node);
+        selectedNode = dCustomSelected ? dCustomSelected(node.origin) : selectedLabel;
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
-  }, [changeSelectByCache, dCustomSelected, dMultiple, dPrefix, disabled, renderNodes, select, size]);
+  })();
 
   return (
     <DSelectbox
@@ -419,10 +371,10 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
           {dLoading && (
             <div
               className={getClassName(`${dPrefix}cascader__loading`, {
-                [`${dPrefix}cascader__loading--empty`]: dOptions.length === 0,
+                [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchOptions : renderNodes).length === 0,
               })}
             >
-              <LoadingOutlined dSize={dOptions.length === 0 ? 18 : 24} dSpin />
+              <LoadingOutlined dSize={(hasSearch ? searchOptions : renderNodes).length === 0 ? 18 : 24} dSpin />
             </div>
           )}
           {hasSearch ? (
@@ -436,7 +388,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
               dMultiple={dMultiple}
               dOnlyLeafSelectable={dOnlyLeafSelectable}
               dFocusVisible={focusVisible}
-              onSelectedChange={changeSelectByCache}
+              onSelectedChange={changeSelect}
               onClose={() => {
                 changeVisible(false);
               }}
@@ -459,7 +411,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
               dOnlyLeafSelectable={dOnlyLeafSelectable}
               dFocusVisible={focusVisible}
               dRoot
-              onSelectedChange={changeSelectByCache}
+              onSelectedChange={changeSelect}
               onClose={() => {
                 changeVisible(false);
               }}

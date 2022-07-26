@@ -24,10 +24,11 @@
   }
 
   @include e(header-title) {
-    @include utils-title;
     @include utils-ellipsis;
 
     flex: 1 0 0;
+    font-size: 1.1em;
+    font-weight: 500;
   }
 
   @include e(header-action) {

@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/global';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
-import type { MultipleTreeNode, SingleTreeNode } from '../tree';
+import type { MultipleTreeNode } from '../tree';
 import type { DCascaderOption, DSearchOption } from './Cascader';
 import type { Subject } from 'rxjs';
 
@@ -16,7 +16,7 @@ interface DSearchListProps<ID extends DId, T> {
   dListId?: string;
   dGetOptionId: (value: ID) => string;
   dOptions: DSearchOption<ID, T>[];
-  dSelected: ID | null | ID[];
+  dSelected: ID | null | Set<ID>;
   dFocusOption: DSearchOption<ID, T> | undefined;
   dCustomOption?: (option: T) => React.ReactNode;
   dMultiple: boolean;
@@ -59,11 +59,10 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
     if (dMultiple) {
       const checkeds = (option[TREE_NODE_KEY] as MultipleTreeNode<ID, T>).changeStatus(
         option[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
-        dSelected as ID[]
+        dSelected as Set<ID>
       );
-      onSelectedChange(checkeds);
+      onSelectedChange(Array.from(checkeds.keys()));
     } else {
-      (option[TREE_NODE_KEY] as SingleTreeNode<ID, T>).setChecked();
       onSelectedChange(option[TREE_NODE_KEY].id);
       onClose();
     }

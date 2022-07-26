@@ -59,8 +59,8 @@
 
   @include e(title) {
     margin-bottom: 8px;
-
-    @include utils-title;
+    font-size: 1.1em;
+    font-weight: 500;
   }
 
   @include e(close) {

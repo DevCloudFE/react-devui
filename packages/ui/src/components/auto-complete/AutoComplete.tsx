@@ -3,7 +3,7 @@ import type { DFocusVisibleRenderProps } from '../_focus-visible';
 import type { DVirtualScrollRef } from '../_virtual-scroll';
 
 import { isUndefined } from 'lodash';
-import React, { useState, useId, useCallback, useMemo, useRef, useImperativeHandle, useEffect } from 'react';
+import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -125,13 +125,13 @@ function AutoComplete<T extends DAutoCompleteOption>(
   useUpdatePosition(updatePosition, visible);
 
   const [_focusOption, setFocusOption] = useState<DNestedChildren<T> | undefined>();
-  const focusOption = useMemo(() => {
+  const focusOption = (() => {
     if (_focusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _focusOption.value)) {
       return _focusOption;
     }
 
     return findNested(dOptions, (o) => canSelectOption(o));
-  }, [_focusOption, canSelectOption, dOptions]);
+  })();
 
   const changeFocusOption = (option?: DNestedChildren<T>) => {
     if (!isUndefined(option)) {
@@ -371,7 +371,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
                           style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
                           title={optionValue}
                           role="option"
-                          aria-auto-completeed={false}
+                          aria-selected={false}
                           aria-disabled={optionDisabled}
                           onClick={() => {
                             if (!optionDisabled) {

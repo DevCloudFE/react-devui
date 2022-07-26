@@ -54,10 +54,4 @@
   @include e(type-wrapper) {
     flex-grow: 1;
   }
-
-  @include e(title) {
-    @include utils-title;
-
-    margin-bottom: 8px;
-  }
 }
