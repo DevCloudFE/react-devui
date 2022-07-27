@@ -127,4 +127,7 @@ export { DTransfer } from './transfer';
 export type { DUploadProps, DUploadActionProps } from './upload';
 export { DUpload, DUploadAction } from './upload';
 
+export type { DVirtualScrollProps } from './virtual-scroll';
+export { DVirtualScroll } from './virtual-scroll';
+
 export { dayjs } from './dayjs';

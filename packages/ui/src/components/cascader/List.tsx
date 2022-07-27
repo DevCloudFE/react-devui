@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/global';
-import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { AbstractTreeNode, MultipleTreeNode } from '../tree';
+import type { DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderOption } from './Cascader';
 import type { Subject } from 'rxjs';
 
@@ -10,8 +10,8 @@ import { useEffect, useRef } from 'react';
 import { usePrefixConfig, useTranslation, useEventCallback } from '../../hooks';
 import { LoadingOutlined, RightOutlined } from '../../icons';
 import { getClassName } from '../../utils';
-import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
+import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DListProps<ID extends DId, T> {
   dListId?: string;
@@ -217,9 +217,9 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
             </li>
           );
         }}
-        dGetSize={() => 32}
+        dItemSize={32}
         dCompareItem={(a, b) => a.id === b.id}
-        dCanFocus={(item) => item.enabled}
+        dFocusable={(item) => item.enabled}
         dFocusItem={inFocusNode}
         dSize={264}
         dPadding={4}

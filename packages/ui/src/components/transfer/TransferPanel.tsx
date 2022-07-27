@@ -1,5 +1,5 @@
 import type { DId } from '../../utils/global';
-import type { DVirtualScrollRef } from '../_virtual-scroll';
+import type { DVirtualScrollRef } from '../virtual-scroll';
 import type { DTransferOption } from './Transfer';
 
 import React, { useId, useCallback, useRef } from 'react';
@@ -7,10 +7,10 @@ import React, { useId, useCallback, useRef } from 'react';
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { LoadingOutlined, SearchOutlined } from '../../icons';
 import { getClassName } from '../../utils';
-import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
 import { DEmpty } from '../empty';
 import { DInput } from '../input';
+import { DVirtualScroll } from '../virtual-scroll';
 import { IS_SELECTED } from './Transfer';
 
 export interface DTransferPanelProps<V extends DId, T extends DTransferOption<V>> {
@@ -116,9 +116,9 @@ export function DTransferPanel<V extends DId, T extends DTransferOption<V>>(prop
               </li>
             );
           }}
-          dGetSize={() => 32}
+          dItemSize={32}
           dCompareItem={(a, b) => a.value === b.value}
-          dCanFocus={canSelectOption}
+          dFocusable={canSelectOption}
           dSize={192}
           dEmpty={<DEmpty className={`${dPrefix}transfer__empty`}></DEmpty>}
           onScrollEnd={onScrollBottom}

@@ -327,17 +327,6 @@ h3 {
   gap: 20px 0;
 }
 
-.app-demo-link {
-  color: var(--d-color-primary);
-  text-decoration: none;
-  cursor: pointer;
-  transition: color var(--d-animation-duration-base) linear;
-
-  &:hover {
-    color: var(--d-color-primary-lighter);
-  }
-}
-
 .app-demo-slide {
   display: flex;
   align-items: center;

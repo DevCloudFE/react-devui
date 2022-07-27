@@ -140,7 +140,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
                 [`${dPrefix}accordion__button--arrow-left`]: accordionArrow === 'left',
                 'is-disabled': accordionDisabled,
               })}
-              tabIndex={!accordionDisabled ? 0 : -1}
+              tabIndex={accordionDisabled ? -1 : 0}
               role="button"
               aria-controls={regionId}
               aria-expanded={isActive}

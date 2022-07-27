@@ -1,6 +1,6 @@
 import type { DNestedChildren } from '../../utils/global';
 import type { DFocusVisibleRenderProps } from '../_focus-visible';
-import type { DVirtualScrollRef } from '../_virtual-scroll';
+import type { DVirtualScrollRef } from '../virtual-scroll';
 
 import { isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect } from 'react';
@@ -22,8 +22,8 @@ import { findNested, registerComponentMate, getClassName, getNoTransformSize, ge
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
 import { DTransition } from '../_transition';
-import { DVirtualScroll } from '../_virtual-scroll';
 import { DInput } from '../input';
+import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DAutoCompleteRef {
   updatePosition: () => void;
@@ -385,15 +385,15 @@ function AutoComplete<T extends DAutoCompleteOption>(
                         </li>
                       );
                     }}
-                    dGetSize={(item) => {
+                    dItemSize={(item) => {
                       if (item.children && item.children.length === 0) {
                         return 64;
                       }
                       return 32;
                     }}
-                    dGetChildren={(item) => item.children}
+                    dItemNested={(item) => item.children}
                     dCompareItem={(a, b) => a.value === b.value}
-                    dCanFocus={canSelectOption}
+                    dFocusable={canSelectOption}
                     dFocusItem={focusOption}
                     dSize={264}
                     dPadding={4}

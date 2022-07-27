@@ -114,6 +114,8 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
             onKeyDown={(e) => {
               if (dStepClickable) {
                 if (e.code === 'Enter' || e.code === 'Space') {
+                  e.preventDefault();
+
                   onStepClick?.(stepStep, step);
                 }
               }

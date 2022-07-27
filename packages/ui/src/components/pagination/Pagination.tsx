@@ -6,6 +6,7 @@ import { DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, LeftOutlined
 import { registerComponentMate, getClassName } from '../../utils';
 import { DInput } from '../input';
 import { DSelect } from '../select';
+import { getButtonRoleAttributes } from './utils';
 
 export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dActive?: number;
@@ -98,6 +99,9 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     if (dCompose.includes('pages')) {
       prevNode = (
         <li
+          {...getButtonRoleAttributes(() => {
+            changeActive(active - 1);
+          }, active === 1)}
           className={getClassName(
             `${dPrefix}pagination__item`,
             `${dPrefix}pagination__item--button`,
@@ -108,11 +112,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
             }
           )}
           title={t('Pagination', 'Previous page')}
-          role="button"
-          aria-disabled={active === 1}
-          onClick={() => {
-            changeActive(active - 1);
-          }}
         >
           {dCustomRender && dCustomRender.prev ? dCustomRender.prev : <LeftOutlined />}
         </li>
@@ -120,16 +119,14 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
       nextNode = (
         <li
+          {...getButtonRoleAttributes(() => {
+            changeActive(active + 1);
+          }, active === lastPage)}
           className={getClassName(`${dPrefix}pagination__item`, `${dPrefix}pagination__item--button`, {
             'is-disabled': active === lastPage,
             [`${dPrefix}pagination__item--border`]: !(dCustomRender && dCustomRender.next),
           })}
           title={t('Pagination', 'Next page')}
-          role="button"
-          aria-disabled={active === lastPage}
-          onClick={() => {
-            changeActive(active + 1);
-          }}
         >
           {dCustomRender && dCustomRender.next ? dCustomRender.next : <RightOutlined />}
         </li>
@@ -271,6 +268,9 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                 if (n === 'prev5') {
                   return (
                     <li
+                      {...getButtonRoleAttributes(() => {
+                        changeActive(active - 5);
+                      })}
                       key="prev5"
                       className={getClassName(
                         `${dPrefix}pagination__item`,
@@ -278,10 +278,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         `${dPrefix}pagination__item--jump5`
                       )}
                       title={t('Pagination', '5 pages forward')}
-                      role="button"
-                      onClick={() => {
-                        changeActive(active - 5);
-                      }}
                     >
                       <DoubleLeftOutlined className={`${dPrefix}pagination__jump5-icon`} />
                       <div className={`${dPrefix}pagination__ellipsis`}>
@@ -292,6 +288,9 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                 } else if (n === 'next5') {
                   return (
                     <li
+                      {...getButtonRoleAttributes(() => {
+                        changeActive(active + 5);
+                      })}
                       key="next5"
                       className={getClassName(
                         `${dPrefix}pagination__item`,
@@ -299,10 +298,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                         `${dPrefix}pagination__item--jump5`
                       )}
                       title={t('Pagination', '5 pages backward')}
-                      role="button"
-                      onClick={() => {
-                        changeActive(active + 5);
-                      }}
                     >
                       <DoubleRightOutlined className={`${dPrefix}pagination__jump5-icon`} />
                       <div className={`${dPrefix}pagination__ellipsis`}>

@@ -1,7 +1,7 @@
 import type { DNestedChildren, DId, DSize } from '../../utils/global';
-import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { DDropdownOption } from '../dropdown';
 import type { DFormControl } from '../form';
+import type { DVirtualScrollRef } from '../virtual-scroll';
 
 import { isNull, isNumber, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
@@ -10,11 +10,11 @@ import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext,
 import { LoadingOutlined, PlusOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { DSelectbox } from '../_selectbox';
-import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
 import { DTag } from '../tag';
+import { DVirtualScroll } from '../virtual-scroll';
 
 const IS_CREATE = Symbol();
 
@@ -539,15 +539,15 @@ function Select<V extends DId, T extends DSelectOption<V>>(
                 </li>
               );
             }}
-            dGetSize={(item) => {
+            dItemSize={(item) => {
               if (item.children && item.children.length === 0) {
                 return 64;
               }
               return 32;
             }}
-            dGetChildren={(item) => item.children}
+            dItemNested={(item) => item.children}
             dCompareItem={(a, b) => a.value === b.value}
-            dCanFocus={canSelectOption}
+            dFocusable={canSelectOption}
             dFocusItem={focusOption}
             dSize={264}
             dPadding={4}

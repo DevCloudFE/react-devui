@@ -164,7 +164,8 @@
   }
 
   @include m(link) {
-    padding: 0 var(--#{$variable-prefix}padding-size);
+    height: auto;
+    padding: 0;
     color: var(--#{$variable-prefix}button-color);
     background-color: transparent;
     border: none;

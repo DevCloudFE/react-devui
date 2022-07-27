@@ -130,6 +130,7 @@
     gap: 0 4px;
     align-items: center;
     justify-content: center;
+    min-height: 41px;
     border-top: 1px solid var(--#{$variable-prefix}color-divider);
 
     @include m(custom) {

@@ -481,6 +481,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
                         handleKeyDown?.(e);
                       } else if (e.code === 'Enter' || e.code === 'Space') {
                         e.preventDefault();
+
                         changeVisible(true);
                       }
                     },

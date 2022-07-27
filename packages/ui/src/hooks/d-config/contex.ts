@@ -58,6 +58,7 @@ import type {
   DTransferProps,
   DUploadProps,
   DUploadActionProps,
+  DVirtualScrollProps,
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
 import type { DIconBaseProps } from '../../icons';
@@ -130,6 +131,7 @@ export type DComponentConfig = {
   DTransfer: DTransferProps<any, any>;
   DUpload: DUploadProps;
   DUploadAction: DUploadActionProps;
+  DVirtualScroll: DVirtualScrollProps<any>;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };
 
 export interface DConfigContextData {

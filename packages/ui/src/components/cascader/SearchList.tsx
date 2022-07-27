@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/global';
-import type { DVirtualScrollRef } from '../_virtual-scroll';
 import type { MultipleTreeNode } from '../tree';
+import type { DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderOption, DSearchOption } from './Cascader';
 import type { Subject } from 'rxjs';
 
@@ -8,8 +8,8 @@ import React, { useEffect, useRef } from 'react';
 
 import { useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
-import { DVirtualScroll } from '../_virtual-scroll';
 import { DCheckbox } from '../checkbox';
+import { DVirtualScroll } from '../virtual-scroll';
 import { getText, TREE_NODE_KEY } from './utils';
 
 interface DSearchListProps<ID extends DId, T> {
@@ -166,9 +166,9 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
           </li>
         );
       }}
-      dGetSize={() => 32}
+      dItemSize={32}
       dCompareItem={(a, b) => a.value === b.value}
-      dCanFocus={(item) => item[TREE_NODE_KEY].enabled}
+      dFocusable={(item) => item[TREE_NODE_KEY].enabled}
       dFocusItem={dFocusOption}
       dSize={264}
       dPadding={4}

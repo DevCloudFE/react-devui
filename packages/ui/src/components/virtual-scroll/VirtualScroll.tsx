@@ -1,7 +1,8 @@
-import { isUndefined, nth } from 'lodash';
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback } from '../../hooks';
+import { useAsync, useComponentConfig, useEventCallback, useIsomorphicLayoutEffect } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 
 export interface DVirtualScrollRef<T> {
   scrollToItem: (item: T) => void;
@@ -19,26 +20,27 @@ export interface DItemRenderProps {
 export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dList: T[];
   dItemRender: (item: T, index: number, props: DItemRenderProps, parent: T[]) => React.ReactNode;
-  dGetSize: (item: T) => number;
-  dGetChildren?: (item: T) => T[] | undefined;
+  dItemSize: number | ((item: T) => number);
+  dItemNested?: (item: T) => T[] | undefined;
   dCompareItem: (a: T, b: T) => boolean;
-  dCanFocus: (item: T) => boolean;
+  dFocusable: boolean | ((item: T) => boolean);
   dFocusItem?: T;
-  dSize: number;
+  dSize?: number;
   dPadding?: number;
   dHorizontal?: boolean;
   dEmpty?: React.ReactNode;
   onScrollEnd?: () => void;
 }
 
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScroll' });
 function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
   const {
     dList,
     dItemRender,
-    dGetSize,
-    dGetChildren,
+    dItemSize,
+    dItemNested,
     dCompareItem,
-    dCanFocus,
+    dFocusable,
     dFocusItem,
     dSize,
     dPadding = 0,
@@ -47,34 +49,69 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     onScrollEnd,
 
     ...restProps
-  } = props;
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Ref
   const listRef = useRef<HTMLUListElement>(null);
   //#endregion
 
+  const asyncCapture = useAsync();
+
   const [scrollPosition, setScrollPosition] = useState(0);
+  const getItemSize = (item: T) => (isNumber(dItemSize) ? dItemSize : dItemSize(item));
+  const getFocusable = (item: T) => (isBoolean(dFocusable) ? dFocusable : dFocusable(item));
+
+  const [elSize, setElSize] = useState<number>();
+  useIsomorphicLayoutEffect(() => {
+    if (listRef.current) {
+      if (isUndefined(dSize)) {
+        setElSize(listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight']);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+    const el = listRef.current;
+    if (el) {
+      asyncGroup.onResize(el, () => {
+        if (isUndefined(dSize)) {
+          setElSize(el[dHorizontal ? 'clientWidth' : 'clientHeight']);
+        }
+      });
+    }
+
+    return () => {
+      asyncCapture.deleteGroup(asyncId);
+    };
+  }, [asyncCapture, dHorizontal, dSize]);
 
   const [list, fillSize] = (() => {
+    const ulSize = dSize ?? elSize;
+    if (isUndefined(ulSize)) {
+      return [[], []];
+    }
+
     let listSize = 0;
     const getScrollSize = (arr: T[]) => {
       arr.forEach((item) => {
-        listSize += dGetSize(item);
-        const children = dGetChildren?.(item);
+        listSize += getItemSize(item);
+        const children = dItemNested?.(item);
         if (children) {
           getScrollSize(children);
         }
       });
     };
     getScrollSize(dList);
-    const maxScrollSize = Math.max(listSize + dPadding * 2 - dSize, 0);
+    const maxScrollSize = Math.max(listSize + dPadding * 2 - ulSize, 0);
     const _scrollPosition = Math.min(scrollPosition, maxScrollSize);
 
     let accSize = 0;
     let renderSize = 0;
     let fillBack = 0;
     const startSize = _scrollPosition - 200 - dPadding;
-    const endSize = _scrollPosition + dSize + 200 - dPadding;
+    const endSize = _scrollPosition + ulSize + 200 - dPadding;
 
     let hasStart = false;
     let hasEnd = false;
@@ -86,10 +123,10 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           break;
         }
 
-        const size = dGetSize(item);
+        const size = getItemSize(item);
         accSize += size;
 
-        const children = dGetChildren?.(item);
+        const children = dItemNested?.(item);
         if (children) {
           renderSize += size;
           list.push(
@@ -163,9 +200,9 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           break;
         }
 
-        accSize += dGetSize(_item);
+        accSize += getItemSize(_item);
 
-        const children = dGetChildren?.(_item);
+        const children = dItemNested?.(_item);
         if (children) {
           reduceArr(children);
         }
@@ -196,10 +233,10 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
             findIndex = index;
           }
 
-          accSize += dGetSize(item);
+          accSize += getItemSize(item);
           accSizeList.push({ item, accSize });
 
-          const children = dGetChildren?.(item);
+          const children = dItemNested?.(item);
           if (children) {
             reduceArr(children);
           }
@@ -211,18 +248,18 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         if (step < 0) {
           for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
             const accSize = nth(accSizeList, index);
-            if (accSize && dCanFocus(accSize.item)) {
+            if (accSize && getFocusable(accSize.item)) {
               findItem = accSize.item;
-              offsetSize = [accSize.accSize - dGetSize(findItem) + dPadding, accSize.accSize + dPadding];
+              offsetSize = [accSize.accSize - getItemSize(findItem) + dPadding, accSize.accSize + dPadding];
               break;
             }
           }
         } else {
           for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
             const accSize = nth(accSizeList, index % accSizeList.length);
-            if (accSize && dCanFocus(accSize.item)) {
+            if (accSize && getFocusable(accSize.item)) {
               findItem = accSize.item;
-              offsetSize = [accSize.accSize - dGetSize(findItem) + dPadding, accSize.accSize + dPadding];
+              offsetSize = [accSize.accSize - getItemSize(findItem) + dPadding, accSize.accSize + dPadding];
               break;
             }
           }
@@ -257,12 +294,12 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     let findItem: T | undefined;
     const reduceArr = (arr: T[]) => {
       for (const item of arr) {
-        if (dCanFocus(item) || !isUndefined(findItem)) {
+        if (getFocusable(item) || !isUndefined(findItem)) {
           findItem = item;
           break;
         }
 
-        const children = dGetChildren?.(item);
+        const children = dItemNested?.(item);
         if (children) {
           reduceArr(children);
         }
@@ -280,12 +317,12 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     const reduceArr = (arr: T[]) => {
       for (let index = arr.length - 1; index >= 0; index--) {
         const item = arr[index];
-        if (dCanFocus(item) || !isUndefined(findItem)) {
+        if (getFocusable(item) || !isUndefined(findItem)) {
           findItem = item;
           break;
         }
 
-        const children = dGetChildren?.(item);
+        const children = dItemNested?.(item);
         if (children) {
           reduceArr(children);
         }
@@ -335,9 +372,15 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         dEmpty
       ) : (
         <>
-          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[0] }} aria-hidden></div>
+          <div
+            style={{ display: dHorizontal ? 'inline-block' : undefined, [dHorizontal ? 'width' : 'height']: fillSize[0] }}
+            aria-hidden
+          ></div>
           {list}
-          <div style={{ [dHorizontal ? 'width' : 'height']: fillSize[1] }} aria-hidden></div>
+          <div
+            style={{ display: dHorizontal ? 'inline-block' : undefined, [dHorizontal ? 'width' : 'height']: fillSize[1] }}
+            aria-hidden
+          ></div>
         </>
       )}
     </ul>

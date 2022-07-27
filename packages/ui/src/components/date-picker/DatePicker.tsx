@@ -115,21 +115,34 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
             })}
           >
             {dPresetOptions ? (
-              Object.keys(dPresetOptions).map((name) => (
-                <DTag
-                  key={name}
-                  className={`${dPrefix}date-picker__footer-button`}
-                  dTheme="primary"
-                  onClick={() => {
-                    const d = dPresetOptions[name]();
-                    changeValue(d);
-                    dDPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
-                    dTPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
-                  }}
-                >
-                  {name}
-                </DTag>
-              ))
+              Object.keys(dPresetOptions).map((name) => {
+                const handleClick = () => {
+                  const d = dPresetOptions[name]();
+                  changeValue(d);
+                  dDPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
+                  dTPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
+                };
+
+                return (
+                  <DTag
+                    key={name}
+                    className={`${dPrefix}date-picker__footer-button`}
+                    tabIndex={0}
+                    role="button"
+                    dTheme="primary"
+                    onKeyDown={(e) => {
+                      if (e.code === 'Enter' || e.code === 'Space') {
+                        e.preventDefault();
+
+                        handleClick();
+                      }
+                    }}
+                    onClick={handleClick}
+                  >
+                    {name}
+                  </DTag>
+                );
+              })
             ) : (
               <DButton
                 dType="link"
