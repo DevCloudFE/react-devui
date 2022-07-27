@@ -1,0 +1,179 @@
+@keyframes stepper-active {
+  0% {
+    box-shadow: 0 0 0 4px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+  }
+
+  100% {
+    box-shadow: 0 0 0 6px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-darker));
+  }
+}
+
+@include b(stepper) {
+  display: flex;
+  width: 100%;
+
+  @include m(label-bottom) {
+    @include e(step-header) {
+      justify-content: center;
+      width: 100%;
+    }
+
+    @include e(step-title) {
+      margin: 8px 0 0;
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    @include e(step-separator) {
+      position: absolute;
+    }
+
+    @include e(step-description) {
+      text-align: center;
+    }
+  }
+
+  @include m(vertical) {
+    flex-direction: column;
+
+    @include e(step) {
+      &:not(:last-child) {
+        padding-bottom: 20px;
+      }
+    }
+
+    @include e(step-separator) {
+      position: absolute;
+      width: 2px;
+
+      &::after {
+        inset: 10px 0;
+      }
+    }
+  }
+
+  @include m(button) {
+    @include e(step) {
+      cursor: pointer;
+      transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+      @include when(wait) {
+        @include e(step-icon) {
+          transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+        }
+      }
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}color-primary-lighter);
+
+        @include when(wait) {
+          @include e(step-icon) {
+            border: 1px solid var(--#{$variable-prefix}color-primary-lighter);
+          }
+        }
+      }
+    }
+  }
+
+  @include e(step) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    &:not(:last-child) {
+      flex: 1 0 0;
+    }
+
+    @include when(completed) {
+      @include e(step-icon) {
+        color: map.get($colors, 'white');
+        background-color: var(--#{$variable-prefix}color-primary);
+      }
+
+      @include e(step-separator) {
+        &::after {
+          background-color: var(--#{$variable-prefix}color-primary-lighter);
+        }
+      }
+    }
+
+    @include when(active) {
+      @include e(step-icon) {
+        color: map.get($colors, 'white');
+        background-color: var(--#{$variable-prefix}color-primary);
+
+        &:not(.#{$variable-prefix}stepper__step-icon--progress) {
+          animation: stepper-active 1.2s linear infinite alternate;
+          animation-fill-mode: both;
+        }
+      }
+    }
+
+    @include when(wait) {
+      color: var(--#{$variable-prefix}color-disabled);
+
+      @include e(step-icon) {
+        border: 1px solid var(--#{$variable-prefix}color-disabled);
+      }
+    }
+
+    @include when(error) {
+      color: var(--#{$variable-prefix}color-danger);
+
+      @include e(step-icon) {
+        color: map.get($colors, 'white');
+        background-color: var(--#{$variable-prefix}color-danger);
+      }
+
+      @include e(step-separator) {
+        &::after {
+          background-color: var(--#{$variable-prefix}color-danger-lighter);
+        }
+      }
+    }
+  }
+
+  @include e(step-header) {
+    position: relative;
+    display: flex;
+    font-size: 1.1em;
+  }
+
+  @include e(step-icon) {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  @include e(step-progress) {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+  }
+
+  @include e(step-title) {
+    margin-left: 8px;
+    font-weight: 500;
+  }
+
+  @include e(step-description) {
+    margin-top: 4px;
+  }
+
+  @include e(step-separator) {
+    position: relative;
+    flex: 1 0 0;
+    height: 2px;
+
+    &::after {
+      position: absolute;
+      inset: 0 10px;
+      content: '';
+      background-color: var(--#{$variable-prefix}background-color-indicator);
+    }
+  }
+}

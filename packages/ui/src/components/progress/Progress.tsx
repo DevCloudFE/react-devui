@@ -12,7 +12,7 @@ function ease(k: number) {
 export interface DProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dPercent?: number;
   dType?: 'line' | 'circle' | 'dashboard';
-  dStatus?: 'success' | 'warning' | 'error';
+  dStatus?: 'success' | 'warning' | 'error' | 'process';
   dWave?: boolean;
   dLineCap?: CanvasLineCap;
   dLinearGradient?: (gradient: CanvasGradient) => void;
@@ -58,7 +58,7 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
   const asyncCapture = useAsync();
 
   const status = isUndefined(dStatus) && dPercent === 100 ? 'success' : dStatus;
-  const theme = isUndefined(status) ? 'primary' : status === 'success' ? 'success' : status === 'warning' ? 'warning' : 'danger';
+  const theme = status === 'success' ? 'success' : status === 'warning' ? 'warning' : status === 'error' ? 'danger' : 'primary';
 
   const [percent, setPercent] = useState(dPercent);
 

@@ -47,6 +47,7 @@ import type {
   DSliderProps,
   DSlidesProps,
   DSlideProps,
+  DStepperProps,
   DSwitchProps,
   DTabsProps,
   DTagProps,
@@ -72,7 +73,7 @@ interface Resources {
 export type DComponentConfig = {
   DAccordion: DAccordionProps<any, any>;
   DAffix: DAffixProps;
-  DAnchor: DAnchorProps;
+  DAnchor: DAnchorProps<any>;
   DAutoComplete: DAutoCompleteProps<any>;
   DAvatar: DAvatarProps;
   DBadge: DBadgeProps;
@@ -118,6 +119,7 @@ export type DComponentConfig = {
   DSlider: DSliderProps;
   DSlides: DSlidesProps;
   DSlide: DSlideProps;
+  DStepper: DStepperProps<any>;
   DSwitch: DSwitchProps;
   DTabs: DTabsProps<any, any>;
   DTag: DTagProps;

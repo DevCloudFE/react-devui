@@ -18,7 +18,7 @@ export interface DAnchorRef {
   updateAnchor: () => void;
 }
 
-export interface DAnchorProps<T = DAnchorOption> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
+export interface DAnchorProps<T extends DAnchorOption> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
   dLinks: DNestedChildren<T>[];
   dPage?: DElementSelector;
   dDistance?: number;

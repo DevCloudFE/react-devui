@@ -106,12 +106,12 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
 
         const buttonId = getButtonId(accordionId);
         const regionId = getRegionId(accordionId);
-        const active = dActiveOne ? activeId === accordionId : (activeId as ID[]).includes(accordionId);
+        const isActive = dActiveOne ? activeId === accordionId : (activeId as ID[]).includes(accordionId);
         const iconRotate = (() => {
-          if (accordionArrow === 'left' && !active) {
+          if (accordionArrow === 'left' && !isActive) {
             return -90;
           }
-          if (accordionArrow === 'right' && active) {
+          if (accordionArrow === 'right' && isActive) {
             return 180;
           }
           return undefined;
@@ -119,7 +119,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
 
         const handleClick = () => {
           if (dActiveOne) {
-            changeActiveId(active ? null : accordionId);
+            changeActiveId(isActive ? null : accordionId);
           } else {
             changeActiveId((draft) => {
               const index = (draft as ID[]).findIndex((v) => v === accordionId);
@@ -143,7 +143,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
               tabIndex={!accordionDisabled ? 0 : -1}
               role="button"
               aria-controls={regionId}
-              aria-expanded={active}
+              aria-expanded={isActive}
               aria-disabled={accordionDisabled}
               onClick={handleClick}
               onKeyDown={(e) => {
@@ -194,7 +194,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
             </div>
             <DCollapseTransition
               dSize={0}
-              dIn={active}
+              dIn={isActive}
               dDuring={TTANSITION_DURING_BASE}
               dStyles={{
                 entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
