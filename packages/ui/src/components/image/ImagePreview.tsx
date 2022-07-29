@@ -264,7 +264,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
 
             case 'entering':
               transitionStyle = {
-                transition: `transform ${TTANSITION_DURING_BASE}ms ease-out, opacity ${TTANSITION_DURING_BASE}ms ease-out`,
+                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
               };
               break;
 
@@ -272,7 +272,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
               transitionStyle = {
                 transform: 'scale(0.3)',
                 opacity: 0,
-                transition: `transform ${TTANSITION_DURING_BASE}ms ease-in, opacity ${TTANSITION_DURING_BASE}ms ease-in`,
+                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
               };
               break;
 

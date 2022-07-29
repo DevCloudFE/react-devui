@@ -23,14 +23,16 @@ $transfer-option-height: 32px;
   }
 
   @include e(actions) {
-    --d-size: 24px;
-
     display: flex;
     flex-direction: column;
     gap: 4px 0;
     margin: 0 8px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 12px;
+
+    .#{$variable-prefix}button {
+      --#{$variable-prefix}size: 24px !important;
+    }
   }
 
   @include e(panel) {

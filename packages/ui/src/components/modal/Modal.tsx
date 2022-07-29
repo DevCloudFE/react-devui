@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 
 import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { registerComponentMate, getClassName, handleModalKeyDown } from '../../utils';
+import { registerComponentMate, getClassName, handleModalKeyDown, checkNodeExist } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -72,7 +72,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
   const asyncCapture = useAsync();
 
   const uniqueId = useId();
-  const headerId = `${dPrefix}modal-header-${uniqueId}`;
+  const titleId = `${dPrefix}modal-title-${uniqueId}`;
   const bodyId = `${dPrefix}modal-content-${uniqueId}`;
 
   const topStyle = dTop + (isNumber(dTop) ? 'px' : '');
@@ -136,7 +136,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
       const node = isString(dHeader) ? <DModalHeader>{dHeader}</DModalHeader> : dHeader;
       return React.cloneElement<DModalHeaderPropsWithPrivate>(node, {
         ...node.props,
-        __id: headerId,
+        __id: titleId,
         __onClose: () => {
           changeVisible(false);
         },
@@ -175,7 +175,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
 
             case 'entering':
               transitionStyle = {
-                transition: `transform ${TTANSITION_DURING_BASE}ms ease-out, opacity ${TTANSITION_DURING_BASE}ms ease-out`,
+                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
                 transformOrigin: dataRef.current.transformOrigin,
               };
               break;
@@ -184,7 +184,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
               transitionStyle = {
                 transform: 'scale(0.3)',
                 opacity: 0,
-                transition: `transform ${TTANSITION_DURING_BASE}ms ease-in, opacity ${TTANSITION_DURING_BASE}ms ease-in`,
+                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
                 transformOrigin: dataRef.current.transformOrigin,
               };
               break;
@@ -209,7 +209,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
               tabIndex={-1}
               role={restProps.role ?? 'dialog'}
               aria-modal={restProps['aria-modal'] ?? 'true'}
-              aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+              aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? titleId : undefined)}
               aria-describedby={restProps['aria-describedby'] ?? bodyId}
               onKeyDown={(e) => {
                 restProps.onKeyDown?.(e);
@@ -246,7 +246,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
                   {dType ? (
                     <>
                       <div className={`${dPrefix}modal__icon`}>
-                        {!isUndefined(dType.icon) ? (
+                        {checkNodeExist(dType.icon) ? (
                           dType.icon
                         ) : dType.type === 'success' ? (
                           <CheckCircleOutlined dTheme="success" />
@@ -259,8 +259,8 @@ export function DModal(props: DModalProps): JSX.Element | null {
                         )}
                       </div>
                       <div className={`${dPrefix}modal__type-wrapper`}>
-                        {!isUndefined(dType.title) && <div className={`${dPrefix}modal__title`}>{dType.title}</div>}
-                        {!isUndefined(dType.description) && <div className={`${dPrefix}modal__description`}>{dType.description}</div>}
+                        {checkNodeExist(dType.title) && <div className={`${dPrefix}modal__title`}>{dType.title}</div>}
+                        {checkNodeExist(dType.description) && <div className={`${dPrefix}modal__description`}>{dType.description}</div>}
                       </div>
                     </>
                   ) : (

@@ -152,7 +152,7 @@
   @include e(picture) {
     --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
     --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
-    --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover-light);
+    --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-light-hover);
 
     display: flex;
     flex-wrap: wrap;
@@ -174,7 +174,7 @@
     padding: 8px;
     margin: 0;
     vertical-align: top;
-    background-color: var(--#{$variable-prefix}background-color-hover);
+    background-color: var(--#{$variable-prefix}background-color-gray);
     border: 1px solid var(--#{$variable-prefix}color-border);
 
     &:hover {
@@ -190,7 +190,7 @@
     @include m(button) {
       --#{$variable-prefix}upload-action-color: #{map.get($colors, 'white')};
       --#{$variable-prefix}upload-action-color-lighter: #{map.get($colors, 'white')};
-      --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover-light);
+      --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-light-hover);
 
       cursor: pointer;
       border-style: dashed;
@@ -235,7 +235,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}upload-mask-background-color);
+    background-color: var(--#{$variable-prefix}upload-background-color-mask);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }

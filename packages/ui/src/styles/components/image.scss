@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}upload-mask-background-color);
+    background-color: var(--#{$variable-prefix}upload-background-color-mask);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }
@@ -40,7 +40,7 @@
 
     &:hover,
     &:focus {
-      background-color: var(--#{$variable-prefix}background-color-hover-light);
+      background-color: var(--#{$variable-prefix}background-color-light-hover);
     }
 
     &:disabled {
@@ -79,7 +79,7 @@
 
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
-      background-color: var(--#{$variable-prefix}slides-navigation-background-color-hover);
+      background-color: var(--#{$variable-prefix}slides-background-color-navigation-hover);
     }
 
     @include m(prev) {
@@ -165,7 +165,7 @@
     display: inline-flex;
     width: 52px;
     height: 52px;
-    background-color: var(--#{$variable-prefix}background-color-hover);
+    background-color: var(--#{$variable-prefix}background-color-gray);
 
     @include when(active) {
       outline: 1px solid var(--#{$variable-prefix}color-primary);

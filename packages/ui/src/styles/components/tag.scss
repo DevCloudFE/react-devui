@@ -15,19 +15,18 @@
   @each $theme, $rgb in $themes {
     @include theme(#{$theme}) {
       --#{$variable-prefix}tag-color: var(--#{$variable-prefix}color-#{$theme});
-      --#{$variable-prefix}tag-border-color: var(--#{$variable-prefix}color-#{$theme}-lighter);
       --#{$variable-prefix}tag-background-color: var(--#{$variable-prefix}background-color-#{$theme});
     }
   }
 
   @include m(primary) {
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
-    background-color: var(--#{$variable-prefix}tag-background-color);
+    background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}tag-background-color-default));
   }
 
   @include m(fill) {
     color: map.get($colors, 'white');
-    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}tag-fill-background-color));
+    background-color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}tag-background-color-fill));
 
     @include e(close) {
       color: map.get($colors, 'white');
@@ -46,7 +45,7 @@
   @include m(outline) {
     padding: 0 calc(var(--#{$variable-prefix}tag-padding-size) - 1px);
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
-    border: 1px solid var(--#{$variable-prefix}tag-border-color, var(--#{$variable-prefix}color-border));
+    border: 1px solid var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}color-border));
   }
 
   @include m(smaller) {

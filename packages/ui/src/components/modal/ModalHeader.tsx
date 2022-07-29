@@ -20,5 +20,5 @@ export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DModalHeaderPropsWithPrivate);
 
-  return <DHeader {...restProps} id={restProps.id ?? __id} dClassNamePrefix="modal" onClose={__onClose}></DHeader>;
+  return <DHeader {...restProps} dClassNamePrefix="modal" dTitleId={restProps.dTitleId ?? __id} onClose={__onClose}></DHeader>;
 }

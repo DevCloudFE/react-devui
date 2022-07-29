@@ -31,6 +31,8 @@
     }
   }
 
+  @include component-size;
+
   @include when(focus) {
     border-color: var(--#{$variable-prefix}color-primary-lighter);
   }
@@ -51,20 +53,6 @@
     @include e(placeholder) {
       color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
     }
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
-
-    @include font-size(0.9rem);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
-
-    @include font-size(1.15rem);
   }
 
   @include e(container) {

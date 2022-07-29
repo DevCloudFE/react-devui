@@ -43,19 +43,7 @@
   display: flex;
   flex-flow: row wrap;
 
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-smaller);
-
-    @include font-size(0.9rem);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
-
-    @include font-size(1.15rem);
-  }
+  @include component-size;
 
   @include e(item) {
     position: relative;

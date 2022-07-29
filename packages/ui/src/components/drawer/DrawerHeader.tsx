@@ -20,5 +20,5 @@ export function DDrawerHeader(props: DDrawerHeaderProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DDrawerHeaderPropsWithPrivate);
 
-  return <DHeader {...restProps} id={restProps.id ?? __id} dClassNamePrefix="drawer" onClose={__onClose}></DHeader>;
+  return <DHeader {...restProps} dClassNamePrefix="drawer" dTitleId={restProps.dTitleId ?? __id} onClose={__onClose}></DHeader>;
 }

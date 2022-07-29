@@ -1,7 +1,7 @@
 import type { DMenuMode } from './Menu';
 
 import { usePrefixConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { checkNodeExist, getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
 export interface DMenuItemProps {
@@ -52,7 +52,7 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
       >
         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
       </div>
-      {dIcon && (
+      {checkNodeExist(dIcon) && (
         <div className={`${dPrefix}menu__item-icon-wrapper`}>
           <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>
         </div>

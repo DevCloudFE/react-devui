@@ -78,11 +78,13 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { opacity: 0, transform: 'translateY(120px)' },
-    entering: { transition: `opacity ${TTANSITION_DURING_BASE}ms ease-out, transform ${TTANSITION_DURING_BASE}ms ease-out` },
+    entering: {
+      transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+    },
     leaving: {
       opacity: 0,
       transform: 'translateY(120px)',
-      transition: `opacity ${TTANSITION_DURING_BASE}ms ease-in, transform ${TTANSITION_DURING_BASE}ms ease-in`,
+      transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
     },
     leaved: { display: 'none' },
   };

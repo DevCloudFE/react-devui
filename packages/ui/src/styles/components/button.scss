@@ -17,6 +17,8 @@
     pointer-events: none;
   }
 
+  @include component-size;
+
   @each $theme, $rgb in $themes {
     @include theme(#{$theme}) {
       --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
@@ -194,20 +196,6 @@
 
   @include m(round) {
     border-radius: var(--#{$variable-prefix}size);
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
-
-    @include font-size(0.9rem);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
-
-    @include font-size(1.15rem);
   }
 
   @include m(block) {

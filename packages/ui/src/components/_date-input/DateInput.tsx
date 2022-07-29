@@ -15,7 +15,7 @@ import {
   useUpdatePosition,
 } from '../../hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
-import { getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { checkNodeExist, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
@@ -302,7 +302,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
               <CloseCircleFilled />
             </button>
           )}
-          {dSuffix && (
+          {checkNodeExist(dSuffix) && (
             <div className={`${prefix}__icon`} style={{ opacity: clearable ? 0 : 1 }}>
               {dSuffix}
             </div>
@@ -331,7 +331,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
                 case 'entering':
                   transitionStyle = {
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
                     transformOrigin,
                   };
                   break;
@@ -340,7 +340,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                   transitionStyle = {
                     transform: 'scaleY(0.7)',
                     opacity: 0,
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
                     transformOrigin,
                   };
                   break;

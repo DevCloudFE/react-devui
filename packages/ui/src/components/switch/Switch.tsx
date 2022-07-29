@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { DTransition } from '../_transition';
 import { useFormControl } from '../form';
@@ -54,10 +54,16 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { left: 2 },
-    entering: { left: 'calc(100% - 20px)', transition: `width ${TTANSITION_DURING}ms ease-in, left ${TTANSITION_DURING}ms ease-out` },
+    entering: {
+      left: 'calc(100% - 20px)',
+      transition: ['width', 'padding', 'margin', 'left'].map((attr) => `${attr} ${TTANSITION_DURING}ms linear`).join(', '),
+    },
     entered: { right: 2 },
     leave: { right: 2 },
-    leaving: { right: 'calc(100% - 20px)', transition: `width ${TTANSITION_DURING}ms ease-in, right ${TTANSITION_DURING}ms ease-out` },
+    leaving: {
+      right: 'calc(100% - 20px)',
+      transition: ['width', 'padding', 'margin', 'right'].map((attr) => `${attr} ${TTANSITION_DURING}ms linear`).join(', '),
+    },
     leaved: { left: 2 },
   };
 
@@ -120,7 +126,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
           )}
         </DTransition>
       </div>
-      {children && <div className={`${dPrefix}switch__label`}>{children}</div>}
+      {checkNodeExist(children) && <div className={`${dPrefix}switch__label`}>{children}</div>}
     </label>
   );
 }

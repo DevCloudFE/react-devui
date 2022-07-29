@@ -30,6 +30,8 @@
     }
   }
 
+  @include component-size;
+
   @include when(disabled) {
     color: var(--#{$variable-prefix}color-disabled);
     pointer-events: none;
@@ -47,20 +49,6 @@
         margin-right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
       }
     }
-  }
-
-  @include m(smaller) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
-
-    @include font-size(0.9rem);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
-
-    @include font-size(1.15rem);
   }
 
   @include e(input) {

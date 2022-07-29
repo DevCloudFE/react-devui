@@ -197,8 +197,18 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
               dIn={isActive}
               dDuring={TTANSITION_DURING_BASE}
               dStyles={{
-                entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
-                leaving: { transition: `height ${TTANSITION_DURING_BASE}ms ease-in` },
+                enter: { opacity: 0 },
+                entering: {
+                  transition: ['height', 'padding', 'margin', 'opacity']
+                    .map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`)
+                    .join(', '),
+                },
+                leaving: {
+                  opacity: 0,
+                  transition: ['height', 'padding', 'margin', 'opacity']
+                    .map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`)
+                    .join(', '),
+                },
                 leaved: { display: 'none' },
               }}
               afterEnter={() => {

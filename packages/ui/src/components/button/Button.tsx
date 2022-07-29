@@ -84,8 +84,12 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
             dDuring={TTANSITION_DURING_SLOW}
             dHorizontal
             dStyles={{
-              entering: { transition: `width ${TTANSITION_DURING_SLOW}ms linear` },
-              leaving: { transition: `width ${TTANSITION_DURING_SLOW}ms linear` },
+              entering: {
+                transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
+              },
+              leaving: {
+                transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
+              },
               leaved: { display: 'none' },
             }}
           >

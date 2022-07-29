@@ -69,7 +69,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   //#endregion
 
   const uniqueId = useId();
-  const headerId = `${dPrefix}drawer-header-${uniqueId}`;
+  const titleId = `${dPrefix}drawer-title-${uniqueId}`;
   const bodyId = `${dPrefix}drawer-content-${uniqueId}`;
 
   const [distance, setDistance] = useState<{ visible: boolean; top: number; right: number; bottom: number; left: number }>({
@@ -176,8 +176,13 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
 
     return {
       enter: { transform },
-      entering: { transition: `transform ${TTANSITION_DURING_BASE}ms ease-out` },
-      leaving: { transform, transition: `transform ${TTANSITION_DURING_BASE}ms ease-in` },
+      entering: {
+        transition: ['transform'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+      },
+      leaving: {
+        transform,
+        transition: ['transform'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
+      },
       leaved: { transform },
     };
   })();
@@ -200,7 +205,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
       const node = isString(dHeader) ? <DDrawerHeader>{dHeader}</DDrawerHeader> : dHeader;
       return React.cloneElement<DDrawerHeaderPropsWithPrivate>(node, {
         ...node.props,
-        __id: headerId,
+        __id: titleId,
         __onClose: () => {
           changeVisible(false);
         },
@@ -235,7 +240,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
             tabIndex={-1}
             role={restProps.role ?? 'dialog'}
             aria-modal={restProps['aria-modal'] ?? 'true'}
-            aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+            aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? titleId : undefined)}
             aria-describedby={restProps['aria-describedby'] ?? bodyId}
             onKeyDown={(e) => {
               restProps.onKeyDown?.(e);

@@ -1,0 +1,19 @@
+@mixin component-size {
+  @include m(smaller) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-smaller);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-smaller);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-smaller);
+
+    @include font-size(0.9rem);
+  }
+
+  @include m(larger) {
+    --#{$variable-prefix}size: var(--#{$variable-prefix}size-larger);
+    --#{$variable-prefix}padding-size: var(--#{$variable-prefix}padding-size-larger);
+    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
+    --#{$variable-prefix}margin-size: var(--#{$variable-prefix}margin-size-larger);
+
+    @include font-size(1.15rem);
+  }
+}

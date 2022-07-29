@@ -16,7 +16,7 @@ import {
   useForceUpdate,
 } from '../../hooks';
 import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
@@ -54,7 +54,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
     dDisabled = false,
     dFormControl,
     dModel,
-    dPrefix: _dPrefix,
+    dPrefix: dPrefixNode,
     dSuffix,
     dPasswordToggle = true,
     dNumbetButton = true,
@@ -175,7 +175,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
           inputRef.current?.focus({ preventScroll: true });
         }}
       >
-        {_dPrefix && <div className={`${dPrefix}input__prefix`}>{_dPrefix}</div>}
+        {checkNodeExist(dPrefixNode) && <div className={`${dPrefix}input__prefix`}>{dPrefixNode}</div>}
         <DBaseInput
           {...dInputProps}
           ref={combineInputRef}
@@ -305,7 +305,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
             </button>
           </div>
         )}
-        {dSuffix && <div className={`${dPrefix}input__suffix`}>{dSuffix}</div>}
+        {checkNodeExist(dSuffix) && <div className={`${dPrefix}input__suffix`}>{dSuffix}</div>}
       </div>
     </DBaseDesign>
   );

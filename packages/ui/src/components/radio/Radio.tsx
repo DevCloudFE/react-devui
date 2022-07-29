@@ -3,7 +3,7 @@ import type { DFormControl } from '../form';
 import { useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';
@@ -104,7 +104,7 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
             )}
           </DFocusVisible>
         </div>
-        {children && <div className={`${dPrefix}radio__label`}>{children}</div>}
+        {checkNodeExist(children) && <div className={`${dPrefix}radio__label`}>{children}</div>}
         {waveNode}
       </label>
     </DBaseDesign>

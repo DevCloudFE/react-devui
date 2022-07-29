@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 
 import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { CaretDownOutlined } from '../../icons';
-import { getClassName, getHorizontalSidePosition, getVerticalSidePosition, getNoTransformSize } from '../../utils';
+import { getClassName, getHorizontalSidePosition, getVerticalSidePosition, getNoTransformSize, checkNodeExist } from '../../utils';
 import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
@@ -129,8 +129,12 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
       dIn={dMode === 'vertical' || !dInNav ? dExpand : false}
       dDuring={TTANSITION_DURING_BASE}
       dStyles={{
-        entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
-        leaving: { transition: `height ${TTANSITION_DURING_BASE}ms ease-in` },
+        entering: {
+          transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+        },
+        leaving: {
+          transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
+        },
         leaved: { display: 'none' },
       }}
     >
@@ -146,7 +150,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
 
                 case 'entering':
                   popupTransitionStyle = {
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
                     transformOrigin,
                   };
                   break;
@@ -155,7 +159,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                   popupTransitionStyle = {
                     transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)',
                     opacity: 0,
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
                     transformOrigin,
                   };
                   break;
@@ -236,7 +240,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       >
                         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
                       </div>
-                      {dIcon && (
+                      {checkNodeExist(dIcon) && (
                         <div className={`${dPrefix}menu__item-icon-wrapper`}>
                           <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>
                         </div>

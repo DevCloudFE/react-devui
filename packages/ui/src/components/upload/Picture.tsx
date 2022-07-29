@@ -70,7 +70,7 @@ export function DPicture(props: DPictureProps): JSX.Element | null {
 
                 case 'entering':
                   transitionStyle = {
-                    transition: `transform ${TTANSITION_DURING_BASE}ms ease-out`,
+                    transition: ['transform'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
                     transformOrigin: 'top left',
                   };
                   break;
@@ -78,7 +78,7 @@ export function DPicture(props: DPictureProps): JSX.Element | null {
                 case 'leaving':
                   transitionStyle = {
                     transform: 'scale(0)',
-                    transition: `transform ${TTANSITION_DURING_BASE}ms ease-in`,
+                    transition: ['transform'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
                     transformOrigin: 'top left',
                   };
                   break;

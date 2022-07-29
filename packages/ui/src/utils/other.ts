@@ -117,3 +117,7 @@ export function handleModalKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     }
   }
 }
+
+export function checkNodeExist(node: React.ReactNode) {
+  return !!node;
+}

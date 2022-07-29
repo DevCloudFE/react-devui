@@ -1,14 +1,10 @@
 @include b(textarea) {
-  --#{$variable-prefix}textarea-line-height: 24px;
-
   @include utils-input;
 
   display: block;
   width: 100%;
-  min-height: calc(var(--#{$variable-prefix}textarea-line-height) + 8px);
   padding: 3px calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
   margin: 0;
-  line-height: var(--#{$variable-prefix}textarea-line-height);
   color: var(--#{$variable-prefix}text-color);
   resize: vertical;
   background-color: var(--#{$variable-prefix}background-color-input);
@@ -48,19 +44,7 @@
     }
   }
 
-  @include m(smaller) {
-    --#{$variable-prefix}textarea-line-height: 20px;
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-smaller);
-
-    @include font-size(0.9rem);
-  }
-
-  @include m(larger) {
-    --#{$variable-prefix}textarea-line-height: 28px;
-    --#{$variable-prefix}horizontal-space-size: var(--#{$variable-prefix}horizontal-space-size-larger);
-
-    @include font-size(1.15rem);
-  }
+  @include component-size;
 
   @include e(count) {
     font-variant-numeric: tabular-nums;

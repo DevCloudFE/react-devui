@@ -16,7 +16,7 @@ import {
   useForkRef,
 } from '../../hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
-import { getClassName } from '../../utils';
+import { checkNodeExist, getClassName } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
@@ -270,7 +270,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                 </div>
               ) : null)}
           </div>
-          {dSuffix && (
+          {checkNodeExist(dSuffix) && (
             <div
               className={`${prefix}__suffix`}
               onClick={(e) => {
@@ -327,7 +327,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
 
                 case 'entering':
                   transitionStyle = {
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
                     transformOrigin,
                   };
                   break;
@@ -336,7 +336,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                   transitionStyle = {
                     transform: 'scaleY(0.7)',
                     opacity: 0,
-                    transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
+                    transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
                     transformOrigin,
                   };
                   break;

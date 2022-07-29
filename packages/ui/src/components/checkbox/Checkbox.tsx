@@ -1,7 +1,7 @@
 import type { DFormControl } from '../form';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
 
@@ -76,7 +76,7 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
           checked && <div className={`${dPrefix}checkbox__tick`}></div>
         )}
       </div>
-      {children && <div className={`${dPrefix}checkbox__label`}>{children}</div>}
+      {checkNodeExist(children) && <div className={`${dPrefix}checkbox__label`}>{children}</div>}
     </label>
   );
 }

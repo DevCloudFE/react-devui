@@ -10,7 +10,7 @@
   }
 
   @include e(item) {
-    color: var(--#{$variable-prefix}breadcrumb-color);
+    color: var(--#{$variable-prefix}breadcrumb-text-color);
 
     @include m(link) {
       cursor: pointer;
@@ -27,6 +27,6 @@
   }
 
   @include e(separator) {
-    color: var(--#{$variable-prefix}breadcrumb-color);
+    color: var(--#{$variable-prefix}breadcrumb-text-color);
   }
 }

@@ -220,7 +220,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING.enter}ms ease-out, opacity ${TTANSITION_DURING.enter}ms ease-out`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
               transformOrigin,
             };
             break;
@@ -229,7 +229,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
             transitionStyle = {
               transform: 'scale(0.3)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING.leave}ms ease-in, opacity ${TTANSITION_DURING.leave}ms ease-in`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
               transformOrigin,
             };
             break;

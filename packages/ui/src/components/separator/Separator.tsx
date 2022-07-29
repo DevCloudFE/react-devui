@@ -1,3 +1,4 @@
+import { isUndefined } from 'lodash';
 import React from 'react';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
@@ -27,7 +28,7 @@ export function DSeparator(props: DSeparatorProps): JSX.Element | null {
   //#endregion
 
   return React.createElement(
-    children && dTag === 'hr' ? 'div' : dTag,
+    !isUndefined(children) && dTag === 'hr' ? 'div' : dTag,
     {
       ...restProps,
       className: getClassName(restProps.className, `${dPrefix}separator`, {

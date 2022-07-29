@@ -129,7 +129,9 @@
   }
 
   @include e(header-actions) {
-    --#{$variable-prefix}size: 24px;
+    .#{$variable-prefix}button {
+      --#{$variable-prefix}size: 24px !important;
+    }
   }
 
   @include e(body) {
@@ -137,12 +139,14 @@
   }
 
   @include e(footer) {
-    --#{$variable-prefix}size: 28px;
-    --#{$variable-prefix}padding-size: 10px;
-
     gap: 0 6px;
     padding: 0 12px 10px;
     border-top: none;
+
+    .#{$variable-prefix}button {
+      --#{$variable-prefix}size: 28px !important;
+      --#{$variable-prefix}padding-size: 10px !important;
+    }
   }
 
   @include e(arrow) {

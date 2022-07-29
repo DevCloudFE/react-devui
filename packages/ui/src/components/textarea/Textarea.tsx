@@ -104,6 +104,8 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
           style={{
             ...restProps.style,
             ...heightStyle,
+            lineHeight: `${lineHeight}px`,
+            minHeight: `${lineHeight + 8}px`,
             resize: resizable ? undefined : 'none',
           }}
           value={value}

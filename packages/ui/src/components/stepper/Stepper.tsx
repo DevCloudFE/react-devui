@@ -2,7 +2,7 @@ import { isNumber, isUndefined } from 'lodash';
 
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { CheckOutlined, CloseOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { checkNodeExist, getClassName, registerComponentMate } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
@@ -136,7 +136,15 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
                   height: dIconSize,
                 }}
               >
-                {stepIcon ?? (stepStatus === 'error' ? <CloseOutlined /> : isCompleted ? <CheckOutlined /> : stepStep)}
+                {stepIcon === false ? null : checkNodeExist(stepIcon) ? (
+                  stepIcon
+                ) : stepStatus === 'error' ? (
+                  <CloseOutlined />
+                ) : isCompleted ? (
+                  <CheckOutlined />
+                ) : (
+                  stepStep
+                )}
                 {isProgress && (
                   <DProgress
                     className={`${dPrefix}stepper__step-progress`}
@@ -154,14 +162,18 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
             </div>
             {dLabelBottom && titleNode}
             {dVertical && separatoreNode}
-            {stepDescription && (
+            {checkNodeExist(stepDescription) && (
               <DCollapseTransition
                 dSize={0}
                 dIn={!dVertical || isActive}
                 dDuring={TTANSITION_DURING_BASE}
                 dStyles={{
-                  entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
-                  leaving: { transition: `height ${TTANSITION_DURING_BASE}ms ease-in` },
+                  entering: {
+                    transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+                  },
+                  leaving: {
+                    transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
+                  },
                   leaved: { display: 'none' },
                 }}
               >

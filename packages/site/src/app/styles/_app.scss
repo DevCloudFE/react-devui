@@ -295,6 +295,12 @@ h3 {
       margin-bottom: 12px;
     }
   }
+
+  section[id^='Alert'] {
+    .d-alert {
+      margin-bottom: 20px;
+    }
+  }
 }
 
 .app-demo-col {

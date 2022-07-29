@@ -1,6 +1,4 @@
 @include b(slider) {
-  $selector: &;
-
   --#{$variable-prefix}slider-color-rgb: var(--#{$variable-prefix}color-primary-rgb);
 
   position: relative;

@@ -13,9 +13,9 @@
       }
     ],
     "declaration-property-value-allowed-list": {
-      "/color/": ["/var/", "/\\$colors/", "currentColor", "transparent", "unset", "inherit"],
-      "font-size": ["/var/", "/[0-9]+em$/", "unset", "inherit"],
-      "border-radius": ["/var/", "50%", "0", "inherit"]
+      "/color/": ["/var/", "/\\$/", "currentColor", "transparent", "unset", "inherit"],
+      "font-size": ["/var/", "/\\$/", "/[0-9]+em$/", "unset", "inherit"],
+      "border-radius": ["/var/", "/\\$/", "50%", "0", "inherit"]
     },
     "declaration-property-value-disallowed-list": {
       "transition": ["/all/", "/[0-9]ms/"]

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
 import { RightOutlined } from '../../icons';
-import { getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
+import { checkNodeExist, getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
@@ -95,7 +95,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
               transformOrigin,
             };
             break;
@@ -104,7 +104,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
             transitionStyle = {
               transform: 'scale(0)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
               transformOrigin,
             };
             break;
@@ -169,7 +169,7 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
                 onMouseLeave={pOnMouseLeave}
               >
                 {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
-                {dIcon && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
+                {checkNodeExist(dIcon) && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
                 <div className={`${dPrefix}dropdown__item-content`}>{children}</div>
                 <RightOutlined className={`${dPrefix}dropdown__sub-arrow`} dSize={14} />
               </li>

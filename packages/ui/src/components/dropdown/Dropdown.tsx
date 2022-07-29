@@ -365,7 +365,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-out, opacity ${TTANSITION_DURING_POPUP}ms ease-out`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
               transformOrigin,
             };
             break;
@@ -374,7 +374,7 @@ function Dropdown<ID extends DId, T extends DDropdownOption<ID>>(
             transitionStyle = {
               transform: 'scaleY(0.7)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING_POPUP}ms ease-in, opacity ${TTANSITION_DURING_POPUP}ms ease-in`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
               transformOrigin,
             };
             break;

@@ -2,7 +2,7 @@ import type { DSize } from '../../utils/global';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext } from '../../hooks';
 import { CloseOutlined } from '../../icons';
-import { convertHex, registerComponentMate, getClassName, pSBC } from '../../utils';
+import { convertHex, registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 
 export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
   dType?: 'primary' | 'fill' | 'outline';
@@ -50,13 +50,12 @@ export function DTag(props: DTagProps): JSX.Element | null {
         ...(dColor
           ? {
               [`--${dPrefix}tag-color`]: dColor,
-              [`--${dPrefix}tag-border-color`]: pSBC(0.3, dColor),
               [`--${dPrefix}tag-background-color`]: convertHex(dColor, 0.1),
             }
           : {}),
       }}
     >
-      {dIcon && <div className={`${dPrefix}tag__icon`}>{dIcon}</div>}
+      {checkNodeExist(dIcon) && <div className={`${dPrefix}tag__icon`}>{dIcon}</div>}
       {children}
       {dClosable && (
         <button className={`${dPrefix}tag__close`} aria-label={t('Close')} onClick={onClose}>

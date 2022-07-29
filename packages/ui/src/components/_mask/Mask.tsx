@@ -26,8 +26,13 @@ export function DMask(props: DMaskProps): JSX.Element | null {
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { opacity: 0 },
-    entering: { transition: `opacity ${TTANSITION_DURING_FAST}ms linear` },
-    leaving: { opacity: 0, transition: `opacity ${TTANSITION_DURING_FAST}ms linear` },
+    entering: {
+      transition: ['opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms linear`).join(', '),
+    },
+    leaving: {
+      opacity: 0,
+      transition: ['opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms linear`).join(', '),
+    },
     leaved: { display: 'none' },
   };
 

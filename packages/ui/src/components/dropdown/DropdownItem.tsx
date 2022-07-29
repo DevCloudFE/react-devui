@@ -1,5 +1,5 @@
 import { usePrefixConfig } from '../../hooks';
-import { getClassName } from '../../utils';
+import { checkNodeExist, getClassName } from '../../utils';
 
 export interface DDropdownItemProps {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ export function DDropdownItem(props: DDropdownItemProps): JSX.Element | null {
       onClick={onClick}
     >
       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
-      {dIcon && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
+      {checkNodeExist(dIcon) && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
       <div className={`${dPrefix}dropdown__item-content`}>{children}</div>
     </li>
   );

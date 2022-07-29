@@ -1,12 +1,11 @@
-import { isUndefined } from 'lodash';
-import { useId, useRef } from 'react';
+import { useRef } from 'react';
 import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
-import { DAlert } from '../_alert';
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
+import { DAlertPopover } from '../_alert-popover';
 import { DTransition } from '../_transition';
+import { DToastPanel } from './ToastPanel';
 
 export interface DToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dType?: 'success' | 'warning' | 'error' | 'info';
@@ -89,16 +88,9 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
   //#region Ref
-  const alertRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   //#endregion
-
-  const uniqueId = useId();
-  const contentId = `${dPrefix}toast-content-${uniqueId}`;
 
   return (
     <DTransition
@@ -124,13 +116,13 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING.enter}ms ease-out, opacity ${TTANSITION_DURING.enter}ms ease-out`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
             };
             break;
 
           case 'leave':
-            if (alertRef.current) {
-              const { height } = alertRef.current.getBoundingClientRect();
+            if (panelRef.current) {
+              const { height } = panelRef.current.getBoundingClientRect();
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;
@@ -139,9 +131,14 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
             transitionStyle = {
               height: 0,
               overflow: 'hidden',
-              opacity: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+              marginTop: 0,
               marginBottom: 0,
-              transition: `height ${TTANSITION_DURING.leave}ms ease-in, opacity ${TTANSITION_DURING.leave}ms ease-in, margin ${TTANSITION_DURING.leave}ms ease-in`,
+              opacity: 0,
+              transition: ['height', 'padding', 'margin', 'opacity']
+                .map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`)
+                .join(', '),
             };
             break;
 
@@ -154,38 +151,21 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
         }
 
         return (
-          <DAlert
-            {...restProps}
-            style={{
-              ...restProps.style,
-              ...transitionStyle,
-            }}
-            aria-describedby={restProps['aria-describedby'] ?? contentId}
-            dClassNamePrefix="toast"
-            dDuration={dDuration}
-            dEscClosable={dEscClosable}
-            dAlertRef={alertRef}
-            onClose={onClose}
-          >
-            {(!isUndefined(dType) || !isUndefined(dIcon)) && (
-              <div className={`${dPrefix}toast__icon`}>
-                {!isUndefined(dIcon) ? (
-                  dIcon
-                ) : dType === 'success' ? (
-                  <CheckCircleOutlined dTheme="success" />
-                ) : dType === 'warning' ? (
-                  <WarningOutlined dTheme="warning" />
-                ) : dType === 'error' ? (
-                  <CloseCircleOutlined dTheme="danger" />
-                ) : (
-                  <ExclamationCircleOutlined dTheme="primary" />
-                )}
-              </div>
-            )}
-            <div id={contentId} className={getClassName(`${dPrefix}toast__content`)}>
-              {dContent}
-            </div>
-          </DAlert>
+          <DAlertPopover dDuration={dDuration} dEscClosable={dEscClosable} onClose={onClose}>
+            <DToastPanel
+              {...restProps}
+              ref={panelRef}
+              style={{
+                ...restProps.style,
+                ...transitionStyle,
+              }}
+              dClassNamePrefix="toast"
+              dType={dType}
+              dIcon={dIcon}
+              dContent={dContent}
+              dActions={[]}
+            ></DToastPanel>
+          </DAlertPopover>
         );
       }}
     </DTransition>

@@ -48,8 +48,12 @@ export function DPictureList(props: DPictureListProps): JSX.Element | null {
             dIn={!removeUIDs.includes(file.uid)}
             dDuring={TTANSITION_DURING_BASE}
             dStyles={{
-              entering: { transition: `height ${TTANSITION_DURING_BASE}ms ease-out` },
-              leaving: { transition: `height ${TTANSITION_DURING_BASE}ms ease-in` },
+              entering: {
+                transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+              },
+              leaving: {
+                transition: ['height', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
+              },
               leaved: { display: 'none' },
             }}
             dSkipFirstTransition={skipFirstTransition}

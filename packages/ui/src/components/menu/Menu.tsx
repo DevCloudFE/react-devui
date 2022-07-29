@@ -440,8 +440,12 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
       dDuring={TTANSITION_DURING_BASE}
       dHorizontal
       dStyles={{
-        entering: { transition: `width ${TTANSITION_DURING_BASE}ms linear` },
-        leaving: { transition: `width ${TTANSITION_DURING_BASE}ms linear` },
+        entering: {
+          transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms linear`).join(', '),
+        },
+        leaving: {
+          transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms linear`).join(', '),
+        },
       }}
     >
       {(navRef, collapseStyle) => (

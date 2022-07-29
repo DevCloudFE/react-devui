@@ -297,7 +297,7 @@
     @include e(tablist) {
       gap: 0;
       min-width: unset;
-      background-color: var(--#{$variable-prefix}tabs-slider-background-color);
+      background-color: var(--#{$variable-prefix}tabs-background-color-slider);
 
       &::after {
         content: none;

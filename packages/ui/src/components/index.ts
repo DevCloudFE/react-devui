@@ -4,6 +4,9 @@ export { DAccordion } from './accordion';
 export type { DAffixProps } from './affix';
 export { DAffix } from './affix';
 
+export type { DAlertProps } from './alert';
+export { DAlert } from './alert';
+
 export type { DAnchorProps } from './anchor';
 export { DAnchor } from './anchor';
 

@@ -93,7 +93,7 @@
 
       @include e(step-separator) {
         &::after {
-          background-color: var(--#{$variable-prefix}color-primary-lighter);
+          background-color: var(--#{$variable-prefix}color-primary);
         }
       }
     }
@@ -128,7 +128,7 @@
 
       @include e(step-separator) {
         &::after {
-          background-color: var(--#{$variable-prefix}color-danger-lighter);
+          background-color: var(--#{$variable-prefix}color-danger);
         }
       }
     }

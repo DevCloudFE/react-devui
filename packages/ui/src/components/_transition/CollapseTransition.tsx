@@ -43,10 +43,18 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
 
           if (dHorizontal) {
             ref.current.style.width = '';
+            ref.current.style.paddingLeft = '';
+            ref.current.style.paddingRight = '';
+            ref.current.style.marginLeft = '';
+            ref.current.style.marginRight = '';
             const { width } = ref.current.getBoundingClientRect();
             dataRef.current.width = width;
           } else {
             ref.current.style.height = '';
+            ref.current.style.paddingTop = '';
+            ref.current.style.paddingBottom = '';
+            ref.current.style.marginTop = '';
+            ref.current.style.marginBottom = '';
             const { height } = ref.current.getBoundingClientRect();
             dataRef.current.height = height;
           }
@@ -59,10 +67,27 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
         const transitionStyle: React.CSSProperties = { ...dStyles[state] };
         switch (state) {
           case 'enter':
-            Object.assign(transitionStyle, {
-              [dHorizontal ? 'width' : 'height']: dSize,
-              overflow: 'hidden',
-            });
+            Object.assign(
+              transitionStyle,
+              {
+                [dHorizontal ? 'width' : 'height']: dSize,
+
+                overflow: 'hidden',
+              },
+              dHorizontal
+                ? {
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    marginLeft: 0,
+                    marginRight: 0,
+                  }
+                : {
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    marginTop: 0,
+                    marginBottom: 0,
+                  }
+            );
             break;
 
           case 'entering':
@@ -85,10 +110,26 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
             break;
 
           case 'leaving':
-            Object.assign(transitionStyle, {
-              [dHorizontal ? 'width' : 'height']: dSize,
-              overflow: 'hidden',
-            });
+            Object.assign(
+              transitionStyle,
+              {
+                [dHorizontal ? 'width' : 'height']: dSize,
+                overflow: 'hidden',
+              },
+              dHorizontal
+                ? {
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    marginLeft: 0,
+                    marginRight: 0,
+                  }
+                : {
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    marginTop: 0,
+                    marginBottom: 0,
+                  }
+            );
             break;
 
           case 'leaved':

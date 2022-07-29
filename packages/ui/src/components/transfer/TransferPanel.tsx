@@ -6,7 +6,7 @@ import React, { useId, useCallback, useRef } from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { LoadingOutlined, SearchOutlined } from '../../icons';
-import { getClassName } from '../../utils';
+import { checkNodeExist, getClassName } from '../../utils';
 import { DCheckbox } from '../checkbox';
 import { DEmpty } from '../empty';
 import { DInput } from '../input';
@@ -71,7 +71,7 @@ export function DTransferPanel<V extends DId, T extends DTransferOption<V>>(prop
         <div className={`${dPrefix}transfer__header-statistic`}>
           {dSelectedNum}/{dOptions.length}
         </div>
-        {dTitle && <div className={`${dPrefix}transfer__header-title`}>{dTitle}</div>}
+        {checkNodeExist(dTitle) && <div className={`${dPrefix}transfer__header-title`}>{dTitle}</div>}
       </div>
       {dSearchable && (
         <DInput

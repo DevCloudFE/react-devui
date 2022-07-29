@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useAsync, useForceUpdate, useMount } from '../../hooks';
 import { CheckCircleFilled, CheckOutlined, CloseCircleFilled, CloseOutlined, ExclamationOutlined, WarningFilled } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 
 function ease(k: number) {
   return 0.5 * (1 - Math.cos(Math.PI * k));
@@ -322,14 +322,15 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
             [`${dPrefix}progress__label--${status}`]: status,
           })}
         >
-          {dLabel ??
-            (status === 'success'
-              ? React.createElement(dType === 'line' ? CheckCircleFilled : CheckOutlined, { className: `${dPrefix}progress__label-icon` })
-              : status === 'warning'
-              ? React.createElement(dType === 'line' ? WarningFilled : ExclamationOutlined, { className: `${dPrefix}progress__label-icon` })
-              : status === 'error'
-              ? React.createElement(dType === 'line' ? CloseCircleFilled : CloseOutlined, { className: `${dPrefix}progress__label-icon` })
-              : `${dPercent}%`)}
+          {checkNodeExist(dLabel)
+            ? dLabel
+            : status === 'success'
+            ? React.createElement(dType === 'line' ? CheckCircleFilled : CheckOutlined, { className: `${dPrefix}progress__label-icon` })
+            : status === 'warning'
+            ? React.createElement(dType === 'line' ? WarningFilled : ExclamationOutlined, { className: `${dPrefix}progress__label-icon` })
+            : status === 'error'
+            ? React.createElement(dType === 'line' ? CloseCircleFilled : CloseOutlined, { className: `${dPrefix}progress__label-icon` })
+            : `${dPercent}%`}
         </div>
       )}
     </div>

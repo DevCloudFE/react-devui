@@ -24,8 +24,13 @@ export function DError(props: DErrorProps): JSX.Element | null {
       dDuring={TTANSITION_DURING_FAST}
       dStyles={{
         enter: { opacity: 0 },
-        entering: { transition: `height ${TTANSITION_DURING_FAST}ms ease-out, opacity ${TTANSITION_DURING_FAST}ms ease-out` },
-        leaving: { opacity: 0, transition: `height ${TTANSITION_DURING_FAST}ms ease-in, opacity ${TTANSITION_DURING_FAST}ms ease-in` },
+        entering: {
+          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms ease-out`).join(', '),
+        },
+        leaving: {
+          opacity: 0,
+          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms ease-in`).join(', '),
+        },
         leaved: { display: 'none' },
       }}
       dSkipFirstTransition={false}

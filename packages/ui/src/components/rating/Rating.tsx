@@ -5,7 +5,7 @@ import { useId, useState } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
 import { StarFilled } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { useFormControl } from '../form';
 import { DStar } from './Star';
 
@@ -76,7 +76,7 @@ export function DRating(props: DRatingProps): JSX.Element | null {
             dName={dName ?? uniqueId}
             dDisabled={disabled || dReadOnly}
             dValue={i + 1}
-            dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : dCustomIcon ?? <StarFilled />}
+            dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : checkNodeExist(dCustomIcon) ? dCustomIcon : <StarFilled />}
             dChecked={value}
             dHoverValue={hoverValue}
             dHalf={dHalf}

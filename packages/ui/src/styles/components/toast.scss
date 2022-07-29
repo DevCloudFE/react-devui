@@ -21,23 +21,12 @@
 }
 
 @include b(toast) {
-  @include component-alert;
+  @include component-toast;
 
-  position: relative;
-  display: flex;
-  align-items: center;
   max-width: calc(100vw - 40px);
-  padding: 8px 16px;
+  padding: 10px 16px;
   margin: 0 auto 12px;
   pointer-events: all;
   background-color: var(--#{$variable-prefix}background-color);
-  border-radius: var(--#{$variable-prefix}border-radius);
-  outline: none;
   box-shadow: var(--#{$variable-prefix}shadow-dialog);
-
-  @include e(icon) {
-    flex-shrink: 0;
-    margin-right: 10px;
-    font-size: 1.2em;
-  }
 }

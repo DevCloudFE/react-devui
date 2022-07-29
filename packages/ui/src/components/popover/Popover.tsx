@@ -31,7 +31,7 @@ export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   dMouseLeaveDelay?: number;
   dZIndex?: number | string;
   dHeader?: React.ReactElement | string;
-  dContent?: React.ReactNode;
+  dContent: React.ReactNode;
   dFooter?: React.ReactElement;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
@@ -73,7 +73,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   //#endregion
 
   const uniqueId = useId();
-  const headerId = `${dPrefix}popover-header-${uniqueId}`;
+  const titleId = `${dPrefix}popover-title-${uniqueId}`;
   const bodyId = `${dPrefix}popover-content-${uniqueId}`;
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
@@ -224,7 +224,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
       const node = isString(dHeader) ? <DPopoverHeader>{dHeader}</DPopoverHeader> : dHeader;
       return React.cloneElement<DPopoverHeaderPropsWithPrivate>(node, {
         ...node.props,
-        __id: headerId,
+        __id: titleId,
         __onClose: () => {
           changeVisible(false);
         },
@@ -261,7 +261,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
 
           case 'entering':
             transitionStyle = {
-              transition: `transform ${TTANSITION_DURING.enter}ms ease-out, opacity ${TTANSITION_DURING.enter}ms ease-out`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
               transformOrigin,
             };
             break;
@@ -270,7 +270,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
             transitionStyle = {
               transform: 'scale(0.3)',
               opacity: 0,
-              transition: `transform ${TTANSITION_DURING.leave}ms ease-in, opacity ${TTANSITION_DURING.leave}ms ease-in`,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
               transformOrigin,
             };
             break;
@@ -294,7 +294,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
                 tabIndex={-1}
                 role={restProps.role ?? (dModal ? 'alertdialog' : 'alert')}
                 aria-modal={restProps['aria-modal'] ?? dModal}
-                aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? headerId : undefined)}
+                aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? titleId : undefined)}
                 aria-describedby={restProps['aria-describedby'] ?? bodyId}
                 onKeyDown={(e) => {
                   restProps.onKeyDown?.(e);

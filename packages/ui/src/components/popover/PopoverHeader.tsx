@@ -21,5 +21,13 @@ export function DPopoverHeader(props: DPopoverHeaderProps): JSX.Element | null {
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props as DPopoverHeaderPropsWithPrivate);
 
-  return <DHeader {...restProps} id={restProps.id ?? __id} dClassNamePrefix="popover" dActions={dActions} onClose={__onClose}></DHeader>;
+  return (
+    <DHeader
+      {...restProps}
+      dClassNamePrefix="popover"
+      dTitleId={restProps.dTitleId ?? __id}
+      dActions={dActions}
+      onClose={__onClose}
+    ></DHeader>
+  );
 }

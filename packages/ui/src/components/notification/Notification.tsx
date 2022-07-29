@@ -1,21 +1,20 @@
-import { isUndefined } from 'lodash';
-import { useId, useRef } from 'react';
+import { useRef } from 'react';
 import { Subject } from 'rxjs';
 
-import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
-import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
+import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
-import { DAlert } from '../_alert';
+import { DAlertPopover } from '../_alert-popover';
 import { DTransition } from '../_transition';
+import { DNotificationPanel } from './NotificationPanel';
 
 export interface DNotificationProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dType?: 'success' | 'warning' | 'error' | 'info';
   dIcon?: React.ReactNode;
-  dTitle?: React.ReactNode;
+  dTitle: React.ReactNode;
   dDescription?: React.ReactNode;
   dDuration?: number;
   dPlacement?: 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom';
-  dClosable?: boolean;
+  dActions?: React.ReactNode[];
   dEscClosable?: boolean;
   onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
@@ -85,7 +84,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     dDescription,
     dDuration = 9.6,
     dPlacement = 'right-top',
-    dClosable = true,
+    dActions = ['close'],
     dEscClosable = true,
     onClose,
     afterVisibleChange,
@@ -93,19 +92,9 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
-  //#region Context
-  const dPrefix = usePrefixConfig();
-  //#endregion
-
   //#region Ref
-  const alertRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   //#endregion
-
-  const [t] = useTranslation();
-
-  const uniqueId = useId();
-  const headerId = `${dPrefix}notification-header-${uniqueId}`;
-  const contentId = `${dPrefix}notification-content-${uniqueId}`;
 
   return (
     <DTransition
@@ -129,12 +118,14 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
             break;
 
           case 'entering':
-            transitionStyle = { transition: `transform ${TTANSITION_DURING.enter}ms ease-out` };
+            transitionStyle = {
+              transition: ['transform'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
+            };
             break;
 
           case 'leave':
-            if (alertRef.current) {
-              const { height } = alertRef.current.getBoundingClientRect();
+            if (panelRef.current) {
+              const { height } = panelRef.current.getBoundingClientRect();
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;
@@ -143,9 +134,14 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
             transitionStyle = {
               height: 0,
               overflow: 'hidden',
-              opacity: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+              marginTop: 0,
               marginBottom: 0,
-              transition: `height ${TTANSITION_DURING.leave}ms ease-in, opacity ${TTANSITION_DURING.leave}ms ease-in, margin ${TTANSITION_DURING.leave}ms ease-in`,
+              opacity: 0,
+              transition: ['height', 'padding', 'margin', 'opacity']
+                .map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`)
+                .join(', '),
             };
             break;
 
@@ -158,49 +154,23 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
         }
 
         return (
-          <DAlert
-            {...restProps}
-            style={{
-              ...restProps.style,
-              ...transitionStyle,
-            }}
-            aria-labelledby={isUndefined(dTitle) ? undefined : headerId}
-            aria-describedby={contentId}
-            dClassNamePrefix="notification"
-            dDuration={dDuration}
-            dEscClosable={dEscClosable}
-            dAlertRef={alertRef}
-            onClose={onClose}
-          >
-            {(!isUndefined(dType) || !isUndefined(dIcon)) && (
-              <div className={`${dPrefix}notification__icon`}>
-                {!isUndefined(dIcon) ? (
-                  dIcon
-                ) : dType === 'success' ? (
-                  <CheckCircleOutlined dTheme="success" />
-                ) : dType === 'warning' ? (
-                  <WarningOutlined dTheme="warning" />
-                ) : dType === 'error' ? (
-                  <CloseCircleOutlined dTheme="danger" />
-                ) : (
-                  <ExclamationCircleOutlined dTheme="primary" />
-                )}
-              </div>
-            )}
-            <div id={contentId} className={`${dPrefix}notification__content`}>
-              {!isUndefined(dTitle) && (
-                <div id={headerId} className={`${dPrefix}notification__title`}>
-                  {dTitle}
-                </div>
-              )}
-              {!isUndefined(dDescription) && <div className={`${dPrefix}notification__description`}>{dDescription}</div>}
-              {dClosable && (
-                <button className={`${dPrefix}notification__close`} aria-label={t('Close')} onClick={onClose}>
-                  <CloseOutlined dSize={18} />
-                </button>
-              )}
-            </div>
-          </DAlert>
+          <DAlertPopover dDuration={dDuration} dEscClosable={dEscClosable} onClose={onClose}>
+            <DNotificationPanel
+              {...restProps}
+              ref={panelRef}
+              style={{
+                ...restProps.style,
+                ...transitionStyle,
+              }}
+              dClassNamePrefix="notification"
+              dType={dType}
+              dIcon={dIcon}
+              dTitle={dTitle}
+              dDescription={dDescription}
+              dActions={dActions}
+              onClose={onClose}
+            ></DNotificationPanel>
+          </DAlertPopover>
         );
       }}
     </DTransition>
