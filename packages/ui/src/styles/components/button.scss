@@ -24,7 +24,7 @@
       --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
       --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
       --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
-      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-hover-#{$theme});
+      --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-#{$theme}-hover);
       --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
     }
   }

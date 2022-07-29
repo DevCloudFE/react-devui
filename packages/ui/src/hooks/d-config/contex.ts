@@ -30,6 +30,7 @@ import type {
   DImageProps,
   DImagePreviewProps,
   DInputProps,
+  DLoadingProps,
   DMenuProps,
   DModalProps,
   DModalHeaderProps,
@@ -104,6 +105,7 @@ export type DComponentConfig = {
   DImage: DImageProps;
   DImagePreview: DImagePreviewProps;
   DInput: DInputProps;
+  DLoading: DLoadingProps;
   DMenu: DMenuProps<any, any>;
   DModal: DModalProps;
   DModalHeader: DModalHeaderProps;

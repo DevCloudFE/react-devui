@@ -84,7 +84,7 @@ $colors: (
 
     /** background **/
     --#{$variable-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -90%)};
-    --#{$variable-prefix}background-color-hover-#{$theme}: #{color.scale(rgb($rgb), $alpha: -96%)};
+    --#{$variable-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -96%)};
   }
 
   /** component **/

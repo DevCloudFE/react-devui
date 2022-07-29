@@ -61,6 +61,9 @@ export { DImage, DImagePreview } from './image';
 export type { DInputProps } from './input';
 export { DInput } from './input';
 
+export type { DLoadingProps } from './loading';
+export { DLoading } from './loading';
+
 export type { DMenuProps } from './menu';
 export { DMenu } from './menu';
 

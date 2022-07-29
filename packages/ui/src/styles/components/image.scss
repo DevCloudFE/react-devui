@@ -165,10 +165,17 @@
     display: inline-flex;
     width: 52px;
     height: 52px;
-    background-color: var(--#{$variable-prefix}background-color-gray);
+    cursor: pointer;
+    background-color: var(--#{$variable-prefix}background-color-hover);
+    border: 1px solid transparent;
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
 
     @include when(active) {
-      outline: 1px solid var(--#{$variable-prefix}color-primary);
+      border-color: var(--#{$variable-prefix}color-primary);
     }
   }
 

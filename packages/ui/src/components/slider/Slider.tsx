@@ -2,8 +2,7 @@ import type { DFormControl } from '../form';
 import type { DTooltipRef } from '../tooltip';
 
 import { isArray, isNumber, toNumber } from 'lodash';
-import { useEffect, useState } from 'react';
-import { useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useAsync, useEventCallback, useDValue } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';

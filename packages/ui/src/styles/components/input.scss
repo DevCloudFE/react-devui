@@ -165,7 +165,7 @@
     &:hover,
     &:focus {
       color: var(--#{$variable-prefix}color-primary-lighter);
-      background-color: var(--#{$variable-prefix}background-color-hover-primary);
+      background-color: var(--#{$variable-prefix}background-color-primary-hover);
     }
 
     &:active {

@@ -1,0 +1,44 @@
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+@include b(loading) {
+  position: absolute;
+  inset: 0;
+  z-index: var(--#{$variable-prefix}zindex-max);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--#{$variable-prefix}color-primary);
+  background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+
+  @include e(icon) {
+    display: inline-flex;
+  }
+
+  @include e(spinner) {
+    animation: spin 2s linear infinite;
+
+    circle {
+      animation: loading-dash 1.5s ease-in-out infinite;
+    }
+  }
+
+  @include e(text) {
+    margin-top: 8px;
+  }
+}

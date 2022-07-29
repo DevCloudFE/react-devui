@@ -85,28 +85,21 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
         onEnterRendered?.();
       }
 
-      setNextState(isEnter ? T_ENTERING : T_LEAVING);
+      dataRef.current.clearTid = asyncCapture.requestAnimationFrame(() => {
+        const nextState = isEnter ? T_ENTERING : T_LEAVING;
+        updateTransitionState(nextState);
+
+        const isEntering = nextState === T_ENTERING;
+        const endState = isEntering ? T_ENTERED : T_LEAVED;
+        const during = isNumber(dDuring) ? dDuring : isEntering ? dDuring.enter : dDuring.leave;
+        dataRef.current.clearTid = asyncCapture.setTimeout(() => {
+          updateTransitionState(endState);
+          endState === T_ENTERED ? afterEnter?.() : afterLeave?.();
+        }, during);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dIn]);
-
-  const [nextState, setNextState] = useState<DTransitionState | null>(null);
-  useEffect(() => {
-    if (nextState !== null) {
-      updateTransitionState(nextState);
-
-      const isEntering = nextState === T_ENTERING;
-      const endState = isEntering ? T_ENTERED : T_LEAVED;
-      const during = isNumber(dDuring) ? dDuring : isEntering ? dDuring.enter : dDuring.leave;
-      dataRef.current.clearTid = asyncCapture.setTimeout(() => {
-        updateTransitionState(endState);
-        endState === T_ENTERED ? afterEnter?.() : afterLeave?.();
-      }, during);
-
-      setNextState(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nextState]);
 
   const shouldRender = (() => {
     if (dataRef.current.isFirstEnter && !dMountBeforeFirstEnter) {

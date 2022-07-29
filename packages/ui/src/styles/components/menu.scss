@@ -50,7 +50,7 @@ $menu-item-height: 40px;
     }
 
     &:not(.#{$variable-prefix}menu__item--horizontal):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover-primary);
+      background-color: var(--#{$variable-prefix}background-color-primary-hover);
     }
 
     @include when(active) {
