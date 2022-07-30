@@ -46,9 +46,9 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
               'is-active': aMenuOpen,
             })}
           >
-            <div className="line"></div>
-            <div className="line"></div>
-            <div className="line"></div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
         </button>
       )}

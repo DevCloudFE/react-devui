@@ -133,7 +133,12 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
         };
 
         return (
-          <div key={accordionId} className={`${dPrefix}accordion__container`}>
+          <div
+            key={accordionId}
+            className={getClassName(`${dPrefix}accordion__container`, {
+              [`${dPrefix}accordion__container--last`]: index === dAccordions.length - 1,
+            })}
+          >
             <div
               id={buttonId}
               className={getClassName(`${dPrefix}accordion__button`, {

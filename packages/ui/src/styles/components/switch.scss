@@ -90,7 +90,7 @@
     color: map.get($colors, 'white');
     transition: opacity var(--#{$variable-prefix}animation-duration-fast) ease-out;
 
-    &:first-of-type {
+    @include m(left) {
       margin-right: auto;
     }
   }

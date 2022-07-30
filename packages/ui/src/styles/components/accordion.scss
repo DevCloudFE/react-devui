@@ -1,9 +1,11 @@
 @include b(accordion) {
   @include e(container) {
-    border: 1px solid var(--#{$variable-prefix}color-border);
+    border-top: 1px solid var(--#{$variable-prefix}color-border);
+    border-right: 1px solid var(--#{$variable-prefix}color-border);
+    border-left: 1px solid var(--#{$variable-prefix}color-border);
 
-    &:not(:last-child) {
-      border-bottom: none;
+    @include m(last) {
+      border-bottom: 1px solid var(--#{$variable-prefix}color-border);
     }
   }
 

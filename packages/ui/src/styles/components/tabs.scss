@@ -256,8 +256,14 @@
   }
 
   @include m(center) {
-    @include e(tablist) {
-      justify-content: center;
+    @include e(tab) {
+      @include m(first) {
+        margin-left: auto;
+      }
+
+      @include m(last) {
+        margin-right: auto;
+      }
     }
   }
 

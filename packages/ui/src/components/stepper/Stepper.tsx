@@ -103,6 +103,7 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
                 : {},
               {
                 [`is-${stepStatus}`]: stepStatus,
+                [`${dPrefix}stepper__step--last`]: index === dSteps.length - 1,
               }
             )}
             style={{

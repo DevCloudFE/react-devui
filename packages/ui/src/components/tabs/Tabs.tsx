@@ -258,6 +258,8 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                 className={getClassName(`${dPrefix}tabs__tab`, {
                   'is-active': active,
                   'is-disabled': tabDisabled,
+                  [`${dPrefix}tabs__tab--first`]: index === 0,
+                  [`${dPrefix}tabs__tab--last`]: index === dTabs.length - 1,
                 })}
                 tabIndex={active && !tabDisabled ? 0 : -1}
                 role="tab"

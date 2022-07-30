@@ -36,48 +36,44 @@
   }
 
   &:not(#{&}--vertical) {
-    #{$compose-support} {
-      & + #{$compose-support} {
-        margin-left: -1px !important;
-      }
+    & > :not(:first-child, :only-child) {
+      margin-left: -1px !important;
+    }
 
-      &:not(:first-child, :last-child) {
-        border-radius: 0 !important;
-      }
+    & > :first-child:not(:only-child) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
 
-      &:first-child:not(:only-child) {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-      }
+    & > :last-child:not(:only-child) {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
 
-      &:last-child:not(:only-child) {
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-      }
+    & > :not(:first-child, :last-child) {
+      border-radius: 0 !important;
     }
   }
 
   @include m(vertical) {
     flex-direction: column;
 
-    #{$compose-support} {
-      & + #{$compose-support} {
-        margin-top: -1px !important;
-      }
+    & > :not(:first-child, :only-child) {
+      margin-top: -1px !important;
+    }
 
-      &:not(:first-child, :last-child) {
-        border-radius: 0 !important;
-      }
+    & > :first-child:not(:only-child) {
+      border-bottom-right-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
 
-      &:first-child:not(:only-child) {
-        border-bottom-right-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-      }
+    & > :last-child:not(:only-child) {
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+    }
 
-      &:last-child:not(:only-child) {
-        border-top-left-radius: 0 !important;
-        border-top-right-radius: 0 !important;
-      }
+    & > :not(:first-child, :last-child) {
+      border-radius: 0 !important;
     }
   }
 }

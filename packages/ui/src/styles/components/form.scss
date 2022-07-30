@@ -142,7 +142,7 @@
       content: '';
     }
 
-    &:nth-of-type(1) {
+    @include m(1) {
       top: 0;
       left: 0;
       width: 100%;
@@ -156,7 +156,7 @@
       }
     }
 
-    &:nth-of-type(2) {
+    @include m(2) {
       top: 0;
       right: 0;
       width: 1px;
@@ -171,7 +171,7 @@
       }
     }
 
-    &:nth-of-type(3) {
+    @include m(3) {
       bottom: 0;
       left: 0;
       width: 100%;
@@ -185,7 +185,7 @@
       }
     }
 
-    &:nth-of-type(4) {
+    @include m(4) {
       top: 0;
       left: 0;
       width: 1px;

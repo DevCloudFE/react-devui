@@ -68,7 +68,7 @@
       }
     }
 
-    &:first-of-type {
+    @include m(first) {
       margin-top: 8px;
     }
 

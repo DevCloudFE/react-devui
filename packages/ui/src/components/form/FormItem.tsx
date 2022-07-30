@@ -312,10 +312,10 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
         <div ref={contentRef} className={`${dPrefix}form__item-content`} style={{ width: contentWidth }}>
           {formItemStatus === 'pending' && (
             <>
-              <div className={`${dPrefix}form__pending`}></div>
-              <div className={`${dPrefix}form__pending`}></div>
-              <div className={`${dPrefix}form__pending`}></div>
-              <div className={`${dPrefix}form__pending`}></div>
+              <div className={getClassName(`${dPrefix}form__pending`, `${dPrefix}form__pending--1`)}></div>
+              <div className={getClassName(`${dPrefix}form__pending`, `${dPrefix}form__pending--2`)}></div>
+              <div className={getClassName(`${dPrefix}form__pending`, `${dPrefix}form__pending--3`)}></div>
+              <div className={getClassName(`${dPrefix}form__pending`, `${dPrefix}form__pending--4`)}></div>
             </>
           )}
           {isFunction(children) ? children(formControls) : children}

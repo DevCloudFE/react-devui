@@ -73,7 +73,10 @@ export function DPictureList(props: DPictureListProps): JSX.Element | null {
                 className={getClassName(
                   `${dPrefix}upload__list-item`,
                   `${dPrefix}upload__list-item--picture`,
-                  `${dPrefix}upload__list-item--${file.status}`
+                  `${dPrefix}upload__list-item--${file.status}`,
+                  {
+                    [`${dPrefix}upload__list-item--first`]: index === 0,
+                  }
                 )}
                 style={collapseStyle}
               >

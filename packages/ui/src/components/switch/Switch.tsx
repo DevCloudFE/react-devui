@@ -79,7 +79,10 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     >
       <div className={`${dPrefix}switch__state-container`}>
         {dStateContent && (
-          <div className={`${dPrefix}switch__state-content`} style={{ opacity: checked ? 1 : 0 }}>
+          <div
+            className={getClassName(`${dPrefix}switch__state-content`, `${dPrefix}switch__state-content--left`)}
+            style={{ opacity: checked ? 1 : 0 }}
+          >
             {dStateContent[0]}
           </div>
         )}

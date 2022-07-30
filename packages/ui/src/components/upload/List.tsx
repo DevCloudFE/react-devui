@@ -70,7 +70,9 @@ export function DList(props: DListProps): JSX.Element | null {
             {(ref, collapseStyle) => (
               <li
                 ref={ref}
-                className={getClassName(`${dPrefix}upload__list-item`, `${dPrefix}upload__list-item--${file.status}`)}
+                className={getClassName(`${dPrefix}upload__list-item`, `${dPrefix}upload__list-item--${file.status}`, {
+                  [`${dPrefix}upload__list-item--first`]: index === 0,
+                })}
                 style={collapseStyle}
               >
                 <div className={`${dPrefix}upload__list-icon`}>

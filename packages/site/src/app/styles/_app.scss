@@ -301,6 +301,18 @@ h3 {
       margin-bottom: 20px;
     }
   }
+
+  section[id^='Transfer'] {
+    .d-transfer {
+      min-width: 400px;
+    }
+  }
+
+  section[id^='Stepper'] {
+    .d-stepper:not(.d-stepper--vertical) {
+      min-width: 600px;
+    }
+  }
 }
 
 .app-demo-col {

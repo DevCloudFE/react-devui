@@ -6,7 +6,7 @@
   height: 22px;
   cursor: pointer;
 
-  .line {
+  div {
     position: absolute;
     left: 0;
     display: block;
@@ -33,20 +33,20 @@
   }
 
   &.is-active {
-    .line {
+    div {
       background-color: var(--d-color-primary-lighter);
     }
 
-    .line:nth-child(1) {
+    div:nth-child(1) {
       top: 10px;
       transform: rotate(45deg);
     }
 
-    .line:nth-child(2) {
+    div:nth-child(2) {
       opacity: 0;
     }
 
-    .line:nth-child(3) {
+    div:nth-child(3) {
       top: 10px;
       transform: rotate(-45deg);
     }
