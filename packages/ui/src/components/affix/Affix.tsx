@@ -10,7 +10,7 @@ import {
   useElement,
   useIsomorphicLayoutEffect,
   useEventCallback,
-  useUpdatePosition,
+  useLayout,
 } from '../../hooks';
 import { getClassName, registerComponentMate, toPx } from '../../utils';
 
@@ -40,6 +40,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   //#region Ref
@@ -49,22 +50,23 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
 
   const asyncCapture = useAsync();
 
-  const targetEl = useElement(dTarget ?? null);
+  const targetEl = useElement(dTarget ?? dScrollEl);
+  const resizeEl = useElement(dResizeEl);
 
   const [fixedStyle, setFixedStyle] = useState<React.CSSProperties>();
   const [referenceStyle, setReferenceStyle] = useState<React.CSSProperties>();
   const [fixed, setFixed] = useState(false);
   const updatePosition = useEventCallback(() => {
-    if (isUndefined(dTarget) || targetEl) {
+    if (targetEl) {
       const offsetEl = fixed ? referenceRef.current : affixRef.current;
 
       if (offsetEl) {
-        let targetRect = {
-          top: 0,
-          bottom: window.innerHeight,
-        };
-        if (targetEl) {
-          targetRect = targetEl.getBoundingClientRect();
+        let targetRect: { top: number; bottom: number } = targetEl.getBoundingClientRect();
+        if (targetEl === document.documentElement) {
+          targetRect = {
+            top: 0,
+            bottom: window.innerHeight,
+          };
         }
 
         const offsetRect = offsetEl.getBoundingClientRect();
@@ -101,8 +103,6 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useUpdatePosition(updatePosition);
-
   useEffect(() => {
     if (targetEl) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -118,6 +118,20 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
       };
     }
   }, [asyncCapture, targetEl, updatePosition]);
+
+  useEffect(() => {
+    if (resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        updatePosition();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, resizeEl, updatePosition]);
 
   useImperativeHandle(
     ref,

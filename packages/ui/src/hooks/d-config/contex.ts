@@ -5,6 +5,7 @@ import type {
   DAnchorProps,
   DAutoCompleteProps,
   DAvatarProps,
+  DBackTopProps,
   DBadgeProps,
   DBreadcrumbProps,
   DButtonProps,
@@ -81,6 +82,7 @@ export type DComponentConfig = {
   DAnchor: DAnchorProps<any>;
   DAutoComplete: DAutoCompleteProps<any>;
   DAvatar: DAvatarProps;
+  DBackTop: DBackTopProps;
   DBadge: DBadgeProps;
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
@@ -151,9 +153,9 @@ export interface DConfigContextData {
     lang?: DLang;
     resources?: Resources;
   };
-  updatePosition?: {
-    scroll?: DElementSelector[];
-    resize?: DElementSelector[];
+  layout?: {
+    scrollEl?: DElementSelector;
+    resizeEl?: DElementSelector;
   };
 }
 export const DConfigContext = React.createContext<DConfigContextData | undefined>(undefined);

@@ -18,7 +18,7 @@ export function useGridConfig() {
   const colNum = grid?.colNum ?? 12;
 
   return {
-    breakpoints,
-    colNum,
+    dBreakpoints: breakpoints,
+    dColNum: colNum,
   };
 }

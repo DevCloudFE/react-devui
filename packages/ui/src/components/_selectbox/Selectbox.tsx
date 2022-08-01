@@ -5,16 +5,7 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  useAsync,
-  usePrefixConfig,
-  useTranslation,
-  useEventCallback,
-  useElement,
-  useMaxIndex,
-  useUpdatePosition,
-  useForkRef,
-} from '../../hooks';
+import { useAsync, usePrefixConfig, useTranslation, useEventCallback, useElement, useMaxIndex, useForkRef, useLayout } from '../../hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
 import { checkNodeExist, getClassName } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
@@ -87,6 +78,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   //#region Ref
@@ -107,6 +99,8 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const inputable = dSearchable && dVisible;
   const clearable = dClearable && !dVisible && !dLoading && !dDisabled && dContent;
 
+  const scrollEl = useElement(dScrollEl);
+  const resizeEl = useElement(dResizeEl);
   const containerEl = useElement(() => {
     let el = document.getElementById(`${prefix}-root`);
     if (!el) {
@@ -134,8 +128,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     }
   });
 
-  useUpdatePosition(updatePosition, dVisible);
-
   useEffect(() => {
     if (dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -157,6 +149,36 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
       };
     }
   }, [asyncCapture, dVisible, updatePosition]);
+
+  useEffect(() => {
+    if (dVisible && scrollEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(scrollEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dVisible, scrollEl, updatePosition]);
+
+  useEffect(() => {
+    if (dVisible && resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        updatePosition();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dVisible, resizeEl, updatePosition]);
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.target !== inputRef.current && e.button === 0) {

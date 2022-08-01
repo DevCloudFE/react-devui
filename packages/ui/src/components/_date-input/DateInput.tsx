@@ -4,16 +4,7 @@ import type { DFormControl } from '../form';
 import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  usePrefixConfig,
-  useTranslation,
-  useAsync,
-  useForkRef,
-  useEventCallback,
-  useMaxIndex,
-  useElement,
-  useUpdatePosition,
-} from '../../hooks';
+import { usePrefixConfig, useTranslation, useAsync, useForkRef, useEventCallback, useMaxIndex, useElement, useLayout } from '../../hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
 import { checkNodeExist, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
@@ -75,6 +66,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   //#region Ref
@@ -115,6 +107,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
   const clearable = dClearable && !dVisible && !dDisabled;
 
+  const scrollEl = useElement(dScrollEl);
+  const resizeEl = useElement(dResizeEl);
   const containerEl = useElement(() => {
     let el = document.getElementById(`${prefix}-root`);
     if (!el) {
@@ -145,8 +139,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     }
   });
 
-  useUpdatePosition(updatePosition, dVisible);
-
   useEffect(() => {
     if (dVisible) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
@@ -168,6 +160,36 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       };
     }
   }, [asyncCapture, dVisible, uniqueId, updatePosition]);
+
+  useEffect(() => {
+    if (dVisible && scrollEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(scrollEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dVisible, scrollEl, updatePosition]);
+
+  useEffect(() => {
+    if (dVisible && resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        updatePosition();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dVisible, resizeEl, updatePosition]);
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.target !== inputRefLeft.current && e.target !== inputRefRight.current && e.button === 0) {

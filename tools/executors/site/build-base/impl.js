@@ -35,7 +35,7 @@ const rxjs_for_await_1 = require("rxjs-for-await");
 const operators_1 = require("rxjs/operators");
 const yamlFront = require('yaml-front-matter');
 const COMPONENT_DIR = String.raw `packages/ui/src/components`;
-const ROUTE_DIR = [String.raw `packages/site/src/app/routes/components`];
+const COMPONENT_ROUTE_DIR = [String.raw `packages/site/src/app/routes/components`];
 const OUTPUT_DIR = String.raw `packages/site/src/app`;
 class GenerateSite {
     constructor() {
@@ -309,7 +309,7 @@ class GenerateSite {
                 this.generateComponentRoute({ name: component, path: componentPath, data: components }, path_1.default.join(OUTPUT_DIR, 'routes', 'components', component));
             }
         }
-        for (const ROUTE of ROUTE_DIR) {
+        for (const ROUTE of COMPONENT_ROUTE_DIR) {
             const files = (0, fs_extra_1.readdirSync)(ROUTE);
             for (const file of files) {
                 if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {
@@ -421,7 +421,7 @@ function siteBuildExecutor(options, context) {
                         }
                     }
                 }
-                for (const ROUTE of ROUTE_DIR) {
+                for (const ROUTE of COMPONENT_ROUTE_DIR) {
                     const files = (0, fs_extra_1.readdirSync)(ROUTE);
                     for (const file of files) {
                         if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {

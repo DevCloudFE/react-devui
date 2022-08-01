@@ -12,7 +12,7 @@ import { debounceTime, tap, mapTo } from 'rxjs/operators';
 const yamlFront = require('yaml-front-matter');
 
 const COMPONENT_DIR = String.raw`packages/ui/src/components`;
-const ROUTE_DIR = [String.raw`packages/site/src/app/routes/components`];
+const COMPONENT_ROUTE_DIR = [String.raw`packages/site/src/app/routes/components`];
 const OUTPUT_DIR = String.raw`packages/site/src/app`;
 
 export interface SiteBuildExecutorOptions {
@@ -335,7 +335,7 @@ class GenerateSite {
       }
     }
 
-    for (const ROUTE of ROUTE_DIR) {
+    for (const ROUTE of COMPONENT_ROUTE_DIR) {
       const files = readdirSync(ROUTE);
       for (const file of files) {
         if (file.endsWith('.md') && file.match(/\./g)?.length === 1) {
@@ -453,7 +453,7 @@ export default async function* siteBuildExecutor(options: SiteBuildExecutorOptio
           }
         }
       }
-      for (const ROUTE of ROUTE_DIR) {
+      for (const ROUTE of COMPONENT_ROUTE_DIR) {
         const files = readdirSync(ROUTE);
         for (const file of files) {
           if (file.endsWith('.md') && file.match(/\./g)?.length === 1) {

@@ -4,7 +4,15 @@ import type { DNestedChildren } from '../../utils/global';
 import { isArray, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useElement, useAsync, useIsomorphicLayoutEffect, useEventCallback } from '../../hooks';
+import {
+  usePrefixConfig,
+  useComponentConfig,
+  useElement,
+  useAsync,
+  useIsomorphicLayoutEffect,
+  useEventCallback,
+  useLayout,
+} from '../../hooks';
 import { getClassName, registerComponentMate, scrollTo } from '../../utils';
 
 export interface DAnchorOption {
@@ -45,6 +53,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   //#region Ref
@@ -58,20 +67,17 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 
   const asyncCapture = useAsync();
 
-  const pageEl = useElement(dPage ?? null);
+  const pageEl = useElement(dPage ?? dScrollEl);
+  const resizeEl = useElement(dResizeEl);
 
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
   const updateAnchor = useEventCallback(() => {
-    let pageTop = 0;
-    if (!isUndefined(dPage)) {
-      if (pageEl) {
-        pageTop = pageEl.getBoundingClientRect().top;
-      } else {
-        return;
-      }
+    if (!pageEl) {
+      return;
     }
 
+    const pageTop = pageEl.getBoundingClientRect().top;
     let nearestEl: [string, number] | undefined;
     const reduceLinks = (arr: DNestedChildren<T>[]) => {
       arr.forEach(({ href, children }) => {
@@ -119,6 +125,20 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   }, [asyncCapture, pageEl, updateAnchor]);
 
   useEffect(() => {
+    if (resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        updateAnchor();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, resizeEl, updateAnchor]);
+
+  useEffect(() => {
     if (anchorRef.current && indicatorRef.current) {
       if (activeHref) {
         const el = anchorRef.current.querySelector(`.${dPrefix}anchor__link.is-active`);
@@ -143,27 +163,22 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
   );
 
   const handleLinkClick = (href: string) => {
-    let pageTop = 0;
-    let targetEl: HTMLElement = document.documentElement;
-    if (!isUndefined(dPage)) {
-      if (pageEl) {
-        pageTop = pageEl.getBoundingClientRect().top;
-        targetEl = pageEl;
-      } else {
-        return;
-      }
+    if (!pageEl) {
+      return;
     }
 
-    const scrollTop = targetEl.scrollTop;
+    const pageTop = pageEl.getBoundingClientRect().top;
+
+    const scrollTop = pageEl.scrollTop;
     window.location.hash = href;
-    targetEl.scrollTop = scrollTop;
+    pageEl.scrollTop = scrollTop;
 
     const el = document.querySelector(href);
     if (el) {
       const top = el.getBoundingClientRect().top;
-      const scrollTop = top - pageTop + targetEl.scrollTop - dDistance;
+      const scrollTop = top - pageTop + pageEl.scrollTop - dDistance;
       dataRef.current.clearTid?.();
-      dataRef.current.clearTid = scrollTo(targetEl, {
+      dataRef.current.clearTid = scrollTo(pageEl, {
         top: scrollTop,
         behavior: dScrollBehavior,
       });

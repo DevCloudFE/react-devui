@@ -59,7 +59,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { colNum } = useGridConfig();
+  const { dColNum } = useGridConfig();
   const { gBreakpointMatchs, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } =
     useContextRequired(DFormContext);
   const formGroup = useContext(DFormGroupContext)!;
@@ -95,7 +95,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   const { span, labelWidth } = (() => {
     const props = {
-      span: dSpan ?? (gLayout === 'inline' ? gInlineSpan : colNum),
+      span: dSpan ?? (gLayout === 'inline' ? gInlineSpan : dColNum),
       labelWidth: dLabelWidth ?? gLabelWidth,
     };
 
@@ -284,7 +284,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
         ...restProps.style,
         flexGrow: span === true ? 1 : undefined,
         flexShrink: span === true ? undefined : 0,
-        width: span === true ? undefined : isNumber(span) ? `calc((100% / ${colNum}) * ${span})` : span,
+        width: span === true ? undefined : isNumber(span) ? `calc((100% / ${dColNum}) * ${span})` : span,
       }}
     >
       <div className={`${dPrefix}form__item-container`}>

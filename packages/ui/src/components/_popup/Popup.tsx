@@ -3,7 +3,7 @@ import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, useElement, useEventCallback, usePrefixConfig, useUpdatePosition } from '../../hooks';
+import { useAsync, useElement, useEventCallback, useLayout, usePrefixConfig } from '../../hooks';
 
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;
@@ -50,6 +50,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   const dataRef = useRef<{
@@ -60,19 +61,21 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
   const uniqueId = useId();
 
-  const containerEl = useElement(
-    isUndefined(dContainer)
-      ? () => {
-          let el = document.getElementById(`${dPrefix}popup-root`);
-          if (!el) {
-            el = document.createElement('div');
-            el.id = `${dPrefix}popup-root`;
-            document.body.appendChild(el);
-          }
-          return el;
-        }
-      : dContainer
-  );
+  const scrollEl = useElement(dScrollEl);
+  const resizeEl = useElement(dResizeEl);
+  const containerEl = useElement(() => {
+    if (isUndefined(dContainer)) {
+      let el = document.getElementById(`${dPrefix}popup-root`);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = `${dPrefix}popup-root`;
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+
+    return dContainer;
+  });
 
   const changeVisible = (visible?: boolean) => {
     if (isUndefined(visible)) {
@@ -127,7 +130,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleTrigger, dTrigger, dVisible, dDisabled]);
+  }, [asyncCapture, dDisabled, dTrigger, dVisible, handleTrigger]);
 
   useEffect(() => {
     if (!dDisabled && dVisible && dEscClosable) {
@@ -146,11 +149,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleTrigger, dEscClosable, dVisible, dDisabled]);
-
-  useUpdatePosition(() => {
-    dUpdatePosition?.();
-  }, !dDisabled && dVisible);
+  }, [asyncCapture, dDisabled, dEscClosable, dVisible, handleTrigger]);
 
   useEffect(() => {
     if (!dDisabled && dVisible) {
@@ -174,8 +173,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asyncCapture, dVisible, uniqueId, dDisabled]);
+  }, [asyncCapture, dDisabled, dUpdatePosition, dVisible, uniqueId]);
 
   useEffect(() => {
     if (!dDisabled && dVisible && dContainer) {
@@ -195,8 +193,37 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asyncCapture, dContainer, dDisabled, dVisible]);
+  }, [asyncCapture, dContainer, dDisabled, dUpdatePosition, dVisible]);
+
+  useEffect(() => {
+    if (!dDisabled && dVisible && scrollEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(scrollEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          dUpdatePosition?.();
+        },
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dDisabled, dUpdatePosition, dVisible, scrollEl]);
+
+  useEffect(() => {
+    if (!dDisabled && dVisible && resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        dUpdatePosition?.();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, dDisabled, dUpdatePosition, dVisible, resizeEl]);
 
   const childProps: DPopupRenderProps = { 'data-popup-triggerid': uniqueId };
   if (!dDisabled) {

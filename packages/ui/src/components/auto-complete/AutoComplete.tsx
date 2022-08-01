@@ -13,9 +13,9 @@ import {
   useEventCallback,
   useElement,
   useMaxIndex,
-  useUpdatePosition,
   useAsync,
   useDValue,
+  useLayout,
 } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
@@ -66,6 +66,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
   //#region Ref
@@ -81,6 +82,8 @@ function AutoComplete<T extends DAutoCompleteOption>(
   const getOptionId = (val: string) => `${dPrefix}auto-complete-option-${val}-${uniqueId}`;
   const getGroupId = (val: string) => `${dPrefix}auto-complete-group-${val}-${uniqueId}`;
 
+  const scrollEl = useElement(dScrollEl);
+  const resizeEl = useElement(dResizeEl);
   const containerEl = useElement(() => {
     let el = document.getElementById(`${dPrefix}auto-complete-root`);
     if (!el) {
@@ -122,8 +125,6 @@ function AutoComplete<T extends DAutoCompleteOption>(
     }
   });
 
-  useUpdatePosition(updatePosition, visible);
-
   const [_focusOption, setFocusOption] = useState<DNestedChildren<T> | undefined>();
   const focusOption = (() => {
     if (_focusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _focusOption.value)) {
@@ -161,6 +162,36 @@ function AutoComplete<T extends DAutoCompleteOption>(
       };
     }
   }, [asyncCapture, uniqueId, updatePosition, visible]);
+
+  useEffect(() => {
+    if (visible && scrollEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(scrollEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, visible, scrollEl, updatePosition]);
+
+  useEffect(() => {
+    if (visible && resizeEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.onResize(resizeEl, () => {
+        updatePosition();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, visible, resizeEl, updatePosition]);
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.button === 0) {

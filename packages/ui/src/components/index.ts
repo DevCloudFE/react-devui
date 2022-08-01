@@ -16,6 +16,9 @@ export { DAutoComplete } from './auto-complete';
 export type { DAvatarProps } from './avatar';
 export { DAvatar } from './avatar';
 
+export type { DBackTopProps } from './back-top';
+export { DBackTop } from './back-top';
+
 export type { DBadgeProps } from './badge';
 export { DBadge } from './badge';
 

@@ -43,29 +43,19 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
         id: group.title,
         title: t(`menu-group.${group.title}`),
         type: 'group',
-        children:
-          group.title === 'Other'
-            ? [
-                {
-                  id: 'Interface',
-                  title: (
-                    <Link to="/components/Interface">
-                      Interface{i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`Documentation.Interface`)}</span>}
-                    </Link>
-                  ),
-                  type: 'item',
-                },
-              ]
-            : group.children.map((child) => ({
-                id: child.title,
-                title: (
-                  <Link to={child.to}>
-                    {child.title}
-                    {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
-                  </Link>
-                ),
-                type: 'item',
-              })),
+        children: (group.title === 'Other'
+          ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
+          : group.children
+        ).map((child) => ({
+          id: child.title,
+          title: (
+            <Link to={child.to}>
+              {child.title}
+              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
+            </Link>
+          ),
+          type: 'item',
+        })),
       }))}
       dActive={activeId}
       onActiveChange={(id) => {

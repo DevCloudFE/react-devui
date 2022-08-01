@@ -10,11 +10,10 @@
       "Copied!": "Copied!",
       "Open main navigation": "Open main navigation",
       "GitHub repository": "GitHub repository",
-      "Documentation": {
-        "Interface": "Interface"
-      },
       "menu-group": {},
-      "menu": {}
+      "menu": {
+        "Interface": "Interface"
+      }
     }
   },
   "zh-Hant": {
@@ -28,11 +27,10 @@
       "Copied!": "复制成功！",
       "Open main navigation": "打开主导航栏",
       "GitHub repository": "GitHub 存储库",
-      "Documentation": {
-        "Interface": "接口"
-      },
       "menu-group": {},
-      "menu": {}
+      "menu": {
+        "Interface": "接口"
+      }
     }
   }
 }

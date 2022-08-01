@@ -20,17 +20,17 @@ function getMediaMatch(mqlList?: Map<DBreakpoints, MediaQueryList>) {
 }
 
 export function useMediaMatch() {
-  const { breakpoints } = useGridConfig();
+  const { dBreakpoints } = useGridConfig();
 
   const asyncCapture = useAsync();
 
   const mqlList = useMemo<Map<DBreakpoints, MediaQueryList> | undefined>(() => {
     if (typeof window !== 'undefined') {
       return new Map<DBreakpoints, MediaQueryList>(
-        MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${breakpoints.get(breakpoint)}px)`)])
+        MEDIA_QUERY_LIST.map((breakpoint) => [breakpoint, window.matchMedia(`(min-width: ${dBreakpoints.get(breakpoint)}px)`)])
       );
     }
-  }, [breakpoints]);
+  }, [dBreakpoints]);
 
   const [mediaMatch, setMediaMatch] = useState(() => {
     if (typeof window !== 'undefined') {

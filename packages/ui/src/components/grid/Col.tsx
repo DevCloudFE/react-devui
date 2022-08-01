@@ -27,7 +27,7 @@ export function DCol(props: DColProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { colNum } = useGridConfig();
+  const { dColNum } = useGridConfig();
   const { gMediaMatch, gSpace } = useContextRequired(DRowContext);
   //#endregion
 
@@ -61,7 +61,7 @@ export function DCol(props: DColProps): JSX.Element | null {
       style={{
         ...restProps.style,
         ...responsiveProps?.style,
-        width: isNumber(span) ? `calc(100% / ${colNum} * ${span})` : undefined,
+        width: isNumber(span) ? `calc(100% / ${dColNum} * ${span})` : undefined,
         flexGrow: span === true ? 1 : undefined,
         paddingLeft: gSpace,
         paddingRight: gSpace,

@@ -112,18 +112,19 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   })();
 
   const containerEl = useElement(
-    isUndefined(dContainer)
+    isUndefined(dContainer) || dContainer === false
       ? () => {
-          let el = document.getElementById(`${dPrefix}drawer-root`);
-          if (!el) {
-            el = document.createElement('div');
-            el.id = `${dPrefix}drawer-root`;
-            document.body.appendChild(el);
+          if (isUndefined(dContainer)) {
+            let el = document.getElementById(`${dPrefix}drawer-root`);
+            if (!el) {
+              el = document.createElement('div');
+              el.id = `${dPrefix}drawer-root`;
+              document.body.appendChild(el);
+            }
+            return el;
           }
-          return el;
+          return null;
         }
-      : dContainer === false
-      ? null
       : dContainer
   );
 
