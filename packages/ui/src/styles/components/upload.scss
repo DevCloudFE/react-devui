@@ -175,7 +175,7 @@
     padding: 8px;
     margin: 0;
     vertical-align: top;
-    background-color: var(--#{$variable-prefix}background-color-gray);
+    background-color: var(--#{$variable-prefix}background-color-light-gray);
     border: 1px solid var(--#{$variable-prefix}color-border);
 
     &:hover {
@@ -236,7 +236,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}upload-background-color-mask);
+    background-color: var(--#{$variable-prefix}background-color-action);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }

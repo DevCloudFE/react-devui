@@ -97,6 +97,9 @@ export { DSelect } from './select';
 export type { DSeparatorProps } from './separator';
 export { DSeparator } from './separator';
 
+export type { DSkeletonProps } from './skeleton';
+export { DSkeleton } from './skeleton';
+
 export type { DSliderProps } from './slider';
 export { DSlider } from './slider';
 

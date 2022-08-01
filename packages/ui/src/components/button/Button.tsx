@@ -14,7 +14,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dLoading?: boolean;
   dBlock?: boolean;
-  dShape?: 'circle' | 'round';
+  dVariant?: 'circle' | 'round';
   dSize?: DSize;
   dIcon?: React.ReactNode;
   dIconRight?: boolean;
@@ -28,7 +28,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
     dTheme = 'primary',
     dLoading = false,
     dBlock = false,
-    dShape,
+    dVariant,
     dSize,
     dIcon,
     dIconRight = false,
@@ -58,7 +58,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
         {...restProps}
         ref={ref}
         className={getClassName(restProps.className, `${dPrefix}button`, `${dPrefix}button--${dType}`, `t-${dTheme}`, {
-          [`${dPrefix}button--${dShape}`]: dShape,
+          [`${dPrefix}button--${dVariant}`]: dVariant,
           [`${dPrefix}button--${size}`]: size,
           [`${dPrefix}button--block`]: dBlock,
           [`${dPrefix}button--icon`]: !children,

@@ -98,6 +98,6 @@
   }
 
   @include m(gray) {
-    background-color: var(--#{$variable-prefix}background-color-gray);
+    background-color: var(--#{$variable-prefix}background-color-light-gray);
   }
 }

@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}upload-background-color-mask);
+    background-color: var(--#{$variable-prefix}background-color-action);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }
@@ -79,7 +79,7 @@
 
     &:hover {
       color: var(--#{$variable-prefix}color-primary);
-      background-color: var(--#{$variable-prefix}slides-background-color-navigation-hover);
+      background-color: var(--#{$variable-prefix}background-color-gray);
     }
 
     @include m(prev) {

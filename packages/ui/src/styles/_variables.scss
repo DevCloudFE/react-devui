@@ -63,7 +63,9 @@ $colors: (
   --#{$variable-prefix}background-color-input: #fff;
   --#{$variable-prefix}background-color-indicator: #dfe1e6;
   --#{$variable-prefix}background-color-disabled: #f5f5f5;
-  --#{$variable-prefix}background-color-gray: hsl(0deg 0% 98%);
+  --#{$variable-prefix}background-color-light-gray: hsl(0deg 0% 98%);
+  --#{$variable-prefix}background-color-gray: hsl(0deg 0% 95%);
+  --#{$variable-prefix}background-color-action: rgb(0 0 0 / 20%);
   --#{$variable-prefix}color-divider: #eee;
   --#{$variable-prefix}color-border: #d9d9d9;
   --#{$variable-prefix}color-disabled: #d5d5d5;
@@ -91,12 +93,10 @@ $colors: (
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}avatar-background-color: #bdbdbd;
   --#{$variable-prefix}breadcrumb-text-color: #b1b1b1;
-  --#{$variable-prefix}slides-background-color-navigation-hover: rgb(245 245 245);
+  --#{$variable-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
   --#{$variable-prefix}switch-background-color: #d4d6d9;
   --#{$variable-prefix}tabs-background-color-slider: hsl(0deg 0% 97%);
-  --#{$variable-prefix}tag-background-color-default: hsl(0deg 0% 94%);
   --#{$variable-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
   --#{$variable-prefix}tooltip-text-color: #dfe1e6;
   --#{$variable-prefix}tooltip-background-color: #464d6e;
-  --#{$variable-prefix}upload-background-color-mask: rgb(0 0 0 / 20%);
 }

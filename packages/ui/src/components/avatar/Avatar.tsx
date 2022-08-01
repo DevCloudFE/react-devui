@@ -4,7 +4,7 @@ import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 
 export interface DAvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  dShape?: string | number;
+  dVariant?: 'circular' | 'square';
   dImg?: React.ImgHTMLAttributes<HTMLImageElement>;
   dIcon?: React.ReactNode;
   dText?: React.ReactNode;
@@ -14,7 +14,7 @@ export interface DAvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAvatar' });
 export function DAvatar(props: DAvatarProps): JSX.Element | null {
   const {
-    dShape = 'circular',
+    dVariant = 'circular',
     dImg,
     dIcon,
     dText,
@@ -46,15 +46,12 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
   return (
     <div
       {...restProps}
-      className={getClassName(restProps.className, `${dPrefix}avatar`, `${dPrefix}avatar--${type}`, {
-        [`${dPrefix}avatar--${dShape}`]: dShape === 'circular' || dShape === 'square',
-      })}
+      className={getClassName(restProps.className, `${dPrefix}avatar`, `${dPrefix}avatar--${type}`, `${dPrefix}avatar--${dVariant}`)}
       style={{
         ...restProps.style,
         width: dSize,
         height: dSize,
         fontSize: type === 'icon' ? dSize / 2 : type === 'text' ? dSize * 0.45 : undefined,
-        borderRadius: dShape === 'circular' || dShape === 'square' ? undefined : dShape,
       }}
     >
       {type === 'img' ? (

@@ -46,6 +46,7 @@ import type {
   DRatingProps,
   DSelectProps,
   DSeparatorProps,
+  DSkeletonProps,
   DSliderProps,
   DSlidesProps,
   DSlideProps,
@@ -121,6 +122,7 @@ export type DComponentConfig = {
   DRating: DRatingProps;
   DSelect: DSelectProps<any, any>;
   DSeparator: DSeparatorProps;
+  DSkeleton: DSkeletonProps;
   DSlider: DSliderProps;
   DSlides: DSlidesProps;
   DSlide: DSlideProps;

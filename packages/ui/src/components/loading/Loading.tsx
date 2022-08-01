@@ -94,7 +94,7 @@ export function DLoading(props: DLoadingProps): JSX.Element | null {
               children
             ) : (
               <svg className={`${dPrefix}loading__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
+                <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
               </svg>
             )}
           </div>

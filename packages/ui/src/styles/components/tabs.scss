@@ -5,11 +5,15 @@
     flex-direction: column-reverse;
   }
 
-  @include e(tabpanel) {
-    @if $direction == top {
-      margin-top: 20px;
-    } @else {
-      margin-bottom: 20px;
+  &.#{$variable-prefix}tabs--center {
+    @include e(tab) {
+      @include m(first) {
+        margin-left: auto;
+      }
+
+      @include m(last) {
+        margin-right: auto;
+      }
     }
   }
 
@@ -22,6 +26,14 @@
           border-top-color: transparent;
         }
       }
+    }
+  }
+
+  @include e(tabpanel) {
+    @if $direction == top {
+      margin-top: 20px;
+    } @else {
+      margin-bottom: 20px;
     }
   }
 
@@ -114,6 +126,18 @@
     flex-direction: row;
   } @else {
     flex-direction: row-reverse;
+  }
+
+  &.#{$variable-prefix}tabs--center {
+    @include e(tab) {
+      @include m(first) {
+        margin-top: auto;
+      }
+
+      @include m(last) {
+        margin-bottom: auto;
+      }
+    }
   }
 
   @include e(tabpanel) {
@@ -253,18 +277,6 @@
 
   @include m(right) {
     @include tabs-vertical(right);
-  }
-
-  @include m(center) {
-    @include e(tab) {
-      @include m(first) {
-        margin-left: auto;
-      }
-
-      @include m(last) {
-        margin-right: auto;
-      }
-    }
   }
 
   @include m(larger) {
@@ -413,7 +425,7 @@
     position: absolute;
     z-index: 1;
     pointer-events: none;
-    background-color: var(--#{$variable-prefix}background-color-gray);
+    background-color: var(--#{$variable-prefix}background-color-light-gray);
     border: 1px solid var(--#{$variable-prefix}background-color-indicator);
     opacity: 0;
   }

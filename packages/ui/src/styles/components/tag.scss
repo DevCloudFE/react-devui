@@ -21,7 +21,7 @@
 
   @include m(primary) {
     color: var(--#{$variable-prefix}tag-color, var(--#{$variable-prefix}text-color));
-    background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}tag-background-color-default));
+    background-color: var(--#{$variable-prefix}tag-background-color, var(--#{$variable-prefix}background-color-gray));
   }
 
   @include m(fill) {
