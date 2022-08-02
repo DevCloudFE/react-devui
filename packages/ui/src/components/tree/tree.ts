@@ -91,7 +91,7 @@ export class SingleTreeNode<ID extends DId, T extends { disabled?: boolean; chil
 
   constructor(
     origin: T,
-    private getId: (o: T) => ID,
+    private getId: (origin: T) => ID,
     private opts: {
       disabled?: boolean;
     }
@@ -133,7 +133,7 @@ export class MultipleTreeNode<ID extends DId, T extends { disabled?: boolean; ch
 
   constructor(
     origin: T,
-    private getId: (o: T) => ID,
+    private getId: (origin: T) => ID,
     private opts: {
       disabled?: boolean;
     }

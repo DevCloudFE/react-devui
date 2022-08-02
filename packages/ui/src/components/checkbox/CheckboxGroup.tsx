@@ -8,7 +8,7 @@ import { registerComponentMate, getClassName } from '../../utils';
 import { useFormControl } from '../form';
 import { DCheckbox } from './Checkbox';
 
-export interface DCheckboxOption<V extends DId> {
+export interface DCheckboxList<V extends DId> {
   label: React.ReactNode;
   value: V;
   disabled?: boolean;
@@ -16,7 +16,7 @@ export interface DCheckboxOption<V extends DId> {
 export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
   dModel?: V[];
-  dOptions: DCheckboxOption<V>[];
+  dList: DCheckboxList<V>[];
   dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: V[]) => void;
@@ -26,7 +26,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckboxGro
 export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,
-    dOptions,
+    dList,
     dModel,
     dDisabled = false,
     dVertical = false,
@@ -56,30 +56,30 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
       })}
       role={restProps.role ?? 'group'}
     >
-      {dOptions.map((option, index) => (
+      {dList.map((item, index) => (
         <DCheckbox
-          key={option.value}
-          dDisabled={option.disabled || disabled}
+          key={item.value}
+          dDisabled={item.disabled || disabled}
           dInputProps={
             index === 0
-              ? ({ id: getId(option.value), 'data-form-label-for': true } as React.InputHTMLAttributes<HTMLInputElement>)
+              ? ({ id: getId(item.value), 'data-form-label-for': true } as React.InputHTMLAttributes<HTMLInputElement>)
               : undefined
           }
-          dModel={value.includes(option.value)}
+          dModel={value.includes(item.value)}
           onModelChange={(checked) => {
             changeValue((draft) => {
               if (checked) {
-                draft.push(option.value);
+                draft.push(item.value);
               } else {
                 draft.splice(
-                  draft.findIndex((v) => v === option.value),
+                  draft.findIndex((v) => v === item.value),
                   1
                 );
               }
             });
           }}
         >
-          {option.label}
+          {item.label}
         </DCheckbox>
       ))}
     </div>

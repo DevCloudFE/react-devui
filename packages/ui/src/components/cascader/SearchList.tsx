@@ -1,7 +1,7 @@
 import type { DId } from '../../utils/global';
 import type { MultipleTreeNode } from '../tree';
 import type { DVirtualScrollRef } from '../virtual-scroll';
-import type { DCascaderOption, DSearchOption } from './Cascader';
+import type { DCascaderItem, DSearchItem } from './Cascader';
 import type { Subject } from 'rxjs';
 
 import React, { useEffect, useRef } from 'react';
@@ -14,28 +14,28 @@ import { getText, TREE_NODE_KEY } from './utils';
 
 interface DSearchListProps<ID extends DId, T> {
   dListId?: string;
-  dGetOptionId: (value: ID) => string;
-  dOptions: DSearchOption<ID, T>[];
+  dGetItemId: (value: ID) => string;
+  dList: DSearchItem<ID, T>[];
   dSelected: ID | null | Set<ID>;
-  dFocusOption: DSearchOption<ID, T> | undefined;
-  dCustomOption?: (option: T) => React.ReactNode;
+  dFocusItem: DSearchItem<ID, T> | undefined;
+  dCustomItem?: (item: T) => React.ReactNode;
   dMultiple: boolean;
   dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
   onSelectedChange: (value: ID | null | ID[]) => void;
   onClose: () => void;
-  onFocusChange: (option: DSearchOption<ID, T>) => void;
+  onFocusChange: (item: DSearchItem<ID, T>) => void;
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
+export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
   const {
     dListId,
-    dGetOptionId,
-    dOptions,
+    dGetItemId,
+    dList,
     dSelected,
-    dFocusOption,
-    dCustomOption,
+    dFocusItem,
+    dCustomItem,
     dMultiple,
     dOnlyLeafSelectable,
     dFocusVisible,
@@ -50,55 +50,55 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<DSearchOption<ID, T>>>(null);
+  const dVSRef = useRef<DVirtualScrollRef<DSearchItem<ID, T>>>(null);
   //#endregion
 
   const [t] = useTranslation();
 
-  const changeSelectByClick = useEventCallback((option: DSearchOption<ID, T>) => {
+  const changeSelectByClick = useEventCallback((item: DSearchItem<ID, T>) => {
     if (dMultiple) {
-      const checkeds = (option[TREE_NODE_KEY] as MultipleTreeNode<ID, T>).changeStatus(
-        option[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
+      const checkeds = (item[TREE_NODE_KEY] as MultipleTreeNode<ID, T>).changeStatus(
+        item[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
         dSelected as Set<ID>
       );
       onSelectedChange(Array.from(checkeds.keys()));
     } else {
-      onSelectedChange(option[TREE_NODE_KEY].id);
+      onSelectedChange(item[TREE_NODE_KEY].id);
       onClose();
     }
   });
 
   const handleKeyDown = useEventCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    const focusOption = (option: DSearchOption<ID, T> | undefined) => {
-      if (option) {
-        onFocusChange(option);
+    const focusItem = (item: DSearchItem<ID, T> | undefined) => {
+      if (item) {
+        onFocusChange(item);
       }
     };
-    if (dFocusOption) {
+    if (dFocusItem) {
       switch (e.code) {
         case 'Enter':
           e.preventDefault();
-          changeSelectByClick(dFocusOption);
+          changeSelectByClick(dFocusItem);
           break;
 
         case 'ArrowUp':
           e.preventDefault();
-          focusOption(dVSRef.current?.scrollByStep(-1));
+          focusItem(dVSRef.current?.scrollByStep(-1));
           break;
 
         case 'ArrowDown':
           e.preventDefault();
-          focusOption(dVSRef.current?.scrollByStep(1));
+          focusItem(dVSRef.current?.scrollByStep(1));
           break;
 
         case 'Home':
           e.preventDefault();
-          focusOption(dVSRef.current?.scrollToStart());
+          focusItem(dVSRef.current?.scrollToStart());
           break;
 
         case 'End':
           e.preventDefault();
-          focusOption(dVSRef.current?.scrollToEnd());
+          focusItem(dVSRef.current?.scrollToEnd());
           break;
 
         default:
@@ -126,8 +126,8 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
       className={`${dPrefix}cascader__list`}
       role="listbox"
       aria-multiselectable={dMultiple}
-      aria-activedescendant={dFocusOption ? dGetOptionId(dFocusOption.value) : undefined}
-      dList={dOptions}
+      aria-activedescendant={dFocusItem ? dGetItemId(dFocusItem.value) : undefined}
+      dList={dList}
       dItemRender={(item, index, renderProps) => {
         const node = item[TREE_NODE_KEY];
         let inSelected = node.checked;
@@ -146,7 +146,7 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
           <li
             {...renderProps}
             key={item.value}
-            id={dGetOptionId(item.value)}
+            id={dGetItemId(item.value)}
             className={getClassName(`${dPrefix}cascader__option`, {
               'is-selected': !dMultiple && inSelected,
               'is-disabled': node.disabled,
@@ -160,16 +160,16 @@ export function DSearchList<ID extends DId, T extends DCascaderOption<ID>>(props
               changeSelectByClick(item);
             }}
           >
-            {dFocusVisible && dFocusOption?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
+            {dFocusVisible && dFocusItem?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
             {dMultiple && <DCheckbox dModel={node.checked} dDisabled={node.disabled}></DCheckbox>}
-            <div className={`${dPrefix}cascader__option-content`}>{dCustomOption ? dCustomOption(node.origin) : getText(node)}</div>
+            <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(node.origin) : getText(node)}</div>
           </li>
         );
       }}
       dItemSize={32}
       dCompareItem={(a, b) => a.value === b.value}
       dFocusable={(item) => item[TREE_NODE_KEY].enabled}
-      dFocusItem={dFocusOption}
+      dFocusItem={dFocusItem}
       dSize={264}
       dPadding={4}
       dEmpty={

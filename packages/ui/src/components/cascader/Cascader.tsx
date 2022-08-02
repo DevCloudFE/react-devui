@@ -1,7 +1,7 @@
 import type { DId, DNestedChildren, DSize } from '../../utils/global';
-import type { DDropdownOption } from '../dropdown';
+import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
-import type { DSelectOption } from '../select';
+import type { DSelectItem } from '../select';
 import type { AbstractTreeNode } from '../tree';
 
 import { isNull } from 'lodash';
@@ -23,19 +23,19 @@ export interface DCascaderRef {
   updatePosition: () => void;
 }
 
-export type DSearchOption<V extends DId, T> = DSelectOption<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
+export type DSearchItem<V extends DId, T> = DSelectItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
 
-export interface DCascaderOption<V extends DId> {
+export interface DCascaderItem<V extends DId> {
   label: string;
   value: V;
   loading?: boolean;
   disabled?: boolean;
 }
 
-export interface DCascaderProps<V extends DId, T extends DCascaderOption<V>> extends React.HTMLAttributes<HTMLDivElement> {
+export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControl?: DFormControl;
   dModel?: V | null | V[];
-  dOptions: DNestedChildren<T>[];
+  dList: DNestedChildren<T>[];
   dVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
@@ -45,32 +45,32 @@ export interface DCascaderProps<V extends DId, T extends DCascaderOption<V>> ext
   dDisabled?: boolean;
   dMultiple?: boolean;
   dOnlyLeafSelectable?: boolean;
-  dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
+  dCustomItem?: (item: DNestedChildren<T>) => React.ReactNode;
   dCustomSelected?: (select: DNestedChildren<T>) => string;
   dCustomSearch?: {
-    filter?: (value: string, option: DNestedChildren<T>) => boolean;
+    filter?: (value: string, item: DNestedChildren<T>) => boolean;
     sort?: (a: DNestedChildren<T>, b: DNestedChildren<T>) => number;
   };
   dPopupClassName?: string;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
-  onModelChange?: (value: any, option: any) => void;
+  onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  onFocusChange?: (value: V, option: DNestedChildren<T>) => void;
+  onFocusChange?: (value: V, item: DNestedChildren<T>) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' });
-function Cascader<V extends DId, T extends DCascaderOption<V>>(
+function Cascader<V extends DId, T extends DCascaderItem<V>>(
   props: DCascaderProps<V, T>,
   ref: React.ForwardedRef<DCascaderRef>
 ): JSX.Element | null {
   const {
     dFormControl,
     dModel,
-    dOptions,
+    dList,
     dVisible,
     dPlaceholder,
     dSize,
@@ -80,7 +80,7 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     dDisabled = false,
     dMultiple = false,
     dOnlyLeafSelectable = true,
-    dCustomOption,
+    dCustomItem,
     dCustomSelected,
     dCustomSearch,
     dPopupClassName,
@@ -105,20 +105,20 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
 
   const uniqueId = useId();
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
-  const getOptionId = (val: V) => `${dPrefix}cascader-option-${val}-${uniqueId}`;
+  const getItemId = (val: V) => `${dPrefix}cascader-item-${val}-${uniqueId}`;
 
   const renderNodes = useMemo(
     () =>
-      dOptions.map((option) =>
+      dList.map((item) =>
         dMultiple
-          ? new MultipleTreeNode(option, (o) => o.value, {
-              disabled: option.disabled,
+          ? new MultipleTreeNode(item, (origin) => origin.value, {
+              disabled: item.disabled,
             })
-          : new SingleTreeNode(option, (o) => o.value, {
-              disabled: option.disabled,
+          : new SingleTreeNode(item, (origin) => origin.value, {
+              disabled: item.disabled,
             })
       ),
-    [dMultiple, dOptions]
+    [dMultiple, dList]
   );
   const nodesMap = useMemo(() => {
     const nodes = new Map<V, AbstractTreeNode<V, T>>();
@@ -170,26 +170,26 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
   const [focusVisible, setFocusVisible] = useState(false);
 
   const filterFn = useCallback(
-    (option: T, searchStr = searchValue) => {
-      const defaultFilterFn = (option: T) => {
-        return option.label.includes(searchStr);
+    (item: T, searchStr = searchValue) => {
+      const defaultFilterFn = (item: T) => {
+        return item.label.includes(searchStr);
       };
-      return dCustomSearch && dCustomSearch.filter ? dCustomSearch.filter(searchStr, option) : defaultFilterFn(option);
+      return dCustomSearch && dCustomSearch.filter ? dCustomSearch.filter(searchStr, item) : defaultFilterFn(item);
     },
     [dCustomSearch, searchValue]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchOptions = (() => {
+  const searchList = (() => {
     if (!hasSearch) {
       return [];
     }
 
-    const searchOptions: DSearchOption<V, T>[] = [];
+    const searchList: DSearchItem<V, T>[] = [];
     const reduceNodes = (nodes: AbstractTreeNode<V, T>[]) => {
       nodes.forEach((node) => {
         if ((!dMultiple && !dOnlyLeafSelectable) || node.isLeaf) {
           if (filterFn(node.origin)) {
-            searchOptions.push({
+            searchList.push({
               label: getText(node),
               value: node.id,
               disabled: node.disabled,
@@ -205,9 +205,9 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     reduceNodes(renderNodes);
 
     if (sortFn) {
-      searchOptions.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
+      searchList.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
     }
-    return searchOptions;
+    return searchList;
   })();
 
   const [_noSearchFocusNode, setNoSearchFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
@@ -224,14 +224,14 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
     }
   })();
 
-  const [_searchFocusOption, setSearchFocusOption] = useState<DSearchOption<V, T> | undefined>();
-  const searchFocusOption = (() => {
-    if (_searchFocusOption && findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled && o.value === _searchFocusOption.value)) {
-      return _searchFocusOption;
+  const [_searchFocusItem, setSearchFocusItem] = useState<DSearchItem<V, T> | undefined>();
+  const searchFocusItem = (() => {
+    if (_searchFocusItem && findNested(searchList, (item) => item[TREE_NODE_KEY].enabled && item.value === _searchFocusItem.value)) {
+      return _searchFocusItem;
     }
 
     if (hasSearch) {
-      return findNested(searchOptions, (o) => o[TREE_NODE_KEY].enabled);
+      return findNested(searchList, (item) => item[TREE_NODE_KEY].enabled);
     }
   })();
 
@@ -254,21 +254,21 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
 
       suffixNode = (
         <DDropdown
-          dOptions={selectedNodes.map<DDropdownOption<V> & { node: MultipleTreeNode<V, T> }>((node) => {
-            const { value: optionValue, disabled: optionDisabled } = node.origin;
+          dList={selectedNodes.map<DDropdownItem<V> & { node: MultipleTreeNode<V, T> }>((node) => {
+            const { value: itemValue, disabled: itemDisabled } = node.origin;
             const text = dCustomSelected ? dCustomSelected(node.origin) : getText(node);
 
             return {
-              id: optionValue,
+              id: itemValue,
               label: text,
               type: 'item',
-              disabled: optionDisabled,
+              disabled: itemDisabled,
               node,
             };
           })}
           dCloseOnClick={false}
-          onOptionClick={(id, option) => {
-            const checkeds = (option.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
+          onItemClick={(id, item) => {
+            const checkeds = (item.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
             changeSelect(Array.from(checkeds.keys()));
           }}
         >
@@ -371,20 +371,20 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
           {dLoading && (
             <div
               className={getClassName(`${dPrefix}cascader__loading`, {
-                [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchOptions : renderNodes).length === 0,
+                [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchList : renderNodes).length === 0,
               })}
             >
-              <LoadingOutlined dSize={(hasSearch ? searchOptions : renderNodes).length === 0 ? 18 : 24} dSpin />
+              <LoadingOutlined dSize={(hasSearch ? searchList : renderNodes).length === 0 ? 18 : 24} dSpin />
             </div>
           )}
           {hasSearch ? (
             <DSearchList
               dListId={listId}
-              dGetOptionId={getOptionId}
-              dOptions={searchOptions}
+              dGetItemId={getItemId}
+              dList={searchList}
               dSelected={select}
-              dFocusOption={searchFocusOption}
-              dCustomOption={dCustomOption}
+              dFocusItem={searchFocusItem}
+              dCustomItem={dCustomItem}
               dMultiple={dMultiple}
               dOnlyLeafSelectable={dOnlyLeafSelectable}
               dFocusVisible={focusVisible}
@@ -392,21 +392,21 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
               onClose={() => {
                 changeVisible(false);
               }}
-              onFocusChange={(option) => {
-                onFocusChange?.(option.value, option[TREE_NODE_KEY].origin);
+              onFocusChange={(item) => {
+                onFocusChange?.(item.value, item[TREE_NODE_KEY].origin);
 
-                setSearchFocusOption(option);
+                setSearchFocusItem(item);
               }}
               onKeyDown$={onKeyDown$}
             ></DSearchList>
           ) : (
             <DList
               dListId={listId}
-              dGetOptionId={getOptionId}
+              dGetItemId={getItemId}
               dNodes={renderNodes}
               dSelected={select}
               dFocusNode={noSearchFocusNode}
-              dCustomOption={dCustomOption}
+              dCustomItem={dCustomItem}
               dMultiple={dMultiple}
               dOnlyLeafSelectable={dOnlyLeafSelectable}
               dFocusVisible={focusVisible}
@@ -429,6 +429,6 @@ function Cascader<V extends DId, T extends DCascaderOption<V>>(
   );
 }
 
-export const DCascader: <V extends DId, T extends DCascaderOption<V>>(
+export const DCascader: <V extends DId, T extends DCascaderItem<V>>(
   props: DCascaderProps<V, T> & { ref?: React.ForwardedRef<DCascaderRef> }
 ) => ReturnType<typeof Cascader> = React.forwardRef(Cascader) as any;

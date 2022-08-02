@@ -3,13 +3,13 @@ import { usePrefixConfig, useTranslation } from '../../hooks';
 export interface DDropdownGroupProps {
   children: React.ReactNode;
   dId: string;
-  dOptions: React.ReactNode;
+  dList: React.ReactNode;
   dEmpty: boolean;
   dLevel?: number;
 }
 
 export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
-  const { children, dId, dOptions, dEmpty, dLevel = 0 } = props;
+  const { children, dId, dList, dEmpty, dLevel = 0 } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -27,7 +27,7 @@ export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
           {t('No Data')}
         </div>
       ) : (
-        dOptions
+        dList
       )}
     </ul>
   );

@@ -29,36 +29,36 @@ export interface DAutoCompleteRef {
   updatePosition: () => void;
 }
 
-export interface DAutoCompleteOption {
+export interface DAutoCompleteItem {
   value: string;
   disabled?: boolean;
 }
 
-export interface DAutoCompleteProps<T extends DAutoCompleteOption> extends React.HTMLAttributes<HTMLDivElement> {
-  dOptions: DNestedChildren<T>[];
+export interface DAutoCompleteProps<T extends DAutoCompleteItem> extends React.HTMLAttributes<HTMLDivElement> {
+  dList: DNestedChildren<T>[];
   dVisible?: boolean;
   dLoading?: boolean;
-  dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
+  dCustomItem?: (item: DNestedChildren<T>) => React.ReactNode;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
-  onOptionClick?: (value: string, option: T) => void;
+  onItemClick?: (value: string, item: T) => void;
   onScrollBottom?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAutoComplete' });
-function AutoComplete<T extends DAutoCompleteOption>(
+function AutoComplete<T extends DAutoCompleteItem>(
   props: DAutoCompleteProps<T>,
   ref: React.ForwardedRef<DAutoCompleteRef>
 ): JSX.Element | null {
   const {
     children,
-    dOptions,
+    dList,
     dVisible,
     dLoading = false,
-    dCustomOption,
+    dCustomItem,
     onVisibleChange,
     afterVisibleChange,
-    onOptionClick,
+    onItemClick,
     onScrollBottom,
 
     ...restProps
@@ -79,8 +79,8 @@ function AutoComplete<T extends DAutoCompleteOption>(
 
   const uniqueId = useId();
   const listId = `${dPrefix}auto-complete-list-${uniqueId}`;
-  const getOptionId = (val: string) => `${dPrefix}auto-complete-option-${val}-${uniqueId}`;
   const getGroupId = (val: string) => `${dPrefix}auto-complete-group-${val}-${uniqueId}`;
+  const getItemId = (val: string) => `${dPrefix}auto-complete-item-${val}-${uniqueId}`;
 
   const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
@@ -94,7 +94,7 @@ function AutoComplete<T extends DAutoCompleteOption>(
     return el;
   });
 
-  const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
+  const canSelectItem = useCallback((item: DNestedChildren<T>) => !item.disabled && !item.children, []);
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
@@ -125,18 +125,18 @@ function AutoComplete<T extends DAutoCompleteOption>(
     }
   });
 
-  const [_focusOption, setFocusOption] = useState<DNestedChildren<T> | undefined>();
-  const focusOption = (() => {
-    if (_focusOption && findNested(dOptions, (o) => canSelectOption(o) && o.value === _focusOption.value)) {
-      return _focusOption;
+  const [_focusItem, setFocusItem] = useState<DNestedChildren<T> | undefined>();
+  const focusItem = (() => {
+    if (_focusItem && findNested(dList, (item) => canSelectItem(item) && item.value === _focusItem.value)) {
+      return _focusItem;
     }
 
-    return findNested(dOptions, (o) => canSelectOption(o));
+    return findNested(dList, (item) => canSelectItem(item));
   })();
 
-  const changeFocusOption = (option?: DNestedChildren<T>) => {
-    if (!isUndefined(option)) {
-      setFocusOption(option);
+  const changeFocusItem = (item?: DNestedChildren<T>) => {
+    if (!isUndefined(item)) {
+      setFocusItem(item);
     }
   };
 
@@ -232,31 +232,31 @@ function AutoComplete<T extends DAutoCompleteOption>(
       inputProps?.onKeyDown?.(e);
       fvProps.fvOnKeyDown(e);
 
-      if (visible && !isUndefined(focusOption)) {
+      if (visible && !isUndefined(focusItem)) {
         switch (e.code) {
           case 'ArrowUp':
             e.preventDefault();
-            changeFocusOption(dVSRef.current?.scrollByStep(-1));
+            changeFocusItem(dVSRef.current?.scrollByStep(-1));
             break;
 
           case 'ArrowDown':
             e.preventDefault();
-            changeFocusOption(dVSRef.current?.scrollByStep(1));
+            changeFocusItem(dVSRef.current?.scrollByStep(1));
             break;
 
           case 'Home':
             e.preventDefault();
-            changeFocusOption(dVSRef.current?.scrollToStart());
+            changeFocusItem(dVSRef.current?.scrollToStart());
             break;
 
           case 'End':
             e.preventDefault();
-            changeFocusOption(dVSRef.current?.scrollToEnd());
+            changeFocusItem(dVSRef.current?.scrollToEnd());
             break;
 
           case 'Enter':
             e.preventDefault();
-            onOptionClick?.(focusOption.value, focusOption);
+            onItemClick?.(focusItem.value, focusItem);
             break;
 
           default:
@@ -346,10 +346,10 @@ function AutoComplete<T extends DAutoCompleteOption>(
                   {dLoading && (
                     <div
                       className={getClassName(`${dPrefix}auto-complete__loading`, {
-                        [`${dPrefix}auto-complete__loading--empty`]: dOptions.length === 0,
+                        [`${dPrefix}auto-complete__loading--empty`]: dList.length === 0,
                       })}
                     >
-                      <LoadingOutlined dSize={dOptions.length === 0 ? 18 : 24} dSpin />
+                      <LoadingOutlined dSize={dList.length === 0 ? 18 : 24} dSpin />
                     </div>
                   )}
                   <DVirtualScroll
@@ -357,28 +357,28 @@ function AutoComplete<T extends DAutoCompleteOption>(
                     id={listId}
                     className={`${dPrefix}auto-complete__list`}
                     role="listbox"
-                    aria-activedescendant={isUndefined(focusOption) ? undefined : getOptionId(focusOption.value)}
-                    dList={dOptions}
+                    aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                    dList={dList}
                     dItemRender={(item, index, renderProps, parent) => {
-                      const { value: optionValue, disabled: optionDisabled, children } = item;
+                      const { value: itemValue, disabled: itemDisabled, children } = item;
 
-                      const optionNode = dCustomOption ? dCustomOption(item) : optionValue;
+                      const itemNode = dCustomItem ? dCustomItem(item) : itemValue;
 
                       if (children) {
                         return (
                           <ul
-                            key={optionValue}
+                            key={itemValue}
                             className={`${dPrefix}auto-complete__option-group`}
                             role="group"
-                            aria-labelledby={getGroupId(optionValue)}
+                            aria-labelledby={getGroupId(itemValue)}
                           >
                             <li
-                              key={optionValue}
-                              id={getGroupId(optionValue)}
+                              key={itemValue}
+                              id={getGroupId(itemValue)}
                               className={`${dPrefix}auto-complete__option-group-label`}
                               role="presentation"
                             >
-                              <div className={`${dPrefix}auto-complete__option-content`}>{optionNode}</div>
+                              <div className={`${dPrefix}auto-complete__option-content`}>{itemNode}</div>
                             </li>
                             {children.length === 0 ? (
                               <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: 12 + 8 }}>
@@ -394,25 +394,25 @@ function AutoComplete<T extends DAutoCompleteOption>(
                       return (
                         <li
                           {...renderProps}
-                          key={optionValue}
-                          id={getOptionId(optionValue)}
+                          key={itemValue}
+                          id={getItemId(itemValue)}
                           className={getClassName(`${dPrefix}auto-complete__option`, {
-                            'is-disabled': optionDisabled,
+                            'is-disabled': itemDisabled,
                           })}
                           style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
-                          title={optionValue}
+                          title={itemValue}
                           role="option"
                           aria-selected={false}
-                          aria-disabled={optionDisabled}
+                          aria-disabled={itemDisabled}
                           onClick={() => {
-                            if (!optionDisabled) {
-                              changeFocusOption(item);
-                              onOptionClick?.(optionValue, item);
+                            if (!itemDisabled) {
+                              changeFocusItem(item);
+                              onItemClick?.(itemValue, item);
                             }
                           }}
                         >
-                          {focusVisible && focusOption?.value === optionValue && <div className={`${dPrefix}focus-outline`}></div>}
-                          <div className={`${dPrefix}auto-complete__option-content`}>{optionNode}</div>
+                          {focusVisible && focusItem?.value === itemValue && <div className={`${dPrefix}focus-outline`}></div>}
+                          <div className={`${dPrefix}auto-complete__option-content`}>{itemNode}</div>
                         </li>
                       );
                     }}
@@ -424,8 +424,8 @@ function AutoComplete<T extends DAutoCompleteOption>(
                     }}
                     dItemNested={(item) => item.children}
                     dCompareItem={(a, b) => a.value === b.value}
-                    dFocusable={canSelectOption}
-                    dFocusItem={focusOption}
+                    dFocusable={canSelectItem}
+                    dFocusItem={focusItem}
                     dSize={264}
                     dPadding={4}
                     dEmpty={
@@ -445,6 +445,6 @@ function AutoComplete<T extends DAutoCompleteOption>(
   );
 }
 
-export const DAutoComplete: <T extends DAutoCompleteOption>(
+export const DAutoComplete: <T extends DAutoCompleteItem>(
   props: DAutoCompleteProps<T> & { ref?: React.ForwardedRef<DAutoCompleteRef> }
 ) => ReturnType<typeof AutoComplete> = React.forwardRef(AutoComplete) as any;

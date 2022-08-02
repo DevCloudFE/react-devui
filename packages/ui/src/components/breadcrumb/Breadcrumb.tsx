@@ -5,22 +5,22 @@ import React from 'react';
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { getClassName, registerComponentMate } from '../../utils';
 
-export interface DBreadcrumbOption<ID extends DId> {
+export interface DBreadcrumbItem<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   link?: boolean;
   separator?: React.ReactNode;
 }
 
-export interface DBreadcrumbProps<ID extends DId, T extends DBreadcrumbOption<ID>>
+export interface DBreadcrumbProps<ID extends DId, T extends DBreadcrumbItem<ID>>
   extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dList: T[];
   dSeparator?: React.ReactNode;
-  onItemClick?: (id: ID, link: T) => void;
+  onItemClick?: (id: ID, item: T) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBreadcrumb' });
-export function DBreadcrumb<ID extends DId, T extends DBreadcrumbOption<ID>>(props: DBreadcrumbProps<ID, T>): JSX.Element | null {
+export function DBreadcrumb<ID extends DId, T extends DBreadcrumbItem<ID>>(props: DBreadcrumbProps<ID, T>): JSX.Element | null {
   const {
     dList,
     dSeparator,

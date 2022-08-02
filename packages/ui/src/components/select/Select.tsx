@@ -1,5 +1,5 @@
 import type { DNestedChildren, DId, DSize } from '../../utils/global';
-import type { DDropdownOption } from '../dropdown';
+import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DVirtualScrollRef } from '../virtual-scroll';
 
@@ -22,16 +22,16 @@ export interface DSelectRef {
   updatePosition: () => void;
 }
 
-export interface DSelectOption<V extends DId> {
+export interface DSelectItem<V extends DId> {
   label: string;
   value: V;
   disabled?: boolean;
 }
 
-export interface DSelectProps<V extends DId, T extends DSelectOption<V>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
+  dList: DNestedChildren<T>[];
   dModel?: V | null | V[];
-  dOptions: DNestedChildren<T>[];
   dVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
@@ -41,35 +41,35 @@ export interface DSelectProps<V extends DId, T extends DSelectOption<V>> extends
   dDisabled?: boolean;
   dMultiple?: boolean;
   dMaxSelectNum?: number;
-  dCustomOption?: (option: DNestedChildren<T>) => React.ReactNode;
+  dCustomItem?: (item: DNestedChildren<T>) => React.ReactNode;
   dCustomSelected?: (select: DNestedChildren<T>) => string;
   dCustomSearch?: {
-    filter?: (value: string, option: DNestedChildren<T>) => boolean;
+    filter?: (value: string, item: DNestedChildren<T>) => boolean;
     sort?: (a: DNestedChildren<T>, b: DNestedChildren<T>) => number;
   };
-  dCreateOption?: (value: string) => DNestedChildren<T> | undefined;
+  dCreateItem?: (value: string) => DNestedChildren<T> | undefined;
   dPopupClassName?: string;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
-  onModelChange?: (value: any, option: any) => void;
+  onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  onCreateOption?: (option: DNestedChildren<T>) => void;
+  onCreateItem?: (item: DNestedChildren<T>) => void;
   onScrollBottom?: () => void;
   onExceed?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' });
-function Select<V extends DId, T extends DSelectOption<V>>(
+function Select<V extends DId, T extends DSelectItem<V>>(
   props: DSelectProps<V, T>,
   ref: React.ForwardedRef<DSelectRef>
 ): JSX.Element | null {
   const {
     dFormControl,
+    dList,
     dModel,
-    dOptions,
     dVisible,
     dPlaceholder,
     dSize,
@@ -79,10 +79,10 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     dDisabled = false,
     dMultiple = false,
     dMaxSelectNum,
-    dCustomOption,
+    dCustomItem,
     dCustomSelected,
     dCustomSearch,
-    dCreateOption,
+    dCreateItem,
     dPopupClassName,
     dInputProps,
     dInputRef,
@@ -91,7 +91,7 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     afterVisibleChange,
     onClear,
     onSearch,
-    onCreateOption,
+    onCreateItem,
     onScrollBottom,
     onExceed,
 
@@ -111,26 +111,26 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
   const uniqueId = useId();
   const listId = `${dPrefix}select-list-${uniqueId}`;
-  const getOptionId = (val: V) => `${dPrefix}select-option-${val}-${uniqueId}`;
   const getGroupId = (val: V) => `${dPrefix}select-group-${val}-${uniqueId}`;
+  const getItemId = (val: V) => `${dPrefix}select-item-${val}-${uniqueId}`;
 
-  const optionsMap = useMemo(() => {
-    const options = new Map<V, T>();
+  const itemsMap = useMemo(() => {
+    const items = new Map<V, T>();
     const reduceArr = (arr: DNestedChildren<T>[]) => {
       for (const item of arr) {
-        options.set(item.value, item);
+        items.set(item.value, item);
         if (item.children) {
           reduceArr(item.children);
         }
       }
     };
-    reduceArr(dOptions);
-    return options;
-  }, [dOptions]);
+    reduceArr(dList);
+    return items;
+  }, [dList]);
 
   const [searchValue, setSearchValue] = useState('');
 
-  const canSelectOption = useCallback((option: DNestedChildren<T>) => !option.disabled && !option.children, []);
+  const canSelectItem = useCallback((item: DNestedChildren<T>) => !item.disabled && !item.children, []);
 
   const [focusVisible, setFocusVisible] = useState(false);
 
@@ -144,10 +144,10 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         if (dMultiple) {
           onModelChange(
             value,
-            (value as V[]).map((v) => optionsMap.get(v))
+            (value as V[]).map((v) => itemsMap.get(v))
           );
         } else {
-          onModelChange(value, isNull(value) ? null : optionsMap.get(value as V));
+          onModelChange(value, isNull(value) ? null : itemsMap.get(value as V));
         }
       }
     },
@@ -164,109 +164,111 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
-    (searchStr: string, option: T) => {
-      const defaultFilterFn = (option: T) => {
-        return option.label.includes(searchStr);
+    (searchStr: string, item: T) => {
+      const defaultFilterFn = (item: T) => {
+        return item.label.includes(searchStr);
       };
-      return _filterFn ? _filterFn(searchStr, option) : defaultFilterFn(option);
+      return _filterFn ? _filterFn(searchStr, item) : defaultFilterFn(item);
     },
     [_filterFn]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchOptions = (() => {
+  const searchList = (() => {
     if (!hasSearch) {
       return [];
     }
 
-    let createOption = dCreateOption?.(searchValue);
-    if (createOption) {
-      createOption = {
-        ...createOption,
+    let createItem = dCreateItem?.(searchValue);
+    if (createItem) {
+      createItem = {
+        ...createItem,
         [IS_CREATE]: true,
       };
     }
 
-    let searchOptions: (T & { [IS_CREATE]?: boolean })[] = [];
+    let searchList: (T & { [IS_CREATE]?: boolean })[] = [];
 
-    dOptions.forEach((option) => {
-      if (!option.children) {
-        if (createOption && option.value === createOption.value) {
-          createOption = undefined;
+    dList.forEach((item) => {
+      if (!item.children) {
+        if (createItem && item.value === createItem.value) {
+          createItem = undefined;
         }
-        if (filterFn(searchValue, option)) {
-          searchOptions.push(option);
+        if (filterFn(searchValue, item)) {
+          searchList.push(item);
         }
       } else {
-        const groupOptions: T[] = [];
-        option.children.forEach((groupItem) => {
-          if (createOption && groupItem.value === createOption.value) {
-            createOption = undefined;
+        const groupList: T[] = [];
+        item.children.forEach((groupItem) => {
+          if (createItem && groupItem.value === createItem.value) {
+            createItem = undefined;
           }
           if (filterFn(searchValue, groupItem)) {
-            groupOptions.push(groupItem);
+            groupList.push(groupItem);
           }
         });
-        searchOptions = searchOptions.concat(groupOptions);
+        searchList = searchList.concat(groupList);
       }
     });
 
     if (sortFn) {
-      searchOptions.sort(sortFn);
+      searchList.sort(sortFn);
     }
 
-    if (createOption) {
-      searchOptions.unshift(createOption);
+    if (createItem) {
+      searchList.unshift(createItem);
     }
 
-    return searchOptions;
+    return searchList;
   })();
-  const options = hasSearch ? searchOptions : dOptions;
+  const list = hasSearch ? searchList : dList;
 
-  const [_noSearchFocusOption, setNoSearchFocusOption] = useState<DNestedChildren<T> | undefined>();
-  const noSearchFocusOption = (() => {
-    let option: DNestedChildren<T> | undefined;
+  const [_noSearchFocusItem, setNoSearchFocusItem] = useState<DNestedChildren<T> | undefined>();
+  const noSearchFocusItem = (() => {
+    let focusItem: DNestedChildren<T> | undefined;
 
-    if (_noSearchFocusOption) {
-      option = optionsMap.get(_noSearchFocusOption.value);
-      if (option && canSelectOption(option)) {
-        return option;
+    if (_noSearchFocusItem) {
+      focusItem = itemsMap.get(_noSearchFocusItem.value);
+      if (focusItem && canSelectItem(focusItem)) {
+        return focusItem;
       }
     }
 
     if (hasSelected) {
-      option = findNested(dOptions, (o) => (canSelectOption(o) && dMultiple ? (select as Set<V>).has(o.value) : (select as V) === o.value));
+      focusItem = findNested(dList, (item) =>
+        canSelectItem(item) && dMultiple ? (select as Set<V>).has(item.value) : (select as V) === item.value
+      );
     }
 
-    if (isUndefined(option)) {
-      option = findNested(dOptions, (o) => canSelectOption(o));
+    if (isUndefined(focusItem)) {
+      focusItem = findNested(dList, (item) => canSelectItem(item));
     }
 
-    return option;
+    return focusItem;
   })();
 
-  const [_searchFocusOption, setSearchFocusOption] = useState<(T & { [IS_CREATE]?: boolean | undefined }) | undefined>();
-  const searchFocusOption = (() => {
-    if (_searchFocusOption && findNested(searchOptions, (o) => canSelectOption(o) && o.value === _searchFocusOption.value)) {
-      return _searchFocusOption;
+  const [_searchFocusItem, setSearchFocusItem] = useState<(T & { [IS_CREATE]?: boolean | undefined }) | undefined>();
+  const searchFocusItem = (() => {
+    if (_searchFocusItem && findNested(searchList, (item) => canSelectItem(item) && item.value === _searchFocusItem.value)) {
+      return _searchFocusItem;
     }
 
     if (hasSearch) {
-      return findNested(searchOptions, (o) => canSelectOption(o));
+      return findNested(searchList, (item) => canSelectItem(item));
     }
   })();
 
-  const focusOption = hasSearch ? searchFocusOption : noSearchFocusOption;
-  const changeFocusOption = (option?: DNestedChildren<T>) => {
-    if (!isUndefined(option)) {
-      hasSearch ? setSearchFocusOption(option) : setNoSearchFocusOption(option);
+  const focusItem = hasSearch ? searchFocusItem : noSearchFocusItem;
+  const changeFocusItem = (item?: DNestedChildren<T>) => {
+    if (!isUndefined(item)) {
+      hasSearch ? setSearchFocusItem(item) : setNoSearchFocusItem(item);
     }
   };
 
-  const createOption = (option?: DNestedChildren<T>) => {
-    if (!isUndefined(option)) {
-      const _option = { ...option };
-      delete _option[IS_CREATE];
-      onCreateOption?.(_option);
+  const createItem = (item?: DNestedChildren<T>) => {
+    if (!isUndefined(item)) {
+      const newItem = { ...item };
+      delete newItem[IS_CREATE];
+      onCreateItem?.(newItem);
     }
   };
 
@@ -295,23 +297,23 @@ function Select<V extends DId, T extends DSelectOption<V>>(
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selectedOptions: T[] = (_select as V[]).map((v) => optionsMap.get(v)!);
+      const selectedItems: T[] = (_select as V[]).map((v) => itemsMap.get(v)!);
 
       suffixNode = (
         <DDropdown
-          dOptions={selectedOptions.map<DDropdownOption<V>>((option) => {
-            const { label: optionLabel, value: optionValue, disabled: optionDisabled } = option;
-            const text = dCustomSelected ? dCustomSelected(option) : optionLabel;
+          dList={selectedItems.map<DDropdownItem<V>>((item) => {
+            const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
+            const text = dCustomSelected ? dCustomSelected(item) : itemLabel;
 
             return {
-              id: optionValue,
+              id: itemValue,
               label: text,
               type: 'item',
-              disabled: optionDisabled,
+              disabled: itemDisabled,
             };
           })}
           dCloseOnClick={false}
-          onOptionClick={(id: V) => {
+          onItemClick={(id: V) => {
             changeSelectByClick(id);
           }}
         >
@@ -324,26 +326,26 @@ function Select<V extends DId, T extends DSelectOption<V>>(
           </DTag>
         </DDropdown>
       );
-      selectedNode = selectedOptions.map((option) => (
+      selectedNode = selectedItems.map((item) => (
         <DTag
-          key={option.value}
+          key={item.value}
           className={`${dPrefix}select__multiple-tag`}
           dSize={size}
-          dClosable={!(option.disabled || disabled)}
+          dClosable={!(item.disabled || disabled)}
           onClose={(e) => {
             e.stopPropagation();
 
-            changeSelectByClick(option.value);
+            changeSelectByClick(item.value);
           }}
         >
-          {dCustomSelected ? dCustomSelected(option) : option.label}
+          {dCustomSelected ? dCustomSelected(item) : item.label}
         </DTag>
       ));
     } else {
       if (!isNull(select)) {
-        const option = optionsMap.get(select as V)!;
-        selectedLabel = option.label;
-        selectedNode = dCustomSelected ? dCustomSelected(option) : selectedLabel;
+        const item = itemsMap.get(select as V)!;
+        selectedLabel = item.label;
+        selectedNode = dCustomSelected ? dCustomSelected(item) : selectedLabel;
       }
     }
     return [selectedNode, suffixNode, selectedLabel];
@@ -372,34 +374,34 @@ function Select<V extends DId, T extends DSelectOption<V>>(
         onKeyDown: (e) => {
           dInputProps?.onKeyDown?.(e);
 
-          if (visible && !isUndefined(focusOption)) {
+          if (visible && !isUndefined(focusItem)) {
             switch (e.code) {
               case 'ArrowUp':
                 e.preventDefault();
-                changeFocusOption(dVSRef.current?.scrollByStep(-1));
+                changeFocusItem(dVSRef.current?.scrollByStep(-1));
                 break;
 
               case 'ArrowDown':
                 e.preventDefault();
-                changeFocusOption(dVSRef.current?.scrollByStep(1));
+                changeFocusItem(dVSRef.current?.scrollByStep(1));
                 break;
 
               case 'Home':
                 e.preventDefault();
-                changeFocusOption(dVSRef.current?.scrollToStart());
+                changeFocusItem(dVSRef.current?.scrollToStart());
                 break;
 
               case 'End':
                 e.preventDefault();
-                changeFocusOption(dVSRef.current?.scrollToEnd());
+                changeFocusItem(dVSRef.current?.scrollToEnd());
                 break;
 
               case 'Enter':
                 e.preventDefault();
-                if (focusOption[IS_CREATE]) {
-                  createOption(focusOption);
+                if (focusItem[IS_CREATE]) {
+                  createItem(focusItem);
                 }
-                changeSelectByClick(focusOption.value);
+                changeSelectByClick(focusItem.value);
                 break;
 
               default:
@@ -457,10 +459,10 @@ function Select<V extends DId, T extends DSelectOption<V>>(
           {dLoading && (
             <div
               className={getClassName(`${dPrefix}select__loading`, {
-                [`${dPrefix}select__loading--empty`]: options.length === 0,
+                [`${dPrefix}select__loading--empty`]: list.length === 0,
               })}
             >
-              <LoadingOutlined dSize={options.length === 0 ? 18 : 24} dSpin />
+              <LoadingOutlined dSize={list.length === 0 ? 18 : 24} dSpin />
             </div>
           )}
           <DVirtualScroll
@@ -469,23 +471,18 @@ function Select<V extends DId, T extends DSelectOption<V>>(
             className={`${dPrefix}select__list`}
             role="listbox"
             aria-multiselectable={dMultiple}
-            aria-activedescendant={isUndefined(focusOption) ? undefined : getOptionId(focusOption.value)}
-            dList={options}
+            aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+            dList={list}
             dItemRender={(item, index, renderProps, parent) => {
-              const { label: optionLabel, value: optionValue, disabled: optionDisabled, children } = item;
+              const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
 
-              const optionNode = dCustomOption ? dCustomOption(item) : optionLabel;
+              const node = dCustomItem ? dCustomItem(item) : itemLabel;
 
               if (children) {
                 return (
-                  <ul key={optionValue} className={`${dPrefix}select__option-group`} role="group" aria-labelledby={getGroupId(optionValue)}>
-                    <li
-                      key={optionValue}
-                      id={getGroupId(optionValue)}
-                      className={`${dPrefix}select__option-group-label`}
-                      role="presentation"
-                    >
-                      <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
+                  <ul key={itemValue} className={`${dPrefix}select__option-group`} role="group" aria-labelledby={getGroupId(itemValue)}>
+                    <li key={itemValue} id={getGroupId(itemValue)} className={`${dPrefix}select__option-group-label`} role="presentation">
+                      <div className={`${dPrefix}select__option-content`}>{node}</div>
                     </li>
                     {children.length === 0 ? (
                       <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>
@@ -500,42 +497,42 @@ function Select<V extends DId, T extends DSelectOption<V>>(
 
               let isSelected = false;
               if (dMultiple) {
-                isSelected = (select as Set<V>).has(optionValue);
+                isSelected = (select as Set<V>).has(itemValue);
               } else {
-                isSelected = (select as V | null) === optionValue;
+                isSelected = (select as V | null) === itemValue;
               }
 
               return (
                 <li
                   {...renderProps}
-                  key={optionValue}
-                  id={getOptionId(optionValue)}
+                  key={itemValue}
+                  id={getItemId(itemValue)}
                   className={getClassName(`${dPrefix}select__option`, {
                     'is-selected': !dMultiple && isSelected,
-                    'is-disabled': optionDisabled,
+                    'is-disabled': itemDisabled,
                   })}
                   style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
-                  title={(item[IS_CREATE] ? t('Create') + ' ' : '') + optionLabel}
+                  title={(item[IS_CREATE] ? t('Create') + ' ' : '') + itemLabel}
                   role="option"
                   aria-selected={isSelected}
-                  aria-disabled={optionDisabled}
+                  aria-disabled={itemDisabled}
                   onClick={() => {
-                    if (!optionDisabled) {
+                    if (!itemDisabled) {
                       if (item[IS_CREATE]) {
-                        createOption(item);
+                        createItem(item);
                       }
-                      changeFocusOption(item);
-                      changeSelectByClick(optionValue);
+                      changeFocusItem(item);
+                      changeSelectByClick(itemValue);
                     }
                   }}
                 >
-                  {focusVisible && focusOption?.value === optionValue && <div className={`${dPrefix}focus-outline`}></div>}
+                  {focusVisible && focusItem?.value === itemValue && <div className={`${dPrefix}focus-outline`}></div>}
                   {item[IS_CREATE] ? (
                     <PlusOutlined dTheme="primary" />
                   ) : dMultiple ? (
-                    <DCheckbox dDisabled={optionDisabled} dModel={isSelected}></DCheckbox>
+                    <DCheckbox dDisabled={itemDisabled} dModel={isSelected}></DCheckbox>
                   ) : null}
-                  <div className={`${dPrefix}select__option-content`}>{optionNode}</div>
+                  <div className={`${dPrefix}select__option-content`}>{node}</div>
                 </li>
               );
             }}
@@ -547,8 +544,8 @@ function Select<V extends DId, T extends DSelectOption<V>>(
             }}
             dItemNested={(item) => item.children}
             dCompareItem={(a, b) => a.value === b.value}
-            dFocusable={canSelectOption}
-            dFocusItem={focusOption}
+            dFocusable={canSelectItem}
+            dFocusItem={focusItem}
             dSize={264}
             dPadding={4}
             dEmpty={
@@ -564,6 +561,6 @@ function Select<V extends DId, T extends DSelectOption<V>>(
   );
 }
 
-export const DSelect: <V extends DId, T extends DSelectOption<V>>(
+export const DSelect: <V extends DId, T extends DSelectItem<V>>(
   props: DSelectProps<V, T> & { ref?: React.ForwardedRef<DSelectRef> }
 ) => ReturnType<typeof Select> = React.forwardRef(Select) as any;

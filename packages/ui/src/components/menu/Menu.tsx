@@ -12,7 +12,7 @@ import { DCollapseTransition } from '../_transition';
 import { DMenuGroup } from './MenuGroup';
 import { DMenuItem } from './MenuItem';
 import { DMenuSub } from './MenuSub';
-import { checkEnableOption, getOptions } from './utils';
+import { checkEnableItem, getItems } from './utils';
 
 export interface DMenuRef {
   updatePosition: () => void;
@@ -20,7 +20,7 @@ export interface DMenuRef {
 
 export type DMenuMode = 'horizontal' | 'vertical' | 'popup' | 'icon';
 
-export interface DMenuOption<ID extends DId> {
+export interface DMenuItem<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   type: 'item' | 'group' | 'sub';
@@ -28,21 +28,21 @@ export interface DMenuOption<ID extends DId> {
   disabled?: boolean;
 }
 
-export interface DMenuProps<ID extends DId, T extends DMenuOption<ID>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
-  dOptions: DNestedChildren<T>[];
+export interface DMenuProps<ID extends DId, T extends DMenuItem<ID>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  dList: DNestedChildren<T>[];
   dActive?: ID | null;
   dExpands?: ID[];
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
-  onActiveChange?: (id: ID, option: DNestedChildren<T>) => void;
-  onExpandsChange?: (ids: ID[], options: DNestedChildren<T>[]) => void;
+  onActiveChange?: (id: ID, item: DNestedChildren<T>) => void;
+  onExpandsChange?: (ids: ID[], items: DNestedChildren<T>[]) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
-function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>): JSX.Element | null {
+function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>): JSX.Element | null {
   const {
-    dOptions,
+    dList,
     dActive,
     dExpands,
     dMode = 'vertical',
@@ -61,11 +61,11 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
   const updatePosition$ = useEventNotify<void>();
 
   const uniqueId = useId();
-  const getOptionId = (id: ID) => `${dPrefix}menu-option-${id}-${uniqueId}`;
+  const getItemId = (id: ID) => `${dPrefix}menu-item-${id}-${uniqueId}`;
 
   const [activeId, changeActiveId] = useDValue<ID | null, ID>(null, dActive, (id) => {
     if (onActiveChange) {
-      onActiveChange(id, findNested(dOptions, (option) => option.id === id) as T);
+      onActiveChange(id, findNested(dList, (item) => item.id === id) as T);
     }
   });
   const activeIds = (() => {
@@ -83,16 +83,16 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
       }
     };
     if (!isNull(activeId)) {
-      reduceArr(dOptions);
+      reduceArr(dList);
     }
 
     return ids ?? [];
   })();
 
-  const [expanoptionIds, changeExpanoptionIds] = useDValue<ID[]>([], dExpands, (ids) => {
+  const [expandIds, changeExpandIds] = useDValue<ID[]>([], dExpands, (ids) => {
     if (onExpandsChange) {
       let length = ids.length;
-      const options: DNestedChildren<T>[] = [];
+      const items: DNestedChildren<T>[] = [];
       const reduceArr = (arr: DNestedChildren<T>[]) => {
         for (const item of arr) {
           if (length === 0) {
@@ -104,15 +104,15 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
           } else {
             const index = ids.findIndex((id) => id === item.id);
             if (index !== -1) {
-              options[index] = item;
+              items[index] = item;
               length -= 1;
             }
           }
         }
       };
-      reduceArr(dOptions);
+      reduceArr(dList);
 
-      onExpandsChange(ids, options);
+      onExpandsChange(ids, items);
     }
   });
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
@@ -145,9 +145,9 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
           break;
         }
 
-        if ((item.type === 'group' || (dMode === 'vertical' && item.type === 'sub' && expanoptionIds.includes(item.id))) && item.children) {
+        if ((item.type === 'group' || (dMode === 'vertical' && item.type === 'sub' && expandIds.includes(item.id))) && item.children) {
           reduceArr(item.children);
-        } else if (checkEnableOption(item)) {
+        } else if (checkEnableItem(item)) {
           if (isUndefined(firstId)) {
             firstId = item.id;
           }
@@ -157,38 +157,38 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
         }
       }
     };
-    reduceArr(dOptions);
+    reduceArr(dList);
     setFocusIds(ids.length === 0 ? (isUndefined(firstId) ? [] : [firstId]) : ids);
   };
 
   let handleKeyDown: React.KeyboardEventHandler<HTMLElement> | undefined;
-  const optionNodes = (() => {
+  const nodes = (() => {
     const getNodes = (arr: DNestedChildren<T>[], level: number, subParents: DNestedChildren<T>[], inNav = false): JSX.Element[] => {
       const posinset = new Map<ID, [number, number]>();
       let noGroup: DNestedChildren<T>[] = [];
-      for (const option of arr) {
-        if (option.type === 'group') {
+      for (const item of arr) {
+        if (item.type === 'group') {
           for (const [i, o] of noGroup.entries()) {
             posinset.set(o.id, [i, noGroup.length]);
           }
           noGroup = [];
         } else {
-          noGroup.push(option);
+          noGroup.push(item);
         }
       }
       for (const [i, o] of noGroup.entries()) {
         posinset.set(o.id, [i, noGroup.length]);
       }
 
-      return arr.map((option) => {
-        const { id: optionId, title: optionTitle, type: optionType, icon: optionIcon, disabled: optionDisabled, children } = option;
+      return arr.map((item) => {
+        const { id: itemId, title: itemTitle, type: itemType, icon: itemIcon, disabled: itemDisabled, children } = item;
 
-        const _subParents = optionType === 'sub' ? subParents.concat([option]) : subParents;
-        const id = getOptionId(optionId);
-        const isExpand = expanoptionIds.includes(optionId);
-        const isFocus = optionId === focusId;
+        const _subParents = itemType === 'sub' ? subParents.concat([item]) : subParents;
+        const id = getItemId(itemId);
+        const isExpand = expandIds.includes(itemId);
+        const isFocus = itemId === focusId;
         const isEmpty = !(children && children.length > 0);
-        const popupState = popupIds.find((v) => v.id === optionId);
+        const popupState = popupIds.find((v) => v.id === itemId);
 
         let step = 20;
         let space = 16;
@@ -201,24 +201,24 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
         }
 
         const handleItemClick = () => {
-          changeActiveId(optionId);
-          setFocusIds(subParents.map((o) => o.id).concat([optionId]));
+          changeActiveId(itemId);
+          setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
         };
 
-        const handleSubExpand = (sameLevelOptions: T[]) => {
+        const handleSubExpand = (sameLevelItems: T[]) => {
           if (isExpand) {
-            changeExpanoptionIds((draft) => {
-              const index = draft.findIndex((id) => id === optionId);
+            changeExpandIds((draft) => {
+              const index = draft.findIndex((id) => id === itemId);
               draft.splice(index, 1);
             });
           } else {
             if (dExpandOne) {
-              const ids = expanoptionIds.filter((id) => sameLevelOptions.findIndex((o) => o.id === id) === -1);
-              ids.push(optionId);
-              changeExpanoptionIds(ids);
+              const ids = expandIds.filter((id) => sameLevelItems.findIndex((sameLevelItem) => sameLevelItem.id === id) === -1);
+              ids.push(itemId);
+              changeExpandIds(ids);
             } else {
-              changeExpanoptionIds((draft) => {
-                draft.push(optionId);
+              changeExpandIds((draft) => {
+                draft.push(itemId);
               });
             }
           }
@@ -226,10 +226,10 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelOptions = getOptions(nth(subParents, -1)?.children ?? dOptions);
-            const focusOption = (o?: T) => {
-              if (o) {
-                setFocusIds(subParents.map((o) => o.id).concat([o.id]));
+            const sameLevelItems = getItems(nth(subParents, -1)?.children ?? dList);
+            const focusItem = (val?: T) => {
+              if (val) {
+                setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
               }
             };
 
@@ -259,10 +259,10 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
             switch (e.code) {
               case 'ArrowUp': {
                 e.preventDefault();
-                const index = sameLevelOptions.findIndex((o) => o.id === optionId);
-                const o = nth(sameLevelOptions, index - 1);
-                focusOption(o);
-                if (dMode !== 'vertical' && o && nth(popupIds, -1)?.id === optionId) {
+                const index = sameLevelItems.findIndex((sameLevelItem) => sameLevelItem.id === itemId);
+                const newFocusItem = nth(sameLevelItems, index - 1);
+                focusItem(newFocusItem);
+                if (dMode !== 'vertical' && newFocusItem && nth(popupIds, -1)?.id === itemId) {
                   setPopupIds(popupIds.slice(0, -1));
                 }
                 break;
@@ -270,10 +270,10 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
               case 'ArrowDown': {
                 e.preventDefault();
-                const index = sameLevelOptions.findIndex((o) => o.id === optionId);
-                const o = nth(sameLevelOptions, (index + 1) % sameLevelOptions.length);
-                focusOption(o);
-                if (dMode !== 'vertical' && o && nth(popupIds, -1)?.id === optionId) {
+                const index = sameLevelItems.findIndex((sameLevelItem) => sameLevelItem.id === itemId);
+                const newFocusItem = nth(sameLevelItems, (index + 1) % sameLevelItems.length);
+                focusItem(newFocusItem);
+                if (dMode !== 'vertical' && newFocusItem && nth(popupIds, -1)?.id === itemId) {
                   setPopupIds(popupIds.slice(0, -1));
                 }
                 break;
@@ -293,18 +293,18 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
               case 'ArrowRight':
                 e.preventDefault();
-                if (optionType === 'sub') {
+                if (itemType === 'sub') {
                   if (dMode === 'vertical') {
                     if (!isExpand) {
-                      handleSubExpand(sameLevelOptions);
+                      handleSubExpand(sameLevelItems);
                     }
                   } else {
-                    addPopupId(optionId);
+                    addPopupId(itemId);
                   }
                   if (children) {
-                    const o = nth(getOptions(children), 0);
-                    if (o) {
-                      setFocusIds(_subParents.map((o) => o.id).concat([o.id]));
+                    const newFocusItem = nth(getItems(children), 0);
+                    if (newFocusItem) {
+                      setFocusIds(_subParents.map((parentItem) => parentItem.id).concat([newFocusItem.id]));
                     }
                   }
                 }
@@ -312,24 +312,24 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
 
               case 'Home':
                 e.preventDefault();
-                focusOption(nth(sameLevelOptions, 0));
+                focusItem(nth(sameLevelItems, 0));
                 break;
 
               case 'End':
                 e.preventDefault();
-                focusOption(nth(sameLevelOptions, -1));
+                focusItem(nth(sameLevelItems, -1));
                 break;
 
               case 'Enter':
               case 'Space':
                 e.preventDefault();
-                if (optionType === 'item') {
+                if (itemType === 'item') {
                   handleItemClick();
-                } else if (optionType === 'sub') {
+                } else if (itemType === 'sub') {
                   if (dMode === 'vertical') {
-                    handleSubExpand(sameLevelOptions);
+                    handleSubExpand(sameLevelItems);
                   } else {
-                    addPopupId(optionId);
+                    addPopupId(itemId);
                   }
                 }
                 break;
@@ -341,43 +341,43 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
         }
 
         return (
-          <React.Fragment key={optionId}>
-            {optionType === 'item' ? (
+          <React.Fragment key={itemId}>
+            {itemType === 'item' ? (
               <DMenuItem
                 dId={id}
-                dDisabled={optionDisabled}
-                dPosinset={posinset.get(optionId)!}
+                dDisabled={itemDisabled}
+                dPosinset={posinset.get(itemId)!}
                 dMode={dMode}
                 dInNav={inNav}
-                dActive={activeId === optionId}
+                dActive={activeId === itemId}
                 dFocusVisible={focusVisible && isFocus}
-                dIcon={optionIcon}
+                dIcon={itemIcon}
                 dStep={step}
                 dSpace={space}
                 dLevel={level}
                 onClick={handleItemClick}
               >
-                {optionTitle}
+                {itemTitle}
               </DMenuItem>
-            ) : optionType === 'group' ? (
+            ) : itemType === 'group' ? (
               <DMenuGroup
                 dId={id}
-                dOptions={children && getNodes(children, level + 1, _subParents)}
+                dList={children && getNodes(children, level + 1, _subParents)}
                 dEmpty={isEmpty}
                 dStep={step}
                 dSpace={space}
                 dLevel={level}
               >
-                {optionTitle}
+                {itemTitle}
               </DMenuGroup>
             ) : (
               <DMenuSub
                 dId={id}
-                dDisabled={optionDisabled}
-                dPosinset={posinset.get(optionId)!}
+                dDisabled={itemDisabled}
+                dPosinset={posinset.get(itemId)!}
                 dMode={dMode}
                 dInNav={inNav}
-                dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(optionId)}
+                dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(itemId)}
                 dExpand={isExpand}
                 dFocusVisible={focusVisible && isFocus}
                 dList={children && getNodes(children, dMode === 'vertical' ? level + 1 : 0, _subParents)}
@@ -385,34 +385,34 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
                 dPopupState={popupState?.visible ?? false}
                 dEmpty={isEmpty}
                 dTrigger={dExpandTrigger ?? (dMode === 'vertical' ? 'click' : 'hover')}
-                dIcon={optionIcon}
+                dIcon={itemIcon}
                 dStep={step}
                 dSpace={space}
                 dLevel={level}
                 onVisibleChange={(visible) => {
                   if (visible) {
                     if (subParents.length === 0) {
-                      setPopupIds([{ id: optionId, visible: true }]);
+                      setPopupIds([{ id: itemId, visible: true }]);
                     } else {
-                      addPopupId(optionId);
+                      addPopupId(itemId);
                     }
                   } else {
-                    removePopupId(optionId);
+                    removePopupId(itemId);
                   }
                 }}
                 onClick={() => {
-                  if (!optionDisabled) {
-                    setFocusIds(subParents.map((o) => o.id).concat([optionId]));
+                  if (!itemDisabled) {
+                    setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
 
                     if (dMode === 'vertical') {
-                      const sameLevelOptions = getOptions(nth(subParents, -1)?.children ?? dOptions);
-                      handleSubExpand(sameLevelOptions);
+                      const sameLevelItems = getItems(nth(subParents, -1)?.children ?? dList);
+                      handleSubExpand(sameLevelItems);
                     }
                   }
                 }}
                 updatePosition$={updatePosition$}
               >
-                {optionTitle}
+                {itemTitle}
               </DMenuSub>
             )}
           </React.Fragment>
@@ -420,7 +420,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
       });
     };
 
-    return getNodes(dOptions, 0, [], true);
+    return getNodes(dList, 0, [], true);
   })();
 
   useImperativeHandle(
@@ -465,7 +465,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
               tabIndex={restProps.tabIndex ?? 0}
               role={restProps.role ?? 'menubar'}
               aria-orientation={restProps['aria-orientation'] ?? (dMode === 'horizontal' ? 'horizontal' : 'vertical')}
-              aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusId) ? undefined : getOptionId(focusId))}
+              aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusId) ? undefined : getItemId(focusId))}
               onFocus={(e) => {
                 restProps.onFocus?.(e);
                 fvOnFocus(e);
@@ -486,7 +486,7 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
                 handleKeyDown?.(e);
               }}
             >
-              {optionNodes}
+              {nodes}
             </nav>
           )}
         </DFocusVisible>
@@ -495,6 +495,6 @@ function Menu<ID extends DId, T extends DMenuOption<ID>>(props: DMenuProps<ID, T
   );
 }
 
-export const DMenu: <ID extends DId, T extends DMenuOption<ID>>(
+export const DMenu: <ID extends DId, T extends DMenuItem<ID>>(
   props: DMenuProps<ID, T> & { ref?: React.ForwardedRef<DMenuRef> }
 ) => ReturnType<typeof Menu> = React.forwardRef(Menu) as any;

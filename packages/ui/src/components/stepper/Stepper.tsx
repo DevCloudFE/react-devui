@@ -7,7 +7,7 @@ import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
 
-export interface DStepperOption {
+export interface DStepperItem {
   step?: number;
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -15,28 +15,28 @@ export interface DStepperOption {
   status?: 'completed' | 'process' | 'wait' | 'error';
 }
 
-export interface DStepperProps<T extends DStepperOption> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  dSteps: T[];
+export interface DStepperProps<T extends DStepperItem> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dList: T[];
   dActive?: number;
   dPercent?: number;
   dVertical?: boolean;
   dIconSize?: number;
   dLabelBottom?: boolean;
-  dStepClickable?: boolean;
-  onStepClick?: (step: number, option: T) => void;
+  dClickable?: boolean;
+  onItemClick?: (step: number, item: T) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DStepper' });
-export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX.Element | null {
+export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.Element | null {
   const {
-    dSteps,
+    dList,
     dActive,
     dPercent,
     dVertical = false,
     dIconSize = 36,
     dLabelBottom = false,
-    dStepClickable = false,
-    onStepClick,
+    dClickable = false,
+    onItemClick,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -45,7 +45,7 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const active = dActive ?? dSteps[0].step ?? 1;
+  const active = dActive ?? dList[0].step ?? 1;
 
   return (
     <div
@@ -53,10 +53,10 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
       className={getClassName(restProps.className, `${dPrefix}stepper`, {
         [`${dPrefix}stepper--label-bottom`]: dLabelBottom,
         [`${dPrefix}stepper--vertical`]: dVertical,
-        [`${dPrefix}stepper--button`]: dStepClickable,
+        [`${dPrefix}stepper--button`]: dClickable,
       })}
     >
-      {dSteps.map((step, index) => {
+      {dList.map((step, index) => {
         const { step: stepStep = index + 1, title: stepTitle, description: stepDescription, icon: stepIcon, status: stepStatus } = step;
 
         const isCompleted = stepStep < active;
@@ -77,7 +77,7 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
         const separatoreNode =
           dVertical && dLabelBottom
             ? null
-            : index !== dSteps.length - 1 && (
+            : index !== dList.length - 1 && (
                 <div
                   className={`${dPrefix}stepper__step-separator`}
                   style={{
@@ -103,27 +103,27 @@ export function DStepper<T extends DStepperOption>(props: DStepperProps<T>): JSX
                 : {},
               {
                 [`is-${stepStatus}`]: stepStatus,
-                [`${dPrefix}stepper__step--last`]: index === dSteps.length - 1,
+                [`${dPrefix}stepper__step--last`]: index === dList.length - 1,
               }
             )}
             style={{
-              maxWidth: !dVertical && index === dSteps.length - 1 ? `calc(100% / ${dSteps.length})` : undefined,
-              width: !dVertical && dLabelBottom ? `calc(100% / ${dSteps.length})` : undefined,
+              maxWidth: !dVertical && index === dList.length - 1 ? `calc(100% / ${dList.length})` : undefined,
+              width: !dVertical && dLabelBottom ? `calc(100% / ${dList.length})` : undefined,
             }}
-            role={dStepClickable ? 'button' : undefined}
-            tabIndex={dStepClickable ? 0 : undefined}
+            role={dClickable ? 'button' : undefined}
+            tabIndex={dClickable ? 0 : undefined}
             onKeyDown={(e) => {
-              if (dStepClickable) {
+              if (dClickable) {
                 if (e.code === 'Enter' || e.code === 'Space') {
                   e.preventDefault();
 
-                  onStepClick?.(stepStep, step);
+                  onItemClick?.(stepStep, step);
                 }
               }
             }}
             onClick={() => {
-              if (dStepClickable) {
-                onStepClick?.(stepStep, step);
+              if (dClickable) {
+                onItemClick?.(stepStep, step);
               }
             }}
           >

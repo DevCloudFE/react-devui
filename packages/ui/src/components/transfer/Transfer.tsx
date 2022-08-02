@@ -13,47 +13,46 @@ import { DTransferPanel } from './TransferPanel';
 
 export const IS_SELECTED = Symbol();
 
-export interface DTransferOption<V extends DId> {
+export interface DTransferItem<V extends DId> {
   label: string;
   value: V;
   disabled?: boolean;
 }
 
-export interface DTransferProps<V extends DId, T extends DTransferOption<V>>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DTransferProps<V extends DId, T extends DTransferItem<V>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
+  dList: T[];
   dModel?: V[];
   dSelected?: V[];
-  dOptions: T[];
   dTitle?: [React.ReactNode?, React.ReactNode?];
   dActions?: React.ReactNode[];
   dLoading?: [boolean?, boolean?];
   dSearchable?: boolean;
   dDisabled?: boolean;
-  dCustomOption?: (option: T) => React.ReactNode;
+  dCustomItem?: (item: T) => React.ReactNode;
   dCustomSearch?: {
-    filter?: (value: string, option: T) => boolean;
+    filter?: (value: string, item: T) => boolean;
     sort?: (a: T, b: T) => number;
   };
-  onModelChange?: (value: V[], option: T[]) => void;
-  onSelectedChange?: (value: V[], option: T[]) => void;
+  onModelChange?: (value: V[], item: T[]) => void;
+  onSelectedChange?: (value: V[], item: T[]) => void;
   onSearch?: (value: string, direction: 'left' | 'right') => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTransfer' });
-export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DTransferProps<V, T>): JSX.Element | null {
+export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTransferProps<V, T>): JSX.Element | null {
   const {
     dFormControl,
+    dList,
     dModel,
     dSelected,
-    dOptions,
     dTitle,
     dActions = ['right', 'left'],
     dLoading = [false, false],
     dSearchable = false,
     dDisabled = false,
-    dCustomOption,
+    dCustomItem,
     dCustomSearch,
     onModelChange,
     onSelectedChange,
@@ -68,7 +67,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
   const { gDisabled } = useGeneralContext();
   //#endregion
 
-  const optionsMap = useMemo(() => new Map(dOptions.map((o) => [o.value, o])), [dOptions]);
+  const itemsMap = useMemo(() => new Map(dList.map((item) => [item.value, item])), [dList]);
 
   const formControlInject = useFormControl(dFormControl);
   const [_valueRight, changeValueRight] = useDValue<V[]>(
@@ -78,7 +77,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
       if (onModelChange) {
         onModelChange(
           value,
-          value.map((v) => optionsMap.get(v)!)
+          value.map((v) => itemsMap.get(v)!)
         );
       }
     },
@@ -91,7 +90,7 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
     if (onSelectedChange) {
       onSelectedChange(
         value,
-        value.map((v) => optionsMap.get(v)!)
+        value.map((v) => itemsMap.get(v)!)
       );
     }
   });
@@ -104,71 +103,71 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
-    (searchStr: string, option: T) => {
-      const defaultFilterFn = (option: T) => {
-        return option.label.includes(searchStr);
+    (searchStr: string, item: T) => {
+      const defaultFilterFn = (item: T) => {
+        return item.label.includes(searchStr);
       };
-      return _filterFn ? _filterFn(searchStr, option) : defaultFilterFn(option);
+      return _filterFn ? _filterFn(searchStr, item) : defaultFilterFn(item);
     },
     [_filterFn]
   );
   const sortFn = dCustomSearch?.sort;
-  const [optionsLeft, optionsRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = (() => {
-    const optionsL: T[] = [];
-    const optionsR: T[] = [];
+  const [listLeft, listRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = (() => {
+    const listL: T[] = [];
+    const listR: T[] = [];
     let selectedNumL = 0;
     let selectedNumR = 0;
-    let noOptionsL = true;
+    let emptyL = true;
     let hasSelectedL = false;
     let checkAllL = true;
-    let noOptionsR = true;
+    let emptyR = true;
     let hasSelectedR = false;
     let checkAllR = true;
 
-    dOptions.forEach((option) => {
-      const isLeft = !valueRight.has(option.value);
-      const newOption = Object.assign({}, option);
+    dList.forEach((item) => {
+      const isLeft = !valueRight.has(item.value);
+      const newItem = Object.assign({}, item);
 
       const searchValue = isLeft ? searchValueLeft : searchValueRight;
-      if (!searchValue || filterFn(searchValue, option)) {
-        newOption[IS_SELECTED] = false;
-        if (selected.has(option.value)) {
-          newOption[IS_SELECTED] = true;
+      if (!searchValue || filterFn(searchValue, item)) {
+        newItem[IS_SELECTED] = false;
+        if (selected.has(item.value)) {
+          newItem[IS_SELECTED] = true;
           isLeft ? (selectedNumL += 1) : (selectedNumR += 1);
-          if (!option.disabled) {
+          if (!item.disabled) {
             isLeft ? (hasSelectedL = true) : (hasSelectedR = true);
           }
         } else {
-          if (!option.disabled) {
+          if (!item.disabled) {
             isLeft ? (checkAllL = false) : (checkAllR = false);
           }
         }
 
         if (isLeft) {
-          optionsL.push(newOption);
-          if (!option.disabled) {
-            noOptionsL = false;
+          listL.push(newItem);
+          if (!item.disabled) {
+            emptyL = false;
           }
         } else {
-          optionsR.push(newOption);
-          if (!option.disabled) {
-            noOptionsR = false;
+          listR.push(newItem);
+          if (!item.disabled) {
+            emptyR = false;
           }
         }
       }
     });
 
     if (searchValueLeft && sortFn) {
-      optionsL.sort(sortFn);
+      listL.sort(sortFn);
     }
     if (searchValueRight && sortFn) {
-      optionsR.sort(sortFn);
+      listR.sort(sortFn);
     }
 
-    const stateL: boolean | 'mixed' = noOptionsL ? false : checkAllL ? true : hasSelectedL ? 'mixed' : false;
-    const stateR: boolean | 'mixed' = noOptionsR ? false : checkAllR ? true : hasSelectedR ? 'mixed' : false;
+    const stateL: boolean | 'mixed' = emptyL ? false : checkAllL ? true : hasSelectedL ? 'mixed' : false;
+    const stateR: boolean | 'mixed' = emptyR ? false : checkAllR ? true : hasSelectedR ? 'mixed' : false;
 
-    return [optionsL, optionsR, selectedNumL, selectedNumR, stateL, stateR];
+    return [listL, listR, selectedNumL, selectedNumR, stateL, stateR];
   })();
 
   const handleSelectedChange = (val: V) => {
@@ -185,15 +184,15 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
   const handleAllSelected = (isSelected: boolean, isLeft: boolean) => {
     changeSelected((draft) => {
       const newSelected = new Set(draft);
-      for (const option of isLeft ? optionsLeft : optionsRight) {
-        if (option.disabled) {
+      for (const item of isLeft ? listLeft : listRight) {
+        if (item.disabled) {
           continue;
         }
 
-        if (isSelected && !option[IS_SELECTED]) {
-          newSelected.add(option.value);
-        } else if (!isSelected && option[IS_SELECTED]) {
-          newSelected.delete(option.value);
+        if (isSelected && !item[IS_SELECTED]) {
+          newSelected.add(item.value);
+        } else if (!isSelected && item[IS_SELECTED]) {
+          newSelected.delete(item.value);
         }
       }
       return Array.from(newSelected);
@@ -203,12 +202,12 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
   const handleButtonClick = (isLeft: boolean) => {
     changeValueRight((draft) => {
       const newValueRight = new Set(draft);
-      (isLeft ? optionsLeft : optionsRight).forEach((option) => {
-        if (option[IS_SELECTED]) {
+      (isLeft ? listLeft : listRight).forEach((item) => {
+        if (item[IS_SELECTED]) {
           if (isLeft) {
-            newValueRight.add(option.value);
+            newValueRight.add(item.value);
           } else {
-            newValueRight.delete(option.value);
+            newValueRight.delete(item.value);
           }
         }
       });
@@ -217,9 +216,9 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
 
     changeSelected((draft) => {
       const newSelected = new Set(draft);
-      (isLeft ? optionsLeft : optionsRight).forEach((option) => {
-        if (option[IS_SELECTED]) {
-          newSelected.delete(option.value);
+      (isLeft ? listLeft : listRight).forEach((item) => {
+        if (item[IS_SELECTED]) {
+          newSelected.delete(item.value);
         }
       });
       return Array.from(newSelected);
@@ -235,13 +234,13 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
         })}
       >
         <DTransferPanel
-          dOptions={optionsLeft}
+          dList={listLeft}
           dSelectedNum={selectedNumLeft}
           dState={stateLeft}
           dTitle={dTitle?.[0]}
           dLoading={dLoading[0]}
           dSearchable={dSearchable}
-          dCustomOption={dCustomOption}
+          dCustomItem={dCustomItem}
           onSelectedChange={handleSelectedChange}
           onAllSelected={(selected) => {
             handleAllSelected(selected, true);
@@ -282,13 +281,13 @@ export function DTransfer<V extends DId, T extends DTransferOption<V>>(props: DT
           )}
         </div>
         <DTransferPanel
-          dOptions={optionsRight}
+          dList={listRight}
           dSelectedNum={selectedNumRight}
           dState={stateRight}
           dTitle={dTitle?.[1]}
           dLoading={dLoading[1]}
           dSearchable={dSearchable}
-          dCustomOption={dCustomOption}
+          dCustomItem={dCustomItem}
           onSelectedChange={handleSelectedChange}
           onAllSelected={(selected) => {
             handleAllSelected(selected, false);

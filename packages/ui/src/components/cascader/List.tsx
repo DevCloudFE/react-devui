@@ -1,7 +1,7 @@
 import type { DId } from '../../utils/global';
 import type { AbstractTreeNode, MultipleTreeNode } from '../tree';
 import type { DVirtualScrollRef } from '../virtual-scroll';
-import type { DCascaderOption } from './Cascader';
+import type { DCascaderItem } from './Cascader';
 import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
@@ -15,29 +15,29 @@ import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DListProps<ID extends DId, T> {
   dListId?: string;
-  dGetOptionId: (value: ID) => string;
+  dGetItemId: (value: ID) => string;
   dNodes: AbstractTreeNode<ID, T>[];
   dSelected: ID | null | Set<ID>;
   dFocusNode: AbstractTreeNode<ID, T> | undefined;
-  dCustomOption?: (option: T) => React.ReactNode;
+  dCustomItem?: (item: T) => React.ReactNode;
   dMultiple: boolean;
   dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
   dRoot: boolean;
   onSelectedChange: (value: ID | null | ID[]) => void;
   onClose: () => void;
-  onFocusChange: (option: AbstractTreeNode<ID, T>) => void;
+  onFocusChange: (node: AbstractTreeNode<ID, T>) => void;
   onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
 }
 
-export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DListProps<ID, T>): JSX.Element | null {
+export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListProps<ID, T>): JSX.Element | null {
   const {
     dListId,
-    dGetOptionId,
+    dGetItemId,
     dNodes,
     dSelected,
     dFocusNode,
-    dCustomOption,
+    dCustomItem,
     dMultiple,
     dOnlyLeafSelectable,
     dFocusVisible,
@@ -76,15 +76,15 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
     }
   })();
 
-  const changeSelectByClick = useEventCallback((option: AbstractTreeNode<ID, T>) => {
+  const changeSelectByClick = useEventCallback((node: AbstractTreeNode<ID, T>) => {
     if (dMultiple) {
-      const checkeds = (option as MultipleTreeNode<ID, T>).changeStatus(option.checked ? 'UNCHECKED' : 'CHECKED', dSelected as Set<ID>);
+      const checkeds = (node as MultipleTreeNode<ID, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', dSelected as Set<ID>);
       onSelectedChange(Array.from(checkeds.keys()));
     } else {
-      if (!dOnlyLeafSelectable || option.isLeaf) {
-        onSelectedChange(option.id);
+      if (!dOnlyLeafSelectable || node.isLeaf) {
+        onSelectedChange(node.id);
       }
-      if (option.isLeaf) {
+      if (node.isLeaf) {
         onClose();
       }
     }
@@ -92,9 +92,9 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
 
   const shouldInitFocus = dRoot && isUndefined(dFocusNode);
   const handleKeyDown = useEventCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    const focusNode = (option: AbstractTreeNode<ID, T> | undefined) => {
-      if (option) {
-        onFocusChange(option);
+    const focusNode = (node: AbstractTreeNode<ID, T> | undefined) => {
+      if (node) {
+        onFocusChange(node);
       }
     };
     if (isFocus && inFocusNode) {
@@ -171,14 +171,14 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
         className={`${dPrefix}cascader__list`}
         role="listbox"
         aria-multiselectable={dMultiple}
-        aria-activedescendant={dRoot && dFocusNode ? dGetOptionId(dFocusNode.id) : undefined}
+        aria-activedescendant={dRoot && dFocusNode ? dGetItemId(dFocusNode.id) : undefined}
         dList={dNodes}
         dItemRender={(item, index, renderProps) => {
           return (
             <li
               {...renderProps}
               key={item.id}
-              id={dGetOptionId(item.id)}
+              id={dGetItemId(item.id)}
               className={getClassName(`${dPrefix}cascader__option`, {
                 'is-focus': item.id === inFocusNode?.id,
                 'is-selected': !dMultiple && item.checked,
@@ -208,7 +208,7 @@ export function DList<ID extends DId, T extends DCascaderOption<ID>>(props: DLis
                   }}
                 ></DCheckbox>
               )}
-              <div className={`${dPrefix}cascader__option-content`}>{dCustomOption ? dCustomOption(item.origin) : item.origin.label}</div>
+              <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
               {!item.isLeaf && (
                 <div className={`${dPrefix}cascader__option-icon`}>
                   {item.origin.loading ? <LoadingOutlined dSpin /> : <RightOutlined />}

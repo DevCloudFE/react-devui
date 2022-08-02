@@ -127,7 +127,7 @@ ${'```'}
           {!scss && <div dangerouslySetInnerHTML={{ __html: tsx }} />}
           {scss && (
             <DTabs
-              dTabs={['tsx', 'scss'].map((code) => ({
+              dList={['tsx', 'scss'].map((code) => ({
                 id: code,
                 title: code,
                 panel: <div dangerouslySetInnerHTML={{ __html: code === 'tsx' ? tsx : scss }} />,

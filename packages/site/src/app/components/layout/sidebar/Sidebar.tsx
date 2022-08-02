@@ -1,4 +1,4 @@
-import type { DMenuOption } from '@react-devui/ui/components/menu';
+import type { DMenuItem } from '@react-devui/ui/components/menu';
 import type { DNestedChildren } from '@react-devui/ui/utils/global';
 
 import { useState } from 'react';
@@ -39,7 +39,7 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
   const menuNode = (
     <DMenu
       className="app-sidebar__menu"
-      dOptions={menu.map<DNestedChildren<DMenuOption<string> & { to?: string }>>((group) => ({
+      dList={menu.map<DNestedChildren<DMenuItem<string> & { to?: string }>>((group) => ({
         id: group.title,
         title: t(`menu-group.${group.title}`),
         type: 'group',

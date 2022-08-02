@@ -21,7 +21,7 @@ export interface DTimePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 
   dPlaceholder?: string | [string?, string?];
   dOrder?: 'ascend' | 'descend' | null;
   d12Hour?: boolean;
-  dConfigOptions?: (
+  dConfigTime?: (
     unit: 'hour' | 'minute' | 'second',
     value: number,
     position: 'start' | 'end',
@@ -37,7 +37,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
     dOrder = 'ascend',
     d12Hour = false,
     dRange = false,
-    dConfigOptions,
+    dConfigTime,
     dPopupClassName,
 
     ...restProps
@@ -81,7 +81,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
             dTime={pbDate}
             dCols={getCols(format)}
             d12Hour={d12Hour}
-            dConfigOptions={dConfigOptions ? (...args) => dConfigOptions(...args, pbPosition, pbCurrentDate) : undefined}
+            dConfigTime={dConfigTime ? (...args) => dConfigTime(...args, pbPosition, pbCurrentDate) : undefined}
             onTimeChange={changeValue}
           ></DTimePickerPanel>
           <div className={`${dPrefix}time-picker__footer`}>

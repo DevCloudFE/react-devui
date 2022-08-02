@@ -1,5 +1,5 @@
 import type { DId, DSize } from '../../utils/global';
-import type { DDropdownOption } from '../dropdown';
+import type { DDropdownItem } from '../dropdown';
 
 import { nth } from 'lodash';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '../../icons';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DDropdown } from '../dropdown';
 
-export interface DTabOption<ID extends DId> {
+export interface DTabItem<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   panel: React.ReactNode;
@@ -25,22 +25,22 @@ export interface DTabOption<ID extends DId> {
   closable?: boolean;
 }
 
-export interface DTabsProps<ID extends DId, T extends DTabOption<ID>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  dTabs: T[];
+export interface DTabsProps<ID extends DId, T extends DTabItem<ID>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dList: T[];
   dActive?: ID;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
   dSize?: DSize;
-  onActiveChange?: (id: ID, option: T) => void;
+  onActiveChange?: (id: ID, item: T) => void;
   onAddClick?: () => void;
-  onClose?: (id: ID, option: T) => void;
+  onClose?: (id: ID, item: T) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
-export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
+export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>): JSX.Element | null {
   const {
-    dTabs,
+    dList,
     dActive,
     dPlacement = 'top',
     dCenter = false,
@@ -80,7 +80,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
   const isHorizontal = dPlacement === 'top' || dPlacement === 'bottom';
   const [activeId, changeActiveId] = useDValue<ID | undefined, ID>(
     () => {
-      for (const tab of dTabs) {
+      for (const tab of dList) {
         if (!tab.disabled) {
           return tab.id;
         }
@@ -89,7 +89,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
     dActive,
     (id) => {
       if (onActiveChange) {
-        const tab = dTabs.find((t) => t.id === id);
+        const tab = dList.find((t) => t.id === id);
         if (tab) {
           onActiveChange(id, tab);
         }
@@ -115,7 +115,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
       if (isOverflow) {
         const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();
         const dropdownList: T[] = [];
-        dTabs.forEach((tab) => {
+        dList.forEach((tab) => {
           const el = document.getElementById(getTabId(tab.id));
           if (el) {
             const rect = el.getBoundingClientRect();
@@ -163,7 +163,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
   useEffect(() => {
     if (tablistRef.current && indicatorRef.current) {
       const tablistRect = tablistRef.current.getBoundingClientRect();
-      for (const tab of dTabs) {
+      for (const tab of dList) {
         if (tab.id === activeId) {
           const el = document.getElementById(getTabId(tab.id));
           if (el) {
@@ -202,12 +202,12 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
           role="tablist"
           aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
         >
-          {dTabs.map((tab, index) => {
+          {dList.map((tab, index) => {
             const { id: tabId, title: tabTitle, disabled: tabDisabled, closable: tabClosable } = tab;
 
             const getTab = (next: boolean, _index = index): T | undefined => {
-              for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dTabs.length; next ? focusIndex++ : focusIndex--, n++) {
-                const t = nth(dTabs, focusIndex % dTabs.length);
+              for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dList.length; next ? focusIndex++ : focusIndex--, n++) {
+                const t = nth(dList, focusIndex % dList.length);
                 if (t && !t.disabled) {
                   return t;
                 }
@@ -228,8 +228,8 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
             const closeTab = () => {
               if (activeId === tabId) {
                 let hasTab = false;
-                for (let focusIndex = index + 1; focusIndex < dTabs.length; focusIndex++) {
-                  const t = nth(dTabs, focusIndex);
+                for (let focusIndex = index + 1; focusIndex < dList.length; focusIndex++) {
+                  const t = nth(dList, focusIndex);
                   if (t && !t.disabled) {
                     hasTab = true;
                     focusTab(t);
@@ -238,7 +238,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                 }
                 if (!hasTab) {
                   for (let focusIndex = index - 1; focusIndex >= 0; focusIndex--) {
-                    const t = nth(dTabs, focusIndex);
+                    const t = nth(dList, focusIndex);
                     if (t && !t.disabled) {
                       focusTab(t);
                       break;
@@ -259,7 +259,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                   'is-active': active,
                   'is-disabled': tabDisabled,
                   [`${dPrefix}tabs__tab--first`]: index === 0,
-                  [`${dPrefix}tabs__tab--last`]: index === dTabs.length - 1,
+                  [`${dPrefix}tabs__tab--last`]: index === dList.length - 1,
                 })}
                 tabIndex={active && !tabDisabled ? 0 : -1}
                 role="tab"
@@ -308,7 +308,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
 
                     case 'Home':
                       e.preventDefault();
-                      for (const t of dTabs) {
+                      for (const t of dList) {
                         if (!t.disabled) {
                           focusTab(t);
                           break;
@@ -318,9 +318,9 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
 
                     case 'End':
                       e.preventDefault();
-                      for (let index = dTabs.length - 1; index >= 0; index--) {
-                        if (!dTabs[index].disabled) {
-                          focusTab(dTabs[index]);
+                      for (let index = dList.length - 1; index >= 0; index--) {
+                        if (!dList[index].disabled) {
+                          focusTab(dList[index]);
                           break;
                         }
                       }
@@ -352,7 +352,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
             <div className={`${dPrefix}tabs__button-container`}>
               {listOverflow && (
                 <DDropdown
-                  dOptions={dropdownList.map<DDropdownOption<ID>>((tab) => {
+                  dList={dropdownList.map<DDropdownItem<ID>>((tab) => {
                     const { id: tabId, title: tabTitle, disabled: tabDisabled } = tab;
 
                     return {
@@ -372,7 +372,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
                   })}
                   dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
                   dCloseOnClick={false}
-                  onOptionClick={(id: ID) => {
+                  onItemClick={(id: ID) => {
                     changeActiveId(id);
                   }}
                 >
@@ -406,7 +406,7 @@ export function DTabs<ID extends DId, T extends DTabOption<ID>>(props: DTabsProp
           <div ref={indicatorRef} className={`${dPrefix}tabs__${dType ? dType + '-' : ''}indicator`}></div>
         </div>
       </div>
-      {dTabs.map((tab) => {
+      {dList.map((tab) => {
         const { id: tabId, panel: tabPanel } = tab;
 
         return (

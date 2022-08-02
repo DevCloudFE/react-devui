@@ -91,14 +91,14 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 
   return (
     <>
-      {mediaMatch.includes('md') && links.length > 0 && <DAnchor className="app-route-article__anchor" dLinks={links} dPage=".app-main" />}
+      {mediaMatch.includes('md') && links.length > 0 && <DAnchor className="app-route-article__anchor" dList={links} dPage=".app-main" />}
       {!mediaMatch.includes('md') && (
         <>
           {links.length > 0 && (
             <DTransition dIn={menuOpen} dDuring={TTANSITION_DURING_BASE}>
               {(state) => (
                 <div className="app-route-article__anchor-conatiner" style={transitionStyles[state]}>
-                  <DAnchor dLinks={links} dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR} onLinkClick={() => setMenuOpen(false)} />
+                  <DAnchor dList={links} dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR} onItemClick={() => setMenuOpen(false)} />
                 </div>
               )}
             </DTransition>

@@ -12,14 +12,14 @@ export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>
   dActive?: number;
   dTotal: number;
   dPageSize?: number;
-  dPageSizeOptions?: number[];
+  dPageSizeList?: number[];
   dCompose?: ('total' | 'pages' | 'size' | 'jump')[];
   dCustomRender?: {
     total?: (range: [number, number]) => React.ReactNode;
     prev?: React.ReactNode;
     page?: (page: number) => React.ReactNode;
     next?: React.ReactNode;
-    sizeOption?: (size: number) => React.ReactNode;
+    size?: (size: number) => React.ReactNode;
     jump?: (input: React.ReactNode) => React.ReactNode;
   };
   dMini?: boolean;
@@ -33,7 +33,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     dActive,
     dTotal,
     dPageSize,
-    dPageSizeOptions = [10, 20, 50, 100],
+    dPageSizeList = [10, 20, 50, 100],
     dCompose = ['pages'],
     dCustomRender,
     dMini = false,
@@ -67,7 +67,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     }
   });
 
-  const [pageSize, _changePageSize] = useDValue<number>(dPageSizeOptions[0] ?? 10, dPageSize, onPageSizeChange);
+  const [pageSize, _changePageSize] = useDValue<number>(dPageSizeList[0] ?? 10, dPageSize, onPageSizeChange);
   const changePageSize = (size: number) => {
     _changePageSize(size);
 
@@ -146,7 +146,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
   })();
 
   const sizeNode = (() => {
-    const options = dPageSizeOptions.map((size) => ({
+    const list = dPageSizeList.map((size) => ({
       label: size.toString(),
       value: size,
     }));
@@ -157,9 +157,9 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
         className={getClassName(`${dPrefix}pagination__size-select`, {
           [`${dPrefix}pagination__size-select--mini`]: dMini,
         })}
-        dOptions={options}
+        dList={list}
         dModel={pageSize}
-        dCustomOption={(option) => (dCustomRender && dCustomRender.sizeOption ? dCustomRender.sizeOption(option.value) : option.label)}
+        dCustomItem={(item) => (dCustomRender && dCustomRender.size ? dCustomRender.size(item.value) : item.label)}
         dCustomSelected={(select) => `${select.label}${t('Pagination', ' / Page')}`}
         onModelChange={(value) => {
           if (!isNull(value)) {

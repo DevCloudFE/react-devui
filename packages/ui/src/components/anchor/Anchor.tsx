@@ -15,7 +15,7 @@ import {
 } from '../../hooks';
 import { getClassName, registerComponentMate, scrollTo } from '../../utils';
 
-export interface DAnchorOption {
+export interface DAnchorItem {
   title: React.ReactNode;
   href: string;
   target?: string;
@@ -26,27 +26,27 @@ export interface DAnchorRef {
   updateAnchor: () => void;
 }
 
-export interface DAnchorProps<T extends DAnchorOption> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
-  dLinks: DNestedChildren<T>[];
+export interface DAnchorProps<T extends DAnchorItem> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
+  dList: DNestedChildren<T>[];
   dPage?: DElementSelector;
   dDistance?: number;
   dScrollBehavior?: 'instant' | 'smooth';
   dIndicator?: React.ReactNode | typeof DOT_INDICATOR | typeof LINE_INDICATOR;
-  onLinkClick?: (href: string, link: DNestedChildren<T>) => void;
+  onItemClick?: (href: string, item: DNestedChildren<T>) => void;
 }
 
 const DOT_INDICATOR = Symbol();
 const LINE_INDICATOR = Symbol();
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' });
-function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>): JSX.Element | null {
+function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>): JSX.Element | null {
   const {
-    dLinks,
+    dList,
     dPage,
     dDistance = 0,
     dScrollBehavior = 'instant',
     dIndicator = DOT_INDICATOR,
-    onLinkClick,
+    onItemClick,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -98,7 +98,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
         }
       });
     };
-    reduceLinks(dLinks);
+    reduceLinks(dList);
 
     const newHref = nearestEl ? nearestEl[0] : null;
     setActiveHref(newHref);
@@ -202,7 +202,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
                 onClick={(e) => {
                   e.preventDefault();
 
-                  onLinkClick?.(linkHref, link);
+                  onItemClick?.(linkHref, link);
                   handleLinkClick(linkHref);
                 }}
               >
@@ -214,7 +214,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
         );
       });
 
-    return getNodes(dLinks);
+    return getNodes(dList);
   })();
 
   return (
@@ -236,7 +236,7 @@ function Anchor<T extends DAnchorOption>(props: DAnchorProps<T>, ref: React.Forw
 }
 
 export const DAnchor: {
-  <T extends DAnchorOption>(props: DAnchorProps<T> & { ref?: React.ForwardedRef<DAnchorRef> }): ReturnType<typeof Anchor>;
+  <T extends DAnchorItem>(props: DAnchorProps<T> & { ref?: React.ForwardedRef<DAnchorRef> }): ReturnType<typeof Anchor>;
   DOT_INDICATOR: typeof DOT_INDICATOR;
   LINE_INDICATOR: typeof LINE_INDICATOR;
 } = React.forwardRef(Anchor) as any;

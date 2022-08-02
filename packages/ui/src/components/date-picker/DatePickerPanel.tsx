@@ -14,12 +14,12 @@ export interface DDatePickerPanelRef {
 export interface DDatePickerPanelProps {
   dDate: Date | null;
   dAnotherDate: Date | null;
-  dConfigOptions?: (date: Date) => { disabled?: boolean };
+  dConfigDate?: (date: Date) => { disabled?: boolean };
   onDateChange?: (time: Date) => void;
 }
 
 function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<DDatePickerPanelRef>): JSX.Element | null {
-  const { dDate, dAnotherDate, dConfigOptions, onDateChange } = props;
+  const { dDate, dAnotherDate, dConfigDate, onDateChange } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -75,7 +75,7 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
       },
     } as React.ButtonHTMLAttributes<HTMLButtonElement>);
 
-  const options: Dayjs[][] = (() => {
+  const weekList: Dayjs[][] = (() => {
     const firstDay = showDate.set('date', 1);
     const month = [];
     let week = [];
@@ -141,10 +141,10 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
           </tr>
         </thead>
         <tbody>
-          {options.map((week, index1) => (
+          {weekList.map((week, index1) => (
             <tr key={index1}>
               {week.map((d, index2) => {
-                const { disabled } = dConfigOptions?.(d.toDate()) ?? {};
+                const { disabled } = dConfigDate?.(d.toDate()) ?? {};
                 const isActive = dDate && d.isSame(activeDate, 'date');
                 const isAnother = anotherDate && d.isSame(anotherDate, 'date');
                 const isHover = !isActive && !isAnother && anotherDate && d.isSame(hoverDate, 'date');

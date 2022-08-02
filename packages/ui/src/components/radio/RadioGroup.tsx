@@ -11,7 +11,7 @@ import { DCompose } from '../compose';
 import { useFormControl } from '../form';
 import { DRadio } from './Radio';
 
-export interface DRadioOption<V extends DId> {
+export interface DRadioItem<V extends DId> {
   label: React.ReactNode;
   value: V;
   disabled?: boolean;
@@ -19,10 +19,10 @@ export interface DRadioOption<V extends DId> {
 
 export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
+  dList: DRadioItem<V>[];
   dModel?: V | null;
   dName?: string;
   dDisabled?: boolean;
-  dOptions: DRadioOption<V>[];
   dType?: 'outline' | 'fill';
   dSize?: DSize;
   dVertical?: boolean;
@@ -33,10 +33,10 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadioGroup'
 export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,
+    dList,
     dModel,
     dName,
     dDisabled = false,
-    dOptions,
     dType,
     dSize,
     dVertical = false,
@@ -54,7 +54,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   const getId = (value: V) => `${dPrefix}radio-group-${value}-${uniqueId}`;
 
   const formControlInject = useFormControl(dFormControl);
-  const [value, changeValue] = useDValue<V | null, V>(nth(dOptions, 0)?.value ?? null, dModel, onModelChange, undefined, formControlInject);
+  const [value, changeValue] = useDValue<V | null, V>(nth(dList, 0)?.value ?? null, dModel, onModelChange, undefined, formControlInject);
 
   const [isChange, setIsChange] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,25 +79,25 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
       dSize={size}
       dVertical={dVertical}
     >
-      {dOptions.map((option) =>
+      {dList.map((item) =>
         React.createElement<DRadioPropsWithPrivate>(
           DRadio,
           {
-            key: option.value,
-            dModel: option.value === value,
-            dDisabled: option.disabled,
+            key: item.value,
+            dModel: item.value === value,
+            dDisabled: item.disabled,
             dInputProps: {
-              ...(option.value === value ? { id: getId(option.value), 'data-form-label-for': true } : undefined),
+              ...(item.value === value ? { id: getId(item.value), 'data-form-label-for': true } : undefined),
               name: dName ?? uniqueId,
-              value: option.value,
+              value: item.value,
             },
             onModelChange: () => {
-              changeValue(option.value);
+              changeValue(item.value);
               setIsChange(true);
             },
             __type: dType,
           },
-          option.label
+          item.label
         )
       )}
     </DCompose>

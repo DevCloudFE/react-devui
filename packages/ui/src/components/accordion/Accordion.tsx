@@ -9,7 +9,7 @@ import { registerComponentMate, getClassName } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
 
-export interface DAccordionOption<ID extends DId> {
+export interface DAccordionItem<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   region: React.ReactNode;
@@ -17,20 +17,20 @@ export interface DAccordionOption<ID extends DId> {
   disabled?: boolean;
 }
 
-export interface DAccordionProps<ID extends DId, T extends DAccordionOption<ID>>
+export interface DAccordionProps<ID extends DId, T extends DAccordionItem<ID>>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  dAccordions: T[];
+  dList: T[];
   dActive?: ID | null | ID[];
   dActiveOne?: boolean;
   dArrow?: 'left' | 'right' | false;
-  onActiveChange?: (id: any, option: any) => void;
-  afterActiveChange?: (id: any, active: boolean) => void;
+  onActiveChange?: (id: any, item: any) => void;
+  afterActiveChange?: (id: any, item: any, active: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAccordion' });
-export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props: DAccordionProps<ID, T>): JSX.Element | null {
+export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: DAccordionProps<ID, T>): JSX.Element | null {
   const {
-    dAccordions,
+    dList,
     dActive,
     dActiveOne = false,
     dArrow = 'right',
@@ -51,10 +51,10 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
   const [activeId, changeActiveId] = useDValue<ID | null | ID[]>(dActiveOne ? null : [], dActive, (id) => {
     if (onActiveChange) {
       if (dActiveOne) {
-        onActiveChange(id, isNull(id) ? null : dAccordions.find((a) => a.id === id));
+        onActiveChange(id, isNull(id) ? null : dList.find((a) => a.id === id));
       } else {
         let length = (id as ID[]).length;
-        const options: T[] = [];
+        const items: T[] = [];
         const reduceArr = (arr: T[]) => {
           for (const item of arr) {
             if (length === 0) {
@@ -63,21 +63,21 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
 
             const index = (id as ID[]).findIndex((v) => v === item.id);
             if (index !== -1) {
-              options[index] = item;
+              items[index] = item;
               length -= 1;
             }
           }
         };
-        reduceArr(dAccordions);
+        reduceArr(dList);
 
-        onActiveChange(id, options);
+        onActiveChange(id, items);
       }
     }
   });
 
   return (
     <div {...restProps} className={getClassName(restProps.className, `${dPrefix}accordion`)}>
-      {dAccordions.map((accordion, index) => {
+      {dList.map((accordion, index) => {
         const {
           id: accordionId,
           title: accordionTitle,
@@ -87,8 +87,8 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
         } = accordion;
 
         const getAccordion = (next: boolean, _index = index): T | undefined => {
-          for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dAccordions.length; next ? focusIndex++ : focusIndex--, n++) {
-            const t = nth(dAccordions, focusIndex % dAccordions.length);
+          for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dList.length; next ? focusIndex++ : focusIndex--, n++) {
+            const t = nth(dList, focusIndex % dList.length);
             if (t && !t.disabled) {
               return t;
             }
@@ -136,7 +136,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
           <div
             key={accordionId}
             className={getClassName(`${dPrefix}accordion__container`, {
-              [`${dPrefix}accordion__container--last`]: index === dAccordions.length - 1,
+              [`${dPrefix}accordion__container--last`]: index === dList.length - 1,
             })}
           >
             <div
@@ -171,7 +171,7 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
 
                   case 'Home':
                     e.preventDefault();
-                    for (const a of dAccordions) {
+                    for (const a of dList) {
                       if (!a.disabled) {
                         focusTab(a);
                         break;
@@ -181,9 +181,9 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
 
                   case 'End':
                     e.preventDefault();
-                    for (let index = dAccordions.length - 1; index >= 0; index--) {
-                      if (!dAccordions[index].disabled) {
-                        focusTab(dAccordions[index]);
+                    for (let index = dList.length - 1; index >= 0; index--) {
+                      if (!dList[index].disabled) {
+                        focusTab(dList[index]);
                         break;
                       }
                     }
@@ -217,10 +217,10 @@ export function DAccordion<ID extends DId, T extends DAccordionOption<ID>>(props
                 leaved: { display: 'none' },
               }}
               afterEnter={() => {
-                afterActiveChange?.(accordionId, true);
+                afterActiveChange?.(accordionId, accordion, true);
               }}
               afterLeave={() => {
-                afterActiveChange?.(accordionId, false);
+                afterActiveChange?.(accordionId, accordion, false);
               }}
             >
               {(ref, collapseStyle) => (

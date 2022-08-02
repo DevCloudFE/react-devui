@@ -24,9 +24,9 @@ export interface DDatePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 
   dFormat?: string;
   dPlaceholder?: string | [string?, string?];
   dOrder?: 'ascend' | 'descend' | null;
-  dPresetOptions?: Record<string, () => Date | [Date, Date]>;
-  dConfigOptions?: (date: Date, position: 'start' | 'end', current: [Date | null, Date | null]) => { disabled?: boolean };
-  dShowTime?: boolean | Pick<DTimePickerProps, 'd12Hour' | 'dConfigOptions'>;
+  dPresetDate?: Record<string, () => Date | [Date, Date]>;
+  dConfigDate?: (date: Date, position: 'start' | 'end', current: [Date | null, Date | null]) => { disabled?: boolean };
+  dShowTime?: boolean | Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' });
@@ -36,8 +36,8 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     dPlaceholder,
     dOrder = 'ascend',
     dRange = false,
-    dPresetOptions,
-    dConfigOptions,
+    dPresetDate,
+    dConfigDate,
     dPopupClassName,
     dShowTime = false,
 
@@ -67,9 +67,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     dRange ? dPlaceholder ?? [] : [dPlaceholder]
   ) as [string?, string?];
 
-  const { d12Hour: t12Hour, dConfigOptions: tConfigOptions } = isBoolean(dShowTime)
-    ? ({} as Pick<DTimePickerProps, 'd12Hour' | 'dConfigOptions'>)
-    : dShowTime;
+  const { d12Hour: t12Hour, dConfigTime } = isBoolean(dShowTime) ? ({} as Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>) : dShowTime;
 
   return (
     <DPickerBuilder
@@ -93,7 +91,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
             ref={dDPPRef}
             dDate={pbDate}
             dAnotherDate={pbCurrentDate[pbPosition === 'start' ? 1 : 0]}
-            dConfigOptions={dConfigOptions ? (...args) => dConfigOptions(...args, pbPosition, pbCurrentDate) : undefined}
+            dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, pbPosition, pbCurrentDate) : undefined}
             onDateChange={changeValue}
           ></DDatePickerPanel>
           {dShowTime &&
@@ -104,20 +102,20 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
                 dTime: pbDate,
                 dCols: getCols(format),
                 d12Hour: t12Hour,
-                dConfigOptions: tConfigOptions ? (...args) => tConfigOptions(...args, pbPosition, pbCurrentDate) : undefined,
+                dConfigTime: dConfigTime ? (...args) => dConfigTime(...args, pbPosition, pbCurrentDate) : undefined,
                 onTimeChange: changeValue,
                 __header: true,
               }
             )}
           <div
             className={getClassName(`${dPrefix}date-picker__footer`, {
-              [`${dPrefix}date-picker__footer--custom`]: dPresetOptions,
+              [`${dPrefix}date-picker__footer--custom`]: dPresetDate,
             })}
           >
-            {dPresetOptions ? (
-              Object.keys(dPresetOptions).map((name) => {
+            {dPresetDate ? (
+              Object.keys(dPresetDate).map((name) => {
                 const handleClick = () => {
-                  const d = dPresetOptions[name]();
+                  const d = dPresetDate[name]();
                   changeValue(d);
                   dDPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
                   dTPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);

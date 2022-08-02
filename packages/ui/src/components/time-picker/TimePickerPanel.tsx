@@ -29,7 +29,7 @@ export interface DTimePickerPanelProps {
   dTime: Date | null;
   dCols: ('hour' | 'minute' | 'second')[];
   d12Hour?: boolean;
-  dConfigOptions?: (unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean };
+  dConfigTime?: (unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean };
   onTimeChange?: (time: Date) => void;
 }
 
@@ -38,7 +38,7 @@ export interface DTimePickerPanelPropsWithPrivate extends DTimePickerPanelProps 
 }
 
 function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>): JSX.Element | null {
-  const { dTime, dCols, d12Hour = false, dConfigOptions, onTimeChange, __header = false } = props as DTimePickerPanelPropsWithPrivate;
+  const { dTime, dCols, d12Hour = false, dConfigTime, onTimeChange, __header = false } = props as DTimePickerPanelPropsWithPrivate;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -142,7 +142,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
                 h += 12;
               }
             }
-            const { disabled, hidden } = dConfigOptions?.('hour', h) ?? {};
+            const { disabled, hidden } = dConfigTime?.('hour', h) ?? {};
 
             return hidden ? null : (
               <li
@@ -168,7 +168,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
         <ul ref={ulMRef} className={`${dPrefix}time-picker__column`}>
           {M60.map((_m) => {
             const m = Number(_m);
-            const { disabled, hidden } = dConfigOptions?.('minute', m) ?? {};
+            const { disabled, hidden } = dConfigTime?.('minute', m) ?? {};
 
             return hidden ? null : (
               <li
@@ -194,7 +194,7 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
         <ul ref={ulSRef} className={`${dPrefix}time-picker__column`}>
           {S60.map((_s) => {
             const s = Number(_s);
-            const { disabled, hidden } = dConfigOptions?.('second', s) ?? {};
+            const { disabled, hidden } = dConfigTime?.('second', s) ?? {};
 
             return hidden ? null : (
               <li

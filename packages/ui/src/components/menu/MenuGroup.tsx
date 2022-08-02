@@ -3,7 +3,7 @@ import { usePrefixConfig, useTranslation } from '../../hooks';
 export interface DMenuGroupProps {
   children: React.ReactNode;
   dId: string;
-  dOptions: React.ReactNode;
+  dList: React.ReactNode;
   dEmpty: boolean;
   dStep: number;
   dSpace: number;
@@ -11,7 +11,7 @@ export interface DMenuGroupProps {
 }
 
 export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
-  const { children, dId, dOptions, dEmpty, dStep, dSpace, dLevel = 0 } = props;
+  const { children, dId, dList, dEmpty, dStep, dSpace, dLevel = 0 } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -29,7 +29,7 @@ export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
           {t('No Data')}
         </div>
       ) : (
-        dOptions
+        dList
       )}
     </ul>
   );
