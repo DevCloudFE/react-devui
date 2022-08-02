@@ -31,7 +31,6 @@ import type {
   DImageProps,
   DImagePreviewProps,
   DInputProps,
-  DLoadingProps,
   DMenuProps,
   DModalProps,
   DModalHeaderProps,
@@ -51,6 +50,7 @@ import type {
   DSliderProps,
   DSlidesProps,
   DSlideProps,
+  DSpinnerProps,
   DStepperProps,
   DSwitchProps,
   DTabsProps,
@@ -108,7 +108,6 @@ export type DComponentConfig = {
   DImage: DImageProps;
   DImagePreview: DImagePreviewProps;
   DInput: DInputProps;
-  DLoading: DLoadingProps;
   DMenu: DMenuProps<any, any>;
   DModal: DModalProps;
   DModalHeader: DModalHeaderProps;
@@ -128,6 +127,7 @@ export type DComponentConfig = {
   DSlider: DSliderProps;
   DSlides: DSlidesProps;
   DSlide: DSlideProps;
+  DSpinner: DSpinnerProps;
   DStepper: DStepperProps<any>;
   DSwitch: DSwitchProps;
   DTabs: DTabsProps<any, any>;

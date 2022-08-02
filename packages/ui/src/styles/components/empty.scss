@@ -1,12 +1,11 @@
 @include b(empty) {
   display: flex;
   flex-direction: column;
+  gap: 8px 0;
   align-items: center;
   color: rgb(var(--#{$variable-prefix}text-color-rgb) / 28%);
 
   @include e(description) {
-    margin-top: 8px;
-
     @include font-size(0.9rem);
   }
 }

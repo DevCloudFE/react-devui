@@ -1,6 +1,6 @@
 ---
 group: Feedback
-title: Loading
+title: Spinner
 ---
 
 ## API

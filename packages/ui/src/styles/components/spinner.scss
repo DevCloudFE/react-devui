@@ -1,4 +1,4 @@
-@keyframes loading-dash {
+@keyframes spinner-dash {
   0% {
     stroke-dasharray: 1, 150;
     stroke-dashoffset: 0;
@@ -15,7 +15,7 @@
   }
 }
 
-@include b(loading) {
+@include b(spinner) {
   position: absolute;
   inset: 0;
   z-index: 5;
@@ -34,7 +34,7 @@
     animation: spin 2s linear infinite;
 
     circle {
-      animation: loading-dash 1.5s ease-in-out infinite;
+      animation: spinner-dash 1.5s ease-in-out infinite;
     }
   }
 

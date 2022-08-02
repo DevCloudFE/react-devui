@@ -20,18 +20,23 @@
   }
 }
 
+.app-sidebar__subtitle {
+  margin-left: 4px;
+  font-size: 0.8em;
+}
+
+.app-sidebar__title {
+  margin-left: 8px;
+}
+
 .app-sidebar__drawer {
+  .d-drawer__header-title {
+    display: flex;
+    align-items: center;
+  }
+
   .d-drawer__body {
-    padding: 12px 0;
-  }
-
-  .app-sidebar__subtitle {
-    margin-left: 4px;
-    font-size: 0.8em;
-  }
-
-  .app-sidebar__title {
-    margin-left: 8px;
+    padding: 0;
   }
 }
 

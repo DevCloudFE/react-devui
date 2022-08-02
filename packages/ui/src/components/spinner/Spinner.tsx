@@ -8,7 +8,7 @@ import { registerComponentMate, getClassName, checkNodeExist } from '../../utils
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DTransition } from '../_transition';
 
-export interface DLoadingProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
   dText?: React.ReactNode;
   dDelay?: number;
@@ -16,8 +16,8 @@ export interface DLoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DLoading' });
-export function DLoading(props: DLoadingProps): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSpinner' });
+export function DSpinner(props: DSpinnerProps): JSX.Element | null {
   const {
     children,
     dVisible = true,
@@ -83,22 +83,22 @@ export function DLoading(props: DLoadingProps): JSX.Element | null {
       {(state) => (
         <div
           {...restProps}
-          className={getClassName(restProps.className, `${dPrefix}loading`)}
+          className={getClassName(restProps.className, `${dPrefix}spinner`)}
           style={{
             ...restProps.style,
             ...transitionStyles[state],
           }}
         >
-          <div className={`${dPrefix}loading__icon`} style={{ fontSize: dSize }}>
+          <div className={`${dPrefix}spinner__icon`} style={{ fontSize: dSize }}>
             {checkNodeExist(children) ? (
               children
             ) : (
-              <svg className={`${dPrefix}loading__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
+              <svg className={`${dPrefix}spinner__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
               </svg>
             )}
           </div>
-          {checkNodeExist(dText) && <div className={`${dPrefix}loading__text`}>{dText}</div>}
+          {checkNodeExist(dText) && <div className={`${dPrefix}spinner__text`}>{dText}</div>}
         </div>
       )}
     </DTransition>

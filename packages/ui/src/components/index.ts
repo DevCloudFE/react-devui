@@ -64,9 +64,6 @@ export { DImage, DImagePreview } from './image';
 export type { DInputProps } from './input';
 export { DInput } from './input';
 
-export type { DLoadingProps } from './loading';
-export { DLoading } from './loading';
-
 export type { DMenuProps } from './menu';
 export { DMenu } from './menu';
 
@@ -108,6 +105,9 @@ export { DSlider } from './slider';
 
 export type { DSlidesProps, DSlideProps } from './slides';
 export { DSlides, DSlide } from './slides';
+
+export type { DSpinnerProps } from './spinner';
+export { DSpinner } from './spinner';
 
 export type { DStepperProps } from './stepper';
 export { DStepper } from './stepper';
