@@ -77,14 +77,8 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
 
   return (
     <div {...restProps} className={getClassName(restProps.className, `${dPrefix}accordion`)}>
-      {dList.map((accordion, index) => {
-        const {
-          id: accordionId,
-          title: accordionTitle,
-          region: accordionRegion,
-          arrow: accordionArrow = dArrow,
-          disabled: accordionDisabled = false,
-        } = accordion;
+      {dList.map((item, index) => {
+        const { id: itemId, title: itemTitle, region: itemRegion, arrow: itemArrow = dArrow, disabled: itemDisabled = false } = item;
 
         const getAccordion = (next: boolean, _index = index): T | undefined => {
           for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dList.length; next ? focusIndex++ : focusIndex--, n++) {
@@ -104,14 +98,14 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
           }
         };
 
-        const buttonId = getButtonId(accordionId);
-        const regionId = getRegionId(accordionId);
-        const isActive = dActiveOne ? activeId === accordionId : (activeId as ID[]).includes(accordionId);
+        const buttonId = getButtonId(itemId);
+        const regionId = getRegionId(itemId);
+        const isActive = dActiveOne ? activeId === itemId : (activeId as ID[]).includes(itemId);
         const iconRotate = (() => {
-          if (accordionArrow === 'left' && !isActive) {
+          if (itemArrow === 'left' && !isActive) {
             return -90;
           }
-          if (accordionArrow === 'right' && isActive) {
+          if (itemArrow === 'right' && isActive) {
             return 180;
           }
           return undefined;
@@ -119,14 +113,14 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
 
         const handleClick = () => {
           if (dActiveOne) {
-            changeActiveId(isActive ? null : accordionId);
+            changeActiveId(isActive ? null : itemId);
           } else {
             changeActiveId((draft) => {
-              const index = (draft as ID[]).findIndex((v) => v === accordionId);
+              const index = (draft as ID[]).findIndex((v) => v === itemId);
               if (index !== -1) {
                 (draft as ID[]).splice(index, 1);
               } else {
-                (draft as ID[]).push(accordionId);
+                (draft as ID[]).push(itemId);
               }
             });
           }
@@ -134,7 +128,7 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
 
         return (
           <div
-            key={accordionId}
+            key={itemId}
             className={getClassName(`${dPrefix}accordion__container`, {
               [`${dPrefix}accordion__container--last`]: index === dList.length - 1,
             })}
@@ -142,14 +136,14 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
             <div
               id={buttonId}
               className={getClassName(`${dPrefix}accordion__button`, {
-                [`${dPrefix}accordion__button--arrow-left`]: accordionArrow === 'left',
-                'is-disabled': accordionDisabled,
+                [`${dPrefix}accordion__button--arrow-left`]: itemArrow === 'left',
+                'is-disabled': itemDisabled,
               })}
-              tabIndex={accordionDisabled ? -1 : 0}
+              tabIndex={itemDisabled ? -1 : 0}
               role="button"
               aria-controls={regionId}
               aria-expanded={isActive}
-              aria-disabled={accordionDisabled}
+              aria-disabled={itemDisabled}
               onClick={handleClick}
               onKeyDown={(e) => {
                 switch (e.code) {
@@ -194,8 +188,8 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 }
               }}
             >
-              <div className={`${dPrefix}accordion__title`}>{accordionTitle}</div>
-              {accordionArrow && <DownOutlined className={`${dPrefix}accordion__arrow`} dRotate={iconRotate} />}
+              <div className={`${dPrefix}accordion__title`}>{itemTitle}</div>
+              {itemArrow && <DownOutlined className={`${dPrefix}accordion__arrow`} dRotate={iconRotate} />}
             </div>
             <DCollapseTransition
               dSize={0}
@@ -217,10 +211,10 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 leaved: { display: 'none' },
               }}
               afterEnter={() => {
-                afterActiveChange?.(accordionId, accordion, true);
+                afterActiveChange?.(itemId, item, true);
               }}
               afterLeave={() => {
-                afterActiveChange?.(accordionId, accordion, false);
+                afterActiveChange?.(itemId, item, false);
               }}
             >
               {(ref, collapseStyle) => (
@@ -230,9 +224,9 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                   className={`${dPrefix}accordion__region`}
                   style={collapseStyle}
                   role="region"
-                  aria-labelledby={getButtonId(accordionId)}
+                  aria-labelledby={getButtonId(itemId)}
                 >
-                  {accordionRegion}
+                  {itemRegion}
                 </div>
               )}
             </DCollapseTransition>

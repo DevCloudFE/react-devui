@@ -57,6 +57,7 @@ import type {
   DTagProps,
   DTextareaProps,
   DTimePickerProps,
+  DTimelineProps,
   DToastProps,
   DTooltipProps,
   DTransferProps,
@@ -134,6 +135,7 @@ export type DComponentConfig = {
   DTag: DTagProps;
   DTextarea: DTextareaProps;
   DTimePicker: DTimePickerProps;
+  DTimeline: DTimelineProps<any>;
   DToast: DToastProps;
   DTooltip: DTooltipProps;
   DTransfer: DTransferProps<any, any>;

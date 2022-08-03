@@ -1,0 +1,97 @@
+@include b(timeline) {
+  @include e(text-container) {
+    display: flex;
+
+    @include e(text, true) {
+      padding: 0 8px;
+      text-align: center;
+    }
+  }
+
+  @include e(icon-container) {
+    display: flex;
+
+    @include e(icon, true) {
+      position: relative;
+      display: flex;
+      flex: 1 0 0;
+      align-items: center;
+    }
+
+    @include e(separator, true) {
+      flex: 1 0 0;
+      height: 2px;
+    }
+  }
+
+  @include e(content) {
+    display: flex;
+    align-items: stretch;
+
+    @include m(gap) {
+      height: 20px;
+    }
+
+    @include e(text, true) {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    @include e(icon, true) {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @include e(separator, true) {
+      flex: 1 0 0;
+      width: 2px;
+    }
+  }
+
+  @include e(text) {
+    flex: 1 0 0;
+
+    @include m(left) {
+      justify-content: flex-end;
+    }
+  }
+
+  @include e(icon) {
+    color: var(--#{$variable-prefix}color-primary);
+
+    @include when(completed) {
+      color: var(--#{$variable-prefix}color-success);
+    }
+
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+
+    @include when(wait) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+
+    @include when(error) {
+      color: var(--#{$variable-prefix}color-danger);
+    }
+  }
+
+  @include e(dot) {
+    position: relative;
+    z-index: 5;
+    width: 12px;
+    height: 12px;
+    background-color: var(--#{$variable-prefix}background-color);
+    border: 2px solid currentcolor;
+    border-radius: 50%;
+  }
+
+  @include e(separator) {
+    background-color: var(--#{$variable-prefix}background-color-indicator);
+
+    @include m(hidden) {
+      background-color: transparent;
+    }
+  }
+}

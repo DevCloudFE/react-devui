@@ -202,8 +202,8 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
           role="tablist"
           aria-orientation={isHorizontal ? 'horizontal' : 'vertical'}
         >
-          {dList.map((tab, index) => {
-            const { id: tabId, title: tabTitle, disabled: tabDisabled, closable: tabClosable } = tab;
+          {dList.map((item, index) => {
+            const { id: itemId, title: itemTitle, disabled: itemDisabled, closable: itemClosable } = item;
 
             const getTab = (next: boolean, _index = index): T | undefined => {
               for (let focusIndex = next ? _index + 1 : _index - 1, n = 0; n < dList.length; next ? focusIndex++ : focusIndex--, n++) {
@@ -226,7 +226,7 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
             };
 
             const closeTab = () => {
-              if (activeId === tabId) {
+              if (activeId === itemId) {
                 let hasTab = false;
                 for (let focusIndex = index + 1; focusIndex < dList.length; focusIndex++) {
                   const t = nth(dList, focusIndex);
@@ -246,34 +246,34 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
                   }
                 }
               }
-              onClose?.(tabId, tab);
+              onClose?.(itemId, item);
             };
 
-            const active = tabId === activeId;
+            const active = itemId === activeId;
 
             return (
               <div
-                key={tabId}
-                id={getTabId(tabId)}
+                key={itemId}
+                id={getTabId(itemId)}
                 className={getClassName(`${dPrefix}tabs__tab`, {
                   'is-active': active,
-                  'is-disabled': tabDisabled,
+                  'is-disabled': itemDisabled,
                   [`${dPrefix}tabs__tab--first`]: index === 0,
                   [`${dPrefix}tabs__tab--last`]: index === dList.length - 1,
                 })}
-                tabIndex={active && !tabDisabled ? 0 : -1}
+                tabIndex={active && !itemDisabled ? 0 : -1}
                 role="tab"
-                aria-controls={getPanelId(tabId)}
+                aria-controls={getPanelId(itemId)}
                 aria-selected={active}
-                aria-disabled={tabDisabled}
+                aria-disabled={itemDisabled}
                 onClick={() => {
-                  changeActiveId(tabId);
+                  changeActiveId(itemId);
                 }}
                 onKeyDown={(e) => {
                   switch (e.code) {
                     case 'Delete':
                       e.preventDefault();
-                      if (tabClosable) {
+                      if (itemClosable) {
                         closeTab();
                       }
                       break;
@@ -331,8 +331,8 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
                   }
                 }}
               >
-                {tabTitle}
-                {!tabDisabled && tabClosable && (
+                {itemTitle}
+                {!itemDisabled && itemClosable && (
                   <button
                     className={`${dPrefix}tabs__close`}
                     aria-label={t('Close')}
@@ -353,21 +353,21 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
               {listOverflow && (
                 <DDropdown
                   dList={dropdownList.map<DDropdownItem<ID>>((tab) => {
-                    const { id: tabId, title: tabTitle, disabled: tabDisabled } = tab;
+                    const { id: itemId, title: itemTitle, disabled: itemDisabled } = tab;
 
                     return {
-                      id: tabId,
+                      id: itemId,
                       label: (
                         <span
                           className={getClassName(`${dPrefix}tabs__dropdown-item`, {
-                            'is-active': tabId === activeId,
+                            'is-active': itemId === activeId,
                           })}
                         >
-                          {tabTitle}
+                          {itemTitle}
                         </span>
                       ),
                       type: 'item',
-                      disabled: tabDisabled,
+                      disabled: itemDisabled,
                     };
                   })}
                   dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
@@ -406,20 +406,20 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
           <div ref={indicatorRef} className={`${dPrefix}tabs__${dType ? dType + '-' : ''}indicator`}></div>
         </div>
       </div>
-      {dList.map((tab) => {
-        const { id: tabId, panel: tabPanel } = tab;
+      {dList.map((item) => {
+        const { id: itemId, panel: itemPanel } = item;
 
         return (
           <div
-            key={tabId}
-            id={getPanelId(tabId)}
+            key={itemId}
+            id={getPanelId(itemId)}
             className={`${dPrefix}tabs__tabpanel`}
             tabIndex={0}
-            hidden={tabId !== activeId}
+            hidden={itemId !== activeId}
             role="tabpanel"
-            aria-labelledby={getTabId(tabId)}
+            aria-labelledby={getTabId(itemId)}
           >
-            {tabPanel}
+            {itemPanel}
           </div>
         );
       })}

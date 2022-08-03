@@ -12,7 +12,7 @@ export interface DStepperItem {
   title: React.ReactNode;
   description?: React.ReactNode;
   icon?: React.ReactNode;
-  status?: 'completed' | 'process' | 'wait' | 'error';
+  status?: 'completed' | 'active' | 'wait' | 'error';
 }
 
 export interface DStepperProps<T extends DStepperItem> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -56,12 +56,12 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
         [`${dPrefix}stepper--button`]: dClickable,
       })}
     >
-      {dList.map((step, index) => {
-        const { step: stepStep = index + 1, title: stepTitle, description: stepDescription, icon: stepIcon, status: stepStatus } = step;
+      {dList.map((item, index) => {
+        const { step: itemStep = index + 1, title: itemTitle, description: itemDescription, icon: itemIcon, status: itemStatus } = item;
 
-        const isCompleted = stepStep < active;
-        const isActive = stepStep === active;
-        const isWait = stepStep > active;
+        const isCompleted = itemStep < active;
+        const isActive = itemStep === active;
+        const isWait = itemStep > active;
 
         const isProgress = isActive && isNumber(dPercent);
 
@@ -70,7 +70,7 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
             className={`${dPrefix}stepper__step-title`}
             style={{ marginTop: dLabelBottom ? undefined : `calc((${dIconSize}px - 1.1em) / 2)` }}
           >
-            {stepTitle}
+            {itemTitle}
           </div>
         );
 
@@ -91,10 +91,10 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
 
         return (
           <div
-            key={stepStep}
+            key={itemStep}
             className={getClassName(
               `${dPrefix}stepper__step`,
-              isUndefined(stepStatus)
+              isUndefined(itemStatus)
                 ? {
                     'is-completed': isCompleted,
                     'is-active': isActive,
@@ -102,7 +102,7 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
                   }
                 : {},
               {
-                [`is-${stepStatus}`]: stepStatus,
+                [`is-${itemStatus}`]: itemStatus,
                 [`${dPrefix}stepper__step--last`]: index === dList.length - 1,
               }
             )}
@@ -117,13 +117,13 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
                 if (e.code === 'Enter' || e.code === 'Space') {
                   e.preventDefault();
 
-                  onItemClick?.(stepStep, step);
+                  onItemClick?.(itemStep, item);
                 }
               }
             }}
             onClick={() => {
               if (dClickable) {
-                onItemClick?.(stepStep, step);
+                onItemClick?.(itemStep, item);
               }
             }}
           >
@@ -137,14 +137,14 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
                   height: dIconSize,
                 }}
               >
-                {stepIcon === false ? null : checkNodeExist(stepIcon) ? (
-                  stepIcon
-                ) : stepStatus === 'error' ? (
+                {itemIcon === false ? null : checkNodeExist(itemIcon) ? (
+                  itemIcon
+                ) : itemStatus === 'error' ? (
                   <CloseOutlined />
                 ) : isCompleted ? (
                   <CheckOutlined />
                 ) : (
-                  stepStep
+                  itemStep
                 )}
                 {isProgress && (
                   <DProgress
@@ -163,7 +163,7 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
             </div>
             {dLabelBottom && titleNode}
             {dVertical && separatoreNode}
-            {checkNodeExist(stepDescription) && (
+            {checkNodeExist(itemDescription) && (
               <DCollapseTransition
                 dSize={0}
                 dIn={!dVertical || isActive}
@@ -187,7 +187,7 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
                       marginLeft: dLabelBottom ? undefined : `calc(${dIconSize}px + 8px)`,
                     }}
                   >
-                    {stepDescription}
+                    {itemDescription}
                   </div>
                 )}
               </DCollapseTransition>

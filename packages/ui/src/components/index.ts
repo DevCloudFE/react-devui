@@ -127,6 +127,9 @@ export { DTextarea } from './textarea';
 export type { DTimePickerProps } from './time-picker';
 export { DTimePicker } from './time-picker';
 
+export type { DTimelineProps } from './timeline';
+export { DTimeline } from './timeline';
+
 export type { DToastProps } from './toast';
 export { ToastService } from './toast';
 
