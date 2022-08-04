@@ -1,6 +1,6 @@
 import type { DNestedChildren, DId } from '../../utils/global';
 import type { DFormControl } from '../form';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { AbstractTreeNode } from './node';
 
 import { isNull, isUndefined } from 'lodash';
@@ -287,11 +287,28 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
     [handleKeyDown]
   );
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<V, T>>>(
+    () => ({
+      dList: renderNodes,
+      dExpands: expandIds,
+      dItemSize: 32,
+      dItemNested: (item) => ({
+        list: item.children,
+        emptySize: 32,
+        asItem: true,
+      }),
+      dItemKey: (item) => item.id,
+      dFocusable: (item) => item.enabled,
+    }),
+    [expandIds, renderNodes]
+  );
+
   return (
     <DFocusVisible onFocusVisibleChange={setFocusVisible}>
       {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
         <DBaseDesign dFormControl={dFormControl}>
           <DVirtualScroll
+            {...vsPerformance}
             ref={dVSRef}
             className={getClassName(restProps.className, `${dPrefix}tree`, {
               [`${dPrefix}tree--line`]: dShowLine,
@@ -319,8 +336,6 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
 
               handleKeyDown?.(e);
             }}
-            dList={renderNodes}
-            dExpands={expandIds}
             dItemRender={(item, index, { iARIA, iChildren }) => {
               if (item.children) {
                 const isExpand = expandIds.has(item.id);
@@ -410,13 +425,7 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
                             role="group"
                             aria-labelledby={getGroupId(item.id)}
                           >
-                            {item.children!.length === 0 ? (
-                              <li className={`${dPrefix}tree__empty`}>
-                                <div className={`${dPrefix}tree__option-content`}>{t('No Data')}</div>
-                              </li>
-                            ) : (
-                              iChildren
-                            )}
+                            {iChildren}
                           </ul>
                         )}
                       </DCollapseTransition>
@@ -451,23 +460,13 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
                 </li>
               );
             }}
-            dItemSize={(item) => {
-              if (item.children && item.children.length === 0) {
-                return 64;
-              }
-              return 32;
-            }}
-            dItemNested={(item) => item.children}
-            dItemKey={(item) => item.id}
-            dFocusable={(item) => item.enabled}
             dFocusItem={focusNode}
-            dSizeIncludeNestedItem
             dSize={dHeight ?? Infinity}
-            dEmpty={
+            dEmptyRender={() => (
               <li className={`${dPrefix}tree__empty`}>
                 <div className={`${dPrefix}tree__option-content`}>{t('No Data')}</div>
               </li>
-            }
+            )}
             onScrollEnd={onScrollBottom}
           ></DVirtualScroll>
         </DBaseDesign>

@@ -112,7 +112,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     [_filterFn]
   );
   const sortFn = dCustomSearch?.sort;
-  const [listLeft, listRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = (() => {
+  const [listLeft, listRight, selectedNumLeft, selectedNumRight, stateLeft, stateRight] = useMemo(() => {
     const listL: T[] = [];
     const listR: T[] = [];
     let selectedNumL = 0;
@@ -168,7 +168,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     const stateR: boolean | 'mixed' = emptyR ? false : checkAllR ? true : hasSelectedR ? 'mixed' : false;
 
     return [listL, listR, selectedNumL, selectedNumR, stateL, stateR];
-  })();
+  }, [dList, filterFn, searchValueLeft, searchValueRight, selected, sortFn, valueRight]);
 
   const handleSelectedChange = (val: V) => {
     changeSelected((draft) => {

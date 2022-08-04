@@ -1,11 +1,11 @@
 import type { DId } from '../../utils/global';
 import type { MultipleTreeNode } from '../tree/node';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem, DSearchItem } from './Cascader';
 import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
 import { getClassName } from '../../utils';
@@ -120,15 +120,25 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
     };
   }, [handleKeyDown, onKeyDown$]);
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<ID, T>>>(
+    () => ({
+      dList: dList,
+      dItemSize: 32,
+      dItemKey: (item) => item.value,
+      dFocusable: (item) => item[TREE_NODE_KEY].enabled,
+    }),
+    [dList]
+  );
+
   return (
     <DVirtualScroll
+      {...vsPerformance}
       ref={dVSRef}
       id={dListId}
       className={`${dPrefix}cascader__list`}
       role="listbox"
       aria-multiselectable={dMultiple}
       aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
-      dList={dList}
       dItemRender={(item, index, { iARIA }) => {
         const node = item[TREE_NODE_KEY];
         let inSelected = node.checked;
@@ -167,17 +177,14 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
           </li>
         );
       }}
-      dItemSize={32}
-      dItemKey={(item) => item.value}
-      dFocusable={(item) => item[TREE_NODE_KEY].enabled}
       dFocusItem={dFocusItem}
       dSize={264}
       dPadding={4}
-      dEmpty={
+      dEmptyRender={() => (
         <li className={`${dPrefix}cascader__empty`}>
           <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
         </li>
-      }
+      )}
     />
   );
 }

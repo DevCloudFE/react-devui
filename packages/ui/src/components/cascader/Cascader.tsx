@@ -183,7 +183,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     [dCustomSearch, searchValue]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchList = (() => {
+  const searchList = useMemo(() => {
     if (!hasSearch) {
       return [];
     }
@@ -212,7 +212,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
       searchList.sort((a, b) => sortFn(a[TREE_NODE_KEY].origin, b[TREE_NODE_KEY].origin));
     }
     return searchList;
-  })();
+  }, [dMultiple, dOnlyLeafSelectable, filterFn, hasSearch, renderNodes, sortFn]);
 
   const [_noSearchFocusNode, setNoSearchFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
   const noSearchFocusNode = (() => {

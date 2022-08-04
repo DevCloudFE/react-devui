@@ -1,8 +1,8 @@
 import type { DId } from '../../utils/global';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTransferItem } from './Transfer';
 
-import React, { useId, useCallback, useRef } from 'react';
+import React, { useId, useCallback, useRef, useMemo } from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { LoadingOutlined, SearchOutlined } from '../../icons';
@@ -57,6 +57,16 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
 
   const canSelectItem = useCallback((item: T) => !item.disabled, []);
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<T>>(
+    () => ({
+      dList: dList,
+      dItemSize: 32,
+      dItemKey: (item) => item.value,
+      dFocusable: canSelectItem,
+    }),
+    [canSelectItem, dList]
+  );
+
   return (
     <div className={`${dPrefix}transfer__panel`}>
       <div className={`${dPrefix}transfer__header`}>
@@ -88,9 +98,9 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
           </div>
         )}
         <DVirtualScroll
+          {...vsPerformance}
           ref={dVSRef}
           className={`${dPrefix}transfer__list`}
-          dList={dList}
           dItemRender={(item, index, { iARIA }) => {
             const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
 
@@ -114,11 +124,8 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
               </li>
             );
           }}
-          dItemSize={32}
-          dItemKey={(item) => item.value}
-          dFocusable={canSelectItem}
           dSize={192}
-          dEmpty={<DEmpty className={`${dPrefix}transfer__empty`}></DEmpty>}
+          dEmptyRender={() => <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty>}
           onScrollEnd={onScrollBottom}
         ></DVirtualScroll>
       </div>

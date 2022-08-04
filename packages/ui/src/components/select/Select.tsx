@@ -1,7 +1,7 @@
 import type { DNestedChildren, DId, DSize } from '../../utils/global';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
@@ -160,16 +160,16 @@ function Select<V extends DId, T extends DSelectItem<V>>(
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
-    (searchStr: string, item: T) => {
+    (item: T) => {
       const defaultFilterFn = (item: T) => {
-        return item.label.includes(searchStr);
+        return item.label.includes(searchValue);
       };
-      return _filterFn ? _filterFn(searchStr, item) : defaultFilterFn(item);
+      return _filterFn ? _filterFn(searchValue, item) : defaultFilterFn(item);
     },
-    [_filterFn]
+    [_filterFn, searchValue]
   );
   const sortFn = dCustomSearch?.sort;
-  const searchList = (() => {
+  const searchList = useMemo(() => {
     if (!hasSearch) {
       return [];
     }
@@ -189,7 +189,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
         if (createItem && item.value === createItem.value) {
           createItem = undefined;
         }
-        if (filterFn(searchValue, item)) {
+        if (filterFn(item)) {
           searchList.push(item);
         }
       } else {
@@ -198,7 +198,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
           if (createItem && groupItem.value === createItem.value) {
             createItem = undefined;
           }
-          if (filterFn(searchValue, groupItem)) {
+          if (filterFn(groupItem)) {
             groupList.push(groupItem);
           }
         });
@@ -215,7 +215,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     }
 
     return searchList;
-  })();
+  }, [dCreateItem, dList, filterFn, hasSearch, searchValue, sortFn]);
   const list = hasSearch ? searchList : dList;
 
   const [_noSearchFocusItem, setNoSearchFocusItem] = useState<DNestedChildren<T> | undefined>();
@@ -339,6 +339,21 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     return [selectedNode, suffixNode, selectedLabel];
   })();
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<DNestedChildren<T>>>(
+    () => ({
+      dList: list,
+      dItemSize: 32,
+      dItemNested: (item) => ({
+        list: item.children,
+        emptySize: 32,
+        asItem: false,
+      }),
+      dItemKey: (item) => item.value,
+      dFocusable: canSelectItem,
+    }),
+    [canSelectItem, list]
+  );
+
   return (
     <DSelectbox
       {...restProps}
@@ -454,13 +469,13 @@ function Select<V extends DId, T extends DSelectItem<V>>(
             </div>
           )}
           <DVirtualScroll
+            {...vsPerformance}
             ref={dVSRef}
             id={listId}
             className={`${dPrefix}select__list`}
             role="listbox"
             aria-multiselectable={dMultiple}
             aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
-            dList={list}
             dItemRender={(item, index, { iARIA, iChildren }, parent) => {
               const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
 
@@ -472,13 +487,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                     <li key={itemValue} id={getGroupId(itemValue)} className={`${dPrefix}select__option-group-label`} role="presentation">
                       <div className={`${dPrefix}select__option-content`}>{node}</div>
                     </li>
-                    {children.length === 0 ? (
-                      <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>
-                        <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
-                      </li>
-                    ) : (
-                      iChildren
-                    )}
+                    {iChildren}
                   </ul>
                 );
               }
@@ -524,23 +533,14 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                 </li>
               );
             }}
-            dItemSize={(item) => {
-              if (item.children && item.children.length === 0) {
-                return 64;
-              }
-              return 32;
-            }}
-            dItemNested={(item) => item.children}
-            dItemKey={(item) => item.value}
-            dFocusable={canSelectItem}
             dFocusItem={focusItem}
             dSize={264}
             dPadding={4}
-            dEmpty={
-              <li className={`${dPrefix}select__empty`}>
+            dEmptyRender={(item) => (
+              <li className={`${dPrefix}select__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
                 <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
               </li>
-            }
+            )}
             onScrollEnd={onScrollBottom}
           />
         </div>

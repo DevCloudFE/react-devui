@@ -1,11 +1,11 @@
 import type { DId } from '../../utils/global';
 import type { AbstractTreeNode, MultipleTreeNode } from '../tree/node';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem } from './Cascader';
 import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useTranslation, useEventCallback } from '../../hooks';
 import { LoadingOutlined, RightOutlined } from '../../icons';
@@ -163,16 +163,26 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
     }
   }, [handleKeyDown, isFocus, onKeyDown$, shouldInitFocus]);
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<ID, T>>>(
+    () => ({
+      dList: dNodes,
+      dItemSize: 32,
+      dItemKey: (item) => item.id,
+      dFocusable: (item) => item.enabled,
+    }),
+    [dNodes]
+  );
+
   return (
     <>
       <DVirtualScroll
+        {...vsPerformance}
         ref={dVSRef}
         id={dListId}
         className={`${dPrefix}cascader__list`}
         role="listbox"
         aria-multiselectable={dMultiple}
         aria-activedescendant={dRoot && !isUndefined(dFocusNode) ? dGetItemId(dFocusNode.id) : undefined}
-        dList={dNodes}
         dItemRender={(item, index, { iARIA }) => (
           <li
             {...iARIA}
@@ -213,17 +223,14 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
             )}
           </li>
         )}
-        dItemSize={32}
-        dItemKey={(item) => item.id}
-        dFocusable={(item) => item.enabled}
         dFocusItem={inFocusNode}
         dSize={264}
         dPadding={4}
-        dEmpty={
+        dEmptyRender={() => (
           <li className={`${dPrefix}cascader__empty`}>
             <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
           </li>
-        }
+        )}
       />
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
         <DList {...props} dListId={undefined} dNodes={inFocusNode.children} dRoot={false}></DList>

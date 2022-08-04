@@ -1,9 +1,9 @@
 import type { DNestedChildren } from '../../utils/global';
 import type { DFocusVisibleRenderProps } from '../_focus-visible';
-import type { DVirtualScrollRef } from '../virtual-scroll';
+import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isUndefined } from 'lodash';
-import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect } from 'react';
+import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -266,6 +266,21 @@ function AutoComplete<T extends DAutoCompleteItem>(
     },
   });
 
+  const vsPerformance = useMemo<DVirtualScrollPerformance<DNestedChildren<T>>>(
+    () => ({
+      dList,
+      dItemSize: 32,
+      dItemNested: (item) => ({
+        list: item.children,
+        emptySize: 32,
+        asItem: false,
+      }),
+      dItemKey: (item) => item.value,
+      dFocusable: canSelectItem,
+    }),
+    [canSelectItem, dList]
+  );
+
   return (
     <>
       <DFocusVisible onFocusVisibleChange={setFocusVisible}>
@@ -353,12 +368,12 @@ function AutoComplete<T extends DAutoCompleteItem>(
                     </div>
                   )}
                   <DVirtualScroll
+                    {...vsPerformance}
                     ref={dVSRef}
                     id={listId}
                     className={`${dPrefix}auto-complete__list`}
                     role="listbox"
                     aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
-                    dList={dList}
                     dItemRender={(item, index, { iARIA, iChildren }, parent) => {
                       const { value: itemValue, disabled: itemDisabled, children } = item;
 
@@ -380,13 +395,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                             >
                               <div className={`${dPrefix}auto-complete__option-content`}>{itemNode}</div>
                             </li>
-                            {children.length === 0 ? (
-                              <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: 12 + 8 }}>
-                                <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
-                              </li>
-                            ) : (
-                              iChildren
-                            )}
+                            {iChildren}
                           </ul>
                         );
                       }
@@ -416,23 +425,14 @@ function AutoComplete<T extends DAutoCompleteItem>(
                         </li>
                       );
                     }}
-                    dItemSize={(item) => {
-                      if (item.children && item.children.length === 0) {
-                        return 64;
-                      }
-                      return 32;
-                    }}
-                    dItemNested={(item) => item.children}
-                    dItemKey={(item) => item.value}
-                    dFocusable={canSelectItem}
                     dFocusItem={focusItem}
                     dSize={264}
                     dPadding={4}
-                    dEmpty={
-                      <li className={`${dPrefix}auto-complete__empty`}>
+                    dEmptyRender={(item) => (
+                      <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
                         <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
                       </li>
-                    }
+                    )}
                     onScrollEnd={onScrollBottom}
                   />
                 </div>
