@@ -54,6 +54,7 @@
 
     @include m(left) {
       justify-content: flex-end;
+      text-align: right;
     }
   }
 

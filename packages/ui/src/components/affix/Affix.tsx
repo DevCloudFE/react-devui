@@ -15,14 +15,13 @@ import {
 import { getClassName, registerComponentMate, toPx } from '../../utils';
 
 export interface DAffixRef {
-  fixed: boolean;
+  sticky: boolean;
   updatePosition: () => void;
 }
 
 export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
-  dTarget?: DElementSelector;
+  dContainer?: DElementSelector | false;
   dTop?: number | string;
-  dBottom?: number | string;
   dZIndex?: number | string;
 }
 
@@ -30,9 +29,8 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' });
 function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Element | null {
   const {
     children,
-    dTarget,
+    dContainer,
     dTop = 0,
-    dBottom,
     dZIndex,
 
     ...restProps
@@ -50,52 +48,55 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
 
   const asyncCapture = useAsync();
 
-  const targetEl = useElement(dTarget ?? dScrollEl);
+  const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
+  const containerEl = useElement(
+    isUndefined(dContainer) || dContainer === false
+      ? () => {
+          if (isUndefined(dContainer)) {
+            let el = document.getElementById(`${dPrefix}affix-root`);
+            if (!el) {
+              el = document.createElement('div');
+              el.id = `${dPrefix}affix-root`;
+              document.body.appendChild(el);
+            }
+            return el;
+          }
+          return null;
+        }
+      : dContainer
+  );
 
-  const [fixedStyle, setFixedStyle] = useState<React.CSSProperties>();
+  const [stickyStyle, setStickyStyle] = useState<React.CSSProperties>();
   const [referenceStyle, setReferenceStyle] = useState<React.CSSProperties>();
-  const [fixed, setFixed] = useState(false);
+  const [sticky, setSticky] = useState(false);
   const updatePosition = useEventCallback(() => {
-    if (targetEl) {
-      const offsetEl = fixed ? referenceRef.current : affixRef.current;
+    const offsetEl = sticky ? referenceRef.current : affixRef.current;
 
-      if (offsetEl) {
-        let targetRect: { top: number; bottom: number } = targetEl.getBoundingClientRect();
-        if (targetEl === document.documentElement) {
-          targetRect = {
-            top: 0,
-            bottom: window.innerHeight,
-          };
-        }
-
-        const offsetRect = offsetEl.getBoundingClientRect();
-
-        const top = isString(dTop) ? toPx(dTop, true) : dTop;
-        let fixed = offsetRect.top - targetRect.top <= top;
-        let fixedTop = targetRect.top + top;
-        if (!isUndefined(dBottom)) {
-          const bottom = isString(dBottom) ? toPx(dBottom, true) : dBottom;
-          fixed = targetRect.bottom - offsetRect.bottom <= bottom;
-          fixedTop = targetRect.bottom - bottom - offsetRect.height;
-        }
-
-        if (fixed) {
-          setFixedStyle({
-            position: 'fixed',
-            zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
-            width: offsetRect.width,
-            height: offsetRect.height,
-            left: offsetRect.left,
-            top: fixedTop,
-          });
-          setReferenceStyle({
-            width: offsetRect.width,
-            height: offsetRect.height,
-          });
-        }
-        setFixed(fixed);
+    if (offsetEl) {
+      const offsetRect = offsetEl.getBoundingClientRect();
+      let containerTop = 0;
+      if (!isUndefined(dContainer) && containerEl) {
+        containerTop = containerEl.getBoundingClientRect().top;
       }
+      const top = isString(dTop) ? toPx(dTop, true) : dTop;
+      const sticky = offsetRect.top - containerTop <= top;
+
+      if (sticky) {
+        setStickyStyle({
+          position: 'fixed',
+          zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
+          width: offsetRect.width,
+          height: offsetRect.height,
+          left: offsetRect.left,
+          top: top + containerTop,
+        });
+        setReferenceStyle({
+          width: offsetRect.width,
+          height: offsetRect.height,
+        });
+      }
+      setSticky(sticky);
     }
   });
   useIsomorphicLayoutEffect(() => {
@@ -104,10 +105,30 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
   }, []);
 
   useEffect(() => {
-    if (targetEl) {
+    if (!isUndefined(dContainer) && containerEl) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-      asyncGroup.fromEvent(targetEl, 'scroll', { passive: true }).subscribe({
+      asyncGroup.fromEvent(containerEl, 'scroll', { passive: true }).subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
+
+      asyncGroup.onResize(containerEl, () => {
+        updatePosition();
+      });
+
+      return () => {
+        asyncCapture.deleteGroup(asyncId);
+      };
+    }
+  }, [asyncCapture, containerEl, dContainer, updatePosition]);
+
+  useEffect(() => {
+    if (scrollEl) {
+      const [asyncGroup, asyncId] = asyncCapture.createGroup();
+
+      asyncGroup.fromEvent(scrollEl, 'scroll', { passive: true }).subscribe({
         next: () => {
           updatePosition();
         },
@@ -117,7 +138,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, targetEl, updatePosition]);
+  }, [asyncCapture, scrollEl, updatePosition]);
 
   useEffect(() => {
     if (resizeEl) {
@@ -136,15 +157,15 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
   useImperativeHandle(
     ref,
     () => ({
-      fixed,
+      sticky,
       updatePosition,
     }),
-    [fixed, updatePosition]
+    [sticky, updatePosition]
   );
 
   return (
     <>
-      {fixed && (
+      {sticky && (
         <div
           {...restProps}
           ref={referenceRef}
@@ -163,7 +184,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
         className={getClassName(restProps.className, `${dPrefix}affix`)}
         style={{
           ...restProps.style,
-          ...(fixed ? fixedStyle : {}),
+          ...(sticky ? stickyStyle : {}),
         }}
       >
         {children}

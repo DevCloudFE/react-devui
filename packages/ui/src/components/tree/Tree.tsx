@@ -394,7 +394,12 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
                         )}
                       </div>
                       {dMultiple && (
-                        <DCheckbox dModel={item.checked} dDisabled={item.disabled} dIndeterminate={item.indeterminate}></DCheckbox>
+                        <DCheckbox
+                          dModel={item.checked}
+                          dDisabled={item.disabled}
+                          dIndeterminate={item.indeterminate}
+                          dInputProps={{ tabIndex: -1 }}
+                        ></DCheckbox>
                       )}
                       <div className={`${dPrefix}tree__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
                     </div>
@@ -455,7 +460,14 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
                   }}
                 >
                   {focusVisible && item.id === focusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
-                  {dMultiple && <DCheckbox dModel={item.checked} dDisabled={item.disabled} dIndeterminate={item.indeterminate}></DCheckbox>}
+                  {dMultiple && (
+                    <DCheckbox
+                      dModel={item.checked}
+                      dDisabled={item.disabled}
+                      dIndeterminate={item.indeterminate}
+                      dInputProps={{ tabIndex: -1 }}
+                    ></DCheckbox>
+                  )}
                   <div className={`${dPrefix}tree__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
                 </li>
               );

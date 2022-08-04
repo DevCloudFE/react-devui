@@ -71,7 +71,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
               transitionStyle,
               {
                 [dHorizontal ? 'width' : 'height']: dSize,
-                [dHorizontal ? 'overflowX' : 'overflowY']: 'hidden',
+                overflow: 'hidden',
               },
               dHorizontal
                 ? {
@@ -92,7 +92,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
           case 'entering':
             Object.assign(transitionStyle, {
               [dHorizontal ? 'width' : 'height']: dataRef.current[dHorizontal ? 'width' : 'height'],
-              [dHorizontal ? 'overflowX' : 'overflowY']: 'hidden',
+              overflow: 'hidden',
             });
             break;
 
@@ -104,7 +104,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
             }
             Object.assign(transitionStyle, {
               [dHorizontal ? 'width' : 'height']: dataRef.current[dHorizontal ? 'width' : 'height'],
-              [dHorizontal ? 'overflowX' : 'overflowY']: 'hidden',
+              overflow: 'hidden',
             });
             break;
 
@@ -113,7 +113,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
               transitionStyle,
               {
                 [dHorizontal ? 'width' : 'height']: dSize,
-                [dHorizontal ? 'overflowX' : 'overflowY']: 'hidden',
+                overflow: 'hidden',
               },
               dHorizontal
                 ? {
@@ -134,7 +134,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
           case 'leaved':
             Object.assign(transitionStyle, {
               [dHorizontal ? 'width' : 'height']: dSize,
-              [dHorizontal ? 'overflowX' : 'overflowY']: 'hidden',
+              overflow: 'hidden',
             });
             break;
 

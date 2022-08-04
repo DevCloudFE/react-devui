@@ -6,6 +6,8 @@
   color: rgb(var(--#{$variable-prefix}text-color-rgb) / 28%);
 
   @include e(description) {
+    text-align: center;
+
     @include font-size(0.9rem);
   }
 }
