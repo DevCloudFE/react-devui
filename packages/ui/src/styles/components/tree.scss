@@ -1,0 +1,149 @@
+$tree-option-height: 32px;
+
+@include b(tree) {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden auto;
+  list-style: none;
+  outline: none;
+
+  &[data-form-invalid-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+  }
+
+  &[data-form-invalid-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+  }
+
+  @include when(disabled) {
+    pointer-events: none;
+    filter: opacity(50%);
+  }
+
+  @include m(line) {
+    @include e(option-group) {
+      &[role='treeitem']:not(.#{$variable-prefix}tree__option-group--root)::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -6px;
+        width: 1px;
+        pointer-events: none;
+        content: '';
+        background-color: var(--#{$variable-prefix}background-color-indicator);
+      }
+    }
+
+    @include e(option) {
+      &:not(.#{$variable-prefix}tree__option--root) {
+        &::before,
+        &::after {
+          position: absolute;
+          pointer-events: none;
+          content: '';
+          background-color: var(--#{$variable-prefix}background-color-indicator);
+        }
+
+        &::before {
+          top: -50%;
+          left: -28px;
+          width: 1px;
+          height: 100%;
+        }
+
+        &::after {
+          left: -28px;
+          width: 32px;
+          height: 1px;
+        }
+
+        &[role='treeitem'] {
+          &::before {
+            left: -6px;
+          }
+
+          &::after {
+            left: -6px;
+            width: 12px;
+          }
+        }
+
+        &.#{$variable-prefix}tree__option--first::before {
+          top: 0;
+          height: 50%;
+        }
+      }
+    }
+  }
+
+  @include e(option) {
+    position: relative;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+    width: 100%;
+    height: $tree-option-height;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:not(.is-selected):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
+
+    @include when(selected) {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
+  }
+
+  @include e(option-content) {
+    @include utils-ellipsis;
+
+    flex: 1 0 0;
+  }
+
+  @include e(option-icon) {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: $tree-option-height;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 14px;
+
+    &::after {
+      position: absolute;
+      inset: 0 -8px;
+      content: '';
+    }
+  }
+
+  @include e(option-arrow) {
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(option-group) {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    &:not(.#{$variable-prefix}tree__option-group--root) {
+      padding-left: 22px;
+    }
+  }
+
+  @include e(empty) {
+    display: flex;
+    align-items: center;
+    height: $tree-option-height;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-disabled);
+  }
+}

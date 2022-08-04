@@ -3,7 +3,7 @@ import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DVirtualScrollRef } from '../virtual-scroll';
 
-import { isNull, isNumber, isUndefined } from 'lodash';
+import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useEventCallback, useDValue } from '../../hooks';
@@ -40,7 +40,6 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dClearable?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
-  dMaxSelectNum?: number;
   dCustomItem?: (item: DNestedChildren<T>) => React.ReactNode;
   dCustomSelected?: (select: DNestedChildren<T>) => string;
   dCustomSearch?: {
@@ -58,7 +57,6 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   onClear?: () => void;
   onCreateItem?: (item: DNestedChildren<T>) => void;
   onScrollBottom?: () => void;
-  onExceed?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' });
@@ -78,7 +76,6 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     dClearable = false,
     dDisabled = false,
     dMultiple = false,
-    dMaxSelectNum,
     dCustomItem,
     dCustomSelected,
     dCustomSearch,
@@ -93,7 +90,6 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     onSearch,
     onCreateItem,
     onScrollBottom,
-    onExceed,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -279,11 +275,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
         if (index !== -1) {
           (draft as V[]).splice(index, 1);
         } else {
-          if (isNumber(dMaxSelectNum) && (draft as V[]).length === dMaxSelectNum) {
-            onExceed?.();
-          } else {
-            (draft as V[]).push(val);
-          }
+          (draft as V[]).push(val);
         }
       });
     } else {
@@ -317,11 +309,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
             changeSelectByClick(id);
           }}
         >
-          <DTag
-            className={`${dPrefix}select__multiple-count`}
-            dSize={size}
-            dTheme={isNumber(dMaxSelectNum) && dMaxSelectNum === (select as Set<V>).size ? 'danger' : undefined}
-          >
+          <DTag className={`${dPrefix}select__multiple-count`} dSize={size}>
             {(select as Set<V>).size}
           </DTag>
         </DDropdown>
@@ -473,7 +461,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
             aria-multiselectable={dMultiple}
             aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
             dList={list}
-            dItemRender={(item, index, renderProps, parent) => {
+            dItemRender={(item, index, { iARIA, iChildren }, parent) => {
               const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
 
               const node = dCustomItem ? dCustomItem(item) : itemLabel;
@@ -489,7 +477,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                         <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
                       </li>
                     ) : (
-                      renderProps.children
+                      iChildren
                     )}
                   </ul>
                 );
@@ -504,7 +492,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
 
               return (
                 <li
-                  {...renderProps}
+                  {...iARIA}
                   key={itemValue}
                   id={getItemId(itemValue)}
                   className={getClassName(`${dPrefix}select__option`, {
@@ -543,7 +531,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
               return 32;
             }}
             dItemNested={(item) => item.children}
-            dCompareItem={(a, b) => a.value === b.value}
+            dItemKey={(item) => item.value}
             dFocusable={canSelectItem}
             dFocusItem={focusItem}
             dSize={264}

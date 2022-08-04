@@ -359,7 +359,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                     role="listbox"
                     aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
                     dList={dList}
-                    dItemRender={(item, index, renderProps, parent) => {
+                    dItemRender={(item, index, { iARIA, iChildren }, parent) => {
                       const { value: itemValue, disabled: itemDisabled, children } = item;
 
                       const itemNode = dCustomItem ? dCustomItem(item) : itemValue;
@@ -385,7 +385,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                                 <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
                               </li>
                             ) : (
-                              renderProps.children
+                              iChildren
                             )}
                           </ul>
                         );
@@ -393,7 +393,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
                       return (
                         <li
-                          {...renderProps}
+                          {...iARIA}
                           key={itemValue}
                           id={getItemId(itemValue)}
                           className={getClassName(`${dPrefix}auto-complete__option`, {
@@ -423,7 +423,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                       return 32;
                     }}
                     dItemNested={(item) => item.children}
-                    dCompareItem={(a, b) => a.value === b.value}
+                    dItemKey={(item) => item.value}
                     dFocusable={canSelectItem}
                     dFocusItem={focusItem}
                     dSize={264}

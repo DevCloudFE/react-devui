@@ -61,6 +61,7 @@ import type {
   DToastProps,
   DTooltipProps,
   DTransferProps,
+  DTreeProps,
   DUploadProps,
   DUploadActionProps,
   DVirtualScrollProps,
@@ -139,6 +140,7 @@ export type DComponentConfig = {
   DToast: DToastProps;
   DTooltip: DTooltipProps;
   DTransfer: DTransferProps<any, any>;
+  DTree: DTreeProps<any, any>;
   DUpload: DUploadProps;
   DUploadAction: DUploadActionProps;
   DVirtualScroll: DVirtualScrollProps<any>;

@@ -6,7 +6,7 @@
 
   @include when(disabled) {
     pointer-events: none;
-    filter: opacity(50%) saturate(50%) grayscale(50%);
+    filter: opacity(50%);
   }
 
   @include m(horizontal) {

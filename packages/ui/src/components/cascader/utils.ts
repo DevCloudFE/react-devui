@@ -1,5 +1,5 @@
 import type { DId } from '../../utils/global';
-import type { AbstractTreeNode } from '../tree';
+import type { AbstractTreeNode } from '../tree/node';
 
 export const SEPARATOR = ' / ';
 export const TREE_NODE_KEY = Symbol();

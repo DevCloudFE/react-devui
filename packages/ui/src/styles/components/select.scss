@@ -59,6 +59,12 @@ $select-option-height: 32px;
     }
   }
 
+  @include e(option-content) {
+    @include utils-ellipsis;
+
+    flex: 1 0 0;
+  }
+
   @include e(option-group) {
     padding: 0;
     margin: 0;
@@ -72,12 +78,6 @@ $select-option-height: 32px;
     padding: 0 12px;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}text-color-sub);
-  }
-
-  @include e(option-content) {
-    @include utils-ellipsis;
-
-    flex: 1 0 0;
   }
 
   @include e(empty) {

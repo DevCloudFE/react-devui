@@ -2,10 +2,10 @@ import type { DId, DNestedChildren, DSize } from '../../utils/global';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DSelectItem } from '../select';
-import type { AbstractTreeNode } from '../tree';
+import type { AbstractTreeNode } from '../tree/node';
 
 import { isNull } from 'lodash';
-import React, { useCallback, useState, useId, useMemo } from 'react';
+import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify } from '../../hooks';
 import { LoadingOutlined } from '../../icons';
@@ -14,7 +14,7 @@ import { DSelectbox } from '../_selectbox';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
 import { DTag } from '../tag';
-import { MultipleTreeNode, SingleTreeNode } from '../tree';
+import { MultipleTreeNode, SingleTreeNode } from '../tree/node';
 import { DList } from './List';
 import { DSearchList } from './SearchList';
 import { getText, TREE_NODE_KEY } from './utils';
@@ -34,8 +34,8 @@ export interface DCascaderItem<V extends DId> {
 
 export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControl?: DFormControl;
-  dModel?: V | null | V[];
   dList: DNestedChildren<T>[];
+  dModel?: V | null | V[];
   dVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
@@ -59,7 +59,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
   afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  onFocusChange?: (value: V, item: DNestedChildren<T>) => void;
+  onFirstFocus?: (value: V, item: DNestedChildren<T>) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' });
@@ -69,8 +69,8 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
 ): JSX.Element | null {
   const {
     dFormControl,
-    dModel,
     dList,
+    dModel,
     dVisible,
     dPlaceholder,
     dSize,
@@ -91,7 +91,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     afterVisibleChange,
     onSearch,
     onClear,
-    onFocusChange,
+    onFirstFocus,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -100,6 +100,10 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   const dPrefix = usePrefixConfig();
   const { gSize, gDisabled } = useGeneralContext();
   //#endregion
+
+  const dataRef = useRef<{
+    focusList: Set<V>;
+  }>({ focusList: new Set() });
 
   const onKeyDown$ = useEventNotify<React.KeyboardEvent<HTMLInputElement>>();
 
@@ -220,7 +224,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     }
 
     if (hasSelected) {
-      return findNested(renderNodes as AbstractTreeNode<V, T>[], (node) => node.enabled && node.checked);
+      return findNested(renderNodes, (node) => node.enabled && node.checked);
     }
   })();
 
@@ -393,7 +397,10 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
                 changeVisible(false);
               }}
               onFocusChange={(item) => {
-                onFocusChange?.(item.value, item[TREE_NODE_KEY].origin);
+                if (!dataRef.current.focusList.has(item.value)) {
+                  dataRef.current.focusList.add(item.value);
+                  onFirstFocus?.(item.value, item[TREE_NODE_KEY].origin);
+                }
 
                 setSearchFocusItem(item);
               }}
@@ -416,7 +423,10 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
                 changeVisible(false);
               }}
               onFocusChange={(node) => {
-                onFocusChange?.(node.id, node.origin);
+                if (!dataRef.current.focusList.has(node.id)) {
+                  dataRef.current.focusList.add(node.id);
+                  onFirstFocus?.(node.id, node.origin);
+                }
 
                 setNoSearchFocusNode(node);
               }}

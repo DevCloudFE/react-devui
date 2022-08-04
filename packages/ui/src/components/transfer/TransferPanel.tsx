@@ -91,12 +91,12 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
           ref={dVSRef}
           className={`${dPrefix}transfer__list`}
           dList={dList}
-          dItemRender={(item, index, renderProps) => {
+          dItemRender={(item, index, { iARIA }) => {
             const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
 
             return (
               <li
-                {...renderProps}
+                {...iARIA}
                 key={itemValue}
                 id={getItemId(itemValue)}
                 className={getClassName(`${dPrefix}transfer__option`, {
@@ -115,7 +115,7 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
             );
           }}
           dItemSize={32}
-          dCompareItem={(a, b) => a.value === b.value}
+          dItemKey={(item) => item.value}
           dFocusable={canSelectItem}
           dSize={192}
           dEmpty={<DEmpty className={`${dPrefix}transfer__empty`}></DEmpty>}

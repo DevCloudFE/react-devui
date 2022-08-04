@@ -1,1 +1,1 @@
-export * from './tree';
+export * from './Tree';

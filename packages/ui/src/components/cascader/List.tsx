@@ -1,5 +1,5 @@
 import type { DId } from '../../utils/global';
-import type { AbstractTreeNode, MultipleTreeNode } from '../tree';
+import type { AbstractTreeNode, MultipleTreeNode } from '../tree/node';
 import type { DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem } from './Cascader';
 import type { Subject } from 'rxjs';
@@ -171,54 +171,50 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
         className={`${dPrefix}cascader__list`}
         role="listbox"
         aria-multiselectable={dMultiple}
-        aria-activedescendant={dRoot && dFocusNode ? dGetItemId(dFocusNode.id) : undefined}
+        aria-activedescendant={dRoot && !isUndefined(dFocusNode) ? dGetItemId(dFocusNode.id) : undefined}
         dList={dNodes}
-        dItemRender={(item, index, renderProps) => {
-          return (
-            <li
-              {...renderProps}
-              key={item.id}
-              id={dGetItemId(item.id)}
-              className={getClassName(`${dPrefix}cascader__option`, {
-                'is-focus': item.id === inFocusNode?.id,
-                'is-selected': !dMultiple && item.checked,
-                'is-disabled': item.disabled,
-              })}
-              title={item.origin.label}
-              role="option"
-              aria-selected={item.checked}
-              aria-disabled={item.disabled}
-              onClick={() => {
-                onFocusChange(item);
-                if (!dMultiple || item.isLeaf) {
+        dItemRender={(item, index, { iARIA }) => (
+          <li
+            {...iARIA}
+            key={item.id}
+            id={dGetItemId(item.id)}
+            className={getClassName(`${dPrefix}cascader__option`, {
+              'is-focus': item.id === inFocusNode?.id,
+              'is-selected': !dMultiple && item.checked,
+              'is-disabled': item.disabled,
+            })}
+            title={item.origin.label}
+            role="option"
+            aria-selected={item.checked}
+            aria-disabled={item.disabled}
+            onClick={() => {
+              onFocusChange(item);
+              if (!dMultiple || item.isLeaf) {
+                changeSelectByClick(item);
+              }
+            }}
+          >
+            {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
+            {dMultiple && (
+              <DCheckbox
+                dModel={item.checked}
+                dDisabled={item.disabled}
+                dIndeterminate={item.indeterminate}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFocusChange(item);
                   changeSelectByClick(item);
-                }
-              }}
-            >
-              {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
-              {dMultiple && (
-                <DCheckbox
-                  dModel={item.checked}
-                  dDisabled={item.disabled}
-                  dIndeterminate={item.indeterminate}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onFocusChange(item);
-                    changeSelectByClick(item);
-                  }}
-                ></DCheckbox>
-              )}
-              <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
-              {!item.isLeaf && (
-                <div className={`${dPrefix}cascader__option-icon`}>
-                  {item.origin.loading ? <LoadingOutlined dSpin /> : <RightOutlined />}
-                </div>
-              )}
-            </li>
-          );
-        }}
+                }}
+              ></DCheckbox>
+            )}
+            <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
+            {!item.isLeaf && (
+              <div className={`${dPrefix}cascader__option-icon`}>{item.origin.loading ? <LoadingOutlined dSpin /> : <RightOutlined />}</div>
+            )}
+          </li>
+        )}
         dItemSize={32}
-        dCompareItem={(a, b) => a.id === b.id}
+        dItemKey={(item) => item.id}
         dFocusable={(item) => item.enabled}
         dFocusItem={inFocusNode}
         dSize={264}

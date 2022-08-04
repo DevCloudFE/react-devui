@@ -139,6 +139,9 @@ export { DTooltip } from './tooltip';
 export type { DTransferProps } from './transfer';
 export { DTransfer } from './transfer';
 
+export type { DTreeProps } from './tree';
+export { DTree } from './tree';
+
 export type { DUploadProps, DUploadActionProps } from './upload';
 export { DUpload, DUploadAction } from './upload';
 

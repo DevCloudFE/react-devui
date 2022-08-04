@@ -1,9 +1,10 @@
 import type { DId } from '../../utils/global';
-import type { MultipleTreeNode } from '../tree';
+import type { MultipleTreeNode } from '../tree/node';
 import type { DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem, DSearchItem } from './Cascader';
 import type { Subject } from 'rxjs';
 
+import { isUndefined } from 'lodash';
 import React, { useEffect, useRef } from 'react';
 
 import { useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
@@ -126,9 +127,9 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
       className={`${dPrefix}cascader__list`}
       role="listbox"
       aria-multiselectable={dMultiple}
-      aria-activedescendant={dFocusItem ? dGetItemId(dFocusItem.value) : undefined}
+      aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
       dList={dList}
-      dItemRender={(item, index, renderProps) => {
+      dItemRender={(item, index, { iARIA }) => {
         const node = item[TREE_NODE_KEY];
         let inSelected = node.checked;
         if (!dOnlyLeafSelectable) {
@@ -144,7 +145,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
 
         return (
           <li
-            {...renderProps}
+            {...iARIA}
             key={item.value}
             id={dGetItemId(item.value)}
             className={getClassName(`${dPrefix}cascader__option`, {
@@ -167,7 +168,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
         );
       }}
       dItemSize={32}
-      dCompareItem={(a, b) => a.value === b.value}
+      dItemKey={(item) => item.value}
       dFocusable={(item) => item[TREE_NODE_KEY].enabled}
       dFocusItem={dFocusItem}
       dSize={264}
