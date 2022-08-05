@@ -1,8 +1,7 @@
 // @ts-nocheck
 
+import { AppRoute } from 'src/app/components';
 import { useEffect } from 'react';
-
-import { AppRoute } from '../../../components';
 
 export default function __Route__() {
   const props = {

@@ -2,4 +2,4 @@
 /dist
 /coverage
 /.yarn
-/packages/site/src/app/routes
+/packages/site/dist

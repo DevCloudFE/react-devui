@@ -24,11 +24,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    const _title = document.title;
     document.title = title + (i18n.language !== 'en-US' ? ` ${subtitle}` : '') + ' - React DevUI';
-    return () => {
-      document.title = _title;
-    };
   }, [i18n.language, subtitle, title]);
 
   // useLayoutEffect(() => {

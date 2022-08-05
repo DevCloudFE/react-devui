@@ -1,14 +1,12 @@
 import type { DMenuItem } from '@react-devui/ui/components/menu';
 import type { DNestedChildren } from '@react-devui/ui/utils/global';
 
-import { useState } from 'react';
+import menu from 'dist/menu.json';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { DDrawer, DDrawerHeader, DMenu, useMediaMatch } from '@react-devui/ui';
-import { useMount } from '@react-devui/ui/hooks';
 
-import menu from '../../../configs/menu.json';
 import './Sidebar.scss';
 
 export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open: boolean) => void }) {
@@ -16,32 +14,16 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
 
   const { t, i18n } = useTranslation();
 
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  useMount(() => {
-    if (window.location.href.includes(String.raw`/components/`)) {
-      const to = window.location.href.match(/\/components\/[a-zA-Z]+/)?.[0];
-      if (to) {
-        menu.forEach((group) => {
-          const child = group.children.find((child) => child.to === to);
-          if (child) {
-            setActiveId(child.title);
-          }
-        });
-
-        if (to === '/components/Interface') {
-          setActiveId('Interface');
-        }
-      }
-    }
-  });
+  const location = useLocation();
+  const page = location.pathname.startsWith('/components/') ? 'Components' : 'Components';
+  const activeId = location.pathname.match(/(?<=^\/components\/).+$/)?.[0] ?? null;
 
   const menuNode = (
     <DMenu
       className="app-sidebar__menu"
       dList={menu.map<DNestedChildren<DMenuItem<string> & { to?: string }>>((group) => ({
         id: group.title,
-        title: t(`menu-group.${group.title}`),
+        title: t(`menu.components-group.${group.title}`),
         type: 'group',
         children: (group.title === 'Other'
           ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
@@ -51,15 +33,14 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
           title: (
             <Link to={child.to}>
               {child.title}
-              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.${child.title}`)}</span>}
+              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.components.${child.title}`)}</span>}
             </Link>
           ),
           type: 'item',
         })),
       }))}
       dActive={activeId}
-      onActiveChange={(id) => {
-        setActiveId(id);
+      onActiveChange={() => {
         onMenuOpenChange(false);
       }}
     ></DMenu>
@@ -76,7 +57,7 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
       dHeader={
         <DDrawerHeader>
           <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
-          <span className="app-sidebar__title">DevUI</span>
+          <span className="app-sidebar__title">{page}</span>
         </DDrawerHeader>
       }
       dWidth={280}

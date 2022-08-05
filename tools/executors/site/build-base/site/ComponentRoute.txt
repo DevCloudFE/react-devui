@@ -1,8 +1,7 @@
 // @ts-nocheck
 
+import { AppComponentRoute, AppDemoBox } from 'src/app/components';
 import { useEffect } from 'react';
-
-import { AppComponentRoute, AppDemoBox } from '../../../components';
 
 __import__
 

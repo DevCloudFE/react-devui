@@ -30,13 +30,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = require("crypto");
 const path_1 = __importDefault(require("path"));
 const fs_extra_1 = require("fs-extra");
+const fs_extra_2 = require("fs-extra");
+const lodash_1 = require("lodash");
 const rxjs_1 = require("rxjs");
 const rxjs_for_await_1 = require("rxjs-for-await");
 const operators_1 = require("rxjs/operators");
 const yamlFront = require('yaml-front-matter');
-const COMPONENT_DIR = String.raw `packages/ui/src/components`;
-const COMPONENT_ROUTE_DIR = [String.raw `packages/site/src/app/routes/components`];
-const OUTPUT_DIR = String.raw `packages/site/src/app`;
+const COMPONENTS_DIR = String.raw `packages/ui/src/components`;
+const ROUTES_DIR = String.raw `packages/site/src/app/routes`;
+const OUTPUT_PATH = {
+    routeDir: String.raw `packages/site/dist/routes`,
+    componentDir: (name) => path_1.default.join(String.raw `packages/site/dist/routes/components`, name),
+    componentDemoDir: (name) => path_1.default.join(String.raw `packages/site/dist/routes/components`, name, 'demos'),
+    routes: String.raw `packages/site/dist/routes/index.ts`,
+    'menu.json': String.raw `packages/site/dist/menu.json`,
+    'resources.json': String.raw `packages/site/dist/resources.json`,
+};
+const LANGS = ['en-US', 'zh-Hant'];
 class GenerateSite {
     constructor() {
         Object.defineProperty(this, "hashList", {
@@ -51,7 +61,7 @@ class GenerateSite {
             writable: true,
             value: []
         });
-        Object.defineProperty(this, "routeConfig", {
+        Object.defineProperty(this, "routes", {
             enumerable: true,
             configurable: true,
             writable: true,
@@ -93,19 +103,20 @@ class GenerateSite {
         const hash = (0, crypto_1.createHash)('md5').update(data).digest('hex');
         if (this.hashList.get(filePath) !== hash) {
             this.hashList.set(filePath, hash);
-            (0, fs_extra_1.outputFileSync)(filePath, data);
+            (0, fs_extra_2.outputFileSync)(filePath, data);
         }
     }
     outputJson(filePath, data) {
         const hash = (0, crypto_1.createHash)('md5').update(JSON.stringify(data)).digest('hex');
         if (this.hashList.get(filePath) !== hash) {
             this.hashList.set(filePath, hash);
-            (0, fs_extra_1.outputJsonSync)(filePath, data);
+            (0, fs_extra_2.outputJsonSync)(filePath, data);
         }
     }
-    generateComponentDemo(file, outDir) {
+    generateComponentDemo(file) {
         var _a, _b, _c;
         const meta = yamlFront.loadFront(file.data);
+        const outDir = OUTPUT_PATH.componentDemoDir(file.component);
         const fileNameRegExp = new RegExp(String.raw `(?<=^[0-9]+.)[a-zA-Z0-9]+(?=.md$)`, 'g');
         const fileName = (_a = file.name.match(fileNameRegExp)) === null || _a === void 0 ? void 0 : _a[0];
         const id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
@@ -153,10 +164,10 @@ class GenerateSite {
             return demo;
         }
     }
-    generateComponentRoute(file, outDir) {
+    generateComponentRoute(file) {
         var _a, _b;
-        const enMeta = yamlFront.loadFront((0, fs_extra_1.readFileSync)(path_1.default.join(file.path, 'README.md')));
-        const zhMeta = yamlFront.loadFront((0, fs_extra_1.readFileSync)(path_1.default.join(file.path, 'README.zh-Hant.md')));
+        const enMeta = yamlFront.loadFront((0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'README.md')));
+        const zhMeta = yamlFront.loadFront((0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'README.zh-Hant.md')));
         const meta = {
             aria: (_a = enMeta.aria) !== null && _a !== void 0 ? _a : '',
             title: {
@@ -186,21 +197,21 @@ class GenerateSite {
                     to: String.raw `/components/${meta.title['en-US']}`,
                 };
             }
-            this.routeConfig.set(meta.title['en-US'], {
-                import: String.raw `./${file.name}/${meta.title['en-US']}`,
+            this.routes.set(`Components${meta.title['en-US']}`, {
+                import: String.raw `./components/${file.name}/${meta.title['en-US']}`,
                 path: String.raw `/components/${meta.title['en-US']}`,
             });
             let importStr = '';
             const demoList = [];
-            for (const demoFile of (0, fs_extra_1.readdirSync)(path_1.default.join(file.path, 'demos'))) {
+            for (const demoFile of (0, fs_extra_2.readdirSync)(path_1.default.join(file.path, 'demos'))) {
                 const order = (_b = demoFile.match(/^[0-9]+/)) === null || _b === void 0 ? void 0 : _b[0];
                 if (order) {
                     const demo = this.generateComponentDemo({
                         name: demoFile,
                         path: path_1.default.join(file.path, 'demos', demoFile),
-                        data: (0, fs_extra_1.readFileSync)(path_1.default.join(file.path, 'demos', demoFile)),
+                        data: (0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'demos', demoFile)),
                         component: file.name,
-                    }, path_1.default.join(OUTPUT_DIR, 'routes', 'components', file.name, 'demos'));
+                    });
                     demoList[Number(order)] = demo;
                     if (demo) {
                         importStr += demo.get('en-US').importStatement;
@@ -210,9 +221,9 @@ class GenerateSite {
             let componentRouteTmp = this.componentRouteTmp;
             componentRouteTmp = componentRouteTmp.replace(/__Route__/g, meta.title['en-US']);
             componentRouteTmp = componentRouteTmp.replace(/__import__/g, importStr);
-            ['en-US', 'zh-Hant'].forEach((lang) => {
+            LANGS.forEach((lang) => {
                 var _a, _b;
-                this.resources[lang].translation.menu[meta.title['en-US']] = meta.title[lang];
+                this.resources[lang].translation.menu.components[meta.title['en-US']] = meta.title[lang];
                 let demosStr = '';
                 let linksStr = '';
                 demoList.forEach((demo) => {
@@ -266,26 +277,33 @@ class GenerateSite {
                 const langRegExp = new RegExp(String.raw `__${lang}__`, 'g');
                 componentRouteTmp = componentRouteTmp.replace(langRegExp, routeArticleProps);
             });
-            this.outputFile(path_1.default.join(outDir, `${meta.title['en-US']}.tsx`), componentRouteTmp);
+            this.outputFile(path_1.default.join(OUTPUT_PATH.componentDir(file.name), `${meta.title['en-US']}.tsx`), componentRouteTmp);
         }
     }
-    generateRoute(routeName, dirPath) {
+    generateRouteMD(paths, routeName) {
+        this.routes.set(`${paths
+            .slice(0, -1)
+            .map((p) => (0, lodash_1.capitalize)(p))
+            .join('')}${routeName}`, {
+            import: String.raw `./${[...paths, routeName].join('/')}`,
+            path: String.raw `/${[...paths.slice(0, -1), routeName].join('/')}`,
+        });
         let routeTmp = this.routeTmp;
         routeTmp = routeTmp.replace(/__Route__/g, routeName);
-        ['en-US', 'zh-Hant'].forEach((lang) => {
+        LANGS.forEach((lang) => {
             const langRegExp = new RegExp(String.raw `__${lang}__`, 'g');
             routeTmp = routeTmp.replace(langRegExp, new TextEncoder()
-                .encode((0, fs_extra_1.readFileSync)(path_1.default.join(dirPath, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString())
+                .encode((0, fs_extra_2.readFileSync)(path_1.default.join(ROUTES_DIR, ...paths, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString())
                 .join());
         });
-        this.outputFile(path_1.default.join(dirPath, routeName, `${routeName}.tsx`), routeTmp);
+        this.outputFile(path_1.default.join(OUTPUT_PATH.routeDir, ...paths, `${routeName}.tsx`), routeTmp);
     }
     generateGlobalFiles() {
-        this.outputJson(path_1.default.join(OUTPUT_DIR, 'configs', 'menu.json'), this.menuConfig);
-        this.outputJson(path_1.default.join(OUTPUT_DIR, 'i18n', 'resources.json'), this.resources);
+        this.outputJson(OUTPUT_PATH['menu.json'], this.menuConfig);
+        this.outputJson(OUTPUT_PATH['resources.json'], this.resources);
         let importStr = '';
         let routeStr = '';
-        for (const [key, value] of this.routeConfig.entries()) {
+        for (const [key, value] of this.routes.entries()) {
             importStr += String.raw `const ${key}Route = lazy(() => import('${value.import}'));
 `;
             routeStr += String.raw `
@@ -298,41 +316,50 @@ class GenerateSite {
         let componentRoutesTmp = this.componentRoutesTmp;
         componentRoutesTmp = componentRoutesTmp.replace(/__import__/g, importStr);
         componentRoutesTmp = componentRoutesTmp.replace(/__Route__/g, routeStr);
-        this.outputFile(path_1.default.join(OUTPUT_DIR, 'routes', 'components', 'routes.ts'), componentRoutesTmp);
+        this.outputFile(OUTPUT_PATH.routes, componentRoutesTmp);
     }
     generateAll() {
-        var _a;
-        const components = (0, fs_extra_1.readdirSync)(COMPONENT_DIR);
+        const components = (0, fs_extra_2.readdirSync)(COMPONENTS_DIR);
         for (const component of components) {
-            const componentPath = path_1.default.join(COMPONENT_DIR, component);
-            if (!component.startsWith('_') && (0, fs_extra_1.statSync)(componentPath).isDirectory() && (0, fs_extra_1.readdirSync)(componentPath).includes('README.md')) {
-                this.generateComponentRoute({ name: component, path: componentPath, data: components }, path_1.default.join(OUTPUT_DIR, 'routes', 'components', component));
+            const componentPath = path_1.default.join(COMPONENTS_DIR, component);
+            if (!component.startsWith('_') && (0, fs_extra_2.statSync)(componentPath).isDirectory() && (0, fs_extra_2.readdirSync)(componentPath).includes('README.md')) {
+                this.generateComponentRoute({
+                    name: component,
+                    path: componentPath,
+                    data: components,
+                });
             }
         }
-        for (const ROUTE of COMPONENT_ROUTE_DIR) {
-            const files = (0, fs_extra_1.readdirSync)(ROUTE);
+        const reduceMD = (mdPath, paths = []) => {
+            var _a;
+            const files = (0, fs_extra_2.readdirSync)(mdPath);
             for (const file of files) {
-                if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {
-                    this.generateRoute(file.slice(0, -3), ROUTE);
+                const filePath = path_1.default.join(mdPath, file);
+                if ((0, fs_extra_2.statSync)(filePath).isDirectory()) {
+                    reduceMD(filePath, [...paths, file]);
+                }
+                else if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {
+                    this.generateRouteMD(paths, file.slice(0, -3));
                 }
             }
-        }
+        };
+        reduceMD(ROUTES_DIR);
         this.generateGlobalFiles();
     }
     updateTmp() {
-        this.resources = (0, fs_extra_1.readJsonSync)(path_1.default.join(__dirname, 'site', 'resources.json'));
-        this.menuGroups = (0, fs_extra_1.readJsonSync)(path_1.default.join(__dirname, 'site', 'menu-groups.json'));
-        this.componentRoutesTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'component-routes.txt')).toString();
-        this.componentRouteTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'ComponentRoute.txt')).toString();
-        this.routeTmp = (0, fs_extra_1.readFileSync)(path_1.default.join(__dirname, 'site', 'Route.txt')).toString();
+        this.resources = (0, fs_extra_2.readJsonSync)(path_1.default.join(__dirname, 'site', 'resources.json'));
+        this.menuGroups = (0, fs_extra_2.readJsonSync)(path_1.default.join(__dirname, 'site', 'menu-groups.json'));
+        this.componentRoutesTmp = (0, fs_extra_2.readFileSync)(path_1.default.join(__dirname, 'site', 'component-routes.txt')).toString();
+        this.componentRouteTmp = (0, fs_extra_2.readFileSync)(path_1.default.join(__dirname, 'site', 'ComponentRoute.txt')).toString();
+        this.routeTmp = (0, fs_extra_2.readFileSync)(path_1.default.join(__dirname, 'site', 'Route.txt')).toString();
         this.menuConfig = [];
         this.menuGroups.forEach((item) => {
             this.menuConfig.push({
                 title: item['en-US'],
                 children: [],
             });
-            Object.keys(item).forEach((lang) => {
-                this.resources[lang].translation['menu-group'][item['en-US']] = item[lang];
+            LANGS.forEach((lang) => {
+                this.resources[lang].translation.menu['components-group'][item['en-US']] = item[lang];
             });
         });
     }
@@ -367,7 +394,7 @@ class FileWatcher {
         }));
     }
     addWatcher(file, task) {
-        this.watcherList.set(file, (0, fs_extra_1.watch)(file, () => {
+        this.watcherList.set(file, (0, fs_extra_2.watch)(file, () => {
             this.taskQueue.set(task.id, task.callback);
             this.subject.next(void 0);
         }));
@@ -395,22 +422,27 @@ class FileWatcher {
 }
 function siteBuildExecutor(options, context) {
     return __asyncGenerator(this, arguments, function* siteBuildExecutor_1() {
+        console.info(`Clear files of ${context.projectName}...`);
+        (0, fs_extra_1.removeSync)(String.raw `packages/site/dist`);
         console.info(`Bundling files of ${context.projectName}...`);
         const generateMediator = new GenerateSite();
         generateMediator.generateAll();
         if (options.watch) {
             const fileWatcher = new FileWatcher();
             const refreshComponentWatcher = () => {
-                var _a;
-                const components = (0, fs_extra_1.readdirSync)(COMPONENT_DIR);
+                const components = (0, fs_extra_2.readdirSync)(COMPONENTS_DIR);
                 for (const component of components) {
-                    const componentPath = path_1.default.join(COMPONENT_DIR, component);
-                    if (!component.startsWith('_') && (0, fs_extra_1.statSync)(componentPath).isDirectory() && (0, fs_extra_1.readdirSync)(componentPath).includes('README.md')) {
+                    const componentPath = path_1.default.join(COMPONENTS_DIR, component);
+                    if (!component.startsWith('_') && (0, fs_extra_2.statSync)(componentPath).isDirectory() && (0, fs_extra_2.readdirSync)(componentPath).includes('README.md')) {
                         const task = {
                             id: `generateComponentRoute_${component}`,
                             callback: () => {
                                 console.info(`Update ${component}...`);
-                                generateMediator.generateComponentRoute({ name: component, path: componentPath, data: components }, path_1.default.join(OUTPUT_DIR, 'routes', 'components', component));
+                                generateMediator.generateComponentRoute({
+                                    name: component,
+                                    path: componentPath,
+                                    data: components,
+                                });
                                 generateMediator.generateGlobalFiles();
                             },
                         };
@@ -421,26 +453,32 @@ function siteBuildExecutor(options, context) {
                         }
                     }
                 }
-                for (const ROUTE of COMPONENT_ROUTE_DIR) {
-                    const files = (0, fs_extra_1.readdirSync)(ROUTE);
+                const reduceMD = (mdPath, paths = []) => {
+                    var _a;
+                    const files = (0, fs_extra_2.readdirSync)(mdPath);
                     for (const file of files) {
-                        if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {
+                        const filePath = path_1.default.join(mdPath, file);
+                        if ((0, fs_extra_2.statSync)(filePath).isDirectory()) {
+                            reduceMD(filePath, [...paths, file]);
+                        }
+                        else if (file.endsWith('.md') && ((_a = file.match(/\./g)) === null || _a === void 0 ? void 0 : _a.length) === 1) {
                             const routeName = file.slice(0, -3);
                             const task = {
                                 id: `generateRoute_${routeName}`,
                                 callback: () => {
                                     console.info(`Update ${routeName}...`);
-                                    generateMediator.generateRoute(routeName, ROUTE);
+                                    generateMediator.generateRouteMD(paths, routeName);
                                     generateMediator.generateGlobalFiles();
                                 },
                             };
-                            if (!fileWatcher.hasWatcher(path_1.default.join(ROUTE, file))) {
-                                fileWatcher.addWatcher(path_1.default.join(ROUTE, routeName + '.md'), task);
-                                fileWatcher.addWatcher(path_1.default.join(ROUTE, routeName + '.zh-Hant.md'), task);
+                            if (!fileWatcher.hasWatcher(filePath)) {
+                                fileWatcher.addWatcher(path_1.default.join(mdPath, routeName + '.md'), task);
+                                fileWatcher.addWatcher(path_1.default.join(mdPath, routeName + '.zh-Hant.md'), task);
                             }
                         }
                     }
-                }
+                };
+                reduceMD(ROUTES_DIR);
             };
             fileWatcher.addWatcher(path_1.default.join(__dirname, 'site'), {
                 id: 'generateAll',

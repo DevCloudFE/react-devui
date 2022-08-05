@@ -10,9 +10,11 @@
       "Copied!": "Copied!",
       "Open main navigation": "Open main navigation",
       "GitHub repository": "GitHub repository",
-      "menu-group": {},
       "menu": {
-        "Interface": "Interface"
+        "components-group": {},
+        "components": {
+          "Interface": "Interface"
+        }
       }
     }
   },
@@ -27,9 +29,11 @@
       "Copied!": "复制成功！",
       "Open main navigation": "打开主导航栏",
       "GitHub repository": "GitHub 存储库",
-      "menu-group": {},
       "menu": {
-        "Interface": "接口"
+        "components-group": {},
+        "components": {
+          "Interface": "接口"
+        }
       }
     }
   }

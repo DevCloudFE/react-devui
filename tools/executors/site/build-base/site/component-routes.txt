@@ -4,6 +4,6 @@ import { lazy } from 'react';
 
 __import__
 
-export const ComponentRoutes = [
+export default [
 __Route__
 ];

@@ -68,11 +68,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
   useEffect(() => {
     if (isString(html)) {
       const el = document.querySelector(`.app-route-article > h1:first-child`);
-      const title = document.title;
       document.title = el?.id + ' - React DevUI';
-      return () => {
-        document.title = title;
-      };
     }
   }, [html]);
 

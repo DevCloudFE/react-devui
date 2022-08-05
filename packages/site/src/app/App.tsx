@@ -1,15 +1,16 @@
 import type { DConfigContextData } from '@react-devui/ui/hooks/d-config/contex';
 import type { DLang } from '@react-devui/ui/utils/global';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import routes from 'dist/routes';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { DRoot } from '@react-devui/ui';
 import { useAsync, useMount } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppLayout } from './components';
-import { AppRoutes } from './routes/Routes';
 
 type DTheme = 'light' | 'dark';
 
@@ -94,7 +95,17 @@ export function App() {
       </AppContext.Provider>
 
       <main ref={mainRef} className="app-main">
-        <AppRoutes />
+        <Routes>
+          {routes.map(({ path, component }) => (
+            <Route
+              key={path}
+              path={path}
+              element={<Suspense fallback={<div className="app-top-line-loader" />}>{React.createElement(component)}</Suspense>}
+            />
+          ))}
+
+          <Route path="*" element={<Navigate to="/components/Button" replace={true} />}></Route>
+        </Routes>
       </main>
     </DRoot>
   );
