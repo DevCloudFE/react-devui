@@ -229,22 +229,22 @@ export function DInput(props: DInputProps): JSX.Element | null {
           }}
         />
         {dClearable && !disabled && (
-          <button
+          <div
             className={`${dPrefix}input__clear`}
             style={{ opacity: dataRef.current.showValue.length > 0 ? 1 : 0 }}
-            tabIndex={dataRef.current.showValue.length > 0 ? 0 : -1}
+            role="button"
             aria-label={t('Clear')}
             onClick={() => {
               changeValue('');
             }}
           >
             <CloseCircleFilled />
-          </button>
+          </div>
         )}
         {dType === 'password' && !disabled && (
-          <button
+          <div
             className={`${dPrefix}input__password`}
-            tabIndex={dPasswordToggle ? 0 : -1}
+            role="button"
             aria-label={t('Input', password ? 'Password is not visible' : 'Password is visible')}
             onClick={() => {
               if (dPasswordToggle) {
@@ -253,13 +253,13 @@ export function DInput(props: DInputProps): JSX.Element | null {
             }}
           >
             {password ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-          </button>
+          </div>
         )}
         {dType === 'number' && dNumbetButton && !disabled && (
           <div className={`${dPrefix}input__number-container`}>
-            <button
+            <div
               className={`${dPrefix}input__number`}
-              tabIndex={-1}
+              role="button"
               aria-label={t('Input', 'Increase number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
@@ -279,10 +279,10 @@ export function DInput(props: DInputProps): JSX.Element | null {
               <DCustomIcon viewBox="0 0 24 24">
                 <path d="M19.637 16.4369C19.0513 17.0227 18.1015 17.0227 17.5157 16.4369L11.8589 10.7801L6.20202 16.4369C5.61623 17.0227 4.66648 17.0227 4.0807 16.4369C3.49491 15.8511 3.49491 14.9014 4.0807 14.3156L10.7982 7.59809C11.384 7.01231 12.3337 7.01231 12.9195 7.59809L19.637 14.3156C20.2228 14.9014 20.2228 15.8511 19.637 16.4369Z"></path>
               </DCustomIcon>
-            </button>
-            <button
+            </div>
+            <div
               className={`${dPrefix}input__number`}
-              tabIndex={-1}
+              role="button"
               aria-label={t('Input', 'Decrease number')}
               onMouseDown={(e) => {
                 if (e.button === 0) {
@@ -302,7 +302,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
               <DCustomIcon viewBox="0 0 24 24">
                 <path d="M4.08045 7.59809C4.66624 7.01231 5.61599 7.01231 6.20177 7.59809L11.8586 13.2549L17.5155 7.59809C18.1013 7.01231 19.051 7.01231 19.6368 7.59809C20.2226 8.18388 20.2226 9.13363 19.6368 9.71941L12.9193 16.4369C12.3335 17.0227 11.3838 17.0227 10.798 16.4369L4.08045 9.71941C3.49467 9.13363 3.49467 8.18388 4.08045 7.59809Z"></path>
               </DCustomIcon>
-            </button>
+            </div>
           </div>
         )}
         {checkNodeExist(dSuffix) && <div className={`${dPrefix}input__suffix`}>{dSuffix}</div>}

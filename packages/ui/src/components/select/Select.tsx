@@ -7,8 +7,9 @@ import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useEventCallback, useDValue } from '../../hooks';
-import { LoadingOutlined, PlusOutlined } from '../../icons';
+import { CloseOutlined, LoadingOutlined, PlusOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DSelectbox } from '../_selectbox';
 import { DCheckbox } from '../checkbox';
 import { DDropdown } from '../dropdown';
@@ -315,18 +316,22 @@ function Select<V extends DId, T extends DSelectItem<V>>(
         </DDropdown>
       );
       selectedNode = selectedItems.map((item) => (
-        <DTag
-          key={item.value}
-          className={`${dPrefix}select__multiple-tag`}
-          dSize={size}
-          dClosable={!(item.disabled || disabled)}
-          onClose={(e) => {
-            e.stopPropagation();
-
-            changeSelectByClick(item.value);
-          }}
-        >
+        <DTag key={item.value} className={`${dPrefix}select__multiple-tag`} dSize={size}>
           {dCustomSelected ? dCustomSelected(item) : item.label}
+          {!(item.disabled || disabled) && (
+            <div
+              className={`${dPrefix}select__close`}
+              role="button"
+              aria-label={t('Close')}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                changeSelectByClick(item.value);
+              }}
+            >
+              <CloseOutlined />
+            </div>
+          )}
         </DTag>
       ));
     } else {
@@ -355,197 +360,215 @@ function Select<V extends DId, T extends DSelectItem<V>>(
   );
 
   return (
-    <DSelectbox
-      {...restProps}
-      ref={ref}
-      dClassNamePrefix="select"
-      dFormControl={dFormControl}
+    <DComboboxKeyboardSupport
       dVisible={visible}
-      dContent={hasSelected && selectedNode}
-      dContentTitle={selectedLabel}
-      dPlaceholder={dPlaceholder}
-      dSuffix={suffixNode}
-      dSize={size}
-      dLoading={dLoading}
-      dSearchable={dSearchable}
-      dClearable={dClearable}
-      dDisabled={disabled}
-      dInputProps={{
-        ...dInputProps,
-        value: searchValue,
-        'aria-controls': listId,
-        onKeyDown: (e) => {
-          dInputProps?.onKeyDown?.(e);
+      dEditable={dSearchable}
+      onVisibleChange={changeVisible}
+      onFocusChange={(focus) => {
+        switch (focus) {
+          case 'next':
+            changeFocusItem(dVSRef.current?.scrollByStep(1));
+            break;
 
-          if (visible && !isUndefined(focusItem)) {
-            switch (e.code) {
-              case 'ArrowUp':
-                e.preventDefault();
-                changeFocusItem(dVSRef.current?.scrollByStep(-1));
-                break;
+          case 'prev':
+            changeFocusItem(dVSRef.current?.scrollByStep(-1));
+            break;
 
-              case 'ArrowDown':
-                e.preventDefault();
-                changeFocusItem(dVSRef.current?.scrollByStep(1));
-                break;
+          case 'first':
+            changeFocusItem(dVSRef.current?.scrollToStart());
+            break;
 
-              case 'Home':
-                e.preventDefault();
-                changeFocusItem(dVSRef.current?.scrollToStart());
-                break;
+          case 'last':
+            changeFocusItem(dVSRef.current?.scrollToEnd());
+            break;
 
-              case 'End':
-                e.preventDefault();
-                changeFocusItem(dVSRef.current?.scrollToEnd());
-                break;
+          default:
+            break;
+        }
+      }}
+    >
+      {({ ksOnKeyDown }) => (
+        <DSelectbox
+          {...restProps}
+          ref={ref}
+          onClick={(e) => {
+            restProps.onClick?.(e);
 
-              case 'Enter':
+            changeVisible((draft) => (dSearchable ? true : !draft));
+          }}
+          dClassNamePrefix="select"
+          dFormControl={dFormControl}
+          dVisible={visible}
+          dContent={hasSelected && selectedNode}
+          dContentTitle={selectedLabel}
+          dPlaceholder={dPlaceholder}
+          dSuffix={suffixNode}
+          dSize={size}
+          dLoading={dLoading}
+          dSearchable={dSearchable}
+          dClearable={dClearable}
+          dDisabled={disabled}
+          dInputProps={{
+            ...dInputProps,
+            value: searchValue,
+            'aria-controls': listId,
+            onBlur: (e) => {
+              dInputProps?.onBlur?.(e);
+
+              changeVisible(false);
+            },
+            onKeyDown: (e) => {
+              dInputProps?.onKeyDown?.(e);
+              ksOnKeyDown(e);
+
+              if ((e.code === 'Enter' || (!dSearchable && e.code === 'Space')) && visible && focusItem) {
                 e.preventDefault();
                 if (focusItem[IS_CREATE]) {
                   createItem(focusItem);
                 }
                 changeSelectByClick(focusItem.value);
-                break;
+              }
+            },
+            onChange: (e) => {
+              dInputProps?.onChange?.(e);
 
-              default:
-                break;
+              const val = e.currentTarget.value;
+              if (dSearchable) {
+                setSearchValue(val);
+                onSearch?.(val);
+              }
+            },
+          }}
+          dInputRef={dInputRef}
+          dUpdatePosition={(boxEl, popupEl) => {
+            const width = boxEl.getBoundingClientRect().width;
+            const { height } = getNoTransformSize(popupEl);
+            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+
+            return {
+              position: {
+                top,
+                left,
+                width,
+                maxWidth: window.innerWidth - left - 20,
+              },
+              transformOrigin,
+            };
+          }}
+          afterVisibleChange={afterVisibleChange}
+          onFocusVisibleChange={setFocusVisible}
+          onClear={() => {
+            onClear?.();
+
+            if (dMultiple) {
+              changeSelect([]);
+            } else {
+              changeSelect(null);
             }
-          }
-        },
-        onChange: (e) => {
-          dInputProps?.onChange?.(e);
-
-          const val = e.currentTarget.value;
-          if (dSearchable) {
-            setSearchValue(val);
-            onSearch?.(val);
-          }
-        },
-      }}
-      dInputRef={dInputRef}
-      dUpdatePosition={(boxEl, popupEl) => {
-        const width = boxEl.getBoundingClientRect().width;
-        const { height } = getNoTransformSize(popupEl);
-        const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
-
-        return {
-          position: {
-            top,
-            left,
-            width,
-            maxWidth: window.innerWidth - left - 20,
-          },
-          transformOrigin,
-        };
-      }}
-      onVisibleChange={changeVisible}
-      afterVisibleChange={afterVisibleChange}
-      onFocusVisibleChange={setFocusVisible}
-      onClear={() => {
-        onClear?.();
-
-        if (dMultiple) {
-          changeSelect([]);
-        } else {
-          changeSelect(null);
-        }
-      }}
-    >
-      {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
-        <div
-          ref={sPopupRef}
-          className={getClassName(dPopupClassName, `${dPrefix}select__popup`)}
-          style={sStyle}
-          onMouseDown={sOnMouseDown}
-          onMouseUp={sOnMouseUp}
+          }}
         >
-          {dLoading && (
+          {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
             <div
-              className={getClassName(`${dPrefix}select__loading`, {
-                [`${dPrefix}select__loading--empty`]: list.length === 0,
-              })}
+              ref={sPopupRef}
+              className={getClassName(dPopupClassName, `${dPrefix}select__popup`)}
+              style={sStyle}
+              onMouseDown={sOnMouseDown}
+              onMouseUp={sOnMouseUp}
             >
-              <LoadingOutlined dSize={list.length === 0 ? 18 : 24} dSpin />
-            </div>
-          )}
-          <DVirtualScroll
-            {...vsPerformance}
-            ref={dVSRef}
-            id={listId}
-            className={`${dPrefix}select__list`}
-            role="listbox"
-            aria-multiselectable={dMultiple}
-            aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
-            dItemRender={(item, index, { iARIA, iChildren }, parent) => {
-              const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
+              {dLoading && (
+                <div
+                  className={getClassName(`${dPrefix}select__loading`, {
+                    [`${dPrefix}select__loading--empty`]: list.length === 0,
+                  })}
+                >
+                  <LoadingOutlined dSize={list.length === 0 ? 18 : 24} dSpin />
+                </div>
+              )}
+              <DVirtualScroll
+                {...vsPerformance}
+                ref={dVSRef}
+                id={listId}
+                className={`${dPrefix}select__list`}
+                role="listbox"
+                aria-multiselectable={dMultiple}
+                aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                dItemRender={(item, index, { iARIA, iChildren }, parent) => {
+                  const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
 
-              const node = dCustomItem ? dCustomItem(item) : itemLabel;
+                  const node = dCustomItem ? dCustomItem(item) : itemLabel;
 
-              if (children) {
-                return (
-                  <ul key={itemValue} className={`${dPrefix}select__option-group`} role="group" aria-labelledby={getGroupId(itemValue)}>
-                    <li key={itemValue} id={getGroupId(itemValue)} className={`${dPrefix}select__option-group-label`} role="presentation">
+                  if (children) {
+                    return (
+                      <ul key={itemValue} className={`${dPrefix}select__option-group`} role="group" aria-labelledby={getGroupId(itemValue)}>
+                        <li
+                          key={itemValue}
+                          id={getGroupId(itemValue)}
+                          className={`${dPrefix}select__option-group-label`}
+                          role="presentation"
+                        >
+                          <div className={`${dPrefix}select__option-content`}>{node}</div>
+                        </li>
+                        {iChildren}
+                      </ul>
+                    );
+                  }
+
+                  let isSelected = false;
+                  if (dMultiple) {
+                    isSelected = (select as Set<V>).has(itemValue);
+                  } else {
+                    isSelected = (select as V | null) === itemValue;
+                  }
+
+                  return (
+                    <li
+                      {...iARIA}
+                      key={itemValue}
+                      id={getItemId(itemValue)}
+                      className={getClassName(`${dPrefix}select__option`, {
+                        'is-selected': !dMultiple && isSelected,
+                        'is-disabled': itemDisabled,
+                      })}
+                      style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
+                      title={(item[IS_CREATE] ? t('Create') + ' ' : '') + itemLabel}
+                      role="option"
+                      aria-selected={isSelected}
+                      aria-disabled={itemDisabled}
+                      onClick={() => {
+                        if (!itemDisabled) {
+                          if (item[IS_CREATE]) {
+                            createItem(item);
+                          }
+                          changeFocusItem(item);
+                          changeSelectByClick(itemValue);
+                        }
+                      }}
+                    >
+                      {focusVisible && focusItem?.value === itemValue && <div className={`${dPrefix}focus-outline`}></div>}
+                      {item[IS_CREATE] ? (
+                        <PlusOutlined dTheme="primary" />
+                      ) : dMultiple ? (
+                        <DCheckbox dDisabled={itemDisabled} dModel={isSelected}></DCheckbox>
+                      ) : null}
                       <div className={`${dPrefix}select__option-content`}>{node}</div>
                     </li>
-                    {iChildren}
-                  </ul>
-                );
-              }
-
-              let isSelected = false;
-              if (dMultiple) {
-                isSelected = (select as Set<V>).has(itemValue);
-              } else {
-                isSelected = (select as V | null) === itemValue;
-              }
-
-              return (
-                <li
-                  {...iARIA}
-                  key={itemValue}
-                  id={getItemId(itemValue)}
-                  className={getClassName(`${dPrefix}select__option`, {
-                    'is-selected': !dMultiple && isSelected,
-                    'is-disabled': itemDisabled,
-                  })}
-                  style={{ paddingLeft: parent.length === 0 ? undefined : 12 + 8 }}
-                  title={(item[IS_CREATE] ? t('Create') + ' ' : '') + itemLabel}
-                  role="option"
-                  aria-selected={isSelected}
-                  aria-disabled={itemDisabled}
-                  onClick={() => {
-                    if (!itemDisabled) {
-                      if (item[IS_CREATE]) {
-                        createItem(item);
-                      }
-                      changeFocusItem(item);
-                      changeSelectByClick(itemValue);
-                    }
-                  }}
-                >
-                  {focusVisible && focusItem?.value === itemValue && <div className={`${dPrefix}focus-outline`}></div>}
-                  {item[IS_CREATE] ? (
-                    <PlusOutlined dTheme="primary" />
-                  ) : dMultiple ? (
-                    <DCheckbox dDisabled={itemDisabled} dModel={isSelected}></DCheckbox>
-                  ) : null}
-                  <div className={`${dPrefix}select__option-content`}>{node}</div>
-                </li>
-              );
-            }}
-            dFocusItem={focusItem}
-            dSize={264}
-            dPadding={4}
-            dEmptyRender={(item) => (
-              <li className={`${dPrefix}select__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
-                <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
-              </li>
-            )}
-            onScrollEnd={onScrollBottom}
-          />
-        </div>
+                  );
+                }}
+                dFocusItem={focusItem}
+                dSize={264}
+                dPadding={4}
+                dEmptyRender={(item) => (
+                  <li className={`${dPrefix}select__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
+                    <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
+                  </li>
+                )}
+                onScrollEnd={onScrollBottom}
+              />
+            </div>
+          )}
+        </DSelectbox>
       )}
-    </DSelectbox>
+    </DComboboxKeyboardSupport>
   );
 }
 

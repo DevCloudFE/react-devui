@@ -21,7 +21,7 @@ import { DTransition } from '../_transition';
 import { DDropdownGroup } from './DropdownGroup';
 import { DDropdownItem } from './DropdownItem';
 import { DDropdownSub } from './DropdownSub';
-import { checkEnableItem, getItems } from './utils';
+import { checkEnableItem, getSameLevelItems } from './utils';
 
 export interface DDropdownRef {
   updatePosition: () => void;
@@ -104,8 +104,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
       return id;
     }
   })();
-
-  const initFocus = () => {
+  const focusFirst = () => {
     const ids: ID[] = [];
     const reduceArr = (arr: DNestedChildren<T>[]) => {
       for (const item of arr) {
@@ -113,6 +112,25 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
           break;
         }
 
+        if (item.type === 'group' && item.children) {
+          reduceArr(item.children);
+        } else if (checkEnableItem(item)) {
+          ids.push(item.id);
+        }
+      }
+    };
+    reduceArr(dList);
+    setFocusIds(ids);
+  };
+  const focusLast = () => {
+    const ids: ID[] = [];
+    const reduceArr = (arr: DNestedChildren<T>[]) => {
+      for (let index = arr.length - 1; index >= 0; index--) {
+        if (ids.length === 1) {
+          break;
+        }
+
+        const item = arr[index];
         if (item.type === 'group' && item.children) {
           reduceArr(item.children);
         } else if (checkEnableItem(item)) {
@@ -186,7 +204,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelItems = getItems(nth(subParents, -1)?.children ?? dList);
+            const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
             const focusItem = (val?: T) => {
               if (val) {
                 setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
@@ -241,7 +259,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                 if (itemType === 'sub') {
                   addPopupId(itemId);
                   if (children) {
-                    const newFocusItem = nth(getItems(children), 0);
+                    const newFocusItem = nth(getSameLevelItems(children), 0);
                     if (newFocusItem) {
                       setFocusIds(newSubParents.map((parentItem) => parentItem.id).concat([newFocusItem.id]));
                     }
@@ -449,12 +467,11 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                   React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                     ...children.props,
                     ...restPProps,
-                    id: buttonId,
-                    tabIndex: 0,
-                    role: 'button',
-                    'aria-haspopup': 'menu',
-                    'aria-expanded': visible,
-                    'aria-controls': id,
+                    id: children.props.id ?? buttonId,
+                    role: children.props.role ?? 'button',
+                    'aria-haspopup': children.props['aria-haspopup'] ?? 'menu',
+                    'aria-expanded': children.props['aria-expanded'] ?? visible,
+                    'aria-controls': children.props['aria-controls'] ?? id,
                     onClick: (e) => {
                       children.props.onClick?.(e);
                       pOnClick?.(e);
@@ -464,7 +481,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                       fvOnFocus(e);
 
                       setIsFocus(true);
-                      initFocus();
+                      focusFirst();
                     },
                     onBlur: (e) => {
                       children.props.onBlur?.(e);
@@ -479,10 +496,25 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
 
                       if (visible) {
                         handleKeyDown?.(e);
-                      } else if (e.code === 'Enter' || e.code === 'Space') {
-                        e.preventDefault();
+                      } else {
+                        switch (e.code) {
+                          case 'Enter':
+                          case 'Space':
+                          case 'ArrowDown':
+                            e.preventDefault();
+                            focusFirst();
+                            changeVisible(true);
+                            break;
 
-                        changeVisible(true);
+                          case 'ArrowUp':
+                            e.preventDefault();
+                            focusLast();
+                            changeVisible(true);
+                            break;
+
+                          default:
+                            break;
+                        }
                       }
                     },
                     onMouseEnter: (e) => {

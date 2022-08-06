@@ -26,7 +26,7 @@ interface DSearchListProps<ID extends DId, T> {
   onSelectedChange: (value: ID | null | ID[]) => void;
   onClose: () => void;
   onFocusChange: (item: DSearchItem<ID, T>) => void;
-  onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
+  onKeyDown$: Subject<'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click'>;
 }
 
 export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
@@ -69,49 +69,44 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
     }
   });
 
-  const handleKeyDown = useEventCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = useEventCallback((code: 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click') => {
     const focusItem = (item: DSearchItem<ID, T> | undefined) => {
       if (item) {
         onFocusChange(item);
       }
     };
-    if (dFocusItem) {
-      switch (e.code) {
-        case 'Enter':
-          e.preventDefault();
+    switch (code) {
+      case 'next':
+        focusItem(dVSRef.current?.scrollByStep(1));
+        break;
+
+      case 'prev':
+        focusItem(dVSRef.current?.scrollByStep(-1));
+        break;
+
+      case 'first':
+        focusItem(dVSRef.current?.scrollToStart());
+        break;
+
+      case 'last':
+        focusItem(dVSRef.current?.scrollToEnd());
+        break;
+
+      case 'click':
+        if (dFocusItem) {
           changeSelectByClick(dFocusItem);
-          break;
+        }
+        break;
 
-        case 'ArrowUp':
-          e.preventDefault();
-          focusItem(dVSRef.current?.scrollByStep(-1));
-          break;
-
-        case 'ArrowDown':
-          e.preventDefault();
-          focusItem(dVSRef.current?.scrollByStep(1));
-          break;
-
-        case 'Home':
-          e.preventDefault();
-          focusItem(dVSRef.current?.scrollToStart());
-          break;
-
-        case 'End':
-          e.preventDefault();
-          focusItem(dVSRef.current?.scrollToEnd());
-          break;
-
-        default:
-          break;
-      }
+      default:
+        break;
     }
   });
 
   useEffect(() => {
     const ob = onKeyDown$.subscribe({
-      next: (e) => {
-        handleKeyDown(e);
+      next: (code) => {
+        handleKeyDown(code);
       },
     });
 

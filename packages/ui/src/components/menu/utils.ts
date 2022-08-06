@@ -5,16 +5,17 @@ export function checkEnableItem<ID extends DId, T extends DMenuItem<ID>>(item: D
   return (item.type === 'item' || item.type === 'sub') && !item.disabled;
 }
 
-export function getItems<ID extends DId, T extends DMenuItem<ID>>(arr: DNestedChildren<T>[], items?: DNestedChildren<T>[]) {
-  const newItems = ([] as DNestedChildren<T>[]).concat(items ?? []);
-  arr.forEach((item) => {
-    if (item.type === 'group') {
-      if (item.children) {
-        getItems(item.children, newItems);
+export function getSameLevelItems<ID extends DId, T extends DMenuItem<ID>>(arr: DNestedChildren<T>[]) {
+  const items: DNestedChildren<T>[] = [];
+  const reduceArr = (arr: DNestedChildren<T>[]) => {
+    for (const item of arr) {
+      if (item.type === 'group' && item.children) {
+        reduceArr(item.children);
+      } else if (checkEnableItem(item)) {
+        items.push(item);
       }
-    } else if (checkEnableItem(item)) {
-      newItems.push(item);
     }
-  });
-  return newItems;
+  };
+  reduceArr(arr);
+  return items;
 }

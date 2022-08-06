@@ -38,12 +38,10 @@ export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dLoading?: boolean;
   dSearchable?: boolean;
   dClearable?: boolean;
-  dEscClosable?: boolean;
   dDisabled?: boolean;
   dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   dInputRef?: React.Ref<HTMLInputElement>;
   dUpdatePosition?: (boxEl: HTMLElement, popupEl: HTMLElement) => { position: React.CSSProperties; transformOrigin?: string } | undefined;
-  onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
   onFocusVisibleChange?: (visible: boolean) => void;
   onClear?: () => void;
@@ -63,12 +61,10 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     dLoading = false,
     dSearchable = false,
     dClearable = false,
-    dEscClosable = true,
     dDisabled = false,
     dInputProps,
     dInputRef,
     dUpdatePosition,
-    onVisibleChange,
     afterVisibleChange,
     onFocusVisibleChange,
     onClear,
@@ -97,7 +93,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
   const [isFocus, setIsFocus] = useState(false);
 
   const inputable = dSearchable && dVisible;
-  const clearable = dClearable && !dVisible && !dLoading && !dDisabled && dContent;
+  const clearable = dClearable && dContent && !dVisible && !dLoading && !dDisabled;
 
   const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
@@ -219,7 +215,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
           onClick={(e) => {
             restProps.onClick?.(e);
 
-            onVisibleChange?.(dSearchable ? true : !dVisible);
             inputRef.current?.focus({ preventScroll: true });
           }}
         >
@@ -242,31 +237,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                   aria-haspopup="listbox"
                   aria-expanded={dVisible}
                   dFormControl={dFormControl}
-                  onChange={(e) => {
-                    dInputProps?.onChange?.(e);
-
-                    if (dSearchable) {
-                      onVisibleChange?.(true);
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    dInputProps?.onKeyDown?.(e);
-                    fvOnKeyDown(e);
-
-                    if (dVisible) {
-                      if (dEscClosable && e.code === 'Escape') {
-                        e.preventDefault();
-
-                        onVisibleChange?.(false);
-                      }
-                    } else {
-                      if (e.code === 'Enter' || e.code === 'Space') {
-                        e.preventDefault();
-
-                        onVisibleChange?.(true);
-                      }
-                    }
-                  }}
                   onFocus={(e) => {
                     dInputProps?.onFocus?.(e);
                     fvOnFocus(e);
@@ -278,7 +248,10 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                     fvOnBlur(e);
 
                     setIsFocus(false);
-                    onVisibleChange?.(false);
+                  }}
+                  onKeyDown={(e) => {
+                    dInputProps?.onKeyDown?.(e);
+                    fvOnKeyDown(e);
                   }}
                 />
               )}
@@ -303,8 +276,9 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
             </div>
           )}
           {clearable && (
-            <button
+            <div
               className={`${prefix}__clear`}
+              role="button"
               aria-label={t('Clear')}
               onClick={(e) => {
                 e.stopPropagation();
@@ -313,7 +287,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
               }}
             >
               <CloseCircleFilled />
-            </button>
+            </div>
           )}
           <div
             className={getClassName(`${prefix}__icon`, {

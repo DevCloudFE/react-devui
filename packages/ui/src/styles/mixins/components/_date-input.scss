@@ -79,17 +79,11 @@
   }
 
   @include e(clear) {
-    @include utils-button;
-
     position: absolute;
     right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
     z-index: 1;
-    padding: 0;
-    margin: 0;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}color-icon-decorator);
-    background-color: transparent;
-    border: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover,

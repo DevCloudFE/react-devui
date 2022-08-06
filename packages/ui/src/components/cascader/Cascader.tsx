@@ -7,9 +7,10 @@ import type { AbstractTreeNode } from '../tree/node';
 import { isNull } from 'lodash';
 import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify } from '../../hooks';
-import { LoadingOutlined } from '../../icons';
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify, useTranslation } from '../../hooks';
+import { CloseOutlined, LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DSelectbox } from '../_selectbox';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
@@ -105,7 +106,8 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     focusList: Set<V>;
   }>({ focusList: new Set() });
 
-  const onKeyDown$ = useEventNotify<React.KeyboardEvent<HTMLInputElement>>();
+  const [t] = useTranslation();
+  const onKeyDown$ = useEventNotify<'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click'>();
 
   const uniqueId = useId();
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
@@ -282,19 +284,23 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
         </DDropdown>
       );
       selectedNode = selectedNodes.map((node) => (
-        <DTag
-          key={node.id}
-          className={`${dPrefix}cascader__multiple-tag`}
-          dSize={size}
-          dClosable={!(node.disabled || disabled)}
-          onClose={(e) => {
-            e.stopPropagation();
-
-            const checkeds = (node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
-            changeSelect(Array.from(checkeds.keys()));
-          }}
-        >
+        <DTag key={node.id} className={`${dPrefix}cascader__multiple-tag`} dSize={size}>
           {dCustomSelected ? dCustomSelected(node.origin) : node.origin.label}
+          {!(node.disabled || disabled) && (
+            <div
+              className={`${dPrefix}cascader__close`}
+              role="button"
+              aria-label={t('Close')}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                const checkeds = (node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
+                changeSelect(Array.from(checkeds.keys()));
+              }}
+            >
+              <CloseOutlined />
+            </div>
+          )}
         </DTag>
       ));
     } else {
@@ -308,134 +314,156 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   })();
 
   return (
-    <DSelectbox
-      {...restProps}
-      ref={ref}
-      dClassNamePrefix="cascader"
-      dFormControl={dFormControl}
+    <DComboboxKeyboardSupport
       dVisible={visible}
-      dContent={hasSelected && selectedNode}
-      dContentTitle={selectedLabel}
-      dPlaceholder={dPlaceholder}
-      dSuffix={suffixNode}
-      dSize={size}
-      dLoading={dLoading}
-      dSearchable={dSearchable}
-      dClearable={dClearable}
-      dDisabled={disabled}
-      dInputProps={{
-        ...dInputProps,
-        value: searchValue,
-        'aria-controls': listId,
-        onKeyDown: (e) => {
-          dInputProps?.onKeyDown?.(e);
-
-          if (visible) {
-            onKeyDown$.next(e);
-          }
-        },
-        onChange: (e) => {
-          dInputProps?.onChange?.(e);
-
-          const val = e.currentTarget.value;
-          if (dSearchable) {
-            setSearchValue(val);
-            onSearch?.(val);
-          }
-        },
-      }}
-      dInputRef={dInputRef}
-      dUpdatePosition={(boxEl, popupEl) => {
-        const width = boxEl.getBoundingClientRect().width;
-        const { height } = getNoTransformSize(popupEl);
-        const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
-
-        return {
-          position: {
-            top,
-            left,
-            maxWidth: window.innerWidth - left - 20,
-          },
-          transformOrigin,
-        };
-      }}
+      dEditable={dSearchable}
+      dNested={!hasSearch}
       onVisibleChange={changeVisible}
-      afterVisibleChange={afterVisibleChange}
-      onFocusVisibleChange={setFocusVisible}
-      onClear={handleClear}
+      onFocusChange={(focus) => {
+        onKeyDown$.next(focus);
+      }}
     >
-      {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
-        <div
-          ref={sPopupRef}
-          className={getClassName(dPopupClassName, `${dPrefix}cascader__popup`)}
-          style={sStyle}
-          onMouseDown={sOnMouseDown}
-          onMouseUp={sOnMouseUp}
+      {({ ksOnKeyDown }) => (
+        <DSelectbox
+          {...restProps}
+          ref={ref}
+          onClick={(e) => {
+            restProps.onClick?.(e);
+
+            changeVisible((draft) => (dSearchable ? true : !draft));
+          }}
+          dClassNamePrefix="cascader"
+          dFormControl={dFormControl}
+          dVisible={visible}
+          dContent={hasSelected && selectedNode}
+          dContentTitle={selectedLabel}
+          dPlaceholder={dPlaceholder}
+          dSuffix={suffixNode}
+          dSize={size}
+          dLoading={dLoading}
+          dSearchable={dSearchable}
+          dClearable={dClearable}
+          dDisabled={disabled}
+          dInputProps={{
+            ...dInputProps,
+            value: searchValue,
+            'aria-controls': listId,
+            onBlur: (e) => {
+              dInputProps?.onBlur?.(e);
+
+              changeVisible(false);
+            },
+            onKeyDown: (e) => {
+              dInputProps?.onKeyDown?.(e);
+              ksOnKeyDown(e);
+
+              if ((e.code === 'Enter' || (!dSearchable && e.code === 'Space')) && visible) {
+                onKeyDown$.next('click');
+              }
+            },
+            onChange: (e) => {
+              dInputProps?.onChange?.(e);
+
+              const val = e.currentTarget.value;
+              if (dSearchable) {
+                setSearchValue(val);
+                onSearch?.(val);
+              }
+            },
+          }}
+          dInputRef={dInputRef}
+          dUpdatePosition={(boxEl, popupEl) => {
+            const width = boxEl.getBoundingClientRect().width;
+            const { height } = getNoTransformSize(popupEl);
+            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+
+            return {
+              position: {
+                top,
+                left,
+                maxWidth: window.innerWidth - left - 20,
+              },
+              transformOrigin,
+            };
+          }}
+          afterVisibleChange={afterVisibleChange}
+          onFocusVisibleChange={setFocusVisible}
+          onClear={handleClear}
         >
-          {dLoading && (
+          {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
             <div
-              className={getClassName(`${dPrefix}cascader__loading`, {
-                [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchList : renderNodes).length === 0,
-              })}
+              ref={sPopupRef}
+              className={getClassName(dPopupClassName, `${dPrefix}cascader__popup`)}
+              style={sStyle}
+              onMouseDown={sOnMouseDown}
+              onMouseUp={sOnMouseUp}
             >
-              <LoadingOutlined dSize={(hasSearch ? searchList : renderNodes).length === 0 ? 18 : 24} dSpin />
+              {dLoading && (
+                <div
+                  className={getClassName(`${dPrefix}cascader__loading`, {
+                    [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchList : renderNodes).length === 0,
+                  })}
+                >
+                  <LoadingOutlined dSize={(hasSearch ? searchList : renderNodes).length === 0 ? 18 : 24} dSpin />
+                </div>
+              )}
+              {hasSearch ? (
+                <DSearchList
+                  dListId={listId}
+                  dGetItemId={getItemId}
+                  dList={searchList}
+                  dSelected={select}
+                  dFocusItem={searchFocusItem}
+                  dCustomItem={dCustomItem}
+                  dMultiple={dMultiple}
+                  dOnlyLeafSelectable={dOnlyLeafSelectable}
+                  dFocusVisible={focusVisible}
+                  onSelectedChange={changeSelect}
+                  onClose={() => {
+                    changeVisible(false);
+                  }}
+                  onFocusChange={(item) => {
+                    if (!dataRef.current.focusList.has(item.value)) {
+                      dataRef.current.focusList.add(item.value);
+                      onFirstFocus?.(item.value, item[TREE_NODE_KEY].origin);
+                    }
+
+                    setSearchFocusItem(item);
+                  }}
+                  onKeyDown$={onKeyDown$}
+                ></DSearchList>
+              ) : (
+                <DList
+                  dListId={listId}
+                  dGetItemId={getItemId}
+                  dNodes={renderNodes}
+                  dSelected={select}
+                  dFocusNode={noSearchFocusNode}
+                  dCustomItem={dCustomItem}
+                  dMultiple={dMultiple}
+                  dOnlyLeafSelectable={dOnlyLeafSelectable}
+                  dFocusVisible={focusVisible}
+                  dRoot
+                  onSelectedChange={changeSelect}
+                  onClose={() => {
+                    changeVisible(false);
+                  }}
+                  onFocusChange={(node) => {
+                    if (!dataRef.current.focusList.has(node.id)) {
+                      dataRef.current.focusList.add(node.id);
+                      onFirstFocus?.(node.id, node.origin);
+                    }
+
+                    setNoSearchFocusNode(node);
+                  }}
+                  onKeyDown$={onKeyDown$}
+                ></DList>
+              )}
             </div>
           )}
-          {hasSearch ? (
-            <DSearchList
-              dListId={listId}
-              dGetItemId={getItemId}
-              dList={searchList}
-              dSelected={select}
-              dFocusItem={searchFocusItem}
-              dCustomItem={dCustomItem}
-              dMultiple={dMultiple}
-              dOnlyLeafSelectable={dOnlyLeafSelectable}
-              dFocusVisible={focusVisible}
-              onSelectedChange={changeSelect}
-              onClose={() => {
-                changeVisible(false);
-              }}
-              onFocusChange={(item) => {
-                if (!dataRef.current.focusList.has(item.value)) {
-                  dataRef.current.focusList.add(item.value);
-                  onFirstFocus?.(item.value, item[TREE_NODE_KEY].origin);
-                }
-
-                setSearchFocusItem(item);
-              }}
-              onKeyDown$={onKeyDown$}
-            ></DSearchList>
-          ) : (
-            <DList
-              dListId={listId}
-              dGetItemId={getItemId}
-              dNodes={renderNodes}
-              dSelected={select}
-              dFocusNode={noSearchFocusNode}
-              dCustomItem={dCustomItem}
-              dMultiple={dMultiple}
-              dOnlyLeafSelectable={dOnlyLeafSelectable}
-              dFocusVisible={focusVisible}
-              dRoot
-              onSelectedChange={changeSelect}
-              onClose={() => {
-                changeVisible(false);
-              }}
-              onFocusChange={(node) => {
-                if (!dataRef.current.focusList.has(node.id)) {
-                  dataRef.current.focusList.add(node.id);
-                  onFirstFocus?.(node.id, node.origin);
-                }
-
-                setNoSearchFocusNode(node);
-              }}
-              onKeyDown$={onKeyDown$}
-            ></DList>
-          )}
-        </div>
+        </DSelectbox>
       )}
-    </DSelectbox>
+    </DComboboxKeyboardSupport>
   );
 }
 

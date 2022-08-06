@@ -97,15 +97,11 @@
   }
 
   @include e(clear) {
-    @include utils-button;
-
     flex-shrink: 0;
-    padding: 0;
     margin: 0 0 0 4px;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}color-icon-decorator);
-    background-color: var(--#{$variable-prefix}background-color);
-    border: none;
+    cursor: pointer;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       opacity var(--#{$variable-prefix}animation-duration-fast) linear;
 
@@ -120,15 +116,12 @@
   }
 
   @include e(password) {
-    @include utils-button;
-
     flex-shrink: 0;
     padding: 0;
     margin: 0 0 0 4px;
     font-size: 0.9em;
     color: var(--#{$variable-prefix}color-icon-decorator);
-    background-color: var(--#{$variable-prefix}background-color);
-    border: none;
+    cursor: pointer;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover,
@@ -150,15 +143,13 @@
   }
 
   @include e(number) {
-    @include utils-button;
-
+    display: inline-flex;
     flex-grow: 1;
+    align-items: center;
+    justify-content: center;
     width: 24px;
-    padding: 0;
-    margin: 0;
     color: var(--#{$variable-prefix}color-icon-decorator);
-    background-color: transparent;
-    border: none;
+    cursor: pointer;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear,
       background-color var(--#{$variable-prefix}animation-duration-base) linear;
 

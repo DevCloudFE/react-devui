@@ -122,21 +122,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
                 };
 
                 return (
-                  <DTag
-                    key={name}
-                    className={`${dPrefix}date-picker__footer-button`}
-                    tabIndex={0}
-                    role="button"
-                    dTheme="primary"
-                    onKeyDown={(e) => {
-                      if (e.code === 'Enter' || e.code === 'Space') {
-                        e.preventDefault();
-
-                        handleClick();
-                      }
-                    }}
-                    onClick={handleClick}
-                  >
+                  <DTag key={name} className={`${dPrefix}date-picker__footer-button`} role="button" dTheme="primary" onClick={handleClick}>
                     {name}
                   </DTag>
                 );

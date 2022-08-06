@@ -27,7 +27,7 @@ export interface DListProps<ID extends DId, T> {
   onSelectedChange: (value: ID | null | ID[]) => void;
   onClose: () => void;
   onFocusChange: (node: AbstractTreeNode<ID, T>) => void;
-  onKeyDown$: Subject<React.KeyboardEvent<HTMLInputElement>>;
+  onKeyDown$: Subject<'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click'>;
 }
 
 export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListProps<ID, T>): JSX.Element | null {
@@ -75,6 +75,7 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
       }
     }
   })();
+  const shouldInitFocus = dRoot && isUndefined(dFocusNode);
 
   const changeSelectByClick = useEventCallback((node: AbstractTreeNode<ID, T>) => {
     if (dMultiple) {
@@ -90,70 +91,62 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
     }
   });
 
-  const shouldInitFocus = dRoot && isUndefined(dFocusNode);
-  const handleKeyDown = useEventCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = useEventCallback((code: 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click') => {
     const focusNode = (node: AbstractTreeNode<ID, T> | undefined) => {
       if (node) {
         onFocusChange(node);
       }
     };
-    if (isFocus && inFocusNode) {
-      switch (e.code) {
-        case 'Enter':
-          e.preventDefault();
-          changeSelectByClick(inFocusNode);
-          break;
+    switch (code) {
+      case 'next':
+        focusNode(dVSRef.current?.scrollByStep(1));
+        break;
 
-        case 'ArrowLeft':
-          e.preventDefault();
-          if (inFocusNode.parent) {
-            onFocusChange(inFocusNode.parent);
-          }
-          break;
+      case 'prev':
+        focusNode(dVSRef.current?.scrollByStep(-1));
+        break;
 
-        case 'ArrowRight':
-          e.preventDefault();
-          if (inFocusNode.children && inFocusNode.children[0]) {
-            onFocusChange(inFocusNode.children[0]);
-          }
-          break;
-
-        case 'ArrowUp':
-          e.preventDefault();
-          focusNode(dVSRef.current?.scrollByStep(-1));
-          break;
-
-        case 'ArrowDown':
-          e.preventDefault();
-          focusNode(dVSRef.current?.scrollByStep(1));
-          break;
-
-        case 'Home':
-          e.preventDefault();
-          focusNode(dVSRef.current?.scrollToStart());
-          break;
-
-        case 'End':
-          e.preventDefault();
-          focusNode(dVSRef.current?.scrollToEnd());
-          break;
-
-        default:
-          break;
-      }
-    } else if (shouldInitFocus) {
-      if (e.code === 'ArrowDown') {
-        e.preventDefault();
+      case 'first':
         focusNode(dVSRef.current?.scrollToStart());
-      }
+        break;
+
+      case 'last':
+        focusNode(dVSRef.current?.scrollToEnd());
+        break;
+
+      case 'prev-level':
+        if (inFocusNode && inFocusNode.parent) {
+          onFocusChange(inFocusNode.parent);
+        }
+        break;
+
+      case 'next-level':
+        if (inFocusNode && inFocusNode.children) {
+          for (const node of inFocusNode.children) {
+            if (node.enabled) {
+              onFocusChange(node);
+              break;
+            }
+          }
+        }
+        break;
+
+      case 'click':
+        if (inFocusNode) {
+          changeSelectByClick(inFocusNode);
+        }
+        break;
+
+      default:
+        break;
     }
   });
 
   useEffect(() => {
     if (isFocus || shouldInitFocus) {
       const ob = onKeyDown$.subscribe({
-        next: (e) => {
-          handleKeyDown(e);
+        next: (code) => {
+          handleKeyDown(code);
         },
       });
 

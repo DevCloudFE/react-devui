@@ -289,7 +289,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                 ...children.props,
                 ...restPProps,
-                'aria-describedby': id,
+                'aria-describedby': children.props['aria-describedby'] ?? id,
                 onClick: (e) => {
                   children.props.onClick?.(e);
                   pOnClick?.(e);

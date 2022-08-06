@@ -1,5 +1,6 @@
 import type { DNestedChildren } from '../../utils/global';
 import type { DFocusVisibleRenderProps } from '../_focus-visible';
+import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isUndefined } from 'lodash';
@@ -21,6 +22,7 @@ import { LoadingOutlined } from '../../icons';
 import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
+import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DTransition } from '../_transition';
 import { DInput } from '../input';
 import { DVirtualScroll } from '../virtual-scroll';
@@ -210,6 +212,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
   const child = React.Children.only(children) as React.ReactElement;
   const getInputProps = (
     fvProps: DFocusVisibleRenderProps,
+    ksProps: DComboboxKeyboardSupportRenderProps,
     inputProps?: React.InputHTMLAttributes<HTMLInputElement>
   ): React.InputHTMLAttributes<HTMLInputElement> => ({
     role: 'combobox',
@@ -219,8 +222,6 @@ function AutoComplete<T extends DAutoCompleteItem>(
     onFocus: (e) => {
       inputProps?.onFocus?.(e);
       fvProps.fvOnFocus(e);
-
-      changeVisible(true);
     },
     onBlur: (e) => {
       inputProps?.onBlur?.(e);
@@ -228,40 +229,19 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
       changeVisible(false);
     },
+    onClick: (e) => {
+      inputProps?.onClick?.(e);
+
+      changeVisible(true);
+    },
     onKeyDown: (e) => {
       inputProps?.onKeyDown?.(e);
       fvProps.fvOnKeyDown(e);
+      ksProps.ksOnKeyDown(e);
 
-      if (visible && !isUndefined(focusItem)) {
-        switch (e.code) {
-          case 'ArrowUp':
-            e.preventDefault();
-            changeFocusItem(dVSRef.current?.scrollByStep(-1));
-            break;
-
-          case 'ArrowDown':
-            e.preventDefault();
-            changeFocusItem(dVSRef.current?.scrollByStep(1));
-            break;
-
-          case 'Home':
-            e.preventDefault();
-            changeFocusItem(dVSRef.current?.scrollToStart());
-            break;
-
-          case 'End':
-            e.preventDefault();
-            changeFocusItem(dVSRef.current?.scrollToEnd());
-            break;
-
-          case 'Enter':
-            e.preventDefault();
-            onItemClick?.(focusItem.value, focusItem);
-            break;
-
-          default:
-            break;
-        }
+      if (e.code === 'Enter' && visible && focusItem) {
+        changeVisible(false);
+        onItemClick?.(focusItem.value, focusItem);
       }
     },
   });
@@ -284,18 +264,48 @@ function AutoComplete<T extends DAutoCompleteItem>(
   return (
     <>
       <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-        {(fvProps) => {
-          const childProps = {
-            ...child.props,
-            'data-auto-complete-boxid': uniqueId,
-          };
-          if (child.type === DInput) {
-            childProps.dInputProps = getInputProps(fvProps, child.props.dInputProps);
-          } else {
-            Object.assign(childProps, getInputProps(fvProps, child.props));
-          }
-          return React.cloneElement(child, childProps);
-        }}
+        {(fvProps) => (
+          <DComboboxKeyboardSupport
+            dVisible={visible}
+            dEditable
+            onVisibleChange={changeVisible}
+            onFocusChange={(focus) => {
+              switch (focus) {
+                case 'next':
+                  changeFocusItem(dVSRef.current?.scrollByStep(1));
+                  break;
+
+                case 'prev':
+                  changeFocusItem(dVSRef.current?.scrollByStep(-1));
+                  break;
+
+                case 'first':
+                  changeFocusItem(dVSRef.current?.scrollToStart());
+                  break;
+
+                case 'last':
+                  changeFocusItem(dVSRef.current?.scrollToEnd());
+                  break;
+
+                default:
+                  break;
+              }
+            }}
+          >
+            {(ksProps) => {
+              const childProps = {
+                ...child.props,
+                'data-auto-complete-boxid': uniqueId,
+              };
+              if (child.type === DInput) {
+                childProps.dInputProps = getInputProps(fvProps, ksProps, child.props.dInputProps);
+              } else {
+                Object.assign(childProps, getInputProps(fvProps, ksProps, child.props));
+              }
+              return React.cloneElement(child, childProps);
+            }}
+          </DComboboxKeyboardSupport>
+        )}
       </DFocusVisible>
       {containerEl &&
         ReactDOM.createPortal(
@@ -416,6 +426,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                           onClick={() => {
                             if (!itemDisabled) {
                               changeFocusItem(item);
+                              changeVisible(false);
                               onItemClick?.(itemValue, item);
                             }
                           }}

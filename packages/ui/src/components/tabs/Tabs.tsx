@@ -333,8 +333,9 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
               >
                 {itemTitle}
                 {!itemDisabled && itemClosable && (
-                  <button
+                  <div
                     className={`${dPrefix}tabs__close`}
+                    role="button"
                     aria-label={t('Close')}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -343,7 +344,7 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
                     }}
                   >
                     <CloseOutlined dSize={14} />
-                  </button>
+                  </div>
                 )}
               </div>
             );
@@ -391,15 +392,16 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
                 </DDropdown>
               )}
               {onAddClick && (
-                <button
+                <div
                   className={getClassName(`${dPrefix}tabs__button`, `${dPrefix}tabs__button--add`)}
+                  role="button"
                   aria-label={t('Add')}
                   onClick={() => {
                     onAddClick?.();
                   }}
                 >
                   <PlusOutlined dSize={iconSize} />
-                </button>
+                </div>
               )}
             </div>
           )}

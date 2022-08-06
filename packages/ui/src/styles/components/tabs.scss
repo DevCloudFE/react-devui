@@ -367,13 +367,12 @@
   }
 
   @include e(button) {
-    @include utils-button;
-
+    display: inline-flex;
     flex-shrink: 0;
-    padding: 0;
-    margin: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     background-color: var(--#{$variable-prefix}background-color);
-    border: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover,
@@ -462,12 +461,7 @@
   }
 
   @include e(close) {
-    @include utils-button;
-
-    padding: 0;
     margin: 0 0 0 4px;
-    background-color: transparent;
-    border: none;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover,

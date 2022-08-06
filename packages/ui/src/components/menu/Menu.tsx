@@ -12,7 +12,7 @@ import { DCollapseTransition } from '../_transition';
 import { DMenuGroup } from './MenuGroup';
 import { DMenuItem } from './MenuItem';
 import { DMenuSub } from './MenuSub';
-import { checkEnableItem, getItems } from './utils';
+import { checkEnableItem, getSameLevelItems } from './utils';
 
 export interface DMenuRef {
   updatePosition: () => void;
@@ -226,10 +226,25 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelItems = getItems(nth(subParents, -1)?.children ?? dList);
+            const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
             const focusItem = (val?: T) => {
               if (val) {
                 setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
+              }
+            };
+            const handleOpenSub = () => {
+              if (dMode === 'vertical') {
+                if (!isExpand) {
+                  handleSubExpand(sameLevelItems);
+                }
+              } else {
+                addPopupId(itemId);
+              }
+              if (children) {
+                const newFocusItem = nth(getSameLevelItems(children), 0);
+                if (newFocusItem) {
+                  setFocusIds(_subParents.map((parentItem) => parentItem.id).concat([newFocusItem.id]));
+                }
               }
             };
 
@@ -281,7 +296,12 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
 
               case 'ArrowLeft': {
                 e.preventDefault();
-                if (dMode !== 'vertical') {
+                if (dMode === 'vertical') {
+                  changeExpandIds((draft) => {
+                    const index = draft.findIndex((id) => id === nth(subParents, -1)?.id);
+                    draft.splice(index, 1);
+                  });
+                } else {
                   setPopupIds(popupIds.slice(0, -1));
                 }
                 const ids = subParents.map((item) => item.id);
@@ -294,19 +314,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
               case 'ArrowRight':
                 e.preventDefault();
                 if (itemType === 'sub') {
-                  if (dMode === 'vertical') {
-                    if (!isExpand) {
-                      handleSubExpand(sameLevelItems);
-                    }
-                  } else {
-                    addPopupId(itemId);
-                  }
-                  if (children) {
-                    const newFocusItem = nth(getItems(children), 0);
-                    if (newFocusItem) {
-                      setFocusIds(_subParents.map((parentItem) => parentItem.id).concat([newFocusItem.id]));
-                    }
-                  }
+                  handleOpenSub();
                 }
                 break;
 
@@ -326,11 +334,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 if (itemType === 'item') {
                   handleItemClick();
                 } else if (itemType === 'sub') {
-                  if (dMode === 'vertical') {
-                    handleSubExpand(sameLevelItems);
-                  } else {
-                    addPopupId(itemId);
-                  }
+                  handleOpenSub();
                 }
                 break;
 
@@ -405,7 +409,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                     setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
 
                     if (dMode === 'vertical') {
-                      const sameLevelItems = getItems(nth(subParents, -1)?.children ?? dList);
+                      const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
                       handleSubExpand(sameLevelItems);
                     }
                   }
@@ -478,6 +482,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 fvOnBlur(e);
 
                 setIsFocus(false);
+                setPopupIds([]);
               }}
               onKeyDown={(e) => {
                 restProps.onKeyDown?.(e);

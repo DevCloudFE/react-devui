@@ -266,6 +266,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
 
     return React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
       ...children.props,
+      ...dragProps,
       onClick: (e) => {
         children.props.onClick?.(e);
 
@@ -273,7 +274,6 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
           inputRef.current.click();
         }
       },
-      ...dragProps,
     });
   })();
 

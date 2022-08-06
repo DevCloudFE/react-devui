@@ -297,10 +297,14 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   });
 
   const scrollByStep = useEventCallback((step: number) => {
+    if (isUndefined(dFocusItem)) {
+      return step > 0 ? scrollToStart() : scrollToEnd();
+    }
+
     let findItem: T | undefined;
     let offsetSize: [number, number] | undefined;
 
-    if (listRef.current && !isUndefined(dFocusItem)) {
+    if (listRef.current) {
       let index = -1;
       let findIndex = -1;
       const accSizeList = [];

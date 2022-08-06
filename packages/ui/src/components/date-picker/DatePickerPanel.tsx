@@ -114,21 +114,21 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
   return (
     <div className={`${dPrefix}date-picker__panel`}>
       <div className={`${dPrefix}date-picker__header`}>
-        <button title={t('DatePicker', 'Previous year')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('year', -1)}>
+        <button {...getButtonProps('year', -1)} className={`${dPrefix}date-picker__header-button`} title={t('DatePicker', 'Previous year')}>
           <DoubleLeftOutlined />
         </button>
         <button
-          title={t('DatePicker', 'Previous month')}
-          className={`${dPrefix}date-picker__header-button`}
           {...getButtonProps('month', -1)}
+          className={`${dPrefix}date-picker__header-button`}
+          title={t('DatePicker', 'Previous month')}
         >
           <LeftOutlined />
         </button>
         <span className={`${dPrefix}date-picker__header-content`}>{showDate.format(lang === 'zh-Hant' ? 'YYYY年 M月' : 'MMM YYYY')}</span>
-        <button title={t('DatePicker', 'Next month')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('month', 1)}>
+        <button {...getButtonProps('month', 1)} className={`${dPrefix}date-picker__header-button`} title={t('DatePicker', 'Next month')}>
           <RightOutlined />
         </button>
-        <button title={t('DatePicker', 'Next year')} className={`${dPrefix}date-picker__header-button`} {...getButtonProps('year', 1)}>
+        <button {...getButtonProps('year', 1)} className={`${dPrefix}date-picker__header-button`} title={t('DatePicker', 'Next year')}>
           <DoubleRightOutlined />
         </button>
       </div>

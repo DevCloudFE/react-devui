@@ -1,4 +1,5 @@
 import type { DSize } from '../../utils/global';
+import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 
 import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
@@ -10,6 +11,7 @@ import { checkNodeExist, getClassName, getNoTransformSize, getVerticalSidePositi
 import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
+import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DTransition } from '../_transition';
 
 export interface DDateInputRef {
@@ -33,7 +35,6 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dSize?: DSize;
   dRange?: boolean;
   dClearable?: boolean;
-  dEscClosable?: boolean;
   dDisabled?: boolean;
   dInputProps?: [React.InputHTMLAttributes<HTMLInputElement>?, React.InputHTMLAttributes<HTMLInputElement>?];
   dInputRef?: [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
@@ -47,13 +48,12 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     children,
     dClassNamePrefix,
     dFormControl,
-    dVisible,
+    dVisible = false,
     dPlacement = 'bottom-left',
     dSuffix,
     dSize,
     dRange = false,
     dClearable = false,
-    dEscClosable = true,
     dDisabled = false,
     dInputProps,
     dInputRef,
@@ -217,7 +217,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     }
   });
 
-  const getInputNode = (isLeft: boolean) => {
+  const getInputNode = (isLeft: boolean, ksProps: DComboboxKeyboardSupportRenderProps) => {
     const [dInputPropsLeft, dInputPropsRight] = dInputProps ?? [];
     const inputProps = isLeft ? dInputPropsLeft : dInputPropsRight;
 
@@ -231,26 +231,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         disabled={dDisabled}
         dFormControl={dFormControl}
         dFor={isLeft}
-        onChange={(e) => {
-          inputProps?.onChange?.(e);
-
-          onVisibleChange?.(true);
-        }}
-        onKeyDown={(e) => {
-          inputProps?.onKeyDown?.(e);
-
-          if (dVisible) {
-            if (dEscClosable && e.code === 'Escape') {
-              onVisibleChange?.(false);
-            }
-          } else {
-            if (e.code === 'Enter' || e.code === 'Space') {
-              e.preventDefault();
-
-              onVisibleChange?.(true);
-            }
-          }
-        }}
         onFocus={(e) => {
           inputProps?.onFocus?.(e);
 
@@ -260,6 +240,10 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           inputProps?.onBlur?.(e);
 
           handleFocusChange(false);
+        }}
+        onKeyDown={(e) => {
+          inputProps?.onKeyDown?.(e);
+          ksProps.ksOnKeyDown(e);
         }}
       />
     );
@@ -275,62 +259,67 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
   return (
     <>
-      <DBaseDesign dCompose={{ active: isFocus, disabled: dDisabled }} dFormControl={dFormControl}>
-        <div
-          {...restProps}
-          ref={boxRef}
-          className={getClassName(restProps.className, prefix, {
-            [`${prefix}--${dSize}`]: dSize,
-            'is-disabled': dDisabled,
-            'is-focus': isFocus,
-          })}
-          onMouseDown={(e) => {
-            restProps.onMouseDown?.(e);
+      <DComboboxKeyboardSupport dVisible={dVisible} dEditable onVisibleChange={onVisibleChange}>
+        {(ksProps) => (
+          <DBaseDesign dCompose={{ active: isFocus, disabled: dDisabled }} dFormControl={dFormControl}>
+            <div
+              {...restProps}
+              ref={boxRef}
+              className={getClassName(restProps.className, prefix, {
+                [`${prefix}--${dSize}`]: dSize,
+                'is-disabled': dDisabled,
+                'is-focus': isFocus,
+              })}
+              onMouseDown={(e) => {
+                restProps.onMouseDown?.(e);
 
-            preventBlur(e);
-          }}
-          onMouseUp={(e) => {
-            restProps.onMouseUp?.(e);
+                preventBlur(e);
+              }}
+              onMouseUp={(e) => {
+                restProps.onMouseUp?.(e);
 
-            preventBlur(e);
-          }}
-          onClick={(e) => {
-            restProps.onClick?.(e);
-
-            onVisibleChange?.(true);
-            if (!isFocus) {
-              inputRefLeft.current?.focus({ preventScroll: true });
-            }
-          }}
-        >
-          {getInputNode(true)}
-          {dRange && (
-            <>
-              <div ref={indicatorRef} className={`${prefix}__indicator`}></div>
-              <SwapRightOutlined className={`${prefix}__separator`} />
-              {getInputNode(false)}
-            </>
-          )}
-          {clearable && (
-            <button
-              className={`${prefix}__clear`}
-              aria-label={t('Clear')}
+                preventBlur(e);
+              }}
               onClick={(e) => {
-                e.stopPropagation();
+                restProps.onClick?.(e);
 
-                onClear?.();
+                onVisibleChange?.(true);
+                if (!isFocus) {
+                  inputRefLeft.current?.focus({ preventScroll: true });
+                }
               }}
             >
-              <CloseCircleFilled />
-            </button>
-          )}
-          {checkNodeExist(dSuffix) && (
-            <div className={`${prefix}__icon`} style={{ opacity: clearable ? 0 : 1 }}>
-              {dSuffix}
+              {getInputNode(true, ksProps)}
+              {dRange && (
+                <>
+                  <div ref={indicatorRef} className={`${prefix}__indicator`}></div>
+                  <SwapRightOutlined className={`${prefix}__separator`} />
+                  {getInputNode(false, ksProps)}
+                </>
+              )}
+              {clearable && (
+                <div
+                  className={`${prefix}__clear`}
+                  role="button"
+                  aria-label={t('Clear')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    onClear?.();
+                  }}
+                >
+                  <CloseCircleFilled />
+                </div>
+              )}
+              {checkNodeExist(dSuffix) && (
+                <div className={`${prefix}__icon`} style={{ opacity: clearable ? 0 : 1 }}>
+                  {dSuffix}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </DBaseDesign>
+          </DBaseDesign>
+        )}
+      </DComboboxKeyboardSupport>
       {containerEl &&
         ReactDOM.createPortal(
           <DTransition
