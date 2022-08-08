@@ -4,6 +4,7 @@ import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } fro
 import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
+import { DCheckboxGroup } from './CheckboxGroup';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
@@ -16,7 +17,10 @@ export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' });
-export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
+export const DCheckbox: {
+  (props: DCheckboxProps): JSX.Element | null;
+  Group: typeof DCheckboxGroup;
+} = (props) => {
   const {
     children,
     dFormControl,
@@ -79,4 +83,6 @@ export function DCheckbox(props: DCheckboxProps): JSX.Element | null {
       {checkNodeExist(children) && <div className={`${dPrefix}checkbox__label`}>{children}</div>}
     </label>
   );
-}
+};
+
+DCheckbox.Group = DCheckboxGroup;

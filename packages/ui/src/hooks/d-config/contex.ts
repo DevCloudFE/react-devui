@@ -24,8 +24,8 @@ import type {
   DDropdownProps,
   DEmptyProps,
   DFormProps,
-  DFormItemProps,
   DFormGroupProps,
+  DFormItemProps,
   DRowProps,
   DColProps,
   DImageProps,
@@ -89,46 +89,46 @@ export type DComponentConfig = {
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
   DCard: DCardProps;
-  DCardHeader: DCardHeaderProps;
-  DCardContent: DCardContentProps;
+  'DCard.Header': DCardHeaderProps;
+  'DCard.Content': DCardContentProps;
   DCascader: DCascaderProps<any, any>;
   DCheckbox: DCheckboxProps;
-  DCheckboxGroup: DCheckboxGroupProps<any>;
+  'DCheckbox.Group': DCheckboxGroupProps<any>;
   DCompose: DComposeProps;
   DDatePicker: DDatePickerProps;
-  DComposeItem: DComposeItemProps;
+  'DCompose.Item': DComposeItemProps;
   DDrawer: DDrawerProps;
-  DDrawerHeader: DDrawerHeaderProps;
-  DDrawerFooter: DDrawerFooterProps;
+  'DDrawer.Header': DDrawerHeaderProps;
+  'DDrawer.Footer': DDrawerFooterProps;
   DDropdown: DDropdownProps<any, any>;
   DEmpty: DEmptyProps;
   DForm: DFormProps;
-  DFormItem: DFormItemProps<any>;
-  DFormGroup: DFormGroupProps;
+  'DForm.Group': DFormGroupProps;
+  'DForm.Item': DFormItemProps<any>;
   DRow: DRowProps;
   DCol: DColProps;
   DImage: DImageProps;
-  DImagePreview: DImagePreviewProps;
+  'DImage.Preview': DImagePreviewProps;
   DInput: DInputProps;
   DMenu: DMenuProps<any, any>;
   DModal: DModalProps;
-  DModalHeader: DModalHeaderProps;
-  DModalFooter: DModalFooterProps;
+  'DModal.Header': DModalHeaderProps;
+  'DModal.Footer': DModalFooterProps;
   DNotification: DNotificationProps;
   DPagination: DPaginationProps;
   DPopover: DPopoverProps;
-  DPopoverHeader: DPopoverHeaderProps;
-  DPopoverFooter: DPopoverFooterProps;
+  'DPopover.Header': DPopoverHeaderProps;
+  'DPopover.Footer': DPopoverFooterProps;
   DProgress: DProgressProps;
   DRadio: DRadioProps;
-  DRadioGroup: DRadioGroupProps<any>;
+  'DRadio.Group': DRadioGroupProps<any>;
   DRating: DRatingProps;
   DSelect: DSelectProps<any, any>;
   DSeparator: DSeparatorProps;
   DSkeleton: DSkeletonProps;
   DSlider: DSliderProps;
   DSlides: DSlidesProps;
-  DSlide: DSlideProps;
+  'DSlides.Slide': DSlideProps;
   DSpinner: DSpinnerProps;
   DStepper: DStepperProps<any>;
   DSwitch: DSwitchProps;
@@ -142,7 +142,7 @@ export type DComponentConfig = {
   DTransfer: DTransferProps<any, any>;
   DTree: DTreeProps<any, any>;
   DUpload: DUploadProps;
-  DUploadAction: DUploadActionProps;
+  'DUpload.Action': DUploadActionProps;
   DVirtualScroll: DVirtualScrollProps<any>;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };
 

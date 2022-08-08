@@ -10,7 +10,7 @@ export interface DDrawerFooterPropsWithPrivate extends DDrawerFooterProps {
   __onClose?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawerFooter' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer.Footer' });
 export function DDrawerFooter(props: DDrawerFooterProps): JSX.Element | null {
   const {
     __onClose,

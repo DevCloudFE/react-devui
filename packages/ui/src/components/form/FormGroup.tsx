@@ -13,7 +13,7 @@ export interface DFormGroupProps {
   dTitle?: React.ReactNode;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFormGroup' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Group' });
 export function DFormGroup(props: DFormGroupProps): JSX.Element | null {
   const { children, dFormGroup, dTitle } = useComponentConfig(COMPONENT_NAME, props);
 

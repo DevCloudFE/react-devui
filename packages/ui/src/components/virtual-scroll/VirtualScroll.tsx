@@ -30,6 +30,7 @@ export interface DItemRenderProps {
 }
 
 export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  dTag?: string;
   dList: T[];
   dExpands?: Set<DId>;
   dItemRender: (item: T, index: number, props: DItemRenderProps, parent: T[]) => React.ReactNode;
@@ -48,6 +49,7 @@ export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLEl
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScroll' });
 function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
   const {
+    dTag = 'ul',
     dList,
     dExpands,
     dItemRender,
@@ -387,11 +389,12 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     [scrollByStep, scrollToEnd, scrollToStart, scrollToItem]
   );
 
-  return (
-    <ul
-      {...restProps}
-      ref={listRef}
-      onScroll={(e) => {
+  return React.createElement(
+    dTag,
+    {
+      ...restProps,
+      ref: listRef,
+      onScroll: (e) => {
         restProps.onScroll?.(e);
 
         if (listRef.current) {
@@ -405,10 +408,9 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
             onScrollEnd?.();
           }
         }
-      }}
-    >
-      {dList.length === 0 ? dEmptyRender() : list}
-    </ul>
+      },
+    } as React.HTMLAttributes<HTMLElement>,
+    dList.length === 0 ? dEmptyRender() : list
   );
 }
 

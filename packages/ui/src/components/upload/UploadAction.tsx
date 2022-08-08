@@ -21,7 +21,7 @@ export interface DUploadActionPropsWithPrivate extends DUploadActionProps {
   __onRemove?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUploadAction' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload.Action' });
 function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): JSX.Element | null {
   const {
     children,

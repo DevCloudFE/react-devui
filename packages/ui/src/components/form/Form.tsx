@@ -8,7 +8,8 @@ import React, { useMemo } from 'react';
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { useMediaMatch } from '../grid';
-import { DFormGroupContext } from './FormGroup';
+import { DFormGroup, DFormGroupContext } from './FormGroup';
+import { DFormItem } from './FormItem';
 
 export interface DFormContextData {
   gInstance: DFormInstance;
@@ -43,7 +44,11 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm' });
-export function DForm(props: DFormProps): JSX.Element | null {
+export const DForm: {
+  (props: DFormProps): JSX.Element | null;
+  Group: typeof DFormGroup;
+  Item: typeof DFormItem;
+} = (props) => {
   const {
     children,
     dForm,
@@ -121,4 +126,7 @@ export function DForm(props: DFormProps): JSX.Element | null {
       </DFormGroupContext.Provider>
     </DFormContext.Provider>
   );
-}
+};
+
+DForm.Group = DFormGroup;
+DForm.Item = DFormItem;

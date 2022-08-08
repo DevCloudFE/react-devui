@@ -332,7 +332,9 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
 
 export const DUpload: {
   (props: DUploadProps & { ref?: React.ForwardedRef<HTMLInputElement> }): ReturnType<typeof Upload>;
+  Action: typeof DUploadAction;
   PICTURE_BUTTON: typeof DPictureButton;
 } = React.forwardRef(Upload) as any;
 
+DUpload.Action = DUploadAction;
 DUpload.PICTURE_BUTTON = DPictureButton;

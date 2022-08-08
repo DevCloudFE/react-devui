@@ -29,22 +29,22 @@ export type { DButtonProps } from './button';
 export { DButton } from './button';
 
 export type { DCardProps, DCardHeaderProps, DCardContentProps } from './card';
-export { DCard, DCardHeader, DCardContent } from './card';
+export { DCard } from './card';
 
 export type { DCascaderProps } from './cascader';
 export { DCascader } from './cascader';
 
 export type { DCheckboxProps, DCheckboxGroupProps } from './checkbox';
-export { DCheckbox, DCheckboxGroup } from './checkbox';
+export { DCheckbox } from './checkbox';
 
 export type { DComposeProps, DComposeItemProps } from './compose';
-export { DCompose, DComposeItem } from './compose';
+export { DCompose } from './compose';
 
 export type { DDatePickerProps } from './date-picker';
 export { DDatePicker } from './date-picker';
 
 export type { DDrawerProps, DDrawerHeaderProps, DDrawerFooterProps } from './drawer';
-export { DDrawer, DDrawerHeader, DDrawerFooter } from './drawer';
+export { DDrawer } from './drawer';
 
 export type { DDropdownProps } from './dropdown';
 export { DDropdown } from './dropdown';
@@ -53,13 +53,13 @@ export type { DEmptyProps } from './empty';
 export { DEmpty } from './empty';
 
 export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
-export { DForm, DFormItem, DFormGroup, useForm, FormControl, FormGroup, Validators } from './form';
+export { DForm, useForm, FormControl, FormGroup, Validators } from './form';
 
 export type { DRowProps, DColProps } from './grid';
 export { DRow, DCol, useMediaMatch } from './grid';
 
 export type { DImageProps, DImagePreviewProps } from './image';
-export { DImage, DImagePreview } from './image';
+export { DImage } from './image';
 
 export type { DInputProps } from './input';
 export { DInput } from './input';
@@ -68,7 +68,7 @@ export type { DMenuProps } from './menu';
 export { DMenu } from './menu';
 
 export type { DModalProps, DModalHeaderProps, DModalFooterProps } from './modal';
-export { DModal, DModalHeader, DModalFooter } from './modal';
+export { DModal } from './modal';
 
 export type { DNotificationProps } from './notification';
 export { NotificationService } from './notification';
@@ -77,13 +77,13 @@ export type { DPaginationProps } from './pagination';
 export { DPagination } from './pagination';
 
 export type { DPopoverProps, DPopoverHeaderProps, DPopoverFooterProps } from './popover';
-export { DPopover, DPopoverHeader, DPopoverFooter } from './popover';
+export { DPopover } from './popover';
 
 export type { DProgressProps } from './progress';
 export { DProgress } from './progress';
 
 export type { DRadioProps, DRadioGroupProps } from './radio';
-export { DRadio, DRadioGroup } from './radio';
+export { DRadio } from './radio';
 
 export type { DRatingProps } from './rating';
 export { DRating } from './rating';
@@ -104,7 +104,7 @@ export type { DSliderProps } from './slider';
 export { DSlider } from './slider';
 
 export type { DSlidesProps, DSlideProps } from './slides';
-export { DSlides, DSlide } from './slides';
+export { DSlides } from './slides';
 
 export type { DSpinnerProps } from './spinner';
 export { DSpinner } from './spinner';
@@ -143,7 +143,7 @@ export type { DTreeProps } from './tree';
 export { DTree } from './tree';
 
 export type { DUploadProps, DUploadActionProps } from './upload';
-export { DUpload, DUploadAction } from './upload';
+export { DUpload } from './upload';
 
 export type { DVirtualScrollProps } from './virtual-scroll';
 export { DVirtualScroll } from './virtual-scroll';

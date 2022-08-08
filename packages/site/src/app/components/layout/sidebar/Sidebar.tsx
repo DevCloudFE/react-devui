@@ -5,7 +5,7 @@ import menu from 'dist/menu.json';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { DDrawer, DDrawerHeader, DMenu, useMediaMatch } from '@react-devui/ui';
+import { DDrawer, DMenu, useMediaMatch } from '@react-devui/ui';
 
 import './Sidebar.scss';
 
@@ -55,10 +55,10 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
       className="app-sidebar__drawer"
       dVisible={aMenuOpen}
       dHeader={
-        <DDrawerHeader>
+        <DDrawer.Header>
           <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
           <span className="app-sidebar__title">{page}</span>
-        </DDrawerHeader>
+        </DDrawer.Header>
       }
       dWidth={280}
       onVisibleChange={onMenuOpenChange}

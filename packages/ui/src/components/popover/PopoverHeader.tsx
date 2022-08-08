@@ -11,7 +11,7 @@ export interface DPopoverHeaderPropsWithPrivate extends DPopoverHeaderProps {
   __onClose?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopoverHeader' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover.Header' });
 export function DPopoverHeader(props: DPopoverHeaderProps): JSX.Element | null {
   const {
     dActions = [],

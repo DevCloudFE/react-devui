@@ -34,11 +34,15 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useComponentConfig, usePrefixConfig } from '../../hooks';
 import { LeftOutlined, RightOutlined } from '../../icons';
 import { getClassName, registerComponentMate } from '../../utils';
+import { DSlide } from './Slide';
 
 export type DSlidesProps = SwiperProps;
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlides' });
-export function DSlides(props: DSlidesProps): JSX.Element | null {
+export const DSlides: {
+  (props: DSlidesProps): JSX.Element | null;
+  Slide: typeof DSlide;
+} = (props) => {
   const {
     children,
 
@@ -132,4 +136,6 @@ export function DSlides(props: DSlidesProps): JSX.Element | null {
       </button>
     </Swiper>
   );
-}
+};
+
+DSlides.Slide = DSlide;

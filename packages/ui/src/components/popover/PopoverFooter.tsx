@@ -10,7 +10,7 @@ export interface DPopoverFooterPropsWithPrivate extends DPopoverFooterProps {
   __onClose?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopoverFooter' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover.Footer' });
 export function DPopoverFooter(props: DPopoverFooterProps): JSX.Element | null {
   const {
     __onClose,

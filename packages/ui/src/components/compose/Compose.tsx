@@ -4,6 +4,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useForkRef } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
+import { DComposeItem } from './ComposeItem';
 
 export interface DComposeContextData {
   gSize?: DSize;
@@ -68,4 +69,9 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
   );
 }
 
-export const DCompose = React.forwardRef(Compose);
+export const DCompose: {
+  (props: DComposeProps & { ref?: DComposeRef }): ReturnType<typeof Compose>;
+  Item: typeof DComposeItem;
+} = React.forwardRef(Compose) as any;
+
+DCompose.Item = DComposeItem;

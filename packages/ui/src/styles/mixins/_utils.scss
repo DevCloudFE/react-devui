@@ -44,7 +44,7 @@
 
   @at-root {
     body.CJK #{$selector} {
-      word-break: break-all;
+      overflow-wrap: break-word;
     }
   }
 }

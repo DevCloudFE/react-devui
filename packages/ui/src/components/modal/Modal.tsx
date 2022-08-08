@@ -11,6 +11,7 @@ import { registerComponentMate, getClassName, handleModalKeyDown, checkNodeExist
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
+import { DModalFooter } from './ModalFooter';
 import { DModalHeader } from './ModalHeader';
 
 export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -34,7 +35,11 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' });
-export function DModal(props: DModalProps): JSX.Element | null {
+export const DModal: {
+  (props: DModalProps): JSX.Element | null;
+  Header: typeof DModalHeader;
+  Footer: typeof DModalFooter;
+} = (props) => {
   const {
     children,
     dVisible,
@@ -282,4 +287,7 @@ export function DModal(props: DModalProps): JSX.Element | null {
       containerEl
     )
   );
-}
+};
+
+DModal.Header = DModalHeader;
+DModal.Footer = DModalFooter;

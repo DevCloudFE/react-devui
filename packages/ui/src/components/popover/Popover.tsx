@@ -10,6 +10,7 @@ import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useM
 import { registerComponentMate, getClassName, getPopupPosition, handleModalKeyDown } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
+import { DPopoverFooter } from './PopoverFooter';
 import { DPopoverHeader } from './PopoverHeader';
 
 export interface DPopoverRef {
@@ -388,4 +389,11 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   );
 }
 
-export const DPopover = React.forwardRef(Popover);
+export const DPopover: {
+  (props: DPopoverProps & { ref?: DPopoverRef }): ReturnType<typeof Popover>;
+  Header: typeof DPopoverHeader;
+  Footer: typeof DPopoverFooter;
+} = React.forwardRef(Popover) as any;
+
+DPopover.Header = DPopoverHeader;
+DPopover.Footer = DPopoverFooter;

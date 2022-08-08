@@ -8,6 +8,7 @@ import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
+import { DRadioGroup } from './RadioGroup';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dFormControl?: DFormControl;
@@ -23,7 +24,10 @@ export interface DRadioPropsWithPrivate extends DRadioProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' });
-export function DRadio(props: DRadioProps): JSX.Element | null {
+export const DRadio: {
+  (props: DRadioProps): JSX.Element | null;
+  Group: typeof DRadioGroup;
+} = (props) => {
   const {
     children,
     dFormControl,
@@ -109,4 +113,6 @@ export function DRadio(props: DRadioProps): JSX.Element | null {
       </label>
     </DBaseDesign>
   );
-}
+};
+
+DRadio.Group = DRadioGroup;

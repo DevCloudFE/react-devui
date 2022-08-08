@@ -10,7 +10,7 @@ export interface DModalFooterPropsWithPrivate extends DModalFooterProps {
   __onClose?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModalFooter' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal.Footer' });
 export function DModalFooter(props: DModalFooterProps): JSX.Element | null {
   const {
     __onClose,

@@ -3,6 +3,8 @@ import React from 'react';
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
 import { DSeparator } from '../separator';
+import { DCardContent } from './CardContent';
+import { DCardHeader } from './CardHeader';
 
 export interface DCardProps extends React.HTMLAttributes<HTMLDivElement> {
   dBorder?: boolean;
@@ -11,7 +13,11 @@ export interface DCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard' });
-export function DCard(props: DCardProps): JSX.Element | null {
+export const DCard: {
+  (props: DCardProps): JSX.Element | null;
+  Header: typeof DCardHeader;
+  Content: typeof DCardContent;
+} = (props) => {
   const {
     children,
     dBorder = true,
@@ -50,4 +56,7 @@ export function DCard(props: DCardProps): JSX.Element | null {
       )}
     </div>
   );
-}
+};
+
+DCard.Header = DCardHeader;
+DCard.Content = DCardContent;

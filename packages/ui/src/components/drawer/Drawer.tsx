@@ -12,6 +12,7 @@ import { registerComponentMate, getClassName, toPx, handleModalKeyDown } from '.
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
+import { DDrawerFooter } from './DrawerFooter';
 import { DDrawerHeader } from './DrawerHeader';
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,7 +38,11 @@ export interface DDrawerPropsWithPrivate extends DDrawerProps {
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
-export function DDrawer(props: DDrawerProps): JSX.Element | null {
+export const DDrawer: {
+  (props: DDrawerProps): JSX.Element | null;
+  Header: typeof DDrawerHeader;
+  Footer: typeof DDrawerFooter;
+} = (props) => {
   const {
     children,
     dVisible,
@@ -289,4 +294,7 @@ export function DDrawer(props: DDrawerProps): JSX.Element | null {
   );
 
   return dContainer === false ? drawerNode : containerEl && ReactDOM.createPortal(drawerNode, containerEl);
-}
+};
+
+DDrawer.Header = DDrawerHeader;
+DDrawer.Footer = DDrawerFooter;

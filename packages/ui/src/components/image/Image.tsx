@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 
 import { usePrefixConfig, useComponentConfig, useForceUpdate } from '../../hooks';
 import { registerComponentMate, getClassName } from '../../utils';
+import { DImagePreview } from './ImagePreview';
 
 export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dLoading?: React.ReactNode;
@@ -11,7 +12,10 @@ export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage' });
-export function DImage(props: DImageProps): JSX.Element | null {
+export const DImage: {
+  (props: DImageProps): JSX.Element | null;
+  Preview: typeof DImagePreview;
+} = (props) => {
   const {
     dLoading,
     dError,
@@ -88,4 +92,6 @@ export function DImage(props: DImageProps): JSX.Element | null {
       )}
     </div>
   );
-}
+};
+
+DImage.Preview = DImagePreview;

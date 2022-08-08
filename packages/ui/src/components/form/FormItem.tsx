@@ -42,7 +42,7 @@ export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> exten
   dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFormItem' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' });
 export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>): JSX.Element | null {
   const {
     children,

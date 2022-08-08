@@ -73,16 +73,18 @@ export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
   const maxZIndex = useMaxIndex(dPopupVisible);
 
   useEffect(() => {
-    const ob = updatePosition$.subscribe({
-      next: () => {
-        updatePosition();
-      },
-    });
+    if (dPopupVisible) {
+      const ob = updatePosition$.subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
 
-    return () => {
-      ob.unsubscribe();
-    };
-  }, [updatePosition, updatePosition$]);
+      return () => {
+        ob.unsubscribe();
+      };
+    }
+  }, [dPopupVisible, updatePosition, updatePosition$]);
 
   return (
     <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>

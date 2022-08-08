@@ -112,16 +112,18 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
   })();
 
   useEffect(() => {
-    const ob = updatePosition$.subscribe({
-      next: () => {
-        updatePosition();
-      },
-    });
+    if (dPopupVisible) {
+      const ob = updatePosition$.subscribe({
+        next: () => {
+          updatePosition();
+        },
+      });
 
-    return () => {
-      ob.unsubscribe();
-    };
-  }, [updatePosition, updatePosition$]);
+      return () => {
+        ob.unsubscribe();
+      };
+    }
+  }, [dPopupVisible, updatePosition, updatePosition$]);
 
   return (
     <DCollapseTransition
