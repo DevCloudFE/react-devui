@@ -28,7 +28,7 @@ $tree-option-height: 32px;
         position: absolute;
         top: 0;
         bottom: 0;
-        left: -6px;
+        left: -18px;
         width: 1px;
         pointer-events: none;
         content: '';
@@ -48,25 +48,25 @@ $tree-option-height: 32px;
 
         &::before {
           top: -50%;
-          left: -28px;
+          left: -18px;
           width: 1px;
           height: 100%;
         }
 
         &::after {
-          left: -28px;
-          width: 32px;
+          left: -18px;
+          width: 18px;
           height: 1px;
         }
 
         &[role='treeitem'] {
           &::before {
-            left: -6px;
+            left: -18px;
           }
 
           &::after {
-            left: -6px;
-            width: 12px;
+            left: -18px;
+            width: 18px;
           }
         }
 
@@ -134,8 +134,8 @@ $tree-option-height: 32px;
     margin: 0;
     list-style: none;
 
-    &:not(.#{$variable-prefix}tree__option-group--root) {
-      padding-left: 22px;
+    &[role='group']:not(.#{$variable-prefix}tree__option-group--root) {
+      padding-left: 34px;
     }
   }
 
