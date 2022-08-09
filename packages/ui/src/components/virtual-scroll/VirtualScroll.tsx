@@ -183,7 +183,9 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           key = dItemKey(item);
           size = getItemSize(item);
           nestedList = dItemNested?.(item)?.list;
-          childrenSize = itemsMap.get(key)!.nestedSize;
+          if (nestedList) {
+            childrenSize = itemsMap.get(key)!.nestedSize;
+          }
         }
 
         if (hasEnd) {
