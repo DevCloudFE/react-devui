@@ -5,7 +5,7 @@ import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DAlertPopover } from '../_alert-popover';
 import { DTransition } from '../_transition';
-import { DNotificationPanel } from './NotificationPanel';
+import { DPanel } from './Panel';
 
 export interface DNotificationProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dType?: 'success' | 'warning' | 'error' | 'info';
@@ -155,7 +155,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
 
         return (
           <DAlertPopover dDuration={dDuration} dEscClosable={dEscClosable} onClose={onClose}>
-            <DNotificationPanel
+            <DPanel
               {...restProps}
               ref={panelRef}
               style={{
@@ -169,7 +169,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
               dDescription={dDescription}
               dActions={dActions}
               onClose={onClose}
-            ></DNotificationPanel>
+            ></DPanel>
           </DAlertPopover>
         );
       }}

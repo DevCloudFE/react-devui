@@ -119,7 +119,7 @@ class GenerateSite {
         const outDir = OUTPUT_PATH.componentDemoDir(file.component);
         const fileNameRegExp = new RegExp(String.raw `(?<=^[0-9]+.)[a-zA-Z0-9]+(?=.md$)`, 'g');
         const fileName = (_a = file.name.match(fileNameRegExp)) === null || _a === void 0 ? void 0 : _a[0];
-        const id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
+        const id = file.componentTitle + fileName + 'Demo';
         const tsx = (_b = meta.__content.match(/(?<=```tsx)[\s\S]*?(?=```)/g)) === null || _b === void 0 ? void 0 : _b[0];
         const scss = (_c = meta.__content.match(/(?<=```scss)[\s\S]*?(?=```)/g)) === null || _c === void 0 ? void 0 : _c[0];
         if (fileName && tsx) {
@@ -211,6 +211,7 @@ class GenerateSite {
                         path: path_1.default.join(file.path, 'demos', demoFile),
                         data: (0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'demos', demoFile)),
                         component: file.name,
+                        componentTitle: enMeta.title,
                     });
                     demoList[Number(order)] = demo;
                     if (demo) {

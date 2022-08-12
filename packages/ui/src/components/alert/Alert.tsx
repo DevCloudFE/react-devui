@@ -2,8 +2,8 @@ import { useComponentConfig, useDValue, usePrefixConfig } from '../../hooks';
 import { checkNodeExist, getClassName, registerComponentMate } from '../../utils';
 import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DCollapseTransition } from '../_transition';
-import { DNotificationPanel } from '../notification/NotificationPanel';
-import { DToastPanel } from '../toast/ToastPanel';
+import { DPanel as DNotificationPanel } from '../notification/Panel';
+import { DPanel as DToastPanel } from '../toast/Panel';
 
 export interface DAlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dVisible?: boolean;

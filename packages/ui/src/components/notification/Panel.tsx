@@ -3,23 +3,25 @@ import React, { useId } from 'react';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { getClassName, checkNodeExist } from '../../utils';
+import { checkNodeExist, getClassName } from '../../utils';
 
-export interface DToastPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dClassNamePrefix: string;
   dType?: 'success' | 'warning' | 'error' | 'info';
   dIcon?: React.ReactNode;
-  dContent: React.ReactNode;
+  dTitle: React.ReactNode;
+  dDescription?: React.ReactNode;
   dActions?: React.ReactNode[];
   onClose?: () => void;
 }
 
-function ToastPanel(props: DToastPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
+function Panel(props: DPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
   const {
     dClassNamePrefix,
     dType,
     dIcon,
-    dContent,
+    dTitle,
+    dDescription,
     dActions = ['close'],
     onClose,
 
@@ -35,6 +37,7 @@ function ToastPanel(props: DToastPanelProps, ref: React.ForwardedRef<HTMLDivElem
   const [t] = useTranslation();
 
   const uniqueId = useId();
+  const titleId = `${prefix}-title-${uniqueId}`;
   const contentId = `${prefix}-content-${uniqueId}`;
 
   return (
@@ -44,6 +47,7 @@ function ToastPanel(props: DToastPanelProps, ref: React.ForwardedRef<HTMLDivElem
       className={getClassName(restProps.className, prefix, {
         [`t-${dType === 'info' ? 'primary' : dType === 'error' ? 'danger' : dType}`]: dType,
       })}
+      aria-labelledby={restProps['aria-labelledby'] ?? titleId}
       aria-describedby={restProps['aria-describedby'] ?? contentId}
     >
       {dIcon !== false && (!isUndefined(dType) || checkNodeExist(dIcon)) && (
@@ -61,22 +65,27 @@ function ToastPanel(props: DToastPanelProps, ref: React.ForwardedRef<HTMLDivElem
               )}
         </div>
       )}
-      <div id={contentId} className={getClassName(`${prefix}__content`)}>
-        {dContent}
-      </div>
-      <div className={`${prefix}__actions`}>
-        {React.Children.map(dActions, (action) =>
-          action === 'close' ? (
-            <button key="$$close" className={`${prefix}__close`} aria-label={t('Close')} onClick={onClose}>
-              <CloseOutlined dSize="1.2em" />
-            </button>
-          ) : (
-            action
-          )
-        )}
+      <div id={contentId} className={`${prefix}__content`}>
+        <div className={`${prefix}__header`}>
+          <div id={titleId} className={`${prefix}__title`}>
+            {dTitle}
+          </div>
+          <div className={`${prefix}__header-actions`}>
+            {React.Children.map(dActions, (action) =>
+              action === 'close' ? (
+                <button key="$$close" className={`${prefix}__close`} aria-label={t('Close')} onClick={onClose}>
+                  <CloseOutlined dSize="1.2em" />
+                </button>
+              ) : (
+                action
+              )
+            )}
+          </div>
+        </div>
+        {checkNodeExist(dDescription) && <div className={`${prefix}__description`}>{dDescription}</div>}
       </div>
     </div>
   );
 }
 
-export const DToastPanel = React.forwardRef(ToastPanel);
+export const DPanel = React.forwardRef(Panel);

@@ -225,9 +225,9 @@ h3 {
         'Radio': 'radio',
         'Input': 'input',
         'Switch': 'switch',
-        'Time-picker': 'time-picker',
-        'Date-picker': 'date-picker',
-        'Auto-complete': 'input',
+        'TimePicker': 'time-picker',
+        'DatePicker': 'date-picker',
+        'AutoComplete': 'input',
         'Image': 'image'
       )
   {
@@ -311,6 +311,17 @@ h3 {
   section[id^='Stepper'] {
     .d-stepper:not(.d-stepper--vertical) {
       min-width: 600px;
+    }
+  }
+
+  section[id^='Table'] {
+    .d-table {
+      min-width: 600px;
+    }
+
+    .d-pagination {
+      justify-content: flex-end;
+      margin-top: 20px;
     }
   }
 }

@@ -236,7 +236,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
 }
 
 export const DAnchor: {
-  <T extends DAnchorItem>(props: DAnchorProps<T> & { ref?: React.ForwardedRef<DAnchorRef> }): ReturnType<typeof Anchor>;
+  <T extends DAnchorItem>(props: DAnchorProps<T> & React.RefAttributes<DAnchorRef>): ReturnType<typeof Anchor>;
   DOT_INDICATOR: typeof DOT_INDICATOR;
   LINE_INDICATOR: typeof LINE_INDICATOR;
 } = React.forwardRef(Anchor) as any;

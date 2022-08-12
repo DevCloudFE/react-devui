@@ -229,8 +229,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         type="text"
         autoComplete="off"
         disabled={dDisabled}
-        dFormControl={dFormControl}
-        dFor={isLeft}
         onFocus={(e) => {
           inputProps?.onFocus?.(e);
 
@@ -245,6 +243,8 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           inputProps?.onKeyDown?.(e);
           ksProps.ksOnKeyDown(e);
         }}
+        dFormControl={dFormControl}
+        dFor={isLeft}
       />
     );
   };

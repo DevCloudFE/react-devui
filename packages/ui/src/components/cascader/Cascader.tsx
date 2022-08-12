@@ -468,5 +468,5 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
 }
 
 export const DCascader: <V extends DId, T extends DCascaderItem<V>>(
-  props: DCascaderProps<V, T> & { ref?: React.ForwardedRef<DCascaderRef> }
+  props: DCascaderProps<V, T> & React.RefAttributes<DCascaderRef>
 ) => ReturnType<typeof Cascader> = React.forwardRef(Cascader) as any;

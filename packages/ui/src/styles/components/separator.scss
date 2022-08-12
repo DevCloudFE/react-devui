@@ -80,7 +80,8 @@
     flex-direction: column;
     width: 1px;
     height: unset;
-    margin: 4px 8px;
+    margin: 2px 8px;
+    background-color: unset;
 
     &::before {
       flex: 1 0 0;

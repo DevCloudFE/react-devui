@@ -97,13 +97,13 @@ class GenerateSite {
     }
   }
 
-  private generateComponentDemo(file: FileMeta & { component: string }) {
+  private generateComponentDemo(file: FileMeta & { component: string; componentTitle: string }) {
     const meta: DemoMeta = yamlFront.loadFront(file.data);
     const outDir = OUTPUT_PATH.componentDemoDir(file.component);
 
     const fileNameRegExp = new RegExp(String.raw`(?<=^[0-9]+.)[a-zA-Z0-9]+(?=.md$)`, 'g');
     const fileName = file.name.match(fileNameRegExp)?.[0];
-    const id = file.component[0].toUpperCase() + file.component.slice(1) + fileName + 'Demo';
+    const id = file.componentTitle + fileName + 'Demo';
     const tsx = meta.__content.match(/(?<=```tsx)[\s\S]*?(?=```)/g)?.[0];
     const scss = meta.__content.match(/(?<=```scss)[\s\S]*?(?=```)/g)?.[0];
 
@@ -217,6 +217,7 @@ class GenerateSite {
             path: path.join(file.path, 'demos', demoFile),
             data: readFileSync(path.join(file.path, 'demos', demoFile)),
             component: file.name,
+            componentTitle: enMeta.title,
           });
           demoList[Number(order)] = demo;
           if (demo) {

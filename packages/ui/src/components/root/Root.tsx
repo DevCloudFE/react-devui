@@ -2,8 +2,6 @@
 import type { DConfigContextData } from '../../hooks/d-config/contex';
 import type { DLang } from '../../utils/global';
 
-import { useEffect } from 'react';
-
 import { DConfigContext } from '../../hooks/d-config/contex';
 import { dayjs } from '../dayjs';
 import { Notification } from './Notification';
@@ -37,10 +35,6 @@ export function DRoot(props: DRootProps): JSX.Element | null {
         break;
     }
   }
-
-  useEffect(() => {
-    document.body.classList.toggle('CJK', lang === 'zh-Hant');
-  }, [lang]);
 
   return (
     <DConfigContext.Provider value={dContext}>

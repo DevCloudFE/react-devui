@@ -40,8 +40,6 @@
   }
 
   @include e(link) {
-    @include utils-break-word;
-
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -49,6 +47,7 @@
     padding-left: 4px;
     color: var(--#{$variable-prefix}text-color);
     text-decoration: none;
+    overflow-wrap: break-word;
     transition: color var(--#{$variable-prefix}animation-duration-base) linear;
 
     &:hover {

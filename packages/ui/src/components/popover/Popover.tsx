@@ -390,7 +390,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
 }
 
 export const DPopover: {
-  (props: DPopoverProps & { ref?: DPopoverRef }): ReturnType<typeof Popover>;
+  (props: DPopoverProps & React.RefAttributes<DPopoverRef>): ReturnType<typeof Popover>;
   Header: typeof DPopoverHeader;
   Footer: typeof DPopoverFooter;
 } = React.forwardRef(Popover) as any;

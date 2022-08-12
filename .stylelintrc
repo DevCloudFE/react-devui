@@ -13,7 +13,7 @@
       }
     ],
     "declaration-property-value-allowed-list": {
-      "/color/": ["/var/", "/\\$/", "currentColor", "transparent", "unset", "inherit"],
+      "/color/": ["/var/", "/\\$/", "currentcolor", "transparent", "unset", "inherit"],
       "font-size": ["/var/", "/\\$/", "/[0-9]+em$/", "unset", "inherit"],
       "border-radius": ["/var/", "/\\$/", "50%", "0", "inherit"]
     },

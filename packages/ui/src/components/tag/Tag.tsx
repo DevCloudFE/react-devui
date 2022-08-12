@@ -24,10 +24,10 @@ export function DTag(props: DTagProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralContext();
+  const { gSize } = useGeneralContext();
   //#endregion
 
-  const size = dSize ?? gDisabled;
+  const size = dSize ?? gSize;
 
   return (
     <div

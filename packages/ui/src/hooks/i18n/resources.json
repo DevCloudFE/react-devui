@@ -182,5 +182,11 @@
       "en-US": "Uploading...",
       "zh-Hant": "上传中..."
     }
+  },
+  "Table": {
+    "Reset": {
+      "en-US": "Reset",
+      "zh-Hant": "重置"
+    }
   }
 }

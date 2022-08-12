@@ -487,11 +487,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
               <DVirtualScroll
                 {...vsPerformance}
                 ref={dVSRef}
-                id={listId}
-                className={`${dPrefix}select__list`}
-                role="listbox"
-                aria-multiselectable={dMultiple}
-                aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                dFillNode={<li></li>}
                 dItemRender={(item, index, { iARIA, iChildren }, parent) => {
                   const { label: itemLabel, value: itemValue, disabled: itemDisabled, children } = item;
 
@@ -557,13 +553,34 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                 dFocusItem={focusItem}
                 dSize={264}
                 dPadding={4}
-                dEmptyRender={(item) => (
-                  <li className={`${dPrefix}select__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
+                dEmptyRender={() => (
+                  <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>
                     <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
                   </li>
                 )}
                 onScrollEnd={onScrollBottom}
-              />
+              >
+                {({ vsScrollRef, vsRender, vsOnScroll }) => (
+                  <ul
+                    ref={vsScrollRef}
+                    id={listId}
+                    className={`${dPrefix}select__list`}
+                    tabIndex={-1}
+                    role="listbox"
+                    aria-multiselectable={dMultiple}
+                    aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                    onScroll={vsOnScroll}
+                  >
+                    {list.length === 0 ? (
+                      <li className={`${dPrefix}select__empty`}>
+                        <div className={`${dPrefix}select__option-content`}>{t('No Data')}</div>
+                      </li>
+                    ) : (
+                      vsRender
+                    )}
+                  </ul>
+                )}
+              </DVirtualScroll>
             </div>
           )}
         </DSelectbox>
@@ -573,5 +590,5 @@ function Select<V extends DId, T extends DSelectItem<V>>(
 }
 
 export const DSelect: <V extends DId, T extends DSelectItem<V>>(
-  props: DSelectProps<V, T> & { ref?: React.ForwardedRef<DSelectRef> }
+  props: DSelectProps<V, T> & React.RefAttributes<DSelectRef>
 ) => ReturnType<typeof Select> = React.forwardRef(Select) as any;

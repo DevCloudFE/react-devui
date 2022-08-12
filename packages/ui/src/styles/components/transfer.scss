@@ -31,7 +31,7 @@ $transfer-option-height: 32px;
     font-size: 12px;
 
     .#{$variable-prefix}button {
-      --#{$variable-prefix}size: 24px !important;
+      --#{$variable-prefix}size: 24px;
     }
   }
 

@@ -36,15 +36,3 @@
     border-radius: inherit;
   }
 }
-
-@mixin utils-break-word {
-  $selector: &;
-
-  overflow-wrap: break-word;
-
-  @at-root {
-    body.CJK #{$selector} {
-      overflow-wrap: break-word;
-    }
-  }
-}

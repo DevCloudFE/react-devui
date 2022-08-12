@@ -380,10 +380,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                   <DVirtualScroll
                     {...vsPerformance}
                     ref={dVSRef}
-                    id={listId}
-                    className={`${dPrefix}auto-complete__list`}
-                    role="listbox"
-                    aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                    dFillNode={<li></li>}
                     dItemRender={(item, index, { iARIA, iChildren }, parent) => {
                       const { value: itemValue, disabled: itemDisabled, children } = item;
 
@@ -439,13 +436,33 @@ function AutoComplete<T extends DAutoCompleteItem>(
                     dFocusItem={focusItem}
                     dSize={264}
                     dPadding={4}
-                    dEmptyRender={(item) => (
-                      <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: item ? 12 + 8 : undefined }}>
+                    dEmptyRender={() => (
+                      <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: 12 + 8 }}>
                         <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
                       </li>
                     )}
                     onScrollEnd={onScrollBottom}
-                  />
+                  >
+                    {({ vsScrollRef, vsRender, vsOnScroll }) => (
+                      <ul
+                        ref={vsScrollRef}
+                        id={listId}
+                        className={`${dPrefix}auto-complete__list`}
+                        tabIndex={-1}
+                        role="listbox"
+                        aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                        onScroll={vsOnScroll}
+                      >
+                        {dList.length === 0 ? (
+                          <li className={`${dPrefix}auto-complete__empty`}>
+                            <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
+                          </li>
+                        ) : (
+                          vsRender
+                        )}
+                      </ul>
+                    )}
+                  </DVirtualScroll>
                 </div>
               );
             }}
@@ -457,5 +474,5 @@ function AutoComplete<T extends DAutoCompleteItem>(
 }
 
 export const DAutoComplete: <T extends DAutoCompleteItem>(
-  props: DAutoCompleteProps<T> & { ref?: React.ForwardedRef<DAutoCompleteRef> }
+  props: DAutoCompleteProps<T> & React.RefAttributes<DAutoCompleteRef>
 ) => ReturnType<typeof AutoComplete> = React.forwardRef(AutoComplete) as any;

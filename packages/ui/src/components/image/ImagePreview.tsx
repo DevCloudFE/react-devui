@@ -339,26 +339,26 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                 </li>
                 <li className={`${dPrefix}image-preview__toolbar-rotate`}>
                   <DButton
-                    dType="text"
-                    dIcon={<RotateRightOutlined />}
                     onClick={() => {
                       setRotate((draft) => {
                         const oldRotate = draft.get(activeSrc) ?? 0;
                         draft.set(activeSrc, oldRotate + 90);
                       });
                     }}
+                    dType="text"
+                    dIcon={<RotateRightOutlined />}
                   ></DButton>
                 </li>
                 <li className={`${dPrefix}image-preview__toolbar-zoom-out`}>
                   <DButton
-                    dType="text"
-                    dIcon={<ZoomOutOutlined />}
                     onClick={() => {
                       setScale((draft) => {
                         const oldScale = draft.get(activeSrc) ?? 1;
                         draft.set(activeSrc, Math.max(oldScale / 1.3, 1));
                       });
                     }}
+                    dType="text"
+                    dIcon={<ZoomOutOutlined />}
                   ></DButton>
                 </li>
                 <li className={`${dPrefix}image-preview__toolbar-zoom`}>
@@ -381,23 +381,23 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                 </li>
                 <li className={`${dPrefix}image-preview__toolbar-zoom-in`}>
                   <DButton
-                    dType="text"
-                    dIcon={<ZoomInOutlined />}
                     onClick={() => {
                       setScale((draft) => {
                         const oldScale = draft.get(activeSrc) ?? 1;
                         draft.set(activeSrc, oldScale * 1.3);
                       });
                     }}
+                    dType="text"
+                    dIcon={<ZoomInOutlined />}
                   ></DButton>
                 </li>
                 <li className={`${dPrefix}image-preview__toolbar-close`}>
                   <DButton
-                    dType="text"
-                    dIcon={<CloseOutlined />}
                     onClick={() => {
                       changeVisible(false);
                     }}
+                    dType="text"
+                    dIcon={<CloseOutlined />}
                   ></DButton>
                 </li>
               </ul>

@@ -86,7 +86,6 @@ export const DRadio: {
                 checked={checked}
                 disabled={disabled}
                 aria-checked={checked}
-                dFormControl={dFormControl}
                 onChange={(e) => {
                   dInputProps?.onChange?.(e);
 
@@ -104,6 +103,7 @@ export const DRadio: {
                   dInputProps?.onKeyDown?.(e);
                   fvOnKeyDown(e);
                 }}
+                dFormControl={dFormControl}
               />
             )}
           </DFocusVisible>

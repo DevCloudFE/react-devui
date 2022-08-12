@@ -55,6 +55,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
   const dataRef = useRef<{
     clearTid?: () => void;
+    clearClickOut?: () => void;
   }>({});
 
   const asyncCapture = useAsync();
@@ -112,17 +113,15 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
     }
   });
 
-  const clickOut = useRef(true);
   useEffect(() => {
     if (!dDisabled && dVisible && dTrigger === 'click') {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-      asyncGroup.fromEvent(window, 'click').subscribe({
+      asyncGroup.fromEvent(window, 'click', { capture: true }).subscribe({
         next: () => {
-          if (clickOut.current) {
+          dataRef.current.clearClickOut = asyncGroup.requestAnimationFrame(() => {
             handleTrigger(false);
-          }
-          clickOut.current = true;
+          });
         },
       });
 
@@ -239,7 +238,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
       case 'click':
         childProps.pOnClick = () => {
-          clickOut.current = false;
+          dataRef.current.clearClickOut?.();
           handleTrigger();
         };
         break;
@@ -264,7 +263,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
       case 'click':
         popupProps.pOnClick = () => {
-          clickOut.current = false;
+          dataRef.current.clearClickOut?.();
         };
         break;
 

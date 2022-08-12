@@ -110,14 +110,14 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
           }}
           value={value}
           disabled={disabled}
-          dTag="textarea"
-          dFormControl={dFormControl}
           onChange={(e) => {
             restProps.onChange?.(e);
 
             changeValue(e.currentTarget.value);
             getRowNum();
           }}
+          dTag="textarea"
+          dFormControl={dFormControl}
         />
       </DBaseDesign>
       {dShowCount !== false && (

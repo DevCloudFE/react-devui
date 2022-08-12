@@ -33,6 +33,11 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
+  //#region Ref
+  const spinnerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  //#endregion
+
   const asyncCapture = useAsync();
   const forceUpdate = useForceUpdate();
 
@@ -73,6 +78,11 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
     <DTransition
       dIn={visible}
       dDuring={TTANSITION_DURING_BASE}
+      onEnterRendered={() => {
+        if (spinnerRef.current && containerRef.current) {
+          containerRef.current.style.top = `${(spinnerRef.current.clientHeight - containerRef.current.clientHeight) / 2}px`;
+        }
+      }}
       afterEnter={() => {
         afterVisibleChange?.(true);
       }}
@@ -83,22 +93,25 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
       {(state) => (
         <div
           {...restProps}
+          ref={spinnerRef}
           className={getClassName(restProps.className, `${dPrefix}spinner`)}
           style={{
             ...restProps.style,
             ...transitionStyles[state],
           }}
         >
-          <div className={`${dPrefix}spinner__icon`} style={{ fontSize: dSize }}>
-            {checkNodeExist(children) ? (
-              children
-            ) : (
-              <svg className={`${dPrefix}spinner__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
-              </svg>
-            )}
+          <div ref={containerRef} className={`${dPrefix}spinner__container`}>
+            <div className={`${dPrefix}spinner__icon`} style={{ fontSize: dSize }}>
+              {checkNodeExist(children) ? (
+                children
+              ) : (
+                <svg className={`${dPrefix}spinner__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
+                </svg>
+              )}
+            </div>
+            {checkNodeExist(dText) && <div className={`${dPrefix}spinner__text`}>{dText}</div>}
           </div>
-          {checkNodeExist(dText) && <div className={`${dPrefix}spinner__text`}>{dText}</div>}
         </div>
       )}
     </DTransition>

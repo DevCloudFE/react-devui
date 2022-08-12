@@ -10,7 +10,7 @@ import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP } from '../../utils/glo
 import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
 
-export interface DMenuSubProps {
+export interface DSubProps {
   children: React.ReactNode;
   dId: string;
   dDisabled?: boolean;
@@ -30,11 +30,11 @@ export interface DMenuSubProps {
   dSpace: number;
   dLevel?: number;
   onVisibleChange: (visible: boolean) => void;
-  onClick: React.MouseEventHandler<HTMLLIElement>;
+  onSubClick: React.MouseEventHandler<HTMLLIElement>;
   updatePosition$: Subject<void>;
 }
 
-export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
+export function DSub(props: DSubProps): JSX.Element | null {
   const {
     children,
     dId,
@@ -55,7 +55,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
     dSpace,
     dLevel = 0,
     onVisibleChange,
-    onClick,
+    onSubClick,
     updatePosition$,
   } = props;
 
@@ -228,7 +228,7 @@ export function DMenuSub(props: DMenuSubProps): JSX.Element | null {
                       onClick={(e) => {
                         pOnClick?.(e);
 
-                        onClick(e);
+                        onSubClick(e);
                       }}
                       onMouseEnter={pOnMouseEnter}
                       onMouseLeave={pOnMouseLeave}

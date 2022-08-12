@@ -5,7 +5,7 @@ import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DAlertPopover } from '../_alert-popover';
 import { DTransition } from '../_transition';
-import { DToastPanel } from './ToastPanel';
+import { DPanel } from './Panel';
 
 export interface DToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dType?: 'success' | 'warning' | 'error' | 'info';
@@ -152,7 +152,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
 
         return (
           <DAlertPopover dDuration={dDuration} dEscClosable={dEscClosable} onClose={onClose}>
-            <DToastPanel
+            <DPanel
               {...restProps}
               ref={panelRef}
               style={{
@@ -164,7 +164,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
               dIcon={dIcon}
               dContent={dContent}
               dActions={[]}
-            ></DToastPanel>
+            ></DPanel>
           </DAlertPopover>
         );
       }}

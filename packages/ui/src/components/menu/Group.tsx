@@ -1,6 +1,6 @@
 import { usePrefixConfig, useTranslation } from '../../hooks';
 
-export interface DMenuGroupProps {
+export interface DGroupProps {
   children: React.ReactNode;
   dId: string;
   dList: React.ReactNode;
@@ -10,7 +10,7 @@ export interface DMenuGroupProps {
   dLevel?: number;
 }
 
-export function DMenuGroup(props: DMenuGroupProps): JSX.Element | null {
+export function DGroup(props: DGroupProps): JSX.Element | null {
   const { children, dId, dList, dEmpty, dStep, dSpace, dLevel = 0 } = props;
 
   //#region Context

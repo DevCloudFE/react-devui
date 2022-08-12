@@ -9,7 +9,7 @@ import { getClassName, registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DButton } from '../button';
 import { useFormControl } from '../form';
-import { DTransferPanel } from './TransferPanel';
+import { DPanel } from './Panel';
 
 export const IS_SELECTED = Symbol();
 
@@ -233,7 +233,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
           'is-disabled': disabled,
         })}
       >
-        <DTransferPanel
+        <DPanel
           dList={listLeft}
           dSelectedNum={selectedNumLeft}
           dState={stateLeft}
@@ -252,35 +252,35 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
           onScrollBottom={() => {
             onScrollBottom?.('left');
           }}
-        ></DTransferPanel>
+        ></DPanel>
         <div className={`${dPrefix}transfer__actions`}>
           {React.Children.map(dActions, (action) =>
             action === 'right' ? (
               <DButton
                 key="$$right"
                 disabled={stateLeft === false}
-                dType="secondary"
-                dIcon={<RightOutlined />}
                 onClick={() => {
                   handleButtonClick(true);
                 }}
+                dType="secondary"
+                dIcon={<RightOutlined />}
               ></DButton>
             ) : action === 'left' ? (
               <DButton
                 key="$$left"
                 disabled={stateRight === false}
-                dType="secondary"
-                dIcon={<LeftOutlined />}
                 onClick={() => {
                   handleButtonClick(false);
                 }}
+                dType="secondary"
+                dIcon={<LeftOutlined />}
               ></DButton>
             ) : (
               action
             )
           )}
         </div>
-        <DTransferPanel
+        <DPanel
           dList={listRight}
           dSelectedNum={selectedNumRight}
           dState={stateRight}
@@ -299,7 +299,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
           onScrollBottom={() => {
             onScrollBottom?.('right');
           }}
-        ></DTransferPanel>
+        ></DPanel>
       </div>
     </DBaseDesign>
   );

@@ -3,12 +3,12 @@ import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import React from 'react';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
 import { FileTwoTone, LoadingOutlined, PlusOutlined } from '../../icons';
-import { getClassName } from '../../utils';
+import { getClassName, registerComponentMate } from '../../utils';
 import { DUploadAction } from './UploadAction';
 
-export interface DPictureButtonProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DUploadPictureButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   dFile?: DUploadFile;
   dDefaultActions?: {
     preview?: (file: DUploadFile) => void;
@@ -18,7 +18,8 @@ export interface DPictureButtonProps extends React.HTMLAttributes<HTMLDivElement
   onRemove?: () => void;
 }
 
-export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload.PictureButton' });
+export function DUploadPictureButton(props: DUploadPictureButtonProps): JSX.Element | null {
   const {
     dFile,
     dActions = [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />],
@@ -26,7 +27,7 @@ export function DPictureButton(props: DPictureButtonProps): JSX.Element | null {
     onRemove,
 
     ...restProps
-  } = props;
+  } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();

@@ -70,7 +70,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
 }
 
 export const DCompose: {
-  (props: DComposeProps & { ref?: DComposeRef }): ReturnType<typeof Compose>;
+  (props: DComposeProps & React.RefAttributes<DComposeRef>): ReturnType<typeof Compose>;
   Item: typeof DComposeItem;
 } = React.forwardRef(Compose) as any;
 

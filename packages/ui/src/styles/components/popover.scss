@@ -130,7 +130,7 @@
 
   @include e(header-actions) {
     .#{$variable-prefix}button {
-      --#{$variable-prefix}size: 24px !important;
+      --#{$variable-prefix}size: 24px;
     }
   }
 
@@ -144,8 +144,8 @@
     border-top: none;
 
     .#{$variable-prefix}button {
-      --#{$variable-prefix}size: 28px !important;
-      --#{$variable-prefix}padding-size: 10px !important;
+      --#{$variable-prefix}size: 28px;
+      --#{$variable-prefix}padding-size: 10px;
     }
   }
 

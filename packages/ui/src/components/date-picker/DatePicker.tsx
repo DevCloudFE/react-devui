@@ -1,7 +1,7 @@
 import type { DTimePickerProps } from '../time-picker';
-import type { DTimePickerPanelPropsWithPrivate, DTimePickerPanelRef } from '../time-picker/TimePickerPanel';
-import type { DDatePickerPanelRef } from './DatePickerPanel';
-import type { DPickerBuilderProps } from './PickerBuilder';
+import type { DPanelPropsWithPrivate as DTimePickerPanelPropsWithPrivate, DPanelRef as DTimePickerPanelRef } from '../time-picker/Panel';
+import type { DBuilderProps } from './Builder';
+import type { DPanelRef } from './Panel';
 
 import { isBoolean, isUndefined } from 'lodash';
 import React, { useRef } from 'react';
@@ -11,16 +11,16 @@ import { CalendarOutlined } from '../../icons';
 import { getClassName, registerComponentMate } from '../../utils';
 import { DButton } from '../button';
 import { DTag } from '../tag';
-import { DTimePickerPanel } from '../time-picker/TimePickerPanel';
-import { DDatePickerPanel } from './DatePickerPanel';
-import { DPickerBuilder } from './PickerBuilder';
+import { DPanel as DTimePickerPanel } from '../time-picker/Panel';
+import { DBuilder } from './Builder';
+import { DPanel } from './Panel';
 import { getCols, orderDate } from './utils';
 
 export interface DDatePickerRef {
   updatePosition: () => void;
 }
 
-export interface DDatePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 'dSuffix' | 'dPlaceholder' | 'dOrder' | 'onUpdatePanel'> {
+export interface DDatePickerProps extends Omit<DBuilderProps, 'dFormat' | 'dSuffix' | 'dPlaceholder' | 'dOrder' | 'onUpdatePanel'> {
   dFormat?: string;
   dPlaceholder?: string | [string?, string?];
   dOrder?: 'ascend' | 'descend' | null;
@@ -49,7 +49,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
   //#endregion
 
   //#region Ref
-  const dDPPRef = useRef<DDatePickerPanelRef>(null);
+  const dDPPRef = useRef<DPanelRef>(null);
   const dTPPRef = useRef<DTimePickerPanelRef>(null);
   //#endregion
 
@@ -70,7 +70,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
   const { d12Hour: t12Hour, dConfigTime } = isBoolean(dShowTime) ? ({} as Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>) : dShowTime;
 
   return (
-    <DPickerBuilder
+    <DBuilder
       {...restProps}
       ref={ref}
       dClassNamePrefix="date-picker"
@@ -87,13 +87,13 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     >
       {({ pbDate, pbCurrentDate, pbPosition, changeValue }) => (
         <>
-          <DDatePickerPanel
+          <DPanel
             ref={dDPPRef}
             dDate={pbDate}
             dAnotherDate={pbCurrentDate[pbPosition === 'start' ? 1 : 0]}
             dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, pbPosition, pbCurrentDate) : undefined}
             onDateChange={changeValue}
-          ></DDatePickerPanel>
+          ></DPanel>
           {dShowTime &&
             React.createElement<React.PropsWithoutRef<DTimePickerPanelPropsWithPrivate> & React.RefAttributes<DTimePickerPanelRef>>(
               DTimePickerPanel,
@@ -122,20 +122,20 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
                 };
 
                 return (
-                  <DTag key={name} className={`${dPrefix}date-picker__footer-button`} role="button" dTheme="primary" onClick={handleClick}>
+                  <DTag key={name} className={`${dPrefix}date-picker__footer-button`} role="button" onClick={handleClick} dTheme="primary">
                     {name}
                   </DTag>
                 );
               })
             ) : (
               <DButton
-                dType="link"
                 onClick={() => {
                   const now = new Date();
                   changeValue(now);
                   dDPPRef.current?.updateView(now);
                   dTPPRef.current?.updateView(now);
                 }}
+                dType="link"
               >
                 {t('DatePicker', dShowTime ? 'Now' : 'Today')}
               </DButton>
@@ -143,7 +143,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
           </div>
         </>
       )}
-    </DPickerBuilder>
+    </DBuilder>
   );
 }
 

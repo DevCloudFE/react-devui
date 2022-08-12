@@ -4,7 +4,7 @@ import { usePrefixConfig } from '../../hooks';
 import { checkNodeExist, getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
-export interface DMenuItemProps {
+export interface DItemProps {
   children: React.ReactNode;
   dId: string;
   dDisabled?: boolean;
@@ -17,11 +17,25 @@ export interface DMenuItemProps {
   dStep: number;
   dSpace: number;
   dLevel?: number;
-  onClick: () => void;
+  onItemClick: () => void;
 }
 
-export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
-  const { children, dId, dDisabled, dPosinset, dMode, dInNav, dActive, dFocusVisible, dIcon, dStep, dSpace, dLevel = 0, onClick } = props;
+export function DItem(props: DItemProps): JSX.Element | null {
+  const {
+    children,
+    dId,
+    dDisabled,
+    dPosinset,
+    dMode,
+    dInNav,
+    dActive,
+    dFocusVisible,
+    dIcon,
+    dStep,
+    dSpace,
+    dLevel = 0,
+    onItemClick,
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -41,7 +55,7 @@ export function DMenuItem(props: DMenuItemProps): JSX.Element | null {
       style={{ paddingLeft: dSpace + dLevel * dStep }}
       role="menuitem"
       aria-disabled={dDisabled}
-      onClick={onClick}
+      onClick={onItemClick}
     >
       {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
       <div

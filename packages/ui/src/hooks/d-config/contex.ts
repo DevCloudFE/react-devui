@@ -49,10 +49,17 @@ import type {
   DSkeletonProps,
   DSliderProps,
   DSlidesProps,
-  DSlideProps,
+  DSlidesSlideProps,
   DSpinnerProps,
   DStepperProps,
   DSwitchProps,
+  DTableProps,
+  DTableThProps,
+  DTableTdProps,
+  DTableEmptyProps,
+  DTableFilterProps,
+  DTableSearchProps,
+  DTableExpandProps,
   DTabsProps,
   DTagProps,
   DTextareaProps,
@@ -64,6 +71,7 @@ import type {
   DTreeProps,
   DUploadProps,
   DUploadActionProps,
+  DUploadPictureButtonProps,
   DVirtualScrollProps,
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
@@ -128,10 +136,17 @@ export type DComponentConfig = {
   DSkeleton: DSkeletonProps;
   DSlider: DSliderProps;
   DSlides: DSlidesProps;
-  'DSlides.Slide': DSlideProps;
+  'DSlides.Slide': DSlidesSlideProps;
   DSpinner: DSpinnerProps;
   DStepper: DStepperProps<any>;
   DSwitch: DSwitchProps;
+  DTable: DTableProps;
+  'DTable.Th': DTableThProps;
+  'DTable.Td': DTableTdProps;
+  'DTable.Empty': DTableEmptyProps;
+  'DTable.Filter': DTableFilterProps<any, any>;
+  'DTable.Search': DTableSearchProps;
+  'DTable.Expand': DTableExpandProps;
   DTabs: DTabsProps<any, any>;
   DTag: DTagProps;
   DTextarea: DTextareaProps;
@@ -143,6 +158,7 @@ export type DComponentConfig = {
   DTree: DTreeProps<any, any>;
   DUpload: DUploadProps;
   'DUpload.Action': DUploadActionProps;
+  'DUpload.PictureButton': DUploadPictureButtonProps;
   DVirtualScroll: DVirtualScrollProps<any>;
 } & { DIcon: Omit<DIconBaseProps, 'children'> };
 

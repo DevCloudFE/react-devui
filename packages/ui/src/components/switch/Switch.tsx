@@ -99,7 +99,6 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
           disabled={disabled || dLoading}
           role="switch"
           aria-checked={checked}
-          dFormControl={dFormControl}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 
@@ -115,6 +114,7 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
 
             setIsFocus(false);
           }}
+          dFormControl={dFormControl}
         />
         <DTransition dIn={checked} dDuring={TTANSITION_DURING}>
           {(state) => (

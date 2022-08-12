@@ -21,11 +21,11 @@ const [H24, M60, S60] = [24, 60, 60].map((num) =>
   )
 );
 
-export interface DTimePickerPanelRef {
+export interface DPanelRef {
   updateView: (time: Date) => void;
 }
 
-export interface DTimePickerPanelProps {
+export interface DPanelProps {
   dTime: Date | null;
   dCols: ('hour' | 'minute' | 'second')[];
   d12Hour?: boolean;
@@ -33,12 +33,12 @@ export interface DTimePickerPanelProps {
   onTimeChange?: (time: Date) => void;
 }
 
-export interface DTimePickerPanelPropsWithPrivate extends DTimePickerPanelProps {
+export interface DPanelPropsWithPrivate extends DPanelProps {
   __header?: boolean;
 }
 
-function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<DTimePickerPanelRef>): JSX.Element | null {
-  const { dTime, dCols, d12Hour = false, dConfigTime, onTimeChange, __header = false } = props as DTimePickerPanelPropsWithPrivate;
+function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Element | null {
+  const { dTime, dCols, d12Hour = false, dConfigTime, onTimeChange, __header = false } = props as DPanelPropsWithPrivate;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -244,4 +244,4 @@ function TimePickerPanel(props: DTimePickerPanelProps, ref: React.ForwardedRef<D
   );
 }
 
-export const DTimePickerPanel = React.forwardRef(TimePickerPanel);
+export const DPanel = React.forwardRef(Panel);

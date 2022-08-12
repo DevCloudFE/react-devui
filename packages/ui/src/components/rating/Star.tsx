@@ -58,8 +58,6 @@ export function DStar(props: DStarProps): JSX.Element | null {
               checked={halfChecked}
               disabled={dDisabled}
               aria-checked={halfChecked}
-              dFormControl={dFormControl}
-              dFor={halfChecked}
               onChange={() => {
                 onCheck(halfValue);
               }}
@@ -76,6 +74,8 @@ export function DStar(props: DStarProps): JSX.Element | null {
 
                 onHoverChange(halfValue);
               }}
+              dFormControl={dFormControl}
+              dFor={halfChecked}
             />
             <label
               className={getClassName(`${dPrefix}rating__icon`, `${dPrefix}rating__icon--half`, {
@@ -100,8 +100,6 @@ export function DStar(props: DStarProps): JSX.Element | null {
             checked={checked}
             disabled={dDisabled}
             aria-checked={checked}
-            dFormControl={dFormControl}
-            dFor={checked}
             onChange={() => {
               onCheck(dValue);
             }}
@@ -118,6 +116,8 @@ export function DStar(props: DStarProps): JSX.Element | null {
 
               onHoverChange(dValue);
             }}
+            dFormControl={dFormControl}
+            dFor={checked}
           />
           {dIcon}
         </label>

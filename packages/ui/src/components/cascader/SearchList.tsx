@@ -117,7 +117,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<ID, T>>>(
     () => ({
-      dList: dList,
+      dList,
       dItemSize: 32,
       dItemKey: (item) => item.value,
       dFocusable: (item) => item[TREE_NODE_KEY].enabled,
@@ -129,11 +129,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
     <DVirtualScroll
       {...vsPerformance}
       ref={dVSRef}
-      id={dListId}
-      className={`${dPrefix}cascader__list`}
-      role="listbox"
-      aria-multiselectable={dMultiple}
-      aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
+      dFillNode={<li></li>}
       dItemRender={(item, index, { iARIA }) => {
         const node = item[TREE_NODE_KEY];
         let inSelected = node.checked;
@@ -175,11 +171,27 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
       dFocusItem={dFocusItem}
       dSize={264}
       dPadding={4}
-      dEmptyRender={() => (
-        <li className={`${dPrefix}cascader__empty`}>
-          <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
-        </li>
+    >
+      {({ vsScrollRef, vsRender, vsOnScroll }) => (
+        <ul
+          ref={vsScrollRef}
+          id={dListId}
+          className={`${dPrefix}cascader__list`}
+          tabIndex={-1}
+          role="listbox"
+          aria-multiselectable={dMultiple}
+          aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
+          onScroll={vsOnScroll}
+        >
+          {dList.length === 0 ? (
+            <li className={`${dPrefix}cascader__empty`}>
+              <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
+            </li>
+          ) : (
+            vsRender
+          )}
+        </ul>
       )}
-    />
+    </DVirtualScroll>
   );
 }

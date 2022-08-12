@@ -1,5 +1,5 @@
-import type { DPickerBuilderProps } from '../date-picker/PickerBuilder';
-import type { DTimePickerPanelRef } from './TimePickerPanel';
+import type { DBuilderProps } from '../date-picker/Builder';
+import type { DPanelRef } from './Panel';
 
 import { isUndefined } from 'lodash';
 import React, { useRef } from 'react';
@@ -8,15 +8,15 @@ import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks
 import { ClockCircleOutlined } from '../../icons';
 import { getClassName, registerComponentMate } from '../../utils';
 import { DButton } from '../button';
-import { DPickerBuilder } from '../date-picker/PickerBuilder';
+import { DBuilder } from '../date-picker/Builder';
 import { getCols, orderTime } from '../date-picker/utils';
-import { DTimePickerPanel } from './TimePickerPanel';
+import { DPanel } from './Panel';
 
 export interface DTimePickerRef {
   updatePosition: () => void;
 }
 
-export interface DTimePickerProps extends Omit<DPickerBuilderProps, 'dFormat' | 'dSuffix' | 'dPlaceholder' | 'dOrder' | 'onUpdatePanel'> {
+export interface DTimePickerProps extends Omit<DBuilderProps, 'dFormat' | 'dSuffix' | 'dPlaceholder' | 'dOrder' | 'onUpdatePanel'> {
   dFormat?: string;
   dPlaceholder?: string | [string?, string?];
   dOrder?: 'ascend' | 'descend' | null;
@@ -48,7 +48,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
   //#endregion
 
   //#region Ref
-  const dTPPRef = useRef<DTimePickerPanelRef>(null);
+  const dTPPRef = useRef<DPanelRef>(null);
   //#endregion
 
   const [t] = useTranslation();
@@ -60,7 +60,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
   ) as [string?, string?];
 
   return (
-    <DPickerBuilder
+    <DBuilder
       {...restProps}
       ref={ref}
       dClassNamePrefix="time-picker"
@@ -76,29 +76,29 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
     >
       {({ pbDate, pbCurrentDate, pbPosition, changeValue }) => (
         <>
-          <DTimePickerPanel
+          <DPanel
             ref={dTPPRef}
             dTime={pbDate}
             dCols={getCols(format)}
             d12Hour={d12Hour}
             dConfigTime={dConfigTime ? (...args) => dConfigTime(...args, pbPosition, pbCurrentDate) : undefined}
             onTimeChange={changeValue}
-          ></DTimePickerPanel>
+          ></DPanel>
           <div className={`${dPrefix}time-picker__footer`}>
             <DButton
-              dType="link"
               onClick={() => {
                 const now = new Date();
                 changeValue(now);
                 dTPPRef.current?.updateView(now);
               }}
+              dType="link"
             >
               {t('TimePicker', 'Now')}
             </DButton>
           </div>
         </>
       )}
-    </DPickerBuilder>
+    </DBuilder>
   );
 }
 

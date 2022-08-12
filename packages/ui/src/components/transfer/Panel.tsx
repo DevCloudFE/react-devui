@@ -13,7 +13,7 @@ import { DInput } from '../input';
 import { DVirtualScroll } from '../virtual-scroll';
 import { IS_SELECTED } from './Transfer';
 
-export interface DTransferPanelProps<V extends DId, T extends DTransferItem<V>> {
+export interface DPanelProps<V extends DId, T extends DTransferItem<V>> {
   dList: T[];
   dSelectedNum: number;
   dState: boolean | 'mixed';
@@ -27,7 +27,7 @@ export interface DTransferPanelProps<V extends DId, T extends DTransferItem<V>> 
   onScrollBottom: () => void;
 }
 
-export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props: DTransferPanelProps<V, T>): JSX.Element | null {
+export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelProps<V, T>): JSX.Element | null {
   const {
     dList,
     dSelectedNum,
@@ -59,7 +59,7 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<T>>(
     () => ({
-      dList: dList,
+      dList,
       dItemSize: 32,
       dItemKey: (item) => item.value,
       dFocusable: canSelectItem,
@@ -100,7 +100,7 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
         <DVirtualScroll
           {...vsPerformance}
           ref={dVSRef}
-          className={`${dPrefix}transfer__list`}
+          dFillNode={<li></li>}
           dItemRender={(item, index, { iARIA }) => {
             const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
 
@@ -125,9 +125,14 @@ export function DTransferPanel<V extends DId, T extends DTransferItem<V>>(props:
             );
           }}
           dSize={192}
-          dEmptyRender={() => <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty>}
           onScrollEnd={onScrollBottom}
-        ></DVirtualScroll>
+        >
+          {({ vsScrollRef, vsRender, vsOnScroll }) => (
+            <ul ref={vsScrollRef} className={`${dPrefix}transfer__list`} onScroll={vsOnScroll}>
+              {dList.length === 0 ? <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty> : vsRender}
+            </ul>
+          )}
+        </DVirtualScroll>
       </div>
     </div>
   );

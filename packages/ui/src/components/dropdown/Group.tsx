@@ -1,6 +1,6 @@
 import { usePrefixConfig, useTranslation } from '../../hooks';
 
-export interface DDropdownGroupProps {
+export interface DGroupProps {
   children: React.ReactNode;
   dId: string;
   dList: React.ReactNode;
@@ -8,7 +8,7 @@ export interface DDropdownGroupProps {
   dLevel?: number;
 }
 
-export function DDropdownGroup(props: DDropdownGroupProps): JSX.Element | null {
+export function DGroup(props: DGroupProps): JSX.Element | null {
   const { children, dId, dList, dEmpty, dLevel = 0 } = props;
 
   //#region Context

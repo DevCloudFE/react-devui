@@ -1,0 +1,362 @@
+$table-filter-option-height: 32px;
+
+@include b(table) {
+  --#{$variable-prefix}table-padding-size: 16px;
+
+  position: relative;
+  width: 100%;
+
+  table {
+    width: 100%;
+    table-layout: auto;
+    border-spacing: 0;
+    border-collapse: separate;
+
+    table {
+      margin-bottom: -1px;
+    }
+  }
+
+  caption {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: 500;
+  }
+
+  th {
+    font-weight: 500;
+    background-color: var(--#{$variable-prefix}background-color-light-gray);
+  }
+
+  td {
+    background-color: var(--#{$variable-prefix}background-color);
+    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+  }
+
+  thead {
+    th {
+      border-bottom: 1px solid var(--#{$variable-prefix}table-th-border-color);
+
+      &:not(:last-child)::after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 1px;
+        height: 1.6em;
+        content: '';
+        background-color: var(--#{$variable-prefix}table-th-border-color);
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  @include m(border) {
+    table {
+      border-top: 1px solid var(--#{$variable-prefix}color-divider);
+      border-left: 1px solid var(--#{$variable-prefix}color-divider);
+    }
+
+    thead {
+      th:not(:last-child)::after {
+        content: none;
+      }
+    }
+
+    th {
+      border-right: 1px solid var(--#{$variable-prefix}color-divider);
+    }
+
+    td {
+      border-right: 1px solid var(--#{$variable-prefix}color-divider);
+    }
+  }
+
+  @include e(cell) {
+    position: relative;
+    padding: var(--#{$variable-prefix}table-padding-size);
+
+    @include m(fixed-left) {
+      &::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: -1px;
+        width: 30px;
+        pointer-events: none;
+        content: '';
+        transition: box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
+        transform: translateX(100%);
+      }
+
+      &.#{$variable-prefix}table__cell--fixed-shadow {
+        $selector: &;
+
+        &::before {
+          box-shadow: inset 8px 0 12px -10px var(--#{$variable-prefix}shadow-color);
+        }
+
+        @at-root {
+          th#{$selector} {
+            &::after {
+              content: none !important;
+            }
+          }
+        }
+      }
+    }
+
+    @include m(fixed-right) {
+      &::before {
+        position: absolute;
+        top: 0;
+        bottom: -1px;
+        left: 0;
+        width: 30px;
+        pointer-events: none;
+        content: '';
+        transition: box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
+        transform: translateX(-100%);
+      }
+
+      &.#{$variable-prefix}table__cell--fixed-shadow {
+        &::before {
+          box-shadow: inset -8px 0 12px -10px var(--#{$variable-prefix}shadow-color);
+        }
+      }
+    }
+
+    @include m(right) {
+      @include e(cell-content) {
+        justify-content: flex-end !important;
+      }
+    }
+
+    @include m(center) {
+      @include e(cell-content) {
+        justify-content: center !important;
+      }
+    }
+
+    @include m(ellipsis) {
+      @include e(cell-text) {
+        @include utils-ellipsis;
+
+        overflow-wrap: unset;
+      }
+    }
+
+    @include m(th-sort) {
+      cursor: pointer;
+    }
+
+    @include m(th-empty) {
+      &::after {
+        content: none !important;
+      }
+    }
+  }
+
+  @include e(cell-content) {
+    $selector: &;
+
+    display: flex;
+    align-items: center;
+
+    @at-root {
+      th #{$selector} {
+        justify-content: space-between;
+      }
+    }
+  }
+
+  @include e(cell-text) {
+    overflow-wrap: break-word;
+  }
+
+  @include e(th-actions) {
+    display: inline-flex;
+    margin-left: 4px;
+  }
+
+  @include e(th-action) {
+    @include utils-button;
+
+    min-width: 20px;
+    min-height: 20px;
+    padding: 0;
+    margin: 0;
+    color: rgb(var(--#{$variable-prefix}text-color-rgb) / 28%);
+    background-color: transparent;
+    border: none;
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 42%);
+    }
+
+    &:active {
+      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 42%);
+    }
+
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+
+    @include m(sort) {
+      flex-direction: column;
+      min-width: 16px;
+    }
+  }
+
+  @include e(th-sort-icon) {
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 12px;
+
+    @include when(active) {
+      color: var(--#{$variable-prefix}color-primary);
+    }
+  }
+
+  @include e(expand) {
+    @include utils-button;
+
+    position: relative;
+    width: 17px;
+    height: 17px;
+    padding: 0;
+    margin: 0;
+    color: var(--#{$variable-prefix}text-color);
+    background-color: transparent;
+    border: 1px solid var(--#{$variable-prefix}color-border);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      border-color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      border-color: var(--#{$variable-prefix}color-primary-darker);
+    }
+
+    &::before {
+      position: absolute;
+      top: 7px;
+      right: 3px;
+      left: 3px;
+      height: 1px;
+      content: '';
+      background-color: currentcolor;
+      transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    }
+
+    &::after {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      left: 7px;
+      width: 1px;
+      content: '';
+      background-color: currentcolor;
+      transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    }
+
+    @include when(expand) {
+      &::before {
+        transform: rotate(180deg);
+      }
+
+      &::after {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  @include e(empty-content) {
+    pointer-events: none;
+
+    .#{$variable-prefix}table__cell-content {
+      min-height: 120px;
+    }
+  }
+
+  @include e(filter-popup) {
+    .#{$variable-prefix}input {
+      --#{$variable-prefix}size: 30px;
+      --#{$variable-prefix}horizontal-space-size: 8px;
+    }
+
+    .#{$variable-prefix}popover__body {
+      padding: 0;
+    }
+
+    .#{$variable-prefix}popover__footer {
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-top: 1px solid var(--#{$variable-prefix}color-divider);
+    }
+  }
+
+  @include e(filter-search) {
+    display: flex;
+    margin: 10px 12px;
+  }
+
+  @include e(filter-list) {
+    position: relative;
+    min-width: 140px;
+    max-height: 200px;
+    padding: 4px 0;
+    margin: 0;
+    overflow: hidden auto;
+    list-style: none;
+  }
+
+  @include e(filter-option) {
+    position: relative;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+    width: 100%;
+    height: $table-filter-option-height;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
+  }
+
+  @include e(filter-empty) {
+    display: flex;
+    align-items: center;
+    height: $table-filter-option-height;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-disabled);
+  }
+
+  @include e(loading) {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-primary);
+    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+
+    @include m(empty) {
+      justify-content: flex-start;
+      background-color: var(--#{$variable-prefix}background-color);
+    }
+  }
+}

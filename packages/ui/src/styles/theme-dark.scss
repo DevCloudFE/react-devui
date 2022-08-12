@@ -31,7 +31,7 @@ body.dark {
   --#{$variable-prefix}background-color-light-gray: #262626;
   --#{$variable-prefix}background-color-gray: hsl(0deg 0% 20%);
   --#{$variable-prefix}background-color-action: rgb(255 255 255 / 20%);
-  --#{$variable-prefix}color-divider: #303030;
+  --#{$variable-prefix}color-divider: #313131;
   --#{$variable-prefix}color-border: #434343;
   --#{$variable-prefix}color-disabled: #4e4e50;
   --#{$variable-prefix}color-icon-decorator: #95989b;
@@ -62,6 +62,7 @@ body.dark {
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 40%);
   --#{$variable-prefix}skeleton-background-color-wave: rgb(255 255 255 / 4%);
   --#{$variable-prefix}switch-background-color: #5f6164;
+  --#{$variable-prefix}table-th-border-color: #3e3e3e;
   --#{$variable-prefix}tabs-background-color-slider: hsl(0deg 0% 26%);
   --#{$variable-prefix}tag-background-color-fill: hsl(0deg 0% 50%);
   --#{$variable-prefix}tooltip-text-color: #d0d2d7;

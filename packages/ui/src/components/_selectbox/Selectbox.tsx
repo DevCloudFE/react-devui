@@ -236,7 +236,6 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                   role="combobox"
                   aria-haspopup="listbox"
                   aria-expanded={dVisible}
-                  dFormControl={dFormControl}
                   onFocus={(e) => {
                     dInputProps?.onFocus?.(e);
                     fvOnFocus(e);
@@ -253,6 +252,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
                     dInputProps?.onKeyDown?.(e);
                     fvOnKeyDown(e);
                   }}
+                  dFormControl={dFormControl}
                 />
               )}
             </DFocusVisible>

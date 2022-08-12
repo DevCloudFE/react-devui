@@ -187,7 +187,6 @@ export function DInput(props: DInputProps): JSX.Element | null {
           min={dMin}
           step={dStep}
           disabled={disabled}
-          dFormControl={dFormControl}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 
@@ -227,6 +226,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
             dataRef.current.showValue = _value;
             setIsFocus(false);
           }}
+          dFormControl={dFormControl}
         />
         {dClearable && !disabled && (
           <div

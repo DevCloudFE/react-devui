@@ -67,12 +67,12 @@ export const DCheckbox: {
           type="checkbox"
           disabled={disabled}
           aria-checked={dIndeterminate ? 'mixed' : checked}
-          dFormControl={dFormControl}
           onChange={(e) => {
             dInputProps?.onChange?.(e);
 
             changeChecked(!checked);
           }}
+          dFormControl={dFormControl}
         />
         {dIndeterminate ? (
           <div className={`${dPrefix}checkbox__indeterminate`}></div>

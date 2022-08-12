@@ -103,7 +103,7 @@ export { DSkeleton } from './skeleton';
 export type { DSliderProps } from './slider';
 export { DSlider } from './slider';
 
-export type { DSlidesProps, DSlideProps } from './slides';
+export type { DSlidesProps, DSlidesSlideProps } from './slides';
 export { DSlides } from './slides';
 
 export type { DSpinnerProps } from './spinner';
@@ -114,6 +114,17 @@ export { DStepper } from './stepper';
 
 export type { DSwitchProps } from './switch';
 export { DSwitch } from './switch';
+
+export type {
+  DTableProps,
+  DTableThProps,
+  DTableTdProps,
+  DTableEmptyProps,
+  DTableFilterProps,
+  DTableSearchProps,
+  DTableExpandProps,
+} from './table';
+export { DTable } from './table';
 
 export type { DTabsProps } from './tabs';
 export { DTabs } from './tabs';
@@ -142,7 +153,7 @@ export { DTransfer } from './transfer';
 export type { DTreeProps } from './tree';
 export { DTree } from './tree';
 
-export type { DUploadProps, DUploadActionProps } from './upload';
+export type { DUploadProps, DUploadActionProps, DUploadPictureButtonProps } from './upload';
 export { DUpload } from './upload';
 
 export type { DVirtualScrollProps } from './virtual-scroll';

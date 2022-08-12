@@ -9,9 +9,9 @@ import { TTANSITION_DURING_BASE } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
-import { DMenuGroup } from './MenuGroup';
-import { DMenuItem } from './MenuItem';
-import { DMenuSub } from './MenuSub';
+import { DGroup } from './Group';
+import { DItem } from './Item';
+import { DSub } from './Sub';
 import { checkEnableItem, getSameLevelItems } from './utils';
 
 export interface DMenuRef {
@@ -347,7 +347,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
         return (
           <React.Fragment key={itemId}>
             {itemType === 'item' ? (
-              <DMenuItem
+              <DItem
                 dId={id}
                 dDisabled={itemDisabled}
                 dPosinset={posinset.get(itemId)!}
@@ -359,12 +359,12 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 dStep={step}
                 dSpace={space}
                 dLevel={level}
-                onClick={handleItemClick}
+                onItemClick={handleItemClick}
               >
                 {itemTitle}
-              </DMenuItem>
+              </DItem>
             ) : itemType === 'group' ? (
-              <DMenuGroup
+              <DGroup
                 dId={id}
                 dList={children && getNodes(children, level + 1, _subParents)}
                 dEmpty={isEmpty}
@@ -373,9 +373,9 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 dLevel={level}
               >
                 {itemTitle}
-              </DMenuGroup>
+              </DGroup>
             ) : (
-              <DMenuSub
+              <DSub
                 dId={id}
                 dDisabled={itemDisabled}
                 dPosinset={posinset.get(itemId)!}
@@ -404,7 +404,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                     removePopupId(itemId);
                   }
                 }}
-                onClick={() => {
+                onSubClick={() => {
                   if (!itemDisabled) {
                     setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
 
@@ -417,7 +417,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 updatePosition$={updatePosition$}
               >
                 {itemTitle}
-              </DMenuSub>
+              </DSub>
             )}
           </React.Fragment>
         );
@@ -501,5 +501,5 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
 }
 
 export const DMenu: <ID extends DId, T extends DMenuItem<ID>>(
-  props: DMenuProps<ID, T> & { ref?: React.ForwardedRef<DMenuRef> }
+  props: DMenuProps<ID, T> & React.RefAttributes<DMenuRef>
 ) => ReturnType<typeof Menu> = React.forwardRef(Menu) as any;

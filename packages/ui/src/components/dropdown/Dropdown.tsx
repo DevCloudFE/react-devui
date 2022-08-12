@@ -18,9 +18,9 @@ import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
-import { DDropdownGroup } from './DropdownGroup';
-import { DDropdownItem } from './DropdownItem';
-import { DDropdownSub } from './DropdownSub';
+import { DGroup } from './Group';
+import { DItem } from './Item';
+import { DSub } from './Sub';
 import { checkEnableItem, getSameLevelItems } from './utils';
 
 export interface DDropdownRef {
@@ -302,22 +302,22 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
         return (
           <React.Fragment key={itemId}>
             {itemType === 'item' ? (
-              <DDropdownItem
+              <DItem
                 dId={id}
                 dDisabled={itemDisabled}
                 dFocusVisible={focusVisible && isFocus}
                 dIcon={itemIcon}
                 dLevel={level}
-                onClick={handleItemClick}
+                onItemClick={handleItemClick}
               >
                 {itemLabel}
-              </DDropdownItem>
+              </DItem>
             ) : itemType === 'group' ? (
-              <DDropdownGroup dId={id} dList={children && getNodes(children, level + 1, newSubParents)} dEmpty={isEmpty} dLevel={level}>
+              <DGroup dId={id} dList={children && getNodes(children, level + 1, newSubParents)} dEmpty={isEmpty} dLevel={level}>
                 {itemLabel}
-              </DDropdownGroup>
+              </DGroup>
             ) : (
-              <DDropdownSub
+              <DSub
                 dId={id}
                 dDisabled={itemDisabled}
                 dFocusVisible={focusVisible && isFocus}
@@ -342,7 +342,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                 updatePosition$={updatePosition$}
               >
                 {itemLabel}
-              </DDropdownSub>
+              </DSub>
             )}
           </React.Fragment>
         );
@@ -537,5 +537,5 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
 }
 
 export const DDropdown: <ID extends DId, T extends DDropdownItem<ID>>(
-  props: DDropdownProps<ID, T> & { ref?: React.ForwardedRef<DDropdownRef> }
+  props: DDropdownProps<ID, T> & React.RefAttributes<DDropdownRef>
 ) => ReturnType<typeof Dropdown> = React.forwardRef(Dropdown) as any;

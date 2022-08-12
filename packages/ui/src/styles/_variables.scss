@@ -66,7 +66,7 @@ $colors: (
   --#{$variable-prefix}background-color-light-gray: hsl(0deg 0% 98%);
   --#{$variable-prefix}background-color-gray: hsl(0deg 0% 95%);
   --#{$variable-prefix}background-color-action: rgb(0 0 0 / 20%);
-  --#{$variable-prefix}color-divider: #eee;
+  --#{$variable-prefix}color-divider: #f0f0f0;
   --#{$variable-prefix}color-border: #d9d9d9;
   --#{$variable-prefix}color-disabled: #d5d5d5;
   --#{$variable-prefix}color-icon-decorator: #7e8083;
@@ -97,6 +97,7 @@ $colors: (
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
   --#{$variable-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
   --#{$variable-prefix}switch-background-color: #d4d6d9;
+  --#{$variable-prefix}table-th-border-color: #e9e9e9;
   --#{$variable-prefix}tabs-background-color-slider: hsl(0deg 0% 97%);
   --#{$variable-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
   --#{$variable-prefix}tooltip-text-color: #dfe1e6;

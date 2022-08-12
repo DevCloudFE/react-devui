@@ -451,8 +451,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
             min={dMin}
             step={dStep ?? undefined}
             aria-orientation={dVertical ? 'vertical' : 'horizontal'}
-            dFormControl={dFormControl}
-            dFor={isLeft}
             onChange={handleChange}
             onFocus={(e) => {
               inputProps?.onFocus?.(e);
@@ -464,6 +462,8 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
               setFocusDot(null);
             }}
+            dFormControl={dFormControl}
+            dFor={isLeft}
           />
         </div>
       </DTooltip>

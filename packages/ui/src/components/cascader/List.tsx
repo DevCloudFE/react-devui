@@ -171,11 +171,7 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
       <DVirtualScroll
         {...vsPerformance}
         ref={dVSRef}
-        id={dListId}
-        className={`${dPrefix}cascader__list`}
-        role="listbox"
-        aria-multiselectable={dMultiple}
-        aria-activedescendant={dRoot && !isUndefined(dFocusNode) ? dGetItemId(dFocusNode.id) : undefined}
+        dFillNode={<li></li>}
         dItemRender={(item, index, { iARIA }) => (
           <li
             {...iARIA}
@@ -200,14 +196,14 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
             {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
             {dMultiple && (
               <DCheckbox
-                dModel={item.checked}
-                dDisabled={item.disabled}
-                dIndeterminate={item.indeterminate}
                 onClick={(e) => {
                   e.stopPropagation();
                   onFocusChange(item);
                   changeSelectByClick(item);
                 }}
+                dModel={item.checked}
+                dDisabled={item.disabled}
+                dIndeterminate={item.indeterminate}
               ></DCheckbox>
             )}
             <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(item.origin) : item.origin.label}</div>
@@ -219,12 +215,28 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
         dFocusItem={inFocusNode}
         dSize={264}
         dPadding={4}
-        dEmptyRender={() => (
-          <li className={`${dPrefix}cascader__empty`}>
-            <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
-          </li>
+      >
+        {({ vsScrollRef, vsRender, vsOnScroll }) => (
+          <ul
+            ref={vsScrollRef}
+            id={dListId}
+            className={`${dPrefix}cascader__list`}
+            tabIndex={-1}
+            role="listbox"
+            aria-multiselectable={dMultiple}
+            aria-activedescendant={dRoot && !isUndefined(dFocusNode) ? dGetItemId(dFocusNode.id) : undefined}
+            onScroll={vsOnScroll}
+          >
+            {dNodes.length === 0 ? (
+              <li className={`${dPrefix}cascader__empty`}>
+                <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
+              </li>
+            ) : (
+              vsRender
+            )}
+          </ul>
         )}
-      />
+      </DVirtualScroll>
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
         <DList {...props} dListId={undefined} dNodes={inFocusNode.children} dRoot={false}></DList>
       )}

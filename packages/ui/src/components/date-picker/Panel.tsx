@@ -7,18 +7,18 @@ import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } 
 import { getClassName } from '../../utils';
 import { dayjs } from '../dayjs';
 
-export interface DDatePickerPanelRef {
+export interface DPanelRef {
   updateView: (time: Date) => void;
 }
 
-export interface DDatePickerPanelProps {
+export interface DPanelProps {
   dDate: Date | null;
   dAnotherDate: Date | null;
   dConfigDate?: (date: Date) => { disabled?: boolean };
   onDateChange?: (time: Date) => void;
 }
 
-function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<DDatePickerPanelRef>): JSX.Element | null {
+function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Element | null {
   const { dDate, dAnotherDate, dConfigDate, onDateChange } = props;
 
   //#region Context
@@ -192,4 +192,4 @@ function DatePickerPanel(props: DDatePickerPanelProps, ref: React.ForwardedRef<D
   );
 }
 
-export const DDatePickerPanel = React.forwardRef(DatePickerPanel);
+export const DPanel = React.forwardRef(Panel);

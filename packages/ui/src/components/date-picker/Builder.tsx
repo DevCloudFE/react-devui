@@ -11,19 +11,19 @@ import { dayjs } from '../dayjs';
 import { useFormControl } from '../form';
 import { deepCompareDate } from './utils';
 
-export interface DPickerBuilderRef {
+export interface DBuilderRef {
   updatePosition: () => void;
 }
 
-export interface DPickerBuilderRenderProps {
+export interface DBuilderRenderProps {
   pbDate: Date | null;
   pbCurrentDate: [Date | null, Date | null];
   pbPosition: 'start' | 'end';
   changeValue: (date: Date | [Date, Date]) => void;
 }
 
-export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children: (props: DPickerBuilderRenderProps) => React.ReactNode;
+export interface DBuilderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children: (props: DBuilderRenderProps) => React.ReactNode;
   dClassNamePrefix: string;
   dFormControl?: DFormControl;
   dModel?: Date | null | [Date, Date];
@@ -49,7 +49,7 @@ export interface DPickerBuilderProps extends Omit<React.HTMLAttributes<HTMLDivEl
   onUpdatePanel?: (date: Date) => void;
 }
 
-function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPickerBuilderRef>): JSX.Element | null {
+function Builder(props: DBuilderProps, ref: React.ForwardedRef<DBuilderRef>): JSX.Element | null {
   const {
     children,
     dClassNamePrefix,
@@ -299,4 +299,4 @@ function PickerBuilder(props: DPickerBuilderProps, ref: React.ForwardedRef<DPick
   );
 }
 
-export const DPickerBuilder = React.forwardRef(PickerBuilder);
+export const DBuilder = React.forwardRef(Builder);

@@ -9,9 +9,9 @@ import { registerComponentMate, getClassName, getUID } from '../../utils';
 import { useFormControl } from '../form';
 import { DList } from './List';
 import { DPicture } from './Picture';
-import { DPictureButton } from './PictureButton';
 import { DPictureList } from './PictureList';
 import { DUploadAction } from './UploadAction';
+import { DUploadPictureButton } from './UploadPictureButton';
 
 export type DUploadFileStatus = 'load' | 'error' | 'progress' | null;
 
@@ -331,10 +331,10 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
 }
 
 export const DUpload: {
-  (props: DUploadProps & { ref?: React.ForwardedRef<HTMLInputElement> }): ReturnType<typeof Upload>;
+  (props: DUploadProps & React.RefAttributes<HTMLInputElement>): ReturnType<typeof Upload>;
   Action: typeof DUploadAction;
-  PICTURE_BUTTON: typeof DPictureButton;
+  PictureButton: typeof DUploadPictureButton;
 } = React.forwardRef(Upload) as any;
 
 DUpload.Action = DUploadAction;
-DUpload.PICTURE_BUTTON = DPictureButton;
+DUpload.PictureButton = DUploadPictureButton;

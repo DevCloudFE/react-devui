@@ -1,7 +1,7 @@
 import type { DId } from '../../utils/global';
 
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
-import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import { useAsync, useComponentConfig, useEventCallback, useIsomorphicLayoutEffect } from '../../hooks';
 import { registerComponentMate, toPx } from '../../utils';
@@ -29,10 +29,16 @@ export interface DItemRenderProps {
   iChildren?: React.ReactNode[];
 }
 
-export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
-  dTag?: string;
+export interface DVirtualScrollRenderProps {
+  vsScrollRef: React.RefCallback<any>;
+  vsRender: React.ReactNode;
+  vsOnScroll: React.UIEventHandler;
+}
+
+export interface DVirtualScrollProps<T> {
+  children: (props: DVirtualScrollRenderProps) => JSX.Element | null;
   dList: T[];
-  dExpands?: Set<DId>;
+  dFillNode: React.ReactElement;
   dItemRender: (item: T, index: number, props: DItemRenderProps, parent: T[]) => React.ReactNode;
   dItemSize: number | ((item: T) => number);
   dItemNested?: (item: T) => { list?: T[]; emptySize?: number; asItem: boolean } | undefined;
@@ -42,16 +48,17 @@ export interface DVirtualScrollProps<T> extends Omit<React.HTMLAttributes<HTMLEl
   dSize?: number;
   dPadding?: number;
   dHorizontal?: boolean;
-  dEmptyRender: (item?: T) => React.ReactNode;
+  dEmptyRender?: (item: T) => React.ReactNode;
+  dExpands?: Set<DId>;
   onScrollEnd?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScroll' });
 function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
   const {
-    dTag = 'ul',
+    children,
     dList,
-    dExpands,
+    dFillNode,
     dItemRender,
     dItemSize,
     dItemNested,
@@ -62,20 +69,20 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     dPadding,
     dHorizontal = false,
     dEmptyRender,
+    dExpands,
     onScrollEnd,
-
-    ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
-
-  //#region Ref
-  const listRef = useRef<HTMLUListElement>(null);
-  //#endregion
 
   const dataRef = useRef<{
     listCache: Map<DId, React.ReactNode[]>;
   }>({ listCache: new Map() });
 
   const asyncCapture = useAsync();
+
+  const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
+  const scrollRef = useCallback((el: HTMLElement | null) => {
+    setScrollEl(el);
+  }, []);
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const getItemSize = useMemo(() => (isNumber(dItemSize) ? () => dItemSize : dItemSize), [dItemSize]);
@@ -122,20 +129,19 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
 
   const [elSize, setElSize] = useState<number>();
   const [elPaddingSize, setElPaddingSize] = useState(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useIsomorphicLayoutEffect(() => {
-    if (isUndefined(dSize) && listRef.current) {
-      setElSize(listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight']);
+    if (isUndefined(dSize) && scrollEl) {
+      setElSize(scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight']);
     }
-    if (isUndefined(dPadding) && listRef.current) {
-      setElPaddingSize(toPx(getComputedStyle(listRef.current).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true));
+    if (isUndefined(dPadding) && scrollEl) {
+      setElPaddingSize(toPx(getComputedStyle(scrollEl).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true));
     }
-  });
+  }, [dHorizontal, dPadding, dSize, scrollEl]);
   useEffect(() => {
     if (isUndefined(dSize)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-      const el = listRef.current;
+      const el = scrollEl;
       if (el) {
         asyncGroup.onResize(el, () => {
           setElSize(el[dHorizontal ? 'clientWidth' : 'clientHeight']);
@@ -146,7 +152,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dHorizontal, dSize]);
+  }, [asyncCapture, dHorizontal, dSize, scrollEl]);
 
   const paddingSize = dPadding ?? elPaddingSize;
 
@@ -178,7 +184,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         let emptyNode: React.ReactNode;
         if (item === EMPTY) {
           size = dItemNested?.(parent[parent.length - 1])?.emptySize ?? 0;
-          emptyNode = <React.Fragment key="$$empty">{dEmptyRender(parent[parent.length - 1])}</React.Fragment>;
+          emptyNode = <React.Fragment key="$$empty">{dEmptyRender?.(parent[parent.length - 1])}</React.Fragment>;
         } else {
           key = dItemKey(item);
           size = getItemSize(item);
@@ -263,20 +269,32 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
 
       if (fillSize[0] > 0) {
         list.unshift(
-          <div
-            key="$$fill-size-0"
-            style={{ display: dHorizontal ? 'inline-block' : undefined, [dHorizontal ? 'width' : 'height']: fillSize[0] }}
-            aria-hidden
-          ></div>
+          React.cloneElement(dFillNode, {
+            ...dFillNode.props,
+            key: '$$fill-size-0',
+            style: {
+              ...dFillNode.props.style,
+              overflow: 'hidden',
+              [dHorizontal ? 'height' : 'width']: 0,
+              [dHorizontal ? 'width' : 'height']: fillSize[0],
+            },
+            'aria-hidden': true,
+          })
         );
       }
       if (fillSize[1] > 0) {
         list.push(
-          <div
-            key="$$fill-size-1"
-            style={{ display: dHorizontal ? 'inline-block' : undefined, [dHorizontal ? 'width' : 'height']: fillSize[1] }}
-            aria-hidden
-          ></div>
+          React.cloneElement(dFillNode, {
+            ...dFillNode.props,
+            key: '$$fill-size-1',
+            style: {
+              ...dFillNode.props.style,
+              overflow: 'hidden',
+              [dHorizontal ? 'height' : 'width']: 0,
+              [dHorizontal ? 'width' : 'height']: fillSize[1],
+            },
+            'aria-hidden': true,
+          })
         );
       }
 
@@ -287,8 +305,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   })();
 
   const scrollTo = (num: number) => {
-    if (listRef.current) {
-      listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
+    if (scrollEl) {
+      scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
     }
   };
 
@@ -308,7 +326,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     let findItem: T | undefined;
     let offsetSize: [number, number] | undefined;
 
-    if (listRef.current) {
+    if (scrollEl) {
       let index = -1;
       let findIndex = -1;
       const accSizeList = [];
@@ -343,8 +361,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
       }
 
       if (!isUndefined(offsetSize)) {
-        const listElScrollPosition = listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop'];
-        const listElClientSize = listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight'];
+        const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
+        const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
         if (listElScrollPosition > offsetSize[1]) {
           scrollTo(offsetSize[0] - paddingSize);
         } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
@@ -373,8 +391,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   });
 
   const scrollToEnd = useEventCallback(() => {
-    if (listRef.current) {
-      scrollTo(listRef.current[dHorizontal ? 'scrollWidth' : 'scrollHeight']);
+    if (scrollEl) {
+      scrollTo(scrollEl[dHorizontal ? 'scrollWidth' : 'scrollHeight']);
     }
 
     return lastFocusableItem;
@@ -391,31 +409,23 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     [scrollByStep, scrollToEnd, scrollToStart, scrollToItem]
   );
 
-  return React.createElement(
-    dTag,
-    {
-      ...restProps,
-      ref: listRef,
-      onScroll: (e) => {
-        restProps.onScroll?.(e);
+  return children({
+    vsScrollRef: scrollRef,
+    vsRender: list,
+    vsOnScroll: (e) => {
+      setScrollPosition(e.currentTarget[dHorizontal ? 'scrollLeft' : 'scrollTop']);
 
-        if (listRef.current) {
-          setScrollPosition(listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop']);
-
-          if (
-            dHorizontal
-              ? listRef.current.scrollLeft + listRef.current.clientWidth === listRef.current.scrollWidth
-              : listRef.current.scrollTop + listRef.current.clientHeight === listRef.current.scrollHeight
-          ) {
-            onScrollEnd?.();
-          }
-        }
-      },
-    } as React.HTMLAttributes<HTMLElement>,
-    dList.length === 0 ? dEmptyRender() : list
-  );
+      if (
+        dHorizontal
+          ? e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth
+          : e.currentTarget.scrollTop + e.currentTarget.clientHeight === e.currentTarget.scrollHeight
+      ) {
+        onScrollEnd?.();
+      }
+    },
+  });
 }
 
 export const DVirtualScroll: <T>(
-  props: DVirtualScrollProps<T> & { ref?: React.ForwardedRef<DVirtualScrollRef<T>> }
+  props: DVirtualScrollProps<T> & React.RefAttributes<DVirtualScrollRef<T>>
 ) => ReturnType<typeof VirtualScroll> = React.forwardRef(VirtualScroll) as any;

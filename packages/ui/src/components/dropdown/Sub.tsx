@@ -9,7 +9,7 @@ import { TTANSITION_DURING_POPUP } from '../../utils/global';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 
-export interface DDropdownSubProps {
+export interface DSubProps {
   children: React.ReactNode;
   dId: string;
   dFocusVisible: boolean;
@@ -25,7 +25,7 @@ export interface DDropdownSubProps {
   updatePosition$: Subject<void>;
 }
 
-export function DDropdownSub(props: DDropdownSubProps): JSX.Element | null {
+export function DSub(props: DSubProps): JSX.Element | null {
   const {
     children,
     dId,

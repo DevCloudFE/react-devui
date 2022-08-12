@@ -36,6 +36,7 @@ export interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<
   dModel?: V | null | V[];
   dExpands?: V[];
   dHeight?: number;
+  dExpandAll?: boolean;
   dShowLine?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -55,6 +56,7 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
     dModel,
     dExpands,
     dHeight,
+    dExpandAll = false,
     dShowLine = false,
     dDisabled = false,
     dMultiple = false,
@@ -100,18 +102,20 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
       ),
     [dMultiple, dList]
   );
-  const nodesMap = useMemo(() => {
+  const [nodesMap, initExpandAll] = useMemo(() => {
     const nodes = new Map<V, AbstractTreeNode<V, T>>();
+    const expandAllNodes: V[] = [];
     const reduceArr = (arr: AbstractTreeNode<V, T>[]) => {
       for (const item of arr) {
         nodes.set(item.id, item);
         if (item.children) {
+          expandAllNodes.push(item.id);
           reduceArr(item.children);
         }
       }
     };
     reduceArr(renderNodes);
-    return nodes;
+    return [nodes, expandAllNodes];
   }, [renderNodes]);
 
   const formControlInject = useFormControl(dFormControl);
@@ -138,7 +142,7 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
     node.updateStatus(select);
   });
 
-  const [_expandIds, changeExpandIds] = useDValue<V[]>([], dExpands, (value) => {
+  const [_expandIds, changeExpandIds] = useDValue<V[]>(dExpandAll ? initExpandAll : [], dExpands, (value) => {
     if (onExpandsChange) {
       onExpandsChange(
         value,
@@ -310,32 +314,7 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
           <DVirtualScroll
             {...vsPerformance}
             ref={dVSRef}
-            className={getClassName(restProps.className, `${dPrefix}tree`, {
-              [`${dPrefix}tree--line`]: dShowLine,
-              'is-disabled': disabled,
-            })}
-            style={{
-              ...restProps.style,
-              maxHeight: dHeight,
-            }}
-            tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
-            role={restProps.role ?? 'tree'}
-            aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
-            aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusNode) ? undefined : getItemId(focusNode.id))}
-            onFocus={(e) => {
-              restProps.onFocus?.(e);
-              fvOnFocus(e);
-            }}
-            onBlur={(e) => {
-              restProps.onBlur?.(e);
-              fvOnBlur(e);
-            }}
-            onKeyDown={(e) => {
-              restProps.onKeyDown?.(e);
-              fvOnKeyDown(e);
-
-              handleKeyDown?.(e);
-            }}
+            dFillNode={<li></li>}
             dItemRender={(item, index, { iARIA, iChildren }) => {
               if (item.children) {
                 const isExpand = expandIds.has(item.id);
@@ -480,7 +459,49 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
               </li>
             )}
             onScrollEnd={onScrollBottom}
-          ></DVirtualScroll>
+          >
+            {({ vsScrollRef, vsRender, vsOnScroll }) => (
+              // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
+              <ul
+                ref={vsScrollRef}
+                className={getClassName(restProps.className, `${dPrefix}tree`, {
+                  [`${dPrefix}tree--line`]: dShowLine,
+                  'is-disabled': disabled,
+                })}
+                style={{
+                  ...restProps.style,
+                  maxHeight: dHeight,
+                }}
+                tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
+                role={restProps.role ?? 'tree'}
+                aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
+                aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusNode) ? undefined : getItemId(focusNode.id))}
+                onFocus={(e) => {
+                  restProps.onFocus?.(e);
+                  fvOnFocus(e);
+                }}
+                onBlur={(e) => {
+                  restProps.onBlur?.(e);
+                  fvOnBlur(e);
+                }}
+                onKeyDown={(e) => {
+                  restProps.onKeyDown?.(e);
+                  fvOnKeyDown(e);
+
+                  handleKeyDown?.(e);
+                }}
+                onScroll={vsOnScroll}
+              >
+                {renderNodes.length === 0 ? (
+                  <li className={`${dPrefix}tree__empty`}>
+                    <div className={`${dPrefix}tree__option-content`}>{t('No Data')}</div>
+                  </li>
+                ) : (
+                  vsRender
+                )}
+              </ul>
+            )}
+          </DVirtualScroll>
         </DBaseDesign>
       )}
     </DFocusVisible>
@@ -488,5 +509,5 @@ function Tree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>, re
 }
 
 export const DTree: <V extends DId, T extends DTreeItem<V>>(
-  props: DTreeProps<V, T> & { ref?: React.ForwardedRef<DTreeRef> }
+  props: DTreeProps<V, T> & React.RefAttributes<DTreeRef>
 ) => ReturnType<typeof Tree> = React.forwardRef(Tree) as any;
