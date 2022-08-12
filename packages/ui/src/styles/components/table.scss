@@ -129,11 +129,19 @@ $table-filter-option-height: 32px;
       @include e(cell-content) {
         justify-content: flex-end !important;
       }
+
+      @include e(cell-text) {
+        text-align: right;
+      }
     }
 
     @include m(center) {
       @include e(cell-content) {
         justify-content: center !important;
+      }
+
+      @include e(cell-text) {
+        text-align: center;
       }
     }
 

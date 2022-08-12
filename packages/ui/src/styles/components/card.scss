@@ -41,8 +41,12 @@
 
   @include e(actions) {
     display: flex;
-    height: 49px;
+    height: 48px;
     border-top: 1px solid var(--#{$variable-prefix}color-border);
+
+    .#{$variable-prefix}separator {
+      margin: 8px;
+    }
   }
 
   @include e(action) {
@@ -71,9 +75,5 @@
       pointer-events: none;
       filter: opacity(50%);
     }
-  }
-
-  @include e(action-separator, true) {
-    margin: 8px;
   }
 }
