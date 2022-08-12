@@ -128,7 +128,12 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
           onScrollEnd={onScrollBottom}
         >
           {({ vsScrollRef, vsRender, vsOnScroll }) => (
-            <ul ref={vsScrollRef} className={`${dPrefix}transfer__list`} onScroll={vsOnScroll}>
+            <ul
+              ref={vsScrollRef}
+              className={`${dPrefix}transfer__list`}
+              style={{ pointerEvents: dLoading ? 'none' : undefined }}
+              onScroll={vsOnScroll}
+            >
               {dList.length === 0 ? <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty> : vsRender}
             </ul>
           )}

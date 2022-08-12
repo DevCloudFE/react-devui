@@ -314,6 +314,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
                 ref={vsScrollRef}
                 id={listId}
                 className={`${dPrefix}table__filter-list`}
+                style={{ pointerEvents: dLoading ? 'none' : undefined }}
                 tabIndex={-1}
                 role="listbox"
                 aria-multiselectable={dMultiple}

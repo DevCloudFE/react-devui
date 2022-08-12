@@ -411,6 +411,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
               {hasSearch ? (
                 <DTreeSearchPanel
                   id={listId}
+                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
                   dGetItemId={getItemId}
                   dList={searchList}
                   dFocusItem={searchFocusItem}
@@ -442,7 +443,8 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
                 ></DTreeSearchPanel>
               ) : (
                 <DList
-                  dListId={listId}
+                  id={listId}
+                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
                   dGetItemId={getItemId}
                   dList={renderNodes}
                   dFocusItem={noSearchFocusItem}

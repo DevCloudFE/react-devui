@@ -14,8 +14,7 @@ import { getClassName } from '../../utils';
 import { DCheckbox } from '../checkbox';
 import { DVirtualScroll } from '../virtual-scroll';
 
-export interface DListProps<V extends DId, T extends DCascaderItem<V>> {
-  dListId?: string;
+export interface DListProps<V extends DId, T extends DCascaderItem<V>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dGetItemId: (value: V) => string;
   dList: AbstractTreeNode<V, T>[];
   dFocusItem: AbstractTreeNode<V, T> | undefined;
@@ -29,8 +28,20 @@ export interface DListProps<V extends DId, T extends DCascaderItem<V>> {
 }
 
 export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListProps<V, T>): JSX.Element | null {
-  const { dListId, dGetItemId, dList, dFocusItem, dCustomItem, dMultiple, dFocusVisible, dRoot, onClickItem, onFocusChange, onKeyDown$ } =
-    props;
+  const {
+    dGetItemId,
+    dList,
+    dFocusItem,
+    dCustomItem,
+    dMultiple,
+    dFocusVisible,
+    dRoot,
+    onClickItem,
+    onFocusChange,
+    onKeyDown$,
+
+    ...restProps
+  } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -187,15 +198,21 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
         dPadding={4}
       >
         {({ vsScrollRef, vsRender, vsOnScroll }) => (
+          // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
           <ul
             ref={vsScrollRef}
-            id={dListId}
-            className={`${dPrefix}cascader__list`}
-            tabIndex={-1}
-            role="listbox"
-            aria-multiselectable={dMultiple}
-            aria-activedescendant={dRoot && !isUndefined(dFocusItem) ? dGetItemId(dFocusItem.id) : undefined}
-            onScroll={vsOnScroll}
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}cascader__list`)}
+            tabIndex={restProps.tabIndex ?? -1}
+            role={restProps.role ?? 'listbox'}
+            aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
+            aria-activedescendant={
+              restProps['aria-activedescendant'] ?? (dRoot && !isUndefined(dFocusItem) ? dGetItemId(dFocusItem.id) : undefined)
+            }
+            onScroll={(e) => {
+              restProps.onScroll?.(e);
+              vsOnScroll(e);
+            }}
           >
             {dList.length === 0 ? (
               <li className={`${dPrefix}cascader__empty`}>
@@ -208,7 +225,7 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
         )}
       </DVirtualScroll>
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
-        <DList {...props} dListId={undefined} dList={inFocusNode.children} dRoot={false}></DList>
+        <DList {...props} id={undefined} dList={inFocusNode.children} dRoot={false}></DList>
       )}
     </>
   );

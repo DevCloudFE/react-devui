@@ -166,9 +166,12 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
           className={getClassName(restProps.className, `${dPrefix}tree__search-list`)}
           tabIndex={restProps.tabIndex ?? -1}
           role={restProps.role ?? 'listbox'}
-          aria-multiselectable={dMultiple}
-          aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
-          onScroll={vsOnScroll}
+          aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
+          aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value))}
+          onScroll={(e) => {
+            restProps.onScroll?.(e);
+            vsOnScroll(e);
+          }}
         >
           {dList.length === 0 ? (
             <li className={`${dPrefix}tree__search-empty`}>

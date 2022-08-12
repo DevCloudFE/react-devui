@@ -443,6 +443,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
               {hasSearch ? (
                 <DTreeSearchPanel
                   id={listId}
+                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
                   dGetItemId={getItemId}
                   dList={searchList}
                   dFocusItem={searchFocusItem}
@@ -468,6 +469,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
               ) : (
                 <DTreePanel
                   id={listId}
+                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
                   dGetGroupId={getGroupId}
                   dGetItemId={getItemId}
                   dList={renderNodes}

@@ -448,6 +448,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                         ref={vsScrollRef}
                         id={listId}
                         className={`${dPrefix}auto-complete__list`}
+                        style={{ pointerEvents: dLoading ? 'none' : undefined }}
                         tabIndex={-1}
                         role="listbox"
                         aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}

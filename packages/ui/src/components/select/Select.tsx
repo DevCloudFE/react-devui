@@ -565,6 +565,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                     ref={vsScrollRef}
                     id={listId}
                     className={`${dPrefix}select__list`}
+                    style={{ pointerEvents: dLoading ? 'none' : undefined }}
                     tabIndex={-1}
                     role="listbox"
                     aria-multiselectable={dMultiple}
