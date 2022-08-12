@@ -3,7 +3,7 @@ import type { DId } from '../../utils/global';
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
-import { useAsync, useComponentConfig, useEventCallback, useIsomorphicLayoutEffect } from '../../hooks';
+import { useAsync, useComponentConfig, useEventCallback, useForceUpdate } from '../../hooks';
 import { registerComponentMate, toPx } from '../../utils';
 
 const EMPTY = Symbol();
@@ -78,6 +78,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   }>({ listCache: new Map() });
 
   const asyncCapture = useAsync();
+  const forceUpdate = useForceUpdate();
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
   const scrollRef = useCallback((el: HTMLElement | null) => {
@@ -127,24 +128,22 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     return [items, reduceArr(dList), firstFocusableItem, lastFocusableItem];
   }, [checkFocusable, dExpands, dItemKey, dItemNested, dList, getItemSize]);
 
-  const [elSize, setElSize] = useState<number>();
-  const [elPaddingSize, setElPaddingSize] = useState(0);
-  useIsomorphicLayoutEffect(() => {
-    if (isUndefined(dSize) && scrollEl) {
-      setElSize(scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight']);
-    }
-    if (isUndefined(dPadding) && scrollEl) {
-      setElPaddingSize(toPx(getComputedStyle(scrollEl).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true));
-    }
-  }, [dHorizontal, dPadding, dSize, scrollEl]);
+  let elSize: number | undefined;
+  let elPaddingSize: number | undefined;
+  if (scrollEl) {
+    elSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
+    elPaddingSize = toPx(getComputedStyle(scrollEl).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true);
+  }
+  const ulSize = dSize ?? elSize;
+  const paddingSize = dPadding ?? elPaddingSize;
+
   useEffect(() => {
     if (isUndefined(dSize)) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
-      const el = scrollEl;
-      if (el) {
-        asyncGroup.onResize(el, () => {
-          setElSize(el[dHorizontal ? 'clientWidth' : 'clientHeight']);
+      if (scrollEl) {
+        asyncGroup.onResize(scrollEl, () => {
+          forceUpdate();
         });
       }
 
@@ -152,13 +151,10 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dHorizontal, dSize, scrollEl]);
-
-  const paddingSize = dPadding ?? elPaddingSize;
+  }, [asyncCapture, dSize, forceUpdate, scrollEl]);
 
   const list = (() => {
-    const ulSize = dSize ?? elSize;
-    if (isUndefined(ulSize)) {
+    if (isUndefined(ulSize) || isUndefined(paddingSize)) {
       return [];
     }
 
@@ -311,77 +307,81 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   };
 
   const scrollToItem = useEventCallback((item: T) => {
-    const findItem = itemsMap.get(dItemKey(item));
+    if (!isUndefined(paddingSize)) {
+      const findItem = itemsMap.get(dItemKey(item));
 
-    if (!isUndefined(findItem)) {
-      scrollTo(findItem.accSize - getItemSize(findItem.item) + paddingSize);
+      if (!isUndefined(findItem)) {
+        scrollTo(findItem.accSize - getItemSize(findItem.item) + paddingSize);
+      }
     }
   });
 
   const scrollByStep = useEventCallback((step: number) => {
-    if (isUndefined(dFocusItem)) {
-      return step > 0 ? scrollToStart() : scrollToEnd();
-    }
-
-    let findItem: T | undefined;
-    let offsetSize: [number, number] | undefined;
-
-    if (scrollEl) {
-      let index = -1;
-      let findIndex = -1;
-      const accSizeList = [];
-      for (const iterator of itemsMap) {
-        index += 1;
-        if (dItemKey(iterator[1].item) === dItemKey(dFocusItem)) {
-          findIndex = index;
-        }
-        accSizeList.push(iterator[1]);
+    if (!isUndefined(paddingSize)) {
+      if (isUndefined(dFocusItem)) {
+        return step > 0 ? scrollToStart() : scrollToEnd();
       }
 
-      if (findIndex !== -1) {
-        if (step < 0) {
-          for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
-            const accSizeItem = nth(accSizeList, index);
-            if (accSizeItem && checkFocusable(accSizeItem.item)) {
-              findItem = accSizeItem.item;
-              offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
-              break;
-            }
-          }
-        } else {
-          for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
-            const accSizeItem = nth(accSizeList, index % accSizeList.length);
-            if (accSizeItem && checkFocusable(accSizeItem.item)) {
-              findItem = accSizeItem.item;
-              offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
-              break;
-            }
-          }
-        }
-      }
+      let findItem: T | undefined;
+      let offsetSize: [number, number] | undefined;
 
-      if (!isUndefined(offsetSize)) {
-        const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
-        const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
-        if (listElScrollPosition > offsetSize[1]) {
-          scrollTo(offsetSize[0] - paddingSize);
-        } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
-          scrollTo(offsetSize[1] - listElClientSize + paddingSize);
-        } else {
-          if (step > 0) {
-            if (offsetSize[1] > listElScrollPosition + listElClientSize) {
-              scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+      if (scrollEl) {
+        let index = -1;
+        let findIndex = -1;
+        const accSizeList = [];
+        for (const iterator of itemsMap) {
+          index += 1;
+          if (dItemKey(iterator[1].item) === dItemKey(dFocusItem)) {
+            findIndex = index;
+          }
+          accSizeList.push(iterator[1]);
+        }
+
+        if (findIndex !== -1) {
+          if (step < 0) {
+            for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
+              const accSizeItem = nth(accSizeList, index);
+              if (accSizeItem && checkFocusable(accSizeItem.item)) {
+                findItem = accSizeItem.item;
+                offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
+                break;
+              }
             }
           } else {
-            if (listElScrollPosition > offsetSize[0]) {
-              scrollTo(offsetSize[0] - paddingSize);
+            for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
+              const accSizeItem = nth(accSizeList, index % accSizeList.length);
+              if (accSizeItem && checkFocusable(accSizeItem.item)) {
+                findItem = accSizeItem.item;
+                offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
+                break;
+              }
+            }
+          }
+        }
+
+        if (!isUndefined(offsetSize)) {
+          const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
+          const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
+          if (listElScrollPosition > offsetSize[1]) {
+            scrollTo(offsetSize[0] - paddingSize);
+          } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
+            scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+          } else {
+            if (step > 0) {
+              if (offsetSize[1] > listElScrollPosition + listElClientSize) {
+                scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+              }
+            } else {
+              if (listElScrollPosition > offsetSize[0]) {
+                scrollTo(offsetSize[0] - paddingSize);
+              }
             }
           }
         }
       }
-    }
 
-    return findItem;
+      return findItem;
+    }
   });
 
   const scrollToStart = useEventCallback(() => {

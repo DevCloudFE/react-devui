@@ -1,5 +1,6 @@
 import type { DId } from '../../utils/global';
-import type { AbstractTreeNode, MultipleTreeNode } from '../tree/node';
+import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
+import type { AbstractTreeNode } from '../tree/node';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem } from './Cascader';
 import type { Subject } from 'rxjs';
@@ -13,59 +14,42 @@ import { getClassName } from '../../utils';
 import { DCheckbox } from '../checkbox';
 import { DVirtualScroll } from '../virtual-scroll';
 
-export interface DListProps<ID extends DId, T> {
+export interface DListProps<V extends DId, T extends DCascaderItem<V>> {
   dListId?: string;
-  dGetItemId: (value: ID) => string;
-  dNodes: AbstractTreeNode<ID, T>[];
-  dSelected: ID | null | Set<ID>;
-  dFocusNode: AbstractTreeNode<ID, T> | undefined;
+  dGetItemId: (value: V) => string;
+  dList: AbstractTreeNode<V, T>[];
+  dFocusItem: AbstractTreeNode<V, T> | undefined;
   dCustomItem?: (item: T) => React.ReactNode;
   dMultiple: boolean;
-  dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
   dRoot: boolean;
-  onSelectedChange: (value: ID | null | ID[]) => void;
-  onClose: () => void;
-  onFocusChange: (node: AbstractTreeNode<ID, T>) => void;
-  onKeyDown$: Subject<'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click'>;
+  onFocusChange: (node: AbstractTreeNode<V, T>) => void;
+  onClickItem: (node: AbstractTreeNode<V, T>) => void;
+  onKeyDown$: Subject<DComboboxKeyboardSupportKey | 'click'>;
 }
 
-export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListProps<ID, T>): JSX.Element | null {
-  const {
-    dListId,
-    dGetItemId,
-    dNodes,
-    dSelected,
-    dFocusNode,
-    dCustomItem,
-    dMultiple,
-    dOnlyLeafSelectable,
-    dFocusVisible,
-    dRoot,
-    onSelectedChange,
-    onClose,
-    onFocusChange,
-    onKeyDown$,
-  } = props;
+export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListProps<V, T>): JSX.Element | null {
+  const { dListId, dGetItemId, dList, dFocusItem, dCustomItem, dMultiple, dFocusVisible, dRoot, onClickItem, onFocusChange, onKeyDown$ } =
+    props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<AbstractTreeNode<ID, T>>>(null);
+  const dVSRef = useRef<DVirtualScrollRef<AbstractTreeNode<V, T>>>(null);
   //#endregion
 
   const [t] = useTranslation();
 
-  const isFocus = dFocusNode && dNodes.findIndex((node) => node.id === dFocusNode.id) !== -1;
+  const isFocus = dFocusItem && dList.findIndex((node) => node.id === dFocusItem.id) !== -1;
   const inFocusNode = (() => {
-    if (dFocusNode) {
-      for (const node of dNodes) {
-        if (dFocusNode.id === node.id) {
+    if (dFocusItem) {
+      for (const node of dList) {
+        if (dFocusItem.id === node.id) {
           return node;
         }
-        let _node = dFocusNode;
+        let _node = dFocusItem;
         while (_node.parent) {
           _node = _node.parent;
           if (_node.id === node.id) {
@@ -75,29 +59,15 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
       }
     }
   })();
-  const shouldInitFocus = dRoot && isUndefined(dFocusNode);
+  const shouldInitFocus = dRoot && isUndefined(dFocusItem);
 
-  const changeSelectByClick = useEventCallback((node: AbstractTreeNode<ID, T>) => {
-    if (dMultiple) {
-      const checkeds = (node as MultipleTreeNode<ID, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', dSelected as Set<ID>);
-      onSelectedChange(Array.from(checkeds.keys()));
-    } else {
-      if (!dOnlyLeafSelectable || node.isLeaf) {
-        onSelectedChange(node.id);
-      }
-      if (node.isLeaf) {
-        onClose();
-      }
-    }
-  });
-
-  const handleKeyDown = useEventCallback((code: 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click') => {
-    const focusNode = (node: AbstractTreeNode<ID, T> | undefined) => {
+  const handleKeyDown = useEventCallback((key: DComboboxKeyboardSupportKey | 'click') => {
+    const focusNode = (node: AbstractTreeNode<V, T> | undefined) => {
       if (node) {
         onFocusChange(node);
       }
     };
-    switch (code) {
+    switch (key) {
       case 'next':
         focusNode(dVSRef.current?.scrollByStep(1));
         break;
@@ -133,7 +103,7 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
 
       case 'click':
         if (inFocusNode) {
-          changeSelectByClick(inFocusNode);
+          onClickItem(inFocusNode);
         }
         break;
 
@@ -145,8 +115,8 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
   useEffect(() => {
     if (isFocus || shouldInitFocus) {
       const ob = onKeyDown$.subscribe({
-        next: (code) => {
-          handleKeyDown(code);
+        next: (key) => {
+          handleKeyDown(key);
         },
       });
 
@@ -156,14 +126,14 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
     }
   }, [handleKeyDown, isFocus, onKeyDown$, shouldInitFocus]);
 
-  const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<ID, T>>>(
+  const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<V, T>>>(
     () => ({
-      dList: dNodes,
+      dList,
       dItemSize: 32,
       dItemKey: (item) => item.id,
       dFocusable: (item) => item.enabled,
     }),
-    [dNodes]
+    [dList]
   );
 
   return (
@@ -189,17 +159,17 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
             onClick={() => {
               onFocusChange(item);
               if (!dMultiple || item.isLeaf) {
-                changeSelectByClick(item);
+                onClickItem(item);
               }
             }}
           >
-            {dFocusVisible && item.id === dFocusNode?.id && <div className={`${dPrefix}focus-outline`}></div>}
+            {dFocusVisible && item.id === dFocusItem?.id && <div className={`${dPrefix}focus-outline`}></div>}
             {dMultiple && (
               <DCheckbox
                 onClick={(e) => {
                   e.stopPropagation();
                   onFocusChange(item);
-                  changeSelectByClick(item);
+                  onClickItem(item);
                 }}
                 dModel={item.checked}
                 dDisabled={item.disabled}
@@ -224,10 +194,10 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
             tabIndex={-1}
             role="listbox"
             aria-multiselectable={dMultiple}
-            aria-activedescendant={dRoot && !isUndefined(dFocusNode) ? dGetItemId(dFocusNode.id) : undefined}
+            aria-activedescendant={dRoot && !isUndefined(dFocusItem) ? dGetItemId(dFocusItem.id) : undefined}
             onScroll={vsOnScroll}
           >
-            {dNodes.length === 0 ? (
+            {dList.length === 0 ? (
               <li className={`${dPrefix}cascader__empty`}>
                 <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
               </li>
@@ -238,7 +208,7 @@ export function DList<ID extends DId, T extends DCascaderItem<ID>>(props: DListP
         )}
       </DVirtualScroll>
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
-        <DList {...props} dListId={undefined} dNodes={inFocusNode.children} dRoot={false}></DList>
+        <DList {...props} dListId={undefined} dList={inFocusNode.children} dRoot={false}></DList>
       )}
     </>
   );

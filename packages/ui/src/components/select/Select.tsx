@@ -364,8 +364,8 @@ function Select<V extends DId, T extends DSelectItem<V>>(
       dVisible={visible}
       dEditable={dSearchable}
       onVisibleChange={changeVisible}
-      onFocusChange={(focus) => {
-        switch (focus) {
+      onFocusChange={(key) => {
+        switch (key) {
           case 'next':
             changeFocusItem(dVSRef.current?.scrollByStep(1));
             break;

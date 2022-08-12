@@ -269,8 +269,8 @@ function AutoComplete<T extends DAutoCompleteItem>(
             dVisible={visible}
             dEditable
             onVisibleChange={changeVisible}
-            onFocusChange={(focus) => {
-              switch (focus) {
+            onFocusChange={(key) => {
+              switch (key) {
                 case 'next':
                   changeFocusItem(dVSRef.current?.scrollByStep(1));
                   break;

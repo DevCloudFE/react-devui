@@ -1,6 +1,8 @@
 import { useAsync } from '../../hooks';
 import { isPrintableCharacter } from './utils';
 
+export type DComboboxKeyboardSupportKey = 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level';
+
 export interface DComboboxKeyboardSupportRenderProps {
   ksOnKeyDown: React.KeyboardEventHandler;
 }
@@ -11,7 +13,7 @@ export interface DComboboxKeyboardSupportProps {
   dEditable?: boolean;
   dNested?: boolean;
   onVisibleChange?: (dVisible: boolean) => void;
-  onFocusChange?: (focus: 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level') => void;
+  onFocusChange?: (key: DComboboxKeyboardSupportKey) => void;
 }
 
 export function DComboboxKeyboardSupport(props: DComboboxKeyboardSupportProps): JSX.Element | null {

@@ -184,9 +184,11 @@ h3 {
 
   section[id^='Compose'],
   section[id^='Cascader'],
-  section[id^='Select'] {
+  section[id^='Select'],
+  section[id^='TreeSelect'] {
     .d-select,
-    .d-cascader {
+    .d-cascader,
+    .d-tree-select {
       width: 400px;
     }
   }
@@ -222,6 +224,7 @@ h3 {
         'Tag': 'tag',
         'Select': 'select',
         'Cascader': 'cascader',
+        'TreeSelect': 'tree-select',
         'Radio': 'radio',
         'Input': 'input',
         'Switch': 'switch',

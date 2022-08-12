@@ -68,7 +68,7 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const generalStateContextValue = useMemo<DTableContextData>(
+  const contextValue = useMemo<DTableContextData>(
     () => ({
       gFixed: fixed,
       gEllipsis: dEllipsis,
@@ -77,7 +77,7 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
   );
 
   return (
-    <DTableContext.Provider value={generalStateContextValue}>
+    <DTableContext.Provider value={contextValue}>
       <div
         {...restProps}
         ref={combineElRef}

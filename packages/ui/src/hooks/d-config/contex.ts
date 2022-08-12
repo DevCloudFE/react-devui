@@ -69,6 +69,7 @@ import type {
   DTooltipProps,
   DTransferProps,
   DTreeProps,
+  DTreeSelectProps,
   DUploadProps,
   DUploadActionProps,
   DUploadPictureButtonProps,
@@ -156,6 +157,7 @@ export type DComponentConfig = {
   DTooltip: DTooltipProps;
   DTransfer: DTransferProps<any, any>;
   DTree: DTreeProps<any, any>;
+  DTreeSelect: DTreeSelectProps<any, any>;
   DUpload: DUploadProps;
   'DUpload.Action': DUploadActionProps;
   'DUpload.PictureButton': DUploadPictureButtonProps;

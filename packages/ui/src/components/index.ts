@@ -153,6 +153,9 @@ export { DTransfer } from './transfer';
 export type { DTreeProps } from './tree';
 export { DTree } from './tree';
 
+export type { DTreeSelectProps } from './tree-select';
+export { DTreeSelect } from './tree-select';
+
 export type { DUploadProps, DUploadActionProps, DUploadPictureButtonProps } from './upload';
 export { DUpload } from './upload';
 

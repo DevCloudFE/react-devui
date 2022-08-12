@@ -4,7 +4,7 @@ import type { AbstractTreeNode } from '../tree/node';
 export const SEPARATOR = ' / ';
 export const TREE_NODE_KEY = Symbol();
 
-export function getText<ID extends DId>(node: AbstractTreeNode<ID, { label: string }>) {
+export function getText<V extends DId>(node: AbstractTreeNode<V, { label: string }>) {
   const text = [node.origin.label];
   let n = node;
   while (n.parent) {

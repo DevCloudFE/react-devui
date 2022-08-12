@@ -1,0 +1,63 @@
+@include b(tree-select) {
+  @include component-selectbox;
+
+  @include when(disabled) {
+    @include e(multiple-tag) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+    @include e(multiple-count) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+  }
+
+  @include e(multiple-tag) {
+    & + & {
+      margin-left: 8px;
+    }
+  }
+
+  @include e(close) {
+    margin: 0 0 0 4px;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
+  }
+
+  @include e(popup) {
+    position: fixed;
+    background-color: var(--#{$variable-prefix}background-color);
+    border-radius: var(--#{$variable-prefix}border-radius);
+    box-shadow: var(--#{$variable-prefix}shadow-popup);
+
+    .#{$variable-prefix}tree {
+      max-height: 264px;
+      padding: 4px 0;
+      overflow: hidden auto;
+    }
+  }
+
+  @include e(loading) {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-primary);
+    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+
+    @include m(empty) {
+      justify-content: flex-start;
+      background-color: var(--#{$variable-prefix}background-color);
+    }
+  }
+}

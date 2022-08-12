@@ -1,7 +1,8 @@
 import type { DId } from '../../utils/global';
-import type { MultipleTreeNode } from '../tree/node';
+import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
-import type { DCascaderItem, DSearchItem } from './Cascader';
+import type { DTreeItem } from './Tree';
+import type { AbstractTreeNode } from './node';
 import type { Subject } from 'rxjs';
 
 import { isUndefined } from 'lodash';
@@ -13,37 +14,35 @@ import { DCheckbox } from '../checkbox';
 import { DVirtualScroll } from '../virtual-scroll';
 import { getText, TREE_NODE_KEY } from './utils';
 
-interface DSearchListProps<ID extends DId, T> {
-  dListId?: string;
-  dGetItemId: (value: ID) => string;
-  dList: DSearchItem<ID, T>[];
-  dSelected: ID | null | Set<ID>;
-  dFocusItem: DSearchItem<ID, T> | undefined;
+export type DSearchItem<V extends DId, T> = DTreeItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
+
+interface DSearchPanelProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  dGetItemId: (value: V) => string;
+  dList: DSearchItem<V, T>[];
+  dFocusItem: DSearchItem<V, T> | undefined;
   dCustomItem?: (item: T) => React.ReactNode;
   dMultiple: boolean;
   dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
-  onSelectedChange: (value: ID | null | ID[]) => void;
-  onClose: () => void;
-  onFocusChange: (item: DSearchItem<ID, T>) => void;
-  onKeyDown$: Subject<'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click'>;
+  onFocusChange: (item: DSearchItem<V, T>) => void;
+  onClickItem: (item: DSearchItem<V, T>) => void;
+  onKeyDown$: Subject<DComboboxKeyboardSupportKey | 'click'>;
 }
 
-export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: DSearchListProps<ID, T>): JSX.Element | null {
+export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSearchPanelProps<V, T>): JSX.Element | null {
   const {
-    dListId,
     dGetItemId,
     dList,
-    dSelected,
     dFocusItem,
     dCustomItem,
     dMultiple,
     dOnlyLeafSelectable,
     dFocusVisible,
-    onSelectedChange,
-    onClose,
     onFocusChange,
+    onClickItem,
     onKeyDown$,
+
+    ...restProps
   } = props;
 
   //#region Context
@@ -51,31 +50,18 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<DSearchItem<ID, T>>>(null);
+  const dVSRef = useRef<DVirtualScrollRef<DSearchItem<V, T>>>(null);
   //#endregion
 
   const [t] = useTranslation();
 
-  const changeSelectByClick = useEventCallback((item: DSearchItem<ID, T>) => {
-    if (dMultiple) {
-      const checkeds = (item[TREE_NODE_KEY] as MultipleTreeNode<ID, T>).changeStatus(
-        item[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
-        dSelected as Set<ID>
-      );
-      onSelectedChange(Array.from(checkeds.keys()));
-    } else {
-      onSelectedChange(item[TREE_NODE_KEY].id);
-      onClose();
-    }
-  });
-
-  const handleKeyDown = useEventCallback((code: 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level' | 'click') => {
-    const focusItem = (item: DSearchItem<ID, T> | undefined) => {
+  const handleKeyDown = useEventCallback((key: DComboboxKeyboardSupportKey | 'click') => {
+    const focusItem = (item: DSearchItem<V, T> | undefined) => {
       if (item) {
         onFocusChange(item);
       }
     };
-    switch (code) {
+    switch (key) {
       case 'next':
         focusItem(dVSRef.current?.scrollByStep(1));
         break;
@@ -94,7 +80,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
 
       case 'click':
         if (dFocusItem) {
-          changeSelectByClick(dFocusItem);
+          onClickItem(dFocusItem);
         }
         break;
 
@@ -105,8 +91,8 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
 
   useEffect(() => {
     const ob = onKeyDown$.subscribe({
-      next: (code) => {
-        handleKeyDown(code);
+      next: (key) => {
+        handleKeyDown(key);
       },
     });
 
@@ -115,7 +101,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
     };
   }, [handleKeyDown, onKeyDown$]);
 
-  const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<ID, T>>>(
+  const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<V, T>>>(
     () => ({
       dList,
       dItemSize: 32,
@@ -149,7 +135,7 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
             {...iARIA}
             key={item.value}
             id={dGetItemId(item.value)}
-            className={getClassName(`${dPrefix}cascader__option`, {
+            className={getClassName(`${dPrefix}tree__search-option`, {
               'is-selected': !dMultiple && inSelected,
               'is-disabled': node.disabled,
             })}
@@ -159,12 +145,12 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
             aria-disabled={node.disabled}
             onClick={() => {
               onFocusChange(item);
-              changeSelectByClick(item);
+              onClickItem(item);
             }}
           >
             {dFocusVisible && dFocusItem?.value === item.value && <div className={`${dPrefix}focus-outline`}></div>}
             {dMultiple && <DCheckbox dModel={node.checked} dDisabled={node.disabled}></DCheckbox>}
-            <div className={`${dPrefix}cascader__option-content`}>{dCustomItem ? dCustomItem(node.origin) : getText(node)}</div>
+            <div className={`${dPrefix}tree__search-option-content`}>{dCustomItem ? dCustomItem(node.origin) : getText(node)}</div>
           </li>
         );
       }}
@@ -173,19 +159,20 @@ export function DSearchList<ID extends DId, T extends DCascaderItem<ID>>(props: 
       dPadding={4}
     >
       {({ vsScrollRef, vsRender, vsOnScroll }) => (
+        // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
         <ul
+          {...restProps}
           ref={vsScrollRef}
-          id={dListId}
-          className={`${dPrefix}cascader__list`}
-          tabIndex={-1}
-          role="listbox"
+          className={getClassName(restProps.className, `${dPrefix}tree__search-list`)}
+          tabIndex={restProps.tabIndex ?? -1}
+          role={restProps.role ?? 'listbox'}
           aria-multiselectable={dMultiple}
           aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
           onScroll={vsOnScroll}
         >
           {dList.length === 0 ? (
-            <li className={`${dPrefix}cascader__empty`}>
-              <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
+            <li className={`${dPrefix}tree__search-empty`}>
+              <div className={`${dPrefix}tree__search-option-content`}>{t('No Data')}</div>
             </li>
           ) : (
             vsRender

@@ -151,4 +151,52 @@ $tree-option-height: 32px;
     margin-left: 22px;
     color: var(--#{$variable-prefix}color-disabled);
   }
+
+  @include e(search-list) {
+    position: relative;
+    max-height: 264px;
+    padding: 4px 0;
+    margin: 0;
+    overflow: hidden auto;
+    list-style: none;
+  }
+
+  @include e(search-option) {
+    position: relative;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+    width: 100%;
+    height: $tree-option-height;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:not(.is-selected):hover {
+      background-color: var(--#{$variable-prefix}background-color-hover);
+    }
+
+    @include when(disabled) {
+      color: var(--#{$variable-prefix}color-disabled);
+      pointer-events: none;
+    }
+
+    @include when(selected) {
+      background-color: var(--#{$variable-prefix}background-color-primary);
+    }
+  }
+
+  @include e(search-option-content) {
+    @include utils-ellipsis;
+
+    flex: 1 0 0;
+  }
+
+  @include e(search-empty) {
+    display: flex;
+    align-items: center;
+    height: $tree-option-height;
+    padding: 0 12px;
+    color: var(--#{$variable-prefix}color-disabled);
+  }
 }

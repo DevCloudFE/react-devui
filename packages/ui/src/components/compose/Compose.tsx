@@ -45,7 +45,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled;
 
-  const generalStateContextValue = useMemo<DComposeContextData>(
+  const contextValue = useMemo<DComposeContextData>(
     () => ({
       gSize: size,
       gDisabled: disabled,
@@ -54,7 +54,7 @@ function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JS
   );
 
   return (
-    <DComposeContext.Provider value={generalStateContextValue}>
+    <DComposeContext.Provider value={contextValue}>
       <div
         {...restProps}
         ref={combineElRef}
