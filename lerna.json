@@ -7,7 +7,8 @@
     "version": {
       "conventionalCommits": true,
       "message": "chore: release %v",
-      "createRelease": "github"
+      "createRelease": "github",
+      "forcePublish": true
     },
     "publish": {
       "yes": true

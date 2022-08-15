@@ -25,5 +25,8 @@
   "publishConfig": {
     "access": "public",
     "directory": "../../dist/packages/ui"
+  },
+  "peerDependencies": {
+    "rfs": "^9.0.6"
   }
 }
