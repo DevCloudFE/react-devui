@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.2](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.1...v0.1.0-alpha.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **ui:** add `rfs` that miss ([183252e](https://github.com/DevCloudFE/react-devui/commit/183252ea5a88e78a7afc552f9e445f456a61dc2b))
+
+
+
+
+
 # [0.1.0-alpha.1](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.0...v0.1.0-alpha.1) (2022-08-15)
 
 **Note:** Version bump only for package react-devui
