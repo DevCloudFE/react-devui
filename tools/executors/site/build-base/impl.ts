@@ -13,7 +13,7 @@ import { debounceTime, tap, mapTo } from 'rxjs/operators';
 
 const yamlFront = require('yaml-front-matter');
 
-const COMPONENTS_DIR = String.raw`packages/ui/src/components`;
+const COMPONENTS_DIR = String.raw`packages/ui/components`;
 const ROUTES_DIR = String.raw`packages/site/src/app/routes`;
 const OUTPUT_PATH = {
   routeDir: String.raw`packages/site/dist/routes`,

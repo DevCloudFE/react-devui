@@ -1,27 +1,31 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/icons/src",
+  "sourceRoot": "packages/icons",
   "projectType": "library",
   "tags": ["scope:icons"],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/icons",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "format": ["esm"],
         "tsConfig": "packages/icons/tsconfig.lib.json",
-        "project": "packages/icons/package.json",
-        "entryFile": "packages/icons/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "main": "packages/icons/index.ts",
         "assets": [
           {
-            "glob": "packages/icons/README.md",
-            "input": ".",
-            "output": "."
+            "glob": "CHANGELOG.md",
+            "input": "packages/icons",
+            "output": "/"
+          },
+          {
+            "glob": "README.md",
+            "input": "packages/icons",
+            "output": "/"
+          },
+          {
+            "glob": "LICENSE",
+            "input": "",
+            "output": "/"
           }
         ]
       }

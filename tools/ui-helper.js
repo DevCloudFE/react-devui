@@ -1,7 +1,7 @@
 const { outputFileSync, readdirSync, statSync, readFileSync } = require('fs-extra');
 const path = require('path');
 
-const COMPONENT_DIR = path.join(__dirname, '../packages/ui/src/components');
+const COMPONENT_DIR = path.join(__dirname, '../packages/ui/components');
 const OUT_FILE = path.join(__dirname, '../ui-helper');
 
 let componentConfigs = String.raw`import type {__props__

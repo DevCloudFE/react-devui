@@ -36,7 +36,7 @@ const rxjs_1 = require("rxjs");
 const rxjs_for_await_1 = require("rxjs-for-await");
 const operators_1 = require("rxjs/operators");
 const yamlFront = require('yaml-front-matter');
-const COMPONENTS_DIR = String.raw `packages/ui/src/components`;
+const COMPONENTS_DIR = String.raw `packages/ui/components`;
 const ROUTES_DIR = String.raw `packages/site/src/app/routes`;
 const OUTPUT_PATH = {
     routeDir: String.raw `packages/site/dist/routes`,

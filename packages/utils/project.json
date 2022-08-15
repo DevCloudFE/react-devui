@@ -1,27 +1,31 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/utils/src",
+  "sourceRoot": "packages/utils",
   "projectType": "library",
   "tags": ["scope:shared"],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/utils",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "format": ["esm"],
         "tsConfig": "packages/utils/tsconfig.lib.json",
-        "project": "packages/utils/package.json",
-        "entryFile": "packages/utils/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "main": "packages/utils/index.ts",
         "assets": [
           {
-            "glob": "packages/utils/README.md",
-            "input": ".",
-            "output": "."
+            "glob": "CHANGELOG.md",
+            "input": "packages/utils",
+            "output": "/"
+          },
+          {
+            "glob": "README.md",
+            "input": "packages/utils",
+            "output": "/"
+          },
+          {
+            "glob": "LICENSE",
+            "input": "",
+            "output": "/"
           }
         ]
       }
