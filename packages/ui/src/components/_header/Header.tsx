@@ -2,9 +2,10 @@ import type { DButtonProps } from '../button';
 
 import React, { useState } from 'react';
 
+import { CloseOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useTranslation } from '../../hooks';
-import { CloseOutlined } from '../../icons';
-import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
 export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {

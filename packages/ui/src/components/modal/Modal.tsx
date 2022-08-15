@@ -5,10 +5,12 @@ import { isNumber, isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useAsync, useDValue } from '../../hooks';
-import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { registerComponentMate, getClassName, handleModalKeyDown, checkNodeExist } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useAsync, useElement, useLockScroll } from '@react-devui/hooks';
+import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DModalFooter } from './ModalFooter';

@@ -1,7 +1,8 @@
 import type { DMenuMode } from './Menu';
 
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig } from '../../hooks';
-import { checkNodeExist, getClassName } from '../../utils';
 import { DTooltip } from '../tooltip';
 
 export interface DItemProps {

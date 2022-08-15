@@ -1,13 +1,16 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DPopupPlacement } from '../../utils/position';
 import type { DPopoverFooterPropsWithPrivate } from './PopoverFooter';
 import type { DPopoverHeaderPropsWithPrivate } from './PopoverHeader';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useMaxIndex, useDValue, useLockScroll } from '../../hooks';
-import { registerComponentMate, getClassName, getPopupPosition, handleModalKeyDown } from '../../utils';
+import { useElement, useEventCallback, useLockScroll } from '@react-devui/hooks';
+import { getClassName, getPopupPosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate, handleModalKeyDown } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { DPopoverFooter } from './PopoverFooter';

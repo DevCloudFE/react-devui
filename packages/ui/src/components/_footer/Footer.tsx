@@ -2,8 +2,9 @@ import type { DButtonProps } from '../button';
 
 import React, { useState } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useTranslation } from '../../hooks';
-import { getClassName } from '../../utils';
 import { DButton } from '../button';
 
 export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {

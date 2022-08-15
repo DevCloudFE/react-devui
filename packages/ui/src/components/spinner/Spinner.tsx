@@ -3,9 +3,11 @@ import type { DTransitionState } from '../_transition';
 import { isNumber, isUndefined } from 'lodash';
 import { useEffect, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useAsync, useForceUpdate } from '../../hooks';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useAsync, useForceUpdate } from '@react-devui/hooks';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 
 export interface DSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {

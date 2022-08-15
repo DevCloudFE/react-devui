@@ -1,5 +1,7 @@
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {

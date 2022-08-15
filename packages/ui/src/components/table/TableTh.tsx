@@ -1,9 +1,11 @@
 import { isUndefined } from 'lodash';
 import React from 'react';
 
+import { CaretDownOutlined, CaretUpOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
-import { CaretDownOutlined, CaretUpOutlined } from '../../icons';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DCell } from './Cell';
 
 export interface DTableThProps extends React.ThHTMLAttributes<HTMLTableCellElement> {

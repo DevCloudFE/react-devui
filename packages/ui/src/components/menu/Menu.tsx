@@ -1,11 +1,13 @@
-import type { DNestedChildren, DId } from '../../utils/global';
+import type { DId, DNestedChildren } from '../../utils';
 
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useDValue, useEventNotify } from '../../hooks';
-import { findNested, registerComponentMate, getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useEventNotify } from '@react-devui/hooks';
+import { findNested, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';

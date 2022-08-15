@@ -1,9 +1,11 @@
 import { isNull } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
+import { DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
-import { DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, LeftOutlined, RightOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DInput } from '../input';
 import { DSelect } from '../select';
 import { getButtonRoleAttributes } from './utils';

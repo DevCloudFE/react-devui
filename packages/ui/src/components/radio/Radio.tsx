@@ -2,8 +2,10 @@ import type { DFormControl } from '../form';
 
 import { useState } from 'react';
 
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';

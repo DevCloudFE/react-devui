@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useAsync, useMount } from '@react-devui/hooks';
+import { CheckOutlined, CodeSandboxOutlined, DCustomIcon, SnippetsOutlined, ThunderboltOutlined } from '@react-devui/icons';
 import { DTooltip, DTabs } from '@react-devui/ui';
-import { useAsync, useMount } from '@react-devui/ui/hooks';
-import { CheckOutlined, CodeSandboxOutlined, DCustomIcon, SnippetsOutlined, ThunderboltOutlined } from '@react-devui/ui/icons';
-import { copy, getClassName } from '@react-devui/ui/utils';
+import { copy, getClassName } from '@react-devui/utils';
 
 import marked, { toString } from '../utils';
 import './DemoBox.scss';

@@ -1,10 +1,13 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
-import { useAsync, useComponentConfig, useEventCallback, useForceUpdate } from '../../hooks';
-import { registerComponentMate, toPx } from '../../utils';
+import { useAsync, useEventCallback, useForceUpdate } from '@react-devui/hooks';
+import { toPx } from '@react-devui/utils';
+
+import { useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 
 const EMPTY = Symbol();
 

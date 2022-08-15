@@ -3,9 +3,11 @@ import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import React from 'react';
 
+import { FileTwoTone, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
-import { FileTwoTone, LoadingOutlined, PlusOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DUploadAction } from './UploadAction';
 
 export interface DUploadPictureButtonProps extends React.HTMLAttributes<HTMLDivElement> {

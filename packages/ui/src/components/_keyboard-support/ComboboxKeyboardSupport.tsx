@@ -1,4 +1,5 @@
-import { useAsync } from '../../hooks';
+import { useAsync } from '@react-devui/hooks';
+
 import { isPrintableCharacter } from './utils';
 
 export type DComboboxKeyboardSupportKey = 'next' | 'prev' | 'first' | 'last' | 'next-level' | 'prev-level';

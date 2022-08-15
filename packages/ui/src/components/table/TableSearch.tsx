@@ -1,8 +1,11 @@
 import React, { useRef } from 'react';
 
-import { useComponentConfig, useDValue, useForceUpdate, usePrefixConfig, useTranslation } from '../../hooks';
-import { SearchOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { useForceUpdate } from '@react-devui/hooks';
+import { SearchOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { useComponentConfig, useDValue, usePrefixConfig, useTranslation } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DButton } from '../button';
 import { DInput } from '../input';
 import { DPopover } from '../popover';

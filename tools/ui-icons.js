@@ -2,7 +2,7 @@ const allIconDefs = require('@ant-design/icons-svg');
 const { outputFile } = require('fs-extra');
 const path = require('path');
 
-const OUT_DIR = path.join(__dirname, '../packages/ui/src/icons/dist');
+const OUT_DIR = path.join(__dirname, '../packages/icons/src/dist');
 
 const ICON_TMP = String.raw`import type { DIconProps } from '../Icon';
 

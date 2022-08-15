@@ -1,6 +1,7 @@
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig } from '../../hooks';
-import { getClassName } from '../../utils';
-import { TTANSITION_DURING_FAST } from '../../utils/global';
+import { TTANSITION_DURING_FAST } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 
 export interface DErrorProps {

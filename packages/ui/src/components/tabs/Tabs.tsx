@@ -1,20 +1,15 @@
-import type { DId, DSize } from '../../utils/global';
+import type { DId, DSize } from '../../utils';
 import type { DDropdownItem } from '../dropdown';
 
 import { nth } from 'lodash';
 import { useEffect, useId, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useAsync,
-  useTranslation,
-  useEventCallback,
-  useIsomorphicLayoutEffect,
-  useDValue,
-} from '../../hooks';
-import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useAsync, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DDropdown } from '../dropdown';
 
 export interface DTabItem<ID extends DId> {

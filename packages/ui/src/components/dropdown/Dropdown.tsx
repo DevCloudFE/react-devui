@@ -1,20 +1,13 @@
-import type { DNestedChildren, DId } from '../../utils/global';
+import type { DId, DNestedChildren } from '../../utils';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTranslation,
-  useEventCallback,
-  useMaxIndex,
-  useDValue,
-  useIsomorphicLayoutEffect,
-  useEventNotify,
-} from '../../hooks';
-import { registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition, scrollElementToView } from '../../utils';
-import { TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useEventCallback, useEventNotify, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { getClassName, getOriginalSize, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useTranslation, useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_POPUP } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
@@ -167,7 +160,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   const updatePosition = useEventCallback(() => {
     const triggerEl = document.getElementById(buttonId);
     if (triggerEl && dropdownRef.current) {
-      const { width, height } = getNoTransformSize(dropdownRef.current);
+      const { width, height } = getOriginalSize(dropdownRef.current);
       const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(triggerEl, { width, height }, dPlacement, 8);
       setPopupPositionStyle({ top, left });
       setTransformOrigin(transformOrigin);
@@ -214,7 +207,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
               if (val) {
                 const el = document.getElementById(getItemId(val.id));
                 if (el && ulRef.current) {
-                  scrollElementToView(el, ulRef.current, 4);
+                  scrollToView(el, ulRef.current, 4);
                 }
               }
             };

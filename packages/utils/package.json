@@ -1,0 +1,29 @@
+{
+  "name": "@react-devui/utils",
+  "version": "0.0.1",
+  "author": "Xie Jay <xiejay97@gmail.com>",
+  "description": "DevUI utils based on React",
+  "title": "DevUI",
+  "keywords": [
+    "ui",
+    "devui",
+    "util",
+    "utils",
+    "react",
+    "react-util"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiejay97/react-devui.git"
+  },
+  "homepage": "https://github.com/xiejay97/react-devui/tree/main/utils#readme",
+  "bugs": {
+    "url": "https://github.com/xiejay97/react-devui/issues"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../dist/packages/utils"
+  }
+}

@@ -1,9 +1,12 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 
 import React, { useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useForkRef } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useForkRef } from '@react-devui/hooks';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DComposeItem } from './ComposeItem';
 
 export interface DComposeContextData {

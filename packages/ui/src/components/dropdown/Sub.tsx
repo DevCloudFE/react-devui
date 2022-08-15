@@ -2,10 +2,12 @@ import type { Subject } from 'rxjs';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
-import { RightOutlined } from '../../icons';
-import { checkNodeExist, getClassName, getHorizontalSidePosition, getNoTransformSize } from '../../utils';
-import { TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useEventCallback } from '@react-devui/hooks';
+import { RightOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation, useMaxIndex } from '../../hooks';
+import { TTANSITION_DURING_POPUP } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 
@@ -60,7 +62,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (ulRef.current && liRef.current) {
-      const { width, height } = getNoTransformSize(ulRef.current);
+      const { width, height } = getOriginalSize(ulRef.current);
       const { top, left, transformOrigin } = getHorizontalSidePosition(liRef.current, { width, height }, 'right', 10);
       setPopupPositionStyle({
         top,

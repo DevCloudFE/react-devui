@@ -1,8 +1,10 @@
 import { isArray, isNumber } from 'lodash';
 import React, { useMemo } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { useMediaMatch } from './hooks';
 
 export type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';

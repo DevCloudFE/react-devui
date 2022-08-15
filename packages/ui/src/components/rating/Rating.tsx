@@ -3,9 +3,11 @@ import type { DFormControl } from '../form';
 import { isFunction } from 'lodash';
 import { useId, useState } from 'react';
 
+import { StarFilled } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { StarFilled } from '../../icons';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
 import { DStar } from './Star';
 

@@ -1,12 +1,15 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isNull, isUndefined } from 'lodash';
 import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 
-import { useComponentConfig, useDValue, useEventCallback, useForceUpdate, usePrefixConfig, useTranslation } from '../../hooks';
-import { FilterFilled, LoadingOutlined, SearchOutlined } from '../../icons';
-import { findNested, getClassName, isSimpleArrayEqual, registerComponentMate } from '../../utils';
+import { useEventCallback, useForceUpdate } from '@react-devui/hooks';
+import { FilterFilled, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
+import { findNested, getClassName, isSimpleArrayEqual } from '@react-devui/utils';
+
+import { useComponentConfig, useDValue, usePrefixConfig, useTranslation } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DButton } from '../button';
 import { DCheckbox } from '../checkbox';
 import { DInput } from '../input';

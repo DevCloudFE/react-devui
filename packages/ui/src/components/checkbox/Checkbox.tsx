@@ -1,7 +1,9 @@
 import type { DFormControl } from '../form';
 
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
 import { DCheckboxGroup } from './CheckboxGroup';

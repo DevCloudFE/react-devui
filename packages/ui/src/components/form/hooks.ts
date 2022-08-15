@@ -3,7 +3,9 @@ import type { FormGroup } from './form-control';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useContextOptional, useEventCallback } from '../../hooks';
+import { useEventCallback } from '@react-devui/hooks';
+
+import { useContextOptional } from '../../hooks';
 import { DFormContext } from './Form';
 
 export interface DFormInstance {

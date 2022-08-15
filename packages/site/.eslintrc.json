@@ -4,14 +4,7 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "react-hooks/exhaustive-deps": [
-          "warn",
-          {
-            "additionalHooks": "(useIsomorphicLayoutEffect)"
-          }
-        ]
-      }
+      "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],

@@ -1,14 +1,16 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 import type { DFormControl } from '../form';
 
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, usePrefixConfig, useTranslation, useEventCallback, useElement, useMaxIndex, useForkRef, useLayout } from '../../hooks';
-import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '../../icons';
-import { checkNodeExist, getClassName } from '../../utils';
-import { TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useAsync, useElement, useEventCallback, useForkRef } from '@react-devui/hooks';
+import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation, useMaxIndex, useLayout } from '../../hooks';
+import { TTANSITION_DURING_POPUP } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';

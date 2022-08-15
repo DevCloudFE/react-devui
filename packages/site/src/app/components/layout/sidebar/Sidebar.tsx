@@ -1,7 +1,8 @@
 import type { DMenuItem } from '@react-devui/ui/components/menu';
-import type { DNestedChildren } from '@react-devui/ui/utils/global';
+import type { DNestedChildren } from '@react-devui/ui/utils';
 
-import menu from 'dist/menu.json';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import menu from 'packages/site/dist/menu.json';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 

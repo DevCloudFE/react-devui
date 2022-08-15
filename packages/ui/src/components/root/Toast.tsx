@@ -4,7 +4,9 @@ import type { Subscription } from 'rxjs';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useElement, useImmer, usePrefixConfig } from '../../hooks';
+import { useElement, useImmer } from '@react-devui/hooks';
+
+import { usePrefixConfig } from '../../hooks';
 import { DToast, ToastService, toastSubject } from '../toast';
 
 export function Toast(): JSX.Element | null {

@@ -76,9 +76,9 @@ import type {
   DVirtualScrollProps,
 } from '../../components';
 import type { DBreakpoints } from '../../components/grid';
-import type { DIconBaseProps } from '../../icons';
-import type { DLang } from '../../utils/global';
-import type { DElementSelector } from '../ui/useElement';
+import type { DLang } from '../i18n';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DIconProps } from '@react-devui/icons/Icon';
 
 import React from 'react';
 
@@ -162,7 +162,7 @@ export type DComponentConfig = {
   'DUpload.Action': DUploadActionProps;
   'DUpload.PictureButton': DUploadPictureButtonProps;
   DVirtualScroll: DVirtualScrollProps<any>;
-} & { DIcon: Omit<DIconBaseProps, 'children'> };
+} & { DIcon: Omit<DIconProps, 'dIcon'> };
 
 export interface DConfigContextData {
   prefix?: string;

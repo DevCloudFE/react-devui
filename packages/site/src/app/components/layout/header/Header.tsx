@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
+import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
 import { useMediaMatch } from '@react-devui/ui';
 import { useContextRequired } from '@react-devui/ui/hooks';
-import { DCustomIcon, GithubOutlined } from '@react-devui/ui/icons';
-import { getClassName } from '@react-devui/ui/utils';
+import { getClassName } from '@react-devui/utils';
 
 import { AppContext } from '../../../App';
 import './Header.scss';

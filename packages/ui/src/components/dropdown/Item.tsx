@@ -1,5 +1,6 @@
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig } from '../../hooks';
-import { checkNodeExist, getClassName } from '../../utils';
 
 export interface DItemProps {
   children: React.ReactNode;

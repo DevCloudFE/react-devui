@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DSeparator } from '../separator';
 import { DCardContent } from './CardContent';
 import { DCardHeader } from './CardHeader';

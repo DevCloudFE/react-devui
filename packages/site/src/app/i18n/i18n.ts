@@ -1,5 +1,6 @@
-import resources from 'dist/resources.json';
 import i18n from 'i18next';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import resources from 'packages/site/dist/resources.json';
 import { initReactI18next } from 'react-i18next';
 
 // the translations

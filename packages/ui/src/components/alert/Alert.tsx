@@ -1,6 +1,7 @@
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { useComponentConfig, useDValue, usePrefixConfig } from '../../hooks';
-import { checkNodeExist, getClassName, registerComponentMate } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DPanel as DNotificationPanel } from '../notification/Panel';
 import { DPanel as DToastPanel } from '../toast/Panel';

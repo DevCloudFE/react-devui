@@ -18,8 +18,20 @@
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "scope:shared",
+                "onlyDependOnLibsWithTags": ["scope:shared"]
+              },
+              {
+                "sourceTag": "scope:icons",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons"]
+              },
+              {
+                "sourceTag": "scope:ui",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons", "scope:ui"]
+              },
+              {
+                "sourceTag": "scope:site",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons", "scope:ui", "scope:site"]
               }
             ]
           }
@@ -42,6 +54,12 @@
               "caseInsensitive": false
             },
             "warnOnUnassignedImports": true
+          }
+        ],
+        "react-hooks/exhaustive-deps": [
+          "warn",
+          {
+            "additionalHooks": "(useIsomorphicLayoutEffect)"
           }
         ]
       }

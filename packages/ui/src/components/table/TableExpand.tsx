@@ -1,5 +1,7 @@
+import { getClassName } from '@react-devui/utils';
+
 import { useComponentConfig, useDValue, usePrefixConfig } from '../../hooks';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Expand' });
 export interface DTableExpandProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

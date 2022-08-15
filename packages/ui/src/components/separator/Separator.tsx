@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 
 export interface DSeparatorProps extends React.HTMLAttributes<HTMLElement> {
   dTextAlign?: 'left' | 'right' | 'center';

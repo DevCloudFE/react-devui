@@ -3,9 +3,11 @@ import type { DUploadFile } from './Upload';
 import { isUndefined } from 'lodash';
 import React from 'react';
 
+import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
-import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { saveFile } from './utils';
 
 export interface DUploadActionProps extends React.HTMLAttributes<HTMLElement> {

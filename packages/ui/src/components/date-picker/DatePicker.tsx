@@ -6,9 +6,11 @@ import type { DPanelRef } from './Panel';
 import { isBoolean, isUndefined } from 'lodash';
 import React, { useRef } from 'react';
 
+import { CalendarOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
-import { CalendarOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DButton } from '../button';
 import { DTag } from '../tag';
 import { DPanel as DTimePickerPanel } from '../time-picker/Panel';

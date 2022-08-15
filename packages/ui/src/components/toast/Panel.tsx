@@ -1,9 +1,10 @@
 import { isUndefined } from 'lodash';
 import React, { useId } from 'react';
 
+import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useTranslation } from '../../hooks';
-import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '../../icons';
-import { getClassName, checkNodeExist } from '../../utils';
 
 export interface DPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dClassNamePrefix: string;

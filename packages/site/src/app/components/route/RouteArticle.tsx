@@ -3,11 +3,11 @@ import type { DTransitionState } from '@react-devui/ui/components/_transition';
 import { isString, isUndefined } from 'lodash';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
+import { useImmer } from '@react-devui/hooks';
+import { DCustomIcon } from '@react-devui/icons';
 import { DAnchor, useMediaMatch } from '@react-devui/ui';
 import { DTransition } from '@react-devui/ui/components/_transition';
-import { useImmer } from '@react-devui/ui/hooks';
-import { DCustomIcon } from '@react-devui/ui/icons';
-import { TTANSITION_DURING_BASE } from '@react-devui/ui/utils/global';
+import { TTANSITION_DURING_BASE } from '@react-devui/ui/utils';
 
 import './RouteArticle.scss';
 import marked, { toString } from './utils';

@@ -1,14 +1,16 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DUploadFile } from './Upload';
 import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import { isNumber } from 'lodash';
 import React, { useState } from 'react';
 
-import { useImmer, useMount, usePrefixConfig, useTranslation } from '../../hooks';
-import { FileTwoTone } from '../../icons';
-import { getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useImmer, useMount } from '@react-devui/hooks';
+import { FileTwoTone } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation } from '../../hooks';
+import { TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 import { DProgress } from '../progress';
 

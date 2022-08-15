@@ -4,9 +4,11 @@ import type { DPanelRef } from './Panel';
 import { isUndefined } from 'lodash';
 import React, { useRef } from 'react';
 
+import { ClockCircleOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
-import { ClockCircleOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DButton } from '../button';
 import { DBuilder } from '../date-picker/Builder';
 import { getCols, orderTime } from '../date-picker/utils';

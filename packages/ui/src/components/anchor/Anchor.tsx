@@ -1,19 +1,14 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DNestedChildren } from '../../utils/global';
+import type { DNestedChildren } from '../../utils';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import { isArray, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useElement,
-  useAsync,
-  useIsomorphicLayoutEffect,
-  useEventCallback,
-  useLayout,
-} from '../../hooks';
-import { getClassName, registerComponentMate, scrollTo } from '../../utils';
+import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { getClassName, scrollTo } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 
 export interface DAnchorItem {
   title: React.ReactNode;

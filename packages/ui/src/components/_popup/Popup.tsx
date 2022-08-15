@@ -3,7 +3,9 @@ import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, useElement, useEventCallback, useLayout, usePrefixConfig } from '../../hooks';
+import { useAsync, useElement, useEventCallback } from '@react-devui/hooks';
+
+import { useLayout, usePrefixConfig } from '../../hooks';
 
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;

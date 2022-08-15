@@ -1,7 +1,8 @@
 {
-  "root": "packages/site",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/site/src",
   "projectType": "application",
+  "tags": ["scope:site"],
   "targets": {
     "build-base": {
       "executor": "./tools/executors/site/build-base:build-base",
@@ -90,11 +91,11 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/site"],
       "options": {
-        "jestConfig": "packages/site/jest.config.js",
+        "jestConfig": "packages/site/jest.config.ts",
         "passWithNoTests": true,
+        "codeCoverage": true,
         "coverageReporters": ["clover", "json", "lcov", "text"]
       }
     }
-  },
-  "tags": []
+  }
 }

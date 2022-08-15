@@ -1,20 +1,14 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DTransitionState } from '../_transition';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useElement,
-  useAsync,
-  useEventCallback,
-  useIsomorphicLayoutEffect,
-  useLayout,
-} from '../../hooks';
-import { VerticalAlignTopOutlined } from '../../icons';
-import { registerComponentMate, getClassName, checkNodeExist, scrollTo } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { VerticalAlignTopOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName, scrollTo } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 
 export interface DBackTopProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

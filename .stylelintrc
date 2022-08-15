@@ -28,7 +28,13 @@
     {
       "files": ["*.scss", "**/*.scss"],
       "rules": {
-        "function-no-unknown": null
+        "function-no-unknown": null,
+        "annotation-no-unknown": [
+          true,
+          {
+            "ignoreAnnotations": ["default", "global"]
+          }
+        ]
       }
     },
     {

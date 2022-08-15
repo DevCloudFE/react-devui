@@ -3,8 +3,11 @@ import type { DFormControl } from '../form';
 import { isFunction, isNumber, isUndefined } from 'lodash';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useForkRef, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useForkRef } from '@react-devui/hooks';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';

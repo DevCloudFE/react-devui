@@ -3,10 +3,12 @@ import type { Subject } from 'rxjs';
 
 import { useState, useRef, useEffect } from 'react';
 
-import { usePrefixConfig, useTranslation, useEventCallback, useMaxIndex } from '../../hooks';
-import { CaretDownOutlined } from '../../icons';
-import { getClassName, getHorizontalSidePosition, getVerticalSidePosition, getNoTransformSize, checkNodeExist } from '../../utils';
-import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useEventCallback } from '@react-devui/hooks';
+import { CaretDownOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation, useMaxIndex } from '../../hooks';
+import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP } from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
 
@@ -79,7 +81,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (popupRef.current && liRef.current) {
-      const size = getNoTransformSize(popupRef.current);
+      const size = getOriginalSize(popupRef.current);
       const height = size.height;
 
       let width = size.width;

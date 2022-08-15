@@ -2,8 +2,10 @@ import { freeze } from 'immer';
 import { isUndefined } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback, usePrefixConfig } from '../../hooks';
-import { getClassName, scrollTo } from '../../utils';
+import { useEventCallback } from '@react-devui/hooks';
+import { getClassName, scrollTo } from '@react-devui/utils';
+
+import { usePrefixConfig } from '../../hooks';
 import { dayjs } from '../dayjs';
 
 const H12 = freeze([

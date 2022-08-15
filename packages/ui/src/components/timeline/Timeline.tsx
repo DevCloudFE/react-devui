@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { checkNodeExist, getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 
 export interface DTimelineItem {
   content: [React.ReactNode, React.ReactNode];

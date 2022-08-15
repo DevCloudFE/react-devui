@@ -1,4 +1,4 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 
 /* eslint-disable @typescript-eslint/no-this-alias */
 export type TreeNodeStatus = 'INDETERMINATE' | 'CHECKED' | 'UNCHECKED';

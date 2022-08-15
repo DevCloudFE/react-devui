@@ -1,9 +1,11 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 
 import React from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 
 export interface DBreadcrumbItem<ID extends DId> {
   id: ID;

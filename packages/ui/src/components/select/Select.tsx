@@ -1,4 +1,4 @@
-import type { DNestedChildren, DId, DSize } from '../../utils/global';
+import type { DNestedChildren, DId, DSize } from '../../utils';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
@@ -6,9 +6,12 @@ import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-sc
 import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useEventCallback, useDValue } from '../../hooks';
-import { CloseOutlined, LoadingOutlined, PlusOutlined } from '../../icons';
-import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { useEventCallback } from '@react-devui/hooks';
+import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
+import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DSelectbox } from '../_selectbox';
 import { DCheckbox } from '../checkbox';
@@ -442,7 +445,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
             const width = boxEl.getBoundingClientRect().width;
-            const { height } = getNoTransformSize(popupEl);
+            const { height } = getOriginalSize(popupEl);
             const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
 
             return {

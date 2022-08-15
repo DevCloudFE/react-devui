@@ -1,4 +1,4 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { AbstractTreeNode } from '../tree/node';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
@@ -8,9 +8,11 @@ import type { Subject } from 'rxjs';
 import { isUndefined } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useTranslation, useEventCallback } from '../../hooks';
-import { LoadingOutlined, RightOutlined } from '../../icons';
-import { getClassName } from '../../utils';
+import { useEventCallback } from '@react-devui/hooks';
+import { LoadingOutlined, RightOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation } from '../../hooks';
 import { DCheckbox } from '../checkbox';
 import { DVirtualScroll } from '../virtual-scroll';
 

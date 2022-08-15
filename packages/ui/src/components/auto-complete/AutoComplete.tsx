@@ -1,4 +1,4 @@
-import type { DNestedChildren } from '../../utils/global';
+import type { DNestedChildren } from '../../utils';
 import type { DFocusVisibleRenderProps } from '../_focus-visible';
 import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
@@ -7,20 +7,12 @@ import { isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTranslation,
-  useEventCallback,
-  useElement,
-  useMaxIndex,
-  useAsync,
-  useDValue,
-  useLayout,
-} from '../../hooks';
-import { LoadingOutlined } from '../../icons';
-import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
-import { TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useAsync, useElement, useEventCallback } from '@react-devui/hooks';
+import { LoadingOutlined } from '@react-devui/icons';
+import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useTranslation, useMaxIndex, useDValue, useLayout } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_POPUP } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DTransition } from '../_transition';
@@ -114,7 +106,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
     const popupEl = popupRef.current;
     if (boxEl && popupEl) {
       const width = boxEl.getBoundingClientRect().width;
-      const { height } = getNoTransformSize(popupEl);
+      const { height } = getOriginalSize(popupEl);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
 
       setPopupPositionStyle({

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useImmer } from '../../hooks';
+import { useImmer } from '@react-devui/hooks';
 
 export function useNestedPopup<ID>(initialValue: ID[] = []) {
   const [popupIds, setPopupIds] = useImmer<{ id: ID; visible: boolean }[]>(() => initialValue.map((id) => ({ id, visible: true })));

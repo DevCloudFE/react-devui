@@ -1,8 +1,9 @@
 import { isNumber, isUndefined } from 'lodash';
 import React, { useEffect, useRef } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useContextRequired } from '../../hooks';
-import { getClassName } from '../../utils';
 import { DTableContext } from './Table';
 
 const ZINDEX_CONFIG = {

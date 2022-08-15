@@ -1,12 +1,14 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 import type { DBreakpoints } from '../grid';
 import type { DFormInstance } from './hooks';
 
 import { isUndefined } from 'lodash';
 import React, { useMemo } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { useMediaMatch } from '../grid';
 import { DFormGroup, DFormGroupContext } from './FormGroup';
 import { DFormItem } from './FormItem';

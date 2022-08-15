@@ -2,20 +2,12 @@ import { isUndefined } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useDValue,
-  useMaxIndex,
-  useElement,
-  useLockScroll,
-  useIsomorphicLayoutEffect,
-  useAsync,
-  useImmer,
-} from '../../hooks';
-import { CloseOutlined, LeftOutlined, RightOutlined, RotateRightOutlined, ZoomInOutlined, ZoomOutOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useAsync, useElement, useImmer, useIsomorphicLayoutEffect, useLockScroll } from '@react-devui/hooks';
+import { CloseOutlined, LeftOutlined, RightOutlined, RotateRightOutlined, ZoomInOutlined, ZoomOutOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useDValue, useMaxIndex } from '../../hooks';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DButton } from '../button';

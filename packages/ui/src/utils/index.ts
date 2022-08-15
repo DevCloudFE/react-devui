@@ -1,7 +1,5 @@
-export { findNested, isSimpleArrayEqual } from './array';
-export { pSBC, convertHex } from './color';
-export { registerComponentMate } from './component-mate';
-export { getFillingPosition, getHorizontalSidePosition, getVerticalSidePosition, getPopupPosition } from './position';
-export { scrollTo, scrollElementToView } from './scroll';
+export * from './vars';
 
-export { toPx, getNoTransformSize, getClassName, getPositionedParent, copy, getUID, handleModalKeyDown, checkNodeExist } from './other';
+export { convertHex } from './convertHex';
+export { handleModalKeyDown } from './handleModalKeyDown';
+export { registerComponentMate } from './registerComponentMate';

@@ -2,9 +2,11 @@ import type { Dayjs, UnitType } from 'dayjs';
 
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useAsync, useEventCallback, usePrefixConfig, useTranslation } from '../../hooks';
-import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '../../icons';
-import { getClassName } from '../../utils';
+import { useAsync, useEventCallback } from '@react-devui/hooks';
+import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation } from '../../hooks';
 import { dayjs } from '../dayjs';
 
 export interface DPanelRef {

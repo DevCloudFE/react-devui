@@ -1,14 +1,15 @@
 {
-  "root": "packages/ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/ui/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:ui"],
   "targets": {
     "build": {
       "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/ui",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["esm"],
         "tsConfig": "packages/ui/tsconfig.lib.json",
         "project": "packages/ui/package.json",
@@ -41,7 +42,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/ui"],
       "options": {
-        "jestConfig": "packages/ui/jest.config.js",
+        "jestConfig": "packages/ui/jest.config.ts",
         "passWithNoTests": true,
         "codeCoverage": true,
         "coverageReporters": ["clover", "json", "lcov", "text"]

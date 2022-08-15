@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 import { DNumber } from './Number';
 

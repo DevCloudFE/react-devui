@@ -1,11 +1,14 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
-import type { DPopupPlacement } from '../../utils/position';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isUndefined } from 'lodash';
 import React, { useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useEventCallback, useElement, useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, getPopupPosition } from '../../utils';
+import { useElement, useEventCallback } from '@react-devui/hooks';
+import { getClassName, getPopupPosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 

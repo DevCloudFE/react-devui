@@ -4,8 +4,11 @@ import type { DTooltipRef } from '../tooltip';
 import { isArray, isNumber, toNumber } from 'lodash';
 import { useEffect, useState, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useAsync, useEventCallback, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useAsync, useEventCallback } from '@react-devui/hooks';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
 import { DTooltip } from '../tooltip';

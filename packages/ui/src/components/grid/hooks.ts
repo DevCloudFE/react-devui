@@ -3,7 +3,9 @@ import type { DBreakpoints } from './Row';
 import { freeze } from 'immer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useAsync, useGridConfig, useMount } from '../../hooks';
+import { useAsync, useMount } from '@react-devui/hooks';
+
+import { useGridConfig } from '../../hooks';
 
 export const MEDIA_QUERY_LIST = freeze(['xxl', 'xl', 'lg', 'md', 'sm', 'xs'] as DBreakpoints[]);
 

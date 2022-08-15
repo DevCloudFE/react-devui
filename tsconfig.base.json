@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -23,7 +22,19 @@
     "disableSizeLimit": true,
     "noErrorTruncation": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@react-devui/hooks": ["packages/hooks/src/index.ts"],
+      "@react-devui/hooks/*": ["packages/hooks/src/*"],
+      "@react-devui/icons": ["packages/icons/src/index.ts"],
+      "@react-devui/icons/*": ["packages/icons/src/*"],
+      "@react-devui/ui": ["packages/ui/src/index.ts"],
+      "@react-devui/ui/*": ["packages/ui/src/*"],
+      "@react-devui/utils": ["packages/utils/src/index.ts"],
+      "@react-devui/utils/*": ["packages/utils/src/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

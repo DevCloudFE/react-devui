@@ -1,7 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useIsomorphicLayoutEffect, useForkRef } from '../../hooks';
-import { registerComponentMate, getClassName, isSimpleArrayEqual } from '../../utils';
+import { useForkRef, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { getClassName, isSimpleArrayEqual } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DTableEmpty } from './TableEmpty';
 import { DTableExpand } from './TableExpand';
 import { DTableFilter } from './TableFilter';

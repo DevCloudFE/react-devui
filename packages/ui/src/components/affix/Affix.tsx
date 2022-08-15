@@ -1,18 +1,13 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useAsync,
-  useElement,
-  useIsomorphicLayoutEffect,
-  useEventCallback,
-  useLayout,
-} from '../../hooks';
-import { getClassName, registerComponentMate, toPx } from '../../utils';
+import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { getClassName, toPx } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 
 export interface DAffixRef {
   sticky: boolean;

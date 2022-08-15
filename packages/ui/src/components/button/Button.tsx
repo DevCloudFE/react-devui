@@ -1,11 +1,12 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 
 import React from 'react';
 
+import { LoadingOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext } from '../../hooks';
-import { LoadingOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
-import { TTANSITION_DURING_SLOW } from '../../utils/global';
+import { registerComponentMate, TTANSITION_DURING_SLOW } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DCollapseTransition } from '../_transition';
 

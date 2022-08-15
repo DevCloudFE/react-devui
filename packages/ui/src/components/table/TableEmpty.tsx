@@ -1,5 +1,7 @@
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DEmpty } from '../empty';
 import { DTableTd } from './TableTd';
 

@@ -1,12 +1,13 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTransferItem } from './Transfer';
 
 import React, { useId, useCallback, useRef, useMemo } from 'react';
 
+import { LoadingOutlined, SearchOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useTranslation } from '../../hooks';
-import { LoadingOutlined, SearchOutlined } from '../../icons';
-import { checkNodeExist, getClassName } from '../../utils';
 import { DCheckbox } from '../checkbox';
 import { DEmpty } from '../empty';
 import { DInput } from '../input';

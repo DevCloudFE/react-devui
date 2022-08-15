@@ -1,14 +1,16 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DUploadFile } from './Upload';
 import type { DUploadActionPropsWithPrivate } from './UploadAction';
 
 import { isNumber, isUndefined } from 'lodash';
 import React, { useState } from 'react';
 
-import { useImmer, useMount, usePrefixConfig } from '../../hooks';
-import { LoadingOutlined, PaperClipOutlined } from '../../icons';
-import { getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useImmer, useMount } from '@react-devui/hooks';
+import { LoadingOutlined, PaperClipOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig } from '../../hooks';
+import { TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
 

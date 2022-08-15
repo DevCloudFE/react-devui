@@ -21,5 +21,9 @@
     "url": "https://github.com/xiejay97/react-devui/issues"
   },
   "license": "MIT",
-  "sideEffects": false
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../dist/packages/ui"
+  }
 }

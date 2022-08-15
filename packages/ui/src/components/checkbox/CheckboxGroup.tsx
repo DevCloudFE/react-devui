@@ -1,10 +1,12 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DFormControl } from '../form';
 
 import { useId } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
 import { DCheckbox } from './Checkbox';
 

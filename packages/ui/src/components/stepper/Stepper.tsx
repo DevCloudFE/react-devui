@@ -1,9 +1,10 @@
 import { isNumber, isUndefined } from 'lodash';
 
+import { CheckOutlined, CloseOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { CheckOutlined, CloseOutlined } from '../../icons';
-import { checkNodeExist, getClassName, registerComponentMate } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
 

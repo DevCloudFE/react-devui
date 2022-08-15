@@ -2,8 +2,10 @@ import type { DBreakpoints } from './Row';
 
 import { isNumber, isObject } from 'lodash';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGridConfig, useContextRequired } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DRowContext } from './Row';
 
 export type DSpanValue = number | true;

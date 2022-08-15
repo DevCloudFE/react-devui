@@ -1,7 +1,7 @@
 import { isArray, isNumber } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useForceUpdate, useMount } from '../..//hooks';
+import { useAsync, useForceUpdate, useMount } from '@react-devui/hooks';
 
 export type DTransitionState = 'enter' | 'entering' | 'entered' | 'leave' | 'leaving' | 'leaved';
 const [T_ENTER, T_ENTERING, T_ENTERED, T_LEAVE, T_LEAVING, T_LEAVED] = [

@@ -1,11 +1,13 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DFormControl } from '../form';
 
 import React, { useState, useCallback, useMemo } from 'react';
 
+import { LeftOutlined, RightOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { LeftOutlined, RightOutlined } from '../../icons';
-import { getClassName, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DButton } from '../button';
 import { useFormControl } from '../form';

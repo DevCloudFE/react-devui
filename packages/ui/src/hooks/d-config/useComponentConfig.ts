@@ -6,14 +6,13 @@ import { useContext } from 'react';
 import { DConfigContext } from './contex';
 
 export function useComponentConfig<T>(component: keyof DComponentConfig, props: T): T {
-  const componentConfigs = useContext(DConfigContext)?.componentConfigs ?? {};
-  const customConfig = componentConfigs[component] ?? {};
+  const gProps = useContext(DConfigContext)?.componentConfigs?.[component] ?? {};
   const noUndefinedProps: any = {};
   Object.keys(props).forEach((key) => {
     if (!isUndefined(props[key])) {
-      (noUndefinedProps as T)[key] = props[key];
+      noUndefinedProps[key] = props[key];
     }
   });
 
-  return { ...customConfig, ...(noUndefinedProps as T) };
+  return { ...gProps, ...noUndefinedProps };
 }

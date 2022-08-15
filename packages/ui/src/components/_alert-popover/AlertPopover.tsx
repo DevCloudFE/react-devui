@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { useAsync, useMount } from '../../hooks';
+import { useAsync, useMount } from '@react-devui/hooks';
 
 export interface DAlertPopoverProps {
   children: React.ReactElement;

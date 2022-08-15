@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import type { DConfigContextData } from '../../hooks/d-config/contex';
-import type { DLang } from '../../utils/global';
+import type { DLang } from '../../hooks/i18n';
+import type { DIconContextData } from '@react-devui/icons/Icon';
+
+import { useMemo } from 'react';
+
+import { DIconContext } from '@react-devui/icons/Icon';
 
 import { DConfigContext } from '../../hooks/d-config/contex';
 import { dayjs } from '../dayjs';
@@ -36,11 +41,27 @@ export function DRoot(props: DRootProps): JSX.Element | null {
     }
   }
 
+  const iconProps = dContext?.componentConfigs?.DIcon;
+  const prefix = dContext?.prefix ?? 'd-';
+  const iconContext = useMemo<DIconContextData>(
+    () => ({
+      props: iconProps,
+      prefix,
+      twoToneColor: (theme) => [
+        theme ? `var(--${prefix}color-${theme})` : `var(--${prefix}text-color)`,
+        theme ? `var(--${prefix}background-color-${theme})` : `rgb(var(--${prefix}text-color-rgb) / 10%)`,
+      ],
+    }),
+    [iconProps, prefix]
+  );
+
   return (
     <DConfigContext.Provider value={dContext}>
-      {children}
-      <Notification></Notification>
-      <Toast></Toast>
+      <DIconContext.Provider value={iconContext}>
+        {children}
+        <Notification></Notification>
+        <Toast></Toast>
+      </DIconContext.Provider>
     </DConfigContext.Provider>
   );
 }

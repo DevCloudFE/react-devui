@@ -1,7 +1,10 @@
 import React, { useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useForceUpdate } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { useForceUpdate } from '@react-devui/hooks';
+import { getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DImagePreview } from './ImagePreview';
 
 export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {

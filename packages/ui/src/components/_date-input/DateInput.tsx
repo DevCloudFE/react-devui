@@ -1,14 +1,16 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 
 import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useTranslation, useAsync, useForkRef, useEventCallback, useMaxIndex, useElement, useLayout } from '../../hooks';
-import { CloseCircleFilled, SwapRightOutlined } from '../../icons';
-import { checkNodeExist, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
-import { TTANSITION_DURING_POPUP } from '../../utils/global';
+import { useAsync, useElement, useEventCallback, useForkRef } from '@react-devui/hooks';
+import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useTranslation, useMaxIndex, useLayout } from '../../hooks';
+import { TTANSITION_DURING_POPUP } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DComboboxKeyboardSupport } from '../_keyboard-support';
@@ -128,7 +130,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (boxRef.current && popupRef.current) {
-      const { width, height } = getNoTransformSize(popupRef.current);
+      const { width, height } = getOriginalSize(popupRef.current);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, dPlacement, 8);
       setPopupPositionStyle({
         top,

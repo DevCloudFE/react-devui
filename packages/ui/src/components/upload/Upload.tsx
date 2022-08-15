@@ -1,11 +1,14 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 import type { DFormControl } from '../form';
 
 import { isNull, isNumber } from 'lodash';
 import React, { useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useForkRef, useDValue, useUnmount } from '../../hooks';
-import { registerComponentMate, getClassName, getUID } from '../../utils';
+import { useForkRef, useUnmount } from '@react-devui/hooks';
+import { getClassName, getUID } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
 import { DList } from './List';
 import { DPicture } from './Picture';

@@ -1,22 +1,15 @@
-import type { DSize } from '../../utils/global';
+import type { DSize } from '../../utils';
 import type { DFormControl } from '../form';
 
 import { isUndefined } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import {
-  usePrefixConfig,
-  useComponentConfig,
-  useTranslation,
-  useAsync,
-  useForkRef,
-  useEventCallback,
-  useGeneralContext,
-  useDValue,
-  useForceUpdate,
-} from '../../hooks';
-import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '../../icons';
-import { registerComponentMate, getClassName, checkNodeExist } from '../../utils';
+import { useAsync, useEventCallback, useForceUpdate, useForkRef } from '@react-devui/hooks';
+import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '@react-devui/icons';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';

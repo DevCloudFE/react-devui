@@ -1,15 +1,17 @@
-import type { DElementSelector } from '../../hooks/ui/useElement';
 import type { DTransitionState } from '../_transition';
 import type { DDrawerFooterPropsWithPrivate } from './DrawerFooter';
 import type { DDrawerHeaderPropsWithPrivate } from './DrawerHeader';
+import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { usePrefixConfig, useComponentConfig, useElement, useLockScroll, useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName, toPx, handleModalKeyDown } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { useElement, useLockScroll } from '@react-devui/hooks';
+import { getClassName, toPx } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DDrawerFooter } from './DrawerFooter';

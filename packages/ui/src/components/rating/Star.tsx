@@ -3,8 +3,9 @@ import type { DFormControl } from '../form';
 import { isUndefined } from 'lodash';
 import { useId, useState } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig } from '../../hooks';
-import { getClassName } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { DTooltip } from '../tooltip';
 

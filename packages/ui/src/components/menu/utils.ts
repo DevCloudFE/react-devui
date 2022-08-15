@@ -1,4 +1,4 @@
-import type { DId, DNestedChildren } from '../../utils/global';
+import type { DId, DNestedChildren } from '../../utils';
 import type { DMenuItem } from './Menu';
 
 export function checkEnableItem<ID extends DId, T extends DMenuItem<ID>>(item: DNestedChildren<T>) {

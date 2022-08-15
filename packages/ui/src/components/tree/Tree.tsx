@@ -1,4 +1,4 @@
-import type { DNestedChildren, DId } from '../../utils/global';
+import type { DNestedChildren, DId } from '../../utils';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 import type { AbstractTreeNode } from './node';
@@ -6,8 +6,11 @@ import type { AbstractTreeNode } from './node';
 import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify } from '../../hooks';
-import { findNested, getClassName, registerComponentMate } from '../../utils';
+import { useEventNotify } from '@react-devui/hooks';
+import { findNested, getClassName } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
 import { DPanel } from './Panel';

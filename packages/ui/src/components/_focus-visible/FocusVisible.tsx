@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useAsync } from '../../hooks';
+import { useAsync } from '@react-devui/hooks';
 
 const FOCUS_KEY = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', 'Space'];
 

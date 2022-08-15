@@ -1,4 +1,4 @@
-import type { DId, DNestedChildren, DSize } from '../../utils/global';
+import type { DId, DNestedChildren, DSize } from '../../utils';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
@@ -8,9 +8,12 @@ import type { AbstractTreeNode } from '../tree/node';
 import { isNull } from 'lodash';
 import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useEventNotify, useTranslation } from '../../hooks';
-import { CloseOutlined, LoadingOutlined } from '../../icons';
-import { findNested, registerComponentMate, getClassName, getNoTransformSize, getVerticalSidePosition } from '../../utils';
+import { useEventNotify } from '@react-devui/hooks';
+import { CloseOutlined, LoadingOutlined } from '@react-devui/icons';
+import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+
+import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useTranslation } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DComboboxKeyboardSupport } from '../_keyboard-support';
 import { DSelectbox } from '../_selectbox';
 import { DDropdown } from '../dropdown';
@@ -375,7 +378,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
             const width = boxEl.getBoundingClientRect().width;
-            const { height } = getNoTransformSize(popupEl);
+            const { height } = getOriginalSize(popupEl);
             const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
 
             return {

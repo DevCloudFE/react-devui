@@ -1,13 +1,14 @@
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config/contex';
-import type { DLang } from '@react-devui/ui/utils/global';
+import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DLang } from '@react-devui/ui/hooks/i18n';
 
-import routes from 'dist/routes';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import routes from 'packages/site/dist/routes';
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import { useAsync, useMount } from '@react-devui/hooks';
 import { DRoot } from '@react-devui/ui';
-import { useAsync, useMount } from '@react-devui/ui/hooks';
 
 import { environment } from '../environments/environment';
 import { AppLayout } from './components';

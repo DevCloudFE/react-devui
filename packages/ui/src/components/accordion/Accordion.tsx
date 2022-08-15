@@ -1,12 +1,13 @@
-import type { DId } from '../../utils/global';
+import type { DId } from '../../utils';
 
 import { isNull, nth } from 'lodash';
 import React, { useId } from 'react';
 
+import { DownOutlined } from '@react-devui/icons';
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
-import { DownOutlined } from '../../icons';
-import { registerComponentMate, getClassName } from '../../utils';
-import { TTANSITION_DURING_BASE } from '../../utils/global';
+import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 
 export interface DAccordionItem<ID extends DId> {

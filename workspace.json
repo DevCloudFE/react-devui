@@ -1,7 +1,10 @@
 {
   "version": 2,
   "projects": {
+    "hooks": "packages/hooks",
+    "icons": "packages/icons",
     "site": "packages/site",
-    "ui": "packages/ui"
+    "ui": "packages/ui",
+    "utils": "packages/utils"
   }
 }

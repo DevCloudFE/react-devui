@@ -1,12 +1,14 @@
-import type { DId, DSize } from '../../utils/global';
+import type { DId, DSize } from '../../utils';
 import type { DFormControl } from '../form';
 import type { DRadioPropsWithPrivate } from './Radio';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useEffect, useId, useState } from 'react';
 
+import { getClassName } from '@react-devui/utils';
+
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate, getClassName } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { DCompose } from '../compose';
 import { useFormControl } from '../form';
 import { DRadio } from './Radio';
