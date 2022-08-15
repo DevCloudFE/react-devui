@@ -93,7 +93,7 @@
     "rxjs-for-await": "^1.0.0",
     "sass": "^1.54.3",
     "standard-version": "^9.5.0",
-    "stylelint": "^14.9.1",
+    "stylelint": "^14.10.0",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-recess-order": "^3.0.0",
     "stylelint-config-recommended-scss": "^7.0.0",
