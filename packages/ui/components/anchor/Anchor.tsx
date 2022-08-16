@@ -11,8 +11,8 @@ import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 
 export interface DAnchorItem {
-  title: React.ReactNode;
   href: string;
+  title?: React.ReactNode;
   target?: string;
 }
 
@@ -76,7 +76,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
     let nearestEl: [string, number] | undefined;
     const reduceLinks = (arr: DNestedChildren<T>[]) => {
       arr.forEach(({ href, children }) => {
-        const el = document.querySelector(href);
+        const el = document.getElementById(href);
         if (el) {
           const top = el.getBoundingClientRect().top;
           // Add 1 because `getBoundingClientRect` return decimal
@@ -165,10 +165,10 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
     const pageTop = pageEl.getBoundingClientRect().top;
 
     const scrollTop = pageEl.scrollTop;
-    window.location.hash = href;
+    window.location.hash = `#${href}`;
     pageEl.scrollTop = scrollTop;
 
-    const el = document.querySelector(href);
+    const el = document.getElementById(href);
     if (el) {
       const top = el.getBoundingClientRect().top;
       const scrollTop = top - pageTop + pageEl.scrollTop - dDistance;
@@ -192,7 +192,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
                   'is-active': linkHref === activeHref,
                 })}
                 style={{ paddingLeft: 16 + level * 16 }}
-                href={linkHref}
+                href={`#${linkHref}`}
                 target={linkTarget}
                 onClick={(e) => {
                   e.preventDefault();
@@ -201,7 +201,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
                   handleLinkClick(linkHref);
                 }}
               >
-                {linkTitle}
+                {linkTitle ?? linkHref}
               </a>
             </li>
             {children && getNodes(children, level + 1)}

@@ -246,7 +246,7 @@ class GenerateSite {
                         demoStr = demoStr.replace(/__tsxSource__/g, new TextEncoder().encode(demo.get(lang).tsx.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)[0]).join());
                         demoStr = demoStr.replace(/__scssSource__/g, demo.get(lang).scss ? new TextEncoder().encode(demo.get(lang).scss.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)[0]).join() : '');
                         demosStr += demoStr;
-                        linksStr += String.raw `{ title: '${demo.get(lang).title}', href: '#${demo.get(lang).id}' }, `;
+                        linksStr += String.raw `{ title: '${demo.get(lang).title}', href: '${demo.get(lang).id}' }, `;
                     }
                 });
                 let routeArticleProps = String.raw `

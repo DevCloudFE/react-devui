@@ -25,8 +25,8 @@ export function AppRouteArticle(props: AppRouteArticleProps) {
   const { i18n } = useTranslation();
   const mediaMatch = useMediaMatch();
 
-  const [_links, setLinks] = useImmer<{ title: string; href: string }[]>([]);
-  const links = isUndefined(props.links) ? _links : [...props.links, { title: 'API', href: '#API' }];
+  const [_links, setLinks] = useImmer<{ title?: string; href: string }[]>([]);
+  const links = isUndefined(props.links) ? _links : [...props.links, { href: 'API' }];
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -58,9 +58,9 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 
   useLayoutEffect(() => {
     if (isUndefined(props.links)) {
-      const arr: { title: string; href: string }[] = [];
+      const arr: { href: string }[] = [];
       document.querySelectorAll('.app-route-article h2').forEach((el) => {
-        arr.push({ title: el.id, href: `#${el.id}` });
+        arr.push({ href: el.id });
       });
       setLinks(arr);
     }

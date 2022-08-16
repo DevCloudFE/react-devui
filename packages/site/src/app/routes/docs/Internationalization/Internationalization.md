@@ -57,7 +57,7 @@ export default function App() {
 }
 ```
 
-## add language
+## Add language
 
 Support for adding languages:
 
