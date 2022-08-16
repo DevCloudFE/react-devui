@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(back-top) {
   @include utils-button;
 

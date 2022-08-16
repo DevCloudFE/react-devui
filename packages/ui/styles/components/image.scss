@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(image) {
   position: relative;
   display: inline-flex;

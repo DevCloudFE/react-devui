@@ -1,6 +1,6 @@
 /* stylelint-disable declaration-property-value-allowed-list */
 /* stylelint-disable scss/operator-no-unspaced */
-@import '~rfs/scss';
+@use 'sass:color';
 
 $namespace: 'd' !default;
 $variable-prefix: '#{$namespace}-' !default;

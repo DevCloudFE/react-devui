@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(upload) {
   display: none;
 

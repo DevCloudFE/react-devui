@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(tag) {
   --#{$variable-prefix}tag-padding-size: 8px;
   --#{$variable-prefix}tag-size: 28px;

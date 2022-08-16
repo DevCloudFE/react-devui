@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(slider) {
   --#{$variable-prefix}slider-color-rgb: var(--#{$variable-prefix}color-primary-rgb);
 

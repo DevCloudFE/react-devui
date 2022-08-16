@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(badge) {
   position: absolute;
   z-index: 1;

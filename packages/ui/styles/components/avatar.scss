@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(avatar) {
   display: inline-flex;
   align-items: center;

@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(radio) {
   position: relative;
   display: inline-flex;

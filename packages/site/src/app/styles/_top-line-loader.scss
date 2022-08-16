@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 @mixin generate-linear-gradient($color) {
   background: linear-gradient(
     90deg,
