@@ -2,7 +2,7 @@ import type { Dayjs, OpUnitType } from 'dayjs';
 
 import { isArray, isDate, isNull } from 'lodash';
 
-import { dayjs } from '../dayjs';
+import { dayjs } from '../../dayjs';
 
 export function getCols(_format: string) {
   const format = _format.replace(/\[[\s\S]*?\]/g, '');

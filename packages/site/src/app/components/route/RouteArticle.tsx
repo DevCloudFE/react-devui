@@ -2,6 +2,7 @@ import type { DTransitionState } from '@react-devui/ui/components/_transition';
 
 import { isString, isUndefined } from 'lodash';
 import { useEffect, useLayoutEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useImmer } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
@@ -21,6 +22,7 @@ export interface AppRouteArticleProps {
 export function AppRouteArticle(props: AppRouteArticleProps) {
   const html = props.html ? marked(toString(props.html)) : undefined;
 
+  const { i18n } = useTranslation();
   const mediaMatch = useMediaMatch();
 
   const [_links, setLinks] = useImmer<{ title: string; href: string }[]>([]);
@@ -63,7 +65,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       setLinks(arr);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (isString(html)) {

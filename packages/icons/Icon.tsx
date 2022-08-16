@@ -33,11 +33,11 @@ function renderAbstractNode(node: AbstractNode, options: DRenderIconOptions): JS
 
 export interface DIconContextData {
   props?: Omit<DIconProps, 'dIcon'>;
-  prefix: string;
+  namespace: string;
   twoToneColor: (theme?: DIconProps['dTheme']) => [string, string];
 }
 export const DIconContext = React.createContext<DIconContextData>({
-  prefix: 'd-',
+  namespace: 'd',
   twoToneColor: (theme) => [
     theme ? `var(--d-color-${theme})` : `var(--d-text-color)`,
     theme ? `var(--d-background-color-${theme})` : `rgb(var(--d-text-color-rgb) / 10%)`,
@@ -61,7 +61,7 @@ export function DIcon(props: DIconProps): JSX.Element | null {
   const twoToneColorByTheme = useContext(DIconContext).twoToneColor;
   const twoToneColor = dTwoToneColor ?? twoToneColorByTheme(dTheme);
 
-  const svgProps = useIconDefinition(restProps);
+  const svgProps = useIconDefinition({ ...restProps, dTheme });
 
   return renderIconDefinition(dIcon, {
     placeholders: {

@@ -24,7 +24,7 @@ export function useIconDefinition(props: DIconBaseProps) {
     ...restProps
   } = props;
 
-  const prefix = useContext(DIconContext).prefix;
+  const prefix = `${useContext(DIconContext).namespace}-`;
 
   const svgProps: React.SVGAttributes<SVGElement> = {
     ...restProps,

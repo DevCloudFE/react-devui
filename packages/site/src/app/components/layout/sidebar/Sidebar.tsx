@@ -6,6 +6,7 @@ import menu from 'packages/site/dist/menu.json';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
+import { AppstoreOutlined, BookOutlined } from '@react-devui/icons';
 import { DDrawer, DMenu, useMediaMatch } from '@react-devui/ui';
 
 import './Sidebar.scss';
@@ -16,34 +17,57 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
   const { t, i18n } = useTranslation();
 
   const location = useLocation();
-  const page = location.pathname.startsWith('/components/') ? 'Components' : 'Components';
-  const activeId = location.pathname.match(/(?<=^\/components\/).+$/)?.[0] ?? null;
+  const page = location.pathname.startsWith('/docs') ? 'Docs' : location.pathname.startsWith('/components') ? 'Components' : null;
+  const regex = new RegExp(String.raw`(?<=^\/${page === 'Docs' ? 'docs' : 'components'}\/).+$`);
+  const activeId = location.pathname.match(regex)?.[0] ?? null;
 
   const menuNode = (
     <DMenu
       className="app-sidebar__menu"
-      dList={menu.map<DNestedChildren<DMenuItem<string> & { to?: string }>>((group) => ({
-        id: group.title,
-        title: t(`menu.components-group.${group.title}`),
-        type: 'group',
-        children: (group.title === 'Other'
-          ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
-          : group.children
-        ).map((child) => ({
-          id: child.title,
-          title: (
-            <Link to={child.to}>
-              {child.title}
-              {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.components.${child.title}`)}</span>}
-            </Link>
-          ),
-          type: 'item',
-        })),
-      }))}
+      dList={
+        page === 'Docs'
+          ? [
+              {
+                id: 'Overview',
+                title: <Link to="/docs/Overview">{t('docs-menu.Overview')}</Link>,
+                type: 'item',
+              },
+              {
+                id: 'GettingStarted',
+                title: <Link to="/docs/GettingStarted">{t('docs-menu.Getting Started')}</Link>,
+                type: 'item',
+              },
+              {
+                id: 'DynamicTheme',
+                title: <Link to="/docs/DynamicTheme">{t('docs-menu.Dynamic Theme')}</Link>,
+                type: 'item',
+              },
+              {
+                id: 'Internationalization',
+                title: <Link to="/docs/Internationalization">{t('docs-menu.Internationalization')}</Link>,
+                type: 'item',
+              },
+            ]
+          : menu.map<DNestedChildren<DMenuItem<string> & { to?: string }>>((group) => ({
+              id: group.title,
+              title: t(`menu.components-group.${group.title}`),
+              type: 'group',
+              children: (group.title === 'Other'
+                ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
+                : group.children
+              ).map((child) => ({
+                id: child.title,
+                title: (
+                  <Link to={child.to}>
+                    {child.title}
+                    {i18n.language !== 'en-US' && <span className="app-sidebar__subtitle">{t(`menu.components.${child.title}`)}</span>}
+                  </Link>
+                ),
+                type: 'item',
+              })),
+            }))
+      }
       dActive={activeId}
-      onActiveChange={() => {
-        onMenuOpenChange(false);
-      }}
     ></DMenu>
   );
 
@@ -64,6 +88,10 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
       dWidth={280}
       onVisibleChange={onMenuOpenChange}
     >
+      <Link className="app-sidebar__link-button" to={page === 'Docs' ? '/components/Button' : '/docs/Overview'}>
+        {page === 'Docs' ? <AppstoreOutlined /> : <BookOutlined />}
+        {t(page === 'Docs' ? 'Components' : 'Docs')}
+      </Link>
       {menuNode}
     </DDrawer>
   );

@@ -5,8 +5,8 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEventCallback } from '@react-devui/hooks';
 import { getClassName, scrollTo } from '@react-devui/utils';
 
+import { dayjs } from '../../dayjs';
 import { usePrefixConfig } from '../../hooks';
-import { dayjs } from '../dayjs';
 
 const H12 = freeze([
   '12',

@@ -6,7 +6,7 @@ import resources from './resources.json';
 export type DLang = 'en-US' | 'zh-Hant';
 
 export function useTranslation(): [(...keys: string[]) => string, DLang] {
-  const { lang = 'zh-Hant', resources: customResources } = useContext(DConfigContext)?.i18n ?? {};
+  const { lang = 'en-US', resources: customResources } = useContext(DConfigContext)?.i18n ?? {};
   const t = useCallback(
     (...keys: string[]) => {
       if (keys.length === 1) {

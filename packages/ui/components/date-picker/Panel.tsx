@@ -6,8 +6,8 @@ import { useAsync, useEventCallback } from '@react-devui/hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
+import { dayjs } from '../../dayjs';
 import { usePrefixConfig, useTranslation } from '../../hooks';
-import { dayjs } from '../dayjs';
 
 export interface DPanelRef {
   updateView: (time: Date) => void;

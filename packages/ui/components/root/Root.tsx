@@ -7,8 +7,8 @@ import { useMemo } from 'react';
 
 import { DIconContext } from '@react-devui/icons/Icon';
 
+import { dayjs } from '../../dayjs';
 import { DConfigContext } from '../../hooks/d-config/contex';
-import { dayjs } from '../dayjs';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
 
@@ -42,18 +42,18 @@ export function DRoot(props: DRootProps): JSX.Element | null {
   }
 
   const iconProps = dContext?.componentConfigs?.DIcon;
-  const prefix = dContext?.prefix ?? 'd-';
-  const iconContext = useMemo<DIconContextData>(
-    () => ({
+  const namespace = dContext?.namespace ?? 'd';
+  const iconContext = useMemo<DIconContextData>(() => {
+    const prefix = `${namespace}-`;
+    return {
       props: iconProps,
-      prefix,
+      namespace,
       twoToneColor: (theme) => [
         theme ? `var(--${prefix}color-${theme})` : `var(--${prefix}text-color)`,
         theme ? `var(--${prefix}background-color-${theme})` : `rgb(var(--${prefix}text-color-rgb) / 10%)`,
       ],
-    }),
-    [iconProps, prefix]
-  );
+    };
+  }, [iconProps, namespace]);
 
   return (
     <DConfigContext.Provider value={dContext}>

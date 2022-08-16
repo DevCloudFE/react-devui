@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 
 import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
-import { useMediaMatch } from '@react-devui/ui';
+import { DMenu, useMediaMatch } from '@react-devui/ui';
 import { useContextRequired } from '@react-devui/ui/hooks';
 import { getClassName } from '@react-devui/utils';
 
@@ -16,6 +17,9 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
   const { i18n, t } = useTranslation();
 
   const mediaMatch = useMediaMatch();
+
+  const location = useLocation();
+  const activeId = location.pathname.startsWith('/docs') ? 'docs' : location.pathname.startsWith('/components') ? 'components' : null;
 
   const switchLang =
     i18n.language === 'en-US'
@@ -52,7 +56,33 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
           </div>
         </button>
       )}
-
+      {mediaMatch.includes('md') && (
+        <DMenu
+          className="app-header__menu"
+          dList={[
+            {
+              id: 'docs',
+              title: (
+                <Link className={activeId === 'docs' ? 'disabled' : undefined} to="/docs/Overview">
+                  {t('Docs')}
+                </Link>
+              ),
+              type: 'item',
+            },
+            {
+              id: 'components',
+              title: (
+                <Link className={activeId === 'components' ? 'disabled' : undefined} to="/components/Button">
+                  {t('Components')}
+                </Link>
+              ),
+              type: 'item',
+            },
+          ]}
+          dMode="horizontal"
+          dActive={activeId}
+        ></DMenu>
+      )}
       <div className="app-header__button-container">
         <button
           className="app-header__button app-header__button--language"

@@ -1,6 +1,8 @@
 {
   "en-US": {
     "translation": {
+      "Docs": "Docs",
+      "Components": "Components",
       "Examples": "Examples",
       "Open in CodeSandbox": "Open in CodeSandbox",
       "Open in Stackblitz": "Open in Stackblitz",
@@ -10,6 +12,12 @@
       "Copied!": "Copied!",
       "Open main navigation": "Open main navigation",
       "GitHub repository": "GitHub repository",
+      "docs-menu": {
+        "Overview": "Overview",
+        "Getting Started": "Getting Started",
+        "Dynamic Theme": "Dynamic Theme",
+        "Internationalization": "Internationalization"
+      },
       "menu": {
         "components-group": {},
         "components": {
@@ -20,6 +28,8 @@
   },
   "zh-Hant": {
     "translation": {
+      "Docs": "文档",
+      "Components": "组件",
       "Examples": "代码演示",
       "Open in CodeSandbox": "在 CodeSandbox 中打开",
       "Open in Stackblitz": "在 Stackblitz 中打开",
@@ -29,6 +39,12 @@
       "Copied!": "复制成功！",
       "Open main navigation": "打开主导航栏",
       "GitHub repository": "GitHub 存储库",
+      "docs-menu": {
+        "Overview": "概述",
+        "Getting Started": "快速开始",
+        "Dynamic Theme": "动态主题",
+        "Internationalization": "国际化"
+      },
       "menu": {
         "components-group": {},
         "components": {

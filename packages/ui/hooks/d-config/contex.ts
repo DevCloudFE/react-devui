@@ -165,7 +165,7 @@ export type DComponentConfig = {
 } & { DIcon: Omit<DIconProps, 'dIcon'> };
 
 export interface DConfigContextData {
-  prefix?: string;
+  namespace?: string;
   grid?: {
     breakpoints?: Map<DBreakpoints, number>;
     colNum?: number;

@@ -161,5 +161,3 @@ export { DUpload } from './upload';
 
 export type { DVirtualScrollProps } from './virtual-scroll';
 export { DVirtualScroll } from './virtual-scroll';
-
-export { dayjs } from './dayjs';
