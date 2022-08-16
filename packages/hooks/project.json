@@ -11,6 +11,7 @@
         "outputPath": "dist/packages/hooks",
         "tsConfig": "packages/hooks/tsconfig.lib.json",
         "main": "packages/hooks/index.ts",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "CHANGELOG.md",

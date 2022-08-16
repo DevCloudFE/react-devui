@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/xiejay97/react-devui.git"
   },
-  "homepage": "https://github.com/xiejay97/react-devui/tree/main/utils#readme",
+  "homepage": "https://github.com/xiejay97/react-devui/tree/main/packages/utils#readme",
   "bugs": {
     "url": "https://github.com/xiejay97/react-devui/issues"
   },

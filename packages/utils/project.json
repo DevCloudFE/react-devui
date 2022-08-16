@@ -11,6 +11,7 @@
         "outputPath": "dist/packages/utils",
         "tsConfig": "packages/utils/tsconfig.lib.json",
         "main": "packages/utils/index.ts",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "CHANGELOG.md",

@@ -11,6 +11,7 @@
         "outputPath": "dist/packages/ui",
         "tsConfig": "packages/ui/tsconfig.lib.json",
         "main": "packages/ui/index.ts",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "**/*",
