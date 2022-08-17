@@ -25,11 +25,14 @@ export function openStackBlitz(name: string, tsxSource: string, scssSource?: str
 ${scssSource}`;
   }
 
-  sdk.openProject({
-    title: `${name} - ${lernaJson.version}`,
-    description: 'Demo of react-devui',
-    template: 'create-react-app',
-    files: files,
-    dependencies: dependencies,
-  });
+  sdk.openProject(
+    {
+      title: `${name} - ${lernaJson.version}`,
+      description: 'Demo of react-devui',
+      template: 'create-react-app',
+      files: files,
+      dependencies: dependencies,
+    },
+    { openFile: 'Demo.tsx' }
+  );
 }

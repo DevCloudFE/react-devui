@@ -40,13 +40,17 @@ ${scssSource}`,
   const parameters = getParameters({ files });
 
   const form = document.createElement('form');
-  const parametersInput = document.createElement('input');
   form.method = 'POST';
-  form.action = 'https://codesandbox.io/api/v1/sandboxes/define?module=/src/Demo.tsx';
+  form.action = 'https://codesandbox.io/api/v1/sandboxes/define';
   form.target = '_blank';
+  const parametersInput = document.createElement('input');
   parametersInput.name = 'parameters';
   parametersInput.value = parameters;
+  const queryInput = document.createElement('input');
+  queryInput.name = 'query';
+  queryInput.value = 'module=/src/Demo.tsx';
   form.appendChild(parametersInput);
+  form.appendChild(queryInput);
   document.body.append(form);
   form.submit();
   document.body.removeChild(form);
