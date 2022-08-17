@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.7](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.6...v0.1.0-alpha.7) (2022-08-17)
+
+
+### Bug Fixes
+
+* **ui:anchor:** use `getElementById` ([7bd740b](https://github.com/DevCloudFE/react-devui/commit/7bd740b18e9bfb494f6b2a5b32a9e696cd2d75ca))
+
+
+
+
+
 # [0.1.0-alpha.6](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.5...v0.1.0-alpha.6) (2022-08-16)
 
 **Note:** Version bump only for package react-devui
