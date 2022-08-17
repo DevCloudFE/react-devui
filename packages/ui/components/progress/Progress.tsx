@@ -247,7 +247,6 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
     if (dWave) {
       dataRef.current.waveLoopFn?.(window.performance.now());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dWave, dType]);
 
   dataRef.current.transitionLoopFn = (startTime, startPercent) => {

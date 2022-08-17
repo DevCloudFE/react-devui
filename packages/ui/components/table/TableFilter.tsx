@@ -4,7 +4,7 @@ import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-sc
 import { isNull, isUndefined } from 'lodash';
 import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 
-import { useEventCallback, useForceUpdate } from '@react-devui/hooks';
+import { useForceUpdate } from '@react-devui/hooks';
 import { FilterFilled, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
 import { findNested, getClassName, isSimpleArrayEqual } from '@react-devui/utils';
 
@@ -208,7 +208,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
     }
   };
 
-  const changeSelectByClick = useEventCallback((val: V) => {
+  const changeSelectByClick = (val: V) => {
     if (dMultiple) {
       const arr = ([] as V[]).concat(dataRef.current.showSelected as V[]);
       const index = arr.findIndex((v) => v === val);
@@ -222,7 +222,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
       dataRef.current.showSelected = val;
     }
     forceUpdate();
-  });
+  };
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<T>>(
     () => ({

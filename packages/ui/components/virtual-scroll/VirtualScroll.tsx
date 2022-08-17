@@ -3,7 +3,7 @@ import type { DId } from '../../utils';
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
-import { useAsync, useEventCallback, useForceUpdate } from '@react-devui/hooks';
+import { useAsync, useForceUpdate } from '@react-devui/hooks';
 import { toPx } from '@react-devui/utils';
 
 import { useComponentConfig } from '../../hooks';
@@ -303,103 +303,112 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     return getList(dList);
   })();
 
-  const scrollTo = (num: number) => {
-    if (scrollEl) {
-      scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
-    }
-  };
-
-  const scrollToItem = useEventCallback((item: T) => {
-    if (!isUndefined(paddingSize)) {
-      const findItem = itemsMap.get(dItemKey(item));
-
-      if (!isUndefined(findItem)) {
-        scrollTo(findItem.accSize - getItemSize(findItem.item) + paddingSize);
-      }
-    }
-  });
-
-  const scrollByStep = useEventCallback((step: number) => {
-    if (!isUndefined(paddingSize)) {
-      if (isUndefined(dFocusItem)) {
-        return step > 0 ? scrollToStart() : scrollToEnd();
-      }
-
-      let findItem: T | undefined;
-      let offsetSize: [number, number] | undefined;
-
+  const scrollTo = useCallback(
+    (num: number) => {
       if (scrollEl) {
-        let index = -1;
-        let findIndex = -1;
-        const accSizeList = [];
-        for (const iterator of itemsMap) {
-          index += 1;
-          if (dItemKey(iterator[1].item) === dItemKey(dFocusItem)) {
-            findIndex = index;
-          }
-          accSizeList.push(iterator[1]);
-        }
+        scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
+      }
+    },
+    [dHorizontal, scrollEl]
+  );
 
-        if (findIndex !== -1) {
-          if (step < 0) {
-            for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
-              const accSizeItem = nth(accSizeList, index);
-              if (accSizeItem && checkFocusable(accSizeItem.item)) {
-                findItem = accSizeItem.item;
-                offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
-                break;
-              }
-            }
-          } else {
-            for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
-              const accSizeItem = nth(accSizeList, index % accSizeList.length);
-              if (accSizeItem && checkFocusable(accSizeItem.item)) {
-                findItem = accSizeItem.item;
-                offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
-                break;
-              }
-            }
-          }
-        }
+  const scrollToItem = useCallback(
+    (item: T) => {
+      if (!isUndefined(paddingSize)) {
+        const findItem = itemsMap.get(dItemKey(item));
 
-        if (!isUndefined(offsetSize)) {
-          const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
-          const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
-          if (listElScrollPosition > offsetSize[1]) {
-            scrollTo(offsetSize[0] - paddingSize);
-          } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
-            scrollTo(offsetSize[1] - listElClientSize + paddingSize);
-          } else {
-            if (step > 0) {
-              if (offsetSize[1] > listElScrollPosition + listElClientSize) {
-                scrollTo(offsetSize[1] - listElClientSize + paddingSize);
-              }
-            } else {
-              if (listElScrollPosition > offsetSize[0]) {
-                scrollTo(offsetSize[0] - paddingSize);
-              }
-            }
-          }
+        if (!isUndefined(findItem)) {
+          scrollTo(findItem.accSize - getItemSize(findItem.item) + paddingSize);
         }
       }
+    },
+    [dItemKey, getItemSize, itemsMap, paddingSize, scrollTo]
+  );
 
-      return findItem;
-    }
-  });
-
-  const scrollToStart = useEventCallback(() => {
+  const scrollToStart = useCallback(() => {
     scrollTo(0);
 
     return firstFocusableItem;
-  });
+  }, [firstFocusableItem, scrollTo]);
 
-  const scrollToEnd = useEventCallback(() => {
+  const scrollToEnd = useCallback(() => {
     if (scrollEl) {
       scrollTo(scrollEl[dHorizontal ? 'scrollWidth' : 'scrollHeight']);
     }
 
     return lastFocusableItem;
-  });
+  }, [dHorizontal, lastFocusableItem, scrollEl, scrollTo]);
+
+  const scrollByStep = useCallback(
+    (step: number) => {
+      if (!isUndefined(paddingSize)) {
+        if (isUndefined(dFocusItem)) {
+          return step > 0 ? scrollToStart() : scrollToEnd();
+        }
+
+        let findItem: T | undefined;
+        let offsetSize: [number, number] | undefined;
+
+        if (scrollEl) {
+          let index = -1;
+          let findIndex = -1;
+          const accSizeList = [];
+          for (const iterator of itemsMap) {
+            index += 1;
+            if (dItemKey(iterator[1].item) === dItemKey(dFocusItem)) {
+              findIndex = index;
+            }
+            accSizeList.push(iterator[1]);
+          }
+
+          if (findIndex !== -1) {
+            if (step < 0) {
+              for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
+                const accSizeItem = nth(accSizeList, index);
+                if (accSizeItem && checkFocusable(accSizeItem.item)) {
+                  findItem = accSizeItem.item;
+                  offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
+                  break;
+                }
+              }
+            } else {
+              for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
+                const accSizeItem = nth(accSizeList, index % accSizeList.length);
+                if (accSizeItem && checkFocusable(accSizeItem.item)) {
+                  findItem = accSizeItem.item;
+                  offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
+                  break;
+                }
+              }
+            }
+          }
+
+          if (!isUndefined(offsetSize)) {
+            const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
+            const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
+            if (listElScrollPosition > offsetSize[1]) {
+              scrollTo(offsetSize[0] - paddingSize);
+            } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
+              scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+            } else {
+              if (step > 0) {
+                if (offsetSize[1] > listElScrollPosition + listElClientSize) {
+                  scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+                }
+              } else {
+                if (listElScrollPosition > offsetSize[0]) {
+                  scrollTo(offsetSize[0] - paddingSize);
+                }
+              }
+            }
+          }
+        }
+
+        return findItem;
+      }
+    },
+    [checkFocusable, dFocusItem, dHorizontal, dItemKey, getItemSize, itemsMap, paddingSize, scrollEl, scrollTo, scrollToEnd, scrollToStart]
+  );
 
   useImperativeHandle(
     ref,

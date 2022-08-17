@@ -4,7 +4,7 @@ import type { DDropdownItem } from '../dropdown';
 import { nth } from 'lodash';
 import { useEffect, useId, useRef, useState } from 'react';
 
-import { useAsync, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useAsync, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
@@ -92,7 +92,7 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
     }
   );
 
-  const refreshTabs = useEventCallback(() => {
+  const refreshTabs = () => {
     const tablistWrapperEl = tablistWrapperRef.current;
     if (tablistWrapperEl) {
       const isOverflow = isHorizontal
@@ -129,7 +129,7 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
         setDropdownList(dropdownList);
       }
     }
-  });
+  };
   useIsomorphicLayoutEffect(() => {
     refreshTabs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +153,7 @@ export function DTabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<
     return () => {
       asyncCapture.deleteGroup(asyncId);
     };
-  }, [asyncCapture, refreshTabs]);
+  });
 
   useEffect(() => {
     if (tablistRef.current && indicatorRef.current) {

@@ -4,9 +4,9 @@ import type { DElementSelector } from '@react-devui/hooks/useElement';
 import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { useElement, useEventCallback, useLockScroll } from '@react-devui/hooks';
+import { useElement, useLockScroll } from '@react-devui/hooks';
 import { getClassName, getPopupPosition } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
@@ -115,7 +115,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   });
   const [placement, setPlacement] = useState<DPopupPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     const triggerEl = document.querySelector(`[data-popover-triggerid="${uniqueId}"]`) as HTMLElement | null;
 
     if (popupRef.current && triggerEl) {
@@ -204,7 +204,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
       }
       setTransformOrigin(transformOrigin);
     }
-  });
+  }, [containerEl, dDistance, dPlacement, isFixed, placement, uniqueId]);
 
   useLockScroll(dModal && visible);
 

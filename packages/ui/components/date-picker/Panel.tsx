@@ -1,8 +1,8 @@
 import type { Dayjs, UnitType } from 'dayjs';
 
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useAsync, useEventCallback } from '@react-devui/hooks';
+import { useAsync } from '@react-devui/hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
@@ -42,9 +42,9 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
   const [hoverDate, setHoverDate] = useState<Dayjs | null>(null);
 
   const [showDate, setShowDate] = useState<Dayjs>(activeDate);
-  const updateView = useEventCallback((t: Date) => {
+  const updateView = useCallback((t: Date) => {
     setShowDate(dayjs(t));
-  });
+  }, []);
 
   const handleButtonDown = (unit: UnitType, value: number) => {
     const loop = () => {

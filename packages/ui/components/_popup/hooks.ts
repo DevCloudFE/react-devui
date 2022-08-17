@@ -1,23 +1,19 @@
-import { useCallback } from 'react';
-
 import { useImmer } from '@react-devui/hooks';
 
 export function useNestedPopup<ID>(initialValue: ID[] = []) {
   const [popupIds, setPopupIds] = useImmer<{ id: ID; visible: boolean }[]>(() => initialValue.map((id) => ({ id, visible: true })));
 
-  const addPopupId = useCallback(
-    (id: ID) => {
+  return {
+    popupIds,
+    setPopupIds,
+    addPopupId: (id: ID) => {
       setPopupIds((draft) => {
         if (draft.findIndex((v) => v.id === id) === -1) {
           draft.push({ id, visible: true });
         }
       });
     },
-    [setPopupIds]
-  );
-
-  const removePopupId = useCallback(
-    (id: ID) => {
+    removePopupId: (id: ID) => {
       setPopupIds((draft) => {
         const index = draft.findIndex((v) => v.id === id);
         if (index !== -1) {
@@ -31,8 +27,5 @@ export function useNestedPopup<ID>(initialValue: ID[] = []) {
         }
       });
     },
-    [setPopupIds]
-  );
-
-  return { popupIds, setPopupIds, addPopupId, removePopupId };
+  };
 }

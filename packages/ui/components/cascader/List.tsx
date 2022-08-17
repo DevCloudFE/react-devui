@@ -8,7 +8,6 @@ import type { Subject } from 'rxjs';
 import { isUndefined } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
 import { LoadingOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
@@ -74,7 +73,7 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
   })();
   const shouldInitFocus = dRoot && isUndefined(dFocusItem);
 
-  const handleKeyDown = useEventCallback((key: DComboboxKeyboardSupportKey | 'click') => {
+  const handleKeyDown = (key: DComboboxKeyboardSupportKey | 'click') => {
     const focusNode = (node: AbstractTreeNode<V, T> | undefined) => {
       if (node) {
         onFocusChange(node);
@@ -123,7 +122,7 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
       default:
         break;
     }
-  });
+  };
 
   useEffect(() => {
     if (isFocus || shouldInitFocus) {
@@ -137,7 +136,7 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
         ob.unsubscribe();
       };
     }
-  }, [handleKeyDown, isFocus, onKeyDown$, shouldInitFocus]);
+  });
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<V, T>>>(
     () => ({

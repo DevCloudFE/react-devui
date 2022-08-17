@@ -2,9 +2,9 @@ import type { DNestedChildren } from '../../utils';
 import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import { isArray, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useAsync, useElement, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName, scrollTo } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
@@ -67,7 +67,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
 
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
-  const updateAnchor = useEventCallback(() => {
+  const updateAnchor = useCallback(() => {
     if (!pageEl) {
       return;
     }
@@ -97,7 +97,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
 
     const newHref = nearestEl ? nearestEl[0] : null;
     setActiveHref(newHref);
-  });
+  }, [dDistance, dList, pageEl]);
   useIsomorphicLayoutEffect(() => {
     updateAnchor();
     // eslint-disable-next-line react-hooks/exhaustive-deps

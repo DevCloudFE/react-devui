@@ -1,11 +1,11 @@
 import type { DSize } from '../../utils';
 import type { DFormControl } from '../form';
 
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, useElement, useEventCallback, useForkRef } from '@react-devui/hooks';
+import { useAsync, useElement, useForkRef } from '@react-devui/hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
@@ -116,7 +116,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     if (boxRef.current && popupRef.current) {
       const res = dUpdatePosition?.(boxRef.current, popupRef.current);
       if (res) {
@@ -124,7 +124,7 @@ function Selectbox(props: DSelectboxProps, ref: React.ForwardedRef<DSelectboxRef
         setTransformOrigin(res.transformOrigin);
       }
     }
-  });
+  }, [dUpdatePosition]);
 
   useEffect(() => {
     if (dVisible) {

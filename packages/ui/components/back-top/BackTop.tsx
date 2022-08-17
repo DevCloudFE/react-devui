@@ -3,7 +3,7 @@ import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useAsync, useElement, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { VerticalAlignTopOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, scrollTo } from '@react-devui/utils';
 
@@ -56,13 +56,13 @@ export function DBackTop(props: DBackTopProps): JSX.Element | null {
     leaved: { display: 'none' },
   };
 
-  const updateBackTop = useEventCallback(() => {
+  const updateBackTop = () => {
     if (!pageEl) {
       return;
     }
 
     setVisible(pageEl.scrollTop >= dDistance);
-  });
+  };
   useIsomorphicLayoutEffect(() => {
     updateBackTop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,7 +82,7 @@ export function DBackTop(props: DBackTopProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, pageEl, updateBackTop]);
+  });
 
   useEffect(() => {
     if (resizeEl) {
@@ -96,7 +96,7 @@ export function DBackTop(props: DBackTopProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, resizeEl, updateBackTop]);
+  });
 
   return (
     <DTransition dIn={visible} dDuring={TTANSITION_DURING_BASE}>

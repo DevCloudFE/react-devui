@@ -1,9 +1,9 @@
 import type { DFormControl } from '../form';
 
 import { isFunction, isNumber, isUndefined } from 'lodash';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-import { useForkRef } from '@react-devui/hooks';
+import { useForkRef, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
@@ -66,7 +66,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
   };
 
   const [rowNum, setRowNum] = useState(1);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     getRowNum();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

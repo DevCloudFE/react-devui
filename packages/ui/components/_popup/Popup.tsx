@@ -3,7 +3,7 @@ import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { filter } from 'rxjs';
 
-import { useAsync, useElement, useEventCallback } from '@react-devui/hooks';
+import { useAsync, useElement } from '@react-devui/hooks';
 
 import { useLayout, usePrefixConfig } from '../../hooks';
 
@@ -80,30 +80,30 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
     return dContainer;
   });
 
-  const changeVisible = (visible?: boolean) => {
-    if (isUndefined(visible)) {
-      onVisibleChange?.(!dVisible);
-    } else if (!Object.is(dVisible, visible)) {
-      onVisibleChange?.(visible);
-    }
-  };
-
-  const handleTrigger = useEventCallback((visible?: boolean, behavior?: 'hover' | 'popup-hover') => {
+  const handleTrigger = (visible?: boolean, behavior?: 'hover' | 'popup-hover') => {
     dataRef.current.clearTid?.();
+
+    const changeVisible = () => {
+      if (isUndefined(visible)) {
+        onVisibleChange?.(!dVisible);
+      } else if (!Object.is(dVisible, visible)) {
+        onVisibleChange?.(visible);
+      }
+    };
 
     if (behavior) {
       switch (behavior) {
         case 'hover':
           if (visible) {
-            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(visible), dMouseEnterDelay);
+            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(), dMouseEnterDelay);
           } else {
-            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(visible), dMouseLeaveDelay);
+            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(), dMouseLeaveDelay);
           }
           break;
 
         case 'popup-hover':
           if (!visible) {
-            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(visible), dMouseLeaveDelay);
+            dataRef.current.clearTid = asyncCapture.setTimeout(() => changeVisible(), dMouseLeaveDelay);
           }
           break;
 
@@ -111,9 +111,9 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
           break;
       }
     } else {
-      changeVisible(visible);
+      changeVisible();
     }
-  });
+  };
 
   useEffect(() => {
     if (!dDisabled && dVisible && dTrigger === 'click') {
@@ -131,7 +131,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dDisabled, dTrigger, dVisible, handleTrigger]);
+  });
 
   useEffect(() => {
     if (!dDisabled && dVisible && dEscClosable) {
@@ -150,7 +150,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dDisabled, dEscClosable, dVisible, handleTrigger]);
+  });
 
   useEffect(() => {
     if (!dDisabled && dVisible) {

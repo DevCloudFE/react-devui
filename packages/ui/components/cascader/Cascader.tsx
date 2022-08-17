@@ -255,6 +255,21 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     }
   };
 
+  const updatePosition = useCallback((boxEl: HTMLElement, popupEl: HTMLElement) => {
+    const width = boxEl.getBoundingClientRect().width;
+    const { height } = getOriginalSize(popupEl);
+    const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+
+    return {
+      position: {
+        top,
+        left,
+        maxWidth: window.innerWidth - left - 20,
+      },
+      transformOrigin,
+    };
+  }, []);
+
   const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
@@ -376,20 +391,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
             },
           }}
           dInputRef={dInputRef}
-          dUpdatePosition={(boxEl, popupEl) => {
-            const width = boxEl.getBoundingClientRect().width;
-            const { height } = getOriginalSize(popupEl);
-            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
-
-            return {
-              position: {
-                top,
-                left,
-                maxWidth: window.innerWidth - left - 20,
-              },
-              transformOrigin,
-            };
-          }}
+          dUpdatePosition={updatePosition}
           afterVisibleChange={afterVisibleChange}
           onFocusVisibleChange={setFocusVisible}
           onClear={handleClear}

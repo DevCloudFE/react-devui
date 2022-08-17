@@ -1,8 +1,7 @@
 import { freeze } from 'immer';
 import { isUndefined } from 'lodash';
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
 import { getClassName, scrollTo } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
@@ -77,49 +76,52 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
     return unit.join(':');
   })();
 
-  const updateView = useEventCallback((t: Date, unit?: 'hour' | 'minute' | 'second') => {
-    if (unit === 'hour' || isUndefined(unit)) {
-      let hour = t.getHours();
-      if (d12Hour) {
-        if (activeA === 'AM' && hour > 11) {
-          hour -= 12;
+  const updateView = useCallback(
+    (t: Date, unit?: 'hour' | 'minute' | 'second') => {
+      if (unit === 'hour' || isUndefined(unit)) {
+        let hour = t.getHours();
+        if (d12Hour) {
+          if (activeA === 'AM' && hour > 11) {
+            hour -= 12;
+          }
+          if (activeA === 'PM' && hour < 12) {
+            hour += 12;
+          }
         }
-        if (activeA === 'PM' && hour < 12) {
-          hour += 12;
+        if (ulHRef.current) {
+          dataRef.current.clearHTid?.();
+
+          dataRef.current.clearHTid = scrollTo(ulHRef.current, {
+            top: Array.prototype.indexOf.call(ulHRef.current.children, ulHRef.current.querySelector(`[data-h="${hour}"]`)) * 28,
+            behavior: 'smooth',
+          });
         }
       }
-      if (ulHRef.current) {
-        dataRef.current.clearHTid?.();
 
-        dataRef.current.clearHTid = scrollTo(ulHRef.current, {
-          top: Array.prototype.indexOf.call(ulHRef.current.children, ulHRef.current.querySelector(`[data-h="${hour}"]`)) * 28,
-          behavior: 'smooth',
-        });
+      if (unit === 'minute' || isUndefined(unit)) {
+        const minute = t.getMinutes();
+        if (ulMRef.current) {
+          dataRef.current.clearMTid?.();
+          dataRef.current.clearMTid = scrollTo(ulMRef.current, {
+            top: Array.prototype.indexOf.call(ulMRef.current.children, ulMRef.current.querySelector(`[data-m="${minute}"]`)) * 28,
+            behavior: 'smooth',
+          });
+        }
       }
-    }
 
-    if (unit === 'minute' || isUndefined(unit)) {
-      const minute = t.getMinutes();
-      if (ulMRef.current) {
-        dataRef.current.clearMTid?.();
-        dataRef.current.clearMTid = scrollTo(ulMRef.current, {
-          top: Array.prototype.indexOf.call(ulMRef.current.children, ulMRef.current.querySelector(`[data-m="${minute}"]`)) * 28,
-          behavior: 'smooth',
-        });
+      if (unit === 'second' || isUndefined(unit)) {
+        const second = t.getSeconds();
+        if (ulSRef.current) {
+          dataRef.current.clearSTid?.();
+          dataRef.current.clearSTid = scrollTo(ulSRef.current, {
+            top: Array.prototype.indexOf.call(ulSRef.current.children, ulSRef.current.querySelector(`[data-s="${second}"]`)) * 28,
+            behavior: 'smooth',
+          });
+        }
       }
-    }
-
-    if (unit === 'second' || isUndefined(unit)) {
-      const second = t.getSeconds();
-      if (ulSRef.current) {
-        dataRef.current.clearSTid?.();
-        dataRef.current.clearSTid = scrollTo(ulSRef.current, {
-          top: Array.prototype.indexOf.call(ulSRef.current.children, ulSRef.current.querySelector(`[data-s="${second}"]`)) * 28,
-          behavior: 'smooth',
-        });
-      }
-    }
-  });
+    },
+    [activeA, d12Hour]
+  );
 
   useImperativeHandle(
     ref,

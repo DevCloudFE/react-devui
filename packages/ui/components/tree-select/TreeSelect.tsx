@@ -285,6 +285,26 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     }
   };
 
+  const updatePosition = useCallback(
+    (boxEl: HTMLElement, popupEl: HTMLElement) => {
+      const width = boxEl.getBoundingClientRect().width;
+      const { height } = getOriginalSize(popupEl);
+      const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+
+      return {
+        position: {
+          top,
+          left,
+          width: hasSearch ? width : undefined,
+          minWidth: hasSearch ? undefined : width,
+          maxWidth: window.innerWidth - left - 20,
+        },
+        transformOrigin,
+      };
+    },
+    [hasSearch]
+  );
+
   const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
@@ -406,22 +426,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
             },
           }}
           dInputRef={dInputRef}
-          dUpdatePosition={(boxEl, popupEl) => {
-            const width = boxEl.getBoundingClientRect().width;
-            const { height } = getOriginalSize(popupEl);
-            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
-
-            return {
-              position: {
-                top,
-                left,
-                width: hasSearch ? width : undefined,
-                minWidth: hasSearch ? undefined : width,
-                maxWidth: window.innerWidth - left - 20,
-              },
-              transformOrigin,
-            };
-          }}
+          dUpdatePosition={updatePosition}
           afterVisibleChange={afterVisibleChange}
           onFocusVisibleChange={setFocusVisible}
           onClear={handleClear}

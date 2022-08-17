@@ -4,7 +4,7 @@ import type { DTooltipRef } from '../tooltip';
 import { isArray, isNumber, toNumber } from 'lodash';
 import { useEffect, useState, useRef } from 'react';
 
-import { useAsync, useEventCallback } from '@react-devui/hooks';
+import { useAsync } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
@@ -140,7 +140,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     return newValue ?? dMin;
   };
 
-  const handleMove = useEventCallback((e: { clientX: number; clientY: number }, isLeft?: boolean) => {
+  const handleMove = (e: { clientX: number; clientY: number }, isLeft?: boolean) => {
     isLeft = isLeft ?? focusDot === 'left';
     if (sliderRef.current) {
       const rect = sliderRef.current.getBoundingClientRect();
@@ -171,9 +171,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         changeValue(newValue);
       }
     }
-  });
+  };
 
-  const handleThumbMove = useEventCallback((e: { clientX: number; clientY: number }) => {
+  const handleThumbMove = (e: { clientX: number; clientY: number }) => {
     if (dStep && thumbPoint && sliderRef.current) {
       const rect = sliderRef.current.getBoundingClientRect();
       const offset =
@@ -205,7 +205,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
       changeValue(value);
     }
-  });
+  };
 
   const startDrag = (e: { clientX: number; clientY: number }) => {
     const handle = (isLeft = true) => {
@@ -321,7 +321,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, draggableDot, handleMove]);
+  });
 
   useEffect(() => {
     if (thumbPoint) {
@@ -364,7 +364,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, handleThumbMove, thumbPoint]);
+  });
 
   const marks = (() => {
     const marks: React.ReactNode[] = [];

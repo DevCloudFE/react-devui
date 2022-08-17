@@ -2,10 +2,10 @@ import type { DSize } from '../../utils';
 import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 
-import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, useElement, useEventCallback, useForkRef } from '@react-devui/hooks';
+import { useAsync, useElement, useForkRef } from '@react-devui/hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
 
@@ -92,8 +92,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const asyncCapture = useAsync();
   const [t] = useTranslation();
 
-  const uniqueId = useId();
-
   const [isFocus, setIsFocus] = useState(false);
   const handleFocusChange = (focus: boolean) => {
     dataRef.current.clearTid?.();
@@ -128,7 +126,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     if (boxRef.current && popupRef.current) {
       const { width, height } = getOriginalSize(popupRef.current);
       const { top, left, transformOrigin } = getVerticalSidePosition(boxRef.current, { width, height }, dPlacement, 8);
@@ -139,7 +137,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       });
       setTransformOrigin(transformOrigin);
     }
-  });
+  }, [dPlacement]);
 
   useEffect(() => {
     if (dVisible) {
@@ -161,7 +159,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, dVisible, uniqueId, updatePosition]);
+  }, [asyncCapture, dVisible, updatePosition]);
 
   useEffect(() => {
     if (dVisible && scrollEl) {

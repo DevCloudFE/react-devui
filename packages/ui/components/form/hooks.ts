@@ -3,8 +3,6 @@ import type { FormGroup } from './form-control';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
-
 import { useContextOptional } from '../../hooks';
 import { DFormContext } from './Form';
 
@@ -48,14 +46,6 @@ export function useFormControl(formControl?: DFormControl): DFormControlInject {
 
   const control = formControl?.control;
 
-  const changeValue = useEventCallback((val: any) => {
-    if (control) {
-      control.markAsDirty(true);
-      control.setValue(val);
-      formInstance?.updateForm();
-    }
-  });
-
   useEffect(() => {
     if (control) {
       const ob = control.asyncVerifyComplete$.subscribe({
@@ -72,5 +62,16 @@ export function useFormControl(formControl?: DFormControl): DFormControlInject {
     }
   }, [control, formInstance]);
 
-  return control ? [control.value, changeValue] : undefined;
+  return control
+    ? [
+        control.value,
+        (val: any) => {
+          if (control) {
+            control.markAsDirty(true);
+            control.setValue(val);
+            formInstance?.updateForm();
+          }
+        },
+      ]
+    : undefined;
 }

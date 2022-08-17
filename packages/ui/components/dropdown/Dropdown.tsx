@@ -1,9 +1,9 @@
 import type { DId, DNestedChildren } from '../../utils';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback, useEventNotify, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useEventNotify, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName, getOriginalSize, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useMaxIndex, useDValue } from '../../hooks';
@@ -157,7 +157,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const [arrowPosition, setArrowPosition] = useState<React.CSSProperties>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     const triggerEl = document.getElementById(buttonId);
     if (triggerEl && dropdownRef.current) {
       const { width, height } = getOriginalSize(dropdownRef.current);
@@ -166,7 +166,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
       setTransformOrigin(transformOrigin);
       setArrowPosition(arrowPosition);
     }
-  });
+  }, [buttonId, dPlacement]);
 
   const preventBlur: React.MouseEventHandler<HTMLElement> = (e) => {
     if (e.button === 0) {

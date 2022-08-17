@@ -1,9 +1,9 @@
 import type { DElementSelector } from '@react-devui/hooks/useElement';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useAsync, useElement, useEventCallback, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useAsync, useElement, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName, toPx } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
@@ -43,12 +43,14 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
 
   const asyncCapture = useAsync();
 
+  const isDefaultContainer = isUndefined(dContainer);
+
   const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
   const containerEl = useElement(
-    isUndefined(dContainer) || dContainer === false
+    isDefaultContainer || dContainer === false
       ? () => {
-          if (isUndefined(dContainer)) {
+          if (isDefaultContainer) {
             let el = document.getElementById(`${dPrefix}affix-root`);
             if (!el) {
               el = document.createElement('div');
@@ -62,25 +64,23 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
       : dContainer
   );
 
-  const [stickyStyle, setStickyStyle] = useState<React.CSSProperties>();
+  const [positionStyle, setPositionStyle] = useState<React.CSSProperties>();
   const [referenceStyle, setReferenceStyle] = useState<React.CSSProperties>();
   const [sticky, setSticky] = useState(false);
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     const offsetEl = sticky ? referenceRef.current : affixRef.current;
 
     if (offsetEl) {
       const offsetRect = offsetEl.getBoundingClientRect();
       let containerTop = 0;
-      if (!isUndefined(dContainer) && containerEl) {
+      if (!isDefaultContainer && containerEl) {
         containerTop = containerEl.getBoundingClientRect().top;
       }
       const top = isString(dTop) ? toPx(dTop, true) : dTop;
       const sticky = offsetRect.top - containerTop <= top;
 
       if (sticky) {
-        setStickyStyle({
-          position: 'fixed',
-          zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
+        setPositionStyle({
           width: offsetRect.width,
           height: offsetRect.height,
           left: offsetRect.left,
@@ -93,14 +93,14 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
       }
       setSticky(sticky);
     }
-  });
+  }, [containerEl, dTop, isDefaultContainer, sticky]);
   useIsomorphicLayoutEffect(() => {
     updatePosition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!isUndefined(dContainer) && containerEl) {
+    if (!isDefaultContainer && containerEl) {
       const [asyncGroup, asyncId] = asyncCapture.createGroup();
 
       asyncGroup.fromEvent(containerEl, 'scroll', { passive: true }).subscribe({
@@ -117,7 +117,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
         asyncCapture.deleteGroup(asyncId);
       };
     }
-  }, [asyncCapture, containerEl, dContainer, updatePosition]);
+  }, [asyncCapture, containerEl, isDefaultContainer, updatePosition]);
 
   useEffect(() => {
     if (scrollEl) {
@@ -179,7 +179,13 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
         className={getClassName(restProps.className, `${dPrefix}affix`)}
         style={{
           ...restProps.style,
-          ...(sticky ? stickyStyle : {}),
+          ...(sticky
+            ? {
+                position: 'fixed',
+                zIndex: dZIndex ?? `var(--${dPrefix}zindex-sticky)`,
+                ...positionStyle,
+              }
+            : {}),
         }}
       >
         {children}

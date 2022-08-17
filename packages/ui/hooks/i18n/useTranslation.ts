@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useContext } from 'react';
 
 import { DConfigContext } from '../d-config/contex';
 import resources from './resources.json';
@@ -7,7 +7,8 @@ export type DLang = 'en-US' | 'zh-Hant';
 
 export function useTranslation(): [(...keys: string[]) => string, DLang] {
   const { lang = 'en-US', resources: customResources } = useContext(DConfigContext)?.i18n ?? {};
-  const t = useCallback(
+
+  return [
     (...keys: string[]) => {
       if (keys.length === 1) {
         keys = ['Common', keys[0]];
@@ -29,8 +30,6 @@ export function useTranslation(): [(...keys: string[]) => string, DLang] {
 
       return content?.[lang] ?? keys.join('.');
     },
-    [customResources, lang]
-  );
-
-  return [t, lang];
+    lang,
+  ];
 }

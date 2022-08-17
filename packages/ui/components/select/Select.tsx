@@ -6,7 +6,6 @@ import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-sc
 import { isNull, isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
 
@@ -272,7 +271,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     }
   };
 
-  const changeSelectByClick = useEventCallback((val: V) => {
+  const changeSelectByClick = (val: V) => {
     if (dMultiple) {
       changeSelect((draft) => {
         const index = (draft as V[]).findIndex((v) => v === val);
@@ -286,7 +285,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
       changeSelect(val);
       changeVisible(false);
     }
-  });
+  };
 
   const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;

@@ -24,7 +24,7 @@ function getScopesRule() {
   if (parsed) {
     const { scope } = parsed;
     if (scope) {
-      return [2, 'always', scope.startsWith('site:') || scope.startsWith('ui:') ? [] : scopes];
+      return [2, 'always', scopes];
     }
   }
   return [2, 'always', []];

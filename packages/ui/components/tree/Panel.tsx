@@ -8,7 +8,6 @@ import type { Subject } from 'rxjs';
 import { isUndefined } from 'lodash';
 import React, { useMemo, useRef, useEffect } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
 import { CaretRightOutlined, LoadingOutlined, MinusSquareOutlined, PlusSquareOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
@@ -67,7 +66,7 @@ export function DPanel<V extends DId, T extends DTreeItem<V>>(props: DPanelProps
 
   const [t] = useTranslation();
 
-  const handleKeyDown = useEventCallback((key: DComboboxKeyboardSupportKey | 'click') => {
+  const handleKeyDown = (key: DComboboxKeyboardSupportKey | 'click') => {
     const focusNode = (node?: AbstractTreeNode<V, T>) => {
       if (node) {
         onFocusChange(node);
@@ -120,7 +119,7 @@ export function DPanel<V extends DId, T extends DTreeItem<V>>(props: DPanelProps
           break;
       }
     }
-  });
+  };
 
   useEffect(() => {
     const ob = onKeyDown$.subscribe({
@@ -132,7 +131,7 @@ export function DPanel<V extends DId, T extends DTreeItem<V>>(props: DPanelProps
     return () => {
       ob.unsubscribe();
     };
-  }, [handleKeyDown, onKeyDown$]);
+  });
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.button === 0) {

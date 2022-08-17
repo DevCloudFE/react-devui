@@ -1,6 +1,5 @@
 export { useAsync } from './useAsync';
 export { useElement } from './useElement';
-export { useEventCallback } from './useEventCallback';
 export { useEventNotify } from './useEventNotify';
 export { useForceUpdate } from './useForceUpdate';
 export { useForkRef } from './useForkRef';

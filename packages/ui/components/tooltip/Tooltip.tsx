@@ -2,9 +2,9 @@ import type { DElementSelector } from '@react-devui/hooks/useElement';
 import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isUndefined } from 'lodash';
-import React, { useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useId, useImperativeHandle, useRef, useState } from 'react';
 
-import { useElement, useEventCallback } from '@react-devui/hooks';
+import { useElement } from '@react-devui/hooks';
 import { getClassName, getPopupPosition } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
@@ -103,7 +103,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   });
   const [placement, setPlacement] = useState<DPopupPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
 
     if (popupRef.current && triggerEl) {
@@ -192,7 +192,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
       }
       setTransformOrigin(transformOrigin);
     }
-  });
+  }, [containerEl, dDistance, dPlacement, id, isFixed, placement]);
 
   useImperativeHandle(
     ref,

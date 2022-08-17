@@ -8,7 +8,6 @@ import type { Subject } from 'rxjs';
 import { isUndefined } from 'lodash';
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useTranslation } from '../../hooks';
@@ -57,7 +56,7 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
 
   const [t] = useTranslation();
 
-  const handleKeyDown = useEventCallback((key: DComboboxKeyboardSupportKey | 'click') => {
+  const handleKeyDown = (key: DComboboxKeyboardSupportKey | 'click') => {
     const focusItem = (item: DSearchItem<V, T> | undefined) => {
       if (item) {
         onFocusChange(item);
@@ -89,7 +88,7 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
       default:
         break;
     }
-  });
+  };
 
   useEffect(() => {
     const ob = onKeyDown$.subscribe({
@@ -101,7 +100,7 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
     return () => {
       ob.unsubscribe();
     };
-  }, [handleKeyDown, onKeyDown$]);
+  });
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<V, T>>>(
     () => ({

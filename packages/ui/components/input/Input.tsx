@@ -4,7 +4,7 @@ import type { DFormControl } from '../form';
 import { isUndefined } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useEventCallback, useForceUpdate, useForkRef } from '@react-devui/hooks';
+import { useAsync, useForceUpdate, useForkRef } from '@react-devui/hooks';
 import { CloseCircleFilled, DCustomIcon, EyeInvisibleOutlined, EyeOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
@@ -94,7 +94,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
-  const changeNumber = useEventCallback((isIncrease = true) => {
+  const changeNumber = (isIncrease = true) => {
     const stepVal = dStep ?? 1;
     const newVal = (() => {
       let val = Number(dataRef.current.showValue);
@@ -107,7 +107,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
       return isIncrease ? val + stepVal : val - stepVal;
     })();
     changeValue(Math.max(dMin ?? -Infinity, Math.min(dMax ?? Infinity, newVal)).toFixed(stepVal.toString().split('.')[1]?.length ?? 0));
-  });
+  };
 
   const handleNumberMouseDown = (isIncrease = true) => {
     const loop = () => {

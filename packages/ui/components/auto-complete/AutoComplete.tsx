@@ -7,7 +7,7 @@ import { isUndefined } from 'lodash';
 import React, { useState, useId, useCallback, useRef, useImperativeHandle, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, useElement, useEventCallback } from '@react-devui/hooks';
+import { useAsync, useElement } from '@react-devui/hooks';
 import { LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
 
@@ -101,7 +101,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useEventCallback(() => {
+  const updatePosition = useCallback(() => {
     const boxEl = document.querySelector(`[data-auto-complete-boxid="${uniqueId}"]`) as HTMLElement | null;
     const popupEl = popupRef.current;
     if (boxEl && popupEl) {
@@ -117,7 +117,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
       });
       setTransformOrigin(transformOrigin);
     }
-  });
+  }, [uniqueId]);
 
   const [_focusItem, setFocusItem] = useState<DNestedChildren<T> | undefined>();
   const focusItem = (() => {
