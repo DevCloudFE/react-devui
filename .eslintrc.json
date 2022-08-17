@@ -55,12 +55,6 @@
             },
             "warnOnUnassignedImports": true
           }
-        ],
-        "react-hooks/exhaustive-deps": [
-          "warn",
-          {
-            "additionalHooks": "(useIsomorphicLayoutEffect)"
-          }
         ]
       }
     },
@@ -99,6 +93,17 @@
       "extends": ["plugin:@nrwl/nx/javascript", "plugin:jsdoc/recommended"],
       "rules": {
         "jsdoc/require-jsdoc": "off"
+      }
+    },
+    {
+      "files": ["*.tsx", "*.jsx"],
+      "rules": {
+        "react-hooks/exhaustive-deps": [
+          "warn",
+          {
+            "additionalHooks": "(useIsomorphicLayoutEffect)"
+          }
+        ]
       }
     },
     {

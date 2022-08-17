@@ -30,6 +30,8 @@
   },
   "dependencies": {
     "@ant-design/icons-svg": "^4.2.1",
+    "@stackblitz/sdk": "^1.8.0",
+    "codesandbox": "^2.2.3",
     "core-js": "^3.24.1",
     "dayjs": "^1.11.5",
     "highlight.js": "^11.6.0",

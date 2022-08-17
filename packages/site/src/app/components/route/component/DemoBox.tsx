@@ -8,6 +8,7 @@ import { copy, getClassName } from '@react-devui/utils';
 
 import marked, { toString } from '../utils';
 import './DemoBox.scss';
+import { openCodeSandbox, openStackBlitz } from './online-ide';
 
 export interface AppDemoBoxProps {
   id: string;
@@ -102,10 +103,24 @@ ${'```'}
       </div>
       <div className="app-demo-box__toolbar">
         <DTooltip dTitle={t('Open in CodeSandbox')}>
-          <CodeSandboxOutlined className="app-icon-button" dSize={18} />
+          <CodeSandboxOutlined
+            className="app-icon-button"
+            dSize={18}
+            onClick={() => {
+              const el = document.getElementById('component-route-title');
+              openCodeSandbox(`${el!.textContent!.match(/[a-zA-Z]+/)![0]}:${title}`, tsxSource, scssSource);
+            }}
+          />
         </DTooltip>
         <DTooltip dTitle={t('Open in Stackblitz')}>
-          <ThunderboltOutlined className="app-icon-button" dSize={18} />
+          <ThunderboltOutlined
+            className="app-icon-button"
+            dSize={18}
+            onClick={() => {
+              const el = document.getElementById('component-route-title');
+              openStackBlitz(`${el!.textContent!.match(/[a-zA-Z]+/)![0]}:${title}`, tsxSource, scssSource);
+            }}
+          />
         </DTooltip>
         <DTooltip dTitle={copyCode ? t('Copied!') : t('Copy code')} afterVisibleChange={afterCopyTrige}>
           <div className="app-icon-button">

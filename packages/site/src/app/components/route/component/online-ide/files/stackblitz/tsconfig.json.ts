@@ -1,0 +1,9 @@
+export default `{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "lib": ["dom", "es2015"],
+    "jsx": "react-jsx"
+  }
+}
+`;

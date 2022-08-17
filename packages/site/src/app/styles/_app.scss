@@ -182,17 +182,6 @@ h3 {
     }
   }
 
-  section[id^='Compose'],
-  section[id^='Cascader'],
-  section[id^='Select'],
-  section[id^='TreeSelect'] {
-    .d-select,
-    .d-cascader,
-    .d-tree-select {
-      width: 400px;
-    }
-  }
-
   section[id^='Button'],
   section[id^='Dropdown'],
   section[id^='Notification'],
@@ -249,14 +238,6 @@ h3 {
     }
   }
 
-  section[id^='Menu'] {
-    .d-menu:not(.d-menu--horizontal) {
-      width: 320px;
-      max-width: 100%;
-      border-right: 1px solid var(--d-color-divider);
-    }
-  }
-
   section[id^='Checkbox'] {
     .d-checkbox {
       margin-right: 8px;
@@ -268,12 +249,6 @@ h3 {
         margin-right: 0;
         margin-bottom: 0;
       }
-    }
-  }
-
-  section[id^='Form'] {
-    .d-form--inline {
-      min-width: 800px;
     }
   }
 
@@ -302,6 +277,19 @@ h3 {
   section[id^='Alert'] {
     .d-alert {
       margin-bottom: 20px;
+    }
+  }
+
+  section[id^='Menu'] {
+    .d-menu:not(.d-menu--horizontal) {
+      max-width: 100%;
+      border-right: 1px solid var(--d-color-divider);
+    }
+  }
+
+  section[id^='Form'] {
+    .d-form--inline {
+      min-width: 800px;
     }
   }
 

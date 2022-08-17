@@ -39,27 +39,13 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
         onEnterRendered?.();
 
         if (ref.current) {
-          const cssText = ref.current.style.cssText;
-
           if (dHorizontal) {
-            ref.current.style.width = '';
-            ref.current.style.paddingLeft = '';
-            ref.current.style.paddingRight = '';
-            ref.current.style.marginLeft = '';
-            ref.current.style.marginRight = '';
             const { width } = ref.current.getBoundingClientRect();
             dataRef.current.width = width;
           } else {
-            ref.current.style.height = '';
-            ref.current.style.paddingTop = '';
-            ref.current.style.paddingBottom = '';
-            ref.current.style.marginTop = '';
-            ref.current.style.marginBottom = '';
             const { height } = ref.current.getBoundingClientRect();
             dataRef.current.height = height;
           }
-
-          ref.current.style.cssText = cssText;
         }
       }}
     >

@@ -41,7 +41,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
 
   return (
     <AppRouteArticle links={links}>
-      <h1 id="title" className="app-component-route-article__title">
+      <h1 id="component-route-title" className="app-component-route-article__title">
         {title}
         {i18n.language !== 'en-US' && <span className="app-component-route-article__subtitle">{subtitle}</span>}
       </h1>
@@ -71,7 +71,7 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
           </li>
         )}
       </ul>
-      <h2 id="Examples" className="app-component-route-article__examples">
+      <h2 id="component-route-examples" className="app-component-route-article__examples">
         {t('Examples')}
       </h2>
       <section className="app-component-route-article__demos" data-demo={title}>

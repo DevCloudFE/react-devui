@@ -1,13 +1,15 @@
 import { isArray, isNumber } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useForceUpdate, useMount } from '@react-devui/hooks';
+import { useAsync, useForceUpdate, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 
-export type DTransitionState = 'enter' | 'entering' | 'entered' | 'leave' | 'leaving' | 'leaved';
-const [T_ENTER, T_ENTERING, T_ENTERED, T_LEAVE, T_LEAVING, T_LEAVED] = [
+export type DTransitionState = 'before-enter' | 'enter' | 'entering' | 'entered' | 'before-leave' | 'leave' | 'leaving' | 'leaved';
+const [T_BEFORE_ENTER, T_ENTER, T_ENTERING, T_ENTERED, T_BEFORE_LEAVE, T_LEAVE, T_LEAVING, T_LEAVED] = [
+  'before-enter',
   'enter',
   'entering',
   'entered',
+  'before-leave',
   'leave',
   'leaving',
   'leaved',
@@ -39,9 +41,9 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
   const [initState] = useState(() => {
     const [skipEnter, skipLeave] = isArray(dSkipFirstTransition) ? dSkipFirstTransition : [dSkipFirstTransition, dSkipFirstTransition];
     if (dIn) {
-      return skipEnter ? T_ENTERED : T_ENTER;
+      return skipEnter ? T_ENTERED : T_BEFORE_ENTER;
     } else {
-      return skipLeave ? T_LEAVED : T_LEAVE;
+      return skipLeave ? T_LEAVED : T_BEFORE_LEAVE;
     }
   });
   const dataRef = useRef<{
@@ -65,16 +67,26 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
 
   if (dataRef.current.prevIn !== dIn) {
     dataRef.current.prevIn = dIn;
-    dataRef.current.state = dIn ? T_ENTER : T_LEAVE;
+    dataRef.current.state = dIn ? T_BEFORE_ENTER : T_BEFORE_LEAVE;
     dataRef.current.isFirstEnter = false;
   }
 
-  useMount(() => {
-    const state = dataRef.current.state;
-    if (state === T_ENTERED) {
+  useIsomorphicLayoutEffect(() => {
+    if (dataRef.current.state === T_ENTERED) {
       onEnterRendered?.();
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useIsomorphicLayoutEffect(() => {
+    if (dataRef.current.state === T_BEFORE_ENTER) {
+      onEnterRendered?.();
+      updateTransitionState(T_ENTER);
+    } else if (dataRef.current.state === T_BEFORE_LEAVE) {
+      updateTransitionState(T_LEAVE);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dIn]);
 
   useEffect(() => {
     dataRef.current.clearTid?.();
