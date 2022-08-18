@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +9,10 @@ import './Home.scss';
 
 export function Home() {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = 'React DevUI';
+  }, []);
 
   return (
     <main className="app-home">

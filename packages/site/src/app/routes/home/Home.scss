@@ -1,6 +1,7 @@
 @import '~rfs/scss';
 
 .app-home {
+  padding: 20px;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -12,8 +13,8 @@
 }
 
 .app-home__img {
+  height: 240px;
   max-width: 100%;
-  max-height: 240px;
   margin: 60px auto 0 auto;
 }
 
@@ -56,7 +57,7 @@
   justify-content: space-around;
   padding: 60px 20px;
   color: #fff;
-  margin: 40px 0 0 0;
+  margin: 40px -20px -20px -20px;
 
   a {
     font: inherit;
