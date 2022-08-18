@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "description": "React Component Library",
-  "homepage": "https://github.com/xiejay97/react-devui",
+  "homepage": "https://github.com/DevCloudFE/react-devui",
   "engines": {
     "node": "14.x || 16.x",
     "yarn": ">=1.22.4 <2",

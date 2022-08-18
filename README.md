@@ -52,4 +52,4 @@ For non-new component contributions, please refer to [Contribution Guide](CONTRI
 
 ## VSCode configuration
 
-Refer to [README.md](https://github.com/xiejay97/react-devui/tree/main/.vscode) under the `.vscode` directory
+Refer to [README.md](https://github.com/DevCloudFE/react-devui/tree/main/.vscode) under the `.vscode` directory

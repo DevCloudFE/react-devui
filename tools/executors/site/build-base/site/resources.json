@@ -12,6 +12,12 @@
       "Copied!": "Copied!",
       "Open main navigation": "Open main navigation",
       "GitHub repository": "GitHub repository",
+      "home": {
+        "Title": "Elegant Design & Ultimate Performance",
+        "Getting Started": "Getting Started",
+        "Resources": "Resources",
+        "Help": "Help"
+      },
       "docs-menu": {
         "Overview": "Overview",
         "Getting Started": "Getting Started",
@@ -39,6 +45,12 @@
       "Copied!": "复制成功！",
       "Open main navigation": "打开主导航栏",
       "GitHub repository": "GitHub 存储库",
+      "home": {
+        "Title": "优雅的设计 & 极致的性能",
+        "Getting Started": "快速开始",
+        "Resources": "相关资源",
+        "Help": "帮助"
+      },
       "docs-menu": {
         "Overview": "概述",
         "Getting Started": "快速开始",

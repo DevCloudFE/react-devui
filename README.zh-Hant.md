@@ -52,4 +52,4 @@ yarn site:serve
 
 ## VSCode 配置
 
-参考 `.vscode` 目录下的 [README.md](https://github.com/xiejay97/react-devui/tree/main/.vscode)
+参考 `.vscode` 目录下的 [README.md](https://github.com/DevCloudFE/react-devui/tree/main/.vscode)

@@ -14,11 +14,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/xiejay97/react-devui.git"
+    "url": "https://github.com/DevCloudFE/react-devui.git"
   },
-  "homepage": "https://github.com/xiejay97/react-devui/tree/main/packages/hooks#readme",
+  "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/hooks#readme",
   "bugs": {
-    "url": "https://github.com/xiejay97/react-devui/issues"
+    "url": "https://github.com/DevCloudFE/react-devui/issues"
   },
   "license": "MIT",
   "sideEffects": false,

@@ -19,7 +19,7 @@ export type DGutterValue = number | string | [number | string, number | string];
 
 export interface DRowProps extends React.HTMLAttributes<HTMLDivElement> {
   dGutter?: DGutterValue;
-  dResponsiveGutter?: Record<DBreakpoints, DGutterValue>;
+  dResponsiveGutter?: Partial<Record<DBreakpoints, DGutterValue>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRow' });
@@ -51,7 +51,7 @@ export function DRow(props: DRowProps): JSX.Element | null {
     if (dResponsiveGutter) {
       for (const breakpoint of mediaMatch) {
         if (breakpoint in dResponsiveGutter) {
-          gap = getGap(dResponsiveGutter[breakpoint]);
+          gap = getGap(dResponsiveGutter[breakpoint]!);
           break;
         }
       }

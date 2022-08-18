@@ -42,7 +42,7 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
         pending?: React.ReactNode;
       };
   dSize?: DSize;
-  dResponsiveProps?: Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dLayout' | 'dInlineSpan'>>;
+  dResponsiveProps?: Partial<Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dLayout' | 'dInlineSpan'>>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm' });

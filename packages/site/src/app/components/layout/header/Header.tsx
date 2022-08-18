@@ -35,10 +35,10 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
   return (
     <header className="app-header is-shadow">
       {mediaMatch.includes('md') ? (
-        <div className="app-header__logo-container">
+        <Link className="app-header__logo-container" to="/">
           <img className="app-header__logo" src="/assets/logo.svg" alt="Logo" width="36" height="36" />
           <span className="app-header__title">DevUI</span>
-        </div>
+        </Link>
       ) : (
         <button
           className="app-header__button app-header__button--menu"
@@ -63,7 +63,7 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
             {
               id: 'docs',
               title: (
-                <Link className={activeId === 'docs' ? 'disabled' : undefined} to="/docs/Overview">
+                <Link className={activeId === 'docs' ? 'disabled' : undefined} to="/docs">
                   {t('Docs')}
                 </Link>
               ),
@@ -72,7 +72,7 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
             {
               id: 'components',
               title: (
-                <Link className={activeId === 'components' ? 'disabled' : undefined} to="/components/Button">
+                <Link className={activeId === 'components' ? 'disabled' : undefined} to="/components">
                   {t('Components')}
                 </Link>
               ),
@@ -119,7 +119,7 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
         </button>
         <a
           className="app-header__button"
-          href="//github.com/xiejay97/react-devui"
+          href="//github.com/DevCloudFE/react-devui"
           target="_blank"
           rel="noreferrer"
           aria-label={t('GitHub repository')}

@@ -12,6 +12,7 @@ import { DRoot } from '@react-devui/ui';
 
 import { environment } from '../environments/environment';
 import { AppLayout } from './components';
+import { Home } from './routes/home';
 
 type DTheme = 'light' | 'dark';
 
@@ -95,19 +96,26 @@ export function App() {
         <AppLayout />
       </AppContext.Provider>
 
-      <main ref={mainRef} className="app-main">
-        <Routes>
-          {routes.map(({ path, component }) => (
-            <Route
-              key={path}
-              path={path}
-              element={<Suspense fallback={<div className="app-top-line-loader" />}>{React.createElement(component)}</Suspense>}
-            />
-          ))}
+      <Routes>
+        {routes.map(({ path, component }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <Suspense fallback={<div className="app-top-line-loader" />}>
+                <main ref={mainRef} className="app-main">
+                  {React.createElement(component)}
+                </main>
+              </Suspense>
+            }
+          />
+        ))}
 
-          <Route path="*" element={<Navigate to="/components/Button" replace={true} />}></Route>
-        </Routes>
-      </main>
+        <Route path="/" element={<Home />} />
+        <Route path="/docs" element={<Navigate to="/docs/Overview" replace={true} />} />
+        <Route path="/components" element={<Navigate to="/components/Button" replace={true} />} />
+        <Route path="*" element={<Navigate to="/" replace={true} />} />
+      </Routes>
     </DRoot>
   );
 }

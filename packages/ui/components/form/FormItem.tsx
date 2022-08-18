@@ -41,7 +41,7 @@ export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> exten
   dLabelExtra?: ({ title: string; icon?: React.ReactElement } | string)[];
   dShowRequired?: boolean;
   dSpan?: number | string | true;
-  dResponsiveProps?: Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>;
+  dResponsiveProps?: Partial<Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' });

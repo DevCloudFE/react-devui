@@ -14,7 +14,7 @@ export interface DColBaseProps extends React.HTMLAttributes<HTMLDivElement> {
   dSpan?: DSpanValue;
 }
 export interface DColProps extends DColBaseProps {
-  dResponsiveProps?: Record<DBreakpoints, DSpanValue | DColBaseProps>;
+  dResponsiveProps?: Partial<Record<DBreakpoints, DSpanValue | DColBaseProps>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' });
