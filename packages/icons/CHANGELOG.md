@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.9](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.8...v0.1.0-alpha.9) (2022-08-18)
+
+**Note:** Version bump only for package @react-devui/icons
+
+
+
+
+
 # [0.1.0-alpha.8](https://github.com/xiejay97/react-devui/compare/v0.1.0-alpha.7...v0.1.0-alpha.8) (2022-08-17)
 
 **Note:** Version bump only for package @react-devui/icons

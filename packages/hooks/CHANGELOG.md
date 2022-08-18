@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.9](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.8...v0.1.0-alpha.9) (2022-08-18)
+
+
+### Bug Fixes
+
+* **ui:** fix first popup update ([0d0262d](https://github.com/DevCloudFE/react-devui/commit/0d0262defd21bf5bfb53d286dbf2d319b5508179))
+
+
+
+
+
 # [0.1.0-alpha.8](https://github.com/xiejay97/react-devui/compare/v0.1.0-alpha.7...v0.1.0-alpha.8) (2022-08-17)
 
 **Note:** Version bump only for package @react-devui/hooks
