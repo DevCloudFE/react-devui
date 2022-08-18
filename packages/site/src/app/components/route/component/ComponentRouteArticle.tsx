@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import { AppRouteArticle } from '../RouteArticle';
 import marked, { toString } from '../utils';
@@ -10,13 +11,15 @@ export interface AppComponentRouteArticleProps {
   subtitle: string;
   description: number[];
   aria: string;
+  compose: string;
+  'virtual-scroll': string;
   api: number[];
   demos: React.ReactNode;
   links: { href: string; title: string }[];
 }
 
 export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
-  const { title, subtitle, aria, demos, links } = props;
+  const { title, subtitle, aria, compose, 'virtual-scroll': virtualScroll, demos, links } = props;
 
   const description = marked(toString(props.description));
   const api = marked(toString(props.api));
@@ -68,6 +71,22 @@ export function AppComponentRouteArticle(props: AppComponentRouteArticleProps) {
               </svg>
               <span>WAI-ARIA</span>
             </a>
+          </li>
+        )}
+        {compose && (
+          <li>
+            <Link className="app-component-route-article__tag-link" to="/components/Compose">
+              <img src="/assets/imgs/compose.png" alt="Compose" height={24} width={20} />
+              <span>Compose</span>
+            </Link>
+          </li>
+        )}
+        {virtualScroll && (
+          <li>
+            <Link className="app-component-route-article__tag-link" to="/components/VirtualScroll">
+              <img src="/assets/imgs/virtual-scroll.png" alt="Compose" height={16} width={16} />
+              <span>VirtualScroll</span>
+            </Link>
           </li>
         )}
       </ul>

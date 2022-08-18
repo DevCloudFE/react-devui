@@ -39,6 +39,8 @@ interface ComponentMeta {
   title: string;
   img?: string;
   aria?: string;
+  compose?: string;
+  'virtual-scroll'?: string;
   __content: string;
 }
 
@@ -175,6 +177,8 @@ class GenerateSite {
     const zhMeta: ComponentMeta = yamlFront.loadFront(readFileSync(path.join(file.path, 'README.zh-Hant.md')));
     const meta = {
       aria: enMeta.aria ?? '',
+      compose: enMeta.compose ?? '',
+      'virtual-scroll': enMeta['virtual-scroll'] ?? '',
       title: {
         'en-US': enMeta.title,
         'zh-Hant': zhMeta.title,
@@ -271,6 +275,8 @@ class GenerateSite {
   subtitle: '__subtitle__',
   description: [__description__],
   aria: '__aria__',
+  compose: '__compose__',
+  'virtual-scroll': '__virtual-scroll__',
   api: [__api__],
   demos: (
     <>
@@ -283,6 +289,8 @@ class GenerateSite {
         routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
         routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
         routeArticleProps = routeArticleProps.replace(/__aria__/g, meta.aria);
+        routeArticleProps = routeArticleProps.replace(/__compose__/g, meta.compose);
+        routeArticleProps = routeArticleProps.replace(/__virtual-scroll__/g, meta['virtual-scroll']);
         routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
 
         const article = meta.__content[lang];

@@ -165,11 +165,13 @@ class GenerateSite {
         }
     }
     generateComponentRoute(file) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const enMeta = yamlFront.loadFront((0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'README.md')));
         const zhMeta = yamlFront.loadFront((0, fs_extra_2.readFileSync)(path_1.default.join(file.path, 'README.zh-Hant.md')));
         const meta = {
             aria: (_a = enMeta.aria) !== null && _a !== void 0 ? _a : '',
+            compose: (_b = enMeta.compose) !== null && _b !== void 0 ? _b : '',
+            'virtual-scroll': (_c = enMeta['virtual-scroll']) !== null && _c !== void 0 ? _c : '',
             title: {
                 'en-US': enMeta.title,
                 'zh-Hant': zhMeta.title,
@@ -204,7 +206,7 @@ class GenerateSite {
             let importStr = '';
             const demoList = [];
             for (const demoFile of (0, fs_extra_2.readdirSync)(path_1.default.join(file.path, 'demos'))) {
-                const order = (_b = demoFile.match(/^[0-9]+/)) === null || _b === void 0 ? void 0 : _b[0];
+                const order = (_d = demoFile.match(/^[0-9]+/)) === null || _d === void 0 ? void 0 : _d[0];
                 if (order) {
                     const demo = this.generateComponentDemo({
                         name: demoFile,
@@ -255,6 +257,8 @@ class GenerateSite {
   subtitle: '__subtitle__',
   description: [__description__],
   aria: '__aria__',
+  compose: '__compose__',
+  'virtual-scroll': '__virtual-scroll__',
   api: [__api__],
   demos: (
     <>
@@ -267,6 +271,8 @@ class GenerateSite {
                 routeArticleProps = routeArticleProps.replace(/__title__/g, meta.title['en-US']);
                 routeArticleProps = routeArticleProps.replace(/__subtitle__/g, meta.title[lang]);
                 routeArticleProps = routeArticleProps.replace(/__aria__/g, meta.aria);
+                routeArticleProps = routeArticleProps.replace(/__compose__/g, meta.compose);
+                routeArticleProps = routeArticleProps.replace(/__virtual-scroll__/g, meta['virtual-scroll']);
                 routeArticleProps = routeArticleProps.replace(/__links__/g, linksStr);
                 const article = meta.__content[lang];
                 const description = (_a = article.match(/^[\s\S]*(?=## API)/g)) === null || _a === void 0 ? void 0 : _a[0];
