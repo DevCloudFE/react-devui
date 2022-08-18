@@ -16,7 +16,7 @@ export function AppLayout() {
   return (
     <>
       <AppHeader aMenuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-      {location.pathname !== '/' && <AppSidebar aMenuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />}
+      <AppSidebar aMenuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
     </>
   );
 }

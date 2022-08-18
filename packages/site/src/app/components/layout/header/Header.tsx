@@ -62,20 +62,12 @@ export function AppHeader(props: { aMenuOpen: boolean; onMenuOpenChange: (open: 
           dList={[
             {
               id: 'docs',
-              title: (
-                <Link className={activeId === 'docs' ? 'disabled' : undefined} to="/docs">
-                  {t('Docs')}
-                </Link>
-              ),
+              title: <Link to="/docs">{t('Docs')}</Link>,
               type: 'item',
             },
             {
               id: 'components',
-              title: (
-                <Link className={activeId === 'components' ? 'disabled' : undefined} to="/components">
-                  {t('Components')}
-                </Link>
-              ),
+              title: <Link to="/components">{t('Components')}</Link>,
               type: 'item',
             },
           ]}

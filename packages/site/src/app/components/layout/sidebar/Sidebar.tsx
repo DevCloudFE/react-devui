@@ -74,25 +74,33 @@ export function AppSidebar(props: { aMenuOpen: boolean; onMenuOpenChange: (open:
   const mediaMatch = useMediaMatch();
 
   return mediaMatch.includes('md') ? (
-    <div className="app-sidebar">{menuNode}</div>
+    page ? (
+      <div className="app-sidebar">{menuNode}</div>
+    ) : null
   ) : (
     <DDrawer
       className="app-sidebar__drawer"
       dVisible={aMenuOpen}
       dHeader={
         <DDrawer.Header>
-          <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
-          <span className="app-sidebar__title">{page}</span>
+          <Link className="app-sidebar__header-link" to="/">
+            <img className="app-sidebar__logo" src="/assets/logo.svg" alt="Logo" width="24" height="24" />
+            <span className="app-sidebar__title">DevUI</span>
+          </Link>
         </DDrawer.Header>
       }
       dWidth={280}
       onVisibleChange={onMenuOpenChange}
     >
-      <Link className="app-sidebar__link-button" to={page === 'Docs' ? '/components/Button' : '/docs/Overview'}>
-        {page === 'Docs' ? <AppstoreOutlined /> : <BookOutlined />}
-        {t(page === 'Docs' ? 'Components' : 'Docs')}
+      <Link className="app-sidebar__link-button" to="/docs">
+        <BookOutlined />
+        {t('Docs')}
       </Link>
-      {menuNode}
+      <Link className="app-sidebar__link-button" to="/components">
+        <AppstoreOutlined />
+        {t('Components')}
+      </Link>
+      {page && menuNode}
     </DDrawer>
   );
 }
