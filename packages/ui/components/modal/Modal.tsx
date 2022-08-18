@@ -74,7 +74,10 @@ export const DModal: {
     x: number;
     y: number;
     transformOrigin?: string;
-  }>({ x: 0, y: 0 });
+  }>({
+    x: 0,
+    y: 0,
+  });
 
   const asyncCapture = useAsync();
 

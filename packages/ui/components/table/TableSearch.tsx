@@ -43,7 +43,10 @@ function TableSearch(props: DTableSearchProps, ref: React.ForwardedRef<DTableSea
   const dataRef = useRef<{
     showValue: string;
     prevValue: string;
-  }>({ showValue: '', prevValue: '' });
+  }>({
+    showValue: '',
+    prevValue: '',
+  });
 
   const [t] = useTranslation();
   const forceUpdate = useForceUpdate();

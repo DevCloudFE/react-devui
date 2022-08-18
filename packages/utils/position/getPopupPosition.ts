@@ -1,7 +1,6 @@
 import { isUndefined } from 'lodash';
 
 import { getOriginalSize } from '../getOriginalSize';
-import { getPositionedParent } from '../getPositionedParent';
 
 export type DPopupPlacement =
   | 'top'
@@ -21,15 +20,13 @@ export function getPopupPosition(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
   placement: DPopupPlacement,
-  offset: number,
-  fixed: boolean
+  offset: number
 ): { top: number; left: number };
 export function getPopupPosition(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
   placement: DPopupPlacement,
   offset: number,
-  fixed: boolean,
   space: [number, number, number, number]
 ): { top: number; left: number; placement: DPopupPlacement } | undefined;
 export function getPopupPosition(
@@ -37,21 +34,11 @@ export function getPopupPosition(
   targetEl: HTMLElement,
   placement: DPopupPlacement,
   offset = 10,
-  fixed = true,
   space?: [number, number, number, number]
 ): { top: number; left: number; placement?: DPopupPlacement } | undefined {
   const { width, height } = getOriginalSize(popupEl);
 
   const targetRect = targetEl.getBoundingClientRect();
-
-  let offsetTop = 0;
-  let offsetLeft = 0;
-  if (!fixed) {
-    const parentEl = getPositionedParent(popupEl);
-    const parentRect = parentEl.getBoundingClientRect();
-    offsetTop = parentEl.scrollTop - parentRect.top;
-    offsetLeft = parentEl.scrollLeft - parentRect.left;
-  }
 
   const getFixedPosition = (placement: DPopupPlacement) => {
     let top = 0;
@@ -205,16 +192,16 @@ export function getPopupPosition(
     }
     return positionStyle
       ? {
-          top: positionStyle.top + offsetTop,
-          left: positionStyle.left + offsetLeft,
+          top: positionStyle.top,
+          left: positionStyle.left,
           placement: positionStyle.placement,
         }
       : undefined;
   } else {
     const positionStyle = getFixedPosition(placement);
     return {
-      top: positionStyle.top + offsetTop,
-      left: positionStyle.left + offsetLeft,
+      top: positionStyle.top,
+      left: positionStyle.left,
     };
   }
 }

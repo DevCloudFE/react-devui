@@ -1,5 +1,5 @@
 import { isArray, isNumber } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useAsync, useForceUpdate, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 
@@ -38,14 +38,16 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
     afterLeave,
   } = props;
 
-  const [initState] = useState(() => {
+  const initState = useMemo(() => {
     const [skipEnter, skipLeave] = isArray(dSkipFirstTransition) ? dSkipFirstTransition : [dSkipFirstTransition, dSkipFirstTransition];
     if (dIn) {
       return skipEnter ? T_ENTERED : T_BEFORE_ENTER;
     } else {
       return skipLeave ? T_LEAVED : T_BEFORE_LEAVE;
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const dataRef = useRef<{
     prevIn: boolean;
     state: DTransitionState;
@@ -71,33 +73,31 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
     dataRef.current.isFirstEnter = false;
   }
 
+  const state = dataRef.current.state;
+  const startTransition = state === T_ENTER || state === T_LEAVE;
+
   useIsomorphicLayoutEffect(() => {
-    if (dataRef.current.state === T_ENTERED) {
+    if (state === T_ENTERED) {
       onEnterRendered?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    if (dataRef.current.state === T_BEFORE_ENTER) {
+    if (state === T_BEFORE_ENTER) {
       onEnterRendered?.();
       updateTransitionState(T_ENTER);
-    } else if (dataRef.current.state === T_BEFORE_LEAVE) {
+    } else if (state === T_BEFORE_LEAVE) {
       updateTransitionState(T_LEAVE);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dIn]);
 
   useEffect(() => {
-    dataRef.current.clearTid?.();
-
-    const isEnter = dataRef.current.state === T_ENTER;
-    if (dataRef.current.state === T_ENTER || dataRef.current.state === T_LEAVE) {
-      if (isEnter) {
-        onEnterRendered?.();
-      }
-
+    if (startTransition) {
+      dataRef.current.clearTid?.();
       dataRef.current.clearTid = asyncCapture.requestAnimationFrame(() => {
+        const isEnter = state === T_ENTER;
         const nextState = isEnter ? T_ENTERING : T_LEAVING;
         updateTransitionState(nextState);
 
@@ -111,7 +111,7 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dIn]);
+  }, [startTransition]);
 
   const shouldRender = (() => {
     if (dataRef.current.isFirstEnter && !dMountBeforeFirstEnter) {
@@ -121,5 +121,5 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
     return true;
   })();
 
-  return shouldRender ? children(dataRef.current.state) : null;
+  return shouldRender ? children(state) : null;
 }

@@ -67,8 +67,10 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
   //#endregion
 
   const dataRef = useRef<{
-    expandList: Set<V>;
-  }>({ expandList: new Set(dExpands) });
+    hasExpandList: Set<V>;
+  }>({
+    hasExpandList: new Set(dExpands),
+  });
 
   const onKeyDown$ = useEventNotify<DComboboxKeyboardSupportKey | 'click'>();
 
@@ -255,8 +257,8 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
                   );
                 });
               } else {
-                if (!dataRef.current.expandList.has(item.id)) {
-                  dataRef.current.expandList.add(item.id);
+                if (!dataRef.current.hasExpandList.has(item.id)) {
+                  dataRef.current.hasExpandList.add(item.id);
                   onFirstExpand?.(item.id, item.origin);
                 }
                 changeExpandIds((draft) => {

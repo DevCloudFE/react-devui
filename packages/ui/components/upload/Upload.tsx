@@ -92,7 +92,11 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
   const inputRef = useRef<HTMLInputElement>(null);
   //#endregion
 
-  const dataRef = useRef<{ fileURLs: string[] }>({ fileURLs: [] });
+  const dataRef = useRef<{
+    fileURLs: string[];
+  }>({
+    fileURLs: [],
+  });
 
   const combineInputRef = useForkRef(inputRef, ref);
 

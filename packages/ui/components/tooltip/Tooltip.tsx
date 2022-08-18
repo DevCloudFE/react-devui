@@ -86,13 +86,20 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   })();
 
   const containerEl = useElement(
-    isUndefined(dContainer) || dContainer === false
+    isFixed
       ? () => {
-          if (dContainer === false) {
-            const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
-            return triggerEl?.parentElement ?? null;
+          let el = document.getElementById(`${dPrefix}tooltip-root`);
+          if (!el) {
+            el = document.createElement('div');
+            el.id = `${dPrefix}tooltip-root`;
+            document.body.appendChild(el);
           }
-          return null;
+          return el;
+        }
+      : dContainer === false
+      ? () => {
+          const triggerEl = document.querySelector(`[aria-describedby="${id}"]`) as HTMLElement | null;
+          return triggerEl?.parentElement ?? null;
         }
       : dContainer
   );
@@ -119,19 +126,17 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
           containerRect.left,
         ];
       }
-      const position = getPopupPosition(popupRef.current, triggerEl, dPlacement, dDistance, isFixed, space);
+      const position = getPopupPosition(popupRef.current, triggerEl, dPlacement, dDistance, space);
       if (position) {
         currentPlacement = position.placement;
         setPlacement(position.placement);
         setPopupPositionStyle({
-          position: isFixed ? undefined : 'absolute',
           top: position.top,
           left: position.left,
         });
       } else {
-        const position = getPopupPosition(popupRef.current, triggerEl, placement, dDistance, isFixed);
+        const position = getPopupPosition(popupRef.current, triggerEl, placement, dDistance);
         setPopupPositionStyle({
-          position: isFixed ? undefined : 'absolute',
           top: position.top,
           left: position.left,
         });
@@ -203,51 +208,51 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   );
 
   return (
-    <DTransition
-      dIn={visible}
-      dDuring={TTANSITION_DURING}
-      onEnterRendered={updatePosition}
-      afterEnter={() => {
-        afterVisibleChange?.(true);
-      }}
-      afterLeave={() => {
-        afterVisibleChange?.(false);
-      }}
-    >
-      {(state) => {
-        let transitionStyle: React.CSSProperties = {};
-        switch (state) {
-          case 'enter':
-            transitionStyle = { transform: 'scale(0.3)', opacity: 0 };
-            break;
+    <DPopup
+      dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+        <DTransition
+          dIn={visible}
+          dDuring={TTANSITION_DURING}
+          onEnterRendered={updatePosition}
+          afterEnter={() => {
+            afterVisibleChange?.(true);
+          }}
+          afterLeave={() => {
+            afterVisibleChange?.(false);
+          }}
+        >
+          {(state) => {
+            let transitionStyle: React.CSSProperties = {};
+            switch (state) {
+              case 'enter':
+                transitionStyle = { transform: 'scale(0.3)', opacity: 0 };
+                break;
 
-          case 'entering':
-            transitionStyle = {
-              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
-              transformOrigin,
-            };
-            break;
+              case 'entering':
+                transitionStyle = {
+                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
+                  transformOrigin,
+                };
+                break;
 
-          case 'leaving':
-            transitionStyle = {
-              transform: 'scale(0.3)',
-              opacity: 0,
-              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
-              transformOrigin,
-            };
-            break;
+              case 'leaving':
+                transitionStyle = {
+                  transform: 'scale(0.3)',
+                  opacity: 0,
+                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
+                  transformOrigin,
+                };
+                break;
 
-          case 'leaved':
-            transitionStyle = { display: 'none' };
-            break;
+              case 'leaved':
+                transitionStyle = { display: 'none' };
+                break;
 
-          default:
-            break;
-        }
+              default:
+                break;
+            }
 
-        return (
-          <DPopup
-            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+            return (
               <div
                 {...restProps}
                 {...restPProps}
@@ -277,40 +282,40 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
                 {dArrow && <div className={`${dPrefix}tooltip__arrow`}></div>}
                 {dTitle}
               </div>
-            )}
-            dVisible={visible}
-            dContainer={isFixed ? undefined : containerEl}
-            dTrigger={dTrigger}
-            dDisabled={dDisabled}
-            dEscClosable={dEscClosable}
-            dMouseEnterDelay={dMouseEnterDelay}
-            dMouseLeaveDelay={dMouseLeaveDelay}
-            dUpdatePosition={updatePosition}
-            onVisibleChange={changeVisible}
-          >
-            {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) =>
-              React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-                ...children.props,
-                ...restPProps,
-                'aria-describedby': children.props['aria-describedby'] ?? id,
-                onClick: (e) => {
-                  children.props.onClick?.(e);
-                  pOnClick?.(e);
-                },
-                onMouseEnter: (e) => {
-                  children.props.onMouseEnter?.(e);
-                  pOnMouseEnter?.(e);
-                },
-                onMouseLeave: (e) => {
-                  children.props.onMouseLeave?.(e);
-                  pOnMouseLeave?.(e);
-                },
-              })
-            }
-          </DPopup>
-        );
-      }}
-    </DTransition>
+            );
+          }}
+        </DTransition>
+      )}
+      dVisible={visible}
+      dContainer={containerEl}
+      dTrigger={dTrigger}
+      dDisabled={dDisabled}
+      dEscClosable={dEscClosable}
+      dMouseEnterDelay={dMouseEnterDelay}
+      dMouseLeaveDelay={dMouseLeaveDelay}
+      dUpdatePosition={updatePosition}
+      onVisibleChange={changeVisible}
+    >
+      {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) =>
+        React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
+          ...children.props,
+          ...restPProps,
+          'aria-describedby': children.props['aria-describedby'] ?? id,
+          onClick: (e) => {
+            children.props.onClick?.(e);
+            pOnClick?.(e);
+          },
+          onMouseEnter: (e) => {
+            children.props.onMouseEnter?.(e);
+            pOnMouseEnter?.(e);
+          },
+          onMouseLeave: (e) => {
+            children.props.onMouseLeave?.(e);
+            pOnMouseLeave?.(e);
+          },
+        })
+      }
+    </DPopup>
   );
 }
 

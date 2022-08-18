@@ -5,7 +5,7 @@ import { filter } from 'rxjs';
 
 import { useAsync, useElement } from '@react-devui/hooks';
 
-import { useLayout, usePrefixConfig } from '../../hooks';
+import { useLayout } from '../../hooks';
 
 export interface DPopupPopupRenderProps {
   'data-popup-popupid': string;
@@ -25,7 +25,7 @@ export interface DPopupProps {
   children: (props: DPopupRenderProps) => JSX.Element | null;
   dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
   dVisible?: boolean;
-  dContainer?: HTMLElement | null;
+  dContainer: HTMLElement | null;
   dTrigger?: 'hover' | 'click';
   dDisabled?: boolean;
   dEscClosable?: boolean;
@@ -51,7 +51,6 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
   } = props;
 
   //#region Context
-  const dPrefix = usePrefixConfig();
   const { dScrollEl, dResizeEl } = useLayout();
   //#endregion
 
@@ -66,19 +65,6 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
   const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
-  const containerEl = useElement(() => {
-    if (isUndefined(dContainer)) {
-      let el = document.getElementById(`${dPrefix}popup-root`);
-      if (!el) {
-        el = document.createElement('div');
-        el.id = `${dPrefix}popup-root`;
-        document.body.appendChild(el);
-      }
-      return el;
-    }
-
-    return dContainer;
-  });
 
   const handleTrigger = (visible?: boolean, behavior?: 'hover' | 'popup-hover') => {
     dataRef.current.clearTid?.();
@@ -278,7 +264,7 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
   return (
     <>
       {child}
-      {!dDisabled && containerEl && ReactDOM.createPortal(popupNode, containerEl)}
+      {!dDisabled && dContainer && ReactDOM.createPortal(popupNode, dContainer)}
     </>
   );
 }

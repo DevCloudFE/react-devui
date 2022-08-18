@@ -45,28 +45,31 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
 
   const isDefaultContainer = isUndefined(dContainer);
 
+  const [sticky, setSticky] = useState(false);
+
   const scrollEl = useElement(dScrollEl);
   const resizeEl = useElement(dResizeEl);
   const containerEl = useElement(
-    isDefaultContainer || dContainer === false
+    isDefaultContainer
       ? () => {
-          if (isDefaultContainer) {
-            let el = document.getElementById(`${dPrefix}affix-root`);
-            if (!el) {
-              el = document.createElement('div');
-              el.id = `${dPrefix}affix-root`;
-              document.body.appendChild(el);
-            }
-            return el;
+          let el = document.getElementById(`${dPrefix}affix-root`);
+          if (!el) {
+            el = document.createElement('div');
+            el.id = `${dPrefix}affix-root`;
+            document.body.appendChild(el);
           }
-          return null;
+          return el;
+        }
+      : dContainer === false
+      ? () => {
+          const el = sticky ? referenceRef.current : affixRef.current;
+          return el?.parentElement ?? null;
         }
       : dContainer
   );
 
   const [positionStyle, setPositionStyle] = useState<React.CSSProperties>();
   const [referenceStyle, setReferenceStyle] = useState<React.CSSProperties>();
-  const [sticky, setSticky] = useState(false);
   const updatePosition = useCallback(() => {
     const offsetEl = sticky ? referenceRef.current : affixRef.current;
 

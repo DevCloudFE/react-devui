@@ -78,7 +78,9 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
 
   const dataRef = useRef<{
     listCache: Map<DId, React.ReactNode[]>;
-  }>({ listCache: new Map() });
+  }>({
+    listCache: new Map(),
+  });
 
   const asyncCapture = useAsync();
   const forceUpdate = useForceUpdate();

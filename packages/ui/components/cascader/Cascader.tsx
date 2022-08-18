@@ -108,7 +108,9 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
 
   const dataRef = useRef<{
     focusList: Set<V>;
-  }>({ focusList: new Set() });
+  }>({
+    focusList: new Set(),
+  });
 
   const [t] = useTranslation();
   const onKeyDown$ = useEventNotify<DComboboxKeyboardSupportKey | 'click'>();

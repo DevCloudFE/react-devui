@@ -84,8 +84,8 @@ function Builder(props: DBuilderProps, ref: React.ForwardedRef<DBuilderRef>): JS
   //#endregion
 
   const dataRef = useRef<{
-    focusAnother: boolean;
     clearTid?: () => void;
+    focusAnother: boolean;
     inputValue: [string, string];
     rangeDate: [Date | null, Date | null];
   }>({

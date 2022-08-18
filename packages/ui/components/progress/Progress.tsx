@@ -56,7 +56,9 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
     transitionLoopFn?: (startTime: number, startPercent: number) => void;
     clearWaveTid?: () => void;
     clearTransitionTid?: () => void;
-  }>({ wavePercent: 0 });
+  }>({
+    wavePercent: 0,
+  });
 
   const asyncCapture = useAsync();
 

@@ -76,7 +76,10 @@ export function DInput(props: DInputProps): JSX.Element | null {
     prevValue: string;
     clearLoop?: () => void;
     clearTid?: () => void;
-  }>({ showValue: '', prevValue: '' });
+  }>({
+    showValue: '',
+    prevValue: '',
+  });
 
   const asyncCapture = useAsync();
   const [t] = useTranslation();

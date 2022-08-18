@@ -82,7 +82,10 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
   const dataRef = useRef<{
     showSelected: V | null | V[];
     prevSelected: V | null | V[];
-  }>({ showSelected: dMultiple ? [] : null, prevSelected: dMultiple ? [] : null });
+  }>({
+    showSelected: dMultiple ? [] : null,
+    prevSelected: dMultiple ? [] : null,
+  });
 
   const [t] = useTranslation();
   const forceUpdate = useForceUpdate();

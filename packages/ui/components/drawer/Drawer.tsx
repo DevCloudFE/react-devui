@@ -119,18 +119,19 @@ export const DDrawer: {
   })();
 
   const containerEl = useElement(
-    isUndefined(dContainer) || dContainer === false
+    isUndefined(dContainer)
       ? () => {
-          if (isUndefined(dContainer)) {
-            let el = document.getElementById(`${dPrefix}drawer-root`);
-            if (!el) {
-              el = document.createElement('div');
-              el.id = `${dPrefix}drawer-root`;
-              document.body.appendChild(el);
-            }
-            return el;
+          let el = document.getElementById(`${dPrefix}drawer-root`);
+          if (!el) {
+            el = document.createElement('div');
+            el.id = `${dPrefix}drawer-root`;
+            document.body.appendChild(el);
           }
-          return null;
+          return el;
+        }
+      : dContainer === false
+      ? () => {
+          return drawerRef.current?.parentElement ?? null;
         }
       : dContainer
   );

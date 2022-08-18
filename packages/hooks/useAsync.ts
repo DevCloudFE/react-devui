@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { flushSync } from 'react-dom';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
@@ -106,7 +106,7 @@ export class AsyncCapture extends BaseAsyncCapture {
 }
 
 export function useAsync(): Omit<AsyncCapture, 'fromEvent'> & CaptureMethod {
-  const [asyncCapture] = useState(() => new AsyncCapture());
+  const asyncCapture = useMemo(() => new AsyncCapture(), []);
 
   useUnmount(() => {
     asyncCapture.clearAll();
