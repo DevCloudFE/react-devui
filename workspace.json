@@ -5,6 +5,7 @@
     "icons": "packages/icons",
     "site": "packages/site",
     "ui": "packages/ui",
-    "utils": "packages/utils"
+    "utils": "packages/utils",
+    "vscode-extension": "packages/vscode-extension"
   }
 }

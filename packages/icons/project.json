@@ -43,9 +43,7 @@
       "outputs": ["coverage/packages/icons"],
       "options": {
         "jestConfig": "packages/icons/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true,
-        "coverageReporters": ["clover", "json", "lcov", "text"]
+        "passWithNoTests": true
       }
     }
   }

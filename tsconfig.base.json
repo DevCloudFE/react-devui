@@ -33,7 +33,8 @@
       "@react-devui/ui": ["packages/ui/index.ts"],
       "@react-devui/ui/*": ["packages/ui/*"],
       "@react-devui/utils": ["packages/utils/index.ts"],
-      "@react-devui/utils/*": ["packages/utils/*"]
+      "@react-devui/utils/*": ["packages/utils/*"],
+      "@react-devui/vscode-extension": ["packages/vscode-extension/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -5,6 +5,8 @@ export default {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  collectCoverage: true,
+  collectCoverageFrom: ['./components/**'],
+  coverageReporters: ['clover', 'json', 'lcov', 'text'],
   coverageDirectory: '../../coverage/packages/ui',
-  setupFilesAfterEnv: ['../../jest.setup.js'],
 };

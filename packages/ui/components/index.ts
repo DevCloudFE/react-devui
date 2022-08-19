@@ -10,7 +10,7 @@ export { DAlert } from './alert';
 export type { DAnchorProps } from './anchor';
 export { DAnchor } from './anchor';
 
-export type { DAutoCompleteProps } from './auto-complete';
+export { DAutoCompleteProps } from './auto-complete';
 export { DAutoComplete } from './auto-complete';
 
 export type { DAvatarProps } from './avatar';

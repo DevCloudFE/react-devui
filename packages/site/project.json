@@ -92,9 +92,7 @@
       "outputs": ["coverage/packages/site"],
       "options": {
         "jestConfig": "packages/site/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true,
-        "coverageReporters": ["clover", "json", "lcov", "text"]
+        "passWithNoTests": true
       }
     }
   }

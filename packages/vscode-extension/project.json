@@ -1,26 +1,25 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/hooks",
+  "sourceRoot": "packages/vscode-extension",
   "projectType": "library",
-  "tags": ["scope:shared"],
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/hooks",
-        "tsConfig": "packages/hooks/tsconfig.lib.json",
-        "main": "packages/hooks/index.ts",
+        "outputPath": "dist/packages/vscode-extension",
+        "tsConfig": "packages/vscode-extension/tsconfig.lib.json",
+        "main": "packages/vscode-extension/extension.ts",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "CHANGELOG.md",
-            "input": "packages/hooks",
+            "input": "packages/vscode-extension",
             "output": "/"
           },
           {
             "glob": "README.md",
-            "input": "packages/hooks",
+            "input": "packages/vscode-extension",
             "output": "/"
           },
           {
@@ -35,16 +34,9 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/hooks/**/*.{ts,tsx,js,jsx,md}"]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/hooks"],
-      "options": {
-        "jestConfig": "packages/hooks/jest.config.ts",
-        "passWithNoTests": true
+        "lintFilePatterns": ["packages/vscode-extension/**/*.ts"]
       }
     }
-  }
+  },
+  "tags": []
 }
