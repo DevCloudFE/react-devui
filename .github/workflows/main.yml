@@ -46,13 +46,10 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production --skip-nx-cache
-      - uses: garygrossgarten/github-action-scp@release
+      - run: cp ./dist/packages/site/index.html ./dist/packages/site/200.html
+      - uses: dswistowski/surge-sh-action@v1
         with:
-          local: './dist/packages/site'
-          remote: '/usr/local/nginx/html/react-devui.com'
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          rmRemote: true
-          dotfiles: true
+          domain: 'react-devui.surge.sh'
+          project: './dist/packages/site'
+          login: ${{ secrets.SURGE_LOGIN }}
+          token: ${{ secrets.SURGE_TOKEN }}
