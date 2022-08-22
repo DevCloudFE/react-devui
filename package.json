@@ -5,20 +5,17 @@
   "description": "React Component Library",
   "homepage": "https://github.com/DevCloudFE/react-devui",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "build:affected": "nx affected --target=build --parallel=5",
     "build:executors": "tsc --project tools/tsconfig.json",
     "build:icons": "node ./tools/ui-icons.js",
-    "build:vscode-extension": "nx build vscode-extension && cd dist/packages/vscode-extension && yarn install -W && vsce package --yarn",
+    "build:vscode-extension": "nx build vscode-extension && cd dist/packages/vscode-extension && yarn install && vsce package --yarn",
     "check-update": "yarn upgrade-interactive --latest",
     "lint:affected": "nx affected --target=lint --parallel=5",
     "lint:style": "stylelint **/*.{css,scss,html,md}",
     "lint:style:fix": "yarn lint:style --fix",
     "prepare": "husky install && chmod ug+x .husky/*",
-    "prepublishOnly": "nx run-many --all --target=build --parallel=5 --exclude=site,vscode-extension",
+    "prepublishOnly": "nx run-many --target=build --parallel=5 --exclude=site,vscode-extension",
     "prepublish:vscode-extension": "yarn build:vscode-extension",
     "publish:vscode-extension": "cd dist/packages/vscode-extension && vsce publish --yarn",
     "site:serve": "nx serve site",
