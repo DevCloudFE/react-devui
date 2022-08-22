@@ -1,9 +1,7 @@
 {
   "name": "@react-devui/utils",
   "version": "0.1.0-alpha.9",
-  "author": "Xie Jay <xiejay97@gmail.com>",
   "description": "DevUI utils based on React",
-  "title": "DevUI",
   "keywords": [
     "ui",
     "devui",
@@ -12,18 +10,23 @@
     "react",
     "react-util"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DevCloudFE/react-devui.git"
-  },
   "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/utils#readme",
   "bugs": {
     "url": "https://github.com/DevCloudFE/react-devui/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevCloudFE/react-devui.git"
+  },
   "license": "MIT",
+  "author": "Xie Jay <xiejay97@gmail.com>",
   "sideEffects": false,
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../dist/packages/utils"
-  }
+  },
+  "title": "DevUI"
 }

@@ -1,9 +1,7 @@
 {
   "name": "@react-devui/ui",
   "version": "0.1.0-alpha.9",
-  "author": "Xie Jay <xiejay97@gmail.com>",
   "description": "DevUI components based on React",
-  "title": "DevUI",
   "keywords": [
     "ui",
     "devui",
@@ -12,21 +10,33 @@
     "react",
     "react-component"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DevCloudFE/react-devui.git"
-  },
   "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/ui#readme",
   "bugs": {
     "url": "https://github.com/DevCloudFE/react-devui/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevCloudFE/react-devui.git"
+  },
   "license": "MIT",
+  "author": "Xie Jay <xiejay97@gmail.com>",
   "sideEffects": false,
+  "dependencies": {
+    "@react-devui/hooks": "file:../hooks",
+    "@react-devui/icons": "file:../icons",
+    "@react-devui/utils": "file:../utils",
+    "dayjs": "^1.11.5",
+    "immer": "^9.0.15",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rfs": "^9.0.6",
+    "rxjs": "^7.5.6",
+    "swiper": "^8.3.2"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../dist/packages/ui"
   },
-  "dependencies": {
-    "rfs": "^9.0.6"
-  }
+  "title": "DevUI"
 }

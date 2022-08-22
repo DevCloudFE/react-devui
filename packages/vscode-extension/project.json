@@ -10,7 +10,7 @@
         "outputPath": "dist/packages/vscode-extension",
         "tsConfig": "packages/vscode-extension/tsconfig.lib.json",
         "main": "packages/vscode-extension/extension.ts",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {
             "glob": "CHANGELOG.md",

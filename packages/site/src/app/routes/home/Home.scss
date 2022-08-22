@@ -1,43 +1,43 @@
 @import '~rfs/scss';
 
 .app-home {
-  padding: 20px;
   position: absolute;
-  left: 0;
   bottom: 0;
-  height: calc(100% - 64px);
+  left: 0;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   width: 100%;
+  height: calc(100% - 64px);
+  padding: 20px;
+  overflow: auto;
 }
 
 .app-home__img {
-  height: 240px;
   max-width: 100%;
-  margin: 60px auto 0 auto;
+  height: 240px;
+  margin: 60px auto 0;
 }
 
 .app-home__title {
+  margin: 40px 0 0;
   text-align: center;
-  margin: 40px 0 0 0;
 
   @include font-size(2.25rem);
 }
 
 .app-home__description {
-  text-align: center;
-  margin: 20px 0 0 0;
+  margin: 20px 0 0;
   color: rgb(var(--d-text-color-rgb) / 80%);
+  text-align: center;
 
   @include font-size(1.5rem);
 }
 
 .app-home__button-link {
+  margin: 20px auto 0;
   font: inherit;
   color: inherit;
   text-decoration: none;
-  margin: 20px auto 0 auto;
 
   .d-button {
     --d-size: 52px;
@@ -48,25 +48,27 @@
 }
 
 .app-home__footer {
-  border-top: 1px solid var(--d-color-border);
-  flex-grow: 1;
-  background-color: #000;
   display: flex;
+  flex-grow: 1;
   flex-wrap: wrap;
   gap: 40px;
   justify-content: space-around;
   padding: 60px 20px;
+  margin: 40px -20px -20px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
   color: #fff;
-  margin: 40px -20px -20px -20px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  background-color: #000;
+  border-top: 1px solid var(--d-color-border);
 
   a {
+    display: flex;
+    gap: 0 4px;
+    align-items: center;
     font: inherit;
     color: inherit;
     text-decoration: none;
     transition: color var(--d-animation-duration-fast) linear;
-    display: flex;
-    align-items: center;
-    gap: 0 4px;
 
     &:hover {
       color: var(--d-color-primary);

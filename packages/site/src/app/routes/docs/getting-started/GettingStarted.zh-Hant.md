@@ -64,9 +64,9 @@ export default function App() {
   style="
     width: 100%;
     height: 500px;
+    overflow: hidden;
     border: 0;
     border-radius: 4px;
-    overflow: hidden;
   "
   title="getting-started"
   allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"

@@ -1,38 +1,34 @@
 {
-  "private": true,
   "name": "react-devui",
   "displayName": "React DevUI",
-  "version": "0.0.1",
-  "author": "Xie Jay <xiejay97@gmail.com>",
-  "publisher": "xiejay97",
+  "version": "0.0.3",
+  "private": true,
   "description": "The extension for React DevUI development",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DevCloudFE/react-devui.git"
-  },
+  "categories": [
+    "Other"
+  ],
   "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/vscode-extension#readme",
   "bugs": {
     "url": "https://github.com/DevCloudFE/react-devui/issues"
   },
-  "license": "MIT",
-  "engines": {
-    "vscode": "^1.70.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevCloudFE/react-devui.git"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "*"
-  ],
+  "license": "MIT",
+  "author": "Xie Jay <xiejay97@gmail.com>",
+  "publisher": "xiejay97",
   "contributes": {
     "commands": [
       {
-        "command": "run_jest",
-        "title": "Run Jest"
+        "title": "Run Jest",
+        "category": "React DevUI",
+        "command": "react-devui.runJest"
       },
       {
-        "command": "run_jest_folder",
-        "title": "Run Jest"
+        "title": "Run Jest",
+        "category": "React DevUI",
+        "command": "react-devui.runJestFolder"
       }
     ],
     "menus": {
@@ -40,25 +36,25 @@
         {
           "when": "editorFocus",
           "submenu": "react-devui.menus",
-          "group": "0_z"
+          "group": "02_react-devui"
         }
       ],
       "explorer/context": [
         {
           "submenu": "react-devui.menus",
-          "group": "0_z"
+          "group": "02_react-devui"
         }
       ],
       "react-devui.menus": [
         {
           "when": "!explorerResourceIsFolder && resourceFilename =~ /.test.[tj]sx?$|.spec.[tj]sx?$/",
-          "command": "run_jest",
-          "group": "1_jest@1"
+          "group": "1_jest@1",
+          "command": "react-devui.runJest"
         },
         {
           "when": "explorerResourceIsFolder",
-          "command": "run_jest_folder",
-          "group": "1_jest@1"
+          "group": "1_jest@1",
+          "command": "react-devui.runJestFolder"
         }
       ]
     },
@@ -68,5 +64,14 @@
         "label": "React DevUI"
       }
     ]
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "dependencies": {
+    "fs-extra": "^10.1.0"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
   }
 }

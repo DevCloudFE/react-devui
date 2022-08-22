@@ -1,9 +1,7 @@
 {
   "name": "@react-devui/icons",
   "version": "0.1.0-alpha.9",
-  "author": "Xie Jay <xiejay97@gmail.com>",
   "description": "DevUI icons based on React",
-  "title": "DevUI",
   "keywords": [
     "ui",
     "devui",
@@ -12,18 +10,26 @@
     "react",
     "react-icon"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DevCloudFE/react-devui.git"
-  },
   "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/icons#readme",
   "bugs": {
     "url": "https://github.com/DevCloudFE/react-devui/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevCloudFE/react-devui.git"
+  },
   "license": "MIT",
+  "author": "Xie Jay <xiejay97@gmail.com>",
   "sideEffects": false,
+  "dependencies": {
+    "@ant-design/icons-svg": "^4.2.1",
+    "@react-devui/utils": "file:../utils",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../dist/packages/icons"
-  }
+  },
+  "title": "DevUI"
 }

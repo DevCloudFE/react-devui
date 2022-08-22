@@ -18,9 +18,9 @@ export default function (name: string) {
     "sass": "latest"
   },
   "devDependencies": {
-    "@types/react": "${packageJson.devDependencies['@types/react']}",
-    "@types/react-dom": "${packageJson.devDependencies['@types/react-dom']}",
-    "typescript": "${packageJson.devDependencies['typescript']}"
+    "@types/react": "${packageJson.dependencies['@types/react']}",
+    "@types/react-dom": "${packageJson.dependencies['@types/react-dom']}",
+    "typescript": "${packageJson.dependencies['typescript']}"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -3,4 +3,3 @@
 /coverage
 /.yarn
 /packages/site/dist
-/packages/site/src/app/routes

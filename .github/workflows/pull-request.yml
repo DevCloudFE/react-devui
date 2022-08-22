@@ -35,6 +35,8 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn test:affected
       - uses: codecov/codecov-action@v3
+        with:
+          directory: './coverage/packages/'
   build:
     runs-on: ubuntu-latest
     strategy:
