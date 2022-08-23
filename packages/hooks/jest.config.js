@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'hooks',
   preset: '../../jest.preset.js',
   transform: {

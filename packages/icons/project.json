@@ -42,7 +42,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/icons"],
       "options": {
-        "jestConfig": "packages/icons/jest.config.ts",
+        "jestConfig": "packages/icons/jest.config.js",
         "passWithNoTests": true
       }
     }

@@ -1,9 +1,9 @@
-import path from 'path';
+const path = require('path');
 
-import { readdirSync, statSync } from 'fs-extra';
+const { readdirSync, statSync } = require('fs-extra');
 
-const collectCoverageFrom: string[] = [];
-const loop = (dirPath: string) => {
+const collectCoverageFrom = [];
+const loop = (dirPath) => {
   const files = readdirSync(dirPath);
   for (const file of files) {
     const filePath = path.join(dirPath, file);
@@ -16,7 +16,7 @@ const loop = (dirPath: string) => {
 };
 loop(__dirname);
 
-export default {
+module.exports = {
   displayName: 'ui',
   preset: '../../jest.preset.js',
   transform: {
@@ -27,4 +27,5 @@ export default {
   collectCoverageFrom,
   coverageReporters: ['clover', 'json', 'lcov', 'text'],
   coverageDirectory: '../../coverage/packages/ui',
+  setupFilesAfterEnv: ['./jest.setup.js'],
 };
