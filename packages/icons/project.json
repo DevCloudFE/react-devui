@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/icons",
+  "sourceRoot": "packages/icons/src",
   "projectType": "library",
   "tags": ["scope:icons"],
   "targets": {
@@ -10,7 +10,7 @@
       "options": {
         "outputPath": "dist/packages/icons",
         "tsConfig": "packages/icons/tsconfig.lib.json",
-        "main": "packages/icons/index.ts",
+        "main": "packages/icons/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {

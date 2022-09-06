@@ -7,8 +7,7 @@
   },
   "files": ["../../node_modules/@nrwl/react/typings/cssmodule.d.ts", "../../node_modules/@nrwl/react/typings/image.d.ts"],
   "exclude": [
-    "jest.setup.js",
-    "jest.config.js",
+    "**/__tests__",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",

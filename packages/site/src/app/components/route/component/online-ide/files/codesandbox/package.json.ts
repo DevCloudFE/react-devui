@@ -12,15 +12,15 @@ export default function (name: string) {
     "@react-devui/icons": "${lernaJson.version}",
     "@react-devui/ui": "${lernaJson.version}",
     "@react-devui/utils": "${lernaJson.version}",
-    "react": "${packageJson.dependencies['react']}",
-    "react-dom": "${packageJson.dependencies['react-dom']}",
+    "react": "${packageJson.devDependencies['react']}",
+    "react-dom": "${packageJson.devDependencies['react-dom']}",
     "react-scripts": "latest",
     "sass": "latest"
   },
   "devDependencies": {
-    "@types/react": "${packageJson.dependencies['@types/react']}",
-    "@types/react-dom": "${packageJson.dependencies['@types/react-dom']}",
-    "typescript": "${packageJson.dependencies['typescript']}"
+    "@types/react": "${packageJson.devDependencies['@types/react']}",
+    "@types/react-dom": "${packageJson.devDependencies['@types/react-dom']}",
+    "typescript": "${packageJson.devDependencies['typescript']}"
   },
   "scripts": {
     "start": "react-scripts start",

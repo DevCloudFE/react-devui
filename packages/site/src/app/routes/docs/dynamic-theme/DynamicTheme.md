@@ -4,7 +4,7 @@
 
 Through clever style design, we have achieved theme customization with a small number of css variables!
 
-Check out our [dark theme](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/styles/theme-dark.scss).
+Check out our [dark theme](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/styles/theme-dark.scss).
 
 ```tsx
 export default function App() {

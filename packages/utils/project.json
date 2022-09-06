@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/utils",
+  "sourceRoot": "packages/utils/src",
   "projectType": "library",
   "tags": ["scope:shared"],
   "targets": {
@@ -10,7 +10,7 @@
       "options": {
         "outputPath": "dist/packages/utils",
         "tsConfig": "packages/utils/tsconfig.lib.json",
-        "main": "packages/utils/index.ts",
+        "main": "packages/utils/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {

@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/ui",
+  "sourceRoot": "packages/ui/src",
   "projectType": "library",
   "tags": ["scope:ui"],
   "targets": {
@@ -10,12 +10,12 @@
       "options": {
         "outputPath": "dist/packages/ui",
         "tsConfig": "packages/ui/tsconfig.lib.json",
-        "main": "packages/ui/index.ts",
+        "main": "packages/ui/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {
             "glob": "**/*",
-            "input": "packages/ui/styles",
+            "input": "packages/ui/src/styles",
             "output": "/styles"
           },
           {

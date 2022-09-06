@@ -4,9 +4,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "watch:vscode-extension",
-      "type": "npm",
-      "script": "watch:vscode-extension",
+      "label": "build:vscode-extension",
+      "type": "shell",
+      "command": "yarn nx build vscode-extension --watch",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
       "presentation": {

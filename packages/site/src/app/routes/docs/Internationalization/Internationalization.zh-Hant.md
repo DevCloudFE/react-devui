@@ -1,6 +1,6 @@
 # 国际化
 
-这里是[完整配置](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/hooks/i18n/resources.json)。
+这里是[完整配置](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/hooks/i18n/resources.json)。
 
 ## 修改语言
 

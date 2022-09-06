@@ -3,9 +3,9 @@ import ReactDOMClient from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './app/App';
-import './app/i18n';
+import './i18n';
 
-const rootElement = document.getElementById('app-root') as Element;
+const rootElement = document.getElementById('root') as Element;
 
 ReactDOMClient.createRoot(rootElement).render(
   <StrictMode>

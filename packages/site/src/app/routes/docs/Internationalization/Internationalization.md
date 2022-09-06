@@ -1,6 +1,6 @@
 # Internationalization
 
-Here is the [full configuration](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/hooks/i18n/resources.json).
+Here is the [full configuration](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/hooks/i18n/resources.json).
 
 ## Modify language
 

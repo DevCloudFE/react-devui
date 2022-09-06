@@ -26,14 +26,14 @@
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
-      "@react-devui/hooks": ["packages/hooks/index.ts"],
-      "@react-devui/hooks/*": ["packages/hooks/*"],
-      "@react-devui/icons": ["packages/icons/index.ts"],
-      "@react-devui/icons/*": ["packages/icons/*"],
-      "@react-devui/ui": ["packages/ui/index.ts"],
-      "@react-devui/ui/*": ["packages/ui/*"],
-      "@react-devui/utils": ["packages/utils/index.ts"],
-      "@react-devui/utils/*": ["packages/utils/*"]
+      "@react-devui/hooks": ["packages/hooks/src/index.ts"],
+      "@react-devui/hooks/*": ["packages/hooks/src/*"],
+      "@react-devui/icons": ["packages/icons/src/index.ts"],
+      "@react-devui/icons/*": ["packages/icons/src/*"],
+      "@react-devui/ui": ["packages/ui/src/index.ts"],
+      "@react-devui/ui/*": ["packages/ui/src/*"],
+      "@react-devui/utils": ["packages/utils/src/index.ts"],
+      "@react-devui/utils/*": ["packages/utils/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
