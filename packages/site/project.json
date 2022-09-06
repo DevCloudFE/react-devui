@@ -4,12 +4,21 @@
   "projectType": "application",
   "tags": ["scope:site"],
   "targets": {
-    "build-base": {
-      "executor": "./tools/executors/site/build-base:build-base",
-      "options": {},
-      "configurations": {
-        "production": {}
+    "build-executors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc --project tools/executors/tsconfig.json", "tsc --project packages/site/executors/tsconfig.json"]
       }
+    },
+    "build-base": {
+      "executor": "./packages/site/executors:build-base",
+      "options": {},
+      "dependsOn": [
+        {
+          "target": "build-executors",
+          "projects": "self"
+        }
+      ]
     },
     "build": {
       "executor": "@nrwl/web:webpack",
@@ -59,7 +68,7 @@
       }
     },
     "serve": {
-      "executor": "./tools/executors/multiple:multiple",
+      "executor": "./tools/executors:multiple",
       "options": {
         "tasks": [
           {
@@ -78,7 +87,13 @@
             }
           }
         ]
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "build-executors",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

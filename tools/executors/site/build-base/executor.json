@@ -1,9 +1,0 @@
-{
-  "executors": {
-    "build-base": {
-      "implementation": "./impl",
-      "schema": "./schema.json",
-      "description": "Bundle site files."
-    }
-  }
-}

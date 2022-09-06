@@ -1,0 +1,13 @@
+{
+  "title": "Site Files Build",
+  "description": "Build necessary files for site.",
+  "cli": "nx",
+  "type": "object",
+  "properties": {
+    "watch": {
+      "type": "boolean",
+      "description": "Enable re-building when files change.",
+      "default": false
+    }
+  }
+}

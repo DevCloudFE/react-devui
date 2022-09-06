@@ -1,12 +1,19 @@
-import type { AppComponentRouteArticleProps } from './ComponentRouteArticle';
+import type { AppRouteProps } from './Route';
+import type { DLang } from '@react-devui/ui/hooks/i18n';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
-import { AppComponentRouteArticle } from './ComponentRouteArticle';
+import { useLocalStorage } from '@react-devui/hooks';
 
-export function AppComponentRoute(props: { 'en-US': AppComponentRouteArticleProps; 'zh-Hant': AppComponentRouteArticleProps }) {
-  const { i18n } = useTranslation();
+import { AppRoute } from './Route';
 
-  return React.createElement(AppComponentRouteArticle, props[i18n.language]);
+export interface AppComponentRouteProps {
+  'en-US': AppRouteProps;
+  'zh-Hant': AppRouteProps;
+}
+
+export function AppComponentRoute(props: AppComponentRouteProps): JSX.Element | null {
+  const [language] = useLocalStorage<DLang>('language', 'en-US');
+
+  return React.createElement(AppRoute, props[language]);
 }

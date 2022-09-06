@@ -5,6 +5,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  collectCoverageFrom: ['!./dist/**'],
   coverageDirectory: '../../coverage/packages/icons',
 };

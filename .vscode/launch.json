@@ -11,7 +11,7 @@
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/packages/vscode-extension"],
       "outFiles": ["${workspaceFolder}/dist/packages/vscode-extension/**/*.js"],
-      "preLaunchTask": "watch:vscode-extension"
+      "preLaunchTask": "build:vscode-extension"
     }
   ]
 }

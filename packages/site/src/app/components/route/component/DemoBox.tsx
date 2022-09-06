@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
-import { useAsync, useMount } from '@react-devui/hooks';
+import { useMount } from '@react-devui/hooks';
 import { CheckOutlined, CodeSandboxOutlined, DCustomIcon, SnippetsOutlined, ThunderboltOutlined } from '@react-devui/icons';
 import { DTooltip, DTabs } from '@react-devui/ui';
 import { copy, getClassName } from '@react-devui/utils';
 
 import marked, { toString } from '../utils';
-import './DemoBox.scss';
 import { openCodeSandbox, openStackBlitz } from './online-ide';
 
 export interface AppDemoBoxProps {
@@ -19,7 +19,7 @@ export interface AppDemoBoxProps {
   scssSource: number[];
 }
 
-export function AppDemoBox(props: AppDemoBoxProps) {
+export function AppDemoBox(props: AppDemoBoxProps): JSX.Element | null {
   const { id, renderer, title } = props;
 
   const elRef = useRef<HTMLElement>(null);
@@ -41,12 +41,13 @@ ${'```'}
 `)
     : undefined;
 
-  const asyncCapture = useAsync();
-
   const [tab, setTab] = useState<string>('tsx');
 
   const [openCode, setOpencode] = useState(false);
   const [copyCode, setCopycode] = useState(false);
+
+  const location = useLocation();
+  const active = location.hash === `#${id}`;
 
   const handleOpenClick = () => {
     setOpencode((draft) => !draft);
@@ -71,37 +72,20 @@ ${'```'}
     }
   });
 
-  const [active, setActive] = useState(false);
-  useEffect(() => {
-    const [asyncGroup, asyncId] = asyncCapture.createGroup();
-
-    setActive(window.location.hash === `#${id}`);
-
-    asyncGroup.fromEvent(window, 'hashchange').subscribe({
-      next: () => {
-        setActive(window.location.hash === `#${id}`);
-      },
-    });
-
-    return () => {
-      asyncCapture.deleteGroup(asyncId);
-    };
-  }, [asyncCapture, id]);
-
   return (
     <section
       ref={elRef}
       id={id}
-      className={getClassName('app-demo-box', {
+      className={getClassName('app-component-route__demo-box', {
         'is-active': active,
       })}
     >
-      <div className="app-demo-box__renderer">{renderer}</div>
-      <div className="app-demo-box__info">
-        <div className="app-demo-box__title">{title}</div>
-        <div className="app-demo-box__description" dangerouslySetInnerHTML={{ __html: description }} />
+      <div className="app-component-route__demo-box-renderer">{renderer}</div>
+      <div className="app-component-route__demo-box-info">
+        <div className="app-component-route__demo-box-title">{title}</div>
+        <div className="app-component-route__demo-box-description" dangerouslySetInnerHTML={{ __html: description }} />
       </div>
-      <div className="app-demo-box__toolbar">
+      <div className="app-component-route__demo-box-toolbar">
         <DTooltip dTitle={t('Open in CodeSandbox')}>
           <CodeSandboxOutlined
             className="app-icon-button"
@@ -138,7 +122,7 @@ ${'```'}
         </DTooltip>
       </div>
       {openCode && (
-        <div className="app-demo-box__code">
+        <div className="app-component-route__demo-box-code">
           {!scss && <div dangerouslySetInnerHTML={{ __html: tsx }} />}
           {scss && (
             <DTabs

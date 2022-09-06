@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/vscode-extension",
+  "sourceRoot": "packages/vscode-extension/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -9,7 +9,7 @@
       "options": {
         "outputPath": "dist/packages/vscode-extension",
         "tsConfig": "packages/vscode-extension/tsconfig.lib.json",
-        "main": "packages/vscode-extension/extension.ts",
+        "main": "packages/vscode-extension/src/extension.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {

@@ -7,5 +7,5 @@
     "lib": ["ES2020"]
   },
   "include": ["**/*.ts"],
-  "exclude": ["jest.config.js", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
 }

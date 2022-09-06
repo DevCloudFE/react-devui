@@ -1,0 +1,69 @@
+@use 'sass:color';
+
+@mixin fcp-loader-linear-gradient($color) {
+  background: linear-gradient(
+    90deg,
+    color.adjust($color, $alpha: -1) 0%,
+    $color 30%,
+    $color 50%,
+    $color 70%,
+    color.adjust($color, $alpha: -1) 100%
+  );
+}
+
+@keyframes fcp-loader-third {
+  0% {
+    transform: translateX(calc(-100vw / 3));
+  }
+
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+@keyframes fcp-loader-progress {
+  0% {
+    @include fcp-loader-linear-gradient(#e88098);
+  }
+
+  20% {
+    @include fcp-loader-linear-gradient(#84bebe);
+  }
+
+  40% {
+    @include fcp-loader-linear-gradient(#e98724);
+  }
+
+  60% {
+    @include fcp-loader-linear-gradient(#afc94e);
+  }
+
+  80% {
+    @include fcp-loader-linear-gradient(#6297a4);
+  }
+
+  100% {
+    @include fcp-loader-linear-gradient(#e88098);
+  }
+}
+
+@include b(fcp-loader) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 920;
+  width: 100vw;
+  height: 4px;
+  overflow: hidden;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  background-color: rgb(221 221 221 / 40%);
+
+  &::after {
+    display: block;
+    width: calc(100vw / 3);
+    height: 100%;
+    content: '';
+    transform-origin: top left;
+    animation: fcp-loader-progress 5s infinite linear, fcp-loader-third 1s infinite linear;
+  }
+}

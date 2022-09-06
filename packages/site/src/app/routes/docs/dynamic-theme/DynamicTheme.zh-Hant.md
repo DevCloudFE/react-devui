@@ -4,7 +4,7 @@
 
 通过巧妙的样式设计，我们实现了通过少量的 css 变量即可完成主题定制！
 
-参考我们的[暗黑主题](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/styles/theme-dark.scss)。
+参考我们的[暗黑主题](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/styles/theme-dark.scss)。
 
 ```tsx
 export default function App() {

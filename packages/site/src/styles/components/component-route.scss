@@ -1,0 +1,129 @@
+@include b(component-route) {
+  @include e(title) {
+    display: flex;
+    align-items: center;
+  }
+
+  @include e(subtitle) {
+    margin-left: 12px;
+  }
+
+  @include e(tag-list) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      display: inline-block;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  @include e(tag-link) {
+    display: inline-flex;
+    gap: 0 4px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    font: inherit;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-weight: 500;
+    line-height: 24px;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 1px solid var(--d-color-border);
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    border-radius: 12px;
+    transition: background-color var(--d-animation-duration-base) linear;
+
+    &:hover {
+      background-color: var(--d-background-color-hover);
+    }
+
+    svg {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  @include e(examples-title) {
+    display: flex;
+    align-items: center;
+  }
+
+  @include e(demo-box) {
+    background-color: var(--app-demo-box-background-color);
+    border: 1px solid var(--d-color-divider);
+
+    & + & {
+      margin-top: 24px;
+    }
+
+    @include when(active) {
+      border-color: var(--d-color-primary);
+    }
+  }
+
+  @include e(demo-box-renderer) {
+    padding: 42px 24px;
+    overflow-x: auto;
+  }
+
+  @include e(demo-box-info) {
+    position: relative;
+    border-top: 1px solid var(--d-color-divider);
+  }
+
+  @include e(demo-box-title) {
+    position: absolute;
+    top: -14px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    padding: 1px 8px;
+    background-color: var(--app-demo-box-background-color);
+  }
+
+  @include e(demo-box-description) {
+    padding: 24px;
+  }
+
+  @include e(demo-box-toolbar) {
+    display: flex;
+    gap: 0 12px;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 0;
+    border-top: 1px dashed var(--d-color-divider);
+
+    .app-icon-button {
+      color: var(--d-color-icon-decorator);
+      transition: color var(--d-animation-duration-fast) linear, transform var(--d-animation-duration-fast) linear;
+
+      &:hover {
+        color: var(--d-color-primary);
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  @include e(demo-box-code) {
+    border-top: 1px dashed var(--d-color-divider);
+
+    pre {
+      margin: 0;
+    }
+
+    pre > code.hljs {
+      padding: 24px !important;
+      background-color: transparent !important;
+    }
+  }
+}

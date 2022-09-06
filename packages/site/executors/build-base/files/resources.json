@@ -1,0 +1,78 @@
+{
+  "en-US": {
+    "translation": {
+      "Docs": "Docs",
+      "Components": "Components",
+      "Examples": "Examples",
+      "Open in CodeSandbox": "Open in CodeSandbox",
+      "Open in Stackblitz": "Open in Stackblitz",
+      "Hide code": "Hide code",
+      "Show code": "Show code",
+      "Copy code": "Copy code",
+      "Copied!": "Copied!",
+      "Open main navigation": "Open main navigation",
+      "Close main navigation": "Close main navigation",
+      "Open anchor navigation": "Open anchor navigation",
+      "Close anchor navigation": "Close anchor navigation",
+      "Light theme": "Light theme",
+      "Dark theme": "Dark theme",
+      "GitHub repository": "GitHub repository",
+      "home": {
+        "Title": "Elegant Design & Ultimate Performance",
+        "Getting Started": "Getting Started",
+        "Resources": "Resources",
+        "Help": "Help"
+      },
+      "docs-menu": {
+        "Overview": "Overview",
+        "Getting Started": "Getting Started",
+        "Dynamic Theme": "Dynamic Theme",
+        "Internationalization": "Internationalization"
+      },
+      "menu": {
+        "components-group": {},
+        "components": {
+          "Interface": "Interface"
+        }
+      }
+    }
+  },
+  "zh-Hant": {
+    "translation": {
+      "Docs": "文档",
+      "Components": "组件",
+      "Examples": "代码演示",
+      "Open in CodeSandbox": "在 CodeSandbox 中打开",
+      "Open in Stackblitz": "在 Stackblitz 中打开",
+      "Hide code": "收起代码",
+      "Show code": "显示代码",
+      "Copy code": "复制代码",
+      "Copied!": "复制成功！",
+      "Open main navigation": "打开主导航栏",
+      "Close main navigation": "关闭主导航栏",
+      "Open anchor navigation": "打开锚点导航栏",
+      "Close anchor navigation": "关闭锚点导航栏",
+      "Light theme": "浅色主题",
+      "Dark theme": "深色主题",
+      "GitHub repository": "GitHub 存储库",
+      "home": {
+        "Title": "优雅的设计 & 极致的性能",
+        "Getting Started": "快速开始",
+        "Resources": "相关资源",
+        "Help": "帮助"
+      },
+      "docs-menu": {
+        "Overview": "概述",
+        "Getting Started": "快速开始",
+        "Dynamic Theme": "动态主题",
+        "Internationalization": "国际化"
+      },
+      "menu": {
+        "components-group": {},
+        "components": {
+          "Interface": "接口"
+        }
+      }
+    }
+  }
+}

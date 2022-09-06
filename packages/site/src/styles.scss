@@ -1,5 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
-@import '~highlight.js/scss/github';
-@import '../../ui/styles/index';
-@import './app/styles/index';
-@import './app/styles/theme-dark';
+/* stylelint-disable declaration-property-value-allowed-list */
+@import '../../ui/src/styles/index';
+@import '../../ui/src/styles/theme-dark';
+
+// Use BEM
+$namespace: 'app';
+@import './styles/index';
+
+body.light {
+  @import '~highlight.js/scss/github';
+}
+
+body.dark {
+  @import '~highlight.js/scss/github-dark';
+
+  --app-th-background-color: rgb(13 13 13);
+  --app-code-background-color: #2d2d2f;
+  --app-demo-box-background-color: rgb(8 8 8);
+  --app-layout-header-background-color: rgb(26 26 26);
+  --app-anchor-toggler-color: #eceef1;
+
+  background-color: rgb(18 18 18);
+}
