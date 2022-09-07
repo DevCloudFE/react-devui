@@ -1,8 +1,8 @@
-import type { Dayjs, UnitType } from 'dayjs';
+import type { UnitType } from 'dayjs';
 
 import React, { useImperativeHandle, useRef, useState } from 'react';
 
-import { useAsync, useEvent, useEventCallback } from '@react-devui/hooks';
+import { useAsync, useEvent } from '@react-devui/hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
@@ -39,16 +39,17 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
   const activeDate = dDate ? dayjs(dDate) : dayjs().set('hour', 0).set('minute', 0).set('second', 0);
   const anotherDate = dAnotherDate ? dayjs(dAnotherDate) : null;
 
-  const [hoverDate, setHoverDate] = useState<Dayjs | null>(null);
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
-  const [showDate, setShowDate] = useState<Dayjs>(activeDate);
-  const updateView = useEventCallback((t: Date) => {
-    setShowDate(dayjs(t));
-  });
+  const [_showDate, setShowDate] = useState<Date>(activeDate.toDate());
+  const showDate = dayjs(_showDate);
 
   const handleButtonDown = (unit: UnitType, value: number) => {
     const loop = () => {
-      setShowDate((d) => d.set(unit, d.get(unit) + value));
+      setShowDate((draft) => {
+        const d = dayjs(draft);
+        return d.set(unit, d.get(unit) + value).toDate();
+      });
       dataRef.current.clearLoop = async.setTimeout(() => loop(), 50);
     };
     dataRef.current.clearTid = async.setTimeout(() => loop(), 400);
@@ -73,16 +74,19 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
         handleButtonMouseUp();
       },
       onClick: () => {
-        updateView(showDate.set(unit, showDate.get(unit) + value).toDate());
+        setShowDate((draft) => {
+          const d = dayjs(draft);
+          return d.set(unit, d.get(unit) + value).toDate();
+        });
       },
     } as React.ButtonHTMLAttributes<HTMLButtonElement>);
 
-  const weekList: Dayjs[][] = (() => {
+  const weekList: Date[][] = (() => {
     const firstDay = showDate.set('date', 1);
     const month = [];
     let week = [];
     for (let num = 0, addDay = -firstDay.day(); num < 7 * 6; num++, addDay++) {
-      week.push(firstDay.add(addDay, 'day'));
+      week.push(firstDay.add(addDay, 'day').toDate());
       if (week.length === 7) {
         month.push(week);
         week = [];
@@ -96,9 +100,9 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
   useImperativeHandle(
     ref,
     () => ({
-      updateView,
+      updateView: setShowDate,
     }),
-    [updateView]
+    []
   );
 
   return (
@@ -114,7 +118,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
         >
           <LeftOutlined />
         </button>
-        <span className={`${dPrefix}date-picker__header-content`}>{showDate.format(lang === 'zh-Hant' ? 'YYYY年 M月' : 'MMM YYYY')}</span>
+        <span className={`${dPrefix}date-picker__header-content`}>{showDate.format(lang === 'zh-CN' ? 'YYYY年 M月' : 'MMM YYYY')}</span>
         <button {...getButtonProps('month', 1)} className={`${dPrefix}date-picker__header-button`} title={t('DatePicker', 'Next month')}>
           <RightOutlined />
         </button>
@@ -133,8 +137,9 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
         <tbody>
           {weekList.map((week, index1) => (
             <tr key={index1}>
-              {week.map((d, index2) => {
-                const { disabled } = dConfigDate?.(d.toDate()) ?? {};
+              {week.map((_d, index2) => {
+                const d = dayjs(_d);
+                const { disabled } = dConfigDate?.(_d) ?? {};
                 const isActive = dDate && d.isSame(activeDate, 'date');
                 const isAnother = anotherDate && d.isSame(anotherDate, 'date');
                 const isHover = !isActive && !isAnother && anotherDate && d.isSame(hoverDate, 'date');
@@ -144,12 +149,12 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
                     key={index2}
                     style={{ pointerEvents: disabled ? 'none' : undefined }}
                     onClick={() => {
-                      updateView(d.toDate());
-                      onDateChange?.(d.toDate());
+                      setShowDate(_d);
+                      onDateChange?.(_d);
                     }}
                     onMouseEnter={() => {
                       dataRef.current.clearHoverTid?.();
-                      setHoverDate(d);
+                      setHoverDate(_d);
                     }}
                     onMouseLeave={() => {
                       dataRef.current.clearHoverTid?.();

@@ -16,7 +16,7 @@ import { DRoot } from '@react-devui/ui';
 export default function App() {
   const rootContext = useMemo<DConfigContextData>(
     () => ({
-      i18n: { lang: 'zh-Hant' },
+      i18n: { lang: 'zh-CN' },
     }),
     []
   );
@@ -44,7 +44,7 @@ export default function App() {
           DatePicker: {
             Now: {
               'en-US': 'Present',
-              'zh-Hant': '现在',
+              'zh-CN': '现在',
             },
           },
         },
@@ -76,7 +76,7 @@ export default function App() {
           Common: {
             Loading: {
               'en-US': 'Loading',
-              'zh-Hant': '加载中',
+              'zh-CN': '加载中',
               'ja-JP': '読み込み中',
             },
             ...other,

@@ -2,7 +2,7 @@
 
 <p align="center">DevUI components based on React</p>
 
-English | [简体中文](README.zh-Hant.md)
+English | [简体中文](README.zh-CN.md)
 
 In development.
 

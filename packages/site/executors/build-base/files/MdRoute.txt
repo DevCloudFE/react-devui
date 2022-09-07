@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 export default function __Route__() {
   const props = {
     'en-US': { html: [__en-US__] },
-    'zh-Hant': { html: [__zh-Hant__] },
+    'zh-CN': { html: [__zh-CN__] },
   };
 
   return <AppMdRoute {...props} />;

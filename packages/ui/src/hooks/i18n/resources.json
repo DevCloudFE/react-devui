@@ -2,191 +2,191 @@
   "Common": {
     "Loading": {
       "en-US": "Loading",
-      "zh-Hant": "加载中"
+      "zh-CN": "加载中"
     },
     "Search": {
       "en-US": "Search",
-      "zh-Hant": "搜索"
+      "zh-CN": "搜索"
     },
     "Add": {
       "en-US": "Add",
-      "zh-Hant": "新增"
+      "zh-CN": "新增"
     },
     "Close": {
       "en-US": "Close",
-      "zh-Hant": "关闭"
+      "zh-CN": "关闭"
     },
     "Create": {
       "en-US": "Create",
-      "zh-Hant": "创建"
+      "zh-CN": "创建"
     },
     "Clear": {
       "en-US": "Clear",
-      "zh-Hant": "清除"
+      "zh-CN": "清除"
     },
     "More": {
       "en-US": "More",
-      "zh-Hant": "更多"
+      "zh-CN": "更多"
     },
     "No Data": {
       "en-US": "No Data",
-      "zh-Hant": "无数据"
+      "zh-CN": "无数据"
     }
   },
   "Footer": {
     "Cancel": {
       "en-US": "Cancel",
-      "zh-Hant": "取 消"
+      "zh-CN": "取 消"
     },
     "OK": {
       "en-US": "OK",
-      "zh-Hant": "确 定"
+      "zh-CN": "确 定"
     }
   },
   "Input": {
     "Password is visible": {
       "en-US": "Password is visible",
-      "zh-Hant": "密码可见"
+      "zh-CN": "密码可见"
     },
     "Password is not visible": {
       "en-US": "Password is not visible",
-      "zh-Hant": "密码不可见"
+      "zh-CN": "密码不可见"
     },
     "Increase number": {
       "en-US": "Increase number",
-      "zh-Hant": "数字加"
+      "zh-CN": "数字加"
     },
     "Decrease number": {
       "en-US": "Decrease number",
-      "zh-Hant": "数字减"
+      "zh-CN": "数字减"
     }
   },
   "Pagination": {
     "Total": {
       "en-US": "Total",
-      "zh-Hant": "共"
+      "zh-CN": "共"
     },
     "items": {
       "en-US": "items",
-      "zh-Hant": "项"
+      "zh-CN": "项"
     },
     "Go": {
       "en-US": "Go",
-      "zh-Hant": "至"
+      "zh-CN": "至"
     },
     "Page": {
       "en-US": "Page",
-      "zh-Hant": "页"
+      "zh-CN": "页"
     },
     "5 pages forward": {
       "en-US": "5 pages forward",
-      "zh-Hant": "向前 5 页"
+      "zh-CN": "向前 5 页"
     },
     "5 pages backward": {
       "en-US": "5 pages backward",
-      "zh-Hant": "向后 5 页"
+      "zh-CN": "向后 5 页"
     },
     "Previous page": {
       "en-US": "Previous page",
-      "zh-Hant": "上一页"
+      "zh-CN": "上一页"
     },
     "Next page": {
       "en-US": "Next page",
-      "zh-Hant": "下一页"
+      "zh-CN": "下一页"
     },
     " / Page": {
       "en-US": " / Page",
-      "zh-Hant": "条/页"
+      "zh-CN": "条/页"
     }
   },
   "DForm": {
     "Optional": {
       "en-US": "(optional)",
-      "zh-Hant": "(可选)"
+      "zh-CN": "(可选)"
     }
   },
   "TimePicker": {
     "Select time": {
       "en-US": "Select time",
-      "zh-Hant": "请选择时间"
+      "zh-CN": "请选择时间"
     },
     "Start time": {
       "en-US": "Start time",
-      "zh-Hant": "开始时间"
+      "zh-CN": "开始时间"
     },
     "End time": {
       "en-US": "End time",
-      "zh-Hant": "结束时间"
+      "zh-CN": "结束时间"
     },
     "Now": {
       "en-US": "Now",
-      "zh-Hant": "此刻"
+      "zh-CN": "此刻"
     }
   },
   "DatePicker": {
     "Select date": {
       "en-US": "Select date",
-      "zh-Hant": "请选择日期"
+      "zh-CN": "请选择日期"
     },
     "Start date": {
       "en-US": "Start date",
-      "zh-Hant": "开始日期"
+      "zh-CN": "开始日期"
     },
     "End date": {
       "en-US": "End date",
-      "zh-Hant": "结束日期"
+      "zh-CN": "结束日期"
     },
     "Today": {
       "en-US": "Today",
-      "zh-Hant": "今天"
+      "zh-CN": "今天"
     },
     "Now": {
       "en-US": "Now",
-      "zh-Hant": "此刻"
+      "zh-CN": "此刻"
     },
     "Previous year": {
       "en-US": "Previous year",
-      "zh-Hant": "上一年"
+      "zh-CN": "上一年"
     },
     "Next year": {
       "en-US": "Next year",
-      "zh-Hant": "下一年"
+      "zh-CN": "下一年"
     },
     "Previous month": {
       "en-US": "Previous month",
-      "zh-Hant": "上月"
+      "zh-CN": "上月"
     },
     "Next month": {
       "en-US": "Next month",
-      "zh-Hant": "下月"
+      "zh-CN": "下月"
     }
   },
   "Upload": {
     "Preview file": {
       "en-US": "Preview file",
-      "zh-Hant": "预览文件"
+      "zh-CN": "预览文件"
     },
     "Download file": {
       "en-US": "Download file",
-      "zh-Hant": "下载文件"
+      "zh-CN": "下载文件"
     },
     "Remove file": {
       "en-US": "Remove file",
-      "zh-Hant": "移除文件"
+      "zh-CN": "移除文件"
     },
     "Upload": {
       "en-US": "Upload",
-      "zh-Hant": "上传"
+      "zh-CN": "上传"
     },
     "Uploading": {
       "en-US": "Uploading...",
-      "zh-Hant": "上传中..."
+      "zh-CN": "上传中..."
     }
   },
   "Table": {
     "Reset": {
       "en-US": "Reset",
-      "zh-Hant": "重置"
+      "zh-CN": "重置"
     }
   }
 }

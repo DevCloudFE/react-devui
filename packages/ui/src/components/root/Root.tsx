@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import type { DConfigContextData } from '../../hooks/d-config/contex';
-import type { DLang } from '../../hooks/i18n';
 import type { DIconContextData } from '@react-devui/icons/Icon';
 
 import { useMemo } from 'react';
@@ -17,28 +16,22 @@ export interface DRootProps {
   dContext?: DConfigContextData;
 }
 
-const loadLocales: DLang[] = [];
-
 export function DRoot(props: DRootProps): JSX.Element | null {
   const { children, dContext } = props;
 
-  const lang = dContext?.i18n?.lang ?? 'zh-Hant';
+  const lang = dContext?.i18n?.lang ?? 'zh-CN';
 
-  if (!loadLocales.includes(lang)) {
-    loadLocales.push(lang);
+  switch (lang) {
+    case 'en-US':
+      dayjs.locale('en');
+      break;
 
-    switch (lang) {
-      case 'en-US':
-        dayjs.locale('en-US', require('dayjs/locale/en'));
-        break;
+    case 'zh-CN':
+      dayjs.locale('zh-cn');
+      break;
 
-      case 'zh-Hant':
-        dayjs.locale('zh-Hant', require('dayjs/locale/zh'));
-        break;
-
-      default:
-        break;
-    }
+    default:
+      break;
   }
 
   const iconProps = dContext?.componentConfigs?.DIcon;

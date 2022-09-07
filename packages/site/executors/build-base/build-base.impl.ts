@@ -38,11 +38,11 @@ interface ComponentMeta {
 }
 
 interface DemoMeta {
-  title: { 'en-US': string; 'zh-Hant': string };
+  title: { 'en-US': string; 'zh-CN': string };
   __content: string;
 }
 
-const LANGS = ['en-US', 'zh-Hant'] as const;
+const LANGS = ['en-US', 'zh-CN'] as const;
 
 class GenerateSite {
   private hashList = new Map<string, string>();
@@ -58,7 +58,7 @@ class GenerateSite {
         };
       };
     };
-    'zh-Hant': {
+    'zh-CN': {
       translation: {
         menu: {
           'components-group': { [index: string]: string };
@@ -67,7 +67,7 @@ class GenerateSite {
       };
     };
   };
-  private menuGroups!: { 'en-US': string; 'zh-Hant': string }[];
+  private menuGroups!: { 'en-US': string; 'zh-CN': string }[];
   private routesTmp!: string;
   private componentRouteTmp!: string;
   private mdRouteTmp!: string;
@@ -127,7 +127,7 @@ class GenerateSite {
       this.outputFile(path.join(outDir, `${fileName}.tsx`), outTSX);
 
       const demo = new Map<
-        'en-US' | 'zh-Hant',
+        'en-US' | 'zh-CN',
         {
           id?: string;
           name?: string;
@@ -139,7 +139,7 @@ class GenerateSite {
         }
       >([
         ['en-US', {}],
-        ['zh-Hant', {}],
+        ['zh-CN', {}],
       ]);
       Array.from(demo.keys()).forEach((lang, index, langs) => {
         const obj = demo.get(lang)!;
@@ -167,18 +167,18 @@ class GenerateSite {
 
   generateComponentRoute(file: { name: string; path: string; data: string[] }) {
     const enMeta = loadFront(readFileSync(path.join(file.path, 'README.md'))) as ComponentMeta;
-    const zhMeta = loadFront(readFileSync(path.join(file.path, 'README.zh-Hant.md'))) as ComponentMeta;
+    const zhMeta = loadFront(readFileSync(path.join(file.path, 'README.zh-CN.md'))) as ComponentMeta;
     const meta = {
       aria: enMeta.aria ?? '',
       compose: enMeta.compose ?? '',
       'virtual-scroll': enMeta['virtual-scroll'] ?? '',
       title: {
         'en-US': enMeta.title,
-        'zh-Hant': zhMeta.title,
+        'zh-CN': zhMeta.title,
       },
       __content: {
         'en-US': enMeta.__content,
-        'zh-Hant': zhMeta.__content,
+        'zh-CN': zhMeta.__content,
       },
     };
 
@@ -483,7 +483,7 @@ export default async function* siteBuildExecutor(options: SiteBuildExecutorOptio
           };
           if (!fileWatcher.hasWatcher(path.join(componentPath, 'README.md'))) {
             fileWatcher.addWatcher(path.join(componentPath, 'README.md'), task);
-            fileWatcher.addWatcher(path.join(componentPath, 'README.zh-Hant.md'), task);
+            fileWatcher.addWatcher(path.join(componentPath, 'README.zh-CN.md'), task);
             fileWatcher.addWatcher(path.join(componentPath, 'demos'), task);
           }
         }
@@ -508,7 +508,7 @@ export default async function* siteBuildExecutor(options: SiteBuildExecutorOptio
             };
             if (!fileWatcher.hasWatcher(filePath)) {
               fileWatcher.addWatcher(path.join(mdPath, routeName + '.md'), task);
-              fileWatcher.addWatcher(path.join(mdPath, routeName + '.zh-Hant.md'), task);
+              fileWatcher.addWatcher(path.join(mdPath, routeName + '.zh-CN.md'), task);
             }
           }
         }

@@ -9,7 +9,7 @@ __import__
 export default function __Route__() {
   const props = {
     'en-US': __en-US__,
-    'zh-Hant': __zh-Hant__,
+    'zh-CN': __zh-CN__,
   };
 
   return <AppComponentRoute {...props} />;

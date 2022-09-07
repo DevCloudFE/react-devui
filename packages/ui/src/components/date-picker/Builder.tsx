@@ -1,6 +1,5 @@
 import type { DSize } from '../../utils';
 import type { DFormControl } from '../form';
-import type { Dayjs } from 'dayjs';
 
 import { isArray, isNull } from 'lodash';
 import React, { useEffect, useRef } from 'react';
@@ -33,7 +32,7 @@ export interface DBuilderProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   dVisible?: boolean;
   dSuffix?: React.ReactNode;
   dPlaceholder: [string, string];
-  dOrder: (date: [Dayjs | Date, Dayjs | Date]) => boolean;
+  dOrder: (date: [Date, Date]) => boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dSize?: DSize;
   dClearable?: boolean;

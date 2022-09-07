@@ -96,7 +96,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
           className="app-layout-header__button app-layout-header__button--text"
           aria-label={switchLang.label}
           onClick={() => {
-            const val = language === 'en-US' ? 'zh-Hant' : 'en-US';
+            const val = language === 'en-US' ? 'zh-CN' : 'en-US';
             setLanguage(val);
             i18n.changeLanguage(val);
           }}

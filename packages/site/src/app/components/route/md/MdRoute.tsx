@@ -7,7 +7,7 @@ import { AppRoute } from './Route';
 
 export interface AppMdRouteProps {
   'en-US': AppRouteProps;
-  'zh-Hant': AppRouteProps;
+  'zh-CN': AppRouteProps;
 }
 
 export function AppMdRoute(props: AppMdRouteProps): JSX.Element | null {

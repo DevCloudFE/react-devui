@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { DConfigContext } from '../d-config/contex';
 import resources from './resources.json';
 
-export type DLang = 'en-US' | 'zh-Hant';
+export type DLang = 'en-US' | 'zh-CN';
 
 export function useTranslation(): [(...keys: string[]) => string, DLang] {
   const { lang = 'en-US', resources: customResources } = useContext(DConfigContext)?.i18n ?? {};
