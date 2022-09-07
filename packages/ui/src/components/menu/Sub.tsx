@@ -1,6 +1,6 @@
 import type { DMenuMode } from './Menu';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 
 import { useElement, useEventListener } from '@react-devui/hooks';
 import { CaretDownOutlined } from '@react-devui/icons';
@@ -88,7 +88,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useCallback(() => {
+  const updatePosition = () => {
     if (dPopupVisible) {
       if (popupRef.current && liRef.current) {
         const size = getOriginalSize(popupRef.current);
@@ -100,17 +100,17 @@ export function DSub(props: DSubProps): JSX.Element | null {
         }
 
         const { top, left, transformOrigin } = inHorizontalNav
-          ? getVerticalSidePosition(liRef.current, { width, height }, 'bottom-left', 12)
+          ? getVerticalSidePosition(liRef.current, { width, height }, 'bottom', 12)
           : getHorizontalSidePosition(liRef.current, { width, height }, 'right', dInNav ? 10 : 14);
         setPopupPositionStyle({
           top,
-          left: inHorizontalNav ? left + 16 : left,
+          left,
           width: inHorizontalNav ? width : undefined,
         });
         setTransformOrigin(transformOrigin);
       }
     }
-  }, [dInNav, dPopupVisible, inHorizontalNav]);
+  };
   useEventListener(dEventId, updatePosition);
 
   const maxZIndex = useMaxIndex(dPopupVisible);

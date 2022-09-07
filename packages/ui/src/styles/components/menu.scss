@@ -129,7 +129,9 @@ $menu-item-height: 40px;
     }
 
     @include m(sub) {
-      padding-right: 32px;
+      &:not(.#{$variable-prefix}menu__item--horizontal) {
+        padding-right: 32px;
+      }
 
       &:hover {
         @include e(sub-arrow) {

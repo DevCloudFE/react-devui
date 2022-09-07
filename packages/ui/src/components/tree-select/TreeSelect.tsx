@@ -12,6 +12,7 @@ import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
 import { useEventNotify } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useTranslation } from '../../hooks';
 import { registerComponentMate } from '../../utils';
@@ -288,26 +289,6 @@ function TreeSelect<V extends DId, T extends DTreeItem<V> & { children?: T[] }>(
     }
   };
 
-  const updatePosition = useCallback(
-    (boxEl: HTMLElement, popupEl: HTMLElement) => {
-      const width = boxEl.getBoundingClientRect().width;
-      const { height } = getOriginalSize(popupEl);
-      const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
-
-      return {
-        position: {
-          top,
-          left,
-          width: hasSearch ? width : undefined,
-          minWidth: hasSearch ? undefined : width,
-          maxWidth: window.innerWidth - left - 20,
-        },
-        transformOrigin,
-      };
-    },
-    [hasSearch]
-  );
-
   const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
@@ -427,7 +408,26 @@ function TreeSelect<V extends DId, T extends DTreeItem<V> & { children?: T[] }>(
             },
           }}
           dInputRef={dInputRef}
-          dUpdatePosition={updatePosition}
+          dUpdatePosition={(boxEl, popupEl) => {
+            const boxWidth = boxEl.getBoundingClientRect().width;
+            const minWidth = Math.min(boxWidth, window.innerWidth - POSITION_CONFIG.space * 2);
+            const { width, height } = getOriginalSize(popupEl);
+            const { top, left, transformOrigin } = getVerticalSidePosition(
+              boxEl,
+              { width: Math.max(width, minWidth), height },
+              'bottom-left',
+              8
+            );
+
+            return {
+              position: {
+                top,
+                left,
+                minWidth,
+              },
+              transformOrigin,
+            };
+          }}
           afterVisibleChange={afterVisibleChange}
           onFocusVisibleChange={setFocusVisible}
           onClear={handleClear}

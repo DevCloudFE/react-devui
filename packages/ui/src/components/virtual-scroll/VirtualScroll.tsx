@@ -267,6 +267,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
               overflow: 'hidden',
               [dHorizontal ? 'height' : 'width']: 0,
               [dHorizontal ? 'width' : 'height']: fillSize[0],
+              flexShrink: 0,
             },
             'aria-hidden': true,
           })

@@ -134,7 +134,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         setPopupPositionStyle({
           top,
           left,
-          maxWidth: window.innerWidth - left - 20,
         });
         setTransformOrigin(transformOrigin);
       }

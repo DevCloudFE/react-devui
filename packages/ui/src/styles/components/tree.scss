@@ -2,10 +2,14 @@ $tree-option-height: 32px;
 
 @include b(tree) {
   position: relative;
-  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 100%;
   padding: 0;
   margin: 0;
-  overflow: hidden auto;
+  overflow: auto;
+  white-space: nowrap;
+  vertical-align: top;
   list-style: none;
   outline: none;
 
@@ -80,10 +84,10 @@ $tree-option-height: 32px;
 
   @include e(option) {
     position: relative;
-    display: flex;
+    display: inline-flex;
+    flex-shrink: 0;
     gap: 0 8px;
     align-items: center;
-    width: 100%;
     height: $tree-option-height;
     padding: 0 12px;
     cursor: pointer;
@@ -108,9 +112,7 @@ $tree-option-height: 32px;
   }
 
   @include e(option-content) {
-    @include utils-ellipsis;
-
-    flex: 1 0 0;
+    flex-grow: 1;
   }
 
   @include e(option-icon) {
@@ -120,6 +122,7 @@ $tree-option-height: 32px;
     height: $tree-option-height;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 14px;
+    user-select: none;
 
     &::after {
       position: absolute;
@@ -134,6 +137,8 @@ $tree-option-height: 32px;
 
   @include e(option-group) {
     position: relative;
+    display: inline-flex;
+    flex-direction: column;
     padding: 0;
     margin: 0;
     list-style: none;
@@ -144,7 +149,8 @@ $tree-option-height: 32px;
   }
 
   @include e(empty) {
-    display: flex;
+    display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     height: $tree-option-height;
     padding: 0 12px;
@@ -166,7 +172,6 @@ $tree-option-height: 32px;
     display: flex;
     gap: 0 8px;
     align-items: center;
-    width: 100%;
     height: $tree-option-height;
     padding: 0 12px;
     cursor: pointer;

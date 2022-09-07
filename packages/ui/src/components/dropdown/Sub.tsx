@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useElement, useEventListener } from '@react-devui/hooks';
 import { RightOutlined } from '@react-devui/icons';
@@ -68,7 +68,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = useCallback(() => {
+  const updatePosition = () => {
     if (ulRef.current && liRef.current) {
       const { width, height } = getOriginalSize(ulRef.current);
       const { top, left, transformOrigin } = getHorizontalSidePosition(liRef.current, { width, height }, 'right', 10);
@@ -78,7 +78,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
       });
       setTransformOrigin(transformOrigin);
     }
-  }, []);
+  };
   useEventListener(dEventId, updatePosition);
 
   const maxZIndex = useMaxIndex(dPopupVisible);

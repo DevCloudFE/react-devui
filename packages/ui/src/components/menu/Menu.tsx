@@ -460,46 +460,64 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
     >
       {(navRef, collapseStyle) => (
         <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-          {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
-            // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
-            <nav
-              {...restProps}
-              ref={navRef}
-              className={getClassName(restProps.className, `${dPrefix}menu`, {
-                [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-              })}
-              style={{
-                ...restProps.style,
-                ...collapseStyle,
-              }}
-              tabIndex={restProps.tabIndex ?? 0}
-              role={restProps.role ?? 'menubar'}
-              aria-orientation={restProps['aria-orientation'] ?? (dMode === 'horizontal' ? 'horizontal' : 'vertical')}
-              aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusId) ? undefined : getItemId(focusId))}
-              onFocus={(e) => {
-                restProps.onFocus?.(e);
-                fvOnFocus(e);
+          {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => {
+            const preventBlur: React.MouseEventHandler = (e) => {
+              if (e.target !== navRef.current && e.button === 0) {
+                e.preventDefault();
+              }
+            };
 
-                setIsFocus(true);
-                initFocus();
-              }}
-              onBlur={(e) => {
-                restProps.onBlur?.(e);
-                fvOnBlur(e);
+            return (
+              // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
+              <nav
+                {...restProps}
+                ref={navRef}
+                className={getClassName(restProps.className, `${dPrefix}menu`, {
+                  [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+                })}
+                style={{
+                  ...restProps.style,
+                  ...collapseStyle,
+                }}
+                tabIndex={restProps.tabIndex ?? 0}
+                role={restProps.role ?? 'menubar'}
+                aria-orientation={restProps['aria-orientation'] ?? (dMode === 'horizontal' ? 'horizontal' : 'vertical')}
+                aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(focusId) ? undefined : getItemId(focusId))}
+                onFocus={(e) => {
+                  restProps.onFocus?.(e);
+                  fvOnFocus(e);
 
-                setIsFocus(false);
-                setPopupIds([]);
-              }}
-              onKeyDown={(e) => {
-                restProps.onKeyDown?.(e);
-                fvOnKeyDown(e);
+                  setIsFocus(true);
+                  initFocus();
+                }}
+                onBlur={(e) => {
+                  restProps.onBlur?.(e);
+                  fvOnBlur(e);
 
-                handleKeyDown?.(e);
-              }}
-            >
-              {nodes}
-            </nav>
-          )}
+                  setIsFocus(false);
+                  setPopupIds([]);
+                }}
+                onKeyDown={(e) => {
+                  restProps.onKeyDown?.(e);
+                  fvOnKeyDown(e);
+
+                  handleKeyDown?.(e);
+                }}
+                onMouseDown={(e) => {
+                  restProps.onMouseDown?.(e);
+
+                  preventBlur(e);
+                }}
+                onMouseUp={(e) => {
+                  restProps.onMouseUp?.(e);
+
+                  preventBlur(e);
+                }}
+              >
+                {nodes}
+              </nav>
+            );
+          }}
         </DFocusVisible>
       )}
     </DCollapseTransition>

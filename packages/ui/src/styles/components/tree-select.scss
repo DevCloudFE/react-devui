@@ -33,6 +33,8 @@
 
   @include e(popup) {
     position: fixed;
+    max-width: calc(100vw - #{$popover-space} * 2);
+    overflow: auto hidden;
     background-color: var(--#{$variable-prefix}background-color);
     border-radius: var(--#{$variable-prefix}border-radius);
     box-shadow: var(--#{$variable-prefix}shadow-popup);

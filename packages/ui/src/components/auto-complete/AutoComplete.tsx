@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 import { useElement, useEvent, useEventCallback, useResize } from '@react-devui/hooks';
 import { LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useMaxIndex, useDValue, useLayout } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_POPUP } from '../../utils';
@@ -104,15 +105,20 @@ function AutoComplete<T extends DAutoCompleteItem & { children?: T[] }>(
     if (visible) {
       const popupEl = popupRef.current;
       if (boxEl && popupEl) {
-        const width = boxEl.getBoundingClientRect().width;
-        const { height } = getOriginalSize(popupEl);
-        const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+        const boxWidth = boxEl.getBoundingClientRect().width;
+        const minWidth = Math.min(boxWidth, window.innerWidth - POSITION_CONFIG.space * 2);
+        const { width, height } = getOriginalSize(popupEl);
+        const { top, left, transformOrigin } = getVerticalSidePosition(
+          boxEl,
+          { width: Math.max(width, minWidth), height },
+          'bottom-left',
+          8
+        );
 
         setPopupPositionStyle({
           top,
           left,
-          minWidth: width,
-          maxWidth: window.innerWidth - left - 20,
+          minWidth,
         });
         setTransformOrigin(transformOrigin);
       }

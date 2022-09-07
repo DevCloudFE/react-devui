@@ -1,3 +1,5 @@
+import { POSITION_CONFIG } from './config';
+
 type DVerticalSidePlacement = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
 
 interface DVerticalSidePosition {
@@ -25,7 +27,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         bottom: 0,
         left: '50%',
-
         transform: 'translate(-50%, 50%) rotate(45deg)',
       };
       break;
@@ -34,7 +35,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         bottom: 0,
         left: 20,
-
         transform: 'translate(0, 50%) rotate(45deg)',
       };
       break;
@@ -43,7 +43,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         right: 20,
         bottom: 0,
-
         transform: 'translate(0, 50%) rotate(45deg)',
       };
       break;
@@ -52,7 +51,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         top: 0,
         left: '50%',
-
         transform: 'translate(-50%, -50%) rotate(45deg)',
       };
       break;
@@ -61,7 +59,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         top: 0,
         left: 20,
-
         transform: 'translate(0, -50%) rotate(45deg)',
       };
       break;
@@ -70,7 +67,6 @@ export function getVerticalSidePosition(
       arrowPosition = {
         top: 0,
         right: 20,
-
         transform: 'translate(0, -50%) rotate(45deg)',
       };
       break;
@@ -83,14 +79,15 @@ export function getVerticalSidePosition(
     placement === 'top' || placement === 'top-left' || placement === 'top-right'
       ? targetRect.top - height - offset
       : targetRect.top + targetRect.height + offset;
-  top = Math.min(Math.max(top, 10), window.innerHeight - height - 10);
+  top = Math.min(Math.max(top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
 
-  const left =
+  let left =
     placement === 'top' || placement === 'bottom'
       ? targetRect.left + (targetRect.width - width) / 2
       : placement === 'top-left' || placement === 'bottom-left'
       ? targetRect.left
       : targetRect.left + targetRect.width - width;
+  left = Math.min(Math.max(left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
 
   const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
 
@@ -101,7 +98,10 @@ export function getVerticalSidePosition(
     arrowPosition,
   };
 
-  if ((placement.includes('top') && top === 10) || (placement.includes('bottom') && top === window.innerHeight - height - 10)) {
+  if (
+    (placement.includes('top') && top === POSITION_CONFIG.space) ||
+    (placement.includes('bottom') && top === window.innerHeight - height - POSITION_CONFIG.space)
+  ) {
     if (prevPosition) {
       return prevPosition;
     } else {

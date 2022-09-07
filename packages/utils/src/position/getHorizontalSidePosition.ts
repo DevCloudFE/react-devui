@@ -1,3 +1,5 @@
+import { POSITION_CONFIG } from './config';
+
 export function getHorizontalSidePosition(
   targetEl: HTMLElement,
   popupSize: { width: number; height: number },
@@ -13,10 +15,10 @@ export function getHorizontalSidePosition(
   const targetRect = targetEl.getBoundingClientRect();
 
   let top = targetRect.top;
-  top = Math.min(Math.max(top, 10), window.innerHeight - height - 10);
+  top = Math.min(Math.max(top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
 
   let left = placement === 'right' ? targetRect.left + targetRect.width + offset : targetRect.left - width - offset;
-  left = Math.min(Math.max(left, 10), window.innerWidth - width - 10);
+  left = Math.min(Math.max(left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
 
   const transformOrigin =
     placement === 'right'

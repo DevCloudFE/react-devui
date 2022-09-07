@@ -122,12 +122,6 @@ export function DPanel<V extends DId, T extends DTreeItem<V>>(props: DPanelProps
   };
   useEventListener(dEventId, handleKeyDown);
 
-  const preventBlur: React.MouseEventHandler = (e) => {
-    if (e.button === 0) {
-      e.preventDefault();
-    }
-  };
-
   const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<V, T>>>(
     () => ({
       dList,
@@ -182,12 +176,6 @@ export function DPanel<V extends DId, T extends DTreeItem<V>>(props: DPanelProps
                 {dFocusVisible && item.id === dFocusItem?.id && <div className={`${dPrefix}focus-outline`}></div>}
                 <div
                   className={`${dPrefix}tree__option-icon`}
-                  onMouseDown={(e) => {
-                    preventBlur(e);
-                  }}
-                  onMouseUp={(e) => {
-                    preventBlur(e);
-                  }}
                   onClick={(e) => {
                     e.stopPropagation();
 
