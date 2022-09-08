@@ -21,11 +21,6 @@
     }
   }
 
-  @include e(container) {
-    position: relative;
-    display: inline-block;
-  }
-
   @include e(wrapper) {
     display: flex;
     justify-content: center;

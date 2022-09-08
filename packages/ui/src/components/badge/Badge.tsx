@@ -7,7 +7,7 @@ import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 import { DNumber } from './Number';
 
-export interface DBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dValue: number;
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dColor?: string;
@@ -20,7 +20,6 @@ export interface DBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge' });
 export function DBadge(props: DBadgeProps): JSX.Element | null {
   const {
-    children,
     dValue,
     dTheme = 'danger',
     dColor,
@@ -60,64 +59,59 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
   }
 
   return (
-    <div
-      {...restProps}
-      className={getClassName(restProps.className, `${dPrefix}badge__container`)}
-      title={restProps.title ?? (dDot ? undefined : dValue.toString())}
-    >
-      {children}
-      <DTransition dIn={show} dDuring={TTANSITION_DURING_BASE}>
-        {(state) => {
-          let transitionStyle: React.CSSProperties = {};
-          switch (state) {
-            case 'enter':
-              transitionStyle = { transform: 'scale(0)', opacity: 0 };
-              break;
+    <DTransition dIn={show} dDuring={TTANSITION_DURING_BASE}>
+      {(state) => {
+        let transitionStyle: React.CSSProperties = {};
+        switch (state) {
+          case 'enter':
+            transitionStyle = { transform: 'scale(0)', opacity: 0 };
+            break;
 
-            case 'entering':
-              transitionStyle = {
-                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
-              };
-              break;
+          case 'entering':
+            transitionStyle = {
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-out`).join(', '),
+            };
+            break;
 
-            case 'leaving':
-              transitionStyle = {
-                transform: 'scale(0)',
-                opacity: 0,
-                transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
-              };
-              break;
+          case 'leaving':
+            transitionStyle = {
+              transform: 'scale(0)',
+              opacity: 0,
+              transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_BASE}ms ease-in`).join(', '),
+            };
+            break;
 
-            default:
-              break;
-          }
+          default:
+            break;
+        }
 
-          return state === 'leaved' ? null : (
-            <div
-              className={getClassName(`${dPrefix}badge`, {
-                [`t-${dTheme}`]: dTheme,
-                [`${dPrefix}badge--dot`]: dDot,
-              })}
-              style={{
-                top: dOffset[0],
-                left: dOffset[1],
-                [`--${dPrefix}badge-color`]: dColor,
-              }}
-            >
-              <div className={`${dPrefix}badge__wrapper`} style={transitionStyle}>
-                {dDot ? null : (
-                  <>
-                    {nums.map((n, i) => (
-                      <DNumber key={nums.length - i} dValue={n} dDown={dataRef.current.dDown}></DNumber>
-                    ))}
-                    {value > dMax ? '+' : ''}
-                  </>
-                )}
-              </div>
+        return state === 'leaved' ? null : (
+          <div
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}badge`, {
+              [`t-${dTheme}`]: dTheme,
+              [`${dPrefix}badge--dot`]: dDot,
+            })}
+            style={{
+              top: dOffset[0],
+              left: dOffset[1],
+              [`--${dPrefix}badge-color`]: dColor,
+            }}
+            title={restProps.title ?? (dDot ? undefined : dValue.toString())}
+          >
+            <div className={`${dPrefix}badge__wrapper`} style={transitionStyle}>
+              {dDot ? null : (
+                <>
+                  {nums.map((n, i) => (
+                    <DNumber key={nums.length - i} dValue={n} dDown={dataRef.current.dDown}></DNumber>
+                  ))}
+                  {value > dMax ? '+' : ''}
+                </>
+              )}
             </div>
-          );
-        }}
-      </DTransition>
-    </div>
+          </div>
+        );
+      }}
+    </DTransition>
   );
 }

@@ -13,7 +13,7 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dTitleId?: string;
   dActions?: React.ReactNode[];
   dCloseProps?: DButtonProps;
-  onCloseClick?: () => void | boolean | Promise<void | boolean>;
+  onCloseClick?: () => void | false | Promise<void | false>;
   onClose?: () => void;
 }
 
