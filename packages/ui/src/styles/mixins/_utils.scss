@@ -1,4 +1,4 @@
-@mixin utils-button {
+@mixin utils-button($outline: false) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -6,8 +6,11 @@
   white-space: nowrap;
   vertical-align: top;
   cursor: pointer;
-  outline: none;
   appearance: none;
+
+  @if $outline == false {
+    outline: none;
+  }
 }
 
 @mixin utils-input {

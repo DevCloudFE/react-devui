@@ -1,6 +1,6 @@
 import type { DMenuMode } from './Menu';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
 import { useElement, useEventListener } from '@react-devui/hooks';
 import { CaretDownOutlined } from '@react-devui/icons';
@@ -69,6 +69,10 @@ export function DSub(props: DSubProps): JSX.Element | null {
   const liRef = useRef<HTMLLIElement>(null);
   //#endregion
 
+  const dataRef = useRef<{
+    nodeCache?: React.ReactNode;
+  }>({});
+
   const [t] = useTranslation();
 
   const inHorizontalNav = dMode === 'horizontal' && dInNav;
@@ -128,7 +132,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
   return (
     <DCollapseTransition
       dSize={0}
-      dIn={dMode === 'vertical' || !dInNav ? dExpand : false}
+      dIn={dMode === 'vertical' ? dExpand : false}
       dDuring={TTANSITION_DURING_BASE}
       dStyles={{
         entering: {
@@ -140,123 +144,9 @@ export function DSub(props: DSubProps): JSX.Element | null {
         leaved: { display: 'none' },
       }}
     >
-      {(collapseRef, collapseStyle, collapseState) => (
-        <>
-          <DPopup
-            dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
-              <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
-                {(popupState) => {
-                  let popupTransitionStyle: React.CSSProperties = {};
-                  switch (popupState) {
-                    case 'enter':
-                      popupTransitionStyle = { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: 0 };
-                      break;
-
-                    case 'entering':
-                      popupTransitionStyle = {
-                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
-                        transformOrigin,
-                      };
-                      break;
-
-                    case 'leaving':
-                      popupTransitionStyle = {
-                        transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)',
-                        opacity: 0,
-                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
-                        transformOrigin,
-                      };
-                      break;
-
-                    case 'leaved':
-                      popupTransitionStyle = { display: 'none' };
-                      break;
-
-                    default:
-                      break;
-                  }
-
-                  return (
-                    <ul
-                      {...restPProps}
-                      ref={popupRef}
-                      className={getClassName(`${dPrefix}menu__sub-list`, `${dPrefix}menu__sub-list--popup`)}
-                      style={{
-                        ...popupPositionStyle,
-                        ...popupTransitionStyle,
-                        minWidth: inHorizontalNav ? undefined : 160,
-                        zIndex: maxZIndex,
-                      }}
-                      role="menu"
-                      aria-labelledby={dId}
-                      onClick={pOnClick}
-                      onMouseEnter={pOnMouseEnter}
-                      onMouseLeave={pOnMouseLeave}
-                    >
-                      {dEmpty ? (
-                        <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + dLevel * dStep }}>
-                          {t('No Data')}
-                        </div>
-                      ) : (
-                        dList
-                      )}
-                    </ul>
-                  );
-                }}
-              </DTransition>
-            )}
-            dVisible={dPopupState}
-            dContainer={containerEl}
-            dDisabled={dDisabled || dMode === 'vertical'}
-            dTrigger={dTrigger}
-            dUpdatePosition={updatePosition}
-            onVisibleChange={onVisibleChange}
-          >
-            {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
-              <li
-                {...restPProps}
-                ref={liRef}
-                id={dId}
-                className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--sub`, {
-                  [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
-                  [`${dPrefix}menu__item--icon`]: dMode === 'icon' && dInNav,
-                  'is-active': dActive,
-                  'is-expand': dMode === 'vertical' ? dExpand : dPopupVisible,
-                  'is-disabled': dDisabled,
-                })}
-                style={{ paddingLeft: dSpace + dLevel * dStep }}
-                role="menuitem"
-                aria-haspopup
-                aria-expanded={dMode === 'vertical' ? dExpand : dPopupVisible}
-                aria-disabled={dDisabled}
-                onClick={(e) => {
-                  pOnClick?.(e);
-
-                  onSubClick(e);
-                }}
-                onMouseEnter={pOnMouseEnter}
-                onMouseLeave={pOnMouseLeave}
-              >
-                {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
-                <div
-                  className={getClassName(`${dPrefix}menu__indicator`, {
-                    [`${dPrefix}menu__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
-                    [`${dPrefix}menu__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
-                  })}
-                >
-                  <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
-                </div>
-                {checkNodeExist(dIcon) && (
-                  <div className={`${dPrefix}menu__item-icon-wrapper`}>
-                    <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>
-                  </div>
-                )}
-                <div className={`${dPrefix}menu__item-content`}>{children}</div>
-                {!inHorizontalNav && <CaretDownOutlined className={`${dPrefix}menu__sub-arrow`} dSize={14} dRotate={iconRotate} />}
-              </li>
-            )}
-          </DPopup>
-          {dMode !== 'vertical' && (collapseState === 'leaved' || !dInNav) ? null : (
+      {(collapseRef, collapseStyle, collapseState) => {
+        const node: React.ReactNode =
+          dMode === 'vertical' ? (
             <ul ref={collapseRef} className={`${dPrefix}menu__sub-list`} style={collapseStyle} role="menu" aria-labelledby={dId}>
               {dEmpty ? (
                 <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + (dLevel + 1) * dStep }}>
@@ -266,9 +156,129 @@ export function DSub(props: DSubProps): JSX.Element | null {
                 dList
               )}
             </ul>
-          )}
-        </>
-      )}
+          ) : dInNav && collapseState !== 'leaved' && React.isValidElement(dataRef.current.nodeCache) ? (
+            React.cloneElement(dataRef.current.nodeCache, { style: collapseStyle })
+          ) : null;
+        if (dMode === 'vertical' && dInNav) {
+          dataRef.current.nodeCache = node;
+        }
+
+        return (
+          <>
+            <DPopup
+              dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+                <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
+                  {(popupState) => {
+                    let popupTransitionStyle: React.CSSProperties = {};
+                    switch (popupState) {
+                      case 'enter':
+                        popupTransitionStyle = { transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)', opacity: 0 };
+                        break;
+
+                      case 'entering':
+                        popupTransitionStyle = {
+                          transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
+                          transformOrigin,
+                        };
+                        break;
+
+                      case 'leaving':
+                        popupTransitionStyle = {
+                          transform: inHorizontalNav ? 'scaleY(0.7)' : 'scale(0)',
+                          opacity: 0,
+                          transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
+                          transformOrigin,
+                        };
+                        break;
+
+                      case 'leaved':
+                        popupTransitionStyle = { display: 'none' };
+                        break;
+
+                      default:
+                        break;
+                    }
+
+                    return (
+                      <ul
+                        {...restPProps}
+                        ref={popupRef}
+                        className={getClassName(`${dPrefix}menu__sub-list`, `${dPrefix}menu__sub-list--popup`)}
+                        style={{
+                          ...popupPositionStyle,
+                          ...popupTransitionStyle,
+                          minWidth: inHorizontalNav ? undefined : 160,
+                          zIndex: maxZIndex,
+                        }}
+                        role="menu"
+                        aria-labelledby={dId}
+                        onClick={pOnClick}
+                        onMouseEnter={pOnMouseEnter}
+                        onMouseLeave={pOnMouseLeave}
+                      >
+                        {dEmpty ? (
+                          <div className={`${dPrefix}menu__empty`} style={{ paddingLeft: dSpace + dLevel * dStep }}>
+                            {t('No Data')}
+                          </div>
+                        ) : (
+                          dList
+                        )}
+                      </ul>
+                    );
+                  }}
+                </DTransition>
+              )}
+              dVisible={dPopupState}
+              dContainer={containerEl}
+              dDisabled={dDisabled || dMode === 'vertical'}
+              dTrigger={dTrigger}
+              dUpdatePosition={updatePosition}
+              onVisibleChange={onVisibleChange}
+            >
+              {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
+                <li
+                  {...restPProps}
+                  ref={liRef}
+                  id={dId}
+                  className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--sub`, {
+                    [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
+                    [`${dPrefix}menu__item--icon`]: dMode === 'icon' && dInNav,
+                    'is-active': dActive,
+                    'is-expand': dMode === 'vertical' ? dExpand : dPopupVisible,
+                    'is-disabled': dDisabled,
+                  })}
+                  style={{ paddingLeft: dSpace + dLevel * dStep }}
+                  role="menuitem"
+                  aria-haspopup
+                  aria-expanded={dMode === 'vertical' ? dExpand : dPopupVisible}
+                  aria-disabled={dDisabled}
+                  onClick={(e) => {
+                    pOnClick?.(e);
+
+                    onSubClick(e);
+                  }}
+                  onMouseEnter={pOnMouseEnter}
+                  onMouseLeave={pOnMouseLeave}
+                >
+                  {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
+                  <div
+                    className={getClassName(`${dPrefix}menu__indicator`, {
+                      [`${dPrefix}menu__indicator--first`]: dPosinset[0] === 0 && dPosinset[1] > 1,
+                      [`${dPrefix}menu__indicator--last`]: dPosinset[0] === dPosinset[1] - 1 && dPosinset[1] > 1,
+                    })}
+                  >
+                    <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
+                  </div>
+                  {checkNodeExist(dIcon) && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
+                  <div className={`${dPrefix}menu__item-content`}>{children}</div>
+                  {!inHorizontalNav && <CaretDownOutlined className={`${dPrefix}menu__sub-arrow`} dSize={14} dRotate={iconRotate} />}
+                </li>
+              )}
+            </DPopup>
+            {node}
+          </>
+        );
+      }}
     </DCollapseTransition>
   );
 }

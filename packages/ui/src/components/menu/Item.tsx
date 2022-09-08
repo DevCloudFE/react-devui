@@ -67,11 +67,7 @@ export function DItem(props: DItemProps): JSX.Element | null {
       >
         <div style={{ backgroundColor: dLevel === 0 ? 'transparent' : undefined }}></div>
       </div>
-      {checkNodeExist(dIcon) && (
-        <div className={`${dPrefix}menu__item-icon-wrapper`}>
-          <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>
-        </div>
-      )}
+      {checkNodeExist(dIcon) && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
       <div className={`${dPrefix}menu__item-content`}>{children}</div>
     </li>
   );

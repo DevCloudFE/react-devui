@@ -11,6 +11,7 @@ import { registerComponentMate, TTANSITION_DURING_POPUP } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
+import { DSeparator } from '../separator';
 import { DGroup } from './Group';
 import { DItem } from './Item';
 import { DSub } from './Sub';
@@ -26,6 +27,7 @@ export interface DDropdownItem<ID extends DId> {
   type: 'item' | 'group' | 'sub';
   icon?: React.ReactNode;
   disabled?: boolean;
+  separator?: boolean;
 }
 
 export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID> & { children?: T[] }>
@@ -188,7 +190,15 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
   const nodes = (() => {
     const getNodes = (arr: T[], level: number, subParents: T[]): JSX.Element[] =>
       arr.map((item) => {
-        const { id: itemId, label: itemLabel, type: itemType, icon: itemIcon, disabled: itemDisabled, children } = item;
+        const {
+          id: itemId,
+          label: itemLabel,
+          type: itemType,
+          icon: itemIcon,
+          disabled: itemDisabled,
+          separator: itemSeparator,
+          children,
+        } = item;
 
         const newSubParents = itemType === 'sub' ? subParents.concat([item]) : subParents;
         const id = getItemId(itemId);
@@ -347,6 +357,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
                 {itemLabel}
               </DSub>
             )}
+            {itemSeparator && <DSeparator style={{ margin: '2px 0' }} />}
           </React.Fragment>
         );
       });

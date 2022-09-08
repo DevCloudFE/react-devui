@@ -51,7 +51,7 @@ export const DCard: {
                 ...action.props,
                 className: getClassName(action.props.className, `${dPrefix}card__action`),
               })}
-              {index !== dActions.length - 1 && <DSeparator dVertical></DSeparator>}
+              {index !== dActions.length - 1 && <DSeparator style={{ margin: 8 }} dVertical></DSeparator>}
             </>
           ))}
         </div>

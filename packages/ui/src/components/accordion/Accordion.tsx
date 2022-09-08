@@ -130,14 +130,14 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
         return (
           <div
             key={itemId}
-            className={getClassName(`${dPrefix}accordion__container`, {
-              [`${dPrefix}accordion__container--last`]: index === dList.length - 1,
+            className={getClassName(`${dPrefix}accordion__item`, {
+              [`${dPrefix}accordion__item--last`]: index === dList.length - 1,
             })}
           >
             <div
               id={buttonId}
-              className={getClassName(`${dPrefix}accordion__button`, {
-                [`${dPrefix}accordion__button--arrow-left`]: itemArrow === 'left',
+              className={getClassName(`${dPrefix}accordion__item-button`, {
+                [`${dPrefix}accordion__item-button--arrow-left`]: itemArrow === 'left',
                 'is-disabled': itemDisabled,
               })}
               tabIndex={itemDisabled ? -1 : 0}
@@ -189,8 +189,8 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 }
               }}
             >
-              <div className={`${dPrefix}accordion__title`}>{itemTitle}</div>
-              {itemArrow && <DownOutlined className={`${dPrefix}accordion__arrow`} dRotate={iconRotate} />}
+              <div className={`${dPrefix}accordion__item-title`}>{itemTitle}</div>
+              {itemArrow && <DownOutlined className={`${dPrefix}accordion__item-arrow`} dRotate={iconRotate} />}
             </div>
             <DCollapseTransition
               dSize={0}
@@ -222,7 +222,7 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 <div
                   ref={ref}
                   id={regionId}
-                  className={`${dPrefix}accordion__region`}
+                  className={`${dPrefix}accordion__item-region`}
                   style={collapseStyle}
                   role="region"
                   aria-labelledby={getButtonId(itemId)}

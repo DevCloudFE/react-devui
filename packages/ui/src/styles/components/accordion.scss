@@ -1,5 +1,5 @@
 @include b(accordion) {
-  @include e(container) {
+  @include e(item) {
     border-top: 1px solid var(--#{$variable-prefix}color-border);
     border-right: 1px solid var(--#{$variable-prefix}color-border);
     border-left: 1px solid var(--#{$variable-prefix}color-border);
@@ -9,7 +9,7 @@
     }
   }
 
-  @include e(button) {
+  @include e(item-button) {
     display: flex;
     gap: 0 10px;
     align-items: center;
@@ -27,18 +27,18 @@
     }
   }
 
-  @include e(title) {
+  @include e(item-title) {
     @include utils-ellipsis;
 
     flex: 1 0 0;
   }
 
-  @include e(arrow) {
+  @include e(item-arrow) {
     font-size: 0.9em;
     transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
   }
 
-  @include e(region) {
+  @include e(item-region) {
     padding: 16px;
     border-top: 1px solid var(--#{$variable-prefix}color-border);
   }

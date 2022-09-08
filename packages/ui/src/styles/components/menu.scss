@@ -104,16 +104,11 @@ $menu-item-height: 40px;
     @include m(icon) {
       height: 52px;
 
-      @include e(item-icon-wrapper) {
-        display: inline-flex;
-        align-items: center;
-        width: 64px;
-        height: 52px;
-        padding-right: 16px;
-      }
-
       @include e(item-icon) {
-        transform: translateX(calc(16px - 50%)) scale(1.5);
+        width: 48px;
+        padding-left: 4px;
+        /* stylelint-disable-next-line declaration-property-value-allowed-list */
+        font-size: 24px;
       }
     }
 
@@ -229,15 +224,13 @@ $menu-item-height: 40px;
     }
   }
 
-  @include e(item-icon-wrapper) {
-    flex-shrink: 0;
-    width: calc(1.05rem + 12px);
-    font-size: 1.1em;
-    transition: height var(--#{$variable-prefix}animation-duration-base) linear;
-  }
-
   @include e(item-icon) {
-    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    flex-shrink: 0;
+    width: calc(1.1em + 8px);
+    font-size: 1.1em;
+    transition: width var(--#{$variable-prefix}animation-duration-base) linear,
+      padding var(--#{$variable-prefix}animation-duration-base) linear, font-size var(--#{$variable-prefix}animation-duration-base) linear;
+    transform-origin: left;
   }
 
   @include e(item-content) {
