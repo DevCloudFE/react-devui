@@ -1,0 +1,299 @@
+@use 'sass:map';
+
+@keyframes fab-popup {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@include b(fab) {
+  $selector: &;
+  $disabled-selector: ':disabled:not(.is-loading)';
+
+  --#{$variable-prefix}fab-size: 56px;
+
+  position: relative;
+  display: inline-block;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  font-size: 24px;
+  vertical-align: top;
+
+  @include e(button) {
+    @include utils-button;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--#{$variable-prefix}fab-size);
+    height: var(--#{$variable-prefix}fab-size);
+    padding: 0;
+    margin: 0;
+
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 var(--#{$variable-prefix}shadow-color);
+    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
+      color var(--#{$variable-prefix}animation-duration-base) linear,
+      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:disabled {
+      pointer-events: none;
+    }
+
+    @include when(expand) {
+      @include e(close-icon) {
+        opacity: 1;
+        transform: rotate(90deg);
+      }
+
+      @include e(button-content) {
+        opacity: 0;
+      }
+    }
+
+    @each $theme, $rgb in $themes {
+      @include theme(#{$theme}) {
+        --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
+        --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
+        --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
+        --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-#{$theme}-hover);
+        --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
+      }
+    }
+
+    @include m(primary) {
+      color: map.get($colors, 'white');
+      background-color: var(--#{$variable-prefix}button-color);
+      border: 1px solid var(--#{$variable-prefix}button-color);
+
+      &:hover,
+      &:focus {
+        background-color: var(--#{$variable-prefix}button-color-lighter);
+        border-color: var(--#{$variable-prefix}button-color-lighter);
+      }
+
+      &:active {
+        background-color: var(--#{$variable-prefix}button-color-darker);
+        border-color: var(--#{$variable-prefix}button-color-darker);
+      }
+
+      &#{$disabled-selector} {
+        filter: saturate(50%) grayscale(50%);
+      }
+
+      @include when(loading) {
+        @include utils-loading('1px');
+      }
+    }
+
+    @include m(secondary) {
+      color: var(--#{$variable-prefix}text-color);
+      background-color: transparent;
+      border: 1px solid var(--#{$variable-prefix}color-border);
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}button-color-lighter);
+        border-color: var(--#{$variable-prefix}button-color-lighter);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}button-color-darker);
+        border-color: var(--#{$variable-prefix}button-color-darker);
+      }
+
+      &#{$disabled-selector} {
+        color: var(--#{$variable-prefix}color-disabled);
+        pointer-events: none;
+        background-color: var(--#{$variable-prefix}background-color-disabled);
+      }
+
+      @include when(loading) {
+        @include utils-loading('1px');
+      }
+    }
+
+    @include m(outline) {
+      color: var(--#{$variable-prefix}button-color);
+      background-color: transparent;
+      border: 1px solid var(--#{$variable-prefix}button-color);
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}button-color-lighter);
+        border-color: var(--#{$variable-prefix}button-color-lighter);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}button-color-darker);
+        border-color: var(--#{$variable-prefix}button-color-darker);
+      }
+
+      &#{$disabled-selector} {
+        color: var(--#{$variable-prefix}color-disabled);
+        border-color: var(--#{$variable-prefix}color-border);
+      }
+
+      @include when(loading) {
+        @include utils-loading('1px');
+      }
+    }
+
+    @include m(dashed) {
+      color: var(--#{$variable-prefix}button-color);
+      background-color: transparent;
+      border: 1px dashed var(--#{$variable-prefix}button-color);
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}button-color-lighter);
+        border-color: var(--#{$variable-prefix}button-color-lighter);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}button-color-darker);
+        border-color: var(--#{$variable-prefix}button-color-darker);
+      }
+
+      &#{$disabled-selector} {
+        color: var(--#{$variable-prefix}color-disabled);
+        border-color: var(--#{$variable-prefix}color-border);
+      }
+
+      @include when(loading) {
+        @include utils-loading('1px');
+      }
+    }
+
+    @include m(text) {
+      color: var(--#{$variable-prefix}text-color);
+      background-color: transparent;
+      border: none;
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}button-color-lighter);
+        background-color: var(--#{$variable-prefix}button-text-hover-background);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}button-color-darker);
+        background-color: var(--#{$variable-prefix}button-text-active-background);
+      }
+
+      &#{$disabled-selector} {
+        color: var(--#{$variable-prefix}color-disabled);
+        pointer-events: none;
+        background-color: var(--#{$variable-prefix}background-color-disabled);
+      }
+
+      @include when(loading) {
+        @include utils-loading;
+      }
+    }
+
+    @include m(link) {
+      color: var(--#{$variable-prefix}button-color);
+      background-color: transparent;
+      border: none;
+
+      &:hover,
+      &:focus {
+        color: var(--#{$variable-prefix}button-color-lighter);
+      }
+
+      &:active {
+        color: var(--#{$variable-prefix}button-color-darker);
+      }
+
+      &#{$disabled-selector} {
+        color: var(--#{$variable-prefix}color-disabled);
+      }
+
+      @include when(loading) {
+        @include utils-loading;
+      }
+    }
+
+    @include m(circle) {
+      border-radius: 50%;
+    }
+
+    @include m(round) {
+      border-radius: calc(var(--#{$variable-prefix}fab-size) / 2);
+    }
+  }
+
+  @include e(close-icon) {
+    position: absolute;
+    font-size: 1.2em;
+    opacity: 0;
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear,
+      transform var(--#{$variable-prefix}animation-duration-base) linear;
+  }
+
+  @include e(button-content) {
+    opacity: 1;
+    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+
+    & > svg:only-child {
+      font-size: 1.2em;
+    }
+  }
+
+  @include e(actions) {
+    --#{$variable-prefix}fab-size: 40px;
+
+    position: absolute;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 16px;
+
+    @include m(top) {
+      top: -16px;
+      left: 0;
+      flex-direction: column-reverse;
+      gap: 10px 0;
+      width: 100%;
+      transform: translateY(-100%);
+    }
+
+    @include m(right) {
+      top: 0;
+      right: -16px;
+      flex-direction: row;
+      gap: 0 10px;
+      height: 100%;
+      transform: translateX(100%);
+    }
+
+    @include m(bottom) {
+      bottom: -16px;
+      left: 0;
+      flex-direction: column;
+      gap: 10px 0;
+      width: 100%;
+      transform: translateY(100%);
+    }
+
+    @include m(left) {
+      top: 0;
+      left: -16px;
+      flex-direction: row-reverse;
+      gap: 0 10px;
+      height: 100%;
+      transform: translateX(-100%);
+    }
+  }
+
+  @include e(action) {
+    animation: fab-popup 133ms linear;
+    animation-fill-mode: both;
+  }
+}

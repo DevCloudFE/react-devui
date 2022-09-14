@@ -13,6 +13,7 @@ export interface DAnchorItem {
   href: string;
   title?: React.ReactNode;
   target?: string;
+  children?: DAnchorItem[];
 }
 
 export interface DAnchorRef {
@@ -20,7 +21,7 @@ export interface DAnchorRef {
   updateAnchor: () => void;
 }
 
-export interface DAnchorProps<T extends DAnchorItem & { children?: T[] }> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
+export interface DAnchorProps<T extends DAnchorItem> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
   dList: T[];
   dPage?: DElementSelector;
   dDistance?: number;
@@ -32,11 +33,8 @@ export interface DAnchorProps<T extends DAnchorItem & { children?: T[] }> extend
 const DOT_INDICATOR = Symbol();
 const LINE_INDICATOR = Symbol();
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' });
-function Anchor<T extends DAnchorItem & { children?: T[] }>(
-  props: DAnchorProps<T>,
-  ref: React.ForwardedRef<DAnchorRef>
-): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAnchor' as const });
+function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.ForwardedRef<DAnchorRef>): JSX.Element | null {
   const {
     dList,
     dPage,
@@ -89,7 +87,7 @@ function Anchor<T extends DAnchorItem & { children?: T[] }>(
           }
         }
         if (isArray(children)) {
-          reduceLinks(children);
+          reduceLinks(children as T[]);
         }
       });
     };
@@ -177,7 +175,7 @@ function Anchor<T extends DAnchorItem & { children?: T[] }>(
                 {linkTitle ?? linkHref}
               </a>
             </li>
-            {children && getNodes(children, level + 1)}
+            {children && getNodes(children as T[], level + 1)}
           </React.Fragment>
         );
       });
@@ -204,7 +202,7 @@ function Anchor<T extends DAnchorItem & { children?: T[] }>(
 }
 
 export const DAnchor: {
-  <T extends DAnchorItem & { children?: T[] }>(props: DAnchorProps<T> & React.RefAttributes<DAnchorRef>): ReturnType<typeof Anchor>;
+  <T extends DAnchorItem>(props: DAnchorProps<T> & React.RefAttributes<DAnchorRef>): ReturnType<typeof Anchor>;
   DOT_INDICATOR: typeof DOT_INDICATOR;
   LINE_INDICATOR: typeof LINE_INDICATOR;
 } = React.forwardRef(Anchor) as any;

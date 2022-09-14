@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 
 import { getClassName } from '@react-devui/utils';
 
@@ -12,7 +12,7 @@ export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
   dSize?: DSize;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTag' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTag' as const });
 export function DTag(props: DTagProps): JSX.Element | null {
   const {
     children,

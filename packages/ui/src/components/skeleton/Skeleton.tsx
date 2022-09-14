@@ -7,7 +7,7 @@ export interface DSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   dVariant?: 'text' | 'circular' | 'rect';
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSkeleton' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSkeleton' as const });
 export function DSkeleton(props: DSkeletonProps): JSX.Element | null {
   const {
     children,

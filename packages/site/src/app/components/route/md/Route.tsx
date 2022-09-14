@@ -4,10 +4,10 @@ import { isString, isUndefined } from 'lodash';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useImmer, useLocalStorage, useMediaMatch } from '@react-devui/hooks';
+import { useImmer, useLocalStorage } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
 import { DAnchor, DDrawer } from '@react-devui/ui';
-import { useGridConfig } from '@react-devui/ui/hooks';
+import { useMediaQuery } from '@react-devui/ui/hooks';
 
 import marked, { toString } from '../utils';
 
@@ -21,8 +21,7 @@ export function AppRoute(props: AppRouteProps): JSX.Element | null {
   const html = props.html ? marked(toString(props.html)) : undefined;
 
   const [language] = useLocalStorage<DLang>('language', 'en-US');
-  const { dBreakpoints } = useGridConfig();
-  const mediaMatch = useMediaMatch(dBreakpoints);
+  const breakpointsMatched = useMediaQuery();
   const { t } = useTranslation();
 
   const [_links, setLinks] = useImmer<{ title?: string; href: string }[]>([]);
@@ -79,8 +78,10 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       <article className="app-md-route" dangerouslySetInnerHTML={html ? { __html: html } : undefined}>
         {props.children}
       </article>
-      {mediaMatch.includes('md') && links.length > 0 && <DAnchor className="app-md-route__anchor" dList={links} dPage=".app-main" />}
-      {!mediaMatch.includes('md') && (
+      {breakpointsMatched.includes('md') && links.length > 0 && (
+        <DAnchor className="app-md-route__anchor" dList={links} dPage=".app-main" />
+      )}
+      {!breakpointsMatched.includes('md') && (
         <>
           {links.length > 0 && (
             <DDrawer

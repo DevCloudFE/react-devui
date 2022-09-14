@@ -40,11 +40,10 @@
       flex-shrink: 0;
       min-width: 4em;
       padding-left: 8px;
-      line-height: 1.25;
     }
 
     @include e(label-icon) {
-      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.25);
+      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.2);
     }
   }
 

@@ -13,7 +13,7 @@ export interface DAvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dSize?: number;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAvatar' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAvatar' as const });
 export function DAvatar(props: DAvatarProps): JSX.Element | null {
   const {
     dVariant = 'circular',

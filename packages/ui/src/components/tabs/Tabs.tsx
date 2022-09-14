@@ -1,4 +1,4 @@
-import type { DId, DSize } from '../../utils';
+import type { DId, DSize } from '../../utils/types';
 import type { DDropdownItem } from '../dropdown';
 
 import { nth } from 'lodash';
@@ -31,12 +31,12 @@ export interface DTabsProps<ID extends DId, T extends DTabItem<ID>> extends Omit
   dCenter?: boolean;
   dType?: 'wrap' | 'slider';
   dSize?: DSize;
-  onActiveChange?: (id: ID, item: T) => void;
+  onActiveChange?: (id: T['id'], item: T) => void;
   onAddClick?: () => void;
-  onClose?: (id: ID, item: T) => void;
+  onClose?: (id: T['id'], item: T) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTabs' as const });
 
 function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, ref: React.ForwardedRef<DTabsRef>): JSX.Element | null {
   const {

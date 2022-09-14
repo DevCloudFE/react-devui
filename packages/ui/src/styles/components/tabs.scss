@@ -69,7 +69,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    transition: left var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
 
     @if $direction == top {
@@ -82,14 +82,14 @@
     left: 0;
     width: 0;
     height: 100%;
-    transition: left var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
   }
   @include e(wrap-indicator) {
     left: 0;
     width: 0;
     height: calc(100% + 1px);
-    transition: left var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
 
     @if $direction == top {
@@ -197,7 +197,7 @@
     top: 0;
     width: 2px;
     height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear;
 
     @if $direction == left {
@@ -211,7 +211,7 @@
     top: 0;
     width: 100%;
     height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }
 
@@ -219,7 +219,7 @@
     top: 0;
     width: calc(100% + 1px);
     height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear;
 
     @if $direction == left {

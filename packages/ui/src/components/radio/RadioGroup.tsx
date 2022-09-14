@@ -1,4 +1,4 @@
-import type { DId, DSize } from '../../utils';
+import type { DId, DSize } from '../../utils/types';
 import type { DFormControl } from '../form';
 import type { DRadioPropsWithPrivate } from './Radio';
 
@@ -31,7 +31,7 @@ export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttribut
   onModelChange?: (value: V) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio.Group' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio.Group' as const });
 export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,

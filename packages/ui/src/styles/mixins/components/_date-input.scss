@@ -119,7 +119,7 @@
     pointer-events: none;
     background-color: var(--#{$variable-prefix}color-primary);
     opacity: 0;
-    transition: left var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
   }
 }

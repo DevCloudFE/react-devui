@@ -42,7 +42,7 @@ export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 }
 
 const TTANSITION_DURING = { enter: 86, leave: 100 };
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover' as const });
 function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JSX.Element | null {
   const {
     children,

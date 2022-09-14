@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 
 import React, { useMemo, useRef } from 'react';
 
@@ -23,7 +23,7 @@ export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
   dDisabled?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCompose' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCompose' as const });
 function Compose(props: DComposeProps, ref: React.ForwardedRef<DComposeRef>): JSX.Element | null {
   const {
     children,

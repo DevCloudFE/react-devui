@@ -17,7 +17,7 @@ export interface DAlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAlert' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAlert' as const });
 export function DAlert(props: DAlertProps): JSX.Element | null {
   const {
     dVisible,

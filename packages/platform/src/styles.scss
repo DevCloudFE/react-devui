@@ -1,0 +1,11 @@
+/* stylelint-disable declaration-property-value-allowed-list */
+@import '../../ui/src/styles/index';
+@import '../../ui/src/styles/theme-dark';
+
+// Use BEM
+$namespace: 'app';
+@import './styles/index';
+
+body.dark {
+  --app-layout-header-background-color: #001529;
+}

@@ -18,7 +18,7 @@ export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   onModelChange?: (checked: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' as const });
 export const DCheckbox: {
   (props: DCheckboxProps): JSX.Element | null;
   Group: typeof DCheckboxGroup;

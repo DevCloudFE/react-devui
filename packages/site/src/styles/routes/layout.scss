@@ -91,7 +91,7 @@
       /* stylelint-disable-next-line declaration-property-value-allowed-list */
       border-radius: 2px;
       /* stylelint-disable-next-line declaration-property-value-disallowed-list */
-      transition: all 300ms ease-in-out;
+      transition: all 300ms linear;
       transform-origin: center center;
 
       &:nth-child(1) {

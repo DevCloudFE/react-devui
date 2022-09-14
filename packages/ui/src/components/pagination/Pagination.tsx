@@ -29,7 +29,7 @@ export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>
   onPageSizeChange?: (size: number) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPagination' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPagination' as const });
 export function DPagination(props: DPaginationProps): JSX.Element | null {
   const {
     dActive,

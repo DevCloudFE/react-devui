@@ -27,7 +27,7 @@ export interface DStepperProps<T extends DStepperItem> extends Omit<React.HTMLAt
   onItemClick?: (step: number, item: T) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DStepper' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DStepper' as const });
 export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.Element | null {
   const {
     dList,

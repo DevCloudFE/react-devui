@@ -26,7 +26,7 @@ export interface DTableThProps extends React.ThHTMLAttributes<HTMLTableCellEleme
   dEllipsis?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Th' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Th' as const });
 export function DTableTh(props: DTableThProps): JSX.Element | null {
   const {
     children,

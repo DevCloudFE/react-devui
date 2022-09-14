@@ -35,7 +35,7 @@
 
       @include e(input-wrapper) {
         &::before {
-          animation: wave-spread 0.36s ease-in-out;
+          animation: wave-spread 0.36s linear;
           animation-fill-mode: backwards;
         }
       }

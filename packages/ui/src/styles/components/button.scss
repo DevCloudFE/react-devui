@@ -197,7 +197,7 @@
   }
 
   @include m(round) {
-    border-radius: var(--#{$variable-prefix}size);
+    border-radius: calc(var(--#{$variable-prefix}size) / 2);
   }
 
   @include m(block) {

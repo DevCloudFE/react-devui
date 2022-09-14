@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import { isNull, isNumber } from 'lodash';
@@ -64,7 +64,7 @@ export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement
 
 const UID_KEY = Symbol();
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload' as const });
 function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element | null {
   const {
     children,

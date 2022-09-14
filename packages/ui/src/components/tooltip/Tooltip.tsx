@@ -35,7 +35,7 @@ export interface DTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 }
 
 const TTANSITION_DURING = { enter: 86, leave: 100 };
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTooltip' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTooltip' as const });
 function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JSX.Element | null {
   const {
     children,

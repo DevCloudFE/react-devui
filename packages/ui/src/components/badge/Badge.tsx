@@ -17,7 +17,7 @@ export interface DBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dOffset?: [number | string, number | string];
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge' as const });
 export function DBadge(props: DBadgeProps): JSX.Element | null {
   const {
     dValue,

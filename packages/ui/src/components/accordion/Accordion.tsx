@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 import { isNull, nth } from 'lodash';
 import React, { useId } from 'react';
@@ -28,7 +28,7 @@ export interface DAccordionProps<ID extends DId, T extends DAccordionItem<ID>>
   afterActiveChange?: (id: any, item: any, active: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAccordion' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAccordion' as const });
 export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: DAccordionProps<ID, T>): JSX.Element | null {
   const {
     dList,

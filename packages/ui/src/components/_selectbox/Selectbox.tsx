@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import React, { useImperativeHandle, useRef, useState } from 'react';

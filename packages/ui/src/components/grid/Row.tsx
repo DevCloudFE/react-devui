@@ -1,16 +1,15 @@
 import { isArray, isNumber } from 'lodash';
 import React, { useMemo } from 'react';
 
-import { useMediaMatch } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGridConfig } from '../../hooks';
+import { usePrefixConfig, useComponentConfig, useMediaQuery } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 
 export type DBreakpoints = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 export interface DRowContextData {
-  gMediaMatch: DBreakpoints[];
+  gBreakpointsMatched: DBreakpoints[];
   gSpace: number | string;
 }
 export const DRowContext = React.createContext<DRowContextData | null>(null);
@@ -22,7 +21,7 @@ export interface DRowProps extends React.HTMLAttributes<HTMLDivElement> {
   dResponsiveGutter?: Partial<Record<DBreakpoints, DGutterValue>>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRow' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRow' as const });
 export function DRow(props: DRowProps): JSX.Element | null {
   const {
     children,
@@ -34,10 +33,9 @@ export function DRow(props: DRowProps): JSX.Element | null {
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { dBreakpoints } = useGridConfig();
   //#endregion
 
-  const mediaMatch = useMediaMatch(dBreakpoints);
+  const breakpointsMatched = useMediaQuery();
 
   const gap = (() => {
     const getGap = (gutter: DGutterValue): [number | string, number | string] => {
@@ -50,7 +48,7 @@ export function DRow(props: DRowProps): JSX.Element | null {
     let gap = getGap(dGutter);
 
     if (dResponsiveGutter) {
-      for (const breakpoint of mediaMatch) {
+      for (const breakpoint of breakpointsMatched) {
         if (breakpoint in dResponsiveGutter) {
           gap = getGap(dResponsiveGutter[breakpoint]!);
           break;
@@ -64,10 +62,10 @@ export function DRow(props: DRowProps): JSX.Element | null {
 
   const contextValue = useMemo<DRowContextData>(
     () => ({
-      gMediaMatch: mediaMatch,
+      gBreakpointsMatched: breakpointsMatched,
       gSpace: space,
     }),
-    [mediaMatch, space]
+    [breakpointsMatched, space]
   );
 
   return (

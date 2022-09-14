@@ -23,7 +23,7 @@ export interface DTableProps extends React.HTMLAttributes<HTMLDivElement> {
   dEllipsis?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable' as const });
 function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
   const {
     children,

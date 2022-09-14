@@ -5,7 +5,7 @@ import { registerComponentMate } from '../../utils';
 
 export type DCardContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard.Content' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard.Content' as const });
 export function DCardContent(props: DCardContentProps): JSX.Element | null {
   const {
     children,

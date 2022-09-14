@@ -68,9 +68,7 @@
   "activationEvents": [
     "*"
   ],
-  "dependencies": {
-    "fs-extra": "^10.1.0"
-  },
+  "dependencies": {},
   "engines": {
     "vscode": "^1.70.0"
   }

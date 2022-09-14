@@ -23,7 +23,7 @@ export interface DTableSearchProps extends React.ButtonHTMLAttributes<HTMLButton
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Search' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Search' as const });
 function TableSearch(props: DTableSearchProps, ref: React.ForwardedRef<DTableSearchRef>): JSX.Element | null {
   const {
     dValue,

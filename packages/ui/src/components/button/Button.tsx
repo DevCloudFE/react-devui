@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 
 import React from 'react';
 
@@ -21,7 +21,7 @@ export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   dIconRight?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DButton' as const });
 function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>): JSX.Element | null {
   const {
     children,

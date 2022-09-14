@@ -1,5 +1,6 @@
 export { createGlobalState } from './createGlobalState';
 export { useAsync } from './useAsync';
+export { useBreakpoints } from './useBreakpoints';
 export { useEvent } from './useEvent';
 export { useEventCallback } from './useEventCallback';
 export { useElement } from './useElement';
@@ -9,7 +10,6 @@ export { useForceUpdate } from './useForceUpdate';
 export { useForkRef } from './useForkRef';
 export { useImmer } from './useImmer';
 export { useLockScroll } from './useLockScroll';
-export { useMediaMatch } from './useMediaMatch';
 export { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 export { useLocalStorage } from './useLocalStorage';
 export { useMount } from './useMount';

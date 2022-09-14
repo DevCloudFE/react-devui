@@ -1,0 +1,20 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-weight: 400;
+  color: var(--d-text-color);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  background-color: #fff;
+  text-size-adjust: 100%;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+
+  @include font-size(1rem);
+}

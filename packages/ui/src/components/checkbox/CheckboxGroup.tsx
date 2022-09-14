@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import { useId } from 'react';
@@ -24,7 +24,7 @@ export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttri
   onModelChange?: (values: V[]) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox.Group' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox.Group' as const });
 export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JSX.Element | null {
   const {
     dFormControl,

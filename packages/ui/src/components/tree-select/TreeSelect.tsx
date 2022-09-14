@@ -1,4 +1,4 @@
-import type { DId, DSize } from '../../utils';
+import type { DId, DSize } from '../../utils/types';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DSearchItem } from '../cascader';
 import type { DDropdownItem } from '../dropdown';
@@ -31,7 +31,7 @@ export interface DTreeSelectRef {
   updatePosition: () => void;
 }
 
-export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V> & { children?: T[] }> extends React.HTMLAttributes<HTMLDivElement> {
+export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControl?: DFormControl;
   dList: T[];
   dModel?: V | null | V[];
@@ -61,12 +61,12 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V> & { chil
   afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  onFirstExpand?: (value: V, item: T) => void;
-  onExpandsChange?: (ids: V[], items: T[]) => void;
+  onFirstExpand?: (value: T['value'], item: T) => void;
+  onExpandsChange?: (ids: T['value'][], items: T[]) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTreeSelect' });
-function TreeSelect<V extends DId, T extends DTreeItem<V> & { children?: T[] }>(
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTreeSelect' as const });
+function TreeSelect<V extends DId, T extends DTreeItem<V>>(
   props: DTreeSelectProps<V, T>,
   ref: React.ForwardedRef<DTreeSelectRef>
 ): JSX.Element | null {
@@ -537,6 +537,6 @@ function TreeSelect<V extends DId, T extends DTreeItem<V> & { children?: T[] }>(
   );
 }
 
-export const DTreeSelect: <V extends DId, T extends DTreeItem<V> & { children?: T[] }>(
+export const DTreeSelect: <V extends DId, T extends DTreeItem<V>>(
   props: DTreeSelectProps<V, T> & React.RefAttributes<DTreeSelectRef>
 ) => ReturnType<typeof TreeSelect> = React.forwardRef(TreeSelect) as any;

@@ -44,7 +44,7 @@ export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> exten
   dResponsiveProps?: Partial<Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' as const });
 export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>): JSX.Element | null {
   const {
     children,
@@ -62,7 +62,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   //#region Context
   const dPrefix = usePrefixConfig();
   const { dColNum } = useGridConfig();
-  const { gBreakpointMatchs, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } =
+  const { gBreakpointsMatched, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } =
     useContextRequired(DFormContext);
   const formGroup = useContext(DFormGroupContext)!;
   //#endregion
@@ -108,7 +108,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
           props[targetKey] = value;
         }
       };
-      for (const breakpoint of gBreakpointMatchs) {
+      for (const breakpoint of gBreakpointsMatched) {
         if (breakpoint in dResponsiveProps) {
           mergeProps(breakpoint, 'span', 'dSpan');
           mergeProps(breakpoint, 'labelWidth', 'dLabelWidth');

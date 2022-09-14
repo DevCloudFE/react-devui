@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Platform</title>
+    <meta name="keywords" content="react,devui,platform" />
+    <meta name="description" content="An out-of-box solution for enterprise applications as a React boilerplate." />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+
+    <style type="text/css">
+      .fp-loader {
+        position: absolute;
+        inset: 0;
+        z-index: 9999;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .fp-loader-inner {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: 150px;
+        height: 150px;
+        margin: -75px 0 0 -75px;
+        border-radius: 50%;
+        box-shadow: 0 3px 3px 0 rgb(255 56 106);
+        transform: translate3d(0, 0, 0);
+        animation: fp-loader-spin 2s linear infinite;
+      }
+
+      .fp-loader-inner::after,
+      .fp-loader-inner::before {
+        position: absolute;
+        content: '';
+        border-radius: 50%;
+      }
+
+      .fp-loader-inner::before {
+        inset: 5px;
+        box-shadow: 0 3px 3px 0 rgb(255 228 32);
+        animation: fp-loader-spin 3s linear infinite;
+      }
+
+      .fp-loader-inner::after {
+        inset: 15px;
+        box-shadow: 0 3px 3px 0 rgb(61 175 255);
+        animation: fp-loader-spin 1.5s linear infinite;
+      }
+
+      @keyframes fp-loader-spin {
+        0% {
+          transform: rotate(0);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fp-loader">
+      <div class="fp-loader-inner"></div>
+    </div>
+    <div id="root"></div>
+  </body>
+</html>

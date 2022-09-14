@@ -25,7 +25,7 @@ export interface DProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement
   dLineWidth?: number;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DProgress' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DProgress' as const });
 export function DProgress(props: DProgressProps): JSX.Element | null {
   const {
     dPercent = 0,

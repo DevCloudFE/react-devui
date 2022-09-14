@@ -30,6 +30,10 @@
                 "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons", "scope:ui"]
               },
               {
+                "sourceTag": "scope:platform",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons", "scope:ui", "scope:platform"]
+              },
+              {
                 "sourceTag": "scope:site",
                 "onlyDependOnLibsWithTags": ["scope:shared", "scope:icons", "scope:ui", "scope:site"]
               }

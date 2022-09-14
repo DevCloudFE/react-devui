@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
 import React, { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
@@ -56,7 +56,7 @@ export interface DVirtualScrollProps<T> {
   onScrollEnd?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScroll' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScroll' as const });
 function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
   const {
     children,

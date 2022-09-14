@@ -24,7 +24,7 @@ export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   onModelChange?: (value: number) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRating' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRating' as const });
 export function DRating(props: DRatingProps): JSX.Element | null {
   const {
     dFormControl,

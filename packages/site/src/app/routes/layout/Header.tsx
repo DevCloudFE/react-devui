@@ -4,10 +4,10 @@ import type { DLang } from '@react-devui/ui/hooks/i18n';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { useLocalStorage, useMediaMatch } from '@react-devui/hooks';
+import { useLocalStorage } from '@react-devui/hooks';
 import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
 import { DMenu } from '@react-devui/ui';
-import { useGridConfig } from '@react-devui/ui/hooks';
+import { useMediaQuery } from '@react-devui/ui/hooks';
 import { getClassName } from '@react-devui/utils';
 
 export interface AppHeaderProps {
@@ -22,9 +22,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
   const [language, setLanguage] = useLocalStorage<DLang>('language', 'en-US');
 
   const [theme, setTheme] = useLocalStorage<AppTheme>('theme', 'light');
-
-  const { dBreakpoints } = useGridConfig();
-  const mediaMatch = useMediaMatch(dBreakpoints);
+  const breakpointsMatched = useMediaQuery();
 
   const location = useLocation();
   const activeId = location.pathname.startsWith('/docs') ? 'docs' : location.pathname.startsWith('/components') ? 'components' : null;
@@ -42,7 +40,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
 
   return (
     <header className="app-layout-header">
-      {mediaMatch.includes('md') ? (
+      {breakpointsMatched.includes('md') ? (
         <Link className="app-layout-header__logo-container" to="/">
           <img src="/assets/logo.svg" alt="Logo" width="36" height="36" />
           <span className="app-layout-header__logo-title">DevUI</span>
@@ -64,7 +62,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
           </div>
         </button>
       )}
-      {mediaMatch.includes('md') && (
+      {breakpointsMatched.includes('md') && (
         <DMenu
           className="app-layout-header__menu"
           dList={[

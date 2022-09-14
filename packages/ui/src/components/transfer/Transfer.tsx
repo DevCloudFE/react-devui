@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import React, { useState, useCallback, useMemo } from 'react';
@@ -36,13 +36,13 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
     filter?: (value: string, item: T) => boolean;
     sort?: (a: T, b: T) => number;
   };
-  onModelChange?: (value: V[], item: T[]) => void;
-  onSelectedChange?: (value: V[], item: T[]) => void;
+  onModelChange?: (value: T['value'][], item: T[]) => void;
+  onSelectedChange?: (value: T['value'][], item: T[]) => void;
   onSearch?: (value: string, direction: 'left' | 'right') => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTransfer' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTransfer' as const });
 export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTransferProps<V, T>): JSX.Element | null {
   const {
     dFormControl,

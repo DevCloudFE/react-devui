@@ -1,0 +1,152 @@
+@use 'sass:map';
+
+@include b(layout) {
+  @include e(main) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: calc(100% - 64px);
+    padding: 20px;
+    overflow: auto;
+    background-color: var(--app-layout-main-background-color);
+    transition: width var(--d-animation-duration-base) linear;
+  }
+}
+
+@include b(layout-header) {
+  position: relative;
+  z-index: 910;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px 0 0;
+  color: map.get($colors, 'white');
+  background-color: var(--app-layout-header-background-color);
+  box-shadow: 0 2px 8px 0 var(--d-shadow-color);
+
+  @include e(logo-container) {
+    display: inline-flex;
+    align-items: center;
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @include e(logo) {
+    display: inline-flex;
+    justify-content: center;
+    width: 64px;
+  }
+
+  @include e(logo-title) {
+    overflow: hidden;
+    transition: width var(--d-animation-duration-base) linear;
+    transform-origin: left;
+
+    @include font-size(1.5rem);
+  }
+
+  @include e(button) {
+    @include utils-button(true);
+
+    align-self: stretch;
+    padding: 0 12px;
+    margin: 0;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 18px;
+    color: inherit;
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    transition: background-color var(--d-animation-duration-base) linear;
+
+    &:hover {
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      background-color: rgb(255 255 255 / 20%);
+    }
+
+    &:active {
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      background-color: rgb(255 255 255 / 14%);
+    }
+
+    @include m(user) {
+      gap: 0 8px;
+    }
+  }
+
+  @include e(notification-popover) {
+    .d-popover__body {
+      width: 320px;
+      padding: 0;
+    }
+
+    @include m(spinner) {
+      .d-popover__body {
+        width: unset;
+        padding: 16px 32px;
+      }
+    }
+  }
+
+  @include e(notification-item) {
+    padding-right: 16px;
+    padding-left: 16px;
+    cursor: pointer;
+    transition: background-color var(--d-animation-duration-base) linear;
+
+    &:hover {
+      background-color: var(--d-background-color-hover);
+    }
+
+    @include m(read) {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
+  }
+
+  @include e(notification-actions) {
+    display: flex;
+    align-items: stretch;
+    height: 44px;
+    border-top: 1px solid var(--d-color-divider);
+
+    .d-button {
+      flex-grow: 1;
+    }
+  }
+}
+
+@include b(layout-sidebar) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  height: calc(100% - 64px);
+  padding: 0;
+  overflow: auto;
+  box-shadow: -2px 0 8px 0 var(--d-shadow-color);
+
+  @include e(menu) {
+    width: 200px;
+  }
+
+  @include e(link) {
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      content: '';
+    }
+  }
+
+  @include e(drawer) {
+    .d-drawer__body {
+      padding: 0;
+    }
+  }
+}

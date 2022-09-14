@@ -49,13 +49,13 @@
 
       @include e(state-container) {
         &::before {
-          animation: wave-spread 0.36s ease-in-out;
+          animation: wave-spread 0.36s linear;
           animation-fill-mode: backwards;
         }
       }
 
       @include e(tick) {
-        animation: checkbox-tick 133ms ease-in-out;
+        animation: checkbox-tick 133ms linear;
         animation-fill-mode: backwards;
       }
     }
@@ -76,7 +76,7 @@
 
     @include e(state-container) {
       &::before {
-        animation: wave-spread 0.36s ease-in-out;
+        animation: wave-spread 0.36s linear;
         animation-fill-mode: backwards;
       }
 

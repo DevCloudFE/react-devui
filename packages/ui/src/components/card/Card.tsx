@@ -14,7 +14,7 @@ export interface DCardProps extends React.HTMLAttributes<HTMLDivElement> {
   dActions?: React.ReactNode[];
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard' as const });
 export const DCard: {
   (props: DCardProps): JSX.Element | null;
   Header: typeof DCardHeader;

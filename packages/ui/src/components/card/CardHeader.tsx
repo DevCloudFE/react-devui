@@ -7,7 +7,7 @@ export interface DCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dAction?: React.ReactNode;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard.Header' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard.Header' as const });
 export function DCardHeader(props: DCardHeaderProps): JSX.Element | null {
   const {
     children,

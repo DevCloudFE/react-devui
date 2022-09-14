@@ -26,9 +26,10 @@ export interface DAutoCompleteRef {
 export interface DAutoCompleteItem {
   value: string;
   disabled?: boolean;
+  children?: DAutoCompleteItem[];
 }
 
-export interface DAutoCompleteProps<T extends DAutoCompleteItem & { children?: T[] }> extends React.HTMLAttributes<HTMLDivElement> {
+export interface DAutoCompleteProps<T extends DAutoCompleteItem> extends React.HTMLAttributes<HTMLDivElement> {
   dList: T[];
   dVisible?: boolean;
   dLoading?: boolean;
@@ -39,8 +40,8 @@ export interface DAutoCompleteProps<T extends DAutoCompleteItem & { children?: T
   onScrollBottom?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAutoComplete' });
-function AutoComplete<T extends DAutoCompleteItem & { children?: T[] }>(
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAutoComplete' as const });
+function AutoComplete<T extends DAutoCompleteItem>(
   props: DAutoCompleteProps<T>,
   ref: React.ForwardedRef<DAutoCompleteRef>
 ): JSX.Element | null {
@@ -201,7 +202,7 @@ function AutoComplete<T extends DAutoCompleteItem & { children?: T[] }>(
       dList,
       dItemSize: 32,
       dItemNested: (item) => ({
-        list: item.children,
+        list: item.children as T[],
         emptySize: 32,
         asItem: false,
       }),
@@ -424,6 +425,6 @@ function AutoComplete<T extends DAutoCompleteItem & { children?: T[] }>(
   );
 }
 
-export const DAutoComplete: <T extends DAutoCompleteItem & { children?: T[] }>(
+export const DAutoComplete: <T extends DAutoCompleteItem>(
   props: DAutoCompleteProps<T> & React.RefAttributes<DAutoCompleteRef>
 ) => ReturnType<typeof AutoComplete> = React.forwardRef(AutoComplete) as any;

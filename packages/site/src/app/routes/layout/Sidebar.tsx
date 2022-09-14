@@ -1,16 +1,15 @@
 import type { DMenuItem } from '@react-devui/ui/components/menu';
 import type { DLang } from '@react-devui/ui/hooks/i18n';
-import type { DNestedItem } from '@react-devui/ui/utils';
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import menu from 'packages/site/dist/menu.json';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { useLocalStorage, useMediaMatch } from '@react-devui/hooks';
+import { useLocalStorage } from '@react-devui/hooks';
 import { AppstoreOutlined, BookOutlined, RightOutlined } from '@react-devui/icons';
 import { DDrawer, DMenu } from '@react-devui/ui';
-import { useGridConfig } from '@react-devui/ui/hooks';
+import { useMediaQuery } from '@react-devui/ui/hooks';
 
 export interface AppSidebarProps {
   menuOpen: boolean;
@@ -22,6 +21,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
 
   const { t } = useTranslation();
   const [language] = useLocalStorage<DLang>('language', 'en-US');
+  const breakpointsMatched = useMediaQuery();
 
   const location = useLocation();
   const page = location.pathname.startsWith('/docs') ? 'Docs' : location.pathname.startsWith('/components') ? 'Components' : null;
@@ -70,15 +70,15 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
                 ),
                 type: 'item',
               },
-            ] as DNestedItem<DMenuItem<string>>[])
-          : menu.map<DNestedItem<DMenuItem<string>>>((group) => ({
+            ] as DMenuItem<string>[])
+          : menu.map<DMenuItem<string>>((group) => ({
               id: group.title,
               title: t(`menu.components-group.${group.title}`),
               type: 'group',
               children: (group.title === 'Other'
                 ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
                 : group.children
-              ).map<DNestedItem<DMenuItem<string>>>((child) => ({
+              ).map<DMenuItem<string>>((child) => ({
                 id: child.title,
                 title: (
                   <Link tabIndex={-1} to={child.to}>
@@ -96,10 +96,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
     ></DMenu>
   );
 
-  const { dBreakpoints } = useGridConfig();
-  const mediaMatch = useMediaMatch(dBreakpoints);
-
-  return mediaMatch.includes('md') ? (
+  return breakpointsMatched.includes('md') ? (
     page ? (
       <div className="app-layout-sidebar">{menuNode}</div>
     ) : null

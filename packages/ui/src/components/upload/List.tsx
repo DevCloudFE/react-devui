@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DUploadFile } from './Upload';
 import type { DUploadActionPropsWithPrivate } from './UploadAction';
 

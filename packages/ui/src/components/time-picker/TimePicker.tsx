@@ -31,7 +31,7 @@ export interface DTimePickerProps extends Omit<DBuilderProps, 'dFormat' | 'dSuff
   ) => { disabled?: boolean; hidden?: boolean };
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimePicker' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimePicker' as const });
 function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePickerRef>): JSX.Element | null {
   const {
     dFormat,

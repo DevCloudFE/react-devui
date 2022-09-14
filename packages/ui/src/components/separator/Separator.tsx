@@ -10,7 +10,7 @@ export interface DSeparatorProps extends React.HTMLAttributes<HTMLElement> {
   dVertical?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSeparator' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSeparator' as const });
 export function DSeparator(props: DSeparatorProps): JSX.Element | null {
   const {
     children,

@@ -9,7 +9,7 @@ export interface DTableEmptyProps extends React.HTMLAttributes<HTMLTableRowEleme
   dColSpan: number;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Empty' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Empty' as const });
 export function DTableEmpty(props: DTableEmptyProps): JSX.Element | null {
   const {
     children,

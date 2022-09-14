@@ -1,9 +1,9 @@
-import type { DId, DSize } from '../../utils';
+import type { DId, DSize } from '../../utils/types';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DSelectItem } from '../select';
-import type { AbstractTreeNode } from '../tree/abstract-node';
+import type { AbstractTreeNode, TreeOrigin } from '../tree/abstract-node';
 
 import { isNull } from 'lodash';
 import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
@@ -29,17 +29,17 @@ export interface DCascaderRef {
   updatePosition: () => void;
 }
 
-export type DSearchItem<V extends DId, T> = DSelectItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
+export type DSearchItem<V extends DId, T extends TreeOrigin> = DSelectItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
 
 export interface DCascaderItem<V extends DId> {
   label: string;
   value: V;
   loading?: boolean;
   disabled?: boolean;
+  children?: DCascaderItem<V>[];
 }
 
-export interface DCascaderProps<V extends DId, T extends DCascaderItem<V> & { children?: T[] }>
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> extends React.HTMLAttributes<HTMLDivElement> {
   dFormControl?: DFormControl;
   dList: T[];
   dModel?: V | null | V[];
@@ -66,11 +66,11 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V> & { ch
   afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  onFirstFocus?: (value: V, item: T) => void;
+  onFirstFocus?: (value: T['value'], item: T) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' });
-function Cascader<V extends DId, T extends DCascaderItem<V> & { children?: T[] }>(
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' as const });
+function Cascader<V extends DId, T extends DCascaderItem<V>>(
   props: DCascaderProps<V, T>,
   ref: React.ForwardedRef<DCascaderRef>
 ): JSX.Element | null {
@@ -490,6 +490,6 @@ function Cascader<V extends DId, T extends DCascaderItem<V> & { children?: T[] }
   );
 }
 
-export const DCascader: <V extends DId, T extends DCascaderItem<V> & { children?: T[] }>(
+export const DCascader: <V extends DId, T extends DCascaderItem<V>>(
   props: DCascaderProps<V, T> & React.RefAttributes<DCascaderRef>
 ) => ReturnType<typeof Cascader> = React.forwardRef(Cascader) as any;

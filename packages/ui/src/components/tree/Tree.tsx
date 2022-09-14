@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 import type { AbstractTreeNode } from './abstract-node';
@@ -22,10 +22,10 @@ export interface DTreeItem<V extends DId> {
   value: V;
   loading?: boolean;
   disabled?: boolean;
+  children?: DTreeItem<V>[];
 }
 
-export interface DTreeProps<V extends DId, T extends DTreeItem<V> & { children?: T[] }>
-  extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dFormControl?: DFormControl;
   dList: T[];
   dModel?: V | null | V[];
@@ -38,12 +38,12 @@ export interface DTreeProps<V extends DId, T extends DTreeItem<V> & { children?:
   dOnlyLeafSelectable?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   onModelChange?: (value: any, item: any) => void;
-  onFirstExpand?: (value: V, item: T) => void;
-  onExpandsChange?: (ids: V[], items: T[]) => void;
+  onFirstExpand?: (value: T['value'], item: T) => void;
+  onExpandsChange?: (ids: T['value'][], items: T[]) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTree' });
-export function DTree<V extends DId, T extends DTreeItem<V> & { children?: T[] }>(props: DTreeProps<V, T>): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTree' as const });
+export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V, T>): JSX.Element | null {
   const {
     dFormControl,
     dList,

@@ -5,7 +5,7 @@ import { useContext } from 'react';
 
 import { DConfigContext } from './contex';
 
-export function useComponentConfig<T>(component: keyof DComponentConfig, props: T): T {
+export function useComponentConfig<T extends object>(component: keyof DComponentConfig, props: T): T {
   const gProps = useContext(DConfigContext)?.componentConfigs?.[component] ?? {};
   const noUndefinedProps: any = {};
   Object.keys(props).forEach((key) => {

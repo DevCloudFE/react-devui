@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 import React from 'react';
 
@@ -18,10 +18,10 @@ export interface DBreadcrumbProps<ID extends DId, T extends DBreadcrumbItem<ID>>
   extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dList: T[];
   dSeparator?: React.ReactNode;
-  onItemClick?: (id: ID, item: T) => void;
+  onItemClick?: (id: T['id'], item: T) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBreadcrumb' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBreadcrumb' as const });
 export function DBreadcrumb<ID extends DId, T extends DBreadcrumbItem<ID>>(props: DBreadcrumbProps<ID, T>): JSX.Element | null {
   const {
     dList,

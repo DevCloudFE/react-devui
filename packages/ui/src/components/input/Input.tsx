@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import { isUndefined } from 'lodash';
@@ -35,7 +35,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   onModelChange?: (value: string) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' as const });
 export function DInput(props: DInputProps): JSX.Element | null {
   const {
     dType,

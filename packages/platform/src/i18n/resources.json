@@ -1,0 +1,78 @@
+{
+  "en-US": {
+    "translation": {
+      "components": {
+        "language": {
+          "Change language": "Change language"
+        }
+      },
+      "routes": {
+        "layout": {
+          "Expand main navigation": "Expand main navigation",
+          "Fold main navigation": "Fold main navigation",
+          "Search": "Search",
+          "Notification": "Notification",
+          "Clear notifications": "Clear",
+          "See more": "More",
+          "My account": "My account",
+          "Account Center": "Account Center",
+          "Account Settings": "Account Settings",
+          "Logout": "Logout"
+        },
+        "login": {
+          "Login": "Login"
+        }
+      }
+    },
+    "title": {
+      "Login": "Login"
+    },
+    "menu": {
+      "Dashboard": "Dashboard",
+      "Amap": "Amap",
+      "Echarts": "Echarts",
+      "Exception": "Exception",
+      "403": "403",
+      "404": "404",
+      "500": "500"
+    }
+  },
+  "zh-CN": {
+    "translation": {
+      "components": {
+        "language": {
+          "Change language": "改变语言"
+        }
+      },
+      "routes": {
+        "layout": {
+          "Expand main navigation": "展开主导航栏",
+          "Fold main navigation": "折叠主导航栏",
+          "Search": "搜索",
+          "Notification": "通知",
+          "Clear notifications": "清空通知",
+          "See more": "查看更多",
+          "My account": "我的账户",
+          "Account Center": "个人中心",
+          "Account Settings": "个人设置",
+          "Logout": "退出登录"
+        },
+        "login": {
+          "Login": "登 录"
+        }
+      }
+    },
+    "title": {
+      "Login": "登录"
+    },
+    "menu": {
+      "Dashboard": "仪表盘",
+      "Amap": "高德地图",
+      "Echarts": "Echarts",
+      "Exception": "异常页",
+      "403": "403",
+      "404": "404",
+      "500": "500"
+    }
+  }
+}

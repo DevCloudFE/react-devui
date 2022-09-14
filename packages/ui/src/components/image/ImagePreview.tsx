@@ -26,7 +26,7 @@ export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement>
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage.Preview' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage.Preview' as const });
 export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
   const {
     dList,

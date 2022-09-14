@@ -27,11 +27,25 @@ export function App() {
 
   const { i18n } = useTranslation();
   const [language] = useLocalStorage<DLang>('language', 'en-US');
+  const [theme] = useLocalStorage<AppTheme>('theme', 'light');
+  const [scrollTop, setScrollTop] = useLocalStorage('scrollTop', 0, 'number');
+
+  useEvent(window, 'beforeunload' as any, () => {
+    if (!environment.production) {
+      if (mainEl) {
+        setScrollTop(mainEl.scrollTop);
+      }
+    }
+  });
+
+  useMount(() => {
+    i18n.changeLanguage(language);
+  });
+
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
-  const [theme] = useLocalStorage<AppTheme>('theme', 'light');
   useEffect(() => {
     for (const t of ['light', 'dark']) {
       document.body.classList.toggle(t, theme === t);
@@ -43,24 +57,12 @@ export function App() {
     };
   }, [theme]);
 
-  const [scrollTop, setScrollTop] = useLocalStorage('scrollTop', 0, 'number');
-  useEvent(window, 'beforeunload' as any, () => {
-    if (!environment.production) {
-      if (mainEl) {
-        setScrollTop(mainEl.scrollTop);
-      }
-    }
-  });
   useEffect(() => {
     if (!environment.production && mainEl) {
       mainEl.scrollTop = scrollTop;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainEl]);
-
-  useMount(() => {
-    i18n.changeLanguage(language);
-  });
 
   const rootContext = useMemo<DConfigContextData>(
     () => ({

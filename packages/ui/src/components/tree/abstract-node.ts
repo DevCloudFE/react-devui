@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 export type TreeNodeStatus = 'INDETERMINATE' | 'CHECKED' | 'UNCHECKED';
 
 export const [INDETERMINATE, CHECKED, UNCHECKED] = ['INDETERMINATE', 'CHECKED', 'UNCHECKED'] as TreeNodeStatus[];
 
-export abstract class AbstractTreeNode<ID extends DId, T> {
+export interface TreeOrigin {
+  disabled?: boolean;
+  children?: TreeOrigin[];
+}
+
+export abstract class AbstractTreeNode<ID extends DId, T extends TreeOrigin> {
   private _parent: AbstractTreeNode<ID, T> | null = null;
 
   constructor(public origin: T) {}

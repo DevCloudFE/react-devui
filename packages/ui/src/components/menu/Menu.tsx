@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useState } from 'react';
@@ -28,25 +28,22 @@ export interface DMenuItem<ID extends DId> {
   type: 'item' | 'group' | 'sub';
   icon?: React.ReactNode;
   disabled?: boolean;
+  children?: DMenuItem<ID>[];
 }
 
-export interface DMenuProps<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>
-  extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+export interface DMenuProps<ID extends DId, T extends DMenuItem<ID>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dList: T[];
   dActive?: ID | null;
   dExpands?: ID[];
   dMode?: DMenuMode;
   dExpandOne?: boolean;
   dExpandTrigger?: 'hover' | 'click';
-  onActiveChange?: (id: ID, item: T) => void;
-  onExpandsChange?: (ids: ID[], items: T[]) => void;
+  onActiveChange?: (id: T['id'], item: T) => void;
+  onExpandsChange?: (ids: T['id'][], items: T[]) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' });
-function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
-  props: DMenuProps<ID, T>,
-  ref: React.ForwardedRef<DMenuRef>
-): JSX.Element | null {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' as const });
+function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>): JSX.Element | null {
   const {
     dList,
     dActive,
@@ -82,7 +79,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
           break;
         }
         if (item.children) {
-          reduceArr(item.children, item.type === 'sub' ? subParent.concat([item.id]) : subParent);
+          reduceArr(item.children as T[], item.type === 'sub' ? subParent.concat([item.id]) : subParent);
         } else if (item.id === activeId) {
           ids = subParent.concat([item.id]);
         }
@@ -106,7 +103,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
           }
 
           if (item.children) {
-            reduceArr(item.children);
+            reduceArr(item.children as T[]);
           } else {
             const index = ids.findIndex((id) => id === item.id);
             if (index !== -1) {
@@ -152,7 +149,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
         }
 
         if ((item.type === 'group' || (dMode === 'vertical' && item.type === 'sub' && expandIds.includes(item.id))) && item.children) {
-          reduceArr(item.children);
+          reduceArr(item.children as T[]);
         } else if (checkEnableItem(item)) {
           if (isUndefined(firstId)) {
             firstId = item.id;
@@ -232,7 +229,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
+            const sameLevelItems = getSameLevelItems((nth(subParents, -1)?.children as T[]) ?? dList);
             const focusItem = (val?: T) => {
               if (val) {
                 setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
@@ -372,7 +369,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
             ) : itemType === 'group' ? (
               <DGroup
                 dId={id}
-                dList={children && getNodes(children, level + 1, _subParents)}
+                dList={children && getNodes(children as T[], level + 1, _subParents)}
                 dEmpty={isEmpty}
                 dStep={step}
                 dSpace={space}
@@ -390,7 +387,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
                 dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(itemId)}
                 dExpand={isExpand}
                 dFocusVisible={focusVisible && isFocus}
-                dList={children && getNodes(children, dMode === 'vertical' ? level + 1 : 0, _subParents)}
+                dList={children && getNodes(children as T[], dMode === 'vertical' ? level + 1 : 0, _subParents)}
                 dPopupVisible={dMode === 'vertical' ? false : !isUndefined(popupState)}
                 dPopupState={popupState?.visible ?? false}
                 dEmpty={isEmpty}
@@ -416,7 +413,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
                     setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
 
                     if (dMode === 'vertical') {
-                      const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
+                      const sameLevelItems = getSameLevelItems((nth(subParents, -1)?.children as T[]) ?? dList);
                       handleSubExpand(sameLevelItems);
                     }
                   }
@@ -524,6 +521,6 @@ function Menu<ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
   );
 }
 
-export const DMenu: <ID extends DId, T extends DMenuItem<ID> & { children?: T[] }>(
+export const DMenu: <ID extends DId, T extends DMenuItem<ID>>(
   props: DMenuProps<ID, T> & React.RefAttributes<DMenuRef>
 ) => ReturnType<typeof Menu> = React.forwardRef(Menu) as any;

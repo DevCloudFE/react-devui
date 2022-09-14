@@ -1,0 +1,8 @@
+@include b(language) {
+  @include e(item-region) {
+    display: inline-block;
+    width: 2em;
+    font-family: Arial, sans-serif;
+    font-size: 0.9em;
+  }
+}

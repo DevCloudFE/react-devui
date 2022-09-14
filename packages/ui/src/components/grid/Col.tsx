@@ -17,7 +17,7 @@ export interface DColProps extends DColBaseProps {
   dResponsiveProps?: Partial<Record<DBreakpoints, DSpanValue | DColBaseProps>>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCol' as const });
 export function DCol(props: DColProps): JSX.Element | null {
   const {
     children,
@@ -30,14 +30,14 @@ export function DCol(props: DColProps): JSX.Element | null {
   //#region Context
   const dPrefix = usePrefixConfig();
   const { dColNum } = useGridConfig();
-  const { gMediaMatch, gSpace } = useContextRequired(DRowContext);
+  const { gBreakpointsMatched, gSpace } = useContextRequired(DRowContext);
   //#endregion
 
   const [span, responsiveProps] = (() => {
     let span = dSpan;
     let responsiveProps: DColBaseProps | undefined = undefined;
     if (dResponsiveProps) {
-      for (const breakpoint of gMediaMatch) {
+      for (const breakpoint of gBreakpointsMatched) {
         if (breakpoint in dResponsiveProps) {
           const data = dResponsiveProps[breakpoint];
           if (isObject(data)) {

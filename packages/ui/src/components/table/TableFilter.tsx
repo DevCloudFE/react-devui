@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isNull, isUndefined } from 'lodash';
@@ -27,7 +27,7 @@ export interface DTableFilterItem<V extends DId> {
   disabled?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Filter' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Filter' as const });
 export interface DTableFilterProps<V extends DId, T extends DTableFilterItem<V>> extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dList: T[];
   dSelected?: V | null | V[];

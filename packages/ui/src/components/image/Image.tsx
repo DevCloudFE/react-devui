@@ -14,7 +14,7 @@ export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dImgProps: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage' as const });
 export const DImage: {
   (props: DImageProps): JSX.Element | null;
   Preview: typeof DImagePreview;

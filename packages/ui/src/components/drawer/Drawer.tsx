@@ -39,7 +39,7 @@ export interface DDrawerPropsWithPrivate extends DDrawerProps {
   __onVisibleChange?: (distance: { visible: boolean; top: number; right: number; bottom: number; left: number }) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDrawer' as const });
 export const DDrawer: {
   (props: DDrawerProps): JSX.Element | null;
   Header: typeof DDrawerHeader;

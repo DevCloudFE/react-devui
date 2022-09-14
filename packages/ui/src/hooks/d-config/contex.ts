@@ -5,7 +5,6 @@ import type {
   DAnchorProps,
   DAutoCompleteProps,
   DAvatarProps,
-  DBackTopProps,
   DBadgeProps,
   DBreadcrumbProps,
   DButtonProps,
@@ -23,6 +22,8 @@ import type {
   DDrawerFooterProps,
   DDropdownProps,
   DEmptyProps,
+  DFabProps,
+  DFabButtonProps,
   DFormProps,
   DFormGroupProps,
   DFormItemProps,
@@ -93,7 +94,6 @@ export type DComponentConfig = {
   DAnchor: DAnchorProps<any>;
   DAutoComplete: DAutoCompleteProps<any>;
   DAvatar: DAvatarProps;
-  DBackTop: DBackTopProps;
   DBadge: DBadgeProps;
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
@@ -111,6 +111,8 @@ export type DComponentConfig = {
   'DDrawer.Footer': DDrawerFooterProps;
   DDropdown: DDropdownProps<any, any>;
   DEmpty: DEmptyProps;
+  DFab: DFabProps;
+  'DFab.Button': DFabButtonProps;
   DForm: DFormProps;
   'DForm.Group': DFormGroupProps;
   'DForm.Item': DFormItemProps<any>;

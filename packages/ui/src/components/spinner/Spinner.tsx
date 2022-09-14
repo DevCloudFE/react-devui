@@ -18,7 +18,7 @@ export interface DSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSpinner' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSpinner' as const });
 export function DSpinner(props: DSpinnerProps): JSX.Element | null {
   const {
     children,

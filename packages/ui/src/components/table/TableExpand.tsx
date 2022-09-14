@@ -3,7 +3,7 @@ import { getClassName } from '@react-devui/utils';
 import { useComponentConfig, useDValue, usePrefixConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Expand' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Expand' as const });
 export interface DTableExpandProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dExpand?: boolean;
   onExpandChange?: (expand: boolean) => void;

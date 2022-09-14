@@ -36,7 +36,7 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   afterVisibleChange?: (visible: boolean) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal' as const });
 export const DModal: {
   (props: DModalProps): JSX.Element | null;
   Header: typeof DModalHeader;

@@ -1,0 +1,64 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/platform/src",
+  "projectType": "application",
+  "tags": ["scope:platform"],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "compiler": "babel",
+        "deployUrl": "/",
+        "outputPath": "dist/packages/platform",
+        "index": "packages/platform/src/index.html",
+        "main": "packages/platform/src/main.tsx",
+        "polyfills": "packages/platform/src/polyfills.ts",
+        "tsConfig": "packages/platform/tsconfig.app.json",
+        "assets": ["packages/platform/src/assets"],
+        "styles": ["packages/platform/src/styles.scss"],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "packages/platform/src/environments/environment.ts",
+              "with": "packages/platform/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "platform:build",
+        "port": 4310,
+        "open": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/platform/**/*.{ts,tsx,js,jsx,md}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/platform"],
+      "options": {
+        "jestConfig": "packages/platform/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

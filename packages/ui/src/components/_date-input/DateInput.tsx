@@ -1,4 +1,4 @@
-import type { DSize } from '../../utils';
+import type { DSize } from '../../utils/types';
 import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
 import type { DFormControl } from '../form';
 

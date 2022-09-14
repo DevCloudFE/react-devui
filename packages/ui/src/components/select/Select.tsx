@@ -1,4 +1,4 @@
-import type { DId, DSize } from '../../utils';
+import type { DId, DSize } from '../../utils/types';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
@@ -29,10 +29,10 @@ export interface DSelectItem<V extends DId> {
   label: string;
   value: V;
   disabled?: boolean;
+  children?: DSelectItem<V>[];
 }
 
-export interface DSelectProps<V extends DId, T extends DSelectItem<V> & { children?: T[] }>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
   dList: T[];
   dModel?: V | null | V[];
@@ -63,8 +63,8 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V> & { childr
   onScrollBottom?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' });
-function Select<V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSelect' as const });
+function Select<V extends DId, T extends DSelectItem<V>>(
   props: DSelectProps<V, T>,
   ref: React.ForwardedRef<DSelectRef>
 ): JSX.Element | null {
@@ -120,7 +120,7 @@ function Select<V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
       for (const item of arr) {
         items.set(item.value, item);
         if (item.children) {
-          reduceArr(item.children);
+          reduceArr(item.children as T[]);
         }
       }
     };
@@ -198,7 +198,7 @@ function Select<V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
         }
       } else {
         const groupList: T[] = [];
-        item.children.forEach((groupItem) => {
+        (item.children as T[]).forEach((groupItem) => {
           if (createItem && groupItem.value === createItem.value) {
             createItem = undefined;
           }
@@ -352,7 +352,7 @@ function Select<V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
       dList: list,
       dItemSize: 32,
       dItemNested: (item) => ({
-        list: item.children,
+        list: item.children as T[],
         emptySize: 32,
         asItem: false,
       }),
@@ -592,6 +592,6 @@ function Select<V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
   );
 }
 
-export const DSelect: <V extends DId, T extends DSelectItem<V> & { children?: T[] }>(
+export const DSelect: <V extends DId, T extends DSelectItem<V>>(
   props: DSelectProps<V, T> & React.RefAttributes<DSelectRef>
 ) => ReturnType<typeof Select> = React.forwardRef(Select) as any;

@@ -157,7 +157,7 @@ export function DSub(props: DSubProps): JSX.Element | null {
               )}
             </ul>
           ) : dInNav && collapseState !== 'leaved' && React.isValidElement(dataRef.current.nodeCache) ? (
-            React.cloneElement(dataRef.current.nodeCache, { style: collapseStyle })
+            React.cloneElement(dataRef.current.nodeCache as React.ReactElement, { style: collapseStyle })
           ) : null;
         if (dMode === 'vertical' && dInNav) {
           dataRef.current.nodeCache = node;

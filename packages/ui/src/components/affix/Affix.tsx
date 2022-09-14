@@ -20,7 +20,7 @@ export interface DAffixProps extends React.HTMLAttributes<HTMLDivElement> {
   dZIndex?: number | string;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAffix' as const });
 function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Element | null {
   const {
     children,

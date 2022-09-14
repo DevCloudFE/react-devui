@@ -1,8 +1,8 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTreeItem } from './Tree';
-import type { AbstractTreeNode } from './abstract-node';
+import type { AbstractTreeNode, TreeOrigin } from './abstract-node';
 
 import { isUndefined } from 'lodash';
 import React, { useMemo, useRef } from 'react';
@@ -15,7 +15,7 @@ import { DCheckbox } from '../checkbox';
 import { DVirtualScroll } from '../virtual-scroll';
 import { getText, TREE_NODE_KEY } from './utils';
 
-export type DSearchItem<V extends DId, T> = DTreeItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
+export type DSearchItem<V extends DId, T extends TreeOrigin> = DTreeItem<V> & { [TREE_NODE_KEY]: AbstractTreeNode<V, T> };
 
 interface DSearchPanelProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dGetItemId: (value: V) => string;

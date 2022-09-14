@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { DIconContext } from './Icon';
 
-export function useIconProps<T>(props: T): T {
+export function useIconProps<T extends object>(props: T): T {
   const context = useContext(DIconContext);
   const gProps = context.props ?? {};
   const noUndefinedProps: any = {};

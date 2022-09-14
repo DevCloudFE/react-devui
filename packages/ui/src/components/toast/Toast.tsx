@@ -9,7 +9,7 @@ import { DTransition } from '../_transition';
 import { DPanel } from './Panel';
 
 const TTANSITION_DURING = { enter: 133, leave: 166 };
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DToast' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DToast' as const });
 export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element | null {
   const {
     dVisible,

@@ -31,7 +31,7 @@ export interface DDatePickerProps extends Omit<DBuilderProps, 'dFormat' | 'dSuff
   dShowTime?: boolean | Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' as const });
 function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePickerRef>): JSX.Element | null {
   const {
     dFormat,

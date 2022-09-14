@@ -9,7 +9,7 @@ import { DTransition } from '../_transition';
 import { DPanel } from './Panel';
 
 const TTANSITION_DURING = { enter: 133, leave: 166 };
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DNotification' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DNotification' as const });
 export function DNotification(props: DNotificationProps & { dVisible: boolean }): JSX.Element | null {
   const {
     dVisible,

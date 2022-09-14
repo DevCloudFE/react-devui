@@ -16,9 +16,6 @@ export { DAutoComplete } from './auto-complete';
 export type { DAvatarProps } from './avatar';
 export { DAvatar } from './avatar';
 
-export type { DBackTopProps } from './back-top';
-export { DBackTop } from './back-top';
-
 export type { DBadgeProps } from './badge';
 export { DBadge } from './badge';
 
@@ -51,6 +48,9 @@ export { DDropdown } from './dropdown';
 
 export type { DEmptyProps } from './empty';
 export { DEmpty } from './empty';
+
+export type { DFabProps, DFabButtonProps } from './fab';
+export { DFab, DFabButton } from './fab';
 
 export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
 export { DForm, useForm, FormControl, FormGroup, Validators } from './form';

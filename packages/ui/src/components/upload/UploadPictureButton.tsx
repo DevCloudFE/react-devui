@@ -20,7 +20,7 @@ export interface DUploadPictureButtonProps extends React.HTMLAttributes<HTMLDivE
   onRemove?: () => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload.PictureButton' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload.PictureButton' as const });
 export function DUploadPictureButton(props: DUploadPictureButtonProps): JSX.Element | null {
   const {
     dFile,

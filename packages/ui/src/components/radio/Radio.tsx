@@ -25,7 +25,7 @@ export interface DRadioPropsWithPrivate extends DRadioProps {
   __type?: 'outline' | 'fill';
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' as const });
 export const DRadio: {
   (props: DRadioProps): JSX.Element | null;
   Group: typeof DRadioGroup;

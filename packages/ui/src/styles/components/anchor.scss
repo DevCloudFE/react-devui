@@ -20,7 +20,7 @@
     left: 1px;
     z-index: 5;
     opacity: 0;
-    transition: top var(--#{$variable-prefix}animation-duration-slow) ease-in-out,
+    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
       opacity var(--#{$variable-prefix}animation-duration-base) linear;
     transform: translate(-50%, -50%);
   }

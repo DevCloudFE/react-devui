@@ -23,7 +23,7 @@ export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaEl
   onModelChange?: (value: string) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTextarea' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTextarea' as const });
 function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>): JSX.Element | null {
   const {
     dFormControl,

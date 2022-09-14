@@ -17,7 +17,7 @@ export interface DTimelineProps<T extends DTimelineItem> extends Omit<React.HTML
   dLineSize?: number;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimeline' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimeline' as const });
 export function DTimeline<T extends DTimelineItem>(props: DTimelineProps<T>): JSX.Element | null {
   const {
     dList,

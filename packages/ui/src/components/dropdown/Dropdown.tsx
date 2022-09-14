@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useId, useImperativeHandle, useRef, useState } from 'react';
@@ -28,9 +28,10 @@ export interface DDropdownItem<ID extends DId> {
   icon?: React.ReactNode;
   disabled?: boolean;
   separator?: boolean;
+  children?: DDropdownItem<ID>[];
 }
 
-export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID> & { children?: T[] }>
+export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID>>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactElement;
   dList: T[];
@@ -42,11 +43,11 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID> & { 
   dZIndex?: number | string;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
-  onItemClick?: (id: ID, item: T) => void;
+  onItemClick?: (id: T['id'], item: T) => void;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' });
-function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[] }>(
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDropdown' as const });
+function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   props: DDropdownProps<ID, T>,
   ref: React.ForwardedRef<DDropdownRef>
 ): JSX.Element | null {
@@ -118,7 +119,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
         }
 
         if (item.type === 'group' && item.children) {
-          reduceArr(item.children);
+          reduceArr(item.children as T[]);
         } else if (checkEnableItem(item)) {
           ids.push(item.id);
         }
@@ -137,7 +138,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
 
         const item = arr[index];
         if (item.type === 'group' && item.children) {
-          reduceArr(item.children);
+          reduceArr(item.children as T[]);
         } else if (checkEnableItem(item)) {
           ids.push(item.id);
         }
@@ -217,7 +218,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelItems = getSameLevelItems(nth(subParents, -1)?.children ?? dList);
+            const sameLevelItems = getSameLevelItems((nth(subParents, -1)?.children as T[]) ?? dList);
             const focusItem = (val?: T) => {
               if (val) {
                 setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
@@ -326,7 +327,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
                 {itemLabel}
               </DItem>
             ) : itemType === 'group' ? (
-              <DGroup dId={id} dList={children && getNodes(children, level + 1, newSubParents)} dEmpty={isEmpty} dLevel={level}>
+              <DGroup dId={id} dList={children && getNodes(children as T[], level + 1, newSubParents)} dEmpty={isEmpty} dLevel={level}>
                 {itemLabel}
               </DGroup>
             ) : (
@@ -334,7 +335,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
                 dId={id}
                 dDisabled={itemDisabled}
                 dFocusVisible={focusVisible && isFocus}
-                dPopup={children && getNodes(children, 0, newSubParents)}
+                dPopup={children && getNodes(children as T[], 0, newSubParents)}
                 dPopupVisible={!isUndefined(popupState)}
                 dPopupState={popupState?.visible ?? false}
                 dEmpty={isEmpty}
@@ -551,6 +552,6 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID> & { children?: T[]
   );
 }
 
-export const DDropdown: <ID extends DId, T extends DDropdownItem<ID> & { children?: T[] }>(
+export const DDropdown: <ID extends DId, T extends DDropdownItem<ID>>(
   props: DDropdownProps<ID, T> & React.RefAttributes<DDropdownRef>
 ) => ReturnType<typeof Dropdown> = React.forwardRef(Dropdown) as any;

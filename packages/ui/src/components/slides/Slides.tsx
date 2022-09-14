@@ -40,7 +40,7 @@ import { DSlidesSlide } from './SlidesSlide';
 
 export type DSlidesProps = SwiperProps;
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlides' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlides' as const });
 export const DSlides: {
   (props: DSlidesProps): JSX.Element | null;
   Slide: typeof DSlidesSlide;

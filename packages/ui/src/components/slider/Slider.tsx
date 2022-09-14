@@ -35,7 +35,7 @@ export interface DSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dCustomTooltip?: (value: number) => React.ReactNode;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlider' });
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlider' as const });
 export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
     dFormControl,

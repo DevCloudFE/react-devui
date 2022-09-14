@@ -1,4 +1,4 @@
-import type { DId } from '../../utils';
+import type { DId } from '../../utils/types';
 import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTreeItem } from './Tree';
