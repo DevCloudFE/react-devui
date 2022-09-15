@@ -24,6 +24,7 @@ import type {
   DEmptyProps,
   DFabProps,
   DFabButtonProps,
+  DFabBacktopProps,
   DFormProps,
   DFormGroupProps,
   DFormItemProps,
@@ -113,6 +114,7 @@ export type DComponentConfig = {
   DEmpty: DEmptyProps;
   DFab: DFabProps;
   'DFab.Button': DFabButtonProps;
+  'DFab.Backtop': DFabBacktopProps;
   DForm: DFormProps;
   'DForm.Group': DFormGroupProps;
   'DForm.Item': DFormItemProps<any>;

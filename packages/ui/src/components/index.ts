@@ -49,8 +49,8 @@ export { DDropdown } from './dropdown';
 export type { DEmptyProps } from './empty';
 export { DEmpty } from './empty';
 
-export type { DFabProps, DFabButtonProps } from './fab';
-export { DFab, DFabButton } from './fab';
+export type { DFabProps, DFabButtonProps, DFabBacktopProps } from './fab';
+export { DFab, DFabButton, DFabBacktop } from './fab';
 
 export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
 export { DForm, useForm, FormControl, FormGroup, Validators } from './form';

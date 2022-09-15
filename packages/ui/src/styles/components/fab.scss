@@ -25,6 +25,7 @@
   @include e(button) {
     @include utils-button;
 
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -32,10 +33,9 @@
     height: var(--#{$variable-prefix}fab-size);
     padding: 0;
     margin: 0;
-
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 4px;
-    box-shadow: 0 2px 4px 0 var(--#{$variable-prefix}shadow-color);
+    box-shadow: var(--#{$variable-prefix}fab-shadow);
     transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
       color var(--#{$variable-prefix}animation-duration-base) linear,
       background-color var(--#{$variable-prefix}animation-duration-base) linear;
@@ -57,28 +57,28 @@
 
     @each $theme, $rgb in $themes {
       @include theme(#{$theme}) {
-        --#{$variable-prefix}button-color: var(--#{$variable-prefix}color-#{$theme});
-        --#{$variable-prefix}button-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
-        --#{$variable-prefix}button-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
-        --#{$variable-prefix}button-text-hover-background: var(--#{$variable-prefix}background-color-#{$theme}-hover);
-        --#{$variable-prefix}button-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
+        --#{$variable-prefix}fab-color: var(--#{$variable-prefix}color-#{$theme});
+        --#{$variable-prefix}fab-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
+        --#{$variable-prefix}fab-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
+        --#{$variable-prefix}fab-text-hover-background: var(--#{$variable-prefix}background-color-#{$theme}-hover);
+        --#{$variable-prefix}fab-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
       }
     }
 
     @include m(primary) {
       color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}button-color);
-      border: 1px solid var(--#{$variable-prefix}button-color);
+      background-color: var(--#{$variable-prefix}fab-color);
+      border: 1px solid var(--#{$variable-prefix}fab-color);
 
       &:hover,
       &:focus {
-        background-color: var(--#{$variable-prefix}button-color-lighter);
-        border-color: var(--#{$variable-prefix}button-color-lighter);
+        background-color: var(--#{$variable-prefix}fab-color-lighter);
+        border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
       &:active {
-        background-color: var(--#{$variable-prefix}button-color-darker);
-        border-color: var(--#{$variable-prefix}button-color-darker);
+        background-color: var(--#{$variable-prefix}fab-color-darker);
+        border-color: var(--#{$variable-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
@@ -97,13 +97,13 @@
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}button-color-lighter);
-        border-color: var(--#{$variable-prefix}button-color-lighter);
+        color: var(--#{$variable-prefix}fab-color-lighter);
+        border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}button-color-darker);
-        border-color: var(--#{$variable-prefix}button-color-darker);
+        color: var(--#{$variable-prefix}fab-color-darker);
+        border-color: var(--#{$variable-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
@@ -118,19 +118,19 @@
     }
 
     @include m(outline) {
-      color: var(--#{$variable-prefix}button-color);
+      color: var(--#{$variable-prefix}fab-color);
       background-color: transparent;
-      border: 1px solid var(--#{$variable-prefix}button-color);
+      border: 1px solid var(--#{$variable-prefix}fab-color);
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}button-color-lighter);
-        border-color: var(--#{$variable-prefix}button-color-lighter);
+        color: var(--#{$variable-prefix}fab-color-lighter);
+        border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}button-color-darker);
-        border-color: var(--#{$variable-prefix}button-color-darker);
+        color: var(--#{$variable-prefix}fab-color-darker);
+        border-color: var(--#{$variable-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
@@ -144,19 +144,19 @@
     }
 
     @include m(dashed) {
-      color: var(--#{$variable-prefix}button-color);
+      color: var(--#{$variable-prefix}fab-color);
       background-color: transparent;
-      border: 1px dashed var(--#{$variable-prefix}button-color);
+      border: 1px dashed var(--#{$variable-prefix}fab-color);
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}button-color-lighter);
-        border-color: var(--#{$variable-prefix}button-color-lighter);
+        color: var(--#{$variable-prefix}fab-color-lighter);
+        border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}button-color-darker);
-        border-color: var(--#{$variable-prefix}button-color-darker);
+        color: var(--#{$variable-prefix}fab-color-darker);
+        border-color: var(--#{$variable-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
@@ -176,13 +176,13 @@
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}button-color-lighter);
-        background-color: var(--#{$variable-prefix}button-text-hover-background);
+        color: var(--#{$variable-prefix}fab-color-lighter);
+        background-color: var(--#{$variable-prefix}fab-text-hover-background);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}button-color-darker);
-        background-color: var(--#{$variable-prefix}button-text-active-background);
+        color: var(--#{$variable-prefix}fab-color-darker);
+        background-color: var(--#{$variable-prefix}fab-text-active-background);
       }
 
       &#{$disabled-selector} {
@@ -197,17 +197,17 @@
     }
 
     @include m(link) {
-      color: var(--#{$variable-prefix}button-color);
+      color: var(--#{$variable-prefix}fab-color);
       background-color: transparent;
       border: none;
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}button-color-lighter);
+        color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}button-color-darker);
+        color: var(--#{$variable-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {

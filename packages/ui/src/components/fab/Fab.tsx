@@ -7,6 +7,7 @@ import { getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { DFabBacktop } from './FabBacktop';
 import { DFabButton } from './FabButton';
 
 export interface DFabProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -20,6 +21,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DFab' as con
 export const DFab: {
   (props: DFabProps): JSX.Element | null;
   Button: typeof DFabButton;
+  Backtop: typeof DFabBacktop;
 } = (props) => {
   const {
     children,
@@ -75,3 +77,4 @@ export const DFab: {
 };
 
 DFab.Button = DFabButton;
+DFab.Backtop = DFabBacktop;
