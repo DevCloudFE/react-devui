@@ -12,11 +12,15 @@ interface DVerticalSidePosition {
 export function getVerticalSidePosition(
   targetEl: HTMLElement,
   popupSize: { width: number; height: number },
-  placement: DVerticalSidePlacement,
-  offset = 10,
+  config: {
+    placement: DVerticalSidePlacement;
+    offset?: number;
+    inWindow?: boolean;
+  },
   prevPosition?: DVerticalSidePosition
 ): DVerticalSidePosition {
   const { width, height } = popupSize;
+  const { placement, offset = 8, inWindow = false } = config;
 
   const targetRect = targetEl.getBoundingClientRect();
 
@@ -79,7 +83,9 @@ export function getVerticalSidePosition(
     placement === 'top' || placement === 'top-left' || placement === 'top-right'
       ? targetRect.top - height - offset
       : targetRect.top + targetRect.height + offset;
-  top = Math.min(Math.max(top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
+  if (inWindow) {
+    top = Math.min(Math.max(top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
+  }
 
   let left =
     placement === 'top' || placement === 'bottom'
@@ -87,7 +93,9 @@ export function getVerticalSidePosition(
       : placement === 'top-left' || placement === 'bottom-left'
       ? targetRect.left
       : targetRect.left + targetRect.width - width;
-  left = Math.min(Math.max(left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
+  if (inWindow) {
+    left = Math.min(Math.max(left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
+  }
 
   const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
 
@@ -108,10 +116,12 @@ export function getVerticalSidePosition(
       return getVerticalSidePosition(
         targetEl,
         popupSize,
-        placement.includes('top')
-          ? (placement.replace('top', 'bottom') as DVerticalSidePlacement)
-          : (placement.replace('bottom', 'top') as DVerticalSidePlacement),
-        offset,
+        {
+          placement: placement.includes('top')
+            ? (placement.replace('top', 'bottom') as DVerticalSidePlacement)
+            : (placement.replace('bottom', 'top') as DVerticalSidePlacement),
+          offset,
+        },
         position
       );
     }

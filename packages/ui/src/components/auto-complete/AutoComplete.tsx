@@ -112,8 +112,10 @@ function AutoComplete<T extends DAutoCompleteItem>(
         const { top, left, transformOrigin } = getVerticalSidePosition(
           boxEl,
           { width: Math.max(width, minWidth), height },
-          'bottom-left',
-          8
+          {
+            placement: 'bottom-left',
+            inWindow: true,
+          }
         );
 
         setPopupPositionStyle({

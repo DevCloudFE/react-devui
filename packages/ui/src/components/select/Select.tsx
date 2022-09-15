@@ -446,7 +446,14 @@ function Select<V extends DId, T extends DSelectItem<V>>(
           dUpdatePosition={(boxEl, popupEl) => {
             const width = boxEl.getBoundingClientRect().width;
             const { height } = getOriginalSize(popupEl);
-            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom', 8);
+            const { top, left, transformOrigin } = getVerticalSidePosition(
+              boxEl,
+              { width, height },
+              {
+                placement: 'bottom',
+                inWindow: true,
+              }
+            );
 
             return {
               position: {

@@ -415,8 +415,10 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
             const { top, left, transformOrigin } = getVerticalSidePosition(
               boxEl,
               { width: Math.max(width, minWidth), height },
-              'bottom-left',
-              8
+              {
+                placement: 'bottom-left',
+                inWindow: true,
+              }
             );
 
             return {

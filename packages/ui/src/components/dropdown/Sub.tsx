@@ -71,7 +71,14 @@ export function DSub(props: DSubProps): JSX.Element | null {
   const updatePosition = () => {
     if (ulRef.current && liRef.current) {
       const { width, height } = getOriginalSize(ulRef.current);
-      const { top, left, transformOrigin } = getHorizontalSidePosition(liRef.current, { width, height }, 'right', 10);
+      const { top, left, transformOrigin } = getHorizontalSidePosition(
+        liRef.current,
+        { width, height },
+        {
+          placement: 'right',
+          inWindow: true,
+        }
+      );
       setPopupPositionStyle({
         top,
         left,

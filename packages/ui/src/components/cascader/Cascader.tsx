@@ -380,7 +380,14 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
             const { width, height } = getOriginalSize(popupEl);
-            const { top, left, transformOrigin } = getVerticalSidePosition(boxEl, { width, height }, 'bottom-left', 8);
+            const { top, left, transformOrigin } = getVerticalSidePosition(
+              boxEl,
+              { width, height },
+              {
+                placement: 'bottom-left',
+                inWindow: true,
+              }
+            );
 
             return {
               position: {

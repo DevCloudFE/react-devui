@@ -1,6 +1,7 @@
 import { isUndefined } from 'lodash';
 
 import { getOriginalSize } from '../getOriginalSize';
+import { POSITION_CONFIG } from './config';
 
 export type DPopupPlacement =
   | 'top'
@@ -19,25 +20,42 @@ export type DPopupPlacement =
 export function getPopupPosition(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
-  placement: DPopupPlacement,
-  offset: number
+  config: {
+    placement: DPopupPlacement;
+    offset?: number;
+    inWindow?: boolean;
+  }
 ): { top: number; left: number };
 export function getPopupPosition(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
-  placement: DPopupPlacement,
-  offset: number,
+  config: {
+    placement: DPopupPlacement;
+    offset?: number;
+    inWindow?: boolean;
+  },
   space: [number, number, number, number]
 ): { top: number; left: number; placement: DPopupPlacement } | undefined;
 export function getPopupPosition(
   popupEl: HTMLElement,
   targetEl: HTMLElement,
-  placement: DPopupPlacement,
-  offset = 10,
+  config: {
+    placement: DPopupPlacement;
+    offset?: number;
+    inWindow?: boolean;
+  },
   space?: [number, number, number, number]
 ): { top: number; left: number; placement?: DPopupPlacement } | undefined {
   const { width, height } = getOriginalSize(popupEl);
+  const { placement, offset = 10, inWindow = false } = config;
 
+  const updatePosition = (position: any) => {
+    if (inWindow) {
+      position.top = Math.min(Math.max(position.top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
+      position.left = Math.min(Math.max(position.left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
+    }
+    return position;
+  };
   const targetRect = targetEl.getBoundingClientRect();
 
   const getFixedPosition = (placement: DPopupPlacement) => {
@@ -191,17 +209,17 @@ export function getPopupPosition(
       ]);
     }
     return positionStyle
-      ? {
+      ? updatePosition({
           top: positionStyle.top,
           left: positionStyle.left,
           placement: positionStyle.placement,
-        }
+        })
       : undefined;
   } else {
     const positionStyle = getFixedPosition(placement);
-    return {
+    return updatePosition({
       top: positionStyle.top,
       left: positionStyle.left,
-    };
+    });
   }
 }

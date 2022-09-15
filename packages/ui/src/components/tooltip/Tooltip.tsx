@@ -27,6 +27,7 @@ export interface DTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   dArrow?: boolean;
   dDisabled?: boolean;
   dDistance?: number;
+  dInWindow?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dZIndex?: number | string;
@@ -48,6 +49,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     dArrow = true,
     dDisabled = false,
     dDistance = 10,
+    dInWindow = false,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
     dZIndex,
@@ -126,7 +128,16 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
           containerRect.left,
         ];
       }
-      const position = getPopupPosition(popupRef.current, triggerEl, dPlacement, dDistance, space);
+      const position = getPopupPosition(
+        popupRef.current,
+        triggerEl,
+        {
+          placement: dPlacement,
+          offset: dDistance,
+          inWindow: dInWindow,
+        },
+        space
+      );
       if (position) {
         currentPlacement = position.placement;
         setPlacement(position.placement);
@@ -135,7 +146,11 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
           left: position.left,
         });
       } else {
-        const position = getPopupPosition(popupRef.current, triggerEl, placement, dDistance);
+        const position = getPopupPosition(popupRef.current, triggerEl, {
+          placement,
+          offset: dDistance,
+          inWindow: dInWindow,
+        });
         setPopupPositionStyle({
           top: position.top,
           left: position.left,

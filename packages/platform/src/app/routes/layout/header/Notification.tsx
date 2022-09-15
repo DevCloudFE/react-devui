@@ -69,6 +69,7 @@ export function AppNotification(): JSX.Element | null {
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
+      dInWindow
       afterVisibleChange={(visible) => {
         if (visible && tabsRef.current) {
           tabsRef.current.updateIndicator();

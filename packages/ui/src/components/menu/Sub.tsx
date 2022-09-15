@@ -104,8 +104,24 @@ export function DSub(props: DSubProps): JSX.Element | null {
         }
 
         const { top, left, transformOrigin } = inHorizontalNav
-          ? getVerticalSidePosition(liRef.current, { width, height }, 'bottom', 12)
-          : getHorizontalSidePosition(liRef.current, { width, height }, 'right', dInNav ? 10 : 14);
+          ? getVerticalSidePosition(
+              liRef.current,
+              { width, height },
+              {
+                placement: 'bottom',
+                offset: 12,
+                inWindow: true,
+              }
+            )
+          : getHorizontalSidePosition(
+              liRef.current,
+              { width, height },
+              {
+                placement: 'right',
+                offset: dInNav ? 10 : 14,
+                inWindow: true,
+              }
+            );
         setPopupPositionStyle({
           top,
           left,

@@ -174,7 +174,14 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
     const triggerEl = document.getElementById(buttonId);
     if (triggerEl && dropdownRef.current) {
       const { width, height } = getOriginalSize(dropdownRef.current);
-      const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(triggerEl, { width, height }, dPlacement, 8);
+      const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(
+        triggerEl,
+        { width, height },
+        {
+          placement: dPlacement,
+          inWindow: true,
+        }
+      );
       setPopupPositionStyle({ top, left });
       setTransformOrigin(transformOrigin);
       setArrowPosition(arrowPosition);
