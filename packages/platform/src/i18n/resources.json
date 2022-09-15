@@ -20,7 +20,23 @@
           "Logout": "Logout"
         },
         "login": {
-          "Login": "Login"
+          "Login": "Login",
+          "description": "Elegant Design & Ultimate Performance",
+          "Account Login": "Account Login",
+          "Phone Login": "Phone Login",
+          "Username": "Username: 'admin'",
+          "Password": "Password: any input",
+          "Please enter your name": "Please enter your name!",
+          "Please enter your password": "Please enter your password!",
+          "Remember me": "Remember me",
+          "Forgot Password": "Forgot Password?",
+          "Phone number": "Phone number",
+          "Verification code": "Verification code",
+          "Get code": "Get code",
+          "Please enter your phone number": "Please enter your phone number!",
+          "Please enter verification code": "Please enter verification code!",
+          "Terms": "Terms",
+          "Privacy": "Privacy"
         }
       }
     },
@@ -58,7 +74,23 @@
           "Logout": "退出登录"
         },
         "login": {
-          "Login": "登 录"
+          "Login": "登 录",
+          "description": "优雅的设计 & 极致的性能",
+          "Account Login": "账号密码登录",
+          "Phone Login": "手机号登录",
+          "Username": "用户名：'admin'",
+          "Password": "密码：任意输入",
+          "Please enter your name": "请输入用户名！",
+          "Please enter your password": "请输入密码！",
+          "Remember me": "记住我",
+          "Forgot Password": "忘记密码？",
+          "Phone number": "手机号",
+          "Verification code": "验证码",
+          "Get code": "获取验证码",
+          "Please enter your phone number": "请输入手机号！",
+          "Please enter verification code": "请输入验证码！",
+          "Terms": "条款",
+          "Privacy": "隐私"
         }
       }
     },

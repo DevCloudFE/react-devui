@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @include b(home-route) {
   position: absolute;
   bottom: 0;
@@ -52,10 +54,8 @@
     justify-content: space-around;
     padding: 60px 20px;
     margin: 40px -20px -20px;
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    color: #fff;
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    background-color: #000;
+    color: map.get($colors, 'white');
+    background-color: map.get($colors, 'black');
     border-top: 1px solid var(--d-color-border);
 
     a {

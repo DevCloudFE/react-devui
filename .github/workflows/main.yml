@@ -53,3 +53,24 @@ jobs:
           project: './dist/packages/site'
           login: ${{ secrets.SURGE_LOGIN }}
           token: ${{ secrets.SURGE_TOKEN }}
+  build-platform:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.13'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - run: yarn nx build platform --configuration=production --skip-nx-cache
+      - run: cp ./dist/packages/platform/index.html ./dist/packages/platform/200.html
+      - uses: dswistowski/surge-sh-action@v1
+        with:
+          domain: 'rd-platform.surge.sh'
+          project: './dist/packages/platform'
+          login: ${{ secrets.SURGE_LOGIN }}
+          token: ${{ secrets.SURGE_TOKEN }}

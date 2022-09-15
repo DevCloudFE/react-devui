@@ -26,11 +26,11 @@ export function DError(props: DErrorProps): JSX.Element | null {
       dStyles={{
         enter: { opacity: 0 },
         entering: {
-          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms ease-out`).join(', '),
+          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms linear`).join(', '),
         },
         leaving: {
           opacity: 0,
-          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms ease-in`).join(', '),
+          transition: ['height', 'padding', 'margin', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_FAST}ms linear`).join(', '),
         },
         leaved: { display: 'none' },
       }}

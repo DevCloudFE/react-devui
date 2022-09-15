@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 *,
 *::before,
 *::after {
@@ -10,11 +12,24 @@ body {
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
   color: var(--d-text-color);
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
-  background-color: #fff;
+  background-color: map.get($colors, 'white');
   text-size-adjust: 100%;
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
-  -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
 
   @include font-size(1rem);
+}
+
+.app-link {
+  font: inherit;
+  color: var(--#{$variable-prefix}color-primary);
+  text-decoration: none;
+  transition: color var(--#{$variable-prefix}animation-duration-fast) linear;
+
+  &:hover,
+  &:focus {
+    color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  &:active {
+    color: var(--#{$variable-prefix}color-primary-darker);
+  }
 }

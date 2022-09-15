@@ -48,7 +48,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' 
 export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFormItemProps<T>): JSX.Element | null {
   const {
     children,
-    dFormControls = {} as { [index: string]: DErrorInfo },
+    dFormControls,
     dLabel,
     dLabelWidth,
     dLabelExtra,
@@ -79,7 +79,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   const formControls = (() => {
     const obj = {} as { [N in keyof T]: DFormControl };
-    Object.keys(dFormControls).forEach((formControlName: keyof T) => {
+    Object.keys(dFormControls ?? {}).forEach((formControlName: keyof T) => {
       const formControl = formGroup.get(formControlName as string);
       if (isNull(formControl)) {
         throw new Error(`Cant find '${formControlName as string}', please check if name exists!`);
@@ -124,7 +124,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     const errors: DErrors = [];
     let formItemStatus: DValidateStatus | undefined;
 
-    Object.entries(dFormControls).forEach(([formControlName, errorInfo]) => {
+    Object.entries(dFormControls ?? {}).forEach(([formControlName, errorInfo]) => {
       const { control } = formControls[formControlName];
       if (control.enabled && control.dirty) {
         let status: DValidateStatus = 'success';
@@ -332,9 +332,11 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
           </div>
         )}
       </div>
-      <div className={`${dPrefix}form__error-container`} style={{ width: contentWidth }}>
-        {errorNodes}
-      </div>
+      {!isUndefined(dFormControls) && (
+        <div className={`${dPrefix}form__error-container`} style={{ width: contentWidth }}>
+          {errorNodes}
+        </div>
+      )}
     </div>
   );
 }

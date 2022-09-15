@@ -1,0 +1,82 @@
+@use 'sass:map';
+
+@include b(login-route) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10vh 20px 20px;
+
+  @include e(bg) {
+    width: 400px;
+    height: 400px;
+    margin-right: 100px;
+  }
+
+  @include e(login-container) {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  @include e(title-container) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include font-size(2rem);
+  }
+
+  @include e(logo) {
+    width: calc(1em * 1.5);
+    height: calc(1em * 1.5);
+    margin-right: 16px;
+  }
+
+  @include e(description) {
+    margin: 10px 0 0;
+    color: rgb(var(--d-text-color-rgb) / 80%);
+    text-align: center;
+  }
+
+  @include e(tabs) {
+    max-width: 400px;
+    margin-top: 20px;
+  }
+
+  @include e(lang) {
+    @include utils-button(true);
+
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    background-color: transparent;
+    border: none;
+  }
+
+  @include e(footer) {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 60px;
+    color: var(--d-text-color-sub);
+    border-top: 1px solid var(--d-color-border);
+
+    & > div {
+      margin-top: 12px;
+    }
+
+    @include m(phone) {
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: unset;
+    }
+  }
+
+  @include e(link-container) {
+    display: flex;
+    gap: 0 12px;
+  }
+}
