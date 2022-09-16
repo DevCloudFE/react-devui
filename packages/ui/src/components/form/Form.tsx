@@ -1,20 +1,18 @@
 import type { DSize } from '../../utils/types';
 import type { DBreakpoints } from '../grid';
-import type { DFormInstance } from './hooks';
 
 import { isUndefined } from 'lodash';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useComponentConfig, useMediaQuery } from '../../hooks';
 import { registerComponentMate } from '../../utils';
-import { DFormGroup, DFormGroupContext } from './FormGroup';
+import { DFormGroup } from './FormGroup';
 import { DFormItem } from './FormItem';
+import { DFormUpdateContext } from './hooks';
 
 export interface DFormContextData {
-  gInstance: DFormInstance;
-  gBreakpointsMatched: DBreakpoints[];
   gLabelWidth: NonNullable<DFormProps['dLabelWidth']>;
   gLabelColon: NonNullable<DFormProps['dLabelColon']>;
   gRequiredType: NonNullable<DFormProps['dRequiredType']>;
@@ -22,11 +20,12 @@ export interface DFormContextData {
   gInlineSpan: NonNullable<DFormProps['dInlineSpan']>;
   gFeedbackIcon: NonNullable<DFormProps['dFeedbackIcon']>;
   gSize?: DSize;
+  gBreakpointsMatched: DBreakpoints[];
 }
 export const DFormContext = React.createContext<DFormContextData | null>(null);
 
 export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
-  dForm: DFormInstance;
+  dUpdate: () => void;
   dLabelWidth?: number | string;
   dLabelColon?: boolean;
   dRequiredType?: 'required' | 'optional' | 'hidden';
@@ -52,7 +51,7 @@ export const DForm: {
 } = (props) => {
   const {
     children,
-    dForm,
+    dUpdate,
     dLabelWidth,
     dLabelColon,
     dRequiredType = 'required',
@@ -71,10 +70,8 @@ export const DForm: {
 
   const breakpointsMatched = useMediaQuery();
 
-  const contextValue = useMemo<DFormContextData>(() => {
-    const contextValue = {
-      gInstance: dForm,
-      gBreakpointsMatched: breakpointsMatched,
+  const contextValue = (() => {
+    const contextValue: DFormContextData = {
       gLabelWidth: dLabelWidth ?? 150,
       gLabelColon: dLabelColon ?? true,
       gRequiredType: dRequiredType,
@@ -82,6 +79,7 @@ export const DForm: {
       gInlineSpan: dInlineSpan,
       gFeedbackIcon: dFeedbackIcon,
       gSize: dSize,
+      gBreakpointsMatched: breakpointsMatched,
     };
     if (dResponsiveProps) {
       const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
@@ -103,11 +101,11 @@ export const DForm: {
     contextValue.gLabelColon = dLabelColon ?? (contextValue.gLayout === 'vertical' ? false : true);
 
     return contextValue;
-  }, [dForm, breakpointsMatched, dLabelWidth, dLabelColon, dRequiredType, dLayout, dInlineSpan, dFeedbackIcon, dSize, dResponsiveProps]);
+  })();
 
   return (
     <DFormContext.Provider value={contextValue}>
-      <DFormGroupContext.Provider value={dForm.form}>
+      <DFormUpdateContext.Provider value={dUpdate}>
         <form
           {...restProps}
           className={getClassName(restProps.className, `${dPrefix}form`, {
@@ -124,7 +122,7 @@ export const DForm: {
         >
           {children}
         </form>
-      </DFormGroupContext.Provider>
+      </DFormUpdateContext.Provider>
     </DFormContext.Provider>
   );
 };

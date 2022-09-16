@@ -34,7 +34,7 @@ export default function Login(): JSX.Element | null {
     }
   }, [async, codeDisabled]);
 
-  const accountForm = useForm(
+  const [accountForm, updateAccountForm] = useForm(
     () =>
       new FormGroup({
         username: new FormControl('', [
@@ -46,7 +46,7 @@ export default function Login(): JSX.Element | null {
         password: new FormControl('', Validators.required),
       })
   );
-  const phoneForm = useForm(
+  const [phoneForm, updatePhoneForm] = useForm(
     () =>
       new FormGroup({
         phone: new FormControl('', [Validators.required]),
@@ -67,7 +67,7 @@ export default function Login(): JSX.Element | null {
       <DForm.Item>
         <DButton
           type="submit"
-          disabled={loginType === 'account' ? accountForm.form.invalid : phoneForm.form.invalid}
+          disabled={loginType === 'account' ? !accountForm.valid : !phoneForm.valid}
           onClick={() => {
             const [http] = createHttp();
             setLoginLoading(true);
@@ -110,30 +110,32 @@ export default function Login(): JSX.Element | null {
                 id: 'account',
                 title: t('routes.login.Account Login'),
                 panel: (
-                  <DForm dForm={accountForm} dLabelWidth={0}>
-                    <DForm.Item
-                      dFormControls={{
-                        username: {
-                          required: t('routes.login.Please enter your name'),
-                          checkValue: t('routes.login.Username'),
-                        },
-                      }}
-                    >
-                      {({ username }) => (
-                        <DInput dFormControl={username} dPrefix={<UserOutlined />} dPlaceholder={t('routes.login.Username')} />
-                      )}
-                    </DForm.Item>
-                    <DForm.Item dFormControls={{ password: t('routes.login.Please enter your password') }}>
-                      {({ password }) => (
-                        <DInput
-                          dFormControl={password}
-                          dPrefix={<LockOutlined />}
-                          dPlaceholder={t('routes.login.Password')}
-                          dType="password"
-                        />
-                      )}
-                    </DForm.Item>
-                    {loginSameNode}
+                  <DForm dUpdate={updateAccountForm} dLabelWidth={0}>
+                    <DForm.Group dFormGroup={accountForm}>
+                      <DForm.Item
+                        dFormControls={{
+                          username: {
+                            required: t('routes.login.Please enter your name'),
+                            checkValue: t('routes.login.Username'),
+                          },
+                        }}
+                      >
+                        {({ username }) => (
+                          <DInput dFormControl={username} dPrefix={<UserOutlined />} dPlaceholder={t('routes.login.Username')} />
+                        )}
+                      </DForm.Item>
+                      <DForm.Item dFormControls={{ password: t('routes.login.Please enter your password') }}>
+                        {({ password }) => (
+                          <DInput
+                            dFormControl={password}
+                            dPrefix={<LockOutlined />}
+                            dPlaceholder={t('routes.login.Password')}
+                            dType="password"
+                          />
+                        )}
+                      </DForm.Item>
+                      {loginSameNode}
+                    </DForm.Group>
                   </DForm>
                 ),
               },
@@ -141,26 +143,28 @@ export default function Login(): JSX.Element | null {
                 id: 'phone',
                 title: t('routes.login.Phone Login'),
                 panel: (
-                  <DForm dForm={phoneForm} dLabelWidth={0}>
-                    <DForm.Item dFormControls={{ phone: t('routes.login.Please enter your phone number') }}>
-                      {({ phone }) => (
-                        <DInput dFormControl={phone} dPrefix={<MobileOutlined />} dPlaceholder={t('routes.login.Phone number')} />
-                      )}
-                    </DForm.Item>
-                    <DForm.Item dFormControls={{ code: t('routes.login.Please enter verification code') }} dSpan>
-                      {({ code }) => <DInput dFormControl={code} dPlaceholder={t('routes.login.Verification code')} />}
-                    </DForm.Item>
-                    <DForm.Item dLabelWidth={8} dSpan="auto">
-                      <DButton
-                        disabled={codeDisabled > 0 || phoneForm.form.controls['phone'].invalid}
-                        onClick={() => {
-                          setCodeDisabled(60);
-                        }}
-                      >
-                        {codeDisabled > 0 ? `${codeDisabled}s` : t('routes.login.Get code')}
-                      </DButton>
-                    </DForm.Item>
-                    {loginSameNode}
+                  <DForm dUpdate={updatePhoneForm} dLabelWidth={0}>
+                    <DForm.Group dFormGroup={phoneForm}>
+                      <DForm.Item dFormControls={{ phone: t('routes.login.Please enter your phone number') }}>
+                        {({ phone }) => (
+                          <DInput dFormControl={phone} dPrefix={<MobileOutlined />} dPlaceholder={t('routes.login.Phone number')} />
+                        )}
+                      </DForm.Item>
+                      <DForm.Item dFormControls={{ code: t('routes.login.Please enter verification code') }} dSpan>
+                        {({ code }) => <DInput dFormControl={code} dPlaceholder={t('routes.login.Verification code')} />}
+                      </DForm.Item>
+                      <DForm.Item dLabelWidth={8} dSpan="auto">
+                        <DButton
+                          disabled={codeDisabled > 0 || !phoneForm.controls['phone'].valid}
+                          onClick={() => {
+                            setCodeDisabled(60);
+                          }}
+                        >
+                          {codeDisabled > 0 ? `${codeDisabled}s` : t('routes.login.Get code')}
+                        </DButton>
+                      </DForm.Item>
+                      {loginSameNode}
+                    </DForm.Group>
                   </DForm>
                 ),
               },

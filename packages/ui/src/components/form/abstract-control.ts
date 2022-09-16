@@ -185,6 +185,10 @@ export abstract class AbstractControl {
 
   public readonly asyncVerifyComplete$ = new Subject<AbstractControl>();
 
+  clone(): typeof this {
+    return new Proxy(this, {});
+  }
+
   setValidators(validators: ValidatorFn | ValidatorFn[] | null): void {
     this._rawValidators = validators;
     this._composedValidatorFn = coerceToValidator(validators);
@@ -329,16 +333,6 @@ export abstract class AbstractControl {
   protected abstract _anyControls(condition: (c: AbstractControl) => boolean): boolean;
 
   protected abstract _allControlsDisabled(): boolean;
-
-  protected _isBoxedValue(formState: any): boolean {
-    return (
-      typeof formState === 'object' &&
-      formState !== null &&
-      Object.keys(formState).length === 2 &&
-      'value' in formState &&
-      'disabled' in formState
-    );
-  }
 
   protected _anyControlsHaveStatus(status: FormControlStatus): boolean {
     return this._anyControls((control) => control.status === status);

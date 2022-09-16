@@ -2,37 +2,38 @@
 import type { FormControlStatus } from './abstract-control';
 import type { AsyncValidatorFn, ValidatorFn } from './validators';
 
-import { isArray, isString } from 'lodash';
-
 import { AbstractControl, VALID } from './abstract-control';
 
-export class FormControl extends AbstractControl {
-  protected _value: any;
+export interface FormControlState<V> {
+  value: V;
+  disabled?: boolean;
+}
+
+export class FormControl<V> extends AbstractControl {
+  public readonly defaultState: FormControlState<V> | V;
+
+  protected _value!: V;
   protected _status: FormControlStatus = VALID;
 
   constructor(
-    formState: any = null,
+    formState: FormControlState<V> | V,
     validators?: ValidatorFn | ValidatorFn[] | null,
     asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null
   ) {
     super(validators ?? null, asyncValidator ?? null);
+    this.defaultState = formState;
     this._applyFormState(formState);
     this.updateValueAndValidity(true);
   }
 
-  override setValue(value: any, onlySelf?: boolean): void {
+  override setValue(value: V, onlySelf?: boolean): void {
     this._value = value;
     this.updateValueAndValidity(onlySelf);
   }
-  override patchValue(value: any, onlySelf?: boolean): void {
+  override patchValue(value: V, onlySelf?: boolean): void {
     this.setValue(value, onlySelf);
   }
-  override reset(formState: any = null, onlySelf?: boolean): void {
-    if (isString(this.value)) {
-      formState = '';
-    } else if (isArray(this.value)) {
-      formState = [];
-    }
+  override reset(formState = this.defaultState, onlySelf?: boolean): void {
     this._applyFormState(formState);
     this.markAsPristine(onlySelf);
     this.setValue(this.value, onlySelf);
@@ -50,8 +51,18 @@ export class FormControl extends AbstractControl {
     return this.disabled;
   }
 
-  private _applyFormState(formState: any) {
-    if (this._isBoxedValue(formState)) {
+  protected _isFormStateObject(formState: FormControlState<V> | V): formState is FormControlState<V> {
+    return (
+      typeof formState === 'object' &&
+      formState !== null &&
+      Object.keys(formState).length === 2 &&
+      'value' in formState &&
+      'disabled' in formState
+    );
+  }
+
+  private _applyFormState(formState: FormControlState<V> | V) {
+    if (this._isFormStateObject(formState)) {
       this._value = formState.value;
       formState.disabled ? this.disable(true) : this.enable(true);
     } else {

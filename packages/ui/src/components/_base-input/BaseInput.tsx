@@ -4,7 +4,7 @@ import { isString } from 'lodash';
 import React, { useContext, useId } from 'react';
 
 import { usePrefixConfig } from '../../hooks';
-import { DFormContext } from '../form';
+import { DFormUpdateContext } from '../form';
 
 export interface DBaseInputProps extends React.InputHTMLAttributes<any> {
   dFormControl?: DFormControl;
@@ -23,13 +23,13 @@ function BaseInput(props: DBaseInputProps, ref: React.ForwardedRef<any>): JSX.El
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const formContext = useContext(DFormContext);
+  const updateForm = useContext(DFormUpdateContext);
   //#endregion
 
   const uniqueId = useId();
   const id = restProps.id ?? `${dPrefix}base-input-${uniqueId}`;
 
-  const supportForm = formContext && dFormControl;
+  const supportForm = updateForm && dFormControl;
 
   const attrs = supportForm
     ? {

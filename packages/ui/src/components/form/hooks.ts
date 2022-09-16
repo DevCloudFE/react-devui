@@ -1,47 +1,31 @@
 import type { DFormControl } from './FormItem';
 import type { FormGroup } from './form-group';
 
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { isUndefined } from 'lodash';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { DFormContext } from './Form';
+import { useEventCallback, useForceUpdate } from '@react-devui/hooks';
 
-export interface DFormInstance {
-  form: FormGroup;
-  initForm: () => void;
-  updateForm: () => void;
-}
+export const DFormUpdateContext = React.createContext<(() => void) | null>(null);
 
-export function useForm(initData: () => FormGroup): DFormInstance {
-  const [form, setForm] = useState(() => initData());
-  const [formChange, setFormChange] = useState(0);
+export function useForm(cb: () => FormGroup) {
+  const [initValue] = useState(() => cb());
+  const form = useRef(initValue);
 
-  const updateForm = () => {
-    setFormChange((n) => n + 1);
-  };
+  const forceUpdate = useForceUpdate();
 
-  const initForm = () => {
-    const data = initData();
-    setForm(data);
-    updateForm();
-  };
+  const updateForm = useEventCallback((val?: FormGroup) => {
+    form.current = isUndefined(val) ? form.current.clone() : val;
+    forceUpdate();
+  });
 
-  const formInstance = useMemo(
-    () => ({
-      form,
-      initForm,
-      updateForm,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formChange]
-  );
-
-  return formInstance;
+  return [form.current, updateForm] as const;
 }
 
 export type DFormControlInject = [any, (val: any) => void] | undefined;
 
 export function useFormControl(formControl?: DFormControl): DFormControlInject {
-  const { gInstance: formInstance } = useContext(DFormContext) ?? {};
+  const updateForm = useContext(DFormUpdateContext);
 
   const control = formControl?.control;
 
@@ -50,7 +34,7 @@ export function useFormControl(formControl?: DFormControl): DFormControlInject {
       const ob = control.asyncVerifyComplete$.subscribe({
         next: (val) => {
           if (val.dirty) {
-            formInstance?.updateForm();
+            updateForm?.();
           }
         },
       });
@@ -59,7 +43,7 @@ export function useFormControl(formControl?: DFormControl): DFormControlInject {
         ob.unsubscribe();
       };
     }
-  }, [control, formInstance]);
+  }, [control, updateForm]);
 
   return control
     ? [
@@ -68,7 +52,7 @@ export function useFormControl(formControl?: DFormControl): DFormControlInject {
           if (control) {
             control.markAsDirty(true);
             control.setValue(val);
-            formInstance?.updateForm();
+            updateForm?.();
           }
         },
       ]

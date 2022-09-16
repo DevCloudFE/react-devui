@@ -62,7 +62,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   //#region Context
   const dPrefix = usePrefixConfig();
   const { dColNum } = useGridConfig();
-  const { gBreakpointsMatched, gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } =
+  const { gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon, gBreakpointsMatched } =
     useContextRequired(DFormContext);
   const formGroup = useContext(DFormGroupContext)!;
   //#endregion
@@ -71,6 +71,10 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   const labelRef = useRef<HTMLLabelElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   //#endregion
+
+  if (!formGroup) {
+    throw new Error('jnnnnnnnn');
+  }
 
   const [t] = useTranslation();
 

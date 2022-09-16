@@ -3,7 +3,7 @@ import type { DFormControl } from '../form';
 import React, { useContext } from 'react';
 
 import { DComposeContext } from '../compose';
-import { DFormContext } from '../form';
+import { DFormUpdateContext } from '../form';
 
 export interface DBaseDesignProps {
   children: React.ReactElement;
@@ -18,10 +18,10 @@ export function DBaseDesign(props: DBaseDesignProps): JSX.Element | null {
   const { children, dCompose, dFormControl } = props;
 
   const composeContext = useContext(DComposeContext);
-  const formContext = useContext(DFormContext);
+  const updateForm = useContext(DFormUpdateContext);
 
   const supportCompose = composeContext && dCompose;
-  const supportForm = formContext && dFormControl;
+  const supportForm = updateForm && dFormControl;
 
   let dataAttrs: { [index: string]: boolean } = {};
 
