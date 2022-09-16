@@ -29,7 +29,7 @@
   }
 
   @include e(icon) {
-    color: var(--#{$variable-prefix}color-divider);
+    color: var(--#{$variable-prefix}rating-background-color);
     transition: color var(--#{$variable-prefix}animation-duration-fast) linear;
 
     @include when(checked) {

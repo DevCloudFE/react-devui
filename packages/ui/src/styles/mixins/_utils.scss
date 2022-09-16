@@ -26,16 +26,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-@mixin utils-loading($border: '0') {
-  pointer-events: none;
-
-  &::after {
-    position: absolute;
-    inset: -#{$border};
-    content: '';
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    background-color: rgb(255 255 255 / 30%);
-    border-radius: inherit;
-  }
-}

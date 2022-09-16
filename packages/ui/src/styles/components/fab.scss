@@ -44,6 +44,10 @@
       pointer-events: none;
     }
 
+    @include when(loading) {
+      pointer-events: none;
+    }
+
     @include when(expand) {
       @include e(close-icon) {
         opacity: 1;
@@ -71,7 +75,8 @@
       border: 1px solid var(--#{$variable-prefix}fab-color);
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         background-color: var(--#{$variable-prefix}fab-color-lighter);
         border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
@@ -84,10 +89,6 @@
       &#{$disabled-selector} {
         filter: saturate(50%) grayscale(50%);
       }
-
-      @include when(loading) {
-        @include utils-loading('1px');
-      }
     }
 
     @include m(secondary) {
@@ -96,7 +97,8 @@
       border: 1px solid var(--#{$variable-prefix}color-border);
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         color: var(--#{$variable-prefix}fab-color-lighter);
         border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
@@ -111,10 +113,6 @@
         pointer-events: none;
         background-color: var(--#{$variable-prefix}background-color-disabled);
       }
-
-      @include when(loading) {
-        @include utils-loading('1px');
-      }
     }
 
     @include m(outline) {
@@ -123,7 +121,8 @@
       border: 1px solid var(--#{$variable-prefix}fab-color);
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         color: var(--#{$variable-prefix}fab-color-lighter);
         border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
@@ -136,10 +135,6 @@
       &#{$disabled-selector} {
         color: var(--#{$variable-prefix}color-disabled);
         border-color: var(--#{$variable-prefix}color-border);
-      }
-
-      @include when(loading) {
-        @include utils-loading('1px');
       }
     }
 
@@ -149,7 +144,8 @@
       border: 1px dashed var(--#{$variable-prefix}fab-color);
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         color: var(--#{$variable-prefix}fab-color-lighter);
         border-color: var(--#{$variable-prefix}fab-color-lighter);
       }
@@ -163,10 +159,6 @@
         color: var(--#{$variable-prefix}color-disabled);
         border-color: var(--#{$variable-prefix}color-border);
       }
-
-      @include when(loading) {
-        @include utils-loading('1px');
-      }
     }
 
     @include m(text) {
@@ -175,7 +167,8 @@
       border: none;
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         color: var(--#{$variable-prefix}fab-color-lighter);
         background-color: var(--#{$variable-prefix}fab-text-hover-background);
       }
@@ -190,10 +183,6 @@
         pointer-events: none;
         background-color: var(--#{$variable-prefix}background-color-disabled);
       }
-
-      @include when(loading) {
-        @include utils-loading;
-      }
     }
 
     @include m(link) {
@@ -202,7 +191,8 @@
       border: none;
 
       &:hover,
-      &:focus {
+      &:focus,
+      &.is-loading {
         color: var(--#{$variable-prefix}fab-color-lighter);
       }
 
@@ -212,10 +202,6 @@
 
       &#{$disabled-selector} {
         color: var(--#{$variable-prefix}color-disabled);
-      }
-
-      @include when(loading) {
-        @include utils-loading;
       }
     }
 

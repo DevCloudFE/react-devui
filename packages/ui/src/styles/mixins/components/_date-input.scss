@@ -70,11 +70,11 @@
     border: none;
 
     &::placeholder {
-      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 40%);
+      color: $placeholder-color;
     }
 
     &:disabled::placeholder {
-      color: rgb(var(--#{$variable-prefix}text-color-rgb) / 10%);
+      color: $placeholder-disabled-color;
     }
   }
 

@@ -59,7 +59,7 @@
   }
 
   @include e(demo-box) {
-    background-color: var(--app-demo-box-background-color);
+    background-color: var(--d-background-color);
     border: 1px solid var(--d-color-divider);
 
     & + & {
@@ -88,7 +88,7 @@
     display: flex;
     align-items: center;
     padding: 1px 8px;
-    background-color: var(--app-demo-box-background-color);
+    background-color: var(--d-background-color);
   }
 
   @include e(demo-box-description) {

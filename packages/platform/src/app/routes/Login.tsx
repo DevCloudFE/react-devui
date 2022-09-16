@@ -2,7 +2,6 @@ import type { UserState } from '../../config/state';
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { useAsync } from '@react-devui/hooks';
 import { LockOutlined, MobileOutlined, UserOutlined } from '@react-devui/icons';
@@ -11,15 +10,13 @@ import { getClassName } from '@react-devui/utils';
 
 import { TOKEN } from '../../config/token';
 import { AppLanguage } from '../components';
-import { useDeviceQuery, useHttp, useInit, usePrevRoute } from '../hooks';
+import { useDeviceQuery, useHttp, useInit } from '../hooks';
 
 export default function Login(): JSX.Element | null {
   const { t } = useTranslation();
   const createHttp = useHttp();
   const [loginloading, setLoginLoading] = useState(false);
   const init = useInit();
-  const navigate = useNavigate();
-  const from = usePrevRoute();
   const async = useAsync();
   const deviceMatched = useDeviceQuery();
 
@@ -37,7 +34,7 @@ export default function Login(): JSX.Element | null {
   const [accountForm, updateAccountForm] = useForm(
     () =>
       new FormGroup({
-        username: new FormControl('', [
+        username: new FormControl('admin', [
           Validators.required,
           (control) => {
             return !control.value || control.value === 'admin' ? null : { checkValue: true };
@@ -79,7 +76,6 @@ export default function Login(): JSX.Element | null {
                 setLoginLoading(false);
                 TOKEN.token = res.token;
                 init(res.user);
-                navigate(from, { replace: true });
               },
             });
           }}

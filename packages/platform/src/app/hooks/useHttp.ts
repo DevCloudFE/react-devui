@@ -9,9 +9,9 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { useUnmount } from '@react-devui/hooks';
 
-import { TOKEN } from '../../../config/token';
-import { environment } from '../../../environments';
-import './mock';
+import '../../config/mock';
+import { TOKEN } from '../../config/token';
+import { environment } from '../../environments';
 
 export function useHttp() {
   const abortFns = useRef(new Set<() => void>());

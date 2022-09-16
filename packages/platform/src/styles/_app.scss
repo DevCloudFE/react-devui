@@ -12,7 +12,8 @@ body {
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
   color: var(--d-text-color);
-  background-color: map.get($colors, 'white');
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  background-color: #f0f2f5;
   text-size-adjust: 100%;
 
   @include font-size(1rem);

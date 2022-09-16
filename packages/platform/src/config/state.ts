@@ -1,4 +1,3 @@
-import type { Control, ControlMode } from '../app/hooks/useACL';
 import type { DMenuItem } from '@react-devui/ui/components/menu';
 
 import { createGlobalState } from '@react-devui/hooks';
@@ -21,15 +20,8 @@ export interface NotificationItem {
 }
 export const useNotificationState = createGlobalState<NotificationItem[]>();
 
-export interface MenuItem extends Omit<DMenuItem<string>, 'icon' | 'children'> {
-  icon?: React.FunctionComponent;
-  acl?:
-    | {
-        control: Control | Control[];
-        mode?: ControlMode;
-      }
-    | Control
-    | Control[];
-  children?: MenuItem[];
+export interface MenuState {
+  menu: DMenuItem<string>[];
+  expands: string[];
 }
-export const useMenuState = createGlobalState<MenuItem[]>();
+export const useMenuState = createGlobalState<MenuState>({ menu: [], expands: [] });

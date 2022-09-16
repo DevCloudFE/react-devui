@@ -128,12 +128,6 @@ $menu-item-height: 40px;
         padding-right: 32px;
       }
 
-      &:hover {
-        @include e(sub-arrow) {
-          color: inherit;
-        }
-      }
-
       &.#{$variable-prefix}menu__item--horizontal {
         @include when(expand) {
           &::after {
@@ -149,24 +143,8 @@ $menu-item-height: 40px;
         }
       }
 
-      @include when(active) {
-        @include e(sub-arrow) {
-          color: inherit;
-        }
-      }
-
       @include when(expand) {
         color: var(--#{$variable-prefix}color-primary);
-
-        @include e(sub-arrow) {
-          color: inherit;
-        }
-      }
-
-      @include when(disabled) {
-        @include e(sub-arrow) {
-          color: inherit;
-        }
       }
     }
   }
@@ -241,13 +219,50 @@ $menu-item-height: 40px;
 
   @include e(sub-arrow) {
     position: absolute;
-    right: 12px;
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
-    color: var(--#{$variable-prefix}color-icon-decorator);
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
-      transform var(--#{$variable-prefix}animation-duration-base) linear;
+    right: 21px;
+    width: 13px;
+    height: 3px;
+    pointer-events: none;
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    transform: rotate(90deg) scale(0.5);
+    transform-origin: 12px center;
+
+    @include when(expand) {
+      transform: translateY(-3px) rotate(90deg) scale(0.5);
+
+      div:nth-child(1) {
+        transform: rotate(130deg);
+      }
+
+      div:nth-child(2) {
+        transform: rotate(-130deg);
+      }
+    }
+
+    @include m(horizontal) {
+      right: 18px;
+      transform: rotate(0deg) scale(0.5);
+    }
+
+    div {
+      position: absolute;
+      width: 13px;
+      height: 3px;
+      background-color: currentcolor;
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      border-radius: 3px;
+      transition: color var(--#{$variable-prefix}animation-duration-base) linear,
+        transform var(--#{$variable-prefix}animation-duration-base) linear;
+      transform-origin: 12px center;
+    }
+
+    div:nth-child(1) {
+      transform: rotate(50deg);
+    }
+
+    div:nth-child(2) {
+      transform: rotate(-50deg);
+    }
   }
 
   @include e(sub-list) {
@@ -274,7 +289,7 @@ $menu-item-height: 40px;
       }
 
       @include e(sub-arrow) {
-        right: 6px;
+        right: 12px;
       }
 
       @include e(group-title) {

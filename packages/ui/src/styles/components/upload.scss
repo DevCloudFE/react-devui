@@ -41,7 +41,7 @@
   }
 
   @include e(list) {
-    --#{$variable-prefix}upload-action-color: var(--#{$variable-prefix}color-icon-decorator);
+    --#{$variable-prefix}upload-action-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 50%);
     --#{$variable-prefix}upload-action-color-lighter: var(--#{$variable-prefix}text-color);
     --#{$variable-prefix}upload-action-background-color-hover: var(--#{$variable-prefix}background-color-hover);
 
@@ -238,7 +238,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}background-color-action);
+    background-color: var(--#{$variable-prefix}background-color-actions-mask);
     opacity: 0;
     transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
   }

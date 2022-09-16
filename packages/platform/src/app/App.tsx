@@ -14,6 +14,8 @@ import { STORAGE_KEY } from '../config/storage';
 import { AppRoutes } from './Routes';
 import { useHttp, useInit } from './hooks';
 
+export type AppTheme = 'light' | 'dark';
+
 export function App() {
   const { i18n } = useTranslation();
   const createHttp = useHttp();
@@ -22,6 +24,7 @@ export function App() {
   const async = useAsync();
   const [language] = useLocalStorage<DLang>(...STORAGE_KEY.language);
   const [loading, setLoading] = useState(true);
+  const [theme] = useLocalStorage<AppTheme>(...STORAGE_KEY.theme);
 
   useMount(() => {
     i18n.changeLanguage(language);
@@ -55,6 +58,17 @@ export function App() {
       }, 500);
     }
   }, [async, loading]);
+
+  useEffect(() => {
+    for (const t of ['light', 'dark']) {
+      document.body.classList.toggle(t, theme === t);
+    }
+    const colorScheme = document.documentElement.style.colorScheme;
+    document.documentElement.style.colorScheme = theme;
+    return () => {
+      document.documentElement.style.colorScheme = colorScheme;
+    };
+  }, [theme]);
 
   const rootContext = useMemo<DConfigContextData>(
     () => ({

@@ -35,7 +35,7 @@ $table-filter-option-height: 32px;
 
   thead {
     th {
-      border-bottom: 1px solid var(--#{$variable-prefix}table-th-border-color);
+      border-bottom: 1px solid var(--#{$variable-prefix}color-border);
 
       &:not(:last-child)::after {
         position: absolute;
@@ -44,7 +44,7 @@ $table-filter-option-height: 32px;
         width: 1px;
         height: 1.6em;
         content: '';
-        background-color: var(--#{$variable-prefix}table-th-border-color);
+        background-color: var(--#{$variable-prefix}color-border);
         transform: translateY(-50%);
       }
     }

@@ -16,7 +16,10 @@ $colors: (
   'black': #000,
 ) !default;
 
-$popover-space: 10px;
+$popover-space: 10px !default;
+
+$placeholder-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 24%);
+$placeholder-disabled-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 8%);
 
 :root {
   /** z-index **/
@@ -56,23 +59,23 @@ $popover-space: 10px;
   --#{$variable-prefix}shadow-darker: 26%;
 
   /** basic **/
-  --#{$variable-prefix}text-color: rgb(33 37 41);
-  --#{$variable-prefix}text-color-rgb: 33 37 41;
-  --#{$variable-prefix}text-color-sub: #999;
+  --#{$variable-prefix}text-color: rgb(36 41 47);
+  --#{$variable-prefix}text-color-rgb: 36 41 47;
+  --#{$variable-prefix}text-color-sub: #7f8287;
   --#{$variable-prefix}background-color: rgb(255 255 255);
   --#{$variable-prefix}background-color-rgb: 255 255 255;
+  --#{$variable-prefix}background-color-light-gray: rgb(247 247 247);
+  --#{$variable-prefix}background-color-gray: rgb(239 239 239);
+  --#{$variable-prefix}background-color-input: rgb(255 255 255);
+  --#{$variable-prefix}background-color-disabled: rgb(247 247 247);
   --#{$variable-prefix}background-color-hover: rgb(0 0 0 / 4%);
   --#{$variable-prefix}background-color-light-hover: rgb(255 255 255 / 16%);
-  --#{$variable-prefix}background-color-input: #fff;
   --#{$variable-prefix}background-color-indicator: #dfe1e6;
-  --#{$variable-prefix}background-color-disabled: #f5f5f5;
-  --#{$variable-prefix}background-color-light-gray: hsl(0deg 0% 98%);
-  --#{$variable-prefix}background-color-gray: hsl(0deg 0% 95%);
-  --#{$variable-prefix}background-color-action: rgb(0 0 0 / 20%);
-  --#{$variable-prefix}color-divider: #f0f0f0;
-  --#{$variable-prefix}color-border: #d9d9d9;
-  --#{$variable-prefix}color-disabled: #d5d5d5;
-  --#{$variable-prefix}color-icon-decorator: #7e8083;
+  --#{$variable-prefix}background-color-actions-mask: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}color-divider: rgb(239 239 239);
+  --#{$variable-prefix}color-border: rgb(219 219 219);
+  --#{$variable-prefix}color-disabled: #d1d4d7;
+  --#{$variable-prefix}color-icon-decorator: #b2b3b5;
 
   @each $theme, $rgb in $themes {
     /** rgb **/
@@ -94,14 +97,12 @@ $popover-space: 10px;
 
   /** component **/
   --#{$variable-prefix}avatar-background-color: #bdbdbd;
-  --#{$variable-prefix}breadcrumb-text-color: #b1b1b1;
   --#{$variable-prefix}fab-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 14px 0 rgb(0 0 0 / 12%);
   --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}rating-background-color: rgb(227 227 227);
   --#{$variable-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
   --#{$variable-prefix}switch-background-color: #d4d6d9;
-  --#{$variable-prefix}table-th-border-color: #e9e9e9;
-  --#{$variable-prefix}tabs-background-color-slider: hsl(0deg 0% 97%);
+  --#{$variable-prefix}tabs-background-color-slider: rgb(243 243 243);
   --#{$variable-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
-  --#{$variable-prefix}tooltip-text-color: #dfe1e6;
   --#{$variable-prefix}tooltip-background-color: #464d6e;
 }

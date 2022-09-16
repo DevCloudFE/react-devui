@@ -1,10 +1,10 @@
-import type { NotificationItem, UserState } from '../../../config/state';
+import type { NotificationItem, UserState } from './state';
 
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-import { environment } from '../../../environments';
-import { base64url } from '../../utils';
+import { base64url } from '../app/utils';
+import { environment } from '../environments';
 
 if (environment.mock) {
   const mock = new MockAdapter(axios, { delayResponse: 500 });

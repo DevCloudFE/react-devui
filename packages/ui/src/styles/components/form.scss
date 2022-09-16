@@ -99,7 +99,7 @@
     margin-left: 4px;
     font-size: 0.9em;
     line-height: 1;
-    color: var(--#{$variable-prefix}color-icon-decorator);
+    color: var(--#{$variable-prefix}text-color-sub);
   }
 
   @include e(item-content) {

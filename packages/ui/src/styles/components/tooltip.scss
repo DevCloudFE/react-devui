@@ -7,7 +7,8 @@
 @include b(tooltip) {
   position: fixed;
   padding: 4px 12px;
-  color: var(--#{$variable-prefix}tooltip-text-color);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  color: #eef0f3;
   white-space: pre;
   background-color: var(--#{$variable-prefix}tooltip-background-color);
   border-radius: var(--#{$variable-prefix}border-radius-larger);

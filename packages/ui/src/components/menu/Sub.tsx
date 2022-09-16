@@ -3,7 +3,6 @@ import type { DMenuMode } from './Menu';
 import React, { useState, useRef } from 'react';
 
 import { useElement, useEventListener } from '@react-devui/hooks';
-import { CaretDownOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
 
 import { usePrefixConfig, useTranslation, useMaxIndex } from '../../hooks';
@@ -134,16 +133,6 @@ export function DSub(props: DSubProps): JSX.Element | null {
   useEventListener(dEventId, updatePosition);
 
   const maxZIndex = useMaxIndex(dPopupVisible);
-
-  const iconRotate = (() => {
-    if (dMode === 'vertical' && dExpand) {
-      return 180;
-    }
-    if (dMode !== 'vertical' && !inHorizontalNav) {
-      return -90;
-    }
-    return undefined;
-  })();
 
   return (
     <DCollapseTransition
@@ -287,7 +276,18 @@ export function DSub(props: DSubProps): JSX.Element | null {
                   </div>
                   {checkNodeExist(dIcon) && <div className={`${dPrefix}menu__item-icon`}>{dIcon}</div>}
                   <div className={`${dPrefix}menu__item-content`}>{children}</div>
-                  {!inHorizontalNav && <CaretDownOutlined className={`${dPrefix}menu__sub-arrow`} dSize={14} dRotate={iconRotate} />}
+                  {!inHorizontalNav && (
+                    <div
+                      className={getClassName(`${dPrefix}menu__sub-arrow`, {
+                        [`${dPrefix}menu__sub-arrow--horizontal`]: dMode !== 'vertical' && !inHorizontalNav,
+                        'is-expand': dMode === 'vertical' && dExpand,
+                      })}
+                      aria-hidden
+                    >
+                      <div></div>
+                      <div></div>
+                    </div>
+                  )}
                 </li>
               )}
             </DPopup>

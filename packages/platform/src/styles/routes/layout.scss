@@ -8,7 +8,6 @@
     height: calc(100% - 64px);
     padding: 20px;
     overflow: auto;
-    background-color: var(--app-layout-main-background-color);
     transition: width var(--d-animation-duration-base) linear;
   }
 }
@@ -22,7 +21,8 @@
   height: 64px;
   padding: 0 16px 0 0;
   color: map.get($colors, 'white');
-  background-color: var(--app-layout-header-background-color);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  background-color: #001529;
   box-shadow: 0 2px 8px 0 var(--d-shadow-color);
 
   @include e(logo-container) {
@@ -126,6 +126,7 @@
   height: calc(100% - 64px);
   padding: 0;
   overflow: auto;
+  background-color: var(--d-background-color);
   box-shadow: -2px 0 8px 0 var(--d-shadow-color);
 
   @include e(menu) {

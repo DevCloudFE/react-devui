@@ -63,7 +63,7 @@
     width: calc(100vw / 3);
     height: 100%;
     content: '';
-    transform-origin: top left;
+    transform-origin: left top;
     animation: fcp-loader-progress 5s infinite linear, fcp-loader-third 1s infinite linear;
   }
 }

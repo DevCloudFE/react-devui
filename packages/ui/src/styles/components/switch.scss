@@ -38,10 +38,7 @@
 
   @include when(loading) {
     pointer-events: none;
-
-    @include e(state-container) {
-      @include utils-loading;
-    }
+    filter: opacity(70%);
   }
 
   @include when(checked) {

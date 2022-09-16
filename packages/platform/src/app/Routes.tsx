@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
+import { ROUTES_ACL } from '../config/acl';
 import { LOGIN_PATH, TITLE_CONFIG } from '../config/other';
 import { useACLGuard, useTokenGuard } from './Routes.guard';
 import AppExceptionRoute from './routes/Exception';
@@ -82,7 +83,7 @@ export function AppRoutes() {
                 ),
                 data: {
                   title: 'AMap',
-                  acl: 'page_amap',
+                  acl: ROUTES_ACL.dashboard.amap,
                   canActivate: [ACLGuard],
                 },
               },
@@ -95,7 +96,7 @@ export function AppRoutes() {
                 ),
                 data: {
                   title: 'ECharts',
-                  acl: 'page_echarts',
+                  acl: ROUTES_ACL.dashboard.echarts,
                   canActivate: [ACLGuard],
                 },
               },

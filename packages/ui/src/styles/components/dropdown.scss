@@ -66,12 +66,6 @@ $dropdown-item-height: 32px;
     @include m(sub) {
       padding: 0 24px 0 12px;
 
-      @include when(disabled) {
-        @include e(sub-arrow) {
-          color: inherit;
-        }
-      }
-
       @include when(expand) {
         background-color: var(--#{$variable-prefix}background-color-hover);
       }
@@ -98,7 +92,6 @@ $dropdown-item-height: 32px;
     display: inline-flex;
     align-items: center;
     height: 100%;
-    color: var(--#{$variable-prefix}color-icon-decorator);
   }
 
   @include e(group-list) {
