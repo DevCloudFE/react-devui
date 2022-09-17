@@ -8,6 +8,7 @@ import React, { useState, useId, useCallback, useMemo, useRef } from 'react';
 
 import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
 import { usePrefixConfig, useComponentConfig, useTranslation, useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
@@ -444,7 +445,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
           }}
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
-            const width = boxEl.getBoundingClientRect().width;
+            const width = Math.min(boxEl.getBoundingClientRect().width, window.innerWidth - POSITION_CONFIG.space * 2);
             const { height } = getOriginalSize(popupEl);
             const { top, left, transformOrigin } = getVerticalSidePosition(
               boxEl,

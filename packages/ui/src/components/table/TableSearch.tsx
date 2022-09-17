@@ -67,6 +67,7 @@ function TableSearch(props: DTableSearchProps, ref: React.ForwardedRef<DTableSea
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
+      dInWindow
       dContent={
         <DInput
           className={`${dPrefix}table__filter-search`}

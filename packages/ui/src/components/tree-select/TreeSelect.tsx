@@ -410,11 +410,12 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
             const boxWidth = boxEl.getBoundingClientRect().width;
-            const minWidth = Math.min(boxWidth, window.innerWidth - POSITION_CONFIG.space * 2);
-            const { width, height } = getOriginalSize(popupEl);
+            const { height } = getOriginalSize(popupEl);
+            const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
+            const width = Math.min(Math.max(popupEl.scrollWidth, boxWidth), maxWidth);
             const { top, left, transformOrigin } = getVerticalSidePosition(
               boxEl,
-              { width: Math.max(width, minWidth), height },
+              { width, height },
               {
                 placement: 'bottom-left',
                 inWindow: true,
@@ -425,7 +426,8 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
               position: {
                 top,
                 left,
-                minWidth,
+                minWidth: Math.min(boxWidth, maxWidth),
+                maxWidth,
               },
               transformOrigin,
             };

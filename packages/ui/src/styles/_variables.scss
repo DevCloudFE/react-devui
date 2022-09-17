@@ -16,10 +16,8 @@ $colors: (
   'black': #000,
 ) !default;
 
-$popover-space: 10px !default;
-
-$placeholder-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 24%);
-$placeholder-disabled-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 8%);
+$placeholder-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 24%) !default;
+$placeholder-disabled-color: rgb(var(--#{$variable-prefix}text-color-rgb) / 8%) !default;
 
 :root {
   /** z-index **/

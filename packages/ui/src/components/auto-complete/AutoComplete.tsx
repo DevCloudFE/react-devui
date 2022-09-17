@@ -107,11 +107,12 @@ function AutoComplete<T extends DAutoCompleteItem>(
       const popupEl = popupRef.current;
       if (boxEl && popupEl) {
         const boxWidth = boxEl.getBoundingClientRect().width;
-        const minWidth = Math.min(boxWidth, window.innerWidth - POSITION_CONFIG.space * 2);
-        const { width, height } = getOriginalSize(popupEl);
+        const { height } = getOriginalSize(popupEl);
+        const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
+        const width = Math.min(Math.max(popupEl.scrollWidth, boxWidth), maxWidth);
         const { top, left, transformOrigin } = getVerticalSidePosition(
           boxEl,
-          { width: Math.max(width, minWidth), height },
+          { width, height },
           {
             placement: 'bottom-left',
             inWindow: true,
@@ -121,7 +122,8 @@ function AutoComplete<T extends DAutoCompleteItem>(
         setPopupPositionStyle({
           top,
           left,
-          minWidth,
+          minWidth: Math.min(boxWidth, maxWidth),
+          maxWidth,
         });
         setTransformOrigin(transformOrigin);
       }

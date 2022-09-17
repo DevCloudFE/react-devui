@@ -11,6 +11,7 @@ import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
 import { useEventNotify } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
 import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useTranslation } from '../../hooks';
 import { registerComponentMate } from '../../utils';
@@ -379,7 +380,9 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
           }}
           dInputRef={dInputRef}
           dUpdatePosition={(boxEl, popupEl) => {
-            const { width, height } = getOriginalSize(popupEl);
+            const { height } = getOriginalSize(popupEl);
+            const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
+            const width = Math.min(popupEl.scrollWidth, maxWidth);
             const { top, left, transformOrigin } = getVerticalSidePosition(
               boxEl,
               { width, height },
@@ -393,6 +396,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
               position: {
                 top,
                 left,
+                maxWidth,
               },
               transformOrigin,
             };

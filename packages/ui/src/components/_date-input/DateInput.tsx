@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import { useAsync, useElement, useEvent, useEventCallback, useForkRef, useResize } from '@react-devui/hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
 import { usePrefixConfig, useTranslation, useMaxIndex, useLayout } from '../../hooks';
 import { TTANSITION_DURING_POPUP } from '../../utils';
@@ -129,7 +130,9 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const updatePosition = useEventCallback(() => {
     if (dVisible) {
       if (boxRef.current && popupRef.current) {
-        const { width, height } = getOriginalSize(popupRef.current);
+        const { height } = getOriginalSize(popupRef.current);
+        const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
+        const width = Math.min(popupRef.current.scrollWidth, maxWidth);
         const { top, left, transformOrigin } = getVerticalSidePosition(
           boxRef.current,
           { width, height },
@@ -141,6 +144,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
         setPopupPositionStyle({
           top,
           left,
+          maxWidth,
         });
         setTransformOrigin(transformOrigin);
       }

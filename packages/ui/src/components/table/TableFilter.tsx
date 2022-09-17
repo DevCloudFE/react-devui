@@ -248,6 +248,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
+      dInWindow
       dContent={
         <>
           {dSearchable && (
