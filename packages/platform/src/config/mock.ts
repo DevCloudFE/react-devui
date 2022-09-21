@@ -23,13 +23,13 @@ if (environment.mock) {
 
   const admin: UserState = {
     name: 'admin',
-    avatar: '/assets/avatar.png',
+    avatar: '/assets/imgs/avatar.png',
     role: 'admin',
     permission: [],
   };
   const user: UserState = {
     name: 'user',
-    avatar: '/assets/avatar.png',
+    avatar: '/assets/imgs/avatar.png',
     role: 'user',
     permission: [0, ROUTES_ACL.test.acl, ROUTES_ACL.test.http],
   };

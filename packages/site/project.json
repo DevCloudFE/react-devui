@@ -4,10 +4,14 @@
   "projectType": "application",
   "tags": ["scope:site"],
   "targets": {
-    "build-executors": {
+    "build-dependencies": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["tsc --project tools/executors/tsconfig.json", "tsc --project packages/site/executors/tsconfig.json"]
+        "commands": [
+          "tsc --project tools/executors/tsconfig.json",
+          "tsc --project packages/site/executors/tsconfig.json",
+          "yarn util:base64-data"
+        ]
       }
     },
     "build-base": {
@@ -15,7 +19,7 @@
       "options": {},
       "dependsOn": [
         {
-          "target": "build-executors",
+          "target": "build-dependencies",
           "projects": "self"
         }
       ]
@@ -90,7 +94,7 @@
       },
       "dependsOn": [
         {
-          "target": "build-executors",
+          "target": "build-dependencies",
           "projects": "self"
         }
       ]

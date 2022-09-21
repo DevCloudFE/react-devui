@@ -12,7 +12,7 @@ import { DRoot } from '@react-devui/ui';
 
 import { environment } from '../environments/environment';
 import { AppFCPLoader } from './components';
-import AppHomeRoute from './routes/Home';
+import AppHomeRoute from './routes/home/Home';
 import AppLayout from './routes/layout/Layout';
 
 export type AppTheme = 'light' | 'dark';

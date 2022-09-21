@@ -8,6 +8,7 @@ import { useLocalStorage } from '@react-devui/hooks';
 
 import { AppRoute as AppMdRoute } from '../md/Route';
 import marked, { toString } from '../utils';
+import { BASE64_DATA } from './base64.out';
 
 export interface AppRouteProps {
   title: string;
@@ -80,7 +81,7 @@ export function AppRoute(props: AppRouteProps): JSX.Element | null {
         {compose && (
           <li>
             <Link className="app-component-route__tag-link" to="/components/Compose">
-              <img src="/assets/imgs/compose.png" alt="Compose" height={24} width={20} />
+              <img src={`data:image/png;base64,${BASE64_DATA.compose}`} alt="Compose" width={20} height={20} />
               <span>Compose</span>
             </Link>
           </li>
@@ -88,7 +89,7 @@ export function AppRoute(props: AppRouteProps): JSX.Element | null {
         {virtualScroll && (
           <li>
             <Link className="app-component-route__tag-link" to="/components/VirtualScroll">
-              <img src="/assets/imgs/virtual-scroll.png" alt="Compose" height={16} width={16} />
+              <img src={`data:image/png;base64,${BASE64_DATA['virtual-scroll']}`} alt="VirtualScroll" width={16} height={16} />
               <span>VirtualScroll</span>
             </Link>
           </li>

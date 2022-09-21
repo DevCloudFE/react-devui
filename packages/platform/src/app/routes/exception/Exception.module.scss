@@ -27,6 +27,7 @@
   }
 
   @include e(bg) {
+    flex-shrink: 0;
     width: calc(100% - 40px);
     max-width: 320px;
   }

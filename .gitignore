@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /tools-dist
+base64.out.ts
 
 # dependencies
 /node_modules

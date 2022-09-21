@@ -4,6 +4,12 @@
   "projectType": "application",
   "tags": ["scope:platform"],
   "targets": {
+    "build-dependencies": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn util:base64-data"]
+      }
+    },
     "build": {
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
@@ -35,7 +41,13 @@
           "extractLicenses": true,
           "vendorChunk": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "build-dependencies",
+          "projects": "self"
+        }
+      ]
     },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
@@ -43,7 +55,13 @@
         "buildTarget": "platform:build",
         "port": 4310,
         "open": true
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "build-dependencies",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

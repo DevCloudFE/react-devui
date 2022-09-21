@@ -15,6 +15,7 @@ import { useHttp, useInit } from '../../../core';
 import { AppLanguage } from '../../components';
 import { useDeviceQuery } from '../../hooks';
 import styles from './Login.module.scss';
+import { BASE64_DATA } from './base64.out';
 
 export default function Login(): JSX.Element | null {
   const { t } = useTranslation();
@@ -101,7 +102,9 @@ export default function Login(): JSX.Element | null {
     <div className={styles['app-login']}>
       <AppLanguage className={styles['app-login__lang']} />
       <div>
-        {deviceMatched === 'desktop' && <img className={styles['app-login__bg']} src="/assets/login-bg.png" alt="bg" />}
+        {deviceMatched === 'desktop' && (
+          <img className={styles['app-login__bg']} src={`data:image/png;base64,${BASE64_DATA.bg}`} alt="bg" />
+        )}
         <div className={styles['app-login__login-container']}>
           <div className={styles['app-login__title-container']}>
             <img className={styles['app-login__logo']} src="/assets/logo.svg" alt="Logo" />

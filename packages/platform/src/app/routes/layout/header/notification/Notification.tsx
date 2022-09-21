@@ -45,7 +45,7 @@ export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElem
                 panel: (
                   <AppList
                     aList={notify.list.map((item) => ({
-                      avatar: <DAvatar dImg={{ src: '/assets/avatar.png', alt: 'avatar' }}></DAvatar>,
+                      avatar: <DAvatar dImg={{ src: '/assets/imgs/avatar.png', alt: 'avatar' }}></DAvatar>,
                       title: 'name',
                       description: item.message,
                       props: {

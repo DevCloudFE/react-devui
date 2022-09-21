@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRightOutlined } from '@react-devui/icons';
 import { DButton } from '@react-devui/ui';
 
-import { AppFooter } from '../components';
+import { AppFooter } from '../../components';
+import { ReactComponent as Bg } from './bg.svg';
 
 export default function Home(): JSX.Element | null {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export default function Home(): JSX.Element | null {
 
   return (
     <main className="app-home-route">
-      <img className="app-home-route__img" src="/assets/imgs/home-logo.svg" alt="logo" />
+      <Bg className="app-home-route__bg" />
       <div className="app-home-route__title">React DevUI</div>
       <div className="app-home-route__description">{t('home.Title')}</div>
       <Link className="app-home-route__button-link" to="/docs/GettingStarted">
