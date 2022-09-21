@@ -54,7 +54,7 @@
     "@vscode/test-electron": "^2.1.5",
     "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.2",
-    "babel-jest": "^27.5.1",
+    "babel-jest": "^29.0.3",
     "codesandbox": "^2.2.3",
     "colors": "^1.4.0",
     "core-js": "^3.25.2",
