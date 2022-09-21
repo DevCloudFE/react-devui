@@ -28,7 +28,7 @@ export function AppFooter(props: React.HTMLAttributes<HTMLDivElement>): JSX.Elem
         </a>
       </div>
       <div className="app-footer__bottom">
-        <span>© 2022 made with ❤ by </span>
+        <span>© {new Date().getFullYear()} made with ❤ by </span>
         <a href="//github.com/xiejay97">Xie Jay</a>
       </div>
     </footer>

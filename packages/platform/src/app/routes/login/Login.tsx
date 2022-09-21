@@ -185,7 +185,7 @@ export default function Login(): JSX.Element | null {
         })}
       >
         <div>
-          <span>© 2022 made with ❤ by </span>
+          <span>© {new Date().getFullYear()} made with ❤ by </span>
           <a className="app-link" href="//github.com/xiejay97">
             Xie Jay
           </a>

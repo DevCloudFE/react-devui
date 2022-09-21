@@ -21,7 +21,7 @@
       ]
     },
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "compiler": "babel",
@@ -60,7 +60,7 @@
       ]
     },
     "serve-base": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "site:build",
         "port": 4300,

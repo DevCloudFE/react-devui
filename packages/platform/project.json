@@ -5,7 +5,7 @@
   "tags": ["scope:platform"],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "compiler": "babel",
@@ -38,7 +38,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "platform:build",
         "port": 4310,
