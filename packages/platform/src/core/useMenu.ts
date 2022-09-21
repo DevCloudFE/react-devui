@@ -37,7 +37,7 @@ export function useMenu() {
       const title = t(tKey, { ns: 'title' });
       const obj: DMenuItem<string> = {
         id: item.path,
-        title: item.type === 'item' ? React.createElement(Link, { tabIndex: -1, to: item.path }, title) : title,
+        title: item.type === 'item' ? React.createElement(Link, { className: 'app-menu-link', tabIndex: -1, to: item.path }, title) : title,
         icon: item.icon ? React.createElement(item.icon) : undefined,
         type: item.type,
       };

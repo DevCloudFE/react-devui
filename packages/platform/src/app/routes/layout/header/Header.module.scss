@@ -30,11 +30,11 @@
 
   @include e(logo-title-wrapper) {
     overflow: hidden;
+    transition: width var(--d-animation-duration-base) linear;
   }
 
   @include e(logo-title) {
     white-space: nowrap;
-    transition: width var(--d-animation-duration-base) linear;
     transform-origin: left;
 
     @include font-size(1.5rem);

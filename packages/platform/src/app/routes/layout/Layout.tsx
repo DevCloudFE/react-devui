@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { useDeviceQuery } from '../../hooks';
 import styles from './Layout.module.scss';
@@ -21,6 +21,13 @@ export default function Layout(props: AppLayoutProps): JSX.Element | null {
 
   const deviceMatched = useDeviceQuery();
   const [menuOpen, setMenuOpen] = useState(deviceMatched === 'desktop');
+  const location = useLocation();
+
+  useEffect(() => {
+    if (deviceMatched === 'phone') {
+      setMenuOpen(false);
+    }
+  }, [deviceMatched, location]);
 
   return (
     <>

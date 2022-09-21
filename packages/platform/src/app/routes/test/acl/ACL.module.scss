@@ -3,9 +3,9 @@
 @include b(acl) {
   @include app-route;
 
-  :global .d-card {
-    margin-top: 20px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
 
   @include e(button-container) {
     display: flex;

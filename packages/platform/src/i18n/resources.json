@@ -3,7 +3,7 @@
     "translation": {
       "User has no menu": "User has no menu",
       "Please contact the administrator": "Please contact the administrator",
-      "Not logged in or logged in has expired": "Not logged in or logged in has expired",
+      "User not authorized": "User not authorized",
       "components": {
         "language": {
           "Change language": "Change language"
@@ -80,7 +80,7 @@
     "translation": {
       "User has no menu": "用户无菜单",
       "Please contact the administrator": "请联系管理员",
-      "Not logged in or logged in has expired": "未登录或登录已过期",
+      "User not authorized": "用户未授权",
       "components": {
         "language": {
           "Change language": "改变语言"

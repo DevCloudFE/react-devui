@@ -2,6 +2,7 @@ $table-filter-option-height: 32px;
 
 @include b(table) {
   --#{$variable-prefix}table-padding-size: 16px;
+  --#{$variable-prefix}table-border-color: var(--#{$variable-prefix}color-divider);
 
   position: relative;
   width: 100%;
@@ -30,7 +31,7 @@ $table-filter-option-height: 32px;
 
   td {
     background-color: var(--#{$variable-prefix}background-color);
-    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+    border-bottom: 1px solid var(--#{$variable-prefix}table-border-color);
   }
 
   thead {
@@ -50,10 +51,18 @@ $table-filter-option-height: 32px;
     }
   }
 
+  tbody {
+    th {
+      border-bottom: 1px solid var(--#{$variable-prefix}table-border-color);
+    }
+  }
+
   @include m(border) {
+    --#{$variable-prefix}table-border-color: var(--#{$variable-prefix}color-border);
+
     table {
-      border-top: 1px solid var(--#{$variable-prefix}color-divider);
-      border-left: 1px solid var(--#{$variable-prefix}color-divider);
+      border-top: 1px solid var(--#{$variable-prefix}table-border-color);
+      border-left: 1px solid var(--#{$variable-prefix}table-border-color);
     }
 
     thead {
@@ -63,11 +72,11 @@ $table-filter-option-height: 32px;
     }
 
     th {
-      border-right: 1px solid var(--#{$variable-prefix}color-divider);
+      border-right: 1px solid var(--#{$variable-prefix}table-border-color);
     }
 
     td {
-      border-right: 1px solid var(--#{$variable-prefix}color-divider);
+      border-right: 1px solid var(--#{$variable-prefix}table-border-color);
     }
   }
 

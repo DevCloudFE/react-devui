@@ -66,7 +66,7 @@ export function useHttp() {
               switch (error.response.status) {
                 case 401:
                   ToastService.open({
-                    dContent: t('Not logged in or logged in has expired'),
+                    dContent: t('User not authorized'),
                     dType: 'error',
                   });
                   navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });

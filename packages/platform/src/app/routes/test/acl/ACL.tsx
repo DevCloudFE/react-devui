@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { DAlert, DButton, DCard, DTag } from '@react-devui/ui';
+import { DAlert, DButton, DCard, DTable, DTag } from '@react-devui/ui';
 
 import { useACL } from '../../../../core';
 import { AppRouteHeader } from '../../../components';
@@ -21,16 +21,25 @@ export default function ACL(): JSX.Element | null {
       </AppRouteHeader>
       <div className={styles['app-acl']}>
         <DAlert dTitle={t('routes.test.acl.Switch between different users to compare effects')} dType="info"></DAlert>
-        <DCard>
-          <DCard.Header>{t('routes.test.acl.ACL Data')}</DCard.Header>
-          <DCard.Content>
-            {JSON.stringify({
-              full: acl.full,
-              controls: acl.controls,
-              controlMode: acl.controlMode,
-            })}
-          </DCard.Content>
-        </DCard>
+        <DTable dBorder>
+          <table>
+            <caption>{t('routes.test.acl.ACL Data')}</caption>
+            <tbody>
+              <tr>
+                <DTable.Th>Full</DTable.Th>
+                <DTable.Td>{String(acl.full)}</DTable.Td>
+              </tr>
+              <tr>
+                <DTable.Th>Controls</DTable.Th>
+                <DTable.Td>{acl.controls.join(', ') || '-'}</DTable.Td>
+              </tr>
+              <tr>
+                <DTable.Th>ControlMode</DTable.Th>
+                <DTable.Td>{acl.controlMode}</DTable.Td>
+              </tr>
+            </tbody>
+          </table>
+        </DTable>
         <DCard>
           <DCard.Content>
             <div className={styles['app-acl__button-container']}>
