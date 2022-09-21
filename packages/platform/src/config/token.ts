@@ -30,7 +30,7 @@ interface TokenInterface {
   expiration: number | null;
 }
 
-class Token {
+export class Token {
   public get token(): string | null {
     if (typeof window === 'undefined') {
       return null;
@@ -48,14 +48,16 @@ class Token {
   }
 }
 
-class JWTToken extends Token implements TokenInterface {
-  public get expiration(): number | null {
+export class JWTToken<T extends TokenPayload> extends Token implements TokenInterface {
+  public get payload(): T | null {
     if (isNull(this.token)) {
       return null;
     }
     const [, payload] = this.token.split('.');
-    const { exp } = JSON.parse(base64url.decode(payload)) as TokenPayload;
-    return exp * 1000;
+    return JSON.parse(base64url.decode(payload));
+  }
+  public get expiration(): number | null {
+    return this.payload ? this.payload.exp * 1000 : null;
   }
   public set expiration(val: number | null) {
     throw new Error('You should not change `expiration` when use JWT!');

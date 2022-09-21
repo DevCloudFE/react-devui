@@ -1,0 +1,52 @@
+@use 'sass:map';
+
+@include b(footer) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 40px;
+  justify-content: space-around;
+  padding: 20px;
+  background-color: map.get($colors, 'black');
+  border-top: 1px solid var(--d-color-border);
+
+  a {
+    display: inline-flex;
+    gap: 0 4px;
+    align-items: center;
+    font: inherit;
+    color: map.get($colors, 'white');
+    text-decoration: none;
+    transition: color var(--d-animation-duration-fast) linear;
+
+    &:hover {
+      color: var(--d-color-primary);
+    }
+  }
+
+  @include e(col) {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 12px 0;
+    margin-top: 40px;
+  }
+
+  @include e(col-title) {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: map.get($colors, 'white');
+
+    @include font-size(1.1rem);
+  }
+
+  @include e(bottom) {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 20px;
+    margin-top: 40px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    color: rgb(155 155 159);
+    white-space: pre-wrap;
+    border-top: 1px solid rgb(71 71 71);
+  }
+}

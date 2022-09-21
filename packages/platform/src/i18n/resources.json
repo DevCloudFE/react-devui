@@ -1,6 +1,9 @@
 {
   "en-US": {
     "translation": {
+      "User has no menu": "User has no menu",
+      "Please contact the administrator": "Please contact the administrator",
+      "Not logged in or logged in has expired": "Not logged in or logged in has expired",
       "components": {
         "language": {
           "Change language": "Change language"
@@ -21,10 +24,10 @@
         },
         "login": {
           "Login": "Login",
-          "description": "Elegant Design & Ultimate Performance",
+          "description": "RD-Platform provides solutions for enterprise-level background management systems",
           "Account Login": "Account Login",
           "Phone Login": "Phone Login",
-          "Username": "Username: 'admin'",
+          "Username": "Username: 'admin' or 'user'",
           "Password": "Password: any input",
           "Please enter your name": "Please enter your name!",
           "Please enter your password": "Please enter your password!",
@@ -37,24 +40,47 @@
           "Please enter verification code": "Please enter verification code!",
           "Terms": "Terms",
           "Privacy": "Privacy"
+        },
+        "exception": {
+          "403": "Sorry, you do not have permission to access this page",
+          "404": "Sorry, the page you visited does not exist",
+          "500": "Sorry, there was an error with the server",
+          "Back Home": "Back Home"
+        },
+        "test": {
+          "acl": {
+            "Switch between different users to compare effects": "Switch between different users to compare effects",
+            "ACL Data": "ACL Data",
+            "Test Route Guard": "Test Route Guard"
+          }
         }
       }
     },
     "title": {
-      "Login": "Login"
-    },
-    "menu": {
-      "Dashboard": "Dashboard",
-      "Amap": "Amap",
-      "Echarts": "Echarts",
-      "Exception": "Exception",
-      "403": "403",
-      "404": "404",
-      "500": "500"
+      "login": "Login",
+      "dashboard": {
+        "index": "Dashboard",
+        "amap": "AMap",
+        "echarts": "ECharts"
+      },
+      "exception": {
+        "index": "Exception",
+        "403": "403",
+        "404": "404",
+        "500": "500"
+      },
+      "test": {
+        "index": "Test",
+        "acl": "ACL",
+        "http": "Http"
+      }
     }
   },
   "zh-CN": {
     "translation": {
+      "User has no menu": "用户无菜单",
+      "Please contact the administrator": "请联系管理员",
+      "Not logged in or logged in has expired": "未登录或登录已过期",
       "components": {
         "language": {
           "Change language": "改变语言"
@@ -75,10 +101,10 @@
         },
         "login": {
           "Login": "登 录",
-          "description": "优雅的设计 & 极致的性能",
+          "description": "RD-Platform 提供了企业级后台管理系统的解决方案",
           "Account Login": "账号密码登录",
           "Phone Login": "手机号登录",
-          "Username": "用户名：'admin'",
+          "Username": "用户名：'admin' 或 'user'",
           "Password": "密码：任意输入",
           "Please enter your name": "请输入用户名！",
           "Please enter your password": "请输入密码！",
@@ -91,20 +117,40 @@
           "Please enter verification code": "请输入验证码！",
           "Terms": "条款",
           "Privacy": "隐私"
+        },
+        "exception": {
+          "403": "抱歉，你无权访问该页面",
+          "404": "抱歉，你访问的页面不存在",
+          "500": "抱歉，服务器出错了",
+          "Back Home": "返回首页"
+        },
+        "test": {
+          "acl": {
+            "Switch between different users to compare effects": "切换不同用户对比效果",
+            "ACL Data": "ACL数据",
+            "Test Route Guard": "测试路由守卫"
+          }
         }
       }
     },
     "title": {
-      "Login": "登录"
-    },
-    "menu": {
-      "Dashboard": "仪表盘",
-      "Amap": "高德地图",
-      "Echarts": "Echarts",
-      "Exception": "异常页",
-      "403": "403",
-      "404": "404",
-      "500": "500"
+      "login": "登录",
+      "dashboard": {
+        "index": "仪表盘",
+        "amap": "高德地图",
+        "echarts": "ECharts"
+      },
+      "exception": {
+        "index": "异常页",
+        "403": "403",
+        "404": "404",
+        "500": "500"
+      },
+      "test": {
+        "index": "测试",
+        "acl": "ACL",
+        "http": "Http"
+      }
     }
   }
 }

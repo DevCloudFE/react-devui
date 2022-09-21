@@ -1,0 +1,56 @@
+@import '~styles/module';
+
+@include b(exception) {
+  display: flex;
+  flex-direction: row;
+  gap: 20px 100px;
+  justify-content: center;
+  width: 100%;
+  padding: 10% 20px 20px;
+
+  @include m(phone) {
+    flex-direction: column;
+    align-items: center;
+
+    @include e(info) {
+      align-items: center;
+    }
+
+    @include e(status) {
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      font-size: 56px;
+    }
+
+    @include e(description) {
+      text-align: center;
+    }
+  }
+
+  @include e(bg) {
+    width: calc(100% - 40px);
+    max-width: 320px;
+  }
+
+  @include e(info) {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  @include e(status) {
+    margin-bottom: 12px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 64px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @include e(description) {
+    margin-bottom: 16px;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list */
+    font-size: 24px;
+    color: var(--d-text-color-sub);
+  }
+}

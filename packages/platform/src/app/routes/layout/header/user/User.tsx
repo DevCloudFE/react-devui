@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@react-devui/icons';
 import { DAvatar, DDropdown } from '@react-devui/ui';
 
-import { LOGIN_PATH } from '../../../../config/other';
-import { useUserState } from '../../../../config/state';
-import { TOKEN } from '../../../../config/token';
-import { useDeviceQuery } from '../../../hooks';
+import { LOGIN_PATH } from '../../../../../config/other';
+import { useUserState } from '../../../../../config/state';
+import { TOKEN } from '../../../../../config/token';
+import { useDeviceQuery } from '../../../../hooks';
 
-export function AppUser(): JSX.Element | null {
+export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const [user] = useUserState();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export function AppUser(): JSX.Element | null {
         }
       }}
     >
-      <button className="app-layout-header__button app-layout-header__button--user" aria-label={t('routes.layout.My account')}>
+      <button {...props} aria-label={t('routes.layout.My account')}>
         <DAvatar dImg={{ src: user.avatar, alt: 'avatar' }} dSize={28}></DAvatar>
         {deviceMatched !== 'phone' && <span>{user.name}</span>}
       </button>

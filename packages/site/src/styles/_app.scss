@@ -24,14 +24,13 @@ body {
   bottom: 0;
   width: 100%;
   height: calc(100% - 64px);
-  padding: 20px;
+  padding: 32px 0 0;
   overflow: auto;
 }
 
 @media (min-width: 768px) {
   .app-main {
     width: calc(100% - 260px);
-    padding: 32px 200px 32px 64px;
   }
 }
 

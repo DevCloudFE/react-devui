@@ -8,7 +8,9 @@ import { useImmer, useLocalStorage } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
 import { DAnchor, DDrawer } from '@react-devui/ui';
 import { useMediaQuery } from '@react-devui/ui/hooks';
+import { getClassName } from '@react-devui/utils';
 
+import { AppFooter } from '../../footer';
 import marked, { toString } from '../utils';
 
 export interface AppRouteProps {
@@ -75,12 +77,17 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
 
   return (
     <>
-      <article className="app-md-route" dangerouslySetInnerHTML={html ? { __html: html } : undefined}>
-        {props.children}
+      <article
+        className={getClassName('app-md-route', {
+          'app-md-route--phone': !breakpointsMatched.includes('md'),
+        })}
+      >
+        <section className="app-md-route__content" dangerouslySetInnerHTML={html ? { __html: html } : undefined}>
+          {props.children}
+        </section>
+        <AppFooter />
       </article>
-      {breakpointsMatched.includes('md') && links.length > 0 && (
-        <DAnchor className="app-md-route__anchor" dList={links} dPage=".app-main" />
-      )}
+      {breakpointsMatched.includes('md') && links.length > 0 && <DAnchor className="app-md-route__anchor" dList={links} />}
       {!breakpointsMatched.includes('md') && (
         <>
           {links.length > 0 && (
@@ -92,7 +99,7 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
               dMask={false}
               onVisibleChange={setMenuOpen}
             >
-              <DAnchor dList={links} dPage=".app-main" dIndicator={DAnchor.LINE_INDICATOR} onItemClick={() => setMenuOpen(false)} />
+              <DAnchor dList={links} dIndicator={DAnchor.LINE_INDICATOR} onItemClick={() => setMenuOpen(false)} />
             </DDrawer>
           )}
           <button

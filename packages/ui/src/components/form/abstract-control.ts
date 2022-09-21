@@ -12,6 +12,24 @@ export type FormControlStatus = 'VALID' | 'INVALID' | 'PENDING' | 'DISABLED';
 
 export const [VALID, INVALID, PENDING, DISABLED] = ['VALID', 'INVALID', 'PENDING', 'DISABLED'] as FormControlStatus[];
 
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+
+type GetFormControlPropertyFromArray<T, A> = Mutable<A> extends [infer K, ...infer R]
+  ? K extends keyof T
+    ? GetFormControlPropertyFromArray<T[K], R>
+    : null
+  : T;
+
+type GetFormControlProperty<T, S> = S extends `${infer K}.${infer R}`
+  ? K extends keyof T
+    ? GetFormControlProperty<T[K], R>
+    : null
+  : S extends keyof T
+  ? T[S]
+  : null;
+
 function find(control: AbstractControl, path: string[] | string, delimiter: string) {
   if (path == null) return null;
 
@@ -98,7 +116,7 @@ function removeValidators<T extends ValidatorFn | AsyncValidatorFn>(validators: 
   return makeValidatorsArray(currentValidators).filter((validator) => !hasValidator(validators, validator));
 }
 
-export abstract class AbstractControl {
+export abstract class AbstractControl<V = any> {
   private _parent: FormGroup | null = null;
 
   private _pristine: boolean = true;
@@ -148,7 +166,7 @@ export abstract class AbstractControl {
     return control;
   }
 
-  get value(): any {
+  get value(): V {
     return this._value;
   }
 
@@ -183,7 +201,7 @@ export abstract class AbstractControl {
     return !this._pristine;
   }
 
-  public readonly asyncVerifyComplete$ = new Subject<AbstractControl>();
+  public readonly asyncVerifyComplete$ = new Subject<AbstractControl<V>>();
 
   clone(): typeof this {
     return new Proxy(this, {});
@@ -305,6 +323,8 @@ export abstract class AbstractControl {
     }
   }
 
+  get<S extends string>(path: S): AbstractControl<GetFormControlProperty<V, S>>;
+  get<S extends ArrayLike<string>>(path: S): AbstractControl<GetFormControlPropertyFromArray<V, S>>;
   get(path: string[] | string): AbstractControl | null {
     return find(this, path, '.');
   }
@@ -318,11 +338,11 @@ export abstract class AbstractControl {
     return !!this.getError(errorCode, path);
   }
 
-  protected abstract _value: any;
+  protected abstract _value: V;
 
   protected abstract _status: FormControlStatus;
 
-  abstract setValue(value: any, onlySelf?: boolean): void;
+  abstract setValue(value: V, onlySelf?: boolean): void;
   abstract patchValue(value: any, onlySelf?: boolean): void;
   abstract reset(value?: any, onlySelf?: boolean): void;
 

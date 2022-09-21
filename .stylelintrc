@@ -8,7 +8,14 @@
   "rules": {
     "custom-property-pattern": null,
     "no-invalid-position-at-import-rule": null,
-    "selector-class-pattern": null
+    "selector-class-pattern": null,
+    "block-no-empty": null,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
+    ]
   },
   "overrides": [
     {

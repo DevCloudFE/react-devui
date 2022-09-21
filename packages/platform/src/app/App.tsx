@@ -11,8 +11,8 @@ import { DRoot } from '@react-devui/ui';
 
 import { LOGIN_PATH } from '../config/other';
 import { STORAGE_KEY } from '../config/storage';
+import { useHttp, useInit } from '../core';
 import { AppRoutes } from './Routes';
-import { useHttp, useInit } from './hooks';
 
 export type AppTheme = 'light' | 'dark';
 
@@ -73,7 +73,7 @@ export function App() {
   const rootContext = useMemo<DConfigContextData>(
     () => ({
       i18n: { lang: language },
-      layout: { scrollEl: 'main.app-main', resizeEl: 'article.app-md-route' },
+      layout: { scrollEl: 'main', resizeEl: '.app-md-route' },
     }),
     [language]
   );

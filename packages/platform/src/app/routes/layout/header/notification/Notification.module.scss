@@ -1,0 +1,42 @@
+@import '~styles/module';
+
+@include b(notification) {
+  :global .d-popover__body {
+    width: 320px;
+    padding: 0;
+  }
+
+  @include m(spinner) {
+    :global .d-popover__body {
+      width: unset;
+      padding: 16px 32px;
+    }
+  }
+
+  @include e(item) {
+    padding-right: 16px;
+    padding-left: 16px;
+    cursor: pointer;
+    transition: background-color var(--d-animation-duration-base) linear;
+
+    &:hover {
+      background-color: var(--d-background-color-hover);
+    }
+
+    @include m(read) {
+      pointer-events: none;
+      filter: opacity(50%);
+    }
+  }
+
+  @include e(actions) {
+    display: flex;
+    align-items: stretch;
+    height: 44px;
+    border-top: 1px solid var(--d-color-divider);
+
+    :global .d-button {
+      flex-grow: 1;
+    }
+  }
+}

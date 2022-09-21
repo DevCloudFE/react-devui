@@ -1,4 +1,14 @@
 @include b(md-route) {
+  @include m(phone) {
+    @include e(content) {
+      padding: 0 20px 32px;
+    }
+  }
+
+  @include e(content) {
+    padding: 0 200px 32px 64px;
+  }
+
   @include e(anchor) {
     position: fixed;
     top: 120px;

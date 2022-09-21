@@ -9,7 +9,7 @@ export interface FormControlState<V> {
   disabled?: boolean;
 }
 
-export class FormControl<V> extends AbstractControl {
+export class FormControl<V> extends AbstractControl<V> {
   public readonly defaultState: FormControlState<V> | V;
 
   protected _value!: V;
@@ -33,7 +33,7 @@ export class FormControl<V> extends AbstractControl {
   override patchValue(value: V, onlySelf?: boolean): void {
     this.setValue(value, onlySelf);
   }
-  override reset(formState = this.defaultState, onlySelf?: boolean): void {
+  override reset(formState: V | FormControlState<V> = this.defaultState, onlySelf?: boolean): void {
     this._applyFormState(formState);
     this.markAsPristine(onlySelf);
     this.setValue(this.value, onlySelf);

@@ -1,4 +1,5 @@
 @include b(card) {
+  background-color: var(--#{$variable-prefix}background-color);
   border-radius: var(--#{$variable-prefix}border-radius);
   transition: box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
 

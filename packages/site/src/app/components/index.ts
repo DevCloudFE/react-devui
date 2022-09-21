@@ -1,5 +1,7 @@
 export { AppFCPLoader } from './fcp-loader';
 
+export { AppFooter } from './footer';
+
 export type { AppComponentRouteProps } from './route/component';
 export { AppComponentRoute } from './route/component';
 

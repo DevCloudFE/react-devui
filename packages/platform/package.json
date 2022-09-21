@@ -1,5 +1,5 @@
 {
-  "name": "platform",
+  "name": "rd-platform",
   "version": "0.0.1",
   "private": true,
   "description": "An out-of-box solution for enterprise applications as a React boilerplate",
@@ -7,7 +7,8 @@
     "react",
     "devui",
     "admin",
-    "platform"
+    "platform",
+    "rd-platform"
   ],
   "homepage": "https://github.com/DevCloudFE/react-devui/tree/main/packages/platform#readme",
   "bugs": {

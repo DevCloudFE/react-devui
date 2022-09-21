@@ -19,7 +19,9 @@
       "GitHub repository": "GitHub repository",
       "home": {
         "Title": "Elegant Design & Ultimate Performance",
-        "Getting Started": "Getting Started",
+        "Getting Started": "Getting Started"
+      },
+      "footer": {
         "Resources": "Resources",
         "Help": "Help"
       },
@@ -57,7 +59,9 @@
       "GitHub repository": "GitHub 存储库",
       "home": {
         "Title": "优雅的设计 & 极致的性能",
-        "Getting Started": "快速开始",
+        "Getting Started": "快速开始"
+      },
+      "footer": {
         "Resources": "相关资源",
         "Help": "帮助"
       },

@@ -3,12 +3,12 @@ import type { AsyncValidatorFn, ValidatorFn } from './validators';
 
 import { AbstractControl, VALID } from './abstract-control';
 
-export class FormGroup extends AbstractControl {
-  protected _value: any;
+export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> extends AbstractControl<{ [K in keyof T]: T[K]['value'] }> {
+  protected _value!: { [K in keyof T]: T[K]['value'] };
   protected _status: FormControlStatus = VALID;
 
   constructor(
-    public controls: { [key: string]: AbstractControl },
+    public controls: T,
     validators?: ValidatorFn | ValidatorFn[] | null,
     asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null
   ) {
@@ -17,6 +17,8 @@ export class FormGroup extends AbstractControl {
     this.updateValueAndValidity(true);
   }
 
+  addControl<K extends keyof T>(name: K, control: T[K]): void;
+  addControl(name: string, control: AbstractControl): void;
   addControl(name: string, control: AbstractControl): void {
     if (!(name in this.controls)) {
       this.controls[name] = control;
@@ -24,20 +26,26 @@ export class FormGroup extends AbstractControl {
     }
     this.updateValueAndValidity();
   }
+  removeControl<K extends keyof T>(name: K): void;
+  removeControl(name: string): void;
   removeControl(name: string): void {
     delete this.controls[name];
     this.updateValueAndValidity();
   }
+  setControl<K extends keyof T>(name: K, control: T[K]): void;
+  setControl(name: string, control: AbstractControl): void;
   setControl(name: string, control: AbstractControl): void {
     delete this.controls[name];
     this.addControl(name, control);
     this.updateValueAndValidity();
   }
+  contains<K extends keyof T>(controlName: K): boolean;
+  contains(controlName: string): boolean;
   contains(controlName: string): boolean {
     return controlName in this.controls;
   }
 
-  override setValue(value: { [key: string]: any }, onlySelf?: boolean): void {
+  override setValue(value: { [K in keyof T]: T[K]['value'] } & { [K: string]: any }, onlySelf?: boolean): void {
     this._checkAllValuesPresent(value);
     Object.keys(value).forEach((name) => {
       this._throwIfControlMissing(name);
@@ -45,7 +53,7 @@ export class FormGroup extends AbstractControl {
     });
     this.updateValueAndValidity(onlySelf);
   }
-  override patchValue(value: { [key: string]: any }, onlySelf?: boolean): void {
+  override patchValue(value: { [K in keyof T]?: T[K]['value'] } & { [K: string]: any }, onlySelf?: boolean): void {
     Object.keys(value).forEach((name) => {
       if (this.controls[name]) {
         this.controls[name].patchValue(value[name], true);
@@ -53,7 +61,7 @@ export class FormGroup extends AbstractControl {
     });
     this.updateValueAndValidity(onlySelf);
   }
-  override reset(value: any = {}, onlySelf?: boolean): void {
+  override reset(value: { [K in keyof T]?: T[K]['value'] } & { [K: string]: any } = {}, onlySelf?: boolean): void {
     this._forEachChild((control, name) => {
       control.reset(value[name], true);
     });
@@ -100,7 +108,7 @@ export class FormGroup extends AbstractControl {
     });
   }
 
-  private _reduceValue() {
+  private _reduceValue(): any {
     return this._reduceChildren({}, (acc: { [k: string]: any }, control, name): any => {
       acc[name] = control.value;
       return acc;

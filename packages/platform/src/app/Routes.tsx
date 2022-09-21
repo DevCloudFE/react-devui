@@ -1,25 +1,29 @@
-import type { Control, ControlMode } from './hooks/useACL';
+import type { Control, ControlMode } from '../core/useACL';
 import type { RouteObject } from 'react-router-dom';
 
+import { isUndefined, nth } from 'lodash';
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
 import { ROUTES_ACL } from '../config/acl';
 import { LOGIN_PATH, TITLE_CONFIG } from '../config/other';
+import { useMenu } from '../core';
 import { useACLGuard, useTokenGuard } from './Routes.guard';
-import AppExceptionRoute from './routes/Exception';
-import AppLoginRoute from './routes/Login';
+import { AppFCPLoader } from './components';
+import { useTitle } from './components/route-header/hooks';
+import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
+import AppLoginRoute from './routes/login/Login';
 
-const AppAmapRoute = React.lazy(() => import('./routes/dashboard/Amap'));
-const AppEchartsRoute = React.lazy(() => import('./routes/dashboard/Echarts'));
+const AppAMapRoute = React.lazy(() => import('./routes/dashboard/AMap'));
+const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/ECharts'));
+
+const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
+const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
 
 export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
-  title?: string;
-  titleI18n?: string;
   acl?:
     | {
         control: Control | Control[];
@@ -39,20 +43,17 @@ export interface RouteItem extends Omit<RouteObject, 'children'> {
 
 // I have a great implementation of route caching, but considering the synchronization of data between pages (like modifying list or detail page data), I ended up not introducing route caching.
 export function AppRoutes() {
-  const { t } = useTranslation('title');
   const ACLGuard = useACLGuard();
   const tokenGuard = useTokenGuard();
   const location = useLocation();
+  const [, allItem] = useMenu();
+  const titles = useTitle();
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const routes = matchRoutes(
     [
       {
         path: LOGIN_PATH,
         element: <AppLoginRoute />,
-        data: {
-          titleI18n: 'Login',
-        },
       },
       {
         path: '/',
@@ -64,25 +65,23 @@ export function AppRoutes() {
         children: [
           {
             index: true,
-            // TODO: Use first menu
-            element: <Navigate to="/dashboard/amap" replace />,
+            element: '/',
           },
           {
             path: 'dashboard',
             children: [
               {
                 index: true,
-                element: <Navigate to="/dashboard/amap" replace />,
+                element: '/dashboard',
               },
               {
                 path: 'amap',
                 element: (
-                  <React.Suspense fallback={<div>loader</div>}>
-                    <AppAmapRoute />
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppAMapRoute />
                   </React.Suspense>
                 ),
                 data: {
-                  title: 'AMap',
                   acl: ROUTES_ACL.dashboard.amap,
                   canActivate: [ACLGuard],
                 },
@@ -90,12 +89,11 @@ export function AppRoutes() {
               {
                 path: 'echarts',
                 element: (
-                  <React.Suspense fallback={<div>loader</div>}>
-                    <AppEchartsRoute />
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppEChartsRoute />
                   </React.Suspense>
                 ),
                 data: {
-                  title: 'ECharts',
                   acl: ROUTES_ACL.dashboard.echarts,
                   canActivate: [ACLGuard],
                 },
@@ -103,34 +101,58 @@ export function AppRoutes() {
             ],
           },
           {
-            path: 'exception',
+            path: 'test',
             children: [
               {
                 index: true,
-                element: <Navigate to="/exception/403" replace />,
+                element: '/test',
               },
               {
-                path: '403',
-                element: <AppExceptionRoute status={403} />,
+                path: 'acl',
+                element: (
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppACLRoute />
+                  </React.Suspense>
+                ),
                 data: {
-                  title: '403',
+                  acl: ROUTES_ACL.test.acl,
+                  canActivate: [ACLGuard],
                 },
               },
               {
-                path: '404',
-                element: <AppExceptionRoute status={404} />,
+                path: 'http',
+                element: (
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppHttpRoute />
+                  </React.Suspense>
+                ),
                 data: {
-                  title: '404',
-                },
-              },
-              {
-                path: '500',
-                element: <AppExceptionRoute status={500} />,
-                data: {
-                  title: '500',
+                  acl: ROUTES_ACL.test.http,
+                  canActivate: [ACLGuard],
                 },
               },
             ],
+          },
+        ],
+      },
+      {
+        path: 'exception',
+        children: [
+          {
+            index: true,
+            element: '/exception',
+          },
+          {
+            path: '403',
+            element: <AppExceptionRoute status={403} />,
+          },
+          {
+            path: '404',
+            element: <AppExceptionRoute status={404} />,
+          },
+          {
+            path: '500',
+            element: <AppExceptionRoute status={500} />,
           },
         ],
       },
@@ -140,14 +162,15 @@ export function AppRoutes() {
       },
     ] as RouteItem[],
     location
-  )!;
+  );
 
-  let currentRouteData: RouteData | undefined;
   const element: React.ReactNode = (() => {
+    if (!routes) {
+      return null;
+    }
+
     let canActivateChild: CanActivateFn[] = [];
-    let index = -1;
     for (const route of routes) {
-      index += 1;
       const routeData = (route.route as RouteItem).data;
       if (routeData && routeData.canActivate) {
         for (const canActivate of routeData.canActivate.concat(canActivateChild)) {
@@ -160,27 +183,29 @@ export function AppRoutes() {
       if (routeData && routeData.canActivateChild) {
         canActivateChild = canActivateChild.concat(routeData.canActivateChild);
       }
-
-      if (index === routes.length - 1) {
-        currentRouteData = routeData;
-      }
     }
 
+    const currentRoute = routes[routes.length - 1].route;
+    if (currentRoute.index === true) {
+      const firstMenu = allItem.find((item) => item.id.startsWith(currentRoute.element as string));
+      return <Navigate to={isUndefined(firstMenu) ? '/exception/404' : firstMenu.id} replace />;
+    }
     return renderMatches(routes);
   })();
 
   useEffect(() => {
-    if (currentRouteData && (currentRouteData.title || currentRouteData.titleI18n)) {
-      const title = [currentRouteData.title ? currentRouteData.title : t(currentRouteData.titleI18n!)];
+    const title = nth(titles, -1)?.[1];
+    if (isUndefined(title)) {
+      document.title = TITLE_CONFIG.default;
+    } else {
+      const arr = [title];
       if (TITLE_CONFIG.prefix) {
-        title.unshift(TITLE_CONFIG.prefix);
+        arr.unshift(TITLE_CONFIG.prefix);
       }
       if (TITLE_CONFIG.suffix) {
-        title.push(TITLE_CONFIG.suffix);
+        arr.push(TITLE_CONFIG.suffix);
       }
-      document.title = title.join(TITLE_CONFIG.separator ?? ' - ');
-    } else {
-      document.title = TITLE_CONFIG.default;
+      document.title = arr.join(TITLE_CONFIG.separator ?? ' - ');
     }
   });
 

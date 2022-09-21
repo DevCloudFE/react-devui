@@ -8,10 +8,11 @@ import { BellOutlined, LoadingOutlined } from '@react-devui/icons';
 import { DAvatar, DBadge, DButton, DPopover, DSeparator, DTabs } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { useNotificationState } from '../../../../config/state';
-import { AppList } from '../../../components';
+import { useNotificationState } from '../../../../../config/state';
+import { AppList } from '../../../../components';
+import styles from './Notification.module.scss';
 
-export function AppNotification(): JSX.Element | null {
+export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const [notification] = useNotificationState();
   const { t } = useTranslation();
   const tabsRef = useRef<DTabsRef>(null);
@@ -28,8 +29,8 @@ export function AppNotification(): JSX.Element | null {
 
   return (
     <DPopover
-      className={getClassName('app-layout-header__notification-popover', {
-        'app-layout-header__notification-popover--spinner': isUndefined(notification),
+      className={getClassName(styles['app-notification'], {
+        [styles['app-notification--spinner']]: isUndefined(notification),
       })}
       dContent={
         isUndefined(notification) ? (
@@ -43,13 +44,13 @@ export function AppNotification(): JSX.Element | null {
                 title: notify.title,
                 panel: (
                   <AppList
-                    list={notify.list.map((item) => ({
+                    aList={notify.list.map((item) => ({
                       avatar: <DAvatar dImg={{ src: '/assets/avatar.png', alt: 'avatar' }}></DAvatar>,
                       title: 'name',
                       description: item.message,
                       props: {
-                        className: getClassName('app-layout-header__notification-item', {
-                          'app-layout-header__notification-item--read': item.read,
+                        className: getClassName(styles['app-notification__item'], {
+                          [styles['app-notification__item--read']]: item.read,
                         }),
                       },
                     }))}
@@ -58,7 +59,7 @@ export function AppNotification(): JSX.Element | null {
               }))}
               dCenter
             />
-            <div className="app-layout-header__notification-actions">
+            <div className={styles['app-notification__actions']}>
               <DButton dType="link">{t('routes.layout.Clear notifications')}</DButton>
               <DSeparator style={{ margin: 0 }} dVertical></DSeparator>
               <DButton dType="link">{t('routes.layout.See more')}</DButton>
@@ -76,7 +77,7 @@ export function AppNotification(): JSX.Element | null {
         }
       }}
     >
-      <button className="app-layout-header__button" aria-label={t('routes.layout.Notification')}>
+      <button {...props} aria-label={t('routes.layout.Notification')}>
         <div style={{ position: 'relative' }}>
           <DBadge dValue={num} dDot />
           <BellOutlined />

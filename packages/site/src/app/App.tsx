@@ -67,7 +67,7 @@ export function App() {
   const rootContext = useMemo<DConfigContextData>(
     () => ({
       i18n: { lang: language },
-      layout: { scrollEl: 'main.app-main', resizeEl: 'article.app-md-route' },
+      layout: { scrollEl: '.app-main', resizeEl: '.app-md-route' },
     }),
     [language]
   );

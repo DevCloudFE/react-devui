@@ -1,0 +1,11 @@
+@import '~styles/module';
+
+@include b(http) {
+  @include app-route;
+
+  @include e(button-container) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+}

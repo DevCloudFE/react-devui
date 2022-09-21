@@ -18,8 +18,8 @@ export function AppLanguage(props: React.ButtonHTMLAttributes<HTMLButtonElement>
     <DDropdown
       dList={(
         [
-          ['US', 'English', 'en-US'],
-          ['CN', '简体中文', 'zh-CN'],
+          ['🇨🇳', '简体中文', 'zh-CN'],
+          ['🇺🇸', 'English', 'en-US'],
         ] as [string, string, DLang][]
       ).map<DDropdownItem<DLang>>((item) => ({
         id: item[2],

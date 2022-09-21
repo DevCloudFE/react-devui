@@ -18,7 +18,7 @@
         "assets": ["packages/platform/src/assets"],
         "styles": ["packages/platform/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "packages/platform/webpack"
       },
       "configurations": {
         "production": {

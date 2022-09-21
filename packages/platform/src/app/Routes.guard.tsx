@@ -5,7 +5,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { LOGIN_PATH, PREV_ROUTE_KEY } from '../config/other';
 import { TOKEN, TOKEN_EXPIRATION_OFFSET } from '../config/token';
-import { useACL } from './hooks';
+import { useACL } from '../core';
 
 export function useACLGuard(): CanActivateFn {
   const acl = useACL();

@@ -10,6 +10,7 @@
       "options": {
         "outputPath": "dist/packages/ui",
         "tsConfig": "packages/ui/tsconfig.lib.json",
+        "rootDir": "packages/ui/src",
         "main": "packages/ui/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [

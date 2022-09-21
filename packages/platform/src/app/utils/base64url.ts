@@ -3,7 +3,13 @@ export const base64url = {
     return window.btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   },
   decode: (str: string) => {
-    str = (str + '===').slice(0, str.length + (str.length % 4));
-    return window.atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    const remainder = str.length % 4;
+    if (remainder !== 0) {
+      str += Array.from({ length: 4 - remainder })
+        .fill('=')
+        .join('');
+    }
+    return window.atob(str);
   },
 };

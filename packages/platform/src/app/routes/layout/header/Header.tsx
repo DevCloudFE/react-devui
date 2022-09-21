@@ -9,8 +9,9 @@ import { DCustomIcon, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } fro
 
 import { AppLanguage } from '../../../components';
 import { useDeviceQuery } from '../../../hooks';
-import { AppNotification } from './Notification';
-import { AppUser } from './User';
+import styles from './Header.module.scss';
+import { AppNotification } from './notification/Notification';
+import { AppUser } from './user/User';
 
 export interface AppHeaderProps {
   sidebarWidth: number;
@@ -21,36 +22,39 @@ export interface AppHeaderProps {
 export function AppHeader(props: AppHeaderProps): JSX.Element | null {
   const { sidebarWidth, menuOpen, onMenuOpenChange } = props;
 
-  const textRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const deviceMatched = useDeviceQuery();
   const [theme, setTheme] = useLocalStorage<AppTheme>('theme', 'light');
 
   useEffect(() => {
     if (menuOpen && textRef.current) {
-      const maxWidth = sidebarWidth - 64;
-      if (textRef.current.clientWidth > maxWidth) {
-        textRef.current.style.cssText = `transform:scale(${maxWidth / textRef.current.clientWidth});`;
+      const maxWidth = sidebarWidth - 64 - 14;
+      if (textRef.current.scrollWidth > maxWidth) {
+        textRef.current.style.transform = `scale(${maxWidth / textRef.current.scrollWidth})`;
+      } else {
+        textRef.current.style.transform = '';
       }
     }
   });
 
   return (
-    <header className="app-layout-header">
-      <Link className="app-layout-header__logo-container" to="/">
-        <div className="app-layout-header__logo">
+    <header className={styles['app-header']}>
+      <Link className={styles['app-header__logo-container']} to="/">
+        <div className={styles['app-header__logo']}>
           <img src="/assets/logo.svg" alt="Logo" width="36" height="36" />
         </div>
-        <span
-          ref={textRef}
-          className="app-layout-header__logo-title"
+        <div
+          className={styles['app-header__logo-title-wrapper']}
           style={{ width: deviceMatched !== 'phone' && menuOpen ? sidebarWidth - 64 : 0 }}
         >
-          DevUI
-        </span>
+          <div className={styles['app-header__logo-title']} ref={textRef}>
+            RD-Platform
+          </div>
+        </div>
       </Link>
       <button
-        className="app-layout-header__button"
+        className={styles['app-header__button']}
         aria-label={t(menuOpen ? 'routes.layout.Fold main navigation' : 'routes.layout.Expand main navigation')}
         onClick={() => {
           onMenuOpenChange(!menuOpen);
@@ -59,7 +63,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
         {menuOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
       </button>
       <button
-        className="app-layout-header__button"
+        className={styles['app-header__button']}
         aria-label={t(theme === 'light' ? 'Dark theme' : 'Light theme')}
         onClick={() => {
           setTheme(theme === 'light' ? 'dark' : 'light');
@@ -73,12 +77,12 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
           )}
         </DCustomIcon>
       </button>
-      <button className="app-layout-header__button" style={{ marginLeft: 'auto' }} aria-label={t('routes.layout.Search')}>
+      <button className={styles['app-header__button']} style={{ marginLeft: 'auto' }} aria-label={t('routes.layout.Search')}>
         <SearchOutlined />
       </button>
-      <AppNotification />
-      <AppUser />
-      <AppLanguage className="app-layout-header__button" />
+      <AppNotification className={styles['app-header__button']} />
+      <AppUser className={styles['app-header__button']} style={{ gap: '0 8px' }} />
+      <AppLanguage className={styles['app-header__button']} />
     </header>
   );
 }

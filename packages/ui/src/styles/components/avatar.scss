@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  white-space: nowrap;
   vertical-align: top;
 
   @include m(circular) {

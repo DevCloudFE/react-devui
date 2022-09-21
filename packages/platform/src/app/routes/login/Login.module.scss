@@ -1,6 +1,7 @@
 @use 'sass:map';
+@import '~styles/module';
 
-@include b(login-route) {
+@include b(login) {
   display: flex;
   flex-direction: column;
   align-items: center;

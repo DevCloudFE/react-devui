@@ -10,6 +10,7 @@
       "options": {
         "outputPath": "dist/packages/icons",
         "tsConfig": "packages/icons/tsconfig.lib.json",
+        "rootDir": "packages/icons/src",
         "main": "packages/icons/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [

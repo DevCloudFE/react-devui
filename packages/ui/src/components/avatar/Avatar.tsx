@@ -30,7 +30,7 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const textRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const [imgError, setImgError] = useState(false);
@@ -38,9 +38,11 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
 
   useEffect(() => {
     if (textRef.current) {
-      const maxWidth = Math.sqrt(Math.pow(dSize / 2, 2) - Math.pow(textRef.current.clientHeight / 2, 2)) * 2;
-      if (textRef.current.clientWidth > maxWidth) {
-        textRef.current.style.cssText = `transform:scale(${maxWidth / textRef.current.clientWidth});`;
+      const maxWidth = Math.sqrt(Math.pow(dSize / 2, 2) - Math.pow(textRef.current.scrollHeight / 2, 2)) * 2;
+      if (textRef.current.scrollWidth > maxWidth) {
+        textRef.current.style.transform = `scale(${maxWidth / textRef.current.scrollWidth})`;
+      } else {
+        textRef.current.style.transform = '';
       }
     }
   });
@@ -70,7 +72,7 @@ export function DAvatar(props: DAvatarProps): JSX.Element | null {
       ) : type === 'icon' ? (
         dIcon
       ) : (
-        <span ref={textRef}>{dText}</span>
+        <div ref={textRef}>{dText}</div>
       )}
     </div>
   );

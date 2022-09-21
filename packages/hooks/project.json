@@ -10,6 +10,7 @@
       "options": {
         "outputPath": "dist/packages/hooks",
         "tsConfig": "packages/hooks/tsconfig.lib.json",
+        "rootDir": "packages/hooks/src",
         "main": "packages/hooks/src/index.ts",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [

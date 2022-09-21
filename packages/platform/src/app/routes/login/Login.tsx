@@ -1,16 +1,20 @@
-import type { UserState } from '../../config/state';
+import type { PREV_ROUTE_KEY } from '../../../config/other';
+import type { UserState } from '../../../config/state';
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useAsync } from '@react-devui/hooks';
 import { LockOutlined, MobileOutlined, UserOutlined } from '@react-devui/icons';
 import { DButton, DCheckbox, DForm, DInput, DTabs, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { TOKEN } from '../../config/token';
-import { AppLanguage } from '../components';
-import { useDeviceQuery, useHttp, useInit } from '../hooks';
+import { TOKEN } from '../../../config/token';
+import { useHttp, useInit } from '../../../core';
+import { AppLanguage } from '../../components';
+import { useDeviceQuery } from '../../hooks';
+import styles from './Login.module.scss';
 
 export default function Login(): JSX.Element | null {
   const { t } = useTranslation();
@@ -19,6 +23,9 @@ export default function Login(): JSX.Element | null {
   const init = useInit();
   const async = useAsync();
   const deviceMatched = useDeviceQuery();
+  const location = useLocation();
+  const from = (location.state as null | { [PREV_ROUTE_KEY]?: Location })?.from?.pathname;
+  const navigate = useNavigate();
 
   const [loginType, setLoginType] = useState<'account' | 'phone'>('account');
   const [remember, setRemember] = useState(true);
@@ -34,10 +41,10 @@ export default function Login(): JSX.Element | null {
   const [accountForm, updateAccountForm] = useForm(
     () =>
       new FormGroup({
-        username: new FormControl('admin', [
+        username: new FormControl('', [
           Validators.required,
           (control) => {
-            return !control.value || control.value === 'admin' ? null : { checkValue: true };
+            return control.value && control.value !== 'admin' && control.value !== 'user' ? { checkValue: true } : null;
           },
         ]),
         password: new FormControl('', Validators.required),
@@ -71,11 +78,13 @@ export default function Login(): JSX.Element | null {
             http<{ user: UserState; token: string }>({
               url: '/api/login',
               method: 'post',
+              data: { username: accountForm.get('username').value },
             }).subscribe({
               next: (res) => {
                 setLoginLoading(false);
                 TOKEN.token = res.token;
                 init(res.user);
+                navigate(from ?? '/', { replace: true });
               },
             });
           }}
@@ -89,18 +98,18 @@ export default function Login(): JSX.Element | null {
   );
 
   return (
-    <div className="app-login-route">
-      <AppLanguage className="app-login-route__lang" />
+    <div className={styles['app-login']}>
+      <AppLanguage className={styles['app-login__lang']} />
       <div>
-        {deviceMatched === 'desktop' && <img className="app-login-route__bg" src="/assets/login-bg.png" alt="bg" />}
-        <div className="app-login-route__login-container">
-          <div className="app-login-route__title-container">
-            <img className="app-login-route__logo" src="/assets/logo.svg" alt="Logo" />
-            <span>React DevUI</span>
+        {deviceMatched === 'desktop' && <img className={styles['app-login__bg']} src="/assets/login-bg.png" alt="bg" />}
+        <div className={styles['app-login__login-container']}>
+          <div className={styles['app-login__title-container']}>
+            <img className={styles['app-login__logo']} src="/assets/logo.svg" alt="Logo" />
+            <span>RD-Platform</span>
           </div>
-          <div className="app-login-route__description">{t('routes.login.description')}</div>
+          <div className={styles['app-login__description']}>{t('routes.login.description')}</div>
           <DTabs
-            className="app-login-route__tabs"
+            className={styles['app-login__tabs']}
             dList={[
               {
                 id: 'account',
@@ -171,8 +180,8 @@ export default function Login(): JSX.Element | null {
         </div>
       </div>
       <footer
-        className={getClassName('app-login-route__footer', {
-          'app-login-route__footer--phone': deviceMatched === 'phone',
+        className={getClassName(styles['app-login__footer'], {
+          [styles['app-login__footer--phone']]: deviceMatched === 'phone',
         })}
       >
         <div>
@@ -181,7 +190,7 @@ export default function Login(): JSX.Element | null {
             Xie Jay
           </a>
         </div>
-        <div className="app-login-route__link-container">
+        <div className={styles['app-login__link-container']}>
           <a className="app-link">{t('routes.login.Terms')}</a>
           <a className="app-link">{t('routes.login.Privacy')}</a>
         </div>

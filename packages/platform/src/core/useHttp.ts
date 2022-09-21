@@ -3,18 +3,26 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { isNull } from 'lodash';
 import { useCallback, useRef } from 'react';
-import { catchError, map, throwError } from 'rxjs';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { catchError, EMPTY, map, throwError } from 'rxjs';
 import { from } from 'rxjs';
 import { Subject, takeUntil } from 'rxjs';
 
 import { useUnmount } from '@react-devui/hooks';
+import { ToastService } from '@react-devui/ui';
 
-import '../../config/mock';
-import { TOKEN } from '../../config/token';
-import { environment } from '../../environments';
+import '../config/mock';
+import { LOGIN_PATH, PREV_ROUTE_KEY } from '../config/other';
+import { TOKEN } from '../config/token';
+import { environment } from '../environments';
 
 export function useHttp() {
   const abortFns = useRef(new Set<() => void>());
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
 
   useUnmount(() => {
     for (const abort of abortFns.current) {
@@ -55,13 +63,28 @@ export function useHttp() {
           takeUntil(onDestroy$),
           catchError((error: AxiosError<T, D>) => {
             if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
+              switch (error.response.status) {
+                case 401:
+                  ToastService.open({
+                    dContent: t('Not logged in or logged in has expired'),
+                    dType: 'error',
+                  });
+                  navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
+                  return EMPTY;
+
+                case 403:
+                case 404:
+                case 500:
+                  navigate(`/exception/${error.response.status}`);
+                  return EMPTY;
+
+                default:
+                  break;
+              }
             } else if (error.request) {
-              console.log(error.request);
+              // The request was made but no response was received.
             } else {
-              console.error(error);
+              // Something happened in setting up the request that triggered an Error.
             }
             return throwError(() => error);
           }),

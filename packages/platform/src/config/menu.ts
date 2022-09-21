@@ -1,13 +1,11 @@
-import type { Control, ControlMode } from '../app/hooks/useACL';
+import type { Control, ControlMode } from '../core/useACL';
 
-import { DashboardOutlined, ExceptionOutlined } from '@react-devui/icons';
+import { DashboardOutlined, ExceptionOutlined, ExperimentOutlined } from '@react-devui/icons';
 
 import { ROUTES_ACL } from './acl';
 
 export interface MenuItem {
   path: string;
-  title?: string;
-  titleI18n?: string;
   type: 'item' | 'group' | 'sub';
   icon?: React.FunctionComponent;
   disabled?: boolean;
@@ -24,43 +22,53 @@ export interface MenuItem {
 export const MENU: MenuItem[] = [
   {
     path: '/dashboard',
-    titleI18n: 'Dashboard',
     type: 'sub',
     icon: DashboardOutlined,
     children: [
       {
         path: '/dashboard/amap',
-        titleI18n: 'Amap',
         type: 'item',
         acl: ROUTES_ACL.dashboard.amap,
       },
       {
         path: '/dashboard/echarts',
-        titleI18n: 'Echarts',
         type: 'item',
         acl: ROUTES_ACL.dashboard.echarts,
       },
     ],
   },
   {
+    path: '/test',
+    type: 'sub',
+    icon: ExperimentOutlined,
+    children: [
+      {
+        path: '/test/acl',
+        type: 'item',
+        acl: ROUTES_ACL.test.acl,
+      },
+      {
+        path: '/test/http',
+        type: 'item',
+        acl: ROUTES_ACL.test.http,
+      },
+    ],
+  },
+  {
     path: '/exception',
-    titleI18n: 'Exception',
     type: 'sub',
     icon: ExceptionOutlined,
     children: [
       {
         path: '/exception/403',
-        titleI18n: '403',
         type: 'item',
       },
       {
         path: '/exception/404',
-        titleI18n: '404',
         type: 'item',
       },
       {
         path: '/exception/500',
-        titleI18n: '500',
         type: 'item',
       },
     ],

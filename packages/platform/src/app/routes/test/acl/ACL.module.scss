@@ -1,0 +1,15 @@
+@import '~styles/module';
+
+@include b(acl) {
+  @include app-route;
+
+  :global .d-card {
+    margin-top: 20px;
+  }
+
+  @include e(button-container) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+}

@@ -1,4 +1,5 @@
 import type { DFormControl } from './FormItem';
+import type { AbstractControl } from './abstract-control';
 import type { FormGroup } from './form-group';
 
 import { isUndefined } from 'lodash';
@@ -8,7 +9,7 @@ import { useEventCallback, useForceUpdate } from '@react-devui/hooks';
 
 export const DFormUpdateContext = React.createContext<(() => void) | null>(null);
 
-export function useForm(cb: () => FormGroup) {
+export function useForm<T extends { [K in keyof T]: AbstractControl } = any>(cb: () => FormGroup<T>) {
   const [initValue] = useState(() => cb());
   const form = useRef(initValue);
 
