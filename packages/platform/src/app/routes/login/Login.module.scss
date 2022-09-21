@@ -15,6 +15,7 @@
 
   @include e(login-container) {
     display: inline-block;
+    max-width: 400px;
     vertical-align: top;
   }
 
@@ -39,7 +40,6 @@
   }
 
   @include e(tabs) {
-    max-width: 400px;
     margin-top: 20px;
   }
 
