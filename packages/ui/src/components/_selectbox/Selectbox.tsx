@@ -9,10 +9,11 @@ import { useForkRef, useRefExtra, useResize } from '@react-devui/hooks';
 import { CloseCircleFilled, DownOutlined, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { useMaxIndex, useFocusVisible } from '../../hooks';
+import { useMaxIndex } from '../../hooks';
 import { cloneHTMLElement } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
+import { DFocusVisible } from '../_focus-visible';
 import { useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
 
 export interface DSelectboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -94,12 +95,6 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
 
   const [isFocus, setIsFocus] = useState(false);
 
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
-  useEffect(() => {
-    onFocusVisibleChange(focusVisible);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusVisible]);
-
   const inputable = dSearchable && dVisible;
   const clearable = dClearable && dContent && !dVisible && !dLoading && !dDisabled;
 
@@ -172,36 +167,40 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
               }}
             >
               <div className={`${prefix}__container`} title={dContentTitle}>
-                <DBaseInput dFormControl={dFormControl} dLabelFor>
-                  {({ render: renderBaseInput }) => {
-                    return renderFocusVisible(
-                      dInputRender(
-                        renderBaseInput(
-                          <input
-                            ref={combineInputRef}
-                            className={`${prefix}__search`}
-                            style={{
-                              opacity: inputable ? undefined : 0,
-                              zIndex: inputable ? undefined : -1,
-                            }}
-                            type="text"
-                            autoComplete="off"
-                            disabled={dDisabled}
-                            role="combobox"
-                            aria-haspopup="listbox"
-                            aria-expanded={dVisible}
-                            onFocus={() => {
-                              setIsFocus(true);
-                            }}
-                            onBlur={() => {
-                              setIsFocus(false);
-                            }}
-                          />
-                        )
-                      )
-                    );
-                  }}
-                </DBaseInput>
+                <DFocusVisible onFocusVisibleChange={onFocusVisibleChange}>
+                  {({ render: renderFocusVisible }) => (
+                    <DBaseInput dFormControl={dFormControl} dLabelFor>
+                      {({ render: renderBaseInput }) => {
+                        return dInputRender(
+                          renderFocusVisible(
+                            renderBaseInput(
+                              <input
+                                ref={combineInputRef}
+                                className={`${prefix}__search`}
+                                style={{
+                                  opacity: inputable ? undefined : 0,
+                                  zIndex: inputable ? undefined : -1,
+                                }}
+                                type="text"
+                                autoComplete="off"
+                                disabled={dDisabled}
+                                role="combobox"
+                                aria-haspopup="listbox"
+                                aria-expanded={dVisible}
+                                onFocus={() => {
+                                  setIsFocus(true);
+                                }}
+                                onBlur={() => {
+                                  setIsFocus(false);
+                                }}
+                              />
+                            )
+                          )
+                        );
+                      }}
+                    </DBaseInput>
+                  )}
+                </DFocusVisible>
                 {!inputable &&
                   (dContent ? (
                     <div className={`${prefix}__content`}>{dContent}</div>

@@ -6,8 +6,9 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useId } from '@react-devui/hooks';
 import { findNested, getClassName } from '@react-devui/utils';
 
-import { useDValue, useFocusVisible } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
+import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
@@ -127,7 +128,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);
   const [isFocus, setIsFocus] = useState(false);
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
+  const [focusVisible, setFocusVisible] = useState(false);
   const focusId = (() => {
     if (isFocus) {
       if (dMode === 'vertical') {
@@ -479,53 +480,59 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
           }
         };
 
-        return renderFocusVisible(
-          // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
-          <nav
-            {...restProps}
-            ref={collapseRef}
-            className={getClassName(restProps.className, `${dPrefix}menu`, {
-              [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
-            })}
-            style={{
-              ...restProps.style,
-              width: dWidth,
-              ...collapseStyle,
-            }}
-            tabIndex={restProps.tabIndex ?? 0}
-            role="menubar"
-            aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
-            aria-activedescendant={isUndefined(focusId) ? undefined : getItemId(focusId)}
-            onFocus={(e) => {
-              restProps.onFocus?.(e);
+        return (
+          <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+            {({ render: renderFocusVisible }) =>
+              renderFocusVisible(
+                // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
+                <nav
+                  {...restProps}
+                  ref={collapseRef}
+                  className={getClassName(restProps.className, `${dPrefix}menu`, {
+                    [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',
+                  })}
+                  style={{
+                    ...restProps.style,
+                    width: dWidth,
+                    ...collapseStyle,
+                  }}
+                  tabIndex={restProps.tabIndex ?? 0}
+                  role="menubar"
+                  aria-orientation={dMode === 'horizontal' ? 'horizontal' : 'vertical'}
+                  aria-activedescendant={isUndefined(focusId) ? undefined : getItemId(focusId)}
+                  onFocus={(e) => {
+                    restProps.onFocus?.(e);
 
-              setIsFocus(true);
-              initFocus();
-            }}
-            onBlur={(e) => {
-              restProps.onBlur?.(e);
+                    setIsFocus(true);
+                    initFocus();
+                  }}
+                  onBlur={(e) => {
+                    restProps.onBlur?.(e);
 
-              setIsFocus(false);
-              setPopupIds([]);
-            }}
-            onKeyDown={(e) => {
-              restProps.onKeyDown?.(e);
+                    setIsFocus(false);
+                    setPopupIds([]);
+                  }}
+                  onKeyDown={(e) => {
+                    restProps.onKeyDown?.(e);
 
-              handleKeyDown?.(e);
-            }}
-            onMouseDown={(e) => {
-              restProps.onMouseDown?.(e);
+                    handleKeyDown?.(e);
+                  }}
+                  onMouseDown={(e) => {
+                    restProps.onMouseDown?.(e);
 
-              preventBlur(e);
-            }}
-            onMouseUp={(e) => {
-              restProps.onMouseUp?.(e);
+                    preventBlur(e);
+                  }}
+                  onMouseUp={(e) => {
+                    restProps.onMouseUp?.(e);
 
-              preventBlur(e);
-            }}
-          >
-            {nodes}
-          </nav>
+                    preventBlur(e);
+                  }}
+                >
+                  {nodes}
+                </nav>
+              )
+            }
+          </DFocusVisible>
         );
       }}
     </DCollapseTransition>

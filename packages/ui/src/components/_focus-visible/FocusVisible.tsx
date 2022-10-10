@@ -1,22 +1,30 @@
-import type { DCloneHTMLElement } from '../utils/types';
+import type { DCloneHTMLElement } from '../../utils/types';
 
 import { isUndefined } from 'lodash';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { useAsync, useEvent, useRefExtra } from '@react-devui/hooks';
 
-import { cloneHTMLElement } from '../utils';
+import { cloneHTMLElement } from '../../utils';
 
 const FOCUS_KEY = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', 'Space'];
 
-export function useFocusVisible(disabled = false): [boolean, DCloneHTMLElement] {
+export interface DFocusVisibleProps {
+  children: (props: { render: DCloneHTMLElement }) => JSX.Element | null;
+  dDisabled?: boolean;
+  onFocusVisibleChange: (focus: boolean) => void;
+}
+
+export function DFocusVisible(props: DFocusVisibleProps): JSX.Element | null {
+  const { children, dDisabled = false, onFocusVisibleChange } = props;
+
+  //#region Ref
   const windowRef = useRefExtra(() => window);
+  //#endregion
 
   const dataRef = useRef<{
     clearTid?: () => void;
   }>({});
-
-  const [focusVisible, setFocusVisible] = useState(false);
 
   const async = useAsync();
   useEvent(
@@ -29,34 +37,33 @@ export function useFocusVisible(disabled = false): [boolean, DCloneHTMLElement] 
       }, 20);
     },
     {},
-    disabled
+    dDisabled
   );
 
-  return [
-    focusVisible,
-    (el) =>
-      disabled
+  return children({
+    render: (el) =>
+      dDisabled
         ? el
         : cloneHTMLElement(el, {
             onFocus: (e) => {
               el.props.onFocus?.(e);
 
               if (!isUndefined(dataRef.current.clearTid)) {
-                setFocusVisible(true);
+                onFocusVisibleChange(true);
               }
             },
             onBlur: (e) => {
               el.props.onBlur?.(e);
 
-              setFocusVisible(false);
+              onFocusVisibleChange(false);
             },
             onKeyDown: (e) => {
               el.props.onKeyDown?.(e);
 
               if (FOCUS_KEY.includes(e.code)) {
-                setFocusVisible(true);
+                onFocusVisibleChange(true);
               }
             },
           }),
-  ];
+  });
 }

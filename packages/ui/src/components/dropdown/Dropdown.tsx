@@ -7,8 +7,9 @@ import ReactDOM from 'react-dom';
 import { useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
 import { getClassName, getOriginalSize, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
 
-import { useMaxIndex, useDValue, useFocusVisible } from '../../hooks';
+import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
@@ -103,7 +104,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);
   const [isFocus, setIsFocus] = useState(false);
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
+  const [focusVisible, setFocusVisible] = useState(false);
   const focusId = (() => {
     if (isFocus) {
       let id: ID | undefined;
@@ -420,54 +421,58 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
       {({ renderTrigger, renderPopup }) => (
         <>
           {renderTrigger(
-            renderFocusVisible(
-              React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-                id: triggerId,
-                tabIndex: children.props.tabIndex ?? 0,
-                role: 'button',
-                'aria-haspopup': 'menu',
-                'aria-expanded': visible,
-                'aria-controls': id,
-                onFocus: (e) => {
-                  children.props.onFocus?.(e);
+            <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+              {({ render: renderFocusVisible }) =>
+                renderFocusVisible(
+                  React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
+                    id: triggerId,
+                    tabIndex: children.props.tabIndex ?? 0,
+                    role: 'button',
+                    'aria-haspopup': 'menu',
+                    'aria-expanded': visible,
+                    'aria-controls': id,
+                    onFocus: (e) => {
+                      children.props.onFocus?.(e);
 
-                  setIsFocus(true);
-                  focusFirst();
-                },
-                onBlur: (e) => {
-                  children.props.onBlur?.(e);
+                      setIsFocus(true);
+                      focusFirst();
+                    },
+                    onBlur: (e) => {
+                      children.props.onBlur?.(e);
 
-                  setIsFocus(false);
-                  changeVisible(false);
-                },
-                onKeyDown: (e) => {
-                  children.props.onKeyDown?.(e);
+                      setIsFocus(false);
+                      changeVisible(false);
+                    },
+                    onKeyDown: (e) => {
+                      children.props.onKeyDown?.(e);
 
-                  if (visible) {
-                    handleKeyDown?.(e);
-                  } else {
-                    switch (e.code) {
-                      case 'Enter':
-                      case 'Space':
-                      case 'ArrowDown':
-                        e.preventDefault();
-                        focusFirst();
-                        changeVisible(true);
-                        break;
+                      if (visible) {
+                        handleKeyDown?.(e);
+                      } else {
+                        switch (e.code) {
+                          case 'Enter':
+                          case 'Space':
+                          case 'ArrowDown':
+                            e.preventDefault();
+                            focusFirst();
+                            changeVisible(true);
+                            break;
 
-                      case 'ArrowUp':
-                        e.preventDefault();
-                        focusLast();
-                        changeVisible(true);
-                        break;
+                          case 'ArrowUp':
+                            e.preventDefault();
+                            focusLast();
+                            changeVisible(true);
+                            break;
 
-                      default:
-                        break;
-                    }
-                  }
-                },
-              })
-            )
+                          default:
+                            break;
+                        }
+                      }
+                    },
+                  })
+                )
+              }
+            </DFocusVisible>
           )}
           {containerRef.current &&
             ReactDOM.createPortal(

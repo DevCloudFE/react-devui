@@ -2,13 +2,15 @@ import type { DCloneHTMLElement } from '../../utils/types';
 import type { DFormControl } from '../form';
 
 import { isUndefined } from 'lodash';
+import { useState } from 'react';
 
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { useWave, useGeneralContext, useDValue, useFocusVisible } from '../../hooks';
+import { useWave, useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
+import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DRadioGroup } from './RadioGroup';
@@ -53,7 +55,7 @@ export const DRadio: {
 
   const [waveNode, wave] = useWave();
 
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const formControlInject = useFormControl(dFormControl);
   const [checked, changeChecked] = useDValue<boolean>(false, dModel, onModelChange, undefined, formControlInject);
@@ -89,29 +91,31 @@ export const DRadio: {
             }}
           >
             <div className={`${dPrefix}radio__input-wrapper`}>
-              {
-                <DBaseInput dFormControl={dFormControl} dLabelFor>
-                  {({ render: renderBaseInput }) => {
-                    const input = renderFocusVisible(
-                      renderBaseInput(
-                        <input
-                          ref={dRef?.input}
-                          className={`${dPrefix}radio__input`}
-                          type="radio"
-                          checked={checked}
-                          disabled={disabled}
-                          aria-checked={checked}
-                          onChange={() => {
-                            changeChecked(true);
-                          }}
-                        />
-                      )
-                    );
+              <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+                {({ render: renderFocusVisible }) => (
+                  <DBaseInput dFormControl={dFormControl} dLabelFor>
+                    {({ render: renderBaseInput }) => {
+                      const input = renderFocusVisible(
+                        renderBaseInput(
+                          <input
+                            ref={dRef?.input}
+                            className={`${dPrefix}radio__input`}
+                            type="radio"
+                            checked={checked}
+                            disabled={disabled}
+                            aria-checked={checked}
+                            onChange={() => {
+                              changeChecked(true);
+                            }}
+                          />
+                        )
+                      );
 
-                    return isUndefined(dInputRender) ? input : dInputRender(input);
-                  }}
-                </DBaseInput>
-              }
+                      return isUndefined(dInputRender) ? input : dInputRender(input);
+                    }}
+                  </DBaseInput>
+                )}
+              </DFocusVisible>
             </div>
             {checkNodeExist(children) && <div className={`${dPrefix}radio__label`}>{children}</div>}
             {waveNode}

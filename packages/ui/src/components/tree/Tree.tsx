@@ -9,8 +9,9 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useId } from '@react-devui/hooks';
 import { findNested, getClassName } from '@react-devui/utils';
 
-import { useGeneralContext, useDValue, useFocusVisible } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DPanel } from './Panel';
@@ -149,7 +150,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
 
   const hasSelected = dMultiple ? (select as Set<V>).size > 0 : !isNull(select);
 
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const [_focusNode, setFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
   const focusNode = (() => {
@@ -173,104 +174,110 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
     return node;
   })();
 
-  return renderFocusVisible(
-    <DPanel
-      {...restProps}
-      className={getClassName(restProps.className, {
-        'is-disabled': disabled,
-      })}
-      style={{
-        ...restProps.style,
-        maxHeight: dHeight,
-      }}
-      tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
-      onKeyDown={(e) => {
-        restProps.onKeyDown?.(e);
+  return (
+    <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+      {({ render: renderFocusVisible }) =>
+        renderFocusVisible(
+          <DPanel
+            {...restProps}
+            className={getClassName(restProps.className, {
+              'is-disabled': disabled,
+            })}
+            style={{
+              ...restProps.style,
+              maxHeight: dHeight,
+            }}
+            tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
+            onKeyDown={(e) => {
+              restProps.onKeyDown?.(e);
 
-        switch (e.code) {
-          case 'ArrowUp':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('prev');
-            break;
+              switch (e.code) {
+                case 'ArrowUp':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('prev');
+                  break;
 
-          case 'ArrowDown':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('next');
-            break;
+                case 'ArrowDown':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('next');
+                  break;
 
-          case 'ArrowLeft':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('prev-level');
-            break;
+                case 'ArrowLeft':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('prev-level');
+                  break;
 
-          case 'ArrowRight':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('next-level');
-            break;
+                case 'ArrowRight':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('next-level');
+                  break;
 
-          case 'Home':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('first');
-            break;
+                case 'Home':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('first');
+                  break;
 
-          case 'End':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('last');
-            break;
+                case 'End':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('last');
+                  break;
 
-          case 'Enter':
-            e.preventDefault();
-            comboboxKeyDownRef.current?.('click');
-            break;
+                case 'Enter':
+                  e.preventDefault();
+                  comboboxKeyDownRef.current?.('click');
+                  break;
 
-          default:
-            break;
-        }
-      }}
-      dGetGroupId={getGroupId}
-      dGetItemId={getItemId}
-      dList={renderNodes}
-      dExpandIds={expandIds}
-      dHeight={dHeight ?? Infinity}
-      dPadding={undefined}
-      dFocusItem={focusNode}
-      dCustomItem={dCustomItem}
-      dShowLine={dShowLine}
-      dMultiple={dMultiple}
-      dFocusVisible={focusVisible}
-      onFocusChange={setFocusNode}
-      onExpandChange={(item) => {
-        const isExpand = expandIds.has(item.id);
+                default:
+                  break;
+              }
+            }}
+            dGetGroupId={getGroupId}
+            dGetItemId={getItemId}
+            dList={renderNodes}
+            dExpandIds={expandIds}
+            dHeight={dHeight ?? Infinity}
+            dPadding={undefined}
+            dFocusItem={focusNode}
+            dCustomItem={dCustomItem}
+            dShowLine={dShowLine}
+            dMultiple={dMultiple}
+            dFocusVisible={focusVisible}
+            onFocusChange={setFocusNode}
+            onExpandChange={(item) => {
+              const isExpand = expandIds.has(item.id);
 
-        if (!item.origin.loading) {
-          if (isExpand) {
-            changeExpandIds((draft) => {
-              draft.splice(
-                draft.findIndex((id) => id === item.id),
-                1
-              );
-            });
-          } else {
-            if (!dataRef.current.hasExpandList.has(item.id)) {
-              dataRef.current.hasExpandList.add(item.id);
-              onFirstExpand?.(item.id, item.origin);
-            }
-            changeExpandIds((draft) => {
-              draft.push(item.id);
-            });
-          }
-        }
-      }}
-      onClickItem={(node) => {
-        if (dMultiple) {
-          const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', select as Set<V>);
-          changeSelect(Array.from(checkeds.keys()));
-        } else {
-          if (!dOnlyLeafSelectable || node.isLeaf) {
-            changeSelect(node.id);
-          }
-        }
-      }}
-    ></DPanel>
+              if (!item.origin.loading) {
+                if (isExpand) {
+                  changeExpandIds((draft) => {
+                    draft.splice(
+                      draft.findIndex((id) => id === item.id),
+                      1
+                    );
+                  });
+                } else {
+                  if (!dataRef.current.hasExpandList.has(item.id)) {
+                    dataRef.current.hasExpandList.add(item.id);
+                    onFirstExpand?.(item.id, item.origin);
+                  }
+                  changeExpandIds((draft) => {
+                    draft.push(item.id);
+                  });
+                }
+              }
+            }}
+            onClickItem={(node) => {
+              if (dMultiple) {
+                const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', select as Set<V>);
+                changeSelect(Array.from(checkeds.keys()));
+              } else {
+                if (!dOnlyLeafSelectable || node.isLeaf) {
+                  changeSelect(node.id);
+                }
+              }
+            }}
+          ></DPanel>
+        )
+      }
+    </DFocusVisible>
   );
 }

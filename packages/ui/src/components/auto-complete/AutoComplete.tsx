@@ -9,8 +9,9 @@ import { useEvent, useEventCallback, useId, useRefExtra, useResize } from '@reac
 import { LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
 
-import { useMaxIndex, useDValue, useFocusVisible } from '../../hooks';
+import { useMaxIndex, useDValue } from '../../hooks';
 import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { DFocusVisible } from '../_focus-visible';
 import { DComboboxKeyboard } from '../_keyboard';
 import { DTransition } from '../_transition';
 import { DInput } from '../input';
@@ -88,7 +89,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
-  const [focusVisible, renderFocusVisible] = useFocusVisible();
+  const [focusVisible, setFocusVisible] = useState(false);
 
   const maxZIndex = useMaxIndex(visible);
 
@@ -177,77 +178,81 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
   return (
     <>
-      <DComboboxKeyboard
-        dVisible={visible}
-        dEditable
-        dHasSub={false}
-        onVisibleChange={changeVisible}
-        onFocusChange={(key) => {
-          switch (key) {
-            case 'next':
-              changeFocusItem(vsRef.current?.scrollByStep(1));
-              break;
+      <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+        {({ render: renderFocusVisible }) => (
+          <DComboboxKeyboard
+            dVisible={visible}
+            dEditable
+            dHasSub={false}
+            onVisibleChange={changeVisible}
+            onFocusChange={(key) => {
+              switch (key) {
+                case 'next':
+                  changeFocusItem(vsRef.current?.scrollByStep(1));
+                  break;
 
-            case 'prev':
-              changeFocusItem(vsRef.current?.scrollByStep(-1));
-              break;
+                case 'prev':
+                  changeFocusItem(vsRef.current?.scrollByStep(-1));
+                  break;
 
-            case 'first':
-              changeFocusItem(vsRef.current?.scrollToStart());
-              break;
+                case 'first':
+                  changeFocusItem(vsRef.current?.scrollToStart());
+                  break;
 
-            case 'last':
-              changeFocusItem(vsRef.current?.scrollToEnd());
-              break;
+                case 'last':
+                  changeFocusItem(vsRef.current?.scrollToEnd());
+                  break;
 
-            default:
-              break;
-          }
-        }}
-      >
-        {({ render: renderComboboxKeyboard }) => {
-          const renderInput = (el: React.ReactElement<React.HTMLAttributes<HTMLElement>>, props?: React.HTMLAttributes<HTMLElement>) =>
-            renderFocusVisible(
-              renderComboboxKeyboard(
-                cloneHTMLElement(el, {
-                  ...props,
-                  role: 'combobox',
-                  'aria-autocomplete': 'list',
-                  'aria-expanded': visible,
-                  'aria-controls': listId,
-                  onBlur: (e) => {
-                    el.props.onBlur?.(e);
+                default:
+                  break;
+              }
+            }}
+          >
+            {({ render: renderComboboxKeyboard }) => {
+              const renderInput = (el: React.ReactElement<React.HTMLAttributes<HTMLElement>>, props?: React.HTMLAttributes<HTMLElement>) =>
+                renderFocusVisible(
+                  renderComboboxKeyboard(
+                    cloneHTMLElement(el, {
+                      ...props,
+                      role: 'combobox',
+                      'aria-autocomplete': 'list',
+                      'aria-expanded': visible,
+                      'aria-controls': listId,
+                      onBlur: (e) => {
+                        el.props.onBlur?.(e);
 
-                    changeVisible(false);
-                  },
-                  onClick: (e) => {
-                    el.props.onClick?.(e);
+                        changeVisible(false);
+                      },
+                      onClick: (e) => {
+                        el.props.onClick?.(e);
 
-                    changeVisible(true);
-                  },
-                  onKeyDown: (e) => {
-                    el.props.onKeyDown?.(e);
+                        changeVisible(true);
+                      },
+                      onKeyDown: (e) => {
+                        el.props.onKeyDown?.(e);
 
-                    if (e.code === 'Enter' && visible && focusItem) {
-                      changeVisible(false);
-                      onItemClick?.(focusItem.value, focusItem);
-                    }
-                  },
-                })
-              )
-            );
+                        if (e.code === 'Enter' && visible && focusItem) {
+                          changeVisible(false);
+                          onItemClick?.(focusItem.value, focusItem);
+                        }
+                      },
+                    })
+                  )
+                );
 
-          const boxSelector = { ['data-auto-complete-box' as string]: uniqueId };
-          if (child.type === DInput) {
-            return React.cloneElement<DInputProps>(child, {
-              ...boxSelector,
-              dInputRender: renderInput,
-            });
-          } else {
-            return renderInput(child, boxSelector);
-          }
-        }}
-      </DComboboxKeyboard>
+              const boxSelector = { ['data-auto-complete-box' as string]: uniqueId };
+              if (child.type === DInput) {
+                return React.cloneElement<DInputProps>(child, {
+                  ...boxSelector,
+                  dInputRender: renderInput,
+                });
+              } else {
+                return renderInput(child, boxSelector);
+              }
+            }}
+          </DComboboxKeyboard>
+        )}
+      </DFocusVisible>
       {containerRef.current &&
         ReactDOM.createPortal(
           <DTransition
