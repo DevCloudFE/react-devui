@@ -2,8 +2,8 @@ import type { FormGroup } from './form-group';
 
 import React from 'react';
 
-import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig } from '../root';
 
 export const DFormGroupContext = React.createContext<FormGroup | null>(null);
 

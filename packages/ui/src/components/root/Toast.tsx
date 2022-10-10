@@ -4,11 +4,11 @@ import type { Subscription } from 'rxjs';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useElement, useImmer } from '@react-devui/hooks';
+import { useImmer, useRefExtra } from '@react-devui/hooks';
 
-import { usePrefixConfig } from '../../hooks';
 import { ToastService, TOAST_SUBJECT } from '../toast';
 import { DToast } from '../toast/Toast';
+import { usePrefixConfig } from './hooks';
 
 export function Toast(): JSX.Element | null {
   //#region Context
@@ -33,8 +33,8 @@ export function Toast(): JSX.Element | null {
     }
     return el;
   };
-  const toastTRoot = useElement(() => getRoot(`${dPrefix}toast-t-root`));
-  const toastBRoot = useElement(() => getRoot(`${dPrefix}toast-b-root`));
+  const toastTRootRef = useRefExtra(() => getRoot(`${dPrefix}toast-t-root`), true);
+  const toastBRootRef = useRefExtra(() => getRoot(`${dPrefix}toast-b-root`), true);
 
   useEffect(() => {
     const obs: Subscription[] = [];
@@ -102,19 +102,19 @@ export function Toast(): JSX.Element | null {
 
   return (
     <>
-      {toastTRoot &&
+      {toastTRootRef.current &&
         ReactDOM.createPortal(
           Array.from(toasts.entries())
             .filter(([, toastProps]) => (toastProps.dPlacement ?? 'top') === 'top')
             .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
-          toastTRoot
+          toastTRootRef.current
         )}
-      {toastBRoot &&
+      {toastBRootRef.current &&
         ReactDOM.createPortal(
           Array.from(toasts.entries())
             .filter(([, toastProps]) => toastProps.dPlacement === 'bottom')
             .map(([uniqueId, toastProps]) => <DToast key={uniqueId} {...toastProps}></DToast>),
-          toastBRoot
+          toastBRootRef.current
         )}
     </>
   );

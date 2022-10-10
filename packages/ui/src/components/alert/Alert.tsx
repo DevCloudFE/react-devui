@@ -1,9 +1,10 @@
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { useComponentConfig, useDValue, usePrefixConfig } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DPanel as DNotificationPanel } from '../notification/Panel';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DPanel as DToastPanel } from '../toast/Panel';
 
 export interface DAlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -40,7 +41,12 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
 
   return (
     <DCollapseTransition
-      dSize={0}
+      dOriginalSize={{
+        height: 'auto',
+      }}
+      dCollapsedStyle={{
+        height: 0,
+      }}
       dIn={visible}
       dDuring={TTANSITION_DURING_BASE}
       dStyles={{
@@ -61,11 +67,11 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
         afterVisibleChange?.(false);
       }}
     >
-      {(ref, collapseStyle) =>
+      {(collapseRef, collapseStyle) =>
         checkNodeExist(dDescription) ? (
           <DNotificationPanel
             {...restProps}
-            ref={ref}
+            ref={collapseRef}
             className={getClassName(restProps.className, `${dPrefix}alert--notification`)}
             style={{
               ...restProps.style,
@@ -84,7 +90,7 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
         ) : (
           <DToastPanel
             {...restProps}
-            ref={ref}
+            ref={collapseRef}
             className={getClassName(restProps.className, `${dPrefix}alert--toast`)}
             style={{
               ...restProps.style,

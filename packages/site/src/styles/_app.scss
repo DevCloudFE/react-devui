@@ -1,18 +1,12 @@
 @use 'sass:map';
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
   color: var(--d-text-color);
-  background-color: map.get($colors, 'white');
+  background-color: var(--app-background-color);
   text-size-adjust: 100%;
 
   @include font-size(1rem);
@@ -26,10 +20,8 @@ body {
   height: calc(100% - 64px);
   padding: 32px 0 0;
   overflow: auto;
-}
 
-@media (min-width: 768px) {
-  .app-main {
+  @include media-breakpoint-up(md) {
     width: calc(100% - 260px);
   }
 }

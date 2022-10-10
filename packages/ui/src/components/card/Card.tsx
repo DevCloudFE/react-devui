@@ -2,8 +2,8 @@ import React from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DSeparator } from '../separator';
 import { DCardContent } from './CardContent';
 import { DCardHeader } from './CardHeader';
@@ -48,7 +48,6 @@ export const DCard: {
           {React.Children.map(dActions as any[], (action, index) => (
             <>
               {React.cloneElement(action, {
-                ...action.props,
                 className: getClassName(action.props.className, `${dPrefix}card__action`),
               })}
               {index !== dActions.length - 1 && <DSeparator style={{ margin: 8 }} dVertical></DSeparator>}

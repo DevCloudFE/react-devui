@@ -1,13 +1,12 @@
 import type { AppTheme } from '../../App';
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DLang } from '@react-devui/ui/utils/types';
 
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { useLocalStorage } from '@react-devui/hooks';
+import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
 import { DMenu } from '@react-devui/ui';
-import { useMediaQuery } from '@react-devui/ui/hooks';
 import { getClassName } from '@react-devui/utils';
 
 export interface AppHeaderProps {
@@ -19,16 +18,14 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
   const { menuOpen, onMenuOpenChange } = props;
 
   const { i18n, t } = useTranslation();
-  const [language, setLanguage] = useLocalStorage<DLang>('language', 'en-US');
-
-  const [theme, setTheme] = useLocalStorage<AppTheme>('theme', 'light');
-  const breakpointsMatched = useMediaQuery();
+  const languageStorage = useStorage<DLang>('language', 'en-US');
+  const themeStorage = useStorage<AppTheme>('theme', 'light');
 
   const location = useLocation();
   const activeId = location.pathname.startsWith('/docs') ? 'docs' : location.pathname.startsWith('/components') ? 'components' : null;
 
   const switchLang =
-    language === 'en-US'
+    languageStorage.value === 'en-US'
       ? {
           label: '切换语言为中文',
           text: '中 文',
@@ -40,62 +37,57 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
 
   return (
     <header className="app-layout-header">
-      {breakpointsMatched.includes('md') ? (
-        <Link className="app-layout-header__logo-container" to="/">
-          <img src="/assets/logo.svg" alt="Logo" width="36" height="36" />
-          <span className="app-layout-header__logo-title">DevUI</span>
-        </Link>
-      ) : (
-        <button
-          className="app-layout-header__button app-layout-header__button--menu"
-          aria-label={t(menuOpen ? 'Close main navigation' : 'Open main navigation')}
-          onClick={() => onMenuOpenChange(true)}
+      <Link className="d-none d-md-inline-flex app-layout-header__logo-container" to="/">
+        <img src="/assets/logo.svg" alt="Logo" width="36" height="36" />
+        <span className="app-layout-header__logo-title">DevUI</span>
+      </Link>
+      <button
+        className="d-md-none app-layout-header__button app-layout-header__button--menu"
+        aria-label={t(menuOpen ? 'Close main navigation' : 'Open main navigation')}
+        onClick={() => onMenuOpenChange(true)}
+      >
+        <div
+          className={getClassName('app-layout-header__hamburger', {
+            'is-active': menuOpen,
+          })}
         >
-          <div
-            className={getClassName('app-layout-header__hamburger', {
-              'is-active': menuOpen,
-            })}
-          >
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </button>
-      )}
-      {breakpointsMatched.includes('md') && (
-        <DMenu
-          className="app-layout-header__menu"
-          dList={[
-            {
-              id: 'docs',
-              title: (
-                <Link tabIndex={-1} to="/docs">
-                  {t('Docs')}
-                </Link>
-              ),
-              type: 'item',
-            },
-            {
-              id: 'components',
-              title: (
-                <Link tabIndex={-1} to="/components">
-                  {t('Components')}
-                </Link>
-              ),
-              type: 'item',
-            },
-          ]}
-          dMode="horizontal"
-          dActive={activeId}
-        ></DMenu>
-      )}
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </button>
+      <DMenu
+        className="d-none d-md-inline-block app-layout-header__menu"
+        dList={[
+          {
+            id: 'docs',
+            title: (
+              <Link tabIndex={-1} to="/docs">
+                {t('Docs')}
+              </Link>
+            ),
+            type: 'item',
+          },
+          {
+            id: 'components',
+            title: (
+              <Link tabIndex={-1} to="/components">
+                {t('Components')}
+              </Link>
+            ),
+            type: 'item',
+          },
+        ]}
+        dMode="horizontal"
+        dActive={activeId}
+      ></DMenu>
       <div className="app-layout-header__button-container">
         <button
           className="app-layout-header__button app-layout-header__button--text"
           aria-label={switchLang.label}
           onClick={() => {
-            const val = language === 'en-US' ? 'zh-CN' : 'en-US';
-            setLanguage(val);
+            const val = languageStorage.value === 'en-US' ? 'zh-CN' : 'en-US';
+            languageStorage.set(val);
             i18n.changeLanguage(val);
           }}
         >
@@ -103,13 +95,13 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
         </button>
         <button
           className="app-layout-header__button"
-          aria-label={t(theme === 'light' ? 'Dark theme' : 'Light theme')}
+          aria-label={t(themeStorage.value === 'light' ? 'Dark theme' : 'Light theme')}
           onClick={() => {
-            setTheme(theme === 'light' ? 'dark' : 'light');
+            themeStorage.set(themeStorage.value === 'light' ? 'dark' : 'light');
           }}
         >
           <DCustomIcon viewBox="0 0 24 24" dSize={24}>
-            {theme === 'light' ? (
+            {themeStorage.value === 'light' ? (
               <path d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM17 15C17.476 15 17.9408 14.9525 18.3901 14.862C17.296 17.3011 14.8464 19 12 19C8.13401 19 5 15.866 5 12C5 8.60996 7.40983 5.78277 10.6099 5.13803C10.218 6.01173 10 6.98041 10 8C10 11.866 13.134 15 17 15Z"></path>
             ) : (
               <>

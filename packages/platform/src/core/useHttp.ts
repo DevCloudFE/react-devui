@@ -2,14 +2,12 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import axios from 'axios';
 import { isNull } from 'lodash';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { catchError, EMPTY, map, throwError } from 'rxjs';
-import { from } from 'rxjs';
-import { Subject, takeUntil } from 'rxjs';
+import { catchError, EMPTY, from, map, Subject, takeUntil, throwError } from 'rxjs';
 
-import { useUnmount } from '@react-devui/hooks';
+import { useEventCallback, useUnmount } from '@react-devui/hooks';
 import { ToastService } from '@react-devui/ui';
 
 import '../config/mock';
@@ -18,19 +16,23 @@ import { TOKEN } from '../config/token';
 import { environment } from '../environments';
 
 export function useHttp() {
-  const abortFns = useRef(new Set<() => void>());
+  const dataRef = useRef<{
+    abortFns: Set<() => void>;
+  }>({
+    abortFns: new Set(),
+  });
 
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
   useUnmount(() => {
-    for (const abort of abortFns.current) {
+    for (const abort of dataRef.current.abortFns) {
       abort();
     }
   });
 
-  return useCallback((options?: { unmount?: boolean }) => {
+  return useEventCallback((options?: { unmount?: boolean }) => {
     const { unmount = true } = options ?? {};
 
     const onDestroy$ = new Subject<void>();
@@ -41,15 +43,14 @@ export function useHttp() {
       controller.abort();
     };
     if (unmount) {
-      abortFns.current.add(abort);
+      dataRef.current.abortFns.add(abort);
     }
 
     return [
       <T = any, D = any>(config: AxiosRequestConfig<D>) => {
-        const token = TOKEN.token;
         const headers = { ...config.headers };
-        if (!isNull(token)) {
-          headers['Authorization'] = `Bearer ${token}`;
+        if (!isNull(TOKEN.value)) {
+          headers['Authorization'] = `Bearer ${TOKEN.value}`;
         }
 
         return from(
@@ -93,5 +94,5 @@ export function useHttp() {
       },
       abort,
     ] as const;
-  }, []);
+  });
 }

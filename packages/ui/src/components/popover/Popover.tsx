@@ -1,18 +1,20 @@
-import type { DPopoverFooterPropsWithPrivate } from './PopoverFooter';
-import type { DPopoverHeaderPropsWithPrivate } from './PopoverHeader';
-import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DPopoverFooterPrivateProps } from './PopoverFooter';
+import type { DPopoverHeaderPrivateProps } from './PopoverHeader';
+import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
 import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
-import { useElement, useEventCallback, useLockScroll } from '@react-devui/hooks';
+import { useEventCallback, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { getClassName, getPopupPosition } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, handleModalKeyDown } from '../../utils';
+import { useMaxIndex, useDValue } from '../../hooks';
+import { registerComponentMate, handleModalKeyDown, cloneHTMLElement } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DPopoverFooter } from './PopoverFooter';
 import { DPopoverHeader } from './PopoverHeader';
 
@@ -24,14 +26,13 @@ export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   children: React.ReactElement;
   dVisible?: boolean;
   dTrigger?: 'hover' | 'click';
-  dContainer?: DElementSelector | false;
+  dContainer?: DRefExtra | false;
   dPlacement?: DPopupPlacement;
   dEscClosable?: boolean;
   dArrow?: boolean;
   dModal?: boolean;
-  dDisabled?: boolean;
   dDistance?: number;
-  dInWindow?: boolean;
+  dInWindow?: number | false;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dZIndex?: number | string;
@@ -54,7 +55,6 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
     dEscClosable = true,
     dArrow = true,
     dModal = false,
-    dDisabled = false,
     dDistance = 10,
     dInWindow = false,
     dMouseEnterDelay = 150,
@@ -74,33 +74,11 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   //#endregion
 
   //#region Ref
+  const triggerRef = useRefExtra(() => document.getElementById(triggerId));
   const popoverRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
-  const uniqueId = useId();
-  const titleId = `${dPrefix}popover-title-${uniqueId}`;
-  const bodyId = `${dPrefix}popover-content-${uniqueId}`;
-
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
-
-  const isFixed = isUndefined(dContainer);
-
-  const maxZIndex = useMaxIndex(visible);
-  const zIndex = (() => {
-    if (isUndefined(dZIndex)) {
-      if (isFixed) {
-        return maxZIndex;
-      } else {
-        return `var(--${dPrefix}zindex-absolute)`;
-      }
-    } else {
-      return dZIndex;
-    }
-  })();
-
-  const containerEl = useElement(
-    isFixed
+  const containerRef = useRefExtra(
+    isUndefined(dContainer)
       ? () => {
           let el = document.getElementById(`${dPrefix}popover-root`);
           if (!el) {
@@ -112,11 +90,38 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
         }
       : dContainer === false
       ? () => {
-          const triggerEl = document.querySelector(`[data-popover-triggerid="${uniqueId}"]`) as HTMLElement | null;
-          return triggerEl?.parentElement ?? null;
+          return triggerRef.current?.parentElement ?? null;
         }
-      : dContainer
+      : dContainer,
+    true
   );
+  //#endregion
+
+  const dataRef = useRef<{
+    prevActiveEl: HTMLElement | null;
+  }>({
+    prevActiveEl: null,
+  });
+
+  const uniqueId = useId();
+  const triggerId = children.props.id ?? `${dPrefix}popover-trigger-${uniqueId}`;
+  const titleId = `${dPrefix}popover-title-${uniqueId}`;
+  const bodyId = `${dPrefix}popover-content-${uniqueId}`;
+
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+
+  const maxZIndex = useMaxIndex(visible);
+  const zIndex = (() => {
+    if (isUndefined(dZIndex)) {
+      if (isUndefined(dContainer)) {
+        return maxZIndex;
+      } else {
+        return `var(--${dPrefix}zindex-absolute)`;
+      }
+    } else {
+      return dZIndex;
+    }
+  })();
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
@@ -125,14 +130,12 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   const [placement, setPlacement] = useState<DPopupPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    const triggerEl = document.querySelector(`[data-popover-triggerid="${uniqueId}"]`) as HTMLElement | null;
-
-    if (popupRef.current && triggerEl) {
+    if (visible && popupRef.current && triggerRef.current) {
       let currentPlacement = dPlacement;
 
       let space: [number, number, number, number] = [0, 0, 0, 0];
-      if (!isFixed && containerEl) {
-        const containerRect = containerEl.getBoundingClientRect();
+      if (!isUndefined(dContainer) && containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
         space = [
           containerRect.top,
           window.innerWidth - containerRect.left - containerRect.width,
@@ -142,7 +145,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
       }
       const position = getPopupPosition(
         popupRef.current,
-        triggerEl,
+        triggerRef.current,
         {
           placement: dPlacement,
           offset: dDistance,
@@ -158,7 +161,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
           left: position.left,
         });
       } else {
-        const position = getPopupPosition(popupRef.current, triggerEl, {
+        const position = getPopupPosition(popupRef.current, triggerRef.current, {
           placement,
           offset: dDistance,
           inWindow: dInWindow,
@@ -228,17 +231,16 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
 
   useLockScroll(dModal && visible);
 
-  const prevActiveEl = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (dModal) {
       if (visible) {
-        prevActiveEl.current = document.activeElement as HTMLElement | null;
+        dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
 
         if (popoverRef.current) {
           popoverRef.current.focus({ preventScroll: true });
         }
-      } else if (prevActiveEl.current) {
-        prevActiveEl.current.focus({ preventScroll: true });
+      } else if (dataRef.current.prevActiveEl) {
+        dataRef.current.prevActiveEl.focus({ preventScroll: true });
       }
     }
   }, [dModal, visible]);
@@ -246,8 +248,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   const headerNode = (() => {
     if (dHeader) {
       const node = isString(dHeader) ? <DPopoverHeader>{dHeader}</DPopoverHeader> : dHeader;
-      return React.cloneElement<DPopoverHeaderPropsWithPrivate>(node, {
-        ...node.props,
+      return React.cloneElement<DPopoverHeaderPrivateProps>(node, {
         __id: titleId,
         __onClose: () => {
           changeVisible(false);
@@ -266,148 +267,131 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
 
   return (
     <DPopup
-      dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
-        <DTransition
-          dIn={visible}
-          dDuring={TTANSITION_DURING}
-          onEnterRendered={updatePosition}
-          afterEnter={() => {
-            afterVisibleChange?.(true);
-          }}
-          afterLeave={() => {
-            afterVisibleChange?.(false);
-          }}
-        >
-          {(state) => {
-            let transitionStyle: React.CSSProperties = {};
-            switch (state) {
-              case 'enter':
-                transitionStyle = { transform: 'scale(0.3)', opacity: 0 };
-                break;
-
-              case 'entering':
-                transitionStyle = {
-                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
-                  transformOrigin,
-                };
-                break;
-
-              case 'leaving':
-                transitionStyle = {
-                  transform: 'scale(0.3)',
-                  opacity: 0,
-                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
-                  transformOrigin,
-                };
-                break;
-
-              default:
-                break;
-            }
-
-            return (
-              <div
-                {...restProps}
-                ref={popoverRef}
-                className={getClassName(restProps.className, `${dPrefix}popover`, `${dPrefix}popover--` + placement)}
-                style={{
-                  ...restProps.style,
-                  display: state === 'leaved' ? 'none' : undefined,
-                  zIndex,
-                }}
-                tabIndex={-1}
-                role={restProps.role ?? (dModal ? 'alertdialog' : 'alert')}
-                aria-modal={restProps['aria-modal'] ?? dModal}
-                aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? titleId : undefined)}
-                aria-describedby={restProps['aria-describedby'] ?? bodyId}
-                onKeyDown={(e) => {
-                  restProps.onKeyDown?.(e);
-
-                  if (dEscClosable && e.code === 'Escape') {
-                    changeVisible(false);
-                  }
-
-                  if (dModal) {
-                    handleModalKeyDown(e);
-                  }
-                }}
-              >
-                {dModal && (
-                  <div
-                    className={`${dPrefix}popover__mask`}
-                    onClick={() => {
-                      changeVisible(false);
-                    }}
-                  ></div>
-                )}
-                <div
-                  {...restPProps}
-                  ref={popupRef}
-                  className={`${dPrefix}popover__content`}
-                  style={{
-                    ...popupPositionStyle,
-                    ...transitionStyle,
-                  }}
-                  onClick={(e) => {
-                    restProps.onClick?.(e);
-                    pOnClick?.(e);
-                  }}
-                  onMouseEnter={(e) => {
-                    restProps.onMouseEnter?.(e);
-                    pOnMouseEnter?.(e);
-                  }}
-                  onMouseLeave={(e) => {
-                    restProps.onMouseLeave?.(e);
-                    pOnMouseLeave?.(e);
-                  }}
-                >
-                  {dArrow && <div className={`${dPrefix}popover__arrow`}></div>}
-                  {headerNode}
-                  <div id={bodyId} className={`${dPrefix}popover__body`}>
-                    {dContent}
-                  </div>
-                  {dFooter &&
-                    React.cloneElement<DPopoverFooterPropsWithPrivate>(dFooter, {
-                      ...dFooter.props,
-                      __onClose: () => {
-                        changeVisible(false);
-                      },
-                    })}
-                </div>
-              </div>
-            );
-          }}
-        </DTransition>
-      )}
       dVisible={visible}
-      dContainer={containerEl}
       dTrigger={dTrigger}
-      dDisabled={dDisabled}
       dEscClosable={dEscClosable}
       dMouseEnterDelay={dMouseEnterDelay}
       dMouseLeaveDelay={dMouseLeaveDelay}
-      dUpdatePosition={updatePosition}
+      dUpdatePosition={{
+        fn: updatePosition,
+        triggerRef,
+        popupRef,
+        extraScrollRefs: [isUndefined(dContainer) ? undefined : containerRef],
+      }}
       onVisibleChange={changeVisible}
     >
-      {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) =>
-        React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-          ...children.props,
-          ...restPProps,
-          'data-popover-triggerid': uniqueId,
-          onClick: (e) => {
-            children.props.onClick?.(e);
-            pOnClick?.(e);
-          },
-          onMouseEnter: (e) => {
-            children.props.onMouseEnter?.(e);
-            pOnMouseEnter?.(e);
-          },
-          onMouseLeave: (e) => {
-            children.props.onMouseLeave?.(e);
-            pOnMouseLeave?.(e);
-          },
-        })
-      }
+      {({ renderTrigger, renderPopup }) => (
+        <>
+          {renderTrigger(
+            cloneHTMLElement(children, {
+              id: triggerId,
+            })
+          )}
+          {containerRef.current &&
+            ReactDOM.createPortal(
+              <DTransition
+                dIn={visible}
+                dDuring={TTANSITION_DURING}
+                onEnter={updatePosition}
+                afterEnter={() => {
+                  afterVisibleChange?.(true);
+                }}
+                afterLeave={() => {
+                  afterVisibleChange?.(false);
+                }}
+              >
+                {(state) => {
+                  let transitionStyle: React.CSSProperties = {};
+                  switch (state) {
+                    case 'enter':
+                      transitionStyle = { transform: 'scale(0.3)', opacity: 0 };
+                      break;
+
+                    case 'entering':
+                      transitionStyle = {
+                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.enter}ms ease-out`).join(', '),
+                        transformOrigin,
+                      };
+                      break;
+
+                    case 'leaving':
+                      transitionStyle = {
+                        transform: 'scale(0.3)',
+                        opacity: 0,
+                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING.leave}ms ease-in`).join(', '),
+                        transformOrigin,
+                      };
+                      break;
+
+                    default:
+                      break;
+                  }
+
+                  return (
+                    <div
+                      {...restProps}
+                      ref={popoverRef}
+                      className={getClassName(restProps.className, `${dPrefix}popover`, `${dPrefix}popover--` + placement)}
+                      style={{
+                        ...restProps.style,
+                        display: state === 'leaved' ? 'none' : undefined,
+                        zIndex,
+                      }}
+                      tabIndex={-1}
+                      role={restProps.role ?? 'dialog'}
+                      aria-modal={dModal}
+                      aria-labelledby={headerNode ? titleId : undefined}
+                      aria-describedby={bodyId}
+                      onKeyDown={(e) => {
+                        restProps.onKeyDown?.(e);
+
+                        if (dEscClosable && e.code === 'Escape') {
+                          changeVisible(false);
+                        }
+
+                        if (dModal) {
+                          handleModalKeyDown(e);
+                        }
+                      }}
+                    >
+                      {dModal && (
+                        <div
+                          className={`${dPrefix}popover__mask`}
+                          onClick={() => {
+                            changeVisible(false);
+                          }}
+                        ></div>
+                      )}
+                      {renderPopup(
+                        <div
+                          ref={popupRef}
+                          className={`${dPrefix}popover__content`}
+                          style={{
+                            ...popupPositionStyle,
+                            ...transitionStyle,
+                          }}
+                        >
+                          {dArrow && <div className={`${dPrefix}popover__arrow`}></div>}
+                          {headerNode}
+                          <div id={bodyId} className={`${dPrefix}popover__body`}>
+                            {dContent}
+                          </div>
+                          {dFooter &&
+                            React.cloneElement<DPopoverFooterPrivateProps>(dFooter, {
+                              __onClose: () => {
+                                changeVisible(false);
+                              },
+                            })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }}
+              </DTransition>,
+              containerRef.current
+            )}
+        </>
+      )}
     </DPopup>
   );
 }

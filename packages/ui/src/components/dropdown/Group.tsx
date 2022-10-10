@@ -1,15 +1,15 @@
-import { usePrefixConfig, useTranslation } from '../../hooks';
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DGroupProps {
   children: React.ReactNode;
   dId: string;
+  dLevel: number;
   dList: React.ReactNode;
   dEmpty: boolean;
-  dLevel?: number;
 }
 
 export function DGroup(props: DGroupProps): JSX.Element | null {
-  const { children, dId, dList, dEmpty, dLevel = 0 } = props;
+  const { children, dId, dLevel, dList, dEmpty } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();

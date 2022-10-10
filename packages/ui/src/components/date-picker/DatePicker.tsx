@@ -1,7 +1,8 @@
+import type { DCloneHTMLElement, DSize } from '../../utils/types';
+import type { DDateInputRef } from '../_date-input';
+import type { DFormControl } from '../form';
 import type { DTimePickerProps } from '../time-picker';
-import type { DPanelPropsWithPrivate as DTimePickerPanelPropsWithPrivate, DPanelRef as DTimePickerPanelRef } from '../time-picker/Panel';
-import type { DBuilderProps } from './Builder';
-import type { DPanelRef } from './Panel';
+import type { DPanelPrivateProps as DTimePickerPanelPrivateProps } from '../time-picker/Panel';
 
 import { isBoolean, isUndefined } from 'lodash';
 import React, { useRef } from 'react';
@@ -9,53 +10,86 @@ import React, { useRef } from 'react';
 import { CalendarOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
+import { useGeneralContext } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { DDateInput } from '../_date-input';
+import { getCols, orderDate } from '../_date-input/utils';
 import { DButton } from '../button';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DTag } from '../tag';
 import { DPanel as DTimePickerPanel } from '../time-picker/Panel';
-import { DBuilder } from './Builder';
 import { DPanel } from './Panel';
-import { getCols, orderDate } from './utils';
 
-export interface DDatePickerRef {
-  updatePosition: () => void;
-}
-
-export interface DDatePickerProps extends Omit<DBuilderProps, 'dFormat' | 'dSuffix' | 'dPlaceholder' | 'dOrder' | 'onUpdatePanel'> {
+export interface DDatePickerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dRef?: {
+    inputLeft?: React.ForwardedRef<HTMLInputElement>;
+    inputRight?: React.ForwardedRef<HTMLInputElement>;
+  };
+  dFormControl?: DFormControl;
+  dModel?: Date | null | [Date, Date];
   dFormat?: string;
-  dPlaceholder?: string | [string?, string?];
+  dVisible?: boolean;
+  dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dOrder?: 'ascend' | 'descend' | null;
+  dPlaceholder?: string | [string?, string?];
+  dRange?: boolean;
+  dSize?: DSize;
+  dClearable?: boolean;
+  dDisabled?: boolean;
   dPresetDate?: Record<string, () => Date | [Date, Date]>;
   dConfigDate?: (date: Date, position: 'start' | 'end', current: [Date | null, Date | null]) => { disabled?: boolean };
   dShowTime?: boolean | Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>;
+  dPopupClassName?: string;
+  dInputRender?: [
+    DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?,
+    DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?
+  ];
+  onModelChange?: (date: any) => void;
+  onVisibleChange?: (visible: boolean) => void;
+  afterVisibleChange?: (visible: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' as const });
-function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePickerRef>): JSX.Element | null {
+function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputRef>): JSX.Element | null {
   const {
+    dRef,
+    dFormControl,
+    dModel,
     dFormat,
-    dPlaceholder,
+    dVisible,
+    dPlacement = 'bottom-left',
     dOrder = 'ascend',
+    dPlaceholder,
     dRange = false,
+    dSize,
+    dClearable = false,
+    dDisabled = false,
     dPresetDate,
     dConfigDate,
-    dPopupClassName,
     dShowTime = false,
+    dPopupClassName,
+    dInputRender,
+    onModelChange,
+    onVisibleChange,
+    afterVisibleChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
   //#region Ref
-  const dDPPRef = useRef<DPanelRef>(null);
-  const dTPPRef = useRef<DTimePickerPanelRef>(null);
+  const updatePanelRef = useRef<(date: Date) => void>(null);
+  const updateTimePickerPanelRef = useRef<(date: Date) => void>(null);
   //#endregion
 
   const [t] = useTranslation();
+
+  const size = dSize ?? gSize;
+  const disabled = (dDisabled || gDisabled || dFormControl?.control.disabled) ?? false;
 
   const format = isUndefined(dFormat)
     ? dShowTime
@@ -69,83 +103,108 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDatePicker
     dRange ? dPlaceholder ?? [] : [dPlaceholder]
   ) as [string?, string?];
 
-  const { d12Hour: t12Hour, dConfigTime } = isBoolean(dShowTime) ? ({} as Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>) : dShowTime;
+  const { d12Hour: t12Hour = false, dConfigTime } = isBoolean(dShowTime)
+    ? ({} as Pick<DTimePickerProps, 'd12Hour' | 'dConfigTime'>)
+    : dShowTime;
 
   return (
-    <DBuilder
+    <DDateInput
       {...restProps}
       ref={ref}
+      dRef={dRef}
       dClassNamePrefix="date-picker"
+      dFormControl={dFormControl}
+      dModel={dModel}
       dFormat={format}
-      dSuffix={<CalendarOutlined />}
-      dPlaceholder={[placeholderLeft, placeholderRight]}
+      dVisible={dVisible}
+      dPlacement={dPlacement}
       dOrder={(date) => orderDate(date, dOrder, dShowTime ? undefined : 'date')}
+      dPlaceholder={[placeholderLeft, placeholderRight]}
+      dSuffix={<CalendarOutlined />}
       dRange={dRange}
-      dPopupClassName={getClassName(dPopupClassName, `${dPrefix}date-picker__popup`)}
+      dSize={size}
+      dClearable={dClearable}
+      dDisabled={disabled}
+      dInputRender={dInputRender}
+      onModelChange={onModelChange}
+      onVisibleChange={onVisibleChange}
       onUpdatePanel={(date) => {
-        dDPPRef.current?.updateView(date);
-        dTPPRef.current?.updateView(date);
+        updatePanelRef.current?.(date);
+        updateTimePickerPanelRef.current?.(date);
       }}
+      afterVisibleChange={afterVisibleChange}
     >
-      {({ pbDate, pbCurrentDate, pbPosition, changeValue }) => (
-        <>
-          <DPanel
-            ref={dDPPRef}
-            dDate={pbDate}
-            dAnotherDate={pbCurrentDate[pbPosition === 'start' ? 1 : 0]}
-            dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, pbPosition, pbCurrentDate) : undefined}
-            onDateChange={changeValue}
-          ></DPanel>
-          {dShowTime &&
-            React.createElement<React.PropsWithoutRef<DTimePickerPanelPropsWithPrivate> & React.RefAttributes<DTimePickerPanelRef>>(
-              DTimePickerPanel,
-              {
-                ref: dTPPRef,
-                dTime: pbDate,
-                dCols: getCols(format),
-                d12Hour: t12Hour,
-                dConfigTime: dConfigTime ? (...args) => dConfigTime(...args, pbPosition, pbCurrentDate) : undefined,
-                onTimeChange: changeValue,
-                __header: true,
-              }
-            )}
-          <div
-            className={getClassName(`${dPrefix}date-picker__footer`, {
-              [`${dPrefix}date-picker__footer--custom`]: dPresetDate,
-            })}
-          >
-            {dPresetDate ? (
-              Object.keys(dPresetDate).map((name) => {
-                const handleClick = () => {
-                  const d = dPresetDate[name]();
-                  changeValue(d);
-                  dDPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
-                  dTPPRef.current?.updateView(d[pbPosition === 'start' ? 0 : 1]);
-                };
+      {({ date, isFocus, changeDate, renderPopup }) => {
+        const index = isFocus[0] ? 0 : 1;
+        const position = isFocus[0] ? 'start' : 'end';
 
-                return (
-                  <DTag key={name} className={`${dPrefix}date-picker__footer-button`} role="button" onClick={handleClick} dTheme="primary">
-                    {name}
-                  </DTag>
-                );
-              })
-            ) : (
-              <DButton
-                onClick={() => {
-                  const now = new Date();
-                  changeValue(now);
-                  dDPPRef.current?.updateView(now);
-                  dTPPRef.current?.updateView(now);
-                }}
-                dType="link"
-              >
-                {t('DatePicker', dShowTime ? 'Now' : 'Today')}
-              </DButton>
-            )}
+        return renderPopup(
+          <div className={getClassName(dPopupClassName, `${dPrefix}date-picker__popup`)}>
+            <DPanel
+              ref={updatePanelRef}
+              dDateCurrentSelected={date[index]}
+              dDateAnotherSelected={date[isFocus[0] ? 1 : 0]}
+              dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, position, date) : undefined}
+              onDateChange={changeDate}
+            ></DPanel>
+            {dShowTime &&
+              React.cloneElement<DTimePickerPanelPrivateProps>(
+                <DTimePickerPanel
+                  ref={updateTimePickerPanelRef}
+                  dTime={date[index]}
+                  dCols={getCols(format)}
+                  d12Hour={t12Hour}
+                  dConfigTime={dConfigTime ? (...args) => dConfigTime(...args, position, date) : undefined}
+                  onTimeChange={changeDate}
+                />,
+                {
+                  __header: true,
+                }
+              )}
+            <div
+              className={getClassName(`${dPrefix}date-picker__footer`, {
+                [`${dPrefix}date-picker__footer--custom`]: dPresetDate,
+              })}
+            >
+              {dPresetDate ? (
+                Object.keys(dPresetDate).map((name) => {
+                  const handleClick = () => {
+                    const d = dPresetDate[name]();
+                    changeDate(d);
+                    updatePanelRef.current?.(d[index]);
+                    updateTimePickerPanelRef.current?.(d[index]);
+                  };
+
+                  return (
+                    <DTag
+                      key={name}
+                      className={`${dPrefix}date-picker__footer-button`}
+                      role="button"
+                      onClick={handleClick}
+                      dTheme="primary"
+                    >
+                      {name}
+                    </DTag>
+                  );
+                })
+              ) : (
+                <DButton
+                  onClick={() => {
+                    const now = new Date();
+                    changeDate(now);
+                    updatePanelRef.current?.(now);
+                    updateTimePickerPanelRef.current?.(now);
+                  }}
+                  dType="link"
+                >
+                  {t('DatePicker', dShowTime ? 'Now' : 'Today')}
+                </DButton>
+              )}
+            </div>
           </div>
-        </>
-      )}
-    </DBuilder>
+        );
+      }}
+    </DDateInput>
   );
 }
 

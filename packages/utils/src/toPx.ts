@@ -1,8 +1,8 @@
 import { toNumber } from 'lodash';
 
-export function toPx(str: string): string;
+export function toPx(str: string, toNum?: false): string;
 export function toPx(str: string, toNum: true): number;
-export function toPx(str: string, toNum?: true): number | string {
+export function toPx(str: string, toNum?: boolean): number | string {
   let num = 0;
   if (str.length === 0 || /^0(?!\.)/.test(str)) {
     num = 0;

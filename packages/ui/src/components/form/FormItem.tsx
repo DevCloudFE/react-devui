@@ -1,14 +1,15 @@
-import type { DBreakpoints } from '../grid';
 import type { AbstractControl } from './abstract-control';
 
 import { isBoolean, isFunction, isNull, isNumber, isString, isUndefined } from 'lodash';
-import React, { useContext, useEffect, useId, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, LoadingOutlined, QuestionCircleOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useGridConfig, useContextRequired } from '../../hooks';
+import { useContextRequired } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DTooltip } from '../tooltip';
 import { DError } from './Error';
 import { DFormContext } from './Form';
@@ -40,8 +41,8 @@ export interface DFormItemProps<T extends { [index: string]: DErrorInfo }> exten
   dLabelWidth?: number | string;
   dLabelExtra?: ({ title: string; icon?: React.ReactElement } | string)[];
   dShowRequired?: boolean;
+  dColNum?: number;
   dSpan?: number | string | true;
-  dResponsiveProps?: Partial<Record<DBreakpoints, Pick<DFormItemProps<T>, 'dLabelWidth' | 'dSpan'>>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm.Item' as const });
@@ -53,17 +54,15 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     dLabelWidth,
     dLabelExtra,
     dShowRequired,
+    dColNum = 12,
     dSpan,
-    dResponsiveProps,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { dColNum } = useGridConfig();
-  const { gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon, gBreakpointsMatched } =
-    useContextRequired(DFormContext);
+  const { gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } = useContextRequired(DFormContext);
   const formGroup = useContext(DFormGroupContext)!;
   //#endregion
 
@@ -72,14 +71,16 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   const contentRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  if (!formGroup) {
-    throw new Error('jnnnnnnnn');
-  }
+  const dataRef = useRef<{
+    prevErrors: DErrors;
+  }>({
+    prevErrors: [],
+  });
 
   const [t] = useTranslation();
 
   const uniqueId = useId();
-  const getErrorId = (formControlName: string) => `${dPrefix}form-item-error-${formControlName}-${uniqueId}`;
+  const getErrorId = (formControlName: string) => `${formControlName}-error-${uniqueId}`;
 
   const formControls = (() => {
     const obj = {} as { [N in keyof T]: DFormControl };
@@ -99,31 +100,9 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
     return obj;
   })();
 
-  const { span, labelWidth } = (() => {
-    const props = {
-      span: dSpan ?? (gLayout === 'inline' ? gInlineSpan : dColNum),
-      labelWidth: dLabelWidth ?? gLabelWidth,
-    };
+  const span = dSpan ?? (gLayout === 'inline' ? gInlineSpan : dColNum);
+  const labelWidth = dLabelWidth ?? gLabelWidth;
 
-    if (dResponsiveProps) {
-      const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
-        const value = dResponsiveProps[point][sourceKey];
-        if (!isUndefined(value)) {
-          props[targetKey] = value;
-        }
-      };
-      for (const breakpoint of gBreakpointsMatched) {
-        if (breakpoint in dResponsiveProps) {
-          mergeProps(breakpoint, 'span', 'dSpan');
-          mergeProps(breakpoint, 'labelWidth', 'dLabelWidth');
-          break;
-        }
-      }
-    }
-    return props;
-  })();
-
-  const prevErrors = useRef<DErrors>([]);
   const [errorNodes, formItemStatus] = (() => {
     const errors: DErrors = [];
     let formItemStatus: DValidateStatus | undefined;
@@ -190,12 +169,12 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
       }
     });
 
-    prevErrors.current.forEach((error, inedx) => {
+    dataRef.current.prevErrors.forEach((error, inedx) => {
       if (errors.findIndex((item) => item.key === error.key) === -1) {
         errors.splice(inedx, 0, { ...error, hidden: true });
       }
     });
-    prevErrors.current = errors;
+    dataRef.current.prevErrors = errors;
 
     const errorNames = new Set(errors.map((item) => item.formControlName));
     const errorNodes: JSX.Element[] = [];
@@ -214,7 +193,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
                 dMessage={error.message}
                 dStatus={error.status}
                 onHidden={() => {
-                  prevErrors.current = prevErrors.current.filter((item) => item.key !== error.key);
+                  dataRef.current.prevErrors = dataRef.current.prevErrors.filter((item) => item.key !== error.key);
                 }}
               ></DError>
             ))}
@@ -273,7 +252,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
 
   useEffect(() => {
     if (labelRef.current && contentRef.current) {
-      const el = contentRef.current.querySelector(`[data-form-label-for="true"]`);
+      const el = contentRef.current.querySelector(`[data-form-item-label-for="true"]`);
       if (el) {
         labelRef.current.setAttribute('for', el.id);
       }

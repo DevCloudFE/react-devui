@@ -7,21 +7,21 @@
 默认语言为 `en-US`，如果需要使用其他语言，请配置 `DRoot`：
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: { lang: 'zh-CN' },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```
 
@@ -30,30 +30,26 @@ export default function App() {
 支持修改语言显示：
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: {
         resources: {
-          DatePicker: {
-            Now: {
-              'en-US': 'Present',
-              'zh-CN': '现在',
-            },
-          },
+          'en-US': { DatePicker: { Now: 'Present' } },
+          'zh-CN': { DatePicker: { Now: '现在' } },
         },
       },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```
 
@@ -62,32 +58,24 @@ export default function App() {
 支持增加语言：
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: {
         resources: {
-          Common: {
-            Loading: {
-              'en-US': 'Loading',
-              'zh-CN': '加载中',
-              'ja-JP': '読み込み中',
-            },
-            ...other,
-          },
-          ...other,
+          'ja-JP': { DatePicker: { Now: '今' } },
         },
       },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```

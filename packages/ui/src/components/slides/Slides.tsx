@@ -34,8 +34,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useComponentConfig, usePrefixConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DSlidesSlide } from './SlidesSlide';
 
 export type DSlidesProps = SwiperProps;

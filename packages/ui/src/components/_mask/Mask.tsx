@@ -2,9 +2,9 @@ import type { DTransitionState } from '../_transition';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig } from '../../hooks';
 import { TTANSITION_DURING_FAST } from '../../utils';
 import { DTransition } from '../_transition';
+import { usePrefixConfig } from '../root';
 
 export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dVisible: boolean;

@@ -1,12 +1,12 @@
 import type { UserState } from '../config/state';
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DRootProps } from '@react-devui/ui';
+import type { DLang } from '@react-devui/ui/utils/types';
 
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { useAsync, useLocalStorage, useMount } from '@react-devui/hooks';
+import { useAsync, useMount, useStorage } from '@react-devui/hooks';
 import { DRoot } from '@react-devui/ui';
 
 import { LOGIN_PATH } from '../config/other';
@@ -22,12 +22,12 @@ export function App() {
   const init = useInit();
   const navigate = useNavigate();
   const async = useAsync();
-  const [language] = useLocalStorage<DLang>(...STORAGE_KEY.language);
   const [loading, setLoading] = useState(true);
-  const [theme] = useLocalStorage<AppTheme>(...STORAGE_KEY.theme);
+  const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
+  const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
 
   useMount(() => {
-    i18n.changeLanguage(language);
+    i18n.changeLanguage(languageStorage.value);
 
     const [http] = createHttp();
     http<UserState>({
@@ -46,8 +46,8 @@ export function App() {
   });
 
   useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
+    document.documentElement.lang = languageStorage.value;
+  }, [languageStorage.value]);
 
   useEffect(() => {
     if (loading === false) {
@@ -61,24 +61,24 @@ export function App() {
 
   useEffect(() => {
     for (const t of ['light', 'dark']) {
-      document.body.classList.toggle(t, theme === t);
+      document.body.classList.toggle(t, themeStorage.value === t);
     }
     const colorScheme = document.documentElement.style.colorScheme;
-    document.documentElement.style.colorScheme = theme;
+    document.documentElement.style.colorScheme = themeStorage.value;
     return () => {
       document.documentElement.style.colorScheme = colorScheme;
     };
-  }, [theme]);
+  }, [themeStorage.value]);
 
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
-      i18n: { lang: language },
-      layout: { scrollEl: 'main', resizeEl: '.app-md-route' },
+      i18n: { lang: languageStorage.value },
+      layout: { pageScrollEl: '#app-main', contentResizeEl: '#app-content' },
     }),
-    [language]
+    [languageStorage.value]
   );
 
-  return <DRoot dContext={rootContext}>{loading ? null : <AppRoutes />}</DRoot>;
+  return <DRoot context={rootContext}>{loading ? null : <AppRoutes />}</DRoot>;
 }
 
 export default App;

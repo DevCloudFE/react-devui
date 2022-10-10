@@ -1,8 +1,8 @@
-import { useId, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
-import { useUnmount } from '@react-devui/hooks';
+import { useId, useUnmount } from '@react-devui/hooks';
 
-import { usePrefixConfig } from './d-config';
+import { usePrefixConfig } from '../components/root';
 
 const MAX_INDEX_MANAGER = {
   record: {} as { [index: string]: number },
@@ -25,7 +25,10 @@ const MAX_INDEX_MANAGER = {
 export function useMaxIndex(condition?: boolean) {
   const dPrefix = usePrefixConfig();
 
-  const prevIndex = useRef<string>();
+  const dataRef = useRef<{
+    prevIndex?: string;
+  }>({});
+
   const id = useId();
 
   const zIndex = useMemo(() => {
@@ -36,9 +39,9 @@ export function useMaxIndex(condition?: boolean) {
       return `calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`;
     }
 
-    return prevIndex.current;
+    return dataRef.current.prevIndex;
   }, [condition, dPrefix, id]);
-  prevIndex.current = zIndex;
+  dataRef.current.prevIndex = zIndex;
 
   useUnmount(() => {
     MAX_INDEX_MANAGER.deleteRecord(id);

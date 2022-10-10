@@ -1,13 +1,11 @@
 import type { DSize } from '../../utils/types';
-import type { DBreakpoints } from '../grid';
 
-import { isUndefined } from 'lodash';
 import React from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useMediaQuery } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DFormGroup } from './FormGroup';
 import { DFormItem } from './FormItem';
 import { DFormUpdateContext } from './hooks';
@@ -20,7 +18,6 @@ export interface DFormContextData {
   gInlineSpan: NonNullable<DFormProps['dInlineSpan']>;
   gFeedbackIcon: NonNullable<DFormProps['dFeedbackIcon']>;
   gSize?: DSize;
-  gBreakpointsMatched: DBreakpoints[];
 }
 export const DFormContext = React.createContext<DFormContextData | null>(null);
 
@@ -40,7 +37,6 @@ export interface DFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
         pending?: React.ReactNode;
       };
   dSize?: DSize;
-  dResponsiveProps?: Partial<Record<DBreakpoints, Pick<DFormProps, 'dLabelWidth' | 'dLayout' | 'dInlineSpan'>>>;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DForm' as const });
@@ -59,7 +55,6 @@ export const DForm: {
     dInlineSpan = 6,
     dFeedbackIcon = false,
     dSize,
-    dResponsiveProps,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -68,43 +63,18 @@ export const DForm: {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const breakpointsMatched = useMediaQuery();
-
-  const contextValue = (() => {
-    const contextValue: DFormContextData = {
-      gLabelWidth: dLabelWidth ?? 150,
-      gLabelColon: dLabelColon ?? true,
-      gRequiredType: dRequiredType,
-      gLayout: dLayout,
-      gInlineSpan: dInlineSpan,
-      gFeedbackIcon: dFeedbackIcon,
-      gSize: dSize,
-      gBreakpointsMatched: breakpointsMatched,
-    };
-    if (dResponsiveProps) {
-      const mergeProps = (point: string, targetKey: string, sourceKey: string) => {
-        const value = dResponsiveProps[point][sourceKey];
-        if (!isUndefined(value)) {
-          contextValue[targetKey] = value;
-        }
-      };
-      for (const breakpoint of breakpointsMatched) {
-        if (breakpoint in dResponsiveProps) {
-          mergeProps(breakpoint, 'gLabelWidth', 'dLabelWidth');
-          mergeProps(breakpoint, 'gLayout', 'dLayout');
-          mergeProps(breakpoint, 'gInlineSpan', 'dInlineSpan');
-          break;
-        }
-      }
-    }
-    contextValue.gLabelWidth = dLabelWidth ?? (contextValue.gLayout === 'vertical' ? '100%' : 150);
-    contextValue.gLabelColon = dLabelColon ?? (contextValue.gLayout === 'vertical' ? false : true);
-
-    return contextValue;
-  })();
-
   return (
-    <DFormContext.Provider value={contextValue}>
+    <DFormContext.Provider
+      value={{
+        gLabelWidth: dLabelWidth ?? (dLayout === 'vertical' ? '100%' : 150),
+        gLabelColon: dLabelColon ?? (dLayout === 'vertical' ? false : true),
+        gRequiredType: dRequiredType,
+        gLayout: dLayout,
+        gInlineSpan: dInlineSpan,
+        gFeedbackIcon: dFeedbackIcon,
+        gSize: dSize,
+      }}
+    >
       <DFormUpdateContext.Provider value={dUpdate}>
         <form
           {...restProps}

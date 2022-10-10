@@ -1,19 +1,19 @@
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig } from '../../hooks';
+import { usePrefixConfig } from '../root';
 
 export interface DItemProps {
   children: React.ReactNode;
   dId: string;
+  dLevel: number;
+  dIcon: React.ReactNode | undefined;
   dFocusVisible: boolean;
-  dIcon?: React.ReactNode;
-  dLevel?: number;
-  dDisabled?: boolean;
+  dDisabled: boolean;
   onItemClick: () => void;
 }
 
 export function DItem(props: DItemProps): JSX.Element | null {
-  const { children, dId, dDisabled, dFocusVisible, dIcon, dLevel = 0, onItemClick } = props;
+  const { children, dId, dLevel, dIcon, dFocusVisible, dDisabled, onItemClick } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();

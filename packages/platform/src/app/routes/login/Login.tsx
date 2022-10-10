@@ -13,7 +13,6 @@ import { getClassName } from '@react-devui/utils';
 import { TOKEN } from '../../../config/token';
 import { useHttp, useInit } from '../../../core';
 import { AppLanguage } from '../../components';
-import { useDeviceQuery } from '../../hooks';
 import styles from './Login.module.scss';
 import { BASE64_DATA } from './base64.out';
 
@@ -23,7 +22,6 @@ export default function Login(): JSX.Element | null {
   const [loginloading, setLoginLoading] = useState(false);
   const init = useInit();
   const async = useAsync();
-  const deviceMatched = useDeviceQuery();
   const location = useLocation();
   const from = (location.state as null | { [PREV_ROUTE_KEY]?: Location })?.from?.pathname;
   const navigate = useNavigate();
@@ -83,7 +81,7 @@ export default function Login(): JSX.Element | null {
             }).subscribe({
               next: (res) => {
                 setLoginLoading(false);
-                TOKEN.token = res.token;
+                TOKEN.set(res.token);
                 init(res.user);
                 navigate(from ?? '/', { replace: true });
               },
@@ -102,9 +100,11 @@ export default function Login(): JSX.Element | null {
     <div className={styles['app-login']}>
       <AppLanguage className={styles['app-login__lang']} />
       <div>
-        {deviceMatched === 'desktop' && (
-          <img className={styles['app-login__bg']} src={`data:image/png;base64,${BASE64_DATA.bg}`} alt="bg" />
-        )}
+        <img
+          className={getClassName(styles['app-login__bg'], 'd-none d-md-inline')}
+          src={`data:image/png;base64,${BASE64_DATA.bg}`}
+          alt="bg"
+        />
         <div className={styles['app-login__login-container']}>
           <div className={styles['app-login__title-container']}>
             <img className={styles['app-login__logo']} src="/assets/logo.svg" alt="Logo" />
@@ -182,11 +182,7 @@ export default function Login(): JSX.Element | null {
           />
         </div>
       </div>
-      <footer
-        className={getClassName(styles['app-login__footer'], {
-          [styles['app-login__footer--phone']]: deviceMatched === 'phone',
-        })}
-      >
+      <footer className={styles['app-login__footer']}>
         <div>
           <span>© {new Date().getFullYear()} made with ❤ by </span>
           <a className="app-link" href="//github.com/xiejay97">

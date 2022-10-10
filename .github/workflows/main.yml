@@ -14,7 +14,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.13'
+          node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn lint:affected
@@ -28,7 +28,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.13'
+          node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn test:affected
@@ -42,7 +42,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.13'
+          node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn nx build site --configuration=production --skip-nx-cache
@@ -63,7 +63,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.13'
+          node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn nx build platform --configuration=production --skip-nx-cache

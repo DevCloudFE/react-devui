@@ -17,22 +17,6 @@
   align-items: center;
   vertical-align: top;
 
-  @include e(label) {
-    font-size: var(--#{$variable-prefix}progress-font-size);
-
-    @include m(success) {
-      color: var(--#{$variable-prefix}color-success);
-    }
-
-    @include m(warning) {
-      color: var(--#{$variable-prefix}color-warning);
-    }
-
-    @include m(error) {
-      color: var(--#{$variable-prefix}color-danger);
-    }
-  }
-
   @include m(line) {
     --#{$variable-prefix}progress-font-size: 14px;
 
@@ -53,5 +37,21 @@
 
   @include m(dashboard) {
     @include progress-circle;
+  }
+
+  @include e(label) {
+    font-size: var(--#{$variable-prefix}progress-font-size);
+
+    @include m(success) {
+      color: var(--#{$variable-prefix}color-success);
+    }
+
+    @include m(warning) {
+      color: var(--#{$variable-prefix}color-warning);
+    }
+
+    @include m(error) {
+      color: var(--#{$variable-prefix}color-danger);
+    }
   }
 }

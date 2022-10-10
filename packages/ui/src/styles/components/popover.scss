@@ -1,3 +1,6 @@
+@import 'mixins/header';
+@import 'mixins/footer';
+
 @mixin popover-arrow() {
   @include e(arrow) {
     @content;
@@ -130,7 +133,11 @@
 
   @include e(header-actions) {
     .#{$variable-prefix}button {
-      --#{$variable-prefix}size: 24px;
+      --#{$variable-prefix}size: calc(1.05em * 1.2);
+
+      .#{$variable-prefix}button__icon {
+        font-size: 1.05em;
+      }
     }
   }
 

@@ -101,14 +101,7 @@
     },
     {
       "files": ["*.tsx", "*.jsx"],
-      "rules": {
-        "react-hooks/exhaustive-deps": [
-          "warn",
-          {
-            "additionalHooks": "(useIsomorphicLayoutEffect)"
-          }
-        ]
-      }
+      "rules": {}
     },
     {
       "files": ["**/*.md/*.ts", "**/*.md/*.tsx"],

@@ -1,6 +1,6 @@
 import { isObject, isString } from 'lodash';
 
-export function getClassName(...args: unknown[]) {
+export function getClassName(...args: any[]) {
   const className: string[] = [];
 
   args.forEach((item) => {

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { useDeviceQuery } from '../../hooks';
+import { getClassName } from '@react-devui/utils';
+
 import styles from './Layout.module.scss';
 import { AppHeader } from './header/Header';
 import { AppSidebar } from './sidebar/Sidebar';
@@ -19,26 +20,31 @@ const SIDEBAR_DEFAULT = {
 export default function Layout(props: AppLayoutProps): JSX.Element | null {
   const { sidebar } = props;
 
-  const deviceMatched = useDeviceQuery();
-  const [menuOpen, setMenuOpen] = useState(deviceMatched === 'desktop');
+  const [menuMode, setMenuMode] = useState<'vertical' | 'icon'>('vertical');
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    if (deviceMatched === 'phone') {
-      setMenuOpen(false);
-    }
-  }, [deviceMatched, location]);
+    setMenuOpen(false);
+  }, [location]);
 
   return (
     <>
-      <AppHeader sidebarWidth={sidebar?.width ?? SIDEBAR_DEFAULT.width} menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-      <AppSidebar menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-      <main
-        className={styles['app-layout']}
-        style={{ width: deviceMatched === 'phone' ? '100%' : menuOpen ? 'calc(100% - 200px)' : 'calc(100% - 64px)' }}
-      >
-        <Outlet />
-      </main>
+      <AppHeader
+        sidebarWidth={sidebar?.width ?? SIDEBAR_DEFAULT.width}
+        menuMode={menuMode}
+        menuOpen={menuOpen}
+        onMenuModeChange={setMenuMode}
+        onMenuOpenChange={setMenuOpen}
+      />
+      <section className={getClassName(styles['app-layout'], styles[`app-layout--menu-${menuMode}`])}>
+        <AppSidebar menuMode={menuMode} menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
+        <main id="app-main" className={styles['app-layout__content']}>
+          <section id="app-content">
+            <Outlet />
+          </section>
+        </main>
+      </section>
     </>
   );
 }

@@ -1,13 +1,13 @@
-import type { DId } from '../../utils/types';
+import type { DCloneHTMLElement, DId } from '../../utils/types';
 
 import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
-import React, { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 
-import { useEventCallback, useForceUpdate, useResize } from '@react-devui/hooks';
+import { useEventCallback, useForkRef, useIsomorphicLayoutEffect, useRefExtra, useResize } from '@react-devui/hooks';
 import { toPx } from '@react-devui/utils';
 
-import { useComponentConfig } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
+import { useComponentConfig } from '../root';
 
 const EMPTY = Symbol();
 
@@ -24,27 +24,22 @@ export interface DVirtualScrollRef<T> {
 }
 
 export interface DItemRenderProps {
-  iARIA: {
+  aria: {
     'aria-level': number;
     'aria-setsize': number;
     'aria-posinset': number;
   };
-  iChildren?: React.ReactNode[];
-}
-
-export interface DVirtualScrollRenderProps {
-  vsScrollRef: React.RefCallback<any>;
-  vsRender: React.ReactNode;
-  vsOnScroll: React.UIEventHandler;
+  vsList?: React.ReactNode;
 }
 
 export interface DVirtualScrollProps<T> {
-  children: (props: DVirtualScrollRenderProps) => JSX.Element | null;
+  children: (props: { render: DCloneHTMLElement; vsList: React.ReactNode }) => JSX.Element | null;
+  dRef?: { list?: React.ForwardedRef<any> };
   dList: T[];
   dFillNode: React.ReactElement;
   dItemRender: (item: T, index: number, props: DItemRenderProps, parent: T[]) => React.ReactNode;
   dItemSize: number | ((item: T) => number);
-  dItemNested?: (item: T) => { list?: T[]; emptySize?: number; asItem: boolean } | undefined;
+  dItemNested?: (item: T) => { list?: T[]; emptySize?: number; inAriaSetsize: boolean } | undefined;
   dItemKey: (item: T) => DId;
   dFocusable?: boolean | ((item: T) => boolean);
   dFocusItem?: T;
@@ -60,6 +55,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DVirtualScro
 function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef<DVirtualScrollRef<T>>): JSX.Element | null {
   const {
     children,
+    dRef,
     dList,
     dFillNode,
     dItemRender,
@@ -76,18 +72,16 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     onScrollEnd,
   } = useComponentConfig(COMPONENT_NAME, props);
 
+  //#region Ref
+  const listRef = useRefExtra(undefined, true);
+  const combineListlRef = useForkRef(listRef, dRef?.list);
+  //#endregion
+
   const dataRef = useRef<{
     listCache: Map<DId, React.ReactNode[]>;
   }>({
     listCache: new Map(),
   });
-
-  const forceUpdate = useForceUpdate();
-
-  const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
-  const scrollRef = useCallback((el: HTMLElement | null) => {
-    setScrollEl(el);
-  }, []);
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const getItemSize = useMemo(() => (isNumber(dItemSize) ? () => dItemSize : dItemSize), [dItemSize]);
@@ -132,20 +126,27 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     return [items, reduceArr(dList), firstFocusableItem, lastFocusableItem];
   }, [checkFocusable, dExpands, dItemKey, dItemNested, dList, getItemSize]);
 
-  let elSize: number | undefined;
-  let elPaddingSize: number | undefined;
-  if (scrollEl) {
-    elSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
-    elPaddingSize = toPx(getComputedStyle(scrollEl).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true);
-  }
+  const [elSize, setElSize] = useState<number>();
+  const [elPaddingSize, setElPaddingSize] = useState<number>();
+  const getSize = () => {
+    if (listRef.current) {
+      if (isUndefined(dSize)) {
+        setElSize(listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight']);
+      }
+
+      if (isUndefined(dPadding)) {
+        setElPaddingSize(toPx(getComputedStyle(listRef.current).getPropertyValue(dHorizontal ? 'padding-left' : 'padding-top'), true));
+      }
+    }
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useIsomorphicLayoutEffect(() => {
+    getSize();
+  });
+  useResize(listRef, getSize);
+
   const ulSize = dSize ?? elSize;
   const paddingSize = dPadding ?? elPaddingSize;
-
-  useResize(scrollEl, () => {
-    if (isUndefined(dSize)) {
-      forceUpdate();
-    }
-  });
 
   const list = (() => {
     if (isUndefined(ulSize) || isUndefined(paddingSize)) {
@@ -164,7 +165,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     const getList = (arr: (T | typeof EMPTY)[], parent: T[] = []): React.ReactNode[] => {
       const fillSize = [0, 0];
       const list: React.ReactNode[] = [];
-      const setsize = arr.filter((item) => item !== EMPTY && (dItemNested?.(item)?.asItem ?? true)).length;
+      const setsize = arr.filter((item) => item !== EMPTY && (dItemNested?.(item)?.inAriaSetsize ?? true)).length;
 
       for (const [index, item] of arr.entries()) {
         let key: DId = '';
@@ -208,8 +209,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
                 item as T,
                 index,
                 {
-                  iARIA: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
-                  iChildren: childrenList,
+                  aria: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
+                  vsList: childrenList,
                 },
                 parent
               )
@@ -227,7 +228,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
                     item,
                     index,
                     {
-                      iARIA: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
+                      aria: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
                     },
                     parent
                   )
@@ -248,7 +249,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
                     item,
                     index,
                     {
-                      iARIA: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
+                      aria: { 'aria-level': parent.length + 1, 'aria-setsize': setsize, 'aria-posinset': index + 1 },
                     },
                     parent
                   )
@@ -260,7 +261,6 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
       if (fillSize[0] > 0) {
         list.unshift(
           React.cloneElement(dFillNode, {
-            ...dFillNode.props,
             key: '$$fill-size-0',
             style: {
               ...dFillNode.props.style,
@@ -276,7 +276,6 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
       if (fillSize[1] > 0) {
         list.push(
           React.cloneElement(dFillNode, {
-            ...dFillNode.props,
             key: '$$fill-size-1',
             style: {
               ...dFillNode.props.style,
@@ -296,8 +295,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   })();
 
   const scrollTo = (num: number) => {
-    if (scrollEl) {
-      scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
+    if (listRef.current) {
+      listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop'] = num;
     }
   };
 
@@ -318,8 +317,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   });
 
   const scrollToEnd = useEventCallback(() => {
-    if (scrollEl) {
-      scrollTo(scrollEl[dHorizontal ? 'scrollWidth' : 'scrollHeight']);
+    if (listRef.current) {
+      scrollTo(listRef.current[dHorizontal ? 'scrollWidth' : 'scrollHeight']);
     }
 
     return lastFocusableItem;
@@ -334,7 +333,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
       let findItem: T | undefined;
       let offsetSize: [number, number] | undefined;
 
-      if (scrollEl) {
+      if (listRef.current) {
         let index = -1;
         let findIndex = -1;
         const accSizeList = [];
@@ -369,8 +368,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         }
 
         if (!isUndefined(offsetSize)) {
-          const listElScrollPosition = scrollEl[dHorizontal ? 'scrollLeft' : 'scrollTop'];
-          const listElClientSize = scrollEl[dHorizontal ? 'clientWidth' : 'clientHeight'];
+          const listElScrollPosition = listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop'];
+          const listElClientSize = listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight'];
           if (listElScrollPosition > offsetSize[1]) {
             scrollTo(offsetSize[0] - paddingSize);
           } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
@@ -405,19 +404,24 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
   );
 
   return children({
-    vsScrollRef: scrollRef,
-    vsRender: list,
-    vsOnScroll: (e) => {
-      setScrollPosition(e.currentTarget[dHorizontal ? 'scrollLeft' : 'scrollTop']);
+    render: (el) =>
+      cloneHTMLElement(el, {
+        ref: combineListlRef,
+        onScroll: (e) => {
+          el.props.onScroll?.(e);
 
-      if (
-        dHorizontal
-          ? e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth
-          : e.currentTarget.scrollTop + e.currentTarget.clientHeight === e.currentTarget.scrollHeight
-      ) {
-        onScrollEnd?.();
-      }
-    },
+          setScrollPosition(e.currentTarget[dHorizontal ? 'scrollLeft' : 'scrollTop']);
+
+          if (
+            dHorizontal
+              ? e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth
+              : e.currentTarget.scrollTop + e.currentTarget.clientHeight === e.currentTarget.scrollHeight
+          ) {
+            onScrollEnd?.();
+          }
+        },
+      }),
+    vsList: list,
   });
 }
 

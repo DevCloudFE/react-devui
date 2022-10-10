@@ -1,0 +1,142 @@
+@import 'size';
+
+@mixin component-selectbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--#{$variable-prefix}size);
+  padding: 0 calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+  vertical-align: top;
+  cursor: pointer;
+  background-color: var(--#{$variable-prefix}background-color-input);
+  border: 1px solid var(--#{$variable-prefix}color-border);
+  border-radius: var(--#{$variable-prefix}border-radius);
+  transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+
+  &:hover {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  &[data-form-invalid-warning='true'] {
+    border-color: var(--#{$variable-prefix}color-warning) !important;
+
+    @include e(search, true) {
+      caret-color: var(--#{$variable-prefix}color-warning) !important;
+    }
+  }
+
+  &[data-form-invalid-error='true'] {
+    border-color: var(--#{$variable-prefix}color-danger) !important;
+
+    @include e(search, true) {
+      caret-color: var(--#{$variable-prefix}color-danger) !important;
+    }
+  }
+
+  @include component-size;
+
+  @include when(focus) {
+    border-color: var(--#{$variable-prefix}color-primary-lighter);
+  }
+
+  @include when(expanded) {
+    border-color: var(--#{$variable-prefix}color-primary);
+  }
+
+  @include when(disabled) {
+    color: var(--#{$variable-prefix}color-disabled);
+    pointer-events: none;
+    background-color: var(--#{$variable-prefix}background-color-disabled);
+
+    @include e(icon) {
+      color: var(--#{$variable-prefix}color-disabled);
+    }
+
+    @include e(placeholder) {
+      color: $placeholder-disabled-color;
+    }
+  }
+
+  @include e(container) {
+    position: relative;
+    display: inline-flex;
+    flex-grow: 1;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  @include e(content) {
+    @include utils-ellipsis;
+  }
+
+  @include e(suffix) {
+    z-index: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+
+  @include e(search) {
+    @include utils-input;
+
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    padding: 0;
+    margin: 0;
+    color: var(--#{$variable-prefix}text-color);
+    background-color: transparent;
+    border: none;
+
+    &::-webkit-search-cancel-button {
+      display: none;
+      appearance: none;
+    }
+  }
+
+  @include e(placeholder-wrapper) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    color: $placeholder-color;
+    user-select: none;
+  }
+
+  @include e(placeholder) {
+    @include utils-ellipsis;
+  }
+
+  @include e(clear) {
+    position: absolute;
+    right: calc(var(--#{$variable-prefix}horizontal-space-size) - 1px);
+    z-index: 5;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$variable-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$variable-prefix}color-primary-darker);
+    }
+  }
+
+  @include e(icon) {
+    z-index: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+    font-size: 0.9em;
+    color: var(--#{$variable-prefix}color-icon-decorator);
+    transition: transform var(--#{$variable-prefix}animation-duration-base) linear,
+      color var(--#{$variable-prefix}animation-duration-base) linear;
+
+    @include when(arrow-up) {
+      color: var(--#{$variable-prefix}color-primary);
+      transform: rotate(180deg);
+    }
+  }
+}

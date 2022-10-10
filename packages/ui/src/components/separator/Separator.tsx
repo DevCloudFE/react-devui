@@ -2,8 +2,8 @@ import React from 'react';
 
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DSeparatorProps extends React.HTMLAttributes<HTMLElement> {
   dTextAlign?: 'left' | 'right' | 'center';
@@ -33,7 +33,7 @@ export function DSeparator(props: DSeparatorProps): JSX.Element | null {
         [`${dPrefix}separator--vertical`]: dVertical,
       })}
       role="separator"
-      aria-orientation={restProps['aria-orientation'] ?? (dVertical ? 'vertical' : 'horizontal')}
+      aria-orientation={dVertical ? 'vertical' : 'horizontal'}
     >
       {checkNodeExist(children) && <div className={`${dPrefix}separator__text`}>{children}</div>}
     </div>

@@ -3,8 +3,8 @@ import React from 'react';
 import { LoadingOutlined, PlusOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DFabButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';

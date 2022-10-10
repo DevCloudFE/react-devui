@@ -1,10 +1,9 @@
-export * from './vars';
-
 export { getHorizontalSidePosition, getPopupPosition, getVerticalSidePosition } from './position';
 export { checkNodeExist } from './checkNodeExist';
 export { copy } from './copy';
 export { findNested } from './findNested';
 export { getClassName } from './getClassName';
+export { getOffsetToRoot } from './getOffsetToRoot';
 export { getOriginalSize } from './getOriginalSize';
 export { getUID } from './getUID';
 export { isSimpleArrayEqual } from './isSimpleArrayEqual';

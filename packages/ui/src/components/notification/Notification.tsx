@@ -2,10 +2,10 @@ import type { DNotificationProps } from './service';
 
 import { useRef } from 'react';
 
-import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DAlertPopover } from '../_alert-popover';
 import { DTransition } from '../_transition';
+import { useComponentConfig } from '../root';
 import { DPanel } from './Panel';
 
 const TTANSITION_DURING = { enter: 133, leave: 166 };
@@ -90,21 +90,25 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
 
         return (
           <DAlertPopover dDuration={dDuration} dEscClosable={dEscClosable} onClose={onClose}>
-            <DPanel
-              {...restProps}
-              ref={panelRef}
-              style={{
-                ...restProps.style,
-                ...transitionStyle,
-              }}
-              dClassNamePrefix="notification"
-              dType={dType}
-              dIcon={dIcon}
-              dTitle={dTitle}
-              dDescription={dDescription}
-              dActions={dActions}
-              onClose={onClose}
-            ></DPanel>
+            {({ render }) =>
+              render(
+                <DPanel
+                  {...restProps}
+                  ref={panelRef}
+                  style={{
+                    ...restProps.style,
+                    ...transitionStyle,
+                  }}
+                  dClassNamePrefix="notification"
+                  dType={dType}
+                  dIcon={dIcon}
+                  dTitle={dTitle}
+                  dDescription={dDescription}
+                  dActions={dActions}
+                  onClose={onClose}
+                ></DPanel>
+              )
+            }
           </DAlertPopover>
         );
       }}

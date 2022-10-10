@@ -4,11 +4,12 @@ import { useForceUpdate } from '@react-devui/hooks';
 import { SearchOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useComponentConfig, useDValue, usePrefixConfig, useTranslation } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useDValue } from '../../hooks';
+import { registerComponentMate, WINDOW_SPACE } from '../../utils';
 import { DButton } from '../button';
 import { DInput } from '../input';
 import { DPopover } from '../popover';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 
 export interface DTableSearchRef {
   updatePosition: () => void;
@@ -67,7 +68,7 @@ function TableSearch(props: DTableSearchProps, ref: React.ForwardedRef<DTableSea
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
-      dInWindow
+      dInWindow={WINDOW_SPACE}
       dContent={
         <DInput
           className={`${dPrefix}table__filter-search`}

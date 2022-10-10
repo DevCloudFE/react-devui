@@ -1,7 +1,7 @@
 import type { AppRouteProps } from './Route';
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DLang } from '@react-devui/ui/utils/types';
 
-import { useLocalStorage } from '@react-devui/hooks';
+import { useStorage } from '@react-devui/hooks';
 
 import { AppRoute } from './Route';
 
@@ -11,7 +11,7 @@ export interface AppMdRouteProps {
 }
 
 export function AppMdRoute(props: AppMdRouteProps): JSX.Element | null {
-  const [language] = useLocalStorage<DLang>('language', 'en-US');
+  const languageStorage = useStorage<DLang>('language', 'en-US');
 
-  return <AppRoute {...props[language]} />;
+  return <AppRoute {...props[languageStorage.value]} />;
 }

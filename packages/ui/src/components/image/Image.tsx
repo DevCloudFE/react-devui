@@ -3,14 +3,14 @@ import React, { useRef } from 'react';
 import { useForceUpdate } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DImagePreview } from './ImagePreview';
 
 export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dLoading?: React.ReactNode;
   dError?: React.ReactNode;
-  dActions?: React.ReactNode[];
+  dActions?: React.ReactElement[];
   dImgProps: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 
@@ -85,9 +85,8 @@ export const DImage: {
       }
       {dActions && (
         <div className={`${dPrefix}image__actions`}>
-          {React.Children.map(dActions as any[], (action) =>
-            React.cloneElement(action, {
-              ...action.props,
+          {React.Children.map(dActions, (action) =>
+            cloneHTMLElement(action, {
               className: getClassName(action.props.className, `${dPrefix}image__action`),
             })
           )}

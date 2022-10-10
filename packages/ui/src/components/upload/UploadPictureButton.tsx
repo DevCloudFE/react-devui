@@ -1,13 +1,13 @@
 import type { DUploadFile } from './Upload';
-import type { DUploadActionPropsWithPrivate } from './UploadAction';
+import type { DUploadActionPrivateProps } from './UploadAction';
 
 import React from 'react';
 
 import { FileTwoTone, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useComponentConfig, usePrefixConfig, useTranslation } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DUploadAction } from './UploadAction';
 
 export interface DUploadPictureButtonProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -60,13 +60,7 @@ export function DUploadPictureButton(props: DUploadPictureButtonProps): JSX.Elem
           )}
           <div className={`${dPrefix}upload__picture-actions`}>
             {React.Children.map(dActions as any[], (action) =>
-              React.cloneElement<DUploadActionPropsWithPrivate>(action, {
-                ...action.props,
-                onClick: (e) => {
-                  action.props.onClick?.(e);
-
-                  e.stopPropagation();
-                },
+              React.cloneElement<DUploadActionPrivateProps>(action, {
                 __file: dFile,
                 __defaultActions: dDefaultActions,
                 __onRemove: onRemove,

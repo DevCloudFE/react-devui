@@ -3,24 +3,20 @@ import type { AbstractControl } from './abstract-control';
 import type { FormGroup } from './form-group';
 
 import { isUndefined } from 'lodash';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import { useEventCallback, useForceUpdate } from '@react-devui/hooks';
+import { useEventCallback } from '@react-devui/hooks';
 
 export const DFormUpdateContext = React.createContext<(() => void) | null>(null);
 
 export function useForm<T extends { [K in keyof T]: AbstractControl } = any>(cb: () => FormGroup<T>) {
-  const [initValue] = useState(() => cb());
-  const form = useRef(initValue);
-
-  const forceUpdate = useForceUpdate();
+  const [form, setForm] = useState(() => cb());
 
   const updateForm = useEventCallback((val?: FormGroup) => {
-    form.current = isUndefined(val) ? form.current.clone() : val;
-    forceUpdate();
+    isUndefined(val) ? setForm((draft) => draft.clone()) : setForm(val);
   });
 
-  return [form.current, updateForm] as const;
+  return [form, updateForm] as const;
 }
 
 export type DFormControlInject = [any, (val: any) => void] | undefined;

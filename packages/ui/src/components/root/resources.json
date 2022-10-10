@@ -1,0 +1,128 @@
+{
+  "en-US": {
+    "Common": {
+      "Loading": "Loading",
+      "Search": "Search",
+      "Add": "Add",
+      "Close": "Close",
+      "Create": "Create",
+      "Clear": "Clear",
+      "More": "More",
+      "No Data": "No Data"
+    },
+    "Footer": {
+      "Cancel": "Cancel",
+      "OK": "OK"
+    },
+    "Input": {
+      "Password is visible": "Password is visible",
+      "Password is not visible": "Password is not visible",
+      "Increase number": "Increase number",
+      "Decrease number": "Decrease number"
+    },
+    "Pagination": {
+      "Total": "Total",
+      "items": "items",
+      "Go": "Go",
+      "Page": "Page",
+      "5 pages forward": "5 pages forward",
+      "5 pages backward": "5 pages backward",
+      "Previous page": "Previous page",
+      "Next page": "Next page",
+      " / Page": " / Page"
+    },
+    "DForm": {
+      "Optional": "(optional)"
+    },
+    "TimePicker": {
+      "Select time": "Select time",
+      "Start time": "Start time",
+      "End time": "End time",
+      "Now": "Now"
+    },
+    "DatePicker": {
+      "Select date": "Select date",
+      "Start date": "Start date",
+      "End date": "End date",
+      "Today": "Today",
+      "Now": "Now",
+      "Previous year": "Previous year",
+      "Next year": "Next year",
+      "Previous month": "Previous month",
+      "Next month": "Next month"
+    },
+    "Upload": {
+      "Preview file": "Preview file",
+      "Download file": "Download file",
+      "Remove file": "Remove file",
+      "Upload": "Upload",
+      "Uploading": "Uploading..."
+    },
+    "Table": {
+      "Reset": "Reset"
+    }
+  },
+  "zh-CN": {
+    "Common": {
+      "Loading": "加载中",
+      "Search": "搜索",
+      "Add": "新增",
+      "Close": "关闭",
+      "Create": "创建",
+      "Clear": "清除",
+      "More": "更多",
+      "No Data": "无数据"
+    },
+    "Footer": {
+      "Cancel": "取 消",
+      "OK": "确 定"
+    },
+    "Input": {
+      "Password is visible": "密码可见",
+      "Password is not visible": "密码不可见",
+      "Increase number": "数字加",
+      "Decrease number": "数字减"
+    },
+    "Pagination": {
+      "Total": "共",
+      "items": "项",
+      "Go": "至",
+      "Page": "页",
+      "5 pages forward": "向前 5 页",
+      "5 pages backward": "向后 5 页",
+      "Previous page": "上一页",
+      "Next page": "下一页",
+      " / Page": "条/页"
+    },
+    "DForm": {
+      "Optional": "(可选)"
+    },
+    "TimePicker": {
+      "Select time": "请选择时间",
+      "Start time": "开始时间",
+      "End time": "结束时间",
+      "Now": "此刻"
+    },
+    "DatePicker": {
+      "Select date": "请选择日期",
+      "Start date": "开始日期",
+      "End date": "结束日期",
+      "Today": "今天",
+      "Now": "此刻",
+      "Previous year": "上一年",
+      "Next year": "下一年",
+      "Previous month": "上月",
+      "Next month": "下月"
+    },
+    "Upload": {
+      "Preview file": "预览文件",
+      "Download file": "下载文件",
+      "Remove file": "移除文件",
+      "Upload": "上传",
+      "Uploading": "上传中..."
+    },
+    "Table": {
+      "Reset": "重置"
+    }
+  }
+}

@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DAvatarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dVariant?: 'circular' | 'square';

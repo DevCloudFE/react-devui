@@ -1,1 +1,1 @@
-export { useDeviceQuery } from './useDeviceQuery';
+export { useEChart } from './useEChart';

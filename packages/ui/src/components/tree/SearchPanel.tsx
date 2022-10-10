@@ -1,17 +1,17 @@
 import type { DId } from '../../utils/types';
-import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
+import type { ComboboxKeyDownRef } from '../_keyboard';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTreeItem } from './Tree';
 import type { AbstractTreeNode, TreeOrigin } from './abstract-node';
 
 import { isUndefined } from 'lodash';
-import React, { useMemo, useRef } from 'react';
+import React, { useImperativeHandle, useMemo, useRef } from 'react';
 
-import { useEventListener } from '@react-devui/hooks';
+import { useEventCallback } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
 import { DCheckbox } from '../checkbox';
+import { usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 import { getText, TREE_NODE_KEY } from './utils';
 
@@ -21,16 +21,18 @@ interface DSearchPanelProps<V extends DId, T extends DTreeItem<V>> extends Omit<
   dGetItemId: (value: V) => string;
   dList: DSearchItem<V, T>[];
   dFocusItem: DSearchItem<V, T> | undefined;
-  dCustomItem?: (item: T) => React.ReactNode;
+  dCustomItem: ((item: T) => React.ReactNode) | undefined;
   dMultiple: boolean;
   dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
-  dEventId: string;
   onFocusChange: (item: DSearchItem<V, T>) => void;
   onClickItem: (item: DSearchItem<V, T>) => void;
 }
 
-export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSearchPanelProps<V, T>): JSX.Element | null {
+function SearchPanel<V extends DId, T extends DTreeItem<V>>(
+  props: DSearchPanelProps<V, T>,
+  ref: React.ForwardedRef<ComboboxKeyDownRef>
+): JSX.Element | null {
   const {
     dGetItemId,
     dList,
@@ -39,7 +41,6 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
     dMultiple,
     dOnlyLeafSelectable,
     dFocusVisible,
-    dEventId,
     onFocusChange,
     onClickItem,
 
@@ -51,12 +52,12 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<DSearchItem<V, T>>>(null);
+  const vsRef = useRef<DVirtualScrollRef<DSearchItem<V, T>>>(null);
   //#endregion
 
   const [t] = useTranslation();
 
-  const handleKeyDown = (key: DComboboxKeyboardSupportKey | 'click') => {
+  const handleKeyDown = useEventCallback<ComboboxKeyDownRef>((key) => {
     const focusItem = (item: DSearchItem<V, T> | undefined) => {
       if (item) {
         onFocusChange(item);
@@ -64,19 +65,19 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
     };
     switch (key) {
       case 'next':
-        focusItem(dVSRef.current?.scrollByStep(1));
+        focusItem(vsRef.current?.scrollByStep(1));
         break;
 
       case 'prev':
-        focusItem(dVSRef.current?.scrollByStep(-1));
+        focusItem(vsRef.current?.scrollByStep(-1));
         break;
 
       case 'first':
-        focusItem(dVSRef.current?.scrollToStart());
+        focusItem(vsRef.current?.scrollToStart());
         break;
 
       case 'last':
-        focusItem(dVSRef.current?.scrollToEnd());
+        focusItem(vsRef.current?.scrollToEnd());
         break;
 
       case 'click':
@@ -88,8 +89,9 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
       default:
         break;
     }
-  };
-  useEventListener(dEventId, handleKeyDown);
+  });
+
+  useImperativeHandle(ref, () => handleKeyDown, [handleKeyDown]);
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<DSearchItem<V, T>>>(
     () => ({
@@ -104,9 +106,9 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
   return (
     <DVirtualScroll
       {...vsPerformance}
-      ref={dVSRef}
+      ref={vsRef}
       dFillNode={<li></li>}
-      dItemRender={(item, index, { iARIA }) => {
+      dItemRender={(item, index, { aria }) => {
         const node = item[TREE_NODE_KEY];
         let inSelected = node.checked;
         if (!dOnlyLeafSelectable) {
@@ -122,7 +124,7 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
 
         return (
           <li
-            {...iARIA}
+            {...aria}
             key={item.value}
             id={dGetItemId(item.value)}
             className={getClassName(`${dPrefix}tree__search-option`, {
@@ -148,30 +150,31 @@ export function DSearchPanel<V extends DId, T extends DTreeItem<V>>(props: DSear
       dSize={264}
       dPadding={4}
     >
-      {({ vsScrollRef, vsRender, vsOnScroll }) => (
-        // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
-        <ul
-          {...restProps}
-          ref={vsScrollRef}
-          className={getClassName(restProps.className, `${dPrefix}tree__search-list`)}
-          tabIndex={restProps.tabIndex ?? -1}
-          role={restProps.role ?? 'listbox'}
-          aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
-          aria-activedescendant={restProps['aria-activedescendant'] ?? (isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value))}
-          onScroll={(e) => {
-            restProps.onScroll?.(e);
-            vsOnScroll(e);
-          }}
-        >
-          {dList.length === 0 ? (
-            <li className={`${dPrefix}tree__search-empty`}>
-              <div className={`${dPrefix}tree__search-option-content`}>{t('No Data')}</div>
-            </li>
-          ) : (
-            vsRender
-          )}
-        </ul>
-      )}
+      {({ render, vsList }) =>
+        render(
+          // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
+          <ul
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}tree__search-list`)}
+            tabIndex={-1}
+            role="listbox"
+            aria-multiselectable={dMultiple}
+            aria-activedescendant={isUndefined(dFocusItem) ? undefined : dGetItemId(dFocusItem.value)}
+          >
+            {dList.length === 0 ? (
+              <li className={`${dPrefix}tree__search-empty`}>
+                <div className={`${dPrefix}tree__search-option-content`}>{t('No Data')}</div>
+              </li>
+            ) : (
+              vsList
+            )}
+          </ul>
+        )
+      }
     </DVirtualScroll>
   );
 }
+
+export const DSearchPanel: <V extends DId, T extends DTreeItem<V>>(
+  props: DSearchPanelProps<V, T> & React.RefAttributes<ComboboxKeyDownRef>
+) => ReturnType<typeof SearchPanel> = React.forwardRef(SearchPanel) as any;

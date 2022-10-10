@@ -1,26 +1,20 @@
 import type { HasEventTargetAddRemove } from 'rxjs/internal/observable/fromEvent';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { fromEvent } from 'rxjs';
 
 export function useEvent<E = Event>(
-  target: HasEventTargetAddRemove<E> | null,
+  target: React.RefObject<HasEventTargetAddRemove<E> | null>,
   type: keyof HTMLElementEventMap,
-  fn: (e: E) => any,
-  options?: AddEventListenerOptions
+  fn?: (e: E) => void,
+  options?: AddEventListenerOptions,
+  disabled = false
 ) {
-  const dataRef = useRef({
-    type,
-    fn,
-    options,
-  });
-  dataRef.current = { type, fn, options };
-
   useEffect(() => {
-    if (target) {
-      const ob = fromEvent<E>(target, dataRef.current.type, dataRef.current.options as EventListenerOptions).subscribe({
+    if (target.current && !disabled) {
+      const ob = fromEvent<E>(target.current, type, options as EventListenerOptions).subscribe({
         next: (e) => {
-          dataRef.current.fn(e);
+          fn?.(e);
         },
       });
 
@@ -28,5 +22,5 @@ export function useEvent<E = Event>(
         ob.unsubscribe();
       };
     }
-  }, [target]);
+  });
 }

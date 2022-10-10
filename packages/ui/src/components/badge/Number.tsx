@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { usePrefixConfig } from '../../hooks';
+import { usePrefixConfig } from '../root';
 
 export interface DNumberProps {
   dValue: number;
@@ -18,32 +18,36 @@ export function DNumber(props: DNumberProps): JSX.Element | null {
   const containerRef = useRef<HTMLDivElement>(null);
   //#endregion
 
-  const prevValue = useRef(dValue);
+  const dataRef = useRef<{
+    prevValue: number;
+  }>({
+    prevValue: dValue,
+  });
 
   const [nums, setNums] = useState<number[]>([dValue]);
 
   useEffect(() => {
-    if (containerRef.current && prevValue.current !== dValue) {
+    if (containerRef.current && dataRef.current.prevValue !== dValue) {
       let newNums: number[] = Array(10)
         .fill(0)
         .map((n, i) => i);
       if (dDown) {
         newNums = newNums.concat(
-          Array(prevValue.current + 1)
+          Array(dataRef.current.prevValue + 1)
             .fill(0)
             .map((n, i) => i)
         );
         newNums = newNums.slice(newNums.length - 10, newNums.length);
         containerRef.current.style.cssText = 'transform:translateY(-900%);transition:none;';
       } else {
-        newNums = Array(10 - prevValue.current)
+        newNums = Array(10 - dataRef.current.prevValue)
           .fill(0)
-          .map((n, i) => prevValue.current + i)
+          .map((n, i) => dataRef.current.prevValue + i)
           .concat(newNums);
         newNums = newNums.slice(0, 10);
         containerRef.current.style.cssText = 'transform:translateY(0);transition:none;';
       }
-      prevValue.current = dValue;
+      dataRef.current.prevValue = dValue;
       setNums(newNums);
     }
   }, [dDown, dValue]);

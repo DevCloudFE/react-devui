@@ -1,18 +1,19 @@
 import { isUndefined } from 'lodash';
-import React, { useId } from 'react';
+import React from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dClassNamePrefix: string;
-  dType?: 'success' | 'warning' | 'error' | 'info';
-  dIcon?: React.ReactNode;
+  dType: 'success' | 'warning' | 'error' | 'info' | undefined;
+  dIcon: React.ReactNode | undefined;
   dContent: React.ReactNode;
-  dActions?: React.ReactNode[];
-  onClose?: () => void;
+  dActions: React.ReactNode[] | undefined;
+  onClose: (() => void) | undefined;
 }
 
 function Panel(props: DPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -45,7 +46,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
       className={getClassName(restProps.className, prefix, {
         [`t-${dType === 'info' ? 'primary' : dType === 'error' ? 'danger' : dType}`]: dType,
       })}
-      aria-describedby={restProps['aria-describedby'] ?? contentId}
+      aria-describedby={contentId}
     >
       {dIcon !== false && (!isUndefined(dType) || checkNodeExist(dIcon)) && (
         <div className={`${prefix}__icon`}>

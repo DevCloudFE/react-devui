@@ -1,18 +1,18 @@
 import type { DId } from '../../utils/types';
-import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
+import type { ComboboxKeyDownRef } from '../_keyboard';
 import type { DFormControl } from '../form';
 import type { AbstractTreeNode } from './abstract-node';
 
 import { isNull, isUndefined } from 'lodash';
-import React, { useState, useId, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 
-import { useEventNotify } from '@react-devui/hooks';
+import { useId } from '@react-devui/hooks';
 import { findNested, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue, useFocusVisible } from '../../hooks';
 import { registerComponentMate } from '../../utils';
-import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DPanel } from './Panel';
 import { MultipleTreeNode } from './multiple-node';
 import { SingleTreeNode } from './single-node';
@@ -68,13 +68,15 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
   const { gDisabled } = useGeneralContext();
   //#endregion
 
+  //#region Ref
+  const comboboxKeyDownRef = useRef<ComboboxKeyDownRef>(null);
+  //#endregion
+
   const dataRef = useRef<{
     hasExpandList: Set<V>;
   }>({
     hasExpandList: new Set(dExpands),
   });
-
-  const [eventId, onKeyDown$] = useEventNotify<[DComboboxKeyboardSupportKey | 'click']>();
 
   const uniqueId = useId();
   const getGroupId = (val: V) => `${dPrefix}tree-group-${val}-${uniqueId}`;
@@ -147,7 +149,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
 
   const hasSelected = dMultiple ? (select as Set<V>).size > 0 : !isNull(select);
 
-  const [focusVisible, setFocusVisible] = useState(false);
+  const [focusVisible, renderFocusVisible] = useFocusVisible();
 
   const [_focusNode, setFocusNode] = useState<AbstractTreeNode<V, T> | undefined>();
   const focusNode = (() => {
@@ -171,117 +173,104 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
     return node;
   })();
 
-  return (
-    <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-      {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
-        <DPanel
-          {...restProps}
-          className={getClassName(restProps.className, {
-            'is-disabled': disabled,
-          })}
-          style={{
-            ...restProps.style,
-            maxHeight: dHeight,
-          }}
-          tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
-          onFocus={(e) => {
-            restProps.onFocus?.(e);
-            fvOnFocus(e);
-          }}
-          onBlur={(e) => {
-            restProps.onBlur?.(e);
-            fvOnBlur(e);
-          }}
-          onKeyDown={(e) => {
-            restProps.onKeyDown?.(e);
-            fvOnKeyDown(e);
+  return renderFocusVisible(
+    <DPanel
+      {...restProps}
+      className={getClassName(restProps.className, {
+        'is-disabled': disabled,
+      })}
+      style={{
+        ...restProps.style,
+        maxHeight: dHeight,
+      }}
+      tabIndex={restProps.tabIndex ?? (disabled ? -1 : 0)}
+      onKeyDown={(e) => {
+        restProps.onKeyDown?.(e);
 
-            switch (e.code) {
-              case 'ArrowUp':
-                e.preventDefault();
-                onKeyDown$('prev');
-                break;
+        switch (e.code) {
+          case 'ArrowUp':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('prev');
+            break;
 
-              case 'ArrowDown':
-                e.preventDefault();
-                onKeyDown$('next');
-                break;
+          case 'ArrowDown':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('next');
+            break;
 
-              case 'ArrowLeft':
-                e.preventDefault();
-                onKeyDown$('prev-level');
-                break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('prev-level');
+            break;
 
-              case 'ArrowRight':
-                e.preventDefault();
-                onKeyDown$('next-level');
-                break;
+          case 'ArrowRight':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('next-level');
+            break;
 
-              case 'Home':
-                e.preventDefault();
-                onKeyDown$('first');
-                break;
+          case 'Home':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('first');
+            break;
 
-              case 'End':
-                e.preventDefault();
-                onKeyDown$('last');
-                break;
+          case 'End':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('last');
+            break;
 
-              case 'Enter':
-                e.preventDefault();
-                onKeyDown$('click');
-                break;
+          case 'Enter':
+            e.preventDefault();
+            comboboxKeyDownRef.current?.('click');
+            break;
 
-              default:
-                break;
+          default:
+            break;
+        }
+      }}
+      dGetGroupId={getGroupId}
+      dGetItemId={getItemId}
+      dList={renderNodes}
+      dExpandIds={expandIds}
+      dHeight={dHeight ?? Infinity}
+      dPadding={undefined}
+      dFocusItem={focusNode}
+      dCustomItem={dCustomItem}
+      dShowLine={dShowLine}
+      dMultiple={dMultiple}
+      dFocusVisible={focusVisible}
+      onFocusChange={setFocusNode}
+      onExpandChange={(item) => {
+        const isExpand = expandIds.has(item.id);
+
+        if (!item.origin.loading) {
+          if (isExpand) {
+            changeExpandIds((draft) => {
+              draft.splice(
+                draft.findIndex((id) => id === item.id),
+                1
+              );
+            });
+          } else {
+            if (!dataRef.current.hasExpandList.has(item.id)) {
+              dataRef.current.hasExpandList.add(item.id);
+              onFirstExpand?.(item.id, item.origin);
             }
-          }}
-          dGetGroupId={getGroupId}
-          dGetItemId={getItemId}
-          dList={renderNodes}
-          dExpandIds={expandIds}
-          dHeight={dHeight ?? Infinity}
-          dFocusItem={focusNode}
-          dCustomItem={dCustomItem}
-          dShowLine={dShowLine}
-          dMultiple={dMultiple}
-          dFocusVisible={focusVisible}
-          dEventId={eventId}
-          onFocusChange={setFocusNode}
-          onExpandChange={(item) => {
-            const isExpand = expandIds.has(item.id);
-
-            if (!item.origin.loading) {
-              if (isExpand) {
-                changeExpandIds((draft) => {
-                  draft.splice(
-                    draft.findIndex((id) => id === item.id),
-                    1
-                  );
-                });
-              } else {
-                if (!dataRef.current.hasExpandList.has(item.id)) {
-                  dataRef.current.hasExpandList.add(item.id);
-                  onFirstExpand?.(item.id, item.origin);
-                }
-                changeExpandIds((draft) => {
-                  draft.push(item.id);
-                });
-              }
-            }
-          }}
-          onClickItem={(node) => {
-            if (dMultiple) {
-              const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', select as Set<V>);
-              changeSelect(Array.from(checkeds.keys()));
-            } else {
-              if (!dOnlyLeafSelectable || node.isLeaf) {
-                changeSelect(node.id);
-              }
-            }
-          }}
-        ></DPanel>
-      )}
-    </DFocusVisible>
+            changeExpandIds((draft) => {
+              draft.push(item.id);
+            });
+          }
+        }
+      }}
+      onClickItem={(node) => {
+        if (dMultiple) {
+          const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(node.checked ? 'UNCHECKED' : 'CHECKED', select as Set<V>);
+          changeSelect(Array.from(checkeds.keys()));
+        } else {
+          if (!dOnlyLeafSelectable || node.isLeaf) {
+            changeSelect(node.id);
+          }
+        }
+      }}
+    ></DPanel>
   );
 }

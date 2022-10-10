@@ -1,24 +1,25 @@
-import type { DId, DSize } from '../../utils/types';
-import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
+import type { DCloneHTMLElement, DId, DSize } from '../../utils/types';
+import type { ComboboxKeyDownRef } from '../_keyboard';
 import type { DDropdownItem } from '../dropdown';
 import type { DFormControl } from '../form';
 import type { DSelectItem } from '../select';
 import type { AbstractTreeNode, TreeOrigin } from '../tree/abstract-node';
 
-import { isNull } from 'lodash';
-import React, { useCallback, useState, useId, useMemo, useRef } from 'react';
+import { isNull, isUndefined } from 'lodash';
+import React, { useCallback, useState, useMemo, useRef, useImperativeHandle } from 'react';
 
-import { useEventNotify } from '@react-devui/hooks';
+import { useEventCallback, useId } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
-import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue, useTranslation } from '../../hooks';
-import { registerComponentMate } from '../../utils';
-import { DComboboxKeyboardSupport } from '../_keyboard-support';
+import { useGeneralContext, useDValue } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { DComboboxKeyboard } from '../_keyboard';
 import { DSelectbox } from '../_selectbox';
+import { DTransition } from '../_transition';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DTag } from '../tag';
 import { DSearchPanel as DTreeSearchPanel } from '../tree/SearchPanel';
 import { MultipleTreeNode } from '../tree/multiple-node';
@@ -41,6 +42,9 @@ export interface DCascaderItem<V extends DId> {
 }
 
 export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> extends React.HTMLAttributes<HTMLDivElement> {
+  dRef?: {
+    input?: React.ForwardedRef<HTMLInputElement>;
+  };
   dFormControl?: DFormControl;
   dList: T[];
   dModel?: V | null | V[];
@@ -60,14 +64,13 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
     sort?: (a: T, b: T) => number;
   };
   dPopupClassName?: string;
-  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.Ref<HTMLInputElement>;
+  dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onClear?: () => void;
   onFirstFocus?: (value: T['value'], item: T) => void;
+  afterVisibleChange?: (visible: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCascader' as const });
@@ -76,6 +79,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   ref: React.ForwardedRef<DCascaderRef>
 ): JSX.Element | null {
   const {
+    dRef,
     dFormControl,
     dList,
     dModel,
@@ -92,14 +96,13 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     dCustomSelected,
     dCustomSearch,
     dPopupClassName,
-    dInputProps,
-    dInputRef,
+    dInputRender,
     onModelChange,
     onVisibleChange,
-    afterVisibleChange,
     onSearch,
     onClear,
     onFirstFocus,
+    afterVisibleChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -109,6 +112,12 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   const { gSize, gDisabled } = useGeneralContext();
   //#endregion
 
+  //#region Ref
+  const boxRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const comboboxKeyDownRef = useRef<ComboboxKeyDownRef>(null);
+  //#endregion
+
   const dataRef = useRef<{
     focusList: Set<V>;
   }>({
@@ -116,7 +125,6 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   });
 
   const [t] = useTranslation();
-  const [eventId, onKeyDown$] = useEventNotify<[DComboboxKeyboardSupportKey | 'click']>();
 
   const uniqueId = useId();
   const listId = `${dPrefix}cascader-list-${uniqueId}`;
@@ -177,7 +185,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   });
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
+  const disabled = (dDisabled || gDisabled || dFormControl?.control.disabled) ?? false;
 
   const hasSearch = searchValue.length > 0;
   const hasSelected = dMultiple ? (select as Set<V>).size > 0 : !isNull(select);
@@ -260,6 +268,41 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     }
   };
 
+  const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
+    top: -9999,
+    left: -9999,
+  });
+  const [transformOrigin, setTransformOrigin] = useState<string>();
+  const updatePosition = useEventCallback(() => {
+    if (visible && boxRef.current && popupRef.current) {
+      const { height } = getOriginalSize(popupRef.current);
+      const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+      const width = Math.min(popupRef.current.scrollWidth, maxWidth);
+      const { top, left, transformOrigin } = getVerticalSidePosition(
+        boxRef.current,
+        { width, height },
+        {
+          placement: 'bottom-left',
+          inWindow: WINDOW_SPACE,
+        }
+      );
+      setPopupPositionStyle({
+        top,
+        left,
+        maxWidth,
+      });
+      setTransformOrigin(transformOrigin);
+    }
+  });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      updatePosition,
+    }),
+    [updatePosition]
+  );
+
   const [selectedNode, suffixNode, selectedLabel] = (() => {
     let selectedNode: React.ReactNode = null;
     let suffixNode: React.ReactNode = null;
@@ -323,181 +366,218 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
   })();
 
   return (
-    <DComboboxKeyboardSupport
+    <DSelectbox
+      {...restProps}
+      onClick={(e) => {
+        restProps.onClick?.(e);
+
+        changeVisible((draft) => (dSearchable ? true : !draft));
+      }}
+      dRef={{
+        box: boxRef,
+        input: dRef?.input,
+      }}
+      dClassNamePrefix="cascader"
+      dFormControl={dFormControl}
       dVisible={visible}
-      dEditable={dSearchable}
-      dNested={!hasSearch}
-      onVisibleChange={changeVisible}
-      onFocusChange={onKeyDown$}
-    >
-      {({ ksOnKeyDown }) => (
-        <DSelectbox
-          {...restProps}
-          ref={ref}
-          onClick={(e) => {
-            restProps.onClick?.(e);
-
-            changeVisible((draft) => (dSearchable ? true : !draft));
-          }}
-          dClassNamePrefix="cascader"
-          dFormControl={dFormControl}
+      dContent={hasSelected && selectedNode}
+      dContentTitle={selectedLabel}
+      dPlaceholder={dPlaceholder}
+      dSuffix={suffixNode}
+      dSize={size}
+      dLoading={dLoading}
+      dSearchable={dSearchable}
+      dClearable={dClearable}
+      dDisabled={disabled}
+      dUpdatePosition={{
+        fn: updatePosition,
+        popupRef,
+        extraScrollRefs: [],
+      }}
+      dInputRender={(el) => (
+        <DComboboxKeyboard
           dVisible={visible}
-          dContent={hasSelected && selectedNode}
-          dContentTitle={selectedLabel}
-          dPlaceholder={dPlaceholder}
-          dSuffix={suffixNode}
-          dSize={size}
-          dLoading={dLoading}
-          dSearchable={dSearchable}
-          dClearable={dClearable}
-          dDisabled={disabled}
-          dInputProps={{
-            ...dInputProps,
-            value: searchValue,
-            'aria-controls': listId,
-            onBlur: (e) => {
-              dInputProps?.onBlur?.(e);
-
-              changeVisible(false);
-            },
-            onKeyDown: (e) => {
-              dInputProps?.onKeyDown?.(e);
-              ksOnKeyDown(e);
-
-              if ((e.code === 'Enter' || (!dSearchable && e.code === 'Space')) && visible) {
-                onKeyDown$('click');
-              }
-            },
-            onChange: (e) => {
-              dInputProps?.onChange?.(e);
-
-              const val = e.currentTarget.value;
-              if (dSearchable) {
-                setSearchValue(val);
-                onSearch?.(val);
-              }
-            },
+          dEditable={dSearchable}
+          dHasSub={!hasSearch}
+          onVisibleChange={changeVisible}
+          onFocusChange={(key) => {
+            comboboxKeyDownRef.current?.(key);
           }}
-          dInputRef={dInputRef}
-          dUpdatePosition={(boxEl, popupEl) => {
-            const { height } = getOriginalSize(popupEl);
-            const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
-            const width = Math.min(popupEl.scrollWidth, maxWidth);
-            const { top, left, transformOrigin } = getVerticalSidePosition(
-              boxEl,
-              { width, height },
-              {
-                placement: 'bottom-left',
-                inWindow: true,
-              }
+        >
+          {({ render: renderComboboxKeyboard }) => {
+            const input = renderComboboxKeyboard(
+              cloneHTMLElement(el, {
+                value: searchValue,
+                'aria-controls': listId,
+                onBlur: (e) => {
+                  el.props.onBlur?.(e);
+
+                  changeVisible(false);
+                },
+                onKeyDown: (e) => {
+                  el.props.onKeyDown?.(e);
+
+                  if ((e.code === 'Enter' || (!dSearchable && e.code === 'Space')) && visible) {
+                    comboboxKeyDownRef.current?.('click');
+                  }
+                },
+                onChange: (e) => {
+                  el.props.onChange?.(e);
+
+                  const val = e.currentTarget.value;
+                  if (dSearchable) {
+                    setSearchValue(val);
+                    onSearch?.(val);
+                  }
+                },
+              })
             );
 
-            return {
-              position: {
-                top,
-                left,
-                maxWidth,
-              },
-              transformOrigin,
-            };
+            return isUndefined(dInputRender) ? input : dInputRender(input);
           }}
-          afterVisibleChange={afterVisibleChange}
-          onFocusVisibleChange={setFocusVisible}
-          onClear={handleClear}
+        </DComboboxKeyboard>
+      )}
+      onFocusVisibleChange={setFocusVisible}
+      onClear={handleClear}
+    >
+      {({ renderPopup }) => (
+        <DTransition
+          dIn={visible}
+          dDuring={TTANSITION_DURING_POPUP}
+          onEnter={updatePosition}
+          afterEnter={() => {
+            afterVisibleChange?.(true);
+          }}
+          afterLeave={() => {
+            afterVisibleChange?.(false);
+          }}
         >
-          {({ sPopupRef, sStyle, sOnMouseDown, sOnMouseUp }) => (
-            <div
-              ref={sPopupRef}
-              className={getClassName(dPopupClassName, `${dPrefix}cascader__popup`)}
-              style={sStyle}
-              onMouseDown={sOnMouseDown}
-              onMouseUp={sOnMouseUp}
-            >
-              {dLoading && (
-                <div
-                  className={getClassName(`${dPrefix}cascader__loading`, {
-                    [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchList : renderNodes).length === 0,
-                  })}
-                >
-                  <LoadingOutlined dSize={(hasSearch ? searchList : renderNodes).length === 0 ? 18 : 24} dSpin />
-                </div>
-              )}
-              {hasSearch ? (
-                <DTreeSearchPanel
-                  id={listId}
-                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
-                  dGetItemId={getItemId}
-                  dList={searchList}
-                  dFocusItem={searchFocusItem}
-                  dCustomItem={dCustomItem}
-                  dMultiple={dMultiple}
-                  dOnlyLeafSelectable={dOnlyLeafSelectable}
-                  dFocusVisible={focusVisible}
-                  dEventId={eventId}
-                  onFocusChange={(item) => {
-                    if (!dataRef.current.focusList.has(item.value)) {
-                      dataRef.current.focusList.add(item.value);
-                      onFirstFocus?.(item.value, item[TREE_NODE_KEY].origin);
-                    }
+          {(state) => {
+            let transitionStyle: React.CSSProperties = {};
+            switch (state) {
+              case 'enter':
+                transitionStyle = { transform: 'scaleY(0.7)', opacity: 0 };
+                break;
 
-                    setSearchFocusItem(item);
-                  }}
-                  onClickItem={(item) => {
-                    if (dMultiple) {
-                      const checkeds = (item[TREE_NODE_KEY] as MultipleTreeNode<V, T>).changeStatus(
-                        item[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
-                        select as Set<V>
-                      );
-                      changeSelect(Array.from(checkeds.keys()));
-                    } else {
-                      changeSelect(item[TREE_NODE_KEY].id);
-                      changeVisible(false);
-                    }
-                  }}
-                ></DTreeSearchPanel>
-              ) : (
-                <DList
-                  id={listId}
-                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
-                  dGetItemId={getItemId}
-                  dList={renderNodes}
-                  dFocusItem={noSearchFocusItem}
-                  dCustomItem={dCustomItem}
-                  dMultiple={dMultiple}
-                  dFocusVisible={focusVisible}
-                  dRoot
-                  dEventId={eventId}
-                  onFocusChange={(node) => {
-                    if (!dataRef.current.focusList.has(node.id)) {
-                      dataRef.current.focusList.add(node.id);
-                      onFirstFocus?.(node.id, node.origin);
-                    }
+              case 'entering':
+                transitionStyle = {
+                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
+                  transformOrigin,
+                };
+                break;
 
-                    setNoSearchFocusItem(node);
-                  }}
-                  onClickItem={(node) => {
-                    if (dMultiple) {
-                      const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(
-                        node.checked ? 'UNCHECKED' : 'CHECKED',
-                        select as Set<V>
-                      );
-                      changeSelect(Array.from(checkeds.keys()));
-                    } else {
-                      if (!dOnlyLeafSelectable || node.isLeaf) {
-                        changeSelect(node.id);
+              case 'leaving':
+                transitionStyle = {
+                  transform: 'scaleY(0.7)',
+                  opacity: 0,
+                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
+                  transformOrigin,
+                };
+                break;
+
+              case 'leaved':
+                transitionStyle = { display: 'none' };
+                break;
+
+              default:
+                break;
+            }
+
+            return renderPopup(
+              <div
+                ref={popupRef}
+                className={getClassName(dPopupClassName, `${dPrefix}cascader__popup`)}
+                style={{
+                  ...popupPositionStyle,
+                  ...transitionStyle,
+                }}
+              >
+                {dLoading && (
+                  <div
+                    className={getClassName(`${dPrefix}cascader__loading`, {
+                      [`${dPrefix}cascader__loading--empty`]: (hasSearch ? searchList : renderNodes).length === 0,
+                    })}
+                  >
+                    <LoadingOutlined dSize={(hasSearch ? searchList : renderNodes).length === 0 ? 18 : 24} dSpin />
+                  </div>
+                )}
+                {hasSearch ? (
+                  <DTreeSearchPanel
+                    ref={comboboxKeyDownRef}
+                    id={listId}
+                    style={{ pointerEvents: dLoading ? 'none' : undefined }}
+                    dGetItemId={getItemId}
+                    dList={searchList}
+                    dFocusItem={searchFocusItem}
+                    dCustomItem={dCustomItem}
+                    dMultiple={dMultiple}
+                    dOnlyLeafSelectable={dOnlyLeafSelectable}
+                    dFocusVisible={focusVisible}
+                    onFocusChange={(item) => {
+                      if (!dataRef.current.focusList.has(item.value)) {
+                        dataRef.current.focusList.add(item.value);
+                        onFirstFocus?.(item.value, item[TREE_NODE_KEY].origin);
                       }
-                      if (node.isLeaf) {
+
+                      setSearchFocusItem(item);
+                    }}
+                    onClickItem={(item) => {
+                      if (dMultiple) {
+                        const checkeds = (item[TREE_NODE_KEY] as MultipleTreeNode<V, T>).changeStatus(
+                          item[TREE_NODE_KEY].checked ? 'UNCHECKED' : 'CHECKED',
+                          select as Set<V>
+                        );
+                        changeSelect(Array.from(checkeds.keys()));
+                      } else {
+                        changeSelect(item[TREE_NODE_KEY].id);
                         changeVisible(false);
                       }
-                    }
-                  }}
-                ></DList>
-              )}
-            </div>
-          )}
-        </DSelectbox>
+                    }}
+                  ></DTreeSearchPanel>
+                ) : (
+                  <DList
+                    ref={comboboxKeyDownRef}
+                    id={listId}
+                    style={{ pointerEvents: dLoading ? 'none' : undefined }}
+                    dGetItemId={getItemId}
+                    dList={renderNodes}
+                    dFocusItem={noSearchFocusItem}
+                    dCustomItem={dCustomItem}
+                    dMultiple={dMultiple}
+                    dFocusVisible={focusVisible}
+                    dRoot
+                    onFocusChange={(node) => {
+                      if (!dataRef.current.focusList.has(node.id)) {
+                        dataRef.current.focusList.add(node.id);
+                        onFirstFocus?.(node.id, node.origin);
+                      }
+
+                      setNoSearchFocusItem(node);
+                    }}
+                    onClickItem={(node) => {
+                      if (dMultiple) {
+                        const checkeds = (node as MultipleTreeNode<V, T>).changeStatus(
+                          node.checked ? 'UNCHECKED' : 'CHECKED',
+                          select as Set<V>
+                        );
+                        changeSelect(Array.from(checkeds.keys()));
+                      } else {
+                        if (!dOnlyLeafSelectable || node.isLeaf) {
+                          changeSelect(node.id);
+                        }
+                        if (node.isLeaf) {
+                          changeVisible(false);
+                        }
+                      }
+                    }}
+                  ></DList>
+                )}
+              </div>
+            );
+          }}
+        </DTransition>
       )}
-    </DComboboxKeyboardSupport>
+    </DSelectbox>
   );
 }
 

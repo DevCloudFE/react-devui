@@ -1,0 +1,89 @@
+/* stylelint-disable declaration-property-value-allowed-list */
+/* stylelint-disable scss/operator-no-unspaced */
+@use 'sass:color';
+
+:root {
+  /** z-index **/
+  --#{$variable-prefix}zindex-absolute: 100;
+  --#{$variable-prefix}zindex-sticky: 900;
+  --#{$variable-prefix}zindex-fixed: 1000;
+  --#{$variable-prefix}zindex-max: 10000;
+
+  /** size **/
+  --#{$variable-prefix}size: 36px;
+  --#{$variable-prefix}size-smaller: 32px;
+  --#{$variable-prefix}size-larger: 40px;
+  --#{$variable-prefix}padding-size: 16px;
+  --#{$variable-prefix}padding-size-smaller: 12px;
+  --#{$variable-prefix}padding-size-larger: 20px;
+  --#{$variable-prefix}horizontal-space-size: 12px;
+  --#{$variable-prefix}horizontal-space-size-smaller: 10px;
+  --#{$variable-prefix}horizontal-space-size-larger: 14px;
+  --#{$variable-prefix}margin-size: 8px;
+  --#{$variable-prefix}margin-size-smaller: 6px;
+  --#{$variable-prefix}margin-size-larger: 10px;
+
+  /** animation **/
+  --#{$variable-prefix}animation-duration-slow: 300ms;
+  --#{$variable-prefix}animation-duration-base: 200ms;
+  --#{$variable-prefix}animation-duration-fast: 100ms;
+
+  /** border-radius **/
+  --#{$variable-prefix}border-radius: 2px;
+  --#{$variable-prefix}border-radius-larger: 4px;
+
+  /** shadow **/
+  --#{$variable-prefix}shadow-color: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}shadow-popup: rgb(0 0 0 / 6%) 0 0 20px 2px, rgb(0 0 0 / 10%) 0 4px 10px 0;
+  --#{$variable-prefix}shadow-dialog: rgb(0 0 0 / 6%) 0 0 32px 2px, rgb(0 0 0 / 10%) 0 4px 12px 0;
+  --#{$variable-prefix}shadow-normal: 16%;
+  --#{$variable-prefix}shadow-darker: 26%;
+
+  /** basic **/
+  --#{$variable-prefix}text-color: rgb(36 41 47);
+  --#{$variable-prefix}text-color-rgb: 36 41 47;
+  --#{$variable-prefix}text-color-sub: #7f8287;
+  --#{$variable-prefix}background-color: rgb(255 255 255);
+  --#{$variable-prefix}background-color-rgb: 255 255 255;
+  --#{$variable-prefix}background-color-light-gray: rgb(247 247 247);
+  --#{$variable-prefix}background-color-gray: rgb(239 239 239);
+  --#{$variable-prefix}background-color-input: rgb(255 255 255);
+  --#{$variable-prefix}background-color-disabled: rgb(247 247 247);
+  --#{$variable-prefix}background-color-hover: rgb(0 0 0 / 4%);
+  --#{$variable-prefix}background-color-light-hover: rgb(255 255 255 / 16%);
+  --#{$variable-prefix}background-color-indicator: #dfe1e6;
+  --#{$variable-prefix}background-color-actions-mask: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}color-divider: rgb(239 239 239);
+  --#{$variable-prefix}color-border: rgb(219 219 219);
+  --#{$variable-prefix}color-disabled: #d1d4d7;
+  --#{$variable-prefix}color-icon-decorator: #b2b3b5;
+
+  @each $theme, $rgb in $themes {
+    /** rgb **/
+    --#{$variable-prefix}color-#{$theme}-rgb: #{$rgb};
+
+    /** theme **/
+    --#{$variable-prefix}color-#{$theme}: rgb(#{$rgb});
+
+    /** lighter **/
+    --#{$variable-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
+
+    /** darker **/
+    --#{$variable-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+
+    /** background **/
+    --#{$variable-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -90%)};
+    --#{$variable-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -96%)};
+  }
+
+  /** component **/
+  --#{$variable-prefix}avatar-background-color: #bdbdbd;
+  --#{$variable-prefix}fab-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 14px 0 rgb(0 0 0 / 12%);
+  --#{$variable-prefix}mask-background-color: rgb(0 0 0 / 20%);
+  --#{$variable-prefix}rating-background-color: rgb(227 227 227);
+  --#{$variable-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
+  --#{$variable-prefix}switch-background-color: #d4d6d9;
+  --#{$variable-prefix}tabs-background-color-slider: rgb(243 243 243);
+  --#{$variable-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
+  --#{$variable-prefix}tooltip-background-color: #464d6e;
+}

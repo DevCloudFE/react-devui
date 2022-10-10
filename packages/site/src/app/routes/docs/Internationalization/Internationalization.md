@@ -7,21 +7,21 @@ Here is the [full configuration](https://github.com/DevCloudFE/react-devui/blob/
 The default language is `en-US`, if you need to use another language, please configure `DRoot`:
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: { lang: 'zh-CN' },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```
 
@@ -30,30 +30,26 @@ export default function App() {
 Support to modify the language display:
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: {
         resources: {
-          DatePicker: {
-            Now: {
-              'en-US': 'Present',
-              'zh-CN': '现在',
-            },
-          },
+          'en-US': { DatePicker: { Now: 'Present' } },
+          'zh-CN': { DatePicker: { Now: '现在' } },
         },
       },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```
 
@@ -62,32 +58,24 @@ export default function App() {
 Support for adding languages:
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: {
         resources: {
-          Common: {
-            Loading: {
-              'en-US': 'Loading',
-              'zh-CN': '加载中',
-              'ja-JP': '読み込み中',
-            },
-            ...other,
-          },
-          ...other,
+          'ja-JP': { DatePicker: { Now: '今' } },
         },
       },
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```

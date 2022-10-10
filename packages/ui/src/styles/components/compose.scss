@@ -1,4 +1,5 @@
-/* stylelint-disable no-descending-specificity */
+@import 'mixins/size';
+
 @include b(compose) {
   $compose-support: "[data-compose-support='true']";
   $compose-support--active: "[data-compose-support-active='true']";

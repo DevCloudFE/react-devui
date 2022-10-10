@@ -19,7 +19,7 @@ Global style:
 Import on demand:
 
 ```scss
-@import '~@react-devui/ui/styles/base';
+@import '~@react-devui/ui/styles/custom';
 
 @import '~@react-devui/ui/styles/components/button';
 ```
@@ -31,24 +31,26 @@ You need to import `DRoot` on the root component of your project (like `App.tsx`
 It is recommended to configure the `layout` parameter, which provides the layout information of your page, so that we can automatically do some work (such as updating the popup position).
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
-      layout: { scrollEl: 'main', resizeEl: 'article' },
+      layout: { pageScrollEl: '#app-main', contentResizeEl: '#app-content' },
     }),
     []
   );
 
   return (
-    <DRoot dContext={rootContext}>
-      <main style={{ overflow: 'auto' }}>
-        <article style={{ height: '200vh' }}>Some content...</article>
+    <DRoot context={rootContext}>
+      <main id="app-main" style={{ overflow: 'auto' }}>
+        <section id="app-content" style={{ height: '200vh' }}>
+          Some content...
+        </section>
       </main>
     </DRoot>
   );

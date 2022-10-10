@@ -59,20 +59,20 @@
     "title": {
       "login": "Login",
       "dashboard": {
-        "index": "Dashboard",
+        "": "Dashboard",
         "amap": "AMap",
         "echarts": "ECharts"
       },
+      "test": {
+        "": "Test",
+        "acl": "ACL",
+        "http": "Http"
+      },
       "exception": {
-        "index": "Exception",
+        "": "Exception",
         "403": "403",
         "404": "404",
         "500": "500"
-      },
-      "test": {
-        "index": "Test",
-        "acl": "ACL",
-        "http": "Http"
       }
     }
   },
@@ -136,20 +136,20 @@
     "title": {
       "login": "登录",
       "dashboard": {
-        "index": "仪表盘",
+        "": "仪表盘",
         "amap": "高德地图",
         "echarts": "ECharts"
       },
+      "test": {
+        "": "测试",
+        "acl": "ACL",
+        "http": "Http"
+      },
       "exception": {
-        "index": "异常页",
+        "": "异常页",
         "403": "403",
         "404": "404",
         "500": "500"
-      },
-      "test": {
-        "index": "测试",
-        "acl": "ACL",
-        "http": "Http"
       }
     }
   }

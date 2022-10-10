@@ -1,14 +1,16 @@
 import type { DId } from '../../utils/types';
 
 import { isNull, nth } from 'lodash';
-import React, { useId } from 'react';
+import React from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { DownOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DAccordionItem<ID extends DId> {
   id: ID;
@@ -193,7 +195,12 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
               {itemArrow && <DownOutlined className={`${dPrefix}accordion__item-arrow`} dRotate={iconRotate} />}
             </div>
             <DCollapseTransition
-              dSize={0}
+              dOriginalSize={{
+                height: 'auto',
+              }}
+              dCollapsedStyle={{
+                height: 0,
+              }}
               dIn={isActive}
               dDuring={TTANSITION_DURING_BASE}
               dStyles={{
@@ -218,9 +225,9 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 afterActiveChange?.(itemId, item, false);
               }}
             >
-              {(ref, collapseStyle) => (
+              {(collapseRef, collapseStyle) => (
                 <div
-                  ref={ref}
+                  ref={collapseRef}
                   id={regionId}
                   className={`${dPrefix}accordion__item-region`}
                   style={collapseStyle}

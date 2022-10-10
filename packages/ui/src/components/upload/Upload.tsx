@@ -7,9 +7,10 @@ import React, { useRef } from 'react';
 import { useForkRef, useUnmount } from '@react-devui/hooks';
 import { getClassName, getUID } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DList } from './List';
 import { DPicture } from './Picture';
 import { DPictureList } from './PictureList';
@@ -90,6 +91,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
 
   //#region Ref
   const inputRef = useRef<HTMLInputElement>(null);
+  const combineInputRef = useForkRef(inputRef, ref);
   //#endregion
 
   const dataRef = useRef<{
@@ -97,8 +99,6 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
   }>({
     fileURLs: [],
   });
-
-  const combineInputRef = useForkRef(inputRef, ref);
 
   const formControlInject = useFormControl(dFormControl);
   const [fileList, changeFileList] = useDValue<DUploadFile[]>([], dModel, undefined, undefined, formControlInject);
@@ -272,7 +272,6 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
     }
 
     return React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-      ...children.props,
       ...dragProps,
       onClick: (e) => {
         children.props.onClick?.(e);

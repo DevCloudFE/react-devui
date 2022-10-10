@@ -5,8 +5,9 @@ import React from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useDValue } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DFabBacktop } from './FabBacktop';
 import { DFabButton } from './FabButton';
 
@@ -40,10 +41,9 @@ export const DFab: {
 
   return (
     <div {...restProps} className={getClassName(restProps.className, `${dPrefix}fab`)}>
-      {React.cloneElement(children, {
-        ...children.props,
+      {cloneHTMLElement(children, {
         className: getClassName(children.props.className, { 'is-expand': expand }),
-        onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        onClick: (e) => {
           children.props.onClick?.(e);
 
           if (!isUndefined(dList)) {
@@ -56,14 +56,13 @@ export const DFab: {
         dList.map(({ placement, actions }, key) => (
           <div key={key} className={getClassName(`${dPrefix}fab__actions`, `${dPrefix}fab__actions--${placement}`)}>
             {React.Children.map(actions, (action, index) =>
-              React.cloneElement(action, {
-                ...action.props,
+              cloneHTMLElement(action, {
                 className: getClassName(action.props.className, `${dPrefix}fab__action`),
                 style: {
                   ...action.props.style,
                   animationDelay: `${index * 33}ms`,
                 },
-                onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                onClick: (e) => {
                   action.props.onClick?.(e);
 
                   changeExpand(false);

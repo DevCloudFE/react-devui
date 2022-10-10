@@ -1,34 +1,36 @@
 import type { DId } from '../../utils/types';
-import type { DComboboxKeyboardSupportKey } from '../_keyboard-support';
+import type { ComboboxKeyDownRef } from '../_keyboard';
 import type { AbstractTreeNode } from '../tree/abstract-node';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DCascaderItem } from './Cascader';
 
 import { isUndefined } from 'lodash';
-import { useMemo, useRef } from 'react';
+import React, { useImperativeHandle, useMemo, useRef } from 'react';
 
-import { useEventListener } from '@react-devui/hooks';
+import { useEventCallback } from '@react-devui/hooks';
 import { LoadingOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
 import { DCheckbox } from '../checkbox';
+import { usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DListProps<V extends DId, T extends DCascaderItem<V>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   dGetItemId: (value: V) => string;
   dList: AbstractTreeNode<V, T>[];
   dFocusItem: AbstractTreeNode<V, T> | undefined;
-  dCustomItem?: (item: T) => React.ReactNode;
+  dCustomItem: ((item: T) => React.ReactNode) | undefined;
   dMultiple: boolean;
   dFocusVisible: boolean;
   dRoot: boolean;
-  dEventId: string;
   onFocusChange: (node: AbstractTreeNode<V, T>) => void;
   onClickItem: (node: AbstractTreeNode<V, T>) => void;
 }
 
-export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListProps<V, T>): JSX.Element | null {
+function List<V extends DId, T extends DCascaderItem<V>>(
+  props: DListProps<V, T>,
+  ref: React.ForwardedRef<ComboboxKeyDownRef>
+): JSX.Element | null {
   const {
     dGetItemId,
     dList,
@@ -37,9 +39,8 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
     dMultiple,
     dFocusVisible,
     dRoot,
-    dEventId,
-    onClickItem,
     onFocusChange,
+    onClickItem,
 
     ...restProps
   } = props;
@@ -49,7 +50,8 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<AbstractTreeNode<V, T>>>(null);
+  const vsRef = useRef<DVirtualScrollRef<AbstractTreeNode<V, T>>>(null);
+  const comboboxKeyDownRef = useRef<ComboboxKeyDownRef>(null);
   //#endregion
 
   const [t] = useTranslation();
@@ -73,7 +75,7 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
   })();
   const shouldInitFocus = dRoot && isUndefined(dFocusItem);
 
-  const handleKeyDown = (key: DComboboxKeyboardSupportKey | 'click') => {
+  const handleKeyDown = useEventCallback<ComboboxKeyDownRef>((key) => {
     if (isFocus || shouldInitFocus) {
       const focusNode = (node: AbstractTreeNode<V, T> | undefined) => {
         if (node) {
@@ -82,19 +84,19 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
       };
       switch (key) {
         case 'next':
-          focusNode(dVSRef.current?.scrollByStep(1));
+          focusNode(vsRef.current?.scrollByStep(1));
           break;
 
         case 'prev':
-          focusNode(dVSRef.current?.scrollByStep(-1));
+          focusNode(vsRef.current?.scrollByStep(-1));
           break;
 
         case 'first':
-          focusNode(dVSRef.current?.scrollToStart());
+          focusNode(vsRef.current?.scrollToStart());
           break;
 
         case 'last':
-          focusNode(dVSRef.current?.scrollToEnd());
+          focusNode(vsRef.current?.scrollToEnd());
           break;
 
         case 'prev-level':
@@ -123,9 +125,12 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
         default:
           break;
       }
+    } else {
+      comboboxKeyDownRef.current?.(key);
     }
-  };
-  useEventListener(dEventId, handleKeyDown);
+  });
+
+  useImperativeHandle(ref, () => handleKeyDown, [handleKeyDown]);
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<AbstractTreeNode<V, T>>>(
     () => ({
@@ -141,11 +146,11 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
     <>
       <DVirtualScroll
         {...vsPerformance}
-        ref={dVSRef}
+        ref={vsRef}
         dFillNode={<li></li>}
-        dItemRender={(item, index, { iARIA }) => (
+        dItemRender={(item, index, { aria }) => (
           <li
-            {...iARIA}
+            {...aria}
             key={item.id}
             id={dGetItemId(item.id)}
             className={getClassName(`${dPrefix}cascader__option`, {
@@ -187,36 +192,35 @@ export function DList<V extends DId, T extends DCascaderItem<V>>(props: DListPro
         dSize={264}
         dPadding={4}
       >
-        {({ vsScrollRef, vsRender, vsOnScroll }) => (
-          // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
-          <ul
-            ref={vsScrollRef}
-            {...restProps}
-            className={getClassName(restProps.className, `${dPrefix}cascader__list`)}
-            tabIndex={restProps.tabIndex ?? -1}
-            role={restProps.role ?? 'listbox'}
-            aria-multiselectable={restProps['aria-multiselectable'] ?? dMultiple}
-            aria-activedescendant={
-              restProps['aria-activedescendant'] ?? (dRoot && !isUndefined(dFocusItem) ? dGetItemId(dFocusItem.id) : undefined)
-            }
-            onScroll={(e) => {
-              restProps.onScroll?.(e);
-              vsOnScroll(e);
-            }}
-          >
-            {dList.length === 0 ? (
-              <li className={`${dPrefix}cascader__empty`}>
-                <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
-              </li>
-            ) : (
-              vsRender
-            )}
-          </ul>
-        )}
+        {({ render, vsList }) =>
+          render(
+            // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
+            <ul
+              {...restProps}
+              className={getClassName(restProps.className, `${dPrefix}cascader__list`)}
+              tabIndex={-1}
+              role="listbox"
+              aria-multiselectable={dMultiple}
+              aria-activedescendant={dRoot && !isUndefined(dFocusItem) ? dGetItemId(dFocusItem.id) : undefined}
+            >
+              {dList.length === 0 ? (
+                <li className={`${dPrefix}cascader__empty`}>
+                  <div className={`${dPrefix}cascader__option-content`}>{t('No Data')}</div>
+                </li>
+              ) : (
+                vsList
+              )}
+            </ul>
+          )
+        }
       </DVirtualScroll>
       {inFocusNode && !inFocusNode.origin.loading && inFocusNode.children && (
-        <DList {...props} id={undefined} dList={inFocusNode.children} dRoot={false}></DList>
+        <DList {...props} ref={comboboxKeyDownRef} id={undefined} dList={inFocusNode.children} dRoot={false}></DList>
       )}
     </>
   );
 }
+
+export const DList: <V extends DId, T extends DCascaderItem<V>>(
+  props: DListProps<V, T> & React.RefAttributes<ComboboxKeyDownRef>
+) => ReturnType<typeof List> = React.forwardRef(List) as any;

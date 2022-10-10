@@ -3,10 +3,10 @@ import { isNumber, isUndefined } from 'lodash';
 import { CheckOutlined, CloseOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DStepperItem {
   step?: number;
@@ -166,7 +166,12 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
             {dVertical && separatoreNode}
             {checkNodeExist(itemDescription) && (
               <DCollapseTransition
-                dSize={0}
+                dOriginalSize={{
+                  height: 'auto',
+                }}
+                dCollapsedStyle={{
+                  height: 0,
+                }}
                 dIn={!dVertical || isActive}
                 dDuring={TTANSITION_DURING_BASE}
                 dStyles={{
@@ -179,13 +184,13 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
                   leaved: { display: 'none' },
                 }}
               >
-                {(ref, collapseStyle) => (
+                {(collapseRef, collapseStyle) => (
                   <div
-                    ref={ref}
+                    ref={collapseRef}
                     className={`${dPrefix}stepper__step-description`}
                     style={{
-                      ...collapseStyle,
                       marginLeft: dLabelBottom ? undefined : `calc(${dIconSize}px + 8px)`,
+                      ...collapseStyle,
                     }}
                   >
                     {itemDescription}

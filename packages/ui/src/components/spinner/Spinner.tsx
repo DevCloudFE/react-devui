@@ -4,11 +4,12 @@ import { isNumber, isUndefined } from 'lodash';
 import { useEffect, useRef } from 'react';
 
 import { useAsync, useForceUpdate } from '@react-devui/hooks';
+import { DCustomIcon } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible?: boolean;
@@ -40,14 +41,34 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
   const containerRef = useRef<HTMLDivElement>(null);
   //#endregion
 
+  const dataRef = useRef<{
+    delayVisible: boolean;
+  }>({
+    delayVisible: false,
+  });
+
   const async = useAsync();
   const forceUpdate = useForceUpdate();
 
-  const delayVisible = useRef(false);
   if (dVisible === false) {
-    delayVisible.current = false;
+    dataRef.current.delayVisible = false;
   }
-  const visible = isUndefined(dDelay) ? dVisible : delayVisible.current;
+  const visible = isUndefined(dDelay) ? dVisible : dataRef.current.delayVisible;
+
+  useEffect(() => {
+    if (isNumber(dDelay) && dVisible) {
+      const asyncInstance = async.create();
+
+      asyncInstance.setTimeout(() => {
+        dataRef.current.delayVisible = true;
+        forceUpdate();
+      }, dDelay);
+
+      return () => {
+        asyncInstance.clearAll();
+      };
+    }
+  }, [async, dDelay, dVisible, forceUpdate]);
 
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = {
     enter: { opacity: 0 },
@@ -61,26 +82,11 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
     leaved: { display: 'none' },
   };
 
-  useEffect(() => {
-    if (isNumber(dDelay) && dVisible) {
-      const asyncInstance = async.create();
-
-      asyncInstance.setTimeout(() => {
-        delayVisible.current = true;
-        forceUpdate();
-      }, dDelay);
-
-      return () => {
-        asyncInstance.clearAll();
-      };
-    }
-  }, [async, dDelay, dVisible, forceUpdate]);
-
   return (
     <DTransition
       dIn={visible}
       dDuring={TTANSITION_DURING_BASE}
-      onEnterRendered={() => {
+      onEnter={() => {
         if (spinnerRef.current && containerRef.current) {
           containerRef.current.style.top = `${(spinnerRef.current.clientHeight - containerRef.current.clientHeight) / 2}px`;
         }
@@ -107,9 +113,9 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
               {checkNodeExist(children) ? (
                 children
               ) : (
-                <svg className={`${dPrefix}spinner__spinner`} width="1em" height="1em" viewBox="0 0 50 50">
+                <DCustomIcon className={`${dPrefix}spinner__spinner`} viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
-                </svg>
+                </DCustomIcon>
               )}
             </div>
             {checkNodeExist(dText) && <div className={`${dPrefix}spinner__text`}>{dText}</div>}

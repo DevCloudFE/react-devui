@@ -1,5 +1,7 @@
 import { isNull } from 'lodash';
 
+import { useStorage } from '@react-devui/hooks';
+
 import { base64url } from '../app/utils';
 import { environment } from '../environments';
 
@@ -15,7 +17,23 @@ if (!environment.production) {
   }
 }
 
-export interface TokenPayload {
+export abstract class Token {
+  public abstract get expiration(): number | null;
+  public abstract set expiration(val: number | null);
+
+  public get value(): string | null {
+    return useStorage.SERVICE.getItem(TOKEN_KEY);
+  }
+
+  set(val: string | null) {
+    useStorage.SERVICE.setItem(TOKEN_KEY, val);
+  }
+  remove() {
+    useStorage.SERVICE.removeItem(TOKEN_KEY);
+  }
+}
+
+export interface JWTTokenPayload {
   iss: string;
   sub: string;
   aud: string;
@@ -24,46 +42,24 @@ export interface TokenPayload {
   iat: number;
   jti: string;
 }
-
-interface TokenInterface {
-  // The number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
-  expiration: number | null;
-}
-
-export class Token {
-  public get token(): string | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-    return localStorage.getItem(TOKEN_KEY);
-  }
-  public set token(val: string | null) {
-    if (typeof window !== 'undefined') {
-      if (isNull(val)) {
-        localStorage.removeItem(TOKEN_KEY);
-      } else {
-        localStorage.setItem(TOKEN_KEY, val);
-      }
-    }
-  }
-}
-
-export class JWTToken<T extends TokenPayload> extends Token implements TokenInterface {
+export class JWTToken<T extends JWTTokenPayload> extends Token {
   public get payload(): T | null {
-    if (isNull(this.token)) {
+    if (isNull(this.value)) {
       return null;
     }
-    const [, payload] = this.token.split('.');
+    const [, payload] = this.value.split('.');
     return JSON.parse(base64url.decode(payload));
   }
   public get expiration(): number | null {
-    return this.payload ? this.payload.exp * 1000 : null;
+    return isNull(this.payload) ? null : this.payload.exp * 1000;
   }
   public set expiration(val: number | null) {
     throw new Error('You should not change `expiration` when use JWT!');
   }
 }
-class CustomToken extends Token implements TokenInterface {
+
+export class CustomToken extends Token {
   public expiration: number | null = null;
 }
+
 export const TOKEN = TOKEN_TYPE === 'JWT' ? new JWTToken() : new CustomToken();

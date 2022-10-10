@@ -1,12 +1,16 @@
-import type { DHeaderProps } from '../_header';
+import type { DButtonProps } from '../button';
 
-import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DHeader } from '../_header';
+import { useComponentConfig } from '../root';
 
-export type DModalHeaderProps = Omit<DHeaderProps, 'dClassNamePrefix' | 'onClose'>;
+export interface DModalHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  dActions?: React.ReactNode[];
+  dCloseProps?: DButtonProps;
+  onCloseClick?: () => void | false | Promise<void | false>;
+}
 
-export interface DModalHeaderPropsWithPrivate extends DModalHeaderProps {
+export interface DModalHeaderPrivateProps {
   __id?: string;
   __onClose?: () => void;
 }
@@ -14,11 +18,24 @@ export interface DModalHeaderPropsWithPrivate extends DModalHeaderProps {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal.Header' as const });
 export function DModalHeader(props: DModalHeaderProps): JSX.Element | null {
   const {
+    dActions = ['close'],
+    dCloseProps,
+    onCloseClick,
     __id,
     __onClose,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DModalHeaderPropsWithPrivate);
+  } = useComponentConfig(COMPONENT_NAME, props as DModalHeaderProps & DModalHeaderPrivateProps);
 
-  return <DHeader {...restProps} dClassNamePrefix="modal" dTitleId={restProps.dTitleId ?? __id} onClose={__onClose}></DHeader>;
+  return (
+    <DHeader
+      {...restProps}
+      dClassNamePrefix="modal"
+      dActions={dActions}
+      dCloseProps={dCloseProps}
+      dAriaLabelledby={__id}
+      onCloseClick={onCloseClick}
+      onClose={__onClose}
+    ></DHeader>
+  );
 }

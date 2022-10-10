@@ -1,0 +1,22 @@
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+);
+$enable-important-utilities: true;
+$utilities: (
+  'display': (
+    responsive: true,
+    print: true,
+    property: display,
+    class: d,
+    values: inline inline-block block grid table table-row table-cell flex inline-flex none,
+  ),
+);
+
+@import '~bootstrap/scss/mixins/breakpoints';
+@import '~bootstrap/scss/mixins/utilities';
+@import '~bootstrap/scss/utilities/api';

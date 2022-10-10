@@ -1,13 +1,12 @@
 import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
 
-import { useId } from 'react';
-
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useGeneralContext, useDValue } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCheckbox } from './Checkbox';
 
 export interface DCheckboxList<V extends DId> {
@@ -42,9 +41,6 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
   const { gDisabled } = useGeneralContext();
   //#endregion
 
-  const uniqueId = useId();
-  const getId = (value: V) => `${dPrefix}checkbox-group-${value}-${uniqueId}`;
-
   const formControlInject = useFormControl(dFormControl);
   const [value, changeValue] = useDValue<V[]>([], dModel, onModelChange, undefined, formControlInject);
 
@@ -56,16 +52,16 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
       className={getClassName(restProps.className, `${dPrefix}checkbox-group`, {
         [`${dPrefix}checkbox-group--vertical`]: dVertical,
       })}
-      role={restProps.role ?? 'group'}
+      role="group"
     >
       {dList.map((item, index) => (
         <DCheckbox
           key={item.value}
           dDisabled={item.disabled || disabled}
-          dInputProps={
-            index === 0
-              ? ({ id: getId(item.value), 'data-form-label-for': true } as React.InputHTMLAttributes<HTMLInputElement>)
-              : undefined
+          dInputRender={(el) =>
+            cloneHTMLElement(el, {
+              ['data-form-item-label-for' as string]: index === 0,
+            })
           }
           dModel={value.includes(item.value)}
           onModelChange={(checked) => {

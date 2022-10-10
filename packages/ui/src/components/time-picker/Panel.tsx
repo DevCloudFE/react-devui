@@ -6,7 +6,7 @@ import { useEventCallback } from '@react-devui/hooks';
 import { getClassName, scrollTo } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
-import { usePrefixConfig } from '../../hooks';
+import { usePrefixConfig } from '../root';
 
 const H12 = freeze([
   '12',
@@ -23,24 +23,20 @@ const [H24, M60, S60] = [24, 60, 60].map((num) =>
   )
 );
 
-export interface DPanelRef {
-  updateView: (time: Date) => void;
-}
-
 export interface DPanelProps {
   dTime: Date | null;
   dCols: ('hour' | 'minute' | 'second')[];
-  d12Hour?: boolean;
-  dConfigTime?: (unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean };
-  onTimeChange?: (time: Date) => void;
+  d12Hour: boolean;
+  dConfigTime: ((unit: 'hour' | 'minute' | 'second', value: number) => { disabled?: boolean; hidden?: boolean }) | undefined;
+  onTimeChange: ((time: Date) => void) | undefined;
 }
 
-export interface DPanelPropsWithPrivate extends DPanelProps {
+export interface DPanelPrivateProps {
   __header?: boolean;
 }
 
-function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Element | null {
-  const { dTime, dCols, d12Hour = false, dConfigTime, onTimeChange, __header = false } = props as DPanelPropsWithPrivate;
+function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>): JSX.Element | null {
+  const { dTime, dCols, d12Hour, dConfigTime, onTimeChange, __header = false } = props as DPanelProps & DPanelPrivateProps;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -121,13 +117,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
     }
   });
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      updateView,
-    }),
-    [updateView]
-  );
+  useImperativeHandle(ref, () => updateView, [updateView]);
 
   return (
     <div className={`${dPrefix}time-picker__panel`}>

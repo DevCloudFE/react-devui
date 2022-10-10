@@ -6,14 +6,14 @@ import React from 'react';
 import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '@react-devui/icons';
 import { getClassName, saveFile } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 
 export interface DUploadActionProps extends React.HTMLAttributes<HTMLElement> {
   dPreset?: 'preview' | 'download' | 'remove';
 }
 
-export interface DUploadActionPropsWithPrivate extends DUploadActionProps {
+export interface DUploadActionPrivateProps {
   __file: DUploadFile;
   __defaultActions?: {
     preview?: (file: DUploadFile) => void;
@@ -32,7 +32,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
     __onRemove,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DUploadActionPropsWithPrivate);
+  } = useComponentConfig(COMPONENT_NAME, props as DUploadActionProps & DUploadActionPrivateProps);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -48,7 +48,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
         'is-disabled': isUndefined(__file.url),
       })}
       target={restProps['target'] ?? '_blank'}
-      href={restProps['href'] ?? __file.url}
+      href={__file.url}
       title={restProps.title ?? t('Upload', 'Preview file')}
       onClick={(e) => {
         if (!isUndefined(defaultAction)) {

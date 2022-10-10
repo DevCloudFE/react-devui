@@ -1,8 +1,11 @@
 import type { Control, ControlMode } from '../core/useACL';
+import type { DBreadcrumbItem } from '@react-devui/ui/components/breadcrumb';
+import type { DId } from '@react-devui/ui/utils/types';
 import type { RouteObject } from 'react-router-dom';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
 import { ROUTES_ACL } from '../config/acl';
@@ -10,7 +13,6 @@ import { LOGIN_PATH, TITLE_CONFIG } from '../config/other';
 import { useMenu } from '../core';
 import { useACLGuard, useTokenGuard } from './Routes.guard';
 import { AppFCPLoader } from './components';
-import { useTitle } from './components/route-header/hooks';
 import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
 import AppLoginRoute from './routes/login/Login';
@@ -21,9 +23,19 @@ const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/ECharts'));
 const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
 const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
 
+export interface RouteStateContextData {
+  matchRoutes: ReturnType<typeof matchRoutes<RouteItem>>;
+}
+export const RouteStateContext = React.createContext<RouteStateContextData>({
+  matchRoutes: null,
+});
+
 export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
+  title?: string;
+  titleI18n?: string;
+  breadcrumb?: DBreadcrumbItem<DId> | false;
   acl?:
     | {
         control: Control | Control[];
@@ -47,13 +59,16 @@ export function AppRoutes() {
   const tokenGuard = useTokenGuard();
   const location = useLocation();
   const [, allItem] = useMenu();
-  const titles = useTitle();
+  const { t } = useTranslation();
 
-  const routes = matchRoutes(
+  const matches = matchRoutes(
     [
       {
         path: LOGIN_PATH,
         element: <AppLoginRoute />,
+        data: {
+          titleI18n: 'login',
+        },
       },
       {
         path: '/',
@@ -69,6 +84,9 @@ export function AppRoutes() {
           },
           {
             path: 'dashboard',
+            data: {
+              titleI18n: 'dashboard.',
+            },
             children: [
               {
                 index: true,
@@ -82,6 +100,20 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
+                  titleI18n: 'dashboard.amap',
+                  acl: ROUTES_ACL.dashboard.amap,
+                  canActivate: [ACLGuard],
+                },
+              },
+              {
+                path: 'amap/:ssssss',
+                element: (
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppAMapRoute />
+                  </React.Suspense>
+                ),
+                data: {
+                  titleI18n: 'dashboard.amap',
                   acl: ROUTES_ACL.dashboard.amap,
                   canActivate: [ACLGuard],
                 },
@@ -94,6 +126,7 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
+                  titleI18n: 'dashboard.echarts',
                   acl: ROUTES_ACL.dashboard.echarts,
                   canActivate: [ACLGuard],
                 },
@@ -102,6 +135,9 @@ export function AppRoutes() {
           },
           {
             path: 'test',
+            data: {
+              titleI18n: 'test.',
+            },
             children: [
               {
                 index: true,
@@ -115,6 +151,7 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
+                  titleI18n: 'test.acl',
                   acl: ROUTES_ACL.test.acl,
                   canActivate: [ACLGuard],
                 },
@@ -127,6 +164,7 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
+                  titleI18n: 'test.http',
                   acl: ROUTES_ACL.test.http,
                   canActivate: [ACLGuard],
                 },
@@ -137,6 +175,9 @@ export function AppRoutes() {
       },
       {
         path: 'exception',
+        data: {
+          titleI18n: 'exception.',
+        },
         children: [
           {
             index: true,
@@ -145,14 +186,23 @@ export function AppRoutes() {
           {
             path: '403',
             element: <AppExceptionRoute status={403} />,
+            data: {
+              titleI18n: 'exception.403',
+            },
           },
           {
             path: '404',
             element: <AppExceptionRoute status={404} />,
+            data: {
+              titleI18n: 'exception.404',
+            },
           },
           {
             path: '500',
             element: <AppExceptionRoute status={500} />,
+            data: {
+              titleI18n: 'exception.500',
+            },
           },
         ],
       },
@@ -165,16 +215,16 @@ export function AppRoutes() {
   );
 
   const element: React.ReactNode = (() => {
-    if (!routes) {
+    if (!matches) {
       return null;
     }
 
     let canActivateChild: CanActivateFn[] = [];
-    for (const route of routes) {
-      const routeData = (route.route as RouteItem).data;
+    for (const match of matches) {
+      const routeData = (match.route as RouteItem).data;
       if (routeData && routeData.canActivate) {
         for (const canActivate of routeData.canActivate.concat(canActivateChild)) {
-          const can = canActivate(route.route);
+          const can = canActivate(match.route);
           if (can !== true) {
             return can;
           }
@@ -185,16 +235,17 @@ export function AppRoutes() {
       }
     }
 
-    const currentRoute = routes[routes.length - 1].route;
+    const currentRoute = matches[matches.length - 1].route;
     if (currentRoute.index === true) {
       const firstMenu = allItem.find((item) => item.id.startsWith(currentRoute.element as string));
       return <Navigate to={isUndefined(firstMenu) ? '/exception/404' : firstMenu.id} replace />;
     }
-    return renderMatches(routes);
+    return renderMatches(matches);
   })();
 
   useEffect(() => {
-    const title = nth(titles, -1)?.[1];
+    const { title: _title, titleI18n } = nth(matches, -1)?.route.data ?? {};
+    const title = _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
     if (isUndefined(title)) {
       document.title = TITLE_CONFIG.default;
     } else {
@@ -209,5 +260,13 @@ export function AppRoutes() {
     }
   });
 
-  return element;
+  return (
+    <RouteStateContext.Provider
+      value={{
+        matchRoutes: matches,
+      }}
+    >
+      {element}
+    </RouteStateContext.Provider>
+  );
 }

@@ -1,7 +1,7 @@
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dAction?: React.ReactNode;

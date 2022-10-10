@@ -1,12 +1,15 @@
 @include b(md-route) {
-  @include m(phone) {
-    @include e(content) {
-      padding: 0 20px 32px;
-    }
+  code.hljs {
+    background-color: var(--d-background-color) !important;
+    border: 1px solid var(--d-color-divider);
   }
 
   @include e(content) {
-    padding: 0 200px 32px 64px;
+    padding: 0 20px 32px;
+
+    @include media-breakpoint-up(md) {
+      padding: 0 200px 32px 64px;
+    }
   }
 
   @include e(anchor) {

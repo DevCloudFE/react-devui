@@ -1,18 +1,19 @@
-import type { DModalFooterPropsWithPrivate } from './ModalFooter';
-import type { DModalHeaderPropsWithPrivate } from './ModalHeader';
+import type { DModalFooterPrivateProps } from './ModalFooter';
+import type { DModalHeaderPrivateProps } from './ModalHeader';
 
 import { isNumber, isString, isUndefined } from 'lodash';
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, useElement, useEvent, useLockScroll } from '@react-devui/hooks';
+import { useAsync, useEvent, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useMaxIndex, useDValue } from '../../hooks';
+import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DModalFooter } from './ModalFooter';
 import { DModalHeader } from './ModalHeader';
 
@@ -67,6 +68,16 @@ export const DModal: {
   //#region Ref
   const modalRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRefExtra(() => {
+    let el = document.getElementById(`${dPrefix}modal-root`);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = `${dPrefix}modal-root`;
+      document.body.appendChild(el);
+    }
+    return el;
+  }, true);
+  const windowRef = useRefExtra(() => window);
   //#endregion
 
   const dataRef = useRef<{
@@ -74,9 +85,11 @@ export const DModal: {
     x: number;
     y: number;
     transformOrigin?: string;
+    prevActiveEl: HTMLElement | null;
   }>({
     x: 0,
     y: 0,
+    prevActiveEl: null,
   });
 
   const async = useAsync();
@@ -97,33 +110,22 @@ export const DModal: {
     return maxZIndex;
   })();
 
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}modal-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}modal-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
-
   useLockScroll(visible);
 
-  const prevActiveEl = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (visible) {
-      prevActiveEl.current = document.activeElement as HTMLElement | null;
+      dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
 
       if (modalRef.current) {
         modalRef.current.focus({ preventScroll: true });
       }
-    } else if (prevActiveEl.current) {
-      prevActiveEl.current.focus({ preventScroll: true });
+    } else if (dataRef.current.prevActiveEl) {
+      dataRef.current.prevActiveEl.focus({ preventScroll: true });
     }
   }, [visible]);
 
   useEvent<MouseEvent>(
-    window,
+    windowRef,
     'click',
     (e) => {
       dataRef.current.x = e.clientX;
@@ -133,14 +135,14 @@ export const DModal: {
         dataRef.current.clearTid = undefined;
       }, 20);
     },
-    { capture: true }
+    { capture: true },
+    visible
   );
 
   const headerNode = (() => {
     if (dHeader) {
       const node = isString(dHeader) ? <DModalHeader>{dHeader}</DModalHeader> : dHeader;
-      return React.cloneElement<DModalHeaderPropsWithPrivate>(node, {
-        ...node.props,
+      return React.cloneElement<DModalHeaderPrivateProps>(node, {
         __id: titleId,
         __onClose: () => {
           changeVisible(false);
@@ -150,12 +152,12 @@ export const DModal: {
   })();
 
   return (
-    containerEl &&
+    containerRef.current &&
     ReactDOM.createPortal(
       <DTransition
         dIn={visible}
         dDuring={TTANSITION_DURING_BASE}
-        onEnterRendered={() => {
+        onEnter={() => {
           if (isUndefined(dataRef.current.clearTid)) {
             dataRef.current.transformOrigin = undefined;
           } else if (modalContentRef.current) {
@@ -212,10 +214,10 @@ export const DModal: {
                 zIndex,
               }}
               tabIndex={-1}
-              role={restProps.role ?? 'dialog'}
-              aria-modal={restProps['aria-modal'] ?? 'true'}
-              aria-labelledby={restProps['aria-labelledby'] ?? (headerNode ? titleId : undefined)}
-              aria-describedby={restProps['aria-describedby'] ?? bodyId}
+              role="dialog"
+              aria-modal
+              aria-labelledby={headerNode ? titleId : undefined}
+              aria-describedby={bodyId}
               onKeyDown={(e) => {
                 restProps.onKeyDown?.(e);
 
@@ -240,10 +242,10 @@ export const DModal: {
                 ref={modalContentRef}
                 className={`${dPrefix}modal__content`}
                 style={{
-                  ...transitionStyle,
                   width: dWidth,
                   top: dTop === 'center' ? undefined : dTop,
                   maxHeight: dTop === 'center' ? undefined : `calc(100% - ${topStyle} - 20px)`,
+                  ...transitionStyle,
                 }}
               >
                 {headerNode}
@@ -273,8 +275,7 @@ export const DModal: {
                   )}
                 </div>
                 {dFooter &&
-                  React.cloneElement<DModalFooterPropsWithPrivate>(dFooter, {
-                    ...dFooter.props,
+                  React.cloneElement<DModalFooterPrivateProps>(dFooter, {
                     __onClose: () => {
                       changeVisible(false);
                     },
@@ -284,7 +285,7 @@ export const DModal: {
           );
         }}
       </DTransition>,
-      containerEl
+      containerRef.current
     )
   );
 };

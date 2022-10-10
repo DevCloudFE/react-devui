@@ -11,7 +11,7 @@ interface DRenderIconOptions {
     primaryColor: string;
     secondaryColor: string;
   };
-  extraSVGAttrs?: React.SVGAttributes<SVGElement>;
+  extraSVGAttrs?: React.SVGAttributes<SVGElement> & { ref: React.ForwardedRef<SVGSVGElement> };
 }
 
 function renderIconDefinition(icond: IconDefinition, options: DRenderIconOptions): JSX.Element {
@@ -49,7 +49,7 @@ export interface DIconProps extends Omit<DIconBaseProps, 'children'> {
   dIcon: IconDefinition;
 }
 
-export function DIcon(props: DIconProps): JSX.Element | null {
+function Icon(props: DIconProps, ref: React.ForwardedRef<SVGSVGElement>): JSX.Element | null {
   const {
     dTheme,
     dTwoToneColor,
@@ -68,6 +68,8 @@ export function DIcon(props: DIconProps): JSX.Element | null {
       primaryColor: twoToneColor[0],
       secondaryColor: twoToneColor[1],
     },
-    extraSVGAttrs: svgProps,
+    extraSVGAttrs: { ref, ...svgProps },
   });
 }
+
+export const DIcon = React.forwardRef(Icon);

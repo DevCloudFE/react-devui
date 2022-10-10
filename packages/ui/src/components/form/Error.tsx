@@ -1,8 +1,8 @@
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig } from '../../hooks';
 import { TTANSITION_DURING_FAST } from '../../utils';
 import { DCollapseTransition } from '../_transition';
+import { usePrefixConfig } from '../root';
 
 export interface DErrorProps {
   dVisible: boolean;
@@ -20,7 +20,12 @@ export function DError(props: DErrorProps): JSX.Element | null {
 
   return (
     <DCollapseTransition
-      dSize={0}
+      dOriginalSize={{
+        height: 'auto',
+      }}
+      dCollapsedStyle={{
+        height: 0,
+      }}
       dIn={dVisible}
       dDuring={TTANSITION_DURING_FAST}
       dStyles={{
@@ -37,9 +42,9 @@ export function DError(props: DErrorProps): JSX.Element | null {
       dSkipFirstTransition={false}
       afterLeave={onHidden}
     >
-      {(ref, collapseStyle) => (
+      {(collapseRef, collapseStyle) => (
         <div
-          ref={ref}
+          ref={collapseRef}
           className={getClassName(`${dPrefix}form__error`, {
             [`${dPrefix}form__error--error`]: dStatus === 'error',
             [`${dPrefix}form__error--warning`]: dStatus === 'warning',

@@ -1,0 +1,9 @@
+/* stylelint-disable declaration-property-value-allowed-list */
+body.dark {
+  @import '~highlight.js/scss/github-dark';
+
+  --app-background-color: rgb(18 18 18);
+  --app-th-background-color: rgb(13 13 13);
+  --app-code-background-color: #39393c;
+  --app-anchor-toggler-color: #eceef1;
+}

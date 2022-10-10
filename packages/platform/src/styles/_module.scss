@@ -1,4 +1,12 @@
-@import '~@react-devui/ui/styles/base';
-
 @import 'variables';
-@import 'mixins';
+
+@import '~rfs/scss';
+
+@import 'vendor/bootstrap';
+
+@import '~@react-devui/ui/styles/variables';
+@import '~@react-devui/ui/styles/mixins';
+
+@mixin app-route {
+  padding: 20px;
+}

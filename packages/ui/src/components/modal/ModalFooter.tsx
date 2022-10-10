@@ -1,22 +1,47 @@
-import type { DFooterProps } from '../_footer';
+import type { DButtonProps } from '../button';
 
-import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DFooter } from '../_footer';
+import { useComponentConfig } from '../root';
 
-export type DModalFooterProps = Omit<DFooterProps, 'dClassNamePrefix' | 'onClose'>;
+export interface DModalFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dAlign?: 'left' | 'center' | 'right';
+  dActions?: React.ReactNode[];
+  dCancelProps?: DButtonProps;
+  dOkProps?: DButtonProps;
+  onCancelClick?: () => void | false | Promise<void | false>;
+  onOkClick?: () => void | false | Promise<void | false>;
+}
 
-export interface DModalFooterPropsWithPrivate extends DModalFooterProps {
+export interface DModalFooterPrivateProps {
   __onClose?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DModal.Footer' as const });
 export function DModalFooter(props: DModalFooterProps): JSX.Element | null {
   const {
+    dAlign = 'right',
+    dActions = ['cancel', 'ok'],
+    dCancelProps,
+    dOkProps,
+    onCancelClick,
+    onOkClick,
     __onClose,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DModalFooterPropsWithPrivate);
+  } = useComponentConfig(COMPONENT_NAME, props as DModalFooterProps & DModalFooterPrivateProps);
 
-  return <DFooter {...restProps} dClassNamePrefix="modal" onClose={__onClose}></DFooter>;
+  return (
+    <DFooter
+      {...restProps}
+      dClassNamePrefix="modal"
+      dAlign={dAlign}
+      dActions={dActions}
+      dCancelProps={dCancelProps}
+      dOkProps={dOkProps}
+      onCancelClick={onCancelClick}
+      onOkClick={onOkClick}
+      onClose={__onClose}
+    ></DFooter>
+  );
 }

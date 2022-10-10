@@ -16,12 +16,7 @@ const SKIP_IMPORT = ['.', 'packages', 'vscode'];
 const table = createStream({
   columnDefault: { width: 50 },
   columnCount: 2,
-  columns: [
-    {
-      width: 40,
-    },
-    { width: 10, alignment: 'center' },
-  ],
+  columns: [{ width: 40 }, { width: 10, alignment: 'center' }],
 });
 
 console.info(`Update package.json...`);

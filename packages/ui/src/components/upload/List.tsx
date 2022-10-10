@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/types';
 import type { DUploadFile } from './Upload';
-import type { DUploadActionPropsWithPrivate } from './UploadAction';
+import type { DUploadActionPrivateProps } from './UploadAction';
 
 import { isNumber, isUndefined } from 'lodash';
 import React, { useState } from 'react';
@@ -9,10 +9,10 @@ import { useImmer, useMount } from '@react-devui/hooks';
 import { LoadingOutlined, PaperClipOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig } from '../../hooks';
 import { TTANSITION_DURING_BASE } from '../../utils';
 import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
+import { usePrefixConfig } from '../root';
 
 export interface DListProps {
   dFileList: DUploadFile[];
@@ -46,7 +46,12 @@ export function DList(props: DListProps): JSX.Element | null {
         return (
           <DCollapseTransition
             key={file.uid}
-            dSize={0}
+            dOriginalSize={{
+              height: 'auto',
+            }}
+            dCollapsedStyle={{
+              height: 0,
+            }}
             dIn={!removeUIDs.includes(file.uid)}
             dDuring={TTANSITION_DURING_BASE}
             dStyles={{
@@ -69,9 +74,9 @@ export function DList(props: DListProps): JSX.Element | null {
               onRemove(file);
             }}
           >
-            {(ref, collapseStyle) => (
+            {(collapseRef, collapseStyle) => (
               <li
-                ref={ref}
+                ref={collapseRef}
                 className={getClassName(`${dPrefix}upload__list-item`, `${dPrefix}upload__list-item--${file.status}`, {
                   [`${dPrefix}upload__list-item--first`]: index === 0,
                 })}
@@ -100,8 +105,7 @@ export function DList(props: DListProps): JSX.Element | null {
                 </a>
                 <div className={`${dPrefix}upload__list-actions`}>
                   {React.Children.map(actions, (action: any) =>
-                    React.cloneElement<DUploadActionPropsWithPrivate>(action, {
-                      ...action.props,
+                    React.cloneElement<DUploadActionPrivateProps>(action, {
                       __file: file,
                       __defaultActions: dDefaultActions,
                       __onRemove: () => {

@@ -4,8 +4,9 @@ import React from 'react';
 import { CaretDownOutlined, CaretUpOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useDValue } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCell } from './Cell';
 
 export interface DTableThProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
@@ -89,7 +90,6 @@ export function DTableTh(props: DTableThProps): JSX.Element | null {
           )}
           {React.Children.map(dActions as any[], (action) =>
             React.cloneElement(action, {
-              ...action.props,
               className: getClassName(action.props.className, `${dPrefix}table__th-action`),
               onClick: (e: React.MouseEvent) => {
                 action.props.onClick?.(e);

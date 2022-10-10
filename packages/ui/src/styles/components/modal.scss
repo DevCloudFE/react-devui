@@ -1,3 +1,6 @@
+@import 'mixins/header';
+@import 'mixins/footer';
+
 @include b(modal) {
   @include component-header;
   @include component-footer;
@@ -42,7 +45,7 @@
   @include e(body) {
     position: relative;
     padding: 20px;
-    overflow: auto;
+    overflow: hidden auto;
   }
 
   @include e(icon) {

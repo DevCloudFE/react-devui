@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 
-import { usePrefixConfig } from './d-config';
+import { usePrefixConfig } from '../components/root';
 
 export function useWave(): [React.ReactNode, (color: string, animation?: string) => void] {
   const dPrefix = usePrefixConfig();

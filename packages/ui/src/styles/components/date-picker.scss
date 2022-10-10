@@ -1,4 +1,5 @@
 @use 'sass:map';
+@import 'mixins/date-input';
 
 @include b(date-picker) {
   @include component-date-input;
@@ -98,17 +99,17 @@
       }
     }
 
-    @include when(active) {
+    @include when(current-selected) {
       color: map.get($colors, 'white');
       background-color: var(--#{$variable-prefix}color-primary);
     }
 
-    @include when(hover) {
+    @include when(another-selected) {
       color: map.get($colors, 'white');
       background-color: var(--#{$variable-prefix}color-primary-lighter);
     }
 
-    @include when(another) {
+    @include when(hover) {
       color: map.get($colors, 'white');
       background-color: var(--#{$variable-prefix}color-primary-lighter);
     }

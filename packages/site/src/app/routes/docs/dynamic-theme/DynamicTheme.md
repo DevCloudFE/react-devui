@@ -32,20 +32,20 @@ $namespace: 'app';
 ```
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
       namespace: 'app',
     }),
     []
   );
 
-  return <DRoot dContext={rootContext}>Some content...</DRoot>;
+  return <DRoot context={rootContext}>Some content...</DRoot>;
 }
 ```

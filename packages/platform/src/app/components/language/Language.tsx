@@ -1,17 +1,17 @@
 import type { DDropdownItem } from '@react-devui/ui/components/dropdown';
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DLang } from '@react-devui/ui/utils/types';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useLocalStorage } from '@react-devui/hooks';
+import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
 import { DDropdown } from '@react-devui/ui';
 
 import { STORAGE_KEY } from '../../../config/storage';
 
 export function AppLanguage(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
-  const [, setLanguage] = useLocalStorage<DLang>(...STORAGE_KEY.language);
+  const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
   const { t, i18n } = useTranslation();
 
   return (
@@ -32,7 +32,7 @@ export function AppLanguage(props: React.ButtonHTMLAttributes<HTMLButtonElement>
         type: 'item',
       }))}
       onItemClick={(id) => {
-        setLanguage(id);
+        languageStorage.set(id);
         i18n.changeLanguage(id);
       }}
     >

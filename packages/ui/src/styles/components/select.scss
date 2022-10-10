@@ -1,3 +1,5 @@
+@import 'mixins/selectbox';
+
 $select-option-height: 32px;
 
 @include b(select) {

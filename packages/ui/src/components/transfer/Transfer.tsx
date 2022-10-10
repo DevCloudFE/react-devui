@@ -6,11 +6,12 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DButton } from '../button';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DPanel } from './Panel';
 
 export const IS_SELECTED = Symbol();
@@ -228,81 +229,90 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
   };
 
   return (
-    <DBaseDesign dFormControl={dFormControl}>
-      <div
-        {...restProps}
-        className={getClassName(restProps.className, `${dPrefix}transfer`, {
-          'is-disabled': disabled,
-        })}
-      >
-        <DPanel
-          dList={listLeft}
-          dSelectedNum={selectedNumLeft}
-          dState={stateLeft}
-          dTitle={dTitle?.[0]}
-          dLoading={dLoading[0]}
-          dSearchable={dSearchable}
-          dCustomItem={dCustomItem}
-          onSelectedChange={handleSelectedChange}
-          onAllSelected={(selected) => {
-            handleAllSelected(selected, true);
-          }}
-          onSearch={(val) => {
-            setSearchValueLeft(val);
-            onSearch?.(val, 'left');
-          }}
-          onScrollBottom={() => {
-            onScrollBottom?.('left');
-          }}
-        ></DPanel>
-        <div className={`${dPrefix}transfer__actions`}>
-          {React.Children.map(dActions, (action) =>
-            action === 'right' ? (
-              <DButton
-                key="$$right"
-                disabled={stateLeft === false}
-                onClick={() => {
-                  handleButtonClick(true);
-                }}
-                dType="secondary"
-                dIcon={<RightOutlined />}
-              ></DButton>
-            ) : action === 'left' ? (
-              <DButton
-                key="$$left"
-                disabled={stateRight === false}
-                onClick={() => {
-                  handleButtonClick(false);
-                }}
-                dType="secondary"
-                dIcon={<LeftOutlined />}
-              ></DButton>
-            ) : (
-              action
-            )
-          )}
-        </div>
-        <DPanel
-          dList={listRight}
-          dSelectedNum={selectedNumRight}
-          dState={stateRight}
-          dTitle={dTitle?.[1]}
-          dLoading={dLoading[1]}
-          dSearchable={dSearchable}
-          dCustomItem={dCustomItem}
-          onSelectedChange={handleSelectedChange}
-          onAllSelected={(selected) => {
-            handleAllSelected(selected, false);
-          }}
-          onSearch={(val) => {
-            setSearchValueRight(val);
-            onSearch?.(val, 'right');
-          }}
-          onScrollBottom={() => {
-            onScrollBottom?.('right');
-          }}
-        ></DPanel>
-      </div>
+    <DBaseDesign
+      dComposeDesign={false}
+      dFormDesign={{
+        control: dFormControl,
+      }}
+    >
+      {({ render: renderBaseDesign }) =>
+        renderBaseDesign(
+          <div
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}transfer`, {
+              'is-disabled': disabled,
+            })}
+          >
+            <DPanel
+              dList={listLeft}
+              dSelectedNum={selectedNumLeft}
+              dState={stateLeft}
+              dTitle={dTitle?.[0]}
+              dLoading={dLoading[0] ?? false}
+              dSearchable={dSearchable}
+              dCustomItem={dCustomItem}
+              onSelectedChange={handleSelectedChange}
+              onAllSelected={(selected) => {
+                handleAllSelected(selected, true);
+              }}
+              onSearch={(val) => {
+                setSearchValueLeft(val);
+                onSearch?.(val, 'left');
+              }}
+              onScrollBottom={() => {
+                onScrollBottom?.('left');
+              }}
+            ></DPanel>
+            <div className={`${dPrefix}transfer__actions`}>
+              {React.Children.map(dActions, (action) =>
+                action === 'right' ? (
+                  <DButton
+                    key="$$right"
+                    disabled={stateLeft === false}
+                    onClick={() => {
+                      handleButtonClick(true);
+                    }}
+                    dType="secondary"
+                    dIcon={<RightOutlined />}
+                  ></DButton>
+                ) : action === 'left' ? (
+                  <DButton
+                    key="$$left"
+                    disabled={stateRight === false}
+                    onClick={() => {
+                      handleButtonClick(false);
+                    }}
+                    dType="secondary"
+                    dIcon={<LeftOutlined />}
+                  ></DButton>
+                ) : (
+                  action
+                )
+              )}
+            </div>
+            <DPanel
+              dList={listRight}
+              dSelectedNum={selectedNumRight}
+              dState={stateRight}
+              dTitle={dTitle?.[1]}
+              dLoading={dLoading[1] ?? false}
+              dSearchable={dSearchable}
+              dCustomItem={dCustomItem}
+              onSelectedChange={handleSelectedChange}
+              onAllSelected={(selected) => {
+                handleAllSelected(selected, false);
+              }}
+              onSearch={(val) => {
+                setSearchValueRight(val);
+                onSearch?.(val, 'right');
+              }}
+              onScrollBottom={() => {
+                onScrollBottom?.('right');
+              }}
+            ></DPanel>
+          </div>
+        )
+      }
     </DBaseDesign>
   );
 }

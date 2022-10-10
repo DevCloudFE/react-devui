@@ -1,4 +1,4 @@
-export default `import type { DConfigContextData } from "@react-devui/ui/hooks/d-config";
+export default `import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from "react";
 
@@ -8,19 +8,19 @@ import Demo from "./Demo";
 import "./styles.scss";
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
-      layout: { scrollEl: "main", resizeEl: "article" }
+      layout: { pageScrollEl: "#app-main", contentResizeEl: "#app-content" }
     }),
     []
   );
 
   return (
-    <DRoot dContext={rootContext}>
-      <main>
-        <article>
+    <DRoot context={rootContext}>
+      <main id="app-main">
+        <section id="app-content">
           <Demo />
-        </article>
+        </section>
       </main>
     </DRoot>
   );

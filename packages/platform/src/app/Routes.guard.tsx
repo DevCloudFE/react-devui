@@ -30,7 +30,7 @@ export function useTokenGuard(): CanActivateFn {
   const location = useLocation();
 
   return () => {
-    const token = TOKEN.token;
+    const token = TOKEN.value;
     if (isNull(token)) {
       return <Navigate to={LOGIN_PATH} state={{ [PREV_ROUTE_KEY]: location }} replace />;
     }

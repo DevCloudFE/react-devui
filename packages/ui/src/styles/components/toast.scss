@@ -1,3 +1,5 @@
+@import 'mixins/toast';
+
 @mixin toast-root {
   position: fixed;
   right: 20px;

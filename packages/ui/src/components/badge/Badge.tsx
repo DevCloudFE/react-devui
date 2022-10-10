@@ -2,9 +2,9 @@ import { useRef } from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DNumber } from './Number';
 
 export interface DBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -93,6 +93,7 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
               [`${dPrefix}badge--dot`]: dDot,
             })}
             style={{
+              ...restProps.style,
               top: dOffset[0],
               left: dOffset[1],
               [`--${dPrefix}badge-color`]: dColor,

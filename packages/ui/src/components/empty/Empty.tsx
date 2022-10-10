@@ -1,7 +1,7 @@
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useTranslation } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 
 export interface DEmptyProps extends React.HTMLAttributes<HTMLDivElement> {
   dIcon?: React.ReactNode;

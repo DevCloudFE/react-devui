@@ -1,4 +1,4 @@
-import { isUndefined, isNumber } from 'lodash';
+import { isUndefined, isNumber, isArray } from 'lodash';
 import { useContext } from 'react';
 
 import { getClassName } from '@react-devui/utils';
@@ -6,7 +6,7 @@ import { getClassName } from '@react-devui/utils';
 import { DIconContext } from './Icon';
 
 export interface DIconBaseProps extends React.SVGAttributes<SVGElement> {
-  dSize?: number | string;
+  dSize?: number | string | [number | string, number | string];
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dRotate?: number;
   dSpin?: boolean;
@@ -26,6 +26,8 @@ export function useIconDefinition(props: DIconBaseProps) {
 
   const prefix = `${useContext(DIconContext).namespace}-`;
 
+  const [width, height] = isArray(dSize) ? dSize : [dSize, dSize];
+
   const svgProps: React.SVGAttributes<SVGElement> = {
     ...restProps,
     className: getClassName(restProps.className, `${prefix}icon`, {
@@ -36,12 +38,12 @@ export function useIconDefinition(props: DIconBaseProps) {
       transform: isUndefined(dRotate) ? undefined : `rotate(${dRotate}deg)`,
       animation: dSpin ? `spin ${dSpinSpeed}${isNumber(dSpinSpeed) ? 's' : ''} linear infinite` : undefined,
     },
-    version: restProps.version ?? '1.1',
-    xmlns: restProps.xmlns ?? 'http://www.w3.org/2000/svg',
-    xmlnsXlink: restProps.xmlnsXlink ?? 'http://www.w3.org/1999/xlink',
-    fill: restProps.fill ?? 'currentColor',
-    width: restProps.width ?? dSize,
-    height: restProps.height ?? dSize,
+    version: '1.1',
+    xmlns: 'http://www.w3.org/2000/svg',
+    xmlnsXlink: 'http://www.w3.org/1999/xlink',
+    fill: 'currentColor',
+    width,
+    height,
   };
 
   return svgProps;

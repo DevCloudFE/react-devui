@@ -1,4 +1,5 @@
 $cascader-option-height: 32px;
+@import 'mixins/selectbox';
 
 @include b(cascader) {
   @include component-selectbox;

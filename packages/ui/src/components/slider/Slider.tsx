@@ -1,19 +1,25 @@
+import type { DCloneHTMLElement } from '../../utils/types';
 import type { DFormControl } from '../form';
 import type { DTooltipRef } from '../tooltip';
 
-import { isArray, isNull, isNumber, toNumber } from 'lodash';
+import { isArray, isNull, isNumber, isUndefined, toNumber } from 'lodash';
 import { useEffect, useState, useRef } from 'react';
 
-import { useEvent } from '@react-devui/hooks';
+import { useEvent, useRefExtra } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DTooltip } from '../tooltip';
 
 export interface DSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dRef?: {
+    inputLeft?: React.ForwardedRef<HTMLInputElement>;
+    inputRight?: React.ForwardedRef<HTMLInputElement>;
+  };
   dFormControl?: DFormControl;
   dModel?: number | [number, number];
   dMax?: number;
@@ -27,17 +33,18 @@ export interface DSliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dRangeMinDistance?: number;
   dRangeThumbDraggable?: boolean;
   dTooltipVisible?: boolean | [boolean?, boolean?];
-  dInputProps?:
-    | React.InputHTMLAttributes<HTMLInputElement>
-    | [React.InputHTMLAttributes<HTMLInputElement>?, React.InputHTMLAttributes<HTMLInputElement>?];
-  dInputRef?: React.Ref<HTMLInputElement> | [React.Ref<HTMLInputElement>?, React.Ref<HTMLInputElement>?];
-  onModelChange?: (value: any) => void;
   dCustomTooltip?: (value: number) => React.ReactNode;
+  dInputRender?: [
+    DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?,
+    DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?
+  ];
+  onModelChange?: (value: any) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DSlider' as const });
 export function DSlider(props: DSliderProps): JSX.Element | null {
   const {
+    dRef,
     dFormControl,
     dModel,
     dMax = 100,
@@ -45,8 +52,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     dStep = 1,
     dDisabled = false,
     dMarks,
-    dInputProps,
-    dInputRef,
     dTooltipVisible,
     dRange = false,
     dRangeMinDistance,
@@ -54,6 +59,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     dVertical = false,
     dReverse = false,
     dCustomTooltip,
+    dInputRender,
     onModelChange,
 
     ...restProps
@@ -66,21 +72,17 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   //#region Ref
   const sliderRef = useRef<HTMLDivElement>(null);
-  const dotRefLeft = useRef<HTMLDivElement>(null);
-  const dotRefRight = useRef<HTMLDivElement>(null);
-  const tooltipRefLeft = useRef<DTooltipRef>(null);
-  const tooltipRefRight = useRef<DTooltipRef>(null);
+  const dotLeftRef = useRef<HTMLDivElement>(null);
+  const dotRightRef = useRef<HTMLDivElement>(null);
+  const tooltipLeftRef = useRef<DTooltipRef>(null);
+  const tooltipRightRef = useRef<DTooltipRef>(null);
+  const windowRef = useRefExtra(() => window);
   //#endregion
 
   const [focusDot, setFocusDot] = useState<'left' | 'right' | null>(null);
   const [mouseenterDot, setMouseenterDot] = useState<'left' | 'right' | null>(null);
   const [draggableDot, setDraggableDot] = useState<'left' | 'right' | null>(null);
   const [thumbPoint, setThumbPoint] = useState<{ left: number; right: number; clientX: number; clientY: number } | null>(null);
-
-  const [dInputRefLeft, dInputRefRight] = (dRange ? dInputRef ?? [] : [dInputRef]) as [
-    React.Ref<HTMLInputElement>?,
-    React.Ref<HTMLInputElement>?
-  ];
 
   const formControlInject = useFormControl(dFormControl);
   const [_value, changeValue] = useDValue<number | [number, number]>(
@@ -207,7 +209,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   const startDrag = (e: { clientX: number; clientY: number }) => {
     const handle = (isLeft = true) => {
-      const el = isLeft ? dotRefLeft.current : dotRefRight.current;
+      const el = isLeft ? dotLeftRef.current : dotRightRef.current;
       if (el) {
         handleMove(e, isLeft);
         setDraggableDot(isLeft ? 'left' : 'right');
@@ -215,9 +217,9 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     };
     if (dRange) {
-      if (dotRefLeft.current && dotRefRight.current) {
-        const rectLeft = dotRefLeft.current.getBoundingClientRect();
-        const rectRight = dotRefRight.current.getBoundingClientRect();
+      if (dotLeftRef.current && dotRightRef.current) {
+        const rectLeft = dotLeftRef.current.getBoundingClientRect();
+        const rectRight = dotRightRef.current.getBoundingClientRect();
         const offsetLeft = dVertical
           ? Math.abs(rectLeft.bottom - rectLeft.height / 2 - e.clientY)
           : Math.abs(e.clientX - (rectLeft.left + rectLeft.width / 2));
@@ -267,19 +269,21 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
 
   useEffect(() => {
     if (thumbPoint) {
-      tooltipRefLeft.current?.updatePosition();
-      tooltipRefRight.current?.updatePosition();
+      tooltipLeftRef.current?.updatePosition();
+      tooltipRightRef.current?.updatePosition();
     } else {
       if (focusDot === 'left') {
-        tooltipRefLeft.current?.updatePosition();
+        tooltipLeftRef.current?.updatePosition();
       } else if (focusDot === 'right') {
-        tooltipRefRight.current?.updatePosition();
+        tooltipRightRef.current?.updatePosition();
       }
     }
   }, [focusDot, _value, thumbPoint]);
 
+  const listenWindow = !isNull(draggableDot) || !isNull(thumbPoint);
+
   useEvent<TouchEvent>(
-    window,
+    windowRef,
     'touchmove',
     (e) => {
       if (!isNull(draggableDot)) {
@@ -293,24 +297,37 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         handleThumbMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
       }
     },
-    { passive: false }
+    { passive: false },
+    !listenWindow
   );
-  useEvent<MouseEvent>(window, 'mousemove', (e) => {
-    if (!isNull(draggableDot)) {
-      e.preventDefault();
+  useEvent<MouseEvent>(
+    windowRef,
+    'mousemove',
+    (e) => {
+      if (!isNull(draggableDot)) {
+        e.preventDefault();
 
-      handleMove({ clientX: e.clientX, clientY: e.clientY });
-    }
-    if (!isNull(thumbPoint)) {
-      e.preventDefault();
+        handleMove({ clientX: e.clientX, clientY: e.clientY });
+      }
+      if (!isNull(thumbPoint)) {
+        e.preventDefault();
 
-      handleThumbMove({ clientX: e.clientX, clientY: e.clientY });
-    }
-  });
-  useEvent(window, 'mouseup', () => {
-    setDraggableDot(null);
-    setThumbPoint(null);
-  });
+        handleThumbMove({ clientX: e.clientX, clientY: e.clientY });
+      }
+    },
+    {},
+    !listenWindow
+  );
+  useEvent(
+    windowRef,
+    'mouseup',
+    () => {
+      setDraggableDot(null);
+      setThumbPoint(null);
+    },
+    {},
+    !listenWindow
+  );
 
   const marks = (() => {
     const marks: React.ReactNode[] = [];
@@ -361,17 +378,11 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
   })();
 
   const getDotNode = (isLeft: boolean) => {
-    const [dInputPropsLeft, dInputPropsRight] = (dRange ? dInputProps ?? [] : [dInputProps]) as [
-      React.InputHTMLAttributes<HTMLInputElement>?,
-      React.InputHTMLAttributes<HTMLInputElement>?
-    ];
-
     const value = isLeft ? valueLeft : valueRight;
-    const inputProps = isLeft ? dInputPropsLeft : dInputPropsRight;
 
     return (
       <DTooltip
-        ref={isLeft ? tooltipRefLeft : tooltipRefRight}
+        ref={isLeft ? tooltipLeftRef : tooltipRightRef}
         dVisible={isLeft ? visibleLeft : visibleRight}
         dTitle={dCustomTooltip ? dCustomTooltip(value) : value}
         dPlacement={dVertical ? 'right' : 'top'}
@@ -380,7 +391,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
         }}
       >
         <div
-          ref={isLeft ? dotRefLeft : dotRefRight}
+          ref={isLeft ? dotLeftRef : dotRightRef}
           className={getClassName(`${dPrefix}slider__input-wrapper`, {
             'is-focus': focusDot === (isLeft ? 'left' : 'right'),
           })}
@@ -389,31 +400,33 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
             bottom: dVertical ? `calc(${value} / ${dMax - dMin} * 100% - 7px)` : undefined,
           }}
         >
-          <DBaseInput
-            {...inputProps}
-            ref={isLeft ? dInputRefLeft : dInputRefRight}
-            className={getClassName(inputProps?.className, `${dPrefix}slider__input`)}
-            type="range"
-            value={value}
-            disabled={disabled}
-            max={dMax}
-            min={dMin}
-            step={dStep ?? undefined}
-            aria-orientation={dVertical ? 'vertical' : 'horizontal'}
-            onChange={handleChange}
-            onFocus={(e) => {
-              inputProps?.onFocus?.(e);
+          <DBaseInput dFormControl={dFormControl} dLabelFor={isLeft}>
+            {({ render: renderBaseInput }) => {
+              const inputRender = (dInputRender ?? [])[isLeft ? 0 : 1];
+              const input = renderBaseInput(
+                <input
+                  ref={isLeft ? dRef?.inputLeft : dRef?.inputRight}
+                  className={`${dPrefix}slider__input`}
+                  type="range"
+                  value={value}
+                  disabled={disabled}
+                  max={dMax}
+                  min={dMin}
+                  step={dStep ?? undefined}
+                  aria-orientation={dVertical ? 'vertical' : 'horizontal'}
+                  onChange={handleChange}
+                  onFocus={() => {
+                    setFocusDot(isLeft ? 'left' : 'right');
+                  }}
+                  onBlur={() => {
+                    setFocusDot(null);
+                  }}
+                />
+              );
 
-              setFocusDot(isLeft ? 'left' : 'right');
+              return isUndefined(inputRender) ? input : inputRender(input);
             }}
-            onBlur={(e) => {
-              inputProps?.onBlur?.(e);
-
-              setFocusDot(null);
-            }}
-            dFormControl={dFormControl}
-            dFor={isLeft}
-          />
+          </DBaseInput>
         </div>
       </DTooltip>
     );

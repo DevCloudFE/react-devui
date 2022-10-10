@@ -1,22 +1,47 @@
-import type { DFooterProps } from '../_footer';
+import type { DButtonProps } from '../button';
 
-import { useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DFooter } from '../_footer';
+import { useComponentConfig } from '../root';
 
-export type DPopoverFooterProps = Omit<DFooterProps, 'dClassNamePrefix' | 'onClose'>;
+export interface DPopoverFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dAlign?: 'left' | 'center' | 'right';
+  dActions?: React.ReactNode[];
+  dCancelProps?: DButtonProps;
+  dOkProps?: DButtonProps;
+  onCancelClick?: () => void | false | Promise<void | false>;
+  onOkClick?: () => void | false | Promise<void | false>;
+}
 
-export interface DPopoverFooterPropsWithPrivate extends DPopoverFooterProps {
+export interface DPopoverFooterPrivateProps {
   __onClose?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPopover.Footer' as const });
 export function DPopoverFooter(props: DPopoverFooterProps): JSX.Element | null {
   const {
+    dAlign = 'right',
+    dActions = ['cancel', 'ok'],
+    dCancelProps,
+    dOkProps,
+    onCancelClick,
+    onOkClick,
     __onClose,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DPopoverFooterPropsWithPrivate);
+  } = useComponentConfig(COMPONENT_NAME, props as DPopoverFooterProps & DPopoverFooterPrivateProps);
 
-  return <DFooter {...restProps} dClassNamePrefix="popover" onClose={__onClose}></DFooter>;
+  return (
+    <DFooter
+      {...restProps}
+      dClassNamePrefix="popover"
+      dAlign={dAlign}
+      dActions={dActions}
+      dCancelProps={dCancelProps}
+      dOkProps={dOkProps}
+      onCancelClick={onCancelClick}
+      onOkClick={onOkClick}
+      onClose={__onClose}
+    ></DFooter>
+  );
 }

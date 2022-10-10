@@ -1,9 +1,2 @@
-/* stylelint-disable declaration-property-value-allowed-list */
-@import '~@react-devui/ui/styles/index';
-@import '~@react-devui/ui/styles/theme-dark';
-
 @import './styles/index';
-
-body.dark {
-  background-color: rgb(18 18 18);
-}
+@import './styles/theme-dark';

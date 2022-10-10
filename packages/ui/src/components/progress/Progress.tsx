@@ -1,12 +1,21 @@
 import { isUndefined } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-import { useAsync, useForceUpdate, useMount } from '@react-devui/hooks';
-import { CheckCircleFilled, CheckOutlined, CloseCircleFilled, CloseOutlined, ExclamationOutlined, WarningFilled } from '@react-devui/icons';
-import { checkNodeExist, getClassName } from '@react-devui/utils';
+import { useAsync, useId } from '@react-devui/hooks';
+import {
+  CheckCircleFilled,
+  CheckOutlined,
+  CloseCircleFilled,
+  CloseOutlined,
+  DCustomIcon,
+  ExclamationOutlined,
+  WarningFilled,
+} from '@react-devui/icons';
+import { checkNodeExist, getClassName, getUID } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 function ease(k: number) {
   return 0.5 * (1 - Math.cos(Math.PI * k));
@@ -17,8 +26,8 @@ export interface DProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement
   dType?: 'line' | 'circle' | 'dashboard';
   dStatus?: 'success' | 'warning' | 'error' | 'process';
   dWave?: boolean;
-  dLineCap?: CanvasLineCap;
-  dLinearGradient?: (gradient: CanvasGradient) => void;
+  dLineCap?: 'butt' | 'round' | 'square' | 'inherit';
+  dLinearGradient?: React.ReactElement<React.SVGProps<SVGLinearGradientElement>>;
   dGapDegree?: number;
   dLabel?: React.ReactNode;
   dSize?: number;
@@ -47,200 +56,187 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
   //#endregion
 
   //#region Ref
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   //#endregion
 
   const dataRef = useRef<{
-    wavePercent: number;
     waveLoopFn?: (startTime: number) => void;
     transitionLoopFn?: (startTime: number, startPercent: number) => void;
     clearWaveTid?: () => void;
     clearTransitionTid?: () => void;
-  }>({
-    wavePercent: 0,
-  });
+  }>({});
 
   const async = useAsync();
+
+  const uniqueId = useId();
+  const gradientId = `${dPrefix}progress-${uniqueId}`;
 
   const status = isUndefined(dStatus) && dPercent === 100 ? 'success' : dStatus;
   const theme = status === 'success' ? 'success' : status === 'warning' ? 'warning' : status === 'error' ? 'danger' : 'primary';
 
   const [percent, setPercent] = useState(dPercent);
+  const [wavePercent, setWavePercent] = useState(0);
 
-  const drawLine = () => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const { width } = canvas.getBoundingClientRect();
-      canvas.width = width;
-      canvas.height = dLineWidth;
+  const valuenowStroke = isUndefined(dLinearGradient) ? `var(--${dPrefix}color-${theme})` : `url(#${gradientId})`;
 
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        const overSize = dLineCap === 'butt' ? 0 : dLineWidth / 2;
+  let waveGradient: React.ReactNode = null;
 
-        ctx.clearRect(0, 0, width, dLineWidth);
-        ctx.lineWidth = dLineWidth;
-        ctx.lineCap = dLineCap;
-
-        ctx.beginPath();
-        ctx.moveTo(overSize, dLineWidth / 2);
-        ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue(`--${dPrefix}background-color-indicator`);
-        ctx.lineTo(width - overSize, dLineWidth / 2);
-        ctx.stroke();
-        ctx.closePath();
-
-        if (percent > 0) {
-          ctx.beginPath();
-          ctx.moveTo(overSize, dLineWidth / 2);
-          const gradient = ctx.createLinearGradient(overSize, dLineWidth / 2, width - overSize, dLineWidth / 2);
-          dLinearGradient?.(gradient);
-          ctx.strokeStyle = isUndefined(dLinearGradient)
-            ? getComputedStyle(canvas).getPropertyValue(`--${dPrefix}color-${theme}`)
-            : gradient;
-          ctx.lineTo(overSize + (width - overSize * 2) * (percent / 100), dLineWidth / 2);
-          ctx.stroke();
-          ctx.closePath();
-        }
-      }
+  const [lineWidth, setLineWidth] = useState(0);
+  useEffect(() => {
+    if (progressRef.current) {
+      const observer = new ResizeObserver(() => {
+        flushSync(() => {
+          if (progressRef.current) {
+            const el = progressRef.current.querySelector(`[data-progress-svg="${uniqueId}"]`);
+            if (el) {
+              setLineWidth(el.getBoundingClientRect().width);
+            }
+          }
+        });
+      });
+      observer.observe(progressRef.current);
+      return () => {
+        observer.disconnect();
+      };
     }
+  }, [uniqueId]);
+  const drawLine = () => {
+    const lineProps = {
+      x1: dLineCap === 'butt' ? 0 : dLineWidth / 2,
+      y1: '50%',
+      y2: '50%',
+      strokeWidth: dLineWidth,
+      strokeLinecap: dLineCap,
+    };
+
+    const waveWidth = Math.max((lineWidth * (percent / 100)) / 20, 12);
+    const waveX2 = lineProps.x1 + (dLineCap === 'butt' ? lineWidth : lineWidth - dLineWidth) * (wavePercent / 100);
+    const waveX1 = Math.max(waveX2 - waveWidth, lineProps.x1);
+    const id = getUID();
+
+    waveGradient = (
+      <linearGradient id={id} x1={waveX1} y1="50%" x2={waveX2} y2="50%" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#fff" stopOpacity={0} />
+        <stop offset="80%" stopColor="#fff" stopOpacity={0.12} />
+        <stop offset="100%" stopColor="#fff" stopOpacity={0.16} />
+      </linearGradient>
+    );
+
+    return (
+      <>
+        <line
+          {...lineProps}
+          x2={dLineCap === 'butt' ? lineWidth : lineWidth - dLineWidth / 2}
+          stroke={`var(--${dPrefix}background-color-indicator)`}
+        />
+        {percent > 0 && (
+          <line
+            {...lineProps}
+            x2={lineProps.x1 + (dLineCap === 'butt' ? lineWidth : lineWidth - dLineWidth) * (percent / 100)}
+            stroke={valuenowStroke}
+          />
+        )}
+        {dWave && wavePercent > 0 && <line {...lineProps} x1={waveX1} x2={waveX2} stroke={`url(#${id})`} />}
+      </>
+    );
   };
 
   const arcSize = dSize ?? 120;
-  const drawArc = (arc: {
-    ctx: CanvasRenderingContext2D;
-    startAngle: number;
-    endAngle: number;
-    strokeStyle: CanvasFillStrokeStyles['strokeStyle'];
-  }) => {
-    const ctx = arc.ctx;
-    ctx.beginPath();
-    ctx.arc(arcSize / 2, arcSize / 2, arcSize / 2 - dLineWidth / 2, arc.startAngle, arc.endAngle);
-    ctx.strokeStyle = arc.strokeStyle;
-    ctx.stroke();
-    ctx.closePath();
+  const getCoordinate = (angle: number) => {
+    const c = arcSize / 2;
+    const r = arcSize / 2 - dLineWidth;
+
+    return [c + Math.sin(angle) * r, dLineWidth + (r - Math.cos(angle) * r)];
+  };
+  const drawArc = (arc: { startAngle: number; endAngle: number; stroke: string }): React.ReactNode => {
+    const r = arcSize / 2 - dLineWidth;
+    const angle = arc.endAngle - arc.startAngle;
+
+    return angle === 2 * Math.PI ? (
+      <>
+        {drawArc({ ...arc, startAngle: 0, endAngle: 1 * Math.PI })}
+        {drawArc({ ...arc, startAngle: 1 * Math.PI, endAngle: 2 * Math.PI })}
+      </>
+    ) : (
+      <path
+        d={`M ${getCoordinate(arc.startAngle).join()}A ${r} ${r} 0 ${angle > Math.PI ? 1 : 0} 1 ${getCoordinate(arc.endAngle).join()}`}
+        fill="none"
+        stroke={arc.stroke}
+        strokeWidth={dLineWidth}
+        strokeLinecap={dLineCap}
+      ></path>
+    );
+  };
+  const drawArcWave = (arc: { startAngle: number; endAngle: number }) => {
+    const [x1, y1] = getCoordinate(arc.startAngle);
+    const [x2, y2] = getCoordinate(arc.endAngle);
+
+    const id = getUID();
+
+    waveGradient = (
+      <linearGradient id={id} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#fff" stopOpacity={0} />
+        <stop offset="80%" stopColor="#fff" stopOpacity={0.12} />
+        <stop offset="100%" stopColor="#fff" stopOpacity={0.16} />
+      </linearGradient>
+    );
+
+    return dWave && wavePercent > 0 && drawArc({ ...arc, stroke: `url(#${id})` });
   };
 
-  const drawCircle = (startAngle: number, gapDegree = 0) => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      canvas.width = arcSize;
-      canvas.height = arcSize;
+  const drawCircle = () => {
+    const waveEndAngle = 2 * Math.PI * (wavePercent / 100);
+    const waveStartAngle = Math.max(waveEndAngle - (2 * Math.PI) / 20, 0);
 
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.clearRect(0, 0, arcSize, arcSize);
-        ctx.lineWidth = dLineWidth;
-        ctx.lineCap = dLineCap;
+    return (
+      <>
+        {drawArc({ startAngle: 0, endAngle: 2 * Math.PI, stroke: `var(--${dPrefix}background-color-indicator)` })}
+        {percent > 0 && drawArc({ startAngle: 0, endAngle: 2 * Math.PI * (percent / 100), stroke: valuenowStroke })}
+        {drawArcWave({ startAngle: waveStartAngle, endAngle: waveEndAngle })}
+      </>
+    );
+  };
 
-        drawArc({
-          ctx,
+  const drawDashboard = () => {
+    const endAngle = Math.PI - dGapDegree / 2;
+    const startAngle = -endAngle;
+
+    const waveEndAngle = startAngle + (endAngle - startAngle) * (wavePercent / 100);
+    const waveStartAngle = Math.max(waveEndAngle - (2 * Math.PI) / 20, startAngle);
+
+    return (
+      <>
+        {drawArc({
           startAngle,
-          endAngle: startAngle + (2 * Math.PI - gapDegree),
-          strokeStyle: getComputedStyle(canvas).getPropertyValue(`--${dPrefix}background-color-indicator`),
-        });
-
-        if (percent > 0) {
-          const gradient = ctx.createLinearGradient(0, 0, arcSize, arcSize);
-          dLinearGradient?.(gradient);
+          endAngle,
+          stroke: `var(--${dPrefix}background-color-indicator)`,
+        })}
+        {percent > 0 &&
           drawArc({
-            ctx,
-            startAngle: startAngle,
-            endAngle: startAngle + (2 * Math.PI - gapDegree) * (percent / 100),
-            strokeStyle: isUndefined(dLinearGradient) ? getComputedStyle(canvas).getPropertyValue(`--${dPrefix}color-${theme}`) : gradient,
-          });
-        }
-      }
-    }
+            startAngle,
+            endAngle: startAngle + (endAngle - startAngle) * (percent / 100),
+            stroke: valuenowStroke,
+          })}
+        {drawArcWave({ startAngle: waveStartAngle, endAngle: waveEndAngle })}
+      </>
+    );
   };
-
-  const draw = () => {
-    dType === 'line'
-      ? drawLine()
-      : dType === 'circle'
-      ? drawCircle(-0.5 * Math.PI)
-      : drawCircle(-1.5 * Math.PI + dGapDegree / 2, dGapDegree);
-  };
-
-  useEffect(() => {
-    draw();
-  });
 
   dataRef.current.waveLoopFn = (startTime) => {
     const time = window.performance.now();
     const elapsed = Math.min((time - startTime) / 1500, 1);
     const speed = ease(elapsed);
 
-    const resetWave = () => {
-      dataRef.current.wavePercent = 0;
-      draw();
-
+    if (wavePercent < percent) {
+      setWavePercent(percent * speed);
+      dataRef.current.clearWaveTid = async.requestAnimationFrame(() => {
+        dataRef.current.waveLoopFn?.(startTime);
+      });
+    } else {
+      setWavePercent(0);
       dataRef.current.clearWaveTid = async.setTimeout(() => {
         dataRef.current.waveLoopFn?.(window.performance.now());
       }, 2000);
-    };
-
-    if (percent > dataRef.current.wavePercent) {
-      dataRef.current.wavePercent = percent * speed;
-
-      if (dataRef.current.wavePercent > 0) {
-        draw();
-
-        if (canvasRef.current) {
-          const canvas = canvasRef.current;
-
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            if (dType === 'line') {
-              const { width } = canvas.getBoundingClientRect();
-              const overSize = dLineCap === 'butt' ? 0 : dLineWidth / 2;
-              const gradientWidth = Math.max((width * (percent / 100)) / 20, dLineWidth * 1.5);
-              const end = overSize + (width - overSize * 2) * (dataRef.current.wavePercent / 100);
-
-              ctx.beginPath();
-              ctx.moveTo(end - gradientWidth, dLineWidth / 2);
-              const gradient = ctx.createLinearGradient(end - gradientWidth, dLineWidth / 2, end, dLineWidth / 2);
-              gradient.addColorStop(0, 'rgb(255 255 255 / 0%)');
-              gradient.addColorStop(0.8, 'rgb(255 255 255 / 12%)');
-              gradient.addColorStop(1, 'rgb(255 255 255 / 16%)');
-              ctx.strokeStyle = gradient;
-              ctx.lineTo(end, dLineWidth / 2);
-              ctx.stroke();
-              ctx.closePath();
-            } else {
-              const endAngle =
-                dType === 'circle'
-                  ? -0.5 * Math.PI + 2 * Math.PI * (dataRef.current.wavePercent / 100)
-                  : -1.5 * Math.PI + dGapDegree / 2 + (2 * Math.PI - dGapDegree) * (dataRef.current.wavePercent / 100);
-              const startAngle = Math.max(endAngle - 0.1 * Math.PI, dType === 'circle' ? -0.5 * Math.PI : -1.5 * Math.PI + dGapDegree / 2);
-              const gradient = ctx.createLinearGradient(
-                arcSize / 2 + (arcSize / 2) * Math.cos(startAngle),
-                arcSize / 2 + (arcSize / 2) * Math.sin(startAngle),
-                arcSize / 2 + (arcSize / 2) * Math.cos(endAngle),
-                arcSize / 2 + (arcSize / 2) * Math.sin(endAngle)
-              );
-              gradient.addColorStop(0, 'rgb(255 255 255 / 0%)');
-              gradient.addColorStop(0.8, 'rgb(255 255 255 / 12%)');
-              gradient.addColorStop(1, 'rgb(255 255 255 / 16%)');
-              drawArc({
-                ctx,
-                startAngle,
-                endAngle,
-                strokeStyle: gradient,
-              });
-            }
-          }
-        }
-      }
-
-      if (dataRef.current.wavePercent === percent) {
-        resetWave();
-      } else {
-        dataRef.current.clearWaveTid = async.requestAnimationFrame(() => {
-          dataRef.current.waveLoopFn?.(startTime);
-        });
-      }
-    } else {
-      resetWave();
     }
   };
   useEffect(() => {
@@ -249,7 +245,7 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
     if (dWave) {
       dataRef.current.waveLoopFn?.(window.performance.now());
     }
-  }, [dWave, dType]);
+  }, [dWave]);
 
   dataRef.current.transitionLoopFn = (startTime, startPercent) => {
     const time = window.performance.now();
@@ -267,59 +263,37 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
   useEffect(() => {
     dataRef.current.clearTransitionTid?.();
 
-    if (dPercent !== percent) {
-      dataRef.current.transitionLoopFn?.(window.performance.now(), percent);
-    }
+    dataRef.current.transitionLoopFn?.(window.performance.now(), percent);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dPercent]);
 
-  const forceUpdate = useForceUpdate();
-  useMount(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-
-      const cssVars = [
-        `--${dPrefix}background-color-indicator`,
-        `--${dPrefix}color-primary`,
-        `--${dPrefix}color-success`,
-        `--${dPrefix}color-warning`,
-        `--${dPrefix}color-danger`,
-      ];
-      let cssVals = cssVars.map((v) => getComputedStyle(canvas).getPropertyValue(v));
-      const observer = new MutationObserver(() => {
-        const newVals = cssVars.map((v) => getComputedStyle(canvas).getPropertyValue(v));
-        if (!newVals.every((v, i) => v === cssVals[i])) {
-          cssVals = newVals;
-          forceUpdate();
-        }
-      });
-      observer.observe(document.body, { attributeFilter: ['class'] });
-
-      return () => {
-        observer.disconnect();
-      };
-    }
-  });
+  const node = dType === 'line' ? drawLine() : dType === 'circle' ? drawCircle() : drawDashboard();
 
   return (
     <div
       {...restProps}
+      ref={progressRef}
       className={getClassName(restProps.className, `${dPrefix}progress`, `${dPrefix}progress--${dType}`)}
       style={{
         ...restProps.style,
         width: dType === 'line' && isUndefined(dSize) ? '100%' : undefined,
       }}
-      role={restProps.role ?? 'progressbar'}
-      aria-valuenow={restProps['aria-valuenow'] ?? dPercent}
-      aria-valuemin={restProps['aria-valuemin'] ?? 0}
-      aria-valuemax={restProps['aria-valuemax'] ?? 100}
+      role="progressbar"
+      aria-valuenow={dPercent}
+      aria-valuemin={0}
+      aria-valuemax={100}
     >
-      <canvas
-        ref={canvasRef}
-        width={dType === 'line' ? undefined : arcSize}
-        height={dType === 'line' ? undefined : arcSize}
-        style={dType === 'line' ? { width: isUndefined(dSize) ? '100%' : dSize, height: dLineWidth } : undefined}
-      ></canvas>
+      <DCustomIcon
+        viewBox={dType === 'line' ? `0 0 ${lineWidth} ${dLineWidth}` : `0 0 ${arcSize} ${arcSize}`}
+        data-progress-svg={uniqueId}
+        dSize={dType === 'line' ? ['100%', dLineWidth] : arcSize}
+      >
+        <defs>
+          {waveGradient}
+          {!isUndefined(dLinearGradient) && React.cloneElement(dLinearGradient, { id: gradientId })}
+        </defs>
+        {node}
+      </DCustomIcon>
       {dLabel !== false && (
         <div
           className={getClassName(`${dPrefix}progress__label`, {

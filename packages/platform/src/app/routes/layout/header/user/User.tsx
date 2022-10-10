@@ -8,13 +8,11 @@ import { DAvatar, DDropdown } from '@react-devui/ui';
 import { LOGIN_PATH } from '../../../../../config/other';
 import { useUserState } from '../../../../../config/state';
 import { TOKEN } from '../../../../../config/token';
-import { useDeviceQuery } from '../../../../hooks';
 
 export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const [user] = useUserState();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deviceMatched = useDeviceQuery();
 
   return isUndefined(user) ? null : (
     <DDropdown
@@ -27,7 +25,7 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
       onItemClick={(id) => {
         switch (id) {
           case 'logout':
-            TOKEN.token = null;
+            TOKEN.remove();
             navigate(LOGIN_PATH);
             break;
 
@@ -38,7 +36,7 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
     >
       <button {...props} aria-label={t('routes.layout.My account')}>
         <DAvatar dImg={{ src: user.avatar, alt: 'avatar' }} dSize={28}></DAvatar>
-        {deviceMatched !== 'phone' && <span>{user.name}</span>}
+        <span className="d-none d-md-block">{user.name}</span>
       </button>
     </DDropdown>
   );

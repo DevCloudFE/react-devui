@@ -7,10 +7,12 @@ import { useIconProps } from './useIconProps';
 
 export type DCustomIconeProps = DIconBaseProps;
 
-export function DCustomIcon(props: DCustomIconeProps): JSX.Element | null {
+function CustomIcon(props: DCustomIconeProps, ref: React.ForwardedRef<SVGSVGElement>): JSX.Element | null {
   const { ...restProps } = useIconProps(props);
 
   const svgProps = useIconDefinition(restProps);
 
-  return React.createElement('svg', svgProps, svgProps.children);
+  return React.createElement('svg', { ref, ...svgProps }, svgProps.children);
 }
+
+export const DCustomIcon = React.forwardRef(CustomIcon);

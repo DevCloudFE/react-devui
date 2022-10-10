@@ -1,26 +1,32 @@
-import { useEffect } from 'react';
+import { isUndefined } from 'lodash';
+import { useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useEventCallback } from './useEventCallback';
+export function useResize(target: React.RefObject<Element | null>, cb?: ResizeObserverCallback, disabled = false): void {
+  const dataRef = useRef<{
+    prevBorderBoxSize?: ResizeObserverSize;
+  }>({});
 
-export function useResize(target: HTMLElement | null, fn: () => any) {
-  const handleResize = useEventCallback(fn);
+  if (disabled) {
+    dataRef.current.prevBorderBoxSize = undefined;
+  }
 
   useEffect(() => {
-    if (target) {
-      let isFirst = true;
-      const observer = new ResizeObserver(() => {
-        if (isFirst) {
-          isFirst = false;
-        } else {
-          flushSync(() => handleResize());
+    if (target.current && !disabled) {
+      const observer = new ResizeObserver((entries, observer) => {
+        if (
+          !isUndefined(dataRef.current.prevBorderBoxSize) &&
+          (dataRef.current.prevBorderBoxSize.blockSize !== entries[0].borderBoxSize[0].blockSize ||
+            dataRef.current.prevBorderBoxSize.inlineSize !== entries[0].borderBoxSize[0].inlineSize)
+        ) {
+          flushSync(() => cb?.(entries, observer));
         }
+        dataRef.current.prevBorderBoxSize = entries[0].borderBoxSize[0];
       });
-      observer.observe(target);
-
+      observer.observe(target.current);
       return () => {
         observer.disconnect();
       };
     }
-  }, [handleResize, target]);
+  });
 }

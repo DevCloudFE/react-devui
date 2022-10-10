@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { DoubleLeftOutlined, DoubleRightOutlined, EllipsisOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useDValue } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
 import { DInput } from '../input';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DSelect } from '../select';
 import { getButtonRoleAttributes } from './utils';
 
@@ -185,18 +186,22 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           dStep={1}
           dModel={jumpValue}
           dNumbetButton={!dMini}
-          dInputProps={{
-            onKeyDown: (e) => {
-              if (e.code === 'Enter') {
-                e.preventDefault();
+          dInputRender={(el) =>
+            cloneHTMLElement(el, {
+              onKeyDown: (e) => {
+                el.props.onKeyDown?.(e);
 
-                const val = Number(jumpValue);
-                if (!isNaN(val)) {
-                  changeActive(val);
+                if (e.code === 'Enter') {
+                  e.preventDefault();
+
+                  const val = Number(jumpValue);
+                  if (!isNaN(val)) {
+                    changeActive(val);
+                  }
                 }
-              }
-            },
-          }}
+              },
+            })
+          }
           onModelChange={setJumpValue}
         />
       );
@@ -222,7 +227,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
         [`${dPrefix}pagination--mini`]: dMini,
         'is-change': isChange,
       })}
-      role={restProps.role ?? 'navigation'}
+      role="navigation"
       aria-label={restProps['aria-label'] ?? 'Pagination Navigation'}
     >
       {dCompose.map((item) => {

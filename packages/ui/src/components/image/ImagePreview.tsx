@@ -2,16 +2,17 @@ import { isUndefined } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useElement, useEvent, useImmer, useIsomorphicLayoutEffect, useLockScroll } from '@react-devui/hooks';
+import { useEvent, useImmer, useIsomorphicLayoutEffect, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { CloseOutlined, LeftOutlined, RightOutlined, RotateRightOutlined, ZoomInOutlined, ZoomOutOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useDValue, useMaxIndex } from '../../hooks';
+import { useDValue, useMaxIndex } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DButton } from '../button';
 import { DInput } from '../input';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement> {
   dList: React.ImgHTMLAttributes<HTMLImageElement>[];
@@ -49,23 +50,36 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
 
   //#region Ref
   const previewRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRefExtra(() => {
+    let el = document.getElementById(`${dPrefix}image-preview-root`);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = `${dPrefix}image-preview-root`;
+      document.body.appendChild(el);
+    }
+    return el;
+  }, true);
+  const windowRef = useRefExtra(() => window);
   //#endregion
+
+  const dataRef = useRef<{
+    prevActiveEl: HTMLElement | null;
+    eventData: {
+      initMove?: { x: number; y: number };
+      currentMove?: { x: number; y: number };
+      initScale?: { x0: number; y0: number; x1: number; y1: number };
+      currentScale?: { x0: number; y0: number; x1: number; y1: number };
+    };
+  }>({
+    prevActiveEl: null,
+    eventData: {},
+  });
 
   const [activeIndex, changeActiveIndex] = useDValue<number>(0, dActive, onActiveChange);
   const activeSrc = dList[activeIndex].src!;
 
   const [offset, setOffset] = useState(3);
-  useIsomorphicLayoutEffect(() => {
-    const handleResize = () => {
-      setOffset(~~((window.innerWidth - 108) / 120));
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  });
   let startIndex = Math.max(activeIndex - offset, 0);
   const endIndex = Math.min(startIndex + offset * 2, dList.length - 1);
   startIndex = Math.max(endIndex - offset * 2, 0);
@@ -91,40 +105,17 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
     return maxZIndex;
   })();
 
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}image-preview-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}image-preview-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
-
-  useLockScroll(visible);
-
-  const prevActiveEl = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    if (visible) {
-      prevActiveEl.current = document.activeElement as HTMLElement | null;
-
-      if (previewRef.current) {
-        previewRef.current.focus({ preventScroll: true });
-      }
-    } else if (prevActiveEl.current) {
-      prevActiveEl.current.focus({ preventScroll: true });
-    }
-  }, [visible]);
-
-  const eventData = useRef<{
-    initMove?: { x: number; y: number };
-    currentMove?: { x: number; y: number };
-    initScale?: { x0: number; y0: number; x1: number; y1: number };
-    currentScale?: { x0: number; y0: number; x1: number; y1: number };
-  }>({});
+  const getOffset = () => {
+    setOffset(~~((window.innerWidth - 108) / 120));
+  };
+  useIsomorphicLayoutEffect(() => {
+    getOffset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEvent(windowRef, 'resize', getOffset, {}, !visible);
 
   const handleMove = () => {
-    const { initMove, currentMove, initScale, currentScale } = eventData.current;
+    const { initMove, currentMove, initScale, currentScale } = dataRef.current.eventData;
     if (initMove && currentMove) {
       const movementX = currentMove.x - initMove.x;
       const movementY = currentMove.y - initMove.y;
@@ -136,8 +127,8 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
         });
       });
 
-      eventData.current.initMove = currentMove;
-      eventData.current.currentMove = undefined;
+      dataRef.current.eventData.initMove = currentMove;
+      dataRef.current.eventData.currentMove = undefined;
     }
 
     if (initScale && currentScale) {
@@ -148,73 +139,101 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
         draft.set(activeSrc, Math.max(oldScale + (currentLength - initLength) / 100, 1));
       });
 
-      eventData.current.initScale = currentScale;
-      eventData.current.currentScale = undefined;
+      dataRef.current.eventData.initScale = currentScale;
+      dataRef.current.eventData.currentScale = undefined;
     }
   };
 
+  useLockScroll(visible);
+
+  useEffect(() => {
+    if (visible) {
+      dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
+
+      if (previewRef.current) {
+        previewRef.current.focus({ preventScroll: true });
+      }
+    } else if (dataRef.current.prevActiveEl) {
+      dataRef.current.prevActiveEl.focus({ preventScroll: true });
+    }
+  }, [visible]);
+
+  const listenWindow = visible && isDragging;
+
   useEvent<TouchEvent>(
-    window,
+    windowRef,
     'touchmove',
     (e) => {
-      if (isDragging) {
-        e.preventDefault();
+      e.preventDefault();
 
-        if (e.touches.length === 2) {
-          eventData.current.initMove = eventData.current.currentMove = undefined;
+      if (e.touches.length === 2) {
+        dataRef.current.eventData.initMove = dataRef.current.eventData.currentMove = undefined;
 
-          const newScale = {
-            x0: e.touches[0].clientX,
-            y0: e.touches[0].clientY,
-            x1: e.touches[1].clientX,
-            y1: e.touches[1].clientY,
-          };
-          if (isUndefined(eventData.current.initScale)) {
-            eventData.current.initScale = newScale;
-          } else {
-            eventData.current.currentScale = newScale;
-          }
+        const newScale = {
+          x0: e.touches[0].clientX,
+          y0: e.touches[0].clientY,
+          x1: e.touches[1].clientX,
+          y1: e.touches[1].clientY,
+        };
+        if (isUndefined(dataRef.current.eventData.initScale)) {
+          dataRef.current.eventData.initScale = newScale;
         } else {
-          eventData.current.initScale = eventData.current.currentScale = undefined;
-
-          const newMove = {
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY,
-          };
-          if (isUndefined(eventData.current.initMove)) {
-            eventData.current.initMove = newMove;
-          } else {
-            eventData.current.currentMove = newMove;
-          }
+          dataRef.current.eventData.currentScale = newScale;
         }
-        handleMove();
+      } else {
+        dataRef.current.eventData.initScale = dataRef.current.eventData.currentScale = undefined;
+
+        const newMove = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+        if (isUndefined(dataRef.current.eventData.initMove)) {
+          dataRef.current.eventData.initMove = newMove;
+        } else {
+          dataRef.current.eventData.currentMove = newMove;
+        }
       }
+
+      handleMove();
     },
-    { passive: false }
+    { passive: false },
+    !listenWindow
   );
-  useEvent<MouseEvent>(window, 'mousemove', (e) => {
-    if (isDragging) {
+
+  useEvent<MouseEvent>(
+    windowRef,
+    'mousemove',
+    (e) => {
       e.preventDefault();
 
       const newMove = {
         x: e.clientX,
         y: e.clientY,
       };
-      if (isUndefined(eventData.current.initMove)) {
-        eventData.current.initMove = newMove;
+      if (isUndefined(dataRef.current.eventData.initMove)) {
+        dataRef.current.eventData.initMove = newMove;
       } else {
-        eventData.current.currentMove = newMove;
+        dataRef.current.eventData.currentMove = newMove;
       }
 
       handleMove();
-    }
-  });
-  useEvent(window, 'mouseup', () => {
-    setIsDragging(false);
-  });
+    },
+    {},
+    !listenWindow
+  );
+
+  useEvent(
+    windowRef,
+    'mouseup',
+    () => {
+      setIsDragging(false);
+    },
+    {},
+    !listenWindow
+  );
 
   return (
-    containerEl &&
+    containerRef.current &&
     ReactDOM.createPortal(
       <DTransition
         dIn={visible}
@@ -258,9 +277,9 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
               className={getClassName(restProps.className, `${dPrefix}image-preview`)}
               style={{
                 ...restProps.style,
-                ...transitionStyle,
                 display: state === 'leaved' ? 'none' : undefined,
                 zIndex,
+                ...transitionStyle,
               }}
               tabIndex={-1}
               onKeyDown={(e) => {
@@ -388,7 +407,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                       e.preventDefault();
 
                       e.currentTarget.focus({ preventScroll: true });
-                      eventData.current = {};
+                      dataRef.current.eventData = {};
                       setIsDragging(true);
                     }
                   }}
@@ -399,7 +418,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                   }}
                   onTouchStart={(e) => {
                     e.currentTarget.focus({ preventScroll: true });
-                    eventData.current = {};
+                    dataRef.current.eventData = {};
                     setIsDragging(true);
                   }}
                   onTouchEnd={() => {
@@ -455,7 +474,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
           );
         }}
       </DTransition>,
-      containerEl
+      containerRef.current
     )
   );
 }

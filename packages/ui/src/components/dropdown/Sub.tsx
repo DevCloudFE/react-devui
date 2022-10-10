@@ -1,59 +1,42 @@
-import { useRef, useState } from 'react';
+import { isUndefined } from 'lodash';
+import React, { useImperativeHandle, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
-import { useElement, useEventListener } from '@react-devui/hooks';
+import { useEventCallback, useRefExtra } from '@react-devui/hooks';
 import { RightOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation, useMaxIndex } from '../../hooks';
-import { TTANSITION_DURING_POPUP } from '../../utils';
+import { TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DSubProps {
   children: React.ReactNode;
   dId: string;
-  dFocusVisible: boolean;
-  dPopup: React.ReactNode;
-  dPopupVisible: boolean;
-  dPopupState: boolean;
-  dEmpty: boolean;
+  dLevel: number;
+  dIcon: React.ReactNode | undefined;
+  dList: React.ReactNode;
+  dPopupState: boolean | undefined;
   dTrigger: 'hover' | 'click';
-  dIcon?: React.ReactNode;
-  dLevel?: number;
-  dDisabled?: boolean;
-  dEventId: string;
+  dZIndex: number | string | undefined;
+  dEmpty: boolean;
+  dFocusVisible: boolean;
+  dDisabled: boolean;
   onVisibleChange: (visible: boolean) => void;
 }
 
-export function DSub(props: DSubProps): JSX.Element | null {
-  const {
-    children,
-    dId,
-    dFocusVisible,
-    dPopup,
-    dPopupVisible,
-    dPopupState,
-    dEmpty,
-    dTrigger,
-    dIcon,
-    dLevel = 0,
-    dDisabled,
-    dEventId,
-    onVisibleChange,
-  } = props;
+function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element | null {
+  const { children, dId, dLevel, dIcon, dList, dPopupState, dTrigger, dZIndex, dEmpty, dFocusVisible, dDisabled, onVisibleChange } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
   //#endregion
 
   //#region Ref
-  const ulRef = useRef<HTMLUListElement>(null);
   const liRef = useRef<HTMLLIElement>(null);
-  //#endregion
-
-  const [t] = useTranslation();
-
-  const containerEl = useElement(() => {
+  const ulRef = useRef<HTMLUListElement>(null);
+  const containerRef = useRefExtra(() => {
     let el = document.getElementById(`${dPrefix}dropdown-root`);
     if (!el) {
       el = document.createElement('div');
@@ -61,22 +44,27 @@ export function DSub(props: DSubProps): JSX.Element | null {
       document.body.appendChild(el);
     }
     return el;
-  });
+  }, true);
+  //#endregion
+
+  const [t] = useTranslation();
+
+  const isVisible = !isUndefined(dPopupState);
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: -9999,
     left: -9999,
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
-  const updatePosition = () => {
-    if (ulRef.current && liRef.current) {
+  const updatePosition = useEventCallback(() => {
+    if (isVisible && ulRef.current && liRef.current) {
       const { width, height } = getOriginalSize(ulRef.current);
       const { top, left, transformOrigin } = getHorizontalSidePosition(
         liRef.current,
         { width, height },
         {
           placement: 'right',
-          inWindow: true,
+          inWindow: WINDOW_SPACE,
         }
       );
       setPopupPositionStyle({
@@ -85,105 +73,110 @@ export function DSub(props: DSubProps): JSX.Element | null {
       });
       setTransformOrigin(transformOrigin);
     }
-  };
-  useEventListener(dEventId, updatePosition);
+  });
 
-  const maxZIndex = useMaxIndex(dPopupVisible);
+  useImperativeHandle(ref, () => updatePosition, [updatePosition]);
 
-  return (
+  const liNode = (
+    <li
+      ref={liRef}
+      id={dId}
+      className={getClassName(`${dPrefix}dropdown__item`, `${dPrefix}dropdown__item--sub`, {
+        'is-expand': isVisible,
+        'is-disabled': dDisabled,
+      })}
+      style={{ paddingLeft: 12 + dLevel * 16 }}
+      role="menuitem"
+      aria-haspopup
+      aria-expanded={isVisible}
+      aria-disabled={dDisabled}
+    >
+      {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
+      {checkNodeExist(dIcon) && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
+      <div className={`${dPrefix}dropdown__item-content`}>{children}</div>
+      <RightOutlined className={`${dPrefix}dropdown__sub-arrow`} dSize={14} />
+    </li>
+  );
+
+  return dDisabled ? (
+    liNode
+  ) : (
     <DPopup
-      dPopup={({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
-        <DTransition dIn={dPopupVisible} dDuring={TTANSITION_DURING_POPUP} onEnterRendered={updatePosition}>
-          {(state) => {
-            let transitionStyle: React.CSSProperties = {};
-            switch (state) {
-              case 'enter':
-                transitionStyle = { transform: 'scale(0)', opacity: 0 };
-                break;
-
-              case 'entering':
-                transitionStyle = {
-                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
-                  transformOrigin,
-                };
-                break;
-
-              case 'leaving':
-                transitionStyle = {
-                  transform: 'scale(0)',
-                  opacity: 0,
-                  transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
-                  transformOrigin,
-                };
-                break;
-
-              case 'leaved':
-                transitionStyle = { display: 'none' };
-                break;
-
-              default:
-                break;
-            }
-
-            return (
-              <ul
-                {...restPProps}
-                ref={ulRef}
-                className={`${dPrefix}dropdown__sub-popup`}
-                style={{
-                  ...popupPositionStyle,
-                  ...transitionStyle,
-                  zIndex: maxZIndex,
-                }}
-                role="menu"
-                aria-labelledby={dId}
-                onClick={pOnClick}
-                onMouseEnter={pOnMouseEnter}
-                onMouseLeave={pOnMouseLeave}
-              >
-                {dEmpty ? (
-                  <div className={`${dPrefix}dropdown__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
-                    {t('No Data')}
-                  </div>
-                ) : (
-                  dPopup
-                )}
-              </ul>
-            );
-          }}
-        </DTransition>
-      )}
-      dVisible={dPopupState}
-      dContainer={containerEl}
-      dDisabled={dDisabled}
+      dVisible={dPopupState ?? false}
       dTrigger={dTrigger}
-      dUpdatePosition={updatePosition}
+      dUpdatePosition={{
+        fn: updatePosition,
+        triggerRef: liRef,
+        popupRef: ulRef,
+        extraScrollRefs: [],
+      }}
       onVisibleChange={onVisibleChange}
     >
-      {({ pOnClick, pOnMouseEnter, pOnMouseLeave, ...restPProps }) => (
-        <li
-          {...restPProps}
-          ref={liRef}
-          id={dId}
-          className={getClassName(`${dPrefix}dropdown__item`, `${dPrefix}dropdown__item--sub`, {
-            'is-expand': dPopupVisible,
-            'is-disabled': dDisabled,
-          })}
-          style={{ paddingLeft: 12 + dLevel * 16 }}
-          role="menuitem"
-          aria-haspopup
-          aria-expanded={dPopupVisible}
-          aria-disabled={dDisabled}
-          onClick={pOnClick}
-          onMouseEnter={pOnMouseEnter}
-          onMouseLeave={pOnMouseLeave}
-        >
-          {dFocusVisible && <div className={`${dPrefix}focus-outline`}></div>}
-          {checkNodeExist(dIcon) && <div className={`${dPrefix}dropdown__item-icon`}>{dIcon}</div>}
-          <div className={`${dPrefix}dropdown__item-content`}>{children}</div>
-          <RightOutlined className={`${dPrefix}dropdown__sub-arrow`} dSize={14} />
-        </li>
+      {({ renderTrigger, renderPopup }) => (
+        <>
+          {renderTrigger(liNode)}
+          {containerRef.current &&
+            ReactDOM.createPortal(
+              <DTransition dIn={isVisible} dDuring={TTANSITION_DURING_POPUP} onEnter={updatePosition}>
+                {(state) => {
+                  let transitionStyle: React.CSSProperties = {};
+                  switch (state) {
+                    case 'enter':
+                      transitionStyle = { transform: 'scale(0)', opacity: 0 };
+                      break;
+
+                    case 'entering':
+                      transitionStyle = {
+                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-out`).join(', '),
+                        transformOrigin,
+                      };
+                      break;
+
+                    case 'leaving':
+                      transitionStyle = {
+                        transform: 'scale(0)',
+                        opacity: 0,
+                        transition: ['transform', 'opacity'].map((attr) => `${attr} ${TTANSITION_DURING_POPUP}ms ease-in`).join(', '),
+                        transformOrigin,
+                      };
+                      break;
+
+                    case 'leaved':
+                      transitionStyle = { display: 'none' };
+                      break;
+
+                    default:
+                      break;
+                  }
+
+                  return renderPopup(
+                    <ul
+                      ref={ulRef}
+                      className={`${dPrefix}dropdown__sub-popup`}
+                      style={{
+                        ...popupPositionStyle,
+                        zIndex: dZIndex,
+                        ...transitionStyle,
+                      }}
+                      role="menu"
+                    >
+                      {dEmpty ? (
+                        <div className={`${dPrefix}dropdown__empty`} style={{ paddingLeft: 12 + dLevel * 16 }}>
+                          {t('No Data')}
+                        </div>
+                      ) : (
+                        dList
+                      )}
+                    </ul>
+                  );
+                }}
+              </DTransition>,
+              containerRef.current
+            )}
+        </>
       )}
     </DPopup>
   );
 }
+
+export const DSub = React.forwardRef(Sub);

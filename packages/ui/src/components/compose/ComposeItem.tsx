@@ -1,8 +1,9 @@
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
+import { useGeneralContext } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DComposeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   dGray?: boolean;
@@ -23,17 +24,26 @@ export function DComposeItem(props: DComposeItemProps): JSX.Element | null {
   //#endregion
 
   return (
-    <DBaseDesign dCompose={{ disabled: true }}>
-      <div
-        {...restProps}
-        className={getClassName(restProps.className, `${dPrefix}compose-item`, {
-          [`${dPrefix}compose-item--${gSize}`]: gSize,
-          [`${dPrefix}compose-item--gray`]: dGray,
-          'is-disabled': gDisabled,
-        })}
-      >
-        {children}
-      </div>
+    <DBaseDesign
+      dComposeDesign={{
+        disabled: true,
+      }}
+      dFormDesign={false}
+    >
+      {({ render: renderBaseDesign }) =>
+        renderBaseDesign(
+          <div
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}compose-item`, {
+              [`${dPrefix}compose-item--${gSize}`]: gSize,
+              [`${dPrefix}compose-item--gray`]: dGray,
+              'is-disabled': gDisabled,
+            })}
+          >
+            {children}
+          </div>
+        )
+      }
     </DBaseDesign>
   );
 }

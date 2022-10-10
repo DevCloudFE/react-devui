@@ -1,13 +1,13 @@
-import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
 
-import { isArray, isUndefined } from 'lodash';
+import { isArray, isString, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useElement, useEvent, useEventCallback, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
-import { getClassName, scrollTo } from '@react-devui/utils';
+import { useEvent, useEventCallback, useIsomorphicLayoutEffect, useRefExtra, useResize } from '@react-devui/hooks';
+import { getClassName, getOffsetToRoot, scrollTo, toPx } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useLayout } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, useGlobalScroll, useLayout, usePrefixConfig } from '../root';
 
 export interface DAnchorItem {
   href: string;
@@ -23,8 +23,8 @@ export interface DAnchorRef {
 
 export interface DAnchorProps<T extends DAnchorItem> extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
   dList: T[];
-  dPage?: DElementSelector;
-  dDistance?: number;
+  dPage?: DRefExtra;
+  dDistance?: number | string;
   dScrollBehavior?: 'instant' | 'smooth';
   dIndicator?: React.ReactNode | typeof DOT_INDICATOR | typeof LINE_INDICATOR;
   onItemClick?: (href: string, item: T) => void;
@@ -48,61 +48,59 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { dScrollEl, dResizeEl } = useLayout();
+  const { dPageScrollRef, dContentResizeRef } = useLayout();
   //#endregion
 
   //#region Ref
   const anchorRef = useRef<HTMLUListElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRefExtra(dPage ?? (() => dPageScrollRef.current));
   //#endregion
 
   const dataRef = useRef<{
     clearTid?: () => void;
   }>({});
 
-  const pageEl = useElement(dPage ?? dScrollEl);
-  const resizeEl = useElement(dResizeEl);
-
   const [activeHref, setActiveHref] = useState<string | null>(null);
 
   const updateAnchor = useEventCallback(() => {
-    if (!pageEl) {
-      return;
-    }
-
-    const pageTop = pageEl.getBoundingClientRect().top;
-    let nearestEl: [string, number] | undefined;
-    const reduceLinks = (arr: T[]) => {
-      arr.forEach(({ href, children }) => {
-        const el = document.getElementById(href);
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          // Add 1 because `getBoundingClientRect` return decimal
-          if (top - pageTop <= dDistance + 1) {
-            if (isUndefined(nearestEl)) {
-              nearestEl = [href, top];
-            } else if (top > nearestEl[1]) {
-              nearestEl = [href, top];
+    if (pageRef.current) {
+      const pageTop = getOffsetToRoot(pageRef.current);
+      let nearestEl: [string, number] | undefined;
+      const reduceLinks = (arr: T[]) => {
+        arr.forEach(({ href, children }) => {
+          const el = document.getElementById(href);
+          if (el && pageRef.current) {
+            const top = getOffsetToRoot(el);
+            const distance = isString(dDistance) ? toPx(dDistance, true) : dDistance;
+            if (pageRef.current.scrollTop + distance >= top - pageTop) {
+              if (isUndefined(nearestEl)) {
+                nearestEl = [href, top];
+              } else if (top > nearestEl[1]) {
+                nearestEl = [href, top];
+              }
             }
           }
-        }
-        if (isArray(children)) {
-          reduceLinks(children as T[]);
-        }
-      });
-    };
-    reduceLinks(dList);
+          if (isArray(children)) {
+            reduceLinks(children as T[]);
+          }
+        });
+      };
+      reduceLinks(dList);
 
-    const newHref = nearestEl ? nearestEl[0] : null;
-    setActiveHref(newHref);
+      const newHref = nearestEl ? nearestEl[0] : null;
+      setActiveHref(newHref);
+    }
   });
   useIsomorphicLayoutEffect(() => {
     updateAnchor();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useResize(resizeEl, updateAnchor);
-  useEvent(pageEl, 'scroll', updateAnchor, { passive: true });
+  const globalScroll = useGlobalScroll(updateAnchor);
+  useEvent(pageRef, 'scroll', updateAnchor, { passive: true }, globalScroll);
+
+  useResize(dContentResizeRef, updateAnchor);
 
   useEffect(() => {
     if (anchorRef.current && indicatorRef.current) {
@@ -129,28 +127,25 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
   );
 
   const handleLinkClick = (href: string) => {
-    if (!pageEl) {
-      return;
-    }
+    if (pageRef.current) {
+      const pageTop = getOffsetToRoot(pageRef.current);
 
-    const pageTop = pageEl.getBoundingClientRect().top;
+      const scrollTop = pageRef.current.scrollTop;
+      window.location.hash = `#${href}`;
+      pageRef.current.scrollTop = scrollTop;
 
-    const scrollTop = pageEl.scrollTop;
-    window.location.hash = `#${href}`;
-    pageEl.scrollTop = scrollTop;
-
-    const el = document.getElementById(href);
-    if (el) {
-      const top = el.getBoundingClientRect().top;
-      const scrollTop = top - pageTop + pageEl.scrollTop - dDistance;
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = scrollTo(pageEl, {
-        top: scrollTop,
-        behavior: dScrollBehavior,
-      });
+      const el = document.getElementById(href);
+      if (el) {
+        const top = getOffsetToRoot(el);
+        const distance = isString(dDistance) ? toPx(dDistance, true) : dDistance;
+        dataRef.current.clearTid?.();
+        dataRef.current.clearTid = scrollTo(pageRef.current, {
+          top: top - pageTop - distance,
+          behavior: dScrollBehavior,
+        });
+      }
     }
   };
-
   const linkNodes = (() => {
     const getNodes = (arr: T[], level = 0): JSX.Element[] =>
       arr.map((link) => {

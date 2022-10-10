@@ -45,12 +45,6 @@
     &:hover {
       background-color: var(--d-background-color-hover);
     }
-
-    svg {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-    }
   }
 
   @include e(examples-title) {

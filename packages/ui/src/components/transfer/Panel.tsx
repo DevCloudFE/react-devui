@@ -2,15 +2,16 @@ import type { DId } from '../../utils/types';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 import type { DTransferItem } from './Transfer';
 
-import React, { useId, useCallback, useRef, useMemo } from 'react';
+import React, { useCallback, useRef, useMemo } from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { LoadingOutlined, SearchOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
 import { DCheckbox } from '../checkbox';
 import { DEmpty } from '../empty';
 import { DInput } from '../input';
+import { usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 import { IS_SELECTED } from './Transfer';
 
@@ -18,10 +19,10 @@ export interface DPanelProps<V extends DId, T extends DTransferItem<V>> {
   dList: T[];
   dSelectedNum: number;
   dState: boolean | 'mixed';
-  dTitle?: React.ReactNode;
-  dLoading?: boolean;
-  dSearchable?: boolean;
-  dCustomItem?: (item: T) => React.ReactNode;
+  dTitle: React.ReactNode;
+  dLoading: boolean;
+  dSearchable: boolean;
+  dCustomItem: ((item: T) => React.ReactNode) | undefined;
   onSelectedChange: (value: V) => void;
   onAllSelected: (selected: boolean) => void;
   onSearch: (value: string) => void;
@@ -34,8 +35,8 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
     dSelectedNum,
     dState,
     dTitle,
-    dLoading = false,
-    dSearchable = false,
+    dLoading,
+    dSearchable,
     dCustomItem,
     onSelectedChange,
     onAllSelected,
@@ -48,7 +49,7 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<T>>(null);
+  const vsRef = useRef<DVirtualScrollRef<T>>(null);
   //#endregion
 
   const [t] = useTranslation();
@@ -100,14 +101,14 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
         )}
         <DVirtualScroll
           {...vsPerformance}
-          ref={dVSRef}
+          ref={vsRef}
           dFillNode={<li></li>}
-          dItemRender={(item, index, { iARIA }) => {
+          dItemRender={(item, index, { aria }) => {
             const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
 
             return (
               <li
-                {...iARIA}
+                {...aria}
                 key={itemValue}
                 id={getItemId(itemValue)}
                 className={getClassName(`${dPrefix}transfer__option`, {
@@ -128,16 +129,13 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
           dSize={192}
           onScrollEnd={onScrollBottom}
         >
-          {({ vsScrollRef, vsRender, vsOnScroll }) => (
-            <ul
-              ref={vsScrollRef}
-              className={`${dPrefix}transfer__list`}
-              style={{ pointerEvents: dLoading ? 'none' : undefined }}
-              onScroll={vsOnScroll}
-            >
-              {dList.length === 0 ? <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty> : vsRender}
-            </ul>
-          )}
+          {({ render, vsList }) =>
+            render(
+              <ul className={`${dPrefix}transfer__list`} style={{ pointerEvents: dLoading ? 'none' : undefined }}>
+                {dList.length === 0 ? <DEmpty className={`${dPrefix}transfer__empty`}></DEmpty> : vsList}
+              </ul>
+            )
+          }
         </DVirtualScroll>
       </div>
     </div>

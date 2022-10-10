@@ -1,3 +1,6 @@
+@import 'mixins/toast';
+@import 'mixins/notification';
+
 @include b(alert) {
   padding: 12px 16px;
   background-color: var(--#{$variable-prefix}alert-background-color, var(--#{$variable-prefix}background-color-light-gray));

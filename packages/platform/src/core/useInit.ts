@@ -19,25 +19,27 @@ export function useInit() {
 
   const refreshToken = () => {
     CLEAR_TOKEN_REFRESH?.();
-    const expiration = TOKEN.expiration;
-    if (TOKEN_REFRESH && !isNull(expiration)) {
+    if (TOKEN_REFRESH) {
       const refresh = () => {
-        const [http, abort] = createHttp({ unmount: false });
-        const tid = window.setTimeout(() => {
-          http<string>({
-            url: '/api/auth/refresh',
-            method: 'post',
-          }).subscribe({
-            next: (res) => {
-              TOKEN.token = res;
-              refresh();
-            },
-          });
-        }, expiration - Date.now() - TOKEN_REFRESH_OFFSET);
-        CLEAR_TOKEN_REFRESH = () => {
-          clearTimeout(tid);
-          abort();
-        };
+        const expiration = TOKEN.expiration;
+        if (!isNull(expiration)) {
+          const [http, abort] = createHttp({ unmount: false });
+          const tid = window.setTimeout(() => {
+            http<string>({
+              url: '/api/auth/refresh',
+              method: 'post',
+            }).subscribe({
+              next: (res) => {
+                TOKEN.set(res);
+                refresh();
+              },
+            });
+          }, expiration - Date.now() - TOKEN_REFRESH_OFFSET);
+          CLEAR_TOKEN_REFRESH = () => {
+            clearTimeout(tid);
+            abort();
+          };
+        }
       };
       refresh();
     }

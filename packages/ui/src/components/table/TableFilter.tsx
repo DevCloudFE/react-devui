@@ -2,19 +2,20 @@ import type { DId } from '../../utils/types';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isNull, isUndefined } from 'lodash';
-import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useForceUpdate } from '@react-devui/hooks';
+import { useForceUpdate, useId } from '@react-devui/hooks';
 import { FilterFilled, LoadingOutlined, SearchOutlined } from '@react-devui/icons';
 import { findNested, getClassName, isSimpleArrayEqual } from '@react-devui/utils';
 
-import { useComponentConfig, useDValue, usePrefixConfig, useTranslation } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useDValue } from '../../hooks';
+import { registerComponentMate, WINDOW_SPACE } from '../../utils';
 import { DButton } from '../button';
 import { DCheckbox } from '../checkbox';
 import { DInput } from '../input';
 import { DPopover } from '../popover';
 import { DRadio } from '../radio';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DTableFilterRef {
@@ -43,9 +44,9 @@ export interface DTableFilterProps<V extends DId, T extends DTableFilterItem<V>>
   dPopupClassName?: string;
   onSelectedChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  afterVisibleChange?: (visible: boolean) => void;
   onSearch?: (value: string) => void;
   onScrollBottom?: () => void;
+  afterVisibleChange?: (visible: boolean) => void;
 }
 
 function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
@@ -64,9 +65,9 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
     dPopupClassName,
     onSelectedChange,
     onVisibleChange,
-    afterVisibleChange,
     onSearch,
     onScrollBottom,
+    afterVisibleChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -76,7 +77,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
   //#endregion
 
   //#region Ref
-  const dVSRef = useRef<DVirtualScrollRef<T>>(null);
+  const vsRef = useRef<DVirtualScrollRef<T>>(null);
   //#endregion
 
   const dataRef = useRef<{
@@ -248,7 +249,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
-      dInWindow
+      dInWindow={WINDOW_SPACE}
       dContent={
         <>
           {dSearchable && (
@@ -273,9 +274,9 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
           )}
           <DVirtualScroll
             {...vsPerformance}
-            ref={dVSRef}
+            ref={vsRef}
             dFillNode={<li></li>}
-            dItemRender={(item, index, { iARIA }) => {
+            dItemRender={(item, index, { aria }) => {
               const { label: itemLabel, value: itemValue, disabled: itemDisabled } = item;
 
               const node = dCustomItem ? dCustomItem(item) : itemLabel;
@@ -289,7 +290,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
 
               return (
                 <li
-                  {...iARIA}
+                  {...aria}
                   key={itemValue}
                   id={getItemId(itemValue)}
                   className={getClassName(`${dPrefix}table__filter-option`, {
@@ -316,27 +317,27 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
             dPadding={4}
             onScrollEnd={onScrollBottom}
           >
-            {({ vsScrollRef, vsRender, vsOnScroll }) => (
-              <ul
-                ref={vsScrollRef}
-                id={listId}
-                className={`${dPrefix}table__filter-list`}
-                style={{ pointerEvents: dLoading ? 'none' : undefined }}
-                tabIndex={-1}
-                role="listbox"
-                aria-multiselectable={dMultiple}
-                aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
-                onScroll={vsOnScroll}
-              >
-                {list.length === 0 ? (
-                  <li className={`${dPrefix}table__filter-empty`}>
-                    <div className={`${dPrefix}table__filter-option-content`}>{t('No Data')}</div>
-                  </li>
-                ) : (
-                  vsRender
-                )}
-              </ul>
-            )}
+            {({ render, vsList }) =>
+              render(
+                <ul
+                  id={listId}
+                  className={`${dPrefix}table__filter-list`}
+                  style={{ pointerEvents: dLoading ? 'none' : undefined }}
+                  tabIndex={-1}
+                  role="listbox"
+                  aria-multiselectable={dMultiple}
+                  aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                >
+                  {list.length === 0 ? (
+                    <li className={`${dPrefix}table__filter-empty`}>
+                      <div className={`${dPrefix}table__filter-option-content`}>{t('No Data')}</div>
+                    </li>
+                  ) : (
+                    vsList
+                  )}
+                </ul>
+              )
+            }
           </DVirtualScroll>
         </>
       }

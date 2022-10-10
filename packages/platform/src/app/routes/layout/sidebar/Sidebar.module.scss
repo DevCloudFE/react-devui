@@ -1,19 +1,13 @@
 @import '~styles/module';
 
 @include b(sidebar) {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  position: relative;
   z-index: 5;
-  height: calc(100% - 64px);
+  height: 100%;
   padding: 0;
-  overflow: auto;
+  overflow: hidden auto;
   background-color: var(--d-background-color);
   box-shadow: -2px 0 8px 0 var(--d-shadow-color);
-
-  @include e(menu) {
-    width: 200px;
-  }
 
   @include e(drawer) {
     :global .d-drawer__body {

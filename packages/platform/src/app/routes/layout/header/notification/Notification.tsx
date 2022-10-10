@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { BellOutlined, LoadingOutlined } from '@react-devui/icons';
 import { DAvatar, DBadge, DButton, DPopover, DSeparator, DTabs } from '@react-devui/ui';
+import { WINDOW_SPACE } from '@react-devui/ui/utils';
 import { getClassName } from '@react-devui/utils';
 
 import { useNotificationState } from '../../../../../config/state';
@@ -13,9 +14,10 @@ import { AppList } from '../../../../components';
 import styles from './Notification.module.scss';
 
 export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
+  const tabsRef = useRef<DTabsRef>(null);
+
   const [notification] = useNotificationState();
   const { t } = useTranslation();
-  const tabsRef = useRef<DTabsRef>(null);
 
   const num = (() => {
     let n = 0;
@@ -70,7 +72,7 @@ export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElem
       dTrigger="click"
       dPlacement="bottom-right"
       dArrow={false}
-      dInWindow
+      dInWindow={WINDOW_SPACE}
       afterVisibleChange={(visible) => {
         if (visible && tabsRef.current) {
           tabsRef.current.updateIndicator();

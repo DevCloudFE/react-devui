@@ -4,7 +4,13 @@
   position: absolute;
   right: 0;
   bottom: 0;
+  display: flex;
+  width: 100%;
   height: calc(100% - 64px);
-  overflow: auto;
-  transition: width var(--d-animation-duration-base) linear;
+
+  @include e(content) {
+    flex-grow: 1;
+    height: 100%;
+    overflow: hidden auto;
+  }
 }

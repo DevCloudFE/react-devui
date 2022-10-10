@@ -1,14 +1,12 @@
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DLang } from '@react-devui/ui/utils/types';
 
 import { isString, isUndefined } from 'lodash';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useImmer, useLocalStorage } from '@react-devui/hooks';
+import { useImmer, useStorage } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
 import { DAnchor, DDrawer } from '@react-devui/ui';
-import { useMediaQuery } from '@react-devui/ui/hooks';
-import { getClassName } from '@react-devui/utils';
 
 import { AppFooter } from '../../footer';
 import marked, { toString } from '../utils';
@@ -22,9 +20,8 @@ export interface AppRouteProps {
 export function AppRoute(props: AppRouteProps): JSX.Element | null {
   const html = props.html ? marked(toString(props.html)) : undefined;
 
-  const [language] = useLocalStorage<DLang>('language', 'en-US');
-  const breakpointsMatched = useMediaQuery();
   const { t } = useTranslation();
+  const languageStorage = useStorage<DLang>('language', 'en-US');
 
   const [_links, setLinks] = useImmer<{ title?: string; href: string }[]>([]);
   const links = isUndefined(props.links) ? _links : [...props.links, { href: 'API' }];
@@ -66,52 +63,47 @@ m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
       setLinks(arr);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language]);
+  }, [languageStorage.value]);
 
   useEffect(() => {
     if (isString(html)) {
-      const el = document.querySelector(`.app-md-route > h1:first-child`);
+      const el = document.querySelector('h1:first-child');
       document.title = el?.id + ' - React DevUI';
     }
   }, [html]);
 
   return (
     <>
-      <article
-        className={getClassName('app-md-route', {
-          'app-md-route--phone': !breakpointsMatched.includes('md'),
-        })}
-      >
+      <article className="app-md-route">
         <section className="app-md-route__content" dangerouslySetInnerHTML={html ? { __html: html } : undefined}>
           {props.children}
         </section>
         <AppFooter />
       </article>
-      {breakpointsMatched.includes('md') && links.length > 0 && <DAnchor className="app-md-route__anchor" dList={links} />}
-      {!breakpointsMatched.includes('md') && (
-        <>
-          {links.length > 0 && (
-            <DDrawer
-              dVisible={menuOpen}
-              dHeight="calc(100% - 64px)"
-              dZIndex={909}
-              dPlacement="bottom"
-              dMask={false}
-              onVisibleChange={setMenuOpen}
-            >
-              <DAnchor dList={links} dIndicator={DAnchor.LINE_INDICATOR} onItemClick={() => setMenuOpen(false)} />
-            </DDrawer>
-          )}
-          <button
-            className="app-md-route__anchor-toggler"
-            aria-label={t(menuOpen ? 'Close anchor navigation' : 'Open anchor navigation')}
-            onClick={() => setMenuOpen(!menuOpen)}
+      <>
+        {links.length > 0 && (
+          <DDrawer
+            className="d-md-none"
+            dVisible={menuOpen}
+            dHeight="calc(100% - 64px)"
+            dZIndex={909}
+            dPlacement="bottom"
+            dMask={false}
+            onVisibleChange={setMenuOpen}
           >
-            {icon(true)}
-            {icon(false)}
-          </button>
-        </>
-      )}
+            <DAnchor dList={links} dIndicator={DAnchor.LINE_INDICATOR} onItemClick={() => setMenuOpen(false)} />
+          </DDrawer>
+        )}
+        <button
+          className="d-md-none app-md-route__anchor-toggler"
+          aria-label={t(menuOpen ? 'Close anchor navigation' : 'Open anchor navigation')}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {icon(true)}
+          {icon(false)}
+        </button>
+      </>
+      {links.length > 0 && <DAnchor className="d-none d-md-block app-md-route__anchor" dList={links} />}
     </>
   );
 }

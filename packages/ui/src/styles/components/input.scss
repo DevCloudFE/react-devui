@@ -1,3 +1,5 @@
+@import 'mixins/size';
+
 @include b(input) {
   display: inline-flex;
   align-items: center;

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 
 export function useUnmount(fn: () => any): void {
-  const fnRef = useRef(fn);
+  const ref = useRef(fn);
 
-  fnRef.current = fn;
+  ref.current = fn;
 
-  useEffect(() => () => fnRef.current(), []);
+  useEffect(() => () => ref.current(), []);
 }

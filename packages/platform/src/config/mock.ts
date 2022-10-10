@@ -1,5 +1,5 @@
 import type { NotificationItem, UserState } from './state';
-import type { JWTToken, TokenPayload } from './token';
+import type { JWTToken, JWTTokenPayload } from './token';
 
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
@@ -55,7 +55,7 @@ if (environment.mock) {
 
   mock
     .onGet('/api/auth/me')
-    .reply(withDelay(500, [200, (TOKEN as JWTToken<TokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
+    .reply(withDelay(500, [200, (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
 
   for (const username of ['admin', 'user']) {
     mock.onPost('/api/login', { username }).reply(

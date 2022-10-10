@@ -1,22 +1,20 @@
-import type { DFocusVisibleRenderProps } from '../_focus-visible';
-import type { DComboboxKeyboardSupportRenderProps } from '../_keyboard-support';
+import type { DInputProps } from '../input';
 import type { DVirtualScrollPerformance, DVirtualScrollRef } from '../virtual-scroll';
 
 import { isUndefined } from 'lodash';
-import React, { useState, useId, useCallback, useRef, useImperativeHandle, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useImperativeHandle, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useElement, useEvent, useEventCallback, useResize } from '@react-devui/hooks';
+import { useEvent, useEventCallback, useId, useRefExtra, useResize } from '@react-devui/hooks';
 import { LoadingOutlined } from '@react-devui/icons';
 import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
-import { POSITION_CONFIG } from '@react-devui/utils/position/config';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useMaxIndex, useDValue, useLayout } from '../../hooks';
-import { registerComponentMate, TTANSITION_DURING_POPUP } from '../../utils';
-import { DFocusVisible } from '../_focus-visible';
-import { DComboboxKeyboardSupport } from '../_keyboard-support';
+import { useMaxIndex, useDValue, useFocusVisible } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { DComboboxKeyboard } from '../_keyboard';
 import { DTransition } from '../_transition';
 import { DInput } from '../input';
+import { useComponentConfig, useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DAutoCompleteRef {
@@ -35,9 +33,9 @@ export interface DAutoCompleteProps<T extends DAutoCompleteItem> extends React.H
   dLoading?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   onVisibleChange?: (visible: boolean) => void;
-  afterVisibleChange?: (visible: boolean) => void;
   onItemClick?: (value: string, item: T) => void;
   onScrollBottom?: () => void;
+  afterVisibleChange?: (visible: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DAutoComplete' as const });
@@ -52,21 +50,31 @@ function AutoComplete<T extends DAutoCompleteItem>(
     dLoading = false,
     dCustomItem,
     onVisibleChange,
-    afterVisibleChange,
     onItemClick,
     onScrollBottom,
+    afterVisibleChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { dScrollEl, dResizeEl } = useLayout();
+  const { dPageScrollRef, dContentResizeRef } = useLayout();
   //#endregion
 
   //#region Ref
+  const boxRef = useRefExtra<HTMLElement>(() => document.querySelector(`[data-auto-complete-box="${uniqueId}"]`));
   const popupRef = useRef<HTMLDivElement>(null);
-  const dVSRef = useRef<DVirtualScrollRef<T>>(null);
+  const vsRef = useRef<DVirtualScrollRef<T>>(null);
+  const containerRef = useRefExtra(() => {
+    let el = document.getElementById(`${dPrefix}auto-complete-root`);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = `${dPrefix}auto-complete-root`;
+      document.body.appendChild(el);
+    }
+    return el;
+  }, true);
   //#endregion
 
   const [t] = useTranslation();
@@ -76,24 +84,11 @@ function AutoComplete<T extends DAutoCompleteItem>(
   const getGroupId = (val: string) => `${dPrefix}auto-complete-group-${val}-${uniqueId}`;
   const getItemId = (val: string) => `${dPrefix}auto-complete-item-${val}-${uniqueId}`;
 
-  const scrollEl = useElement(dScrollEl);
-  const resizeEl = useElement(dResizeEl);
-  const boxEl = useElement(`[data-auto-complete-boxid="${uniqueId}"]`);
-  const containerEl = useElement(() => {
-    let el = document.getElementById(`${dPrefix}auto-complete-root`);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = `${dPrefix}auto-complete-root`;
-      document.body.appendChild(el);
-    }
-    return el;
-  });
-
   const canSelectItem = useCallback((item: T) => !item.disabled && !item.children, []);
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
-  const [focusVisible, setFocusVisible] = useState(false);
+  const [focusVisible, renderFocusVisible] = useFocusVisible();
 
   const maxZIndex = useMaxIndex(visible);
 
@@ -103,30 +98,27 @@ function AutoComplete<T extends DAutoCompleteItem>(
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    if (visible) {
-      const popupEl = popupRef.current;
-      if (boxEl && popupEl) {
-        const boxWidth = boxEl.getBoundingClientRect().width;
-        const { height } = getOriginalSize(popupEl);
-        const maxWidth = window.innerWidth - POSITION_CONFIG.space * 2;
-        const width = Math.min(Math.max(popupEl.scrollWidth, boxWidth), maxWidth);
-        const { top, left, transformOrigin } = getVerticalSidePosition(
-          boxEl,
-          { width, height },
-          {
-            placement: 'bottom-left',
-            inWindow: true,
-          }
-        );
+    if (visible && boxRef.current && popupRef.current) {
+      const boxWidth = boxRef.current.getBoundingClientRect().width;
+      const { height } = getOriginalSize(popupRef.current);
+      const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+      const width = Math.min(Math.max(popupRef.current.scrollWidth, boxWidth), maxWidth);
+      const { top, left, transformOrigin } = getVerticalSidePosition(
+        boxRef.current,
+        { width, height },
+        {
+          placement: 'bottom-left',
+          inWindow: WINDOW_SPACE,
+        }
+      );
 
-        setPopupPositionStyle({
-          top,
-          left,
-          minWidth: Math.min(boxWidth, maxWidth),
-          maxWidth,
-        });
-        setTransformOrigin(transformOrigin);
-      }
+      setPopupPositionStyle({
+        top,
+        left,
+        minWidth: Math.min(boxWidth, maxWidth),
+        maxWidth,
+      });
+      setTransformOrigin(transformOrigin);
     }
   });
 
@@ -145,10 +137,12 @@ function AutoComplete<T extends DAutoCompleteItem>(
     }
   };
 
-  useResize(boxEl, updatePosition);
-  useResize(popupRef.current, updatePosition);
-  useResize(resizeEl, updatePosition);
-  useEvent(scrollEl, 'scroll', updatePosition, { passive: true });
+  const globalScroll = useGlobalScroll(updatePosition, !visible);
+  useEvent(dPageScrollRef, 'scroll', updatePosition, { passive: true }, !visible || globalScroll);
+
+  useResize(boxRef, updatePosition, !visible);
+  useResize(popupRef, updatePosition, !visible);
+  useResize(dContentResizeRef, updatePosition, !visible);
 
   const preventBlur: React.MouseEventHandler = (e) => {
     if (e.button === 0) {
@@ -165,41 +159,6 @@ function AutoComplete<T extends DAutoCompleteItem>(
   );
 
   const child = React.Children.only(children) as React.ReactElement;
-  const getInputProps = (
-    fvProps: DFocusVisibleRenderProps,
-    ksProps: DComboboxKeyboardSupportRenderProps,
-    inputProps?: React.InputHTMLAttributes<HTMLInputElement>
-  ): React.InputHTMLAttributes<HTMLInputElement> => ({
-    role: 'combobox',
-    'aria-autocomplete': 'list',
-    'aria-expanded': visible,
-    'aria-controls': listId,
-    onFocus: (e) => {
-      inputProps?.onFocus?.(e);
-      fvProps.fvOnFocus(e);
-    },
-    onBlur: (e) => {
-      inputProps?.onBlur?.(e);
-      fvProps.fvOnBlur(e);
-
-      changeVisible(false);
-    },
-    onClick: (e) => {
-      inputProps?.onClick?.(e);
-
-      changeVisible(true);
-    },
-    onKeyDown: (e) => {
-      inputProps?.onKeyDown?.(e);
-      fvProps.fvOnKeyDown(e);
-      ksProps.ksOnKeyDown(e);
-
-      if (e.code === 'Enter' && visible && focusItem) {
-        changeVisible(false);
-        onItemClick?.(focusItem.value, focusItem);
-      }
-    },
-  });
 
   const vsPerformance = useMemo<DVirtualScrollPerformance<T>>(
     () => ({
@@ -208,7 +167,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
       dItemNested: (item) => ({
         list: item.children as T[],
         emptySize: 32,
-        asItem: false,
+        inAriaSetsize: false,
       }),
       dItemKey: (item) => item.value,
       dFocusable: canSelectItem,
@@ -218,56 +177,83 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
   return (
     <>
-      <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-        {(fvProps) => (
-          <DComboboxKeyboardSupport
-            dVisible={visible}
-            dEditable
-            onVisibleChange={changeVisible}
-            onFocusChange={(key) => {
-              switch (key) {
-                case 'next':
-                  changeFocusItem(dVSRef.current?.scrollByStep(1));
-                  break;
+      <DComboboxKeyboard
+        dVisible={visible}
+        dEditable
+        dHasSub={false}
+        onVisibleChange={changeVisible}
+        onFocusChange={(key) => {
+          switch (key) {
+            case 'next':
+              changeFocusItem(vsRef.current?.scrollByStep(1));
+              break;
 
-                case 'prev':
-                  changeFocusItem(dVSRef.current?.scrollByStep(-1));
-                  break;
+            case 'prev':
+              changeFocusItem(vsRef.current?.scrollByStep(-1));
+              break;
 
-                case 'first':
-                  changeFocusItem(dVSRef.current?.scrollToStart());
-                  break;
+            case 'first':
+              changeFocusItem(vsRef.current?.scrollToStart());
+              break;
 
-                case 'last':
-                  changeFocusItem(dVSRef.current?.scrollToEnd());
-                  break;
+            case 'last':
+              changeFocusItem(vsRef.current?.scrollToEnd());
+              break;
 
-                default:
-                  break;
-              }
-            }}
-          >
-            {(ksProps) => {
-              const childProps = {
-                ...child.props,
-                'data-auto-complete-boxid': uniqueId,
-              };
-              if (child.type === DInput) {
-                childProps.dInputProps = getInputProps(fvProps, ksProps, child.props.dInputProps);
-              } else {
-                Object.assign(childProps, getInputProps(fvProps, ksProps, child.props));
-              }
-              return React.cloneElement(child, childProps);
-            }}
-          </DComboboxKeyboardSupport>
-        )}
-      </DFocusVisible>
-      {containerEl &&
+            default:
+              break;
+          }
+        }}
+      >
+        {({ render: renderComboboxKeyboard }) => {
+          const renderInput = (el: React.ReactElement<React.HTMLAttributes<HTMLElement>>, props?: React.HTMLAttributes<HTMLElement>) =>
+            renderFocusVisible(
+              renderComboboxKeyboard(
+                cloneHTMLElement(el, {
+                  ...props,
+                  role: 'combobox',
+                  'aria-autocomplete': 'list',
+                  'aria-expanded': visible,
+                  'aria-controls': listId,
+                  onBlur: (e) => {
+                    el.props.onBlur?.(e);
+
+                    changeVisible(false);
+                  },
+                  onClick: (e) => {
+                    el.props.onClick?.(e);
+
+                    changeVisible(true);
+                  },
+                  onKeyDown: (e) => {
+                    el.props.onKeyDown?.(e);
+
+                    if (e.code === 'Enter' && visible && focusItem) {
+                      changeVisible(false);
+                      onItemClick?.(focusItem.value, focusItem);
+                    }
+                  },
+                })
+              )
+            );
+
+          const boxSelector = { ['data-auto-complete-box' as string]: uniqueId };
+          if (child.type === DInput) {
+            return React.cloneElement<DInputProps>(child, {
+              ...boxSelector,
+              dInputRender: renderInput,
+            });
+          } else {
+            return renderInput(child, boxSelector);
+          }
+        }}
+      </DComboboxKeyboard>
+      {containerRef.current &&
         ReactDOM.createPortal(
           <DTransition
             dIn={visible}
             dDuring={TTANSITION_DURING_POPUP}
-            onEnterRendered={updatePosition}
+            onEnter={updatePosition}
             afterEnter={() => {
               afterVisibleChange?.(true);
             }}
@@ -311,7 +297,12 @@ function AutoComplete<T extends DAutoCompleteItem>(
                   {...restProps}
                   ref={popupRef}
                   className={getClassName(restProps.className, `${dPrefix}auto-complete`)}
-                  style={{ ...restProps.style, ...popupPositionStyle, ...transitionStyle, zIndex: maxZIndex }}
+                  style={{
+                    ...restProps.style,
+                    ...popupPositionStyle,
+                    zIndex: maxZIndex,
+                    ...transitionStyle,
+                  }}
                   onMouseDown={(e) => {
                     restProps.onMouseDown?.(e);
 
@@ -334,9 +325,9 @@ function AutoComplete<T extends DAutoCompleteItem>(
                   )}
                   <DVirtualScroll
                     {...vsPerformance}
-                    ref={dVSRef}
+                    ref={vsRef}
                     dFillNode={<li></li>}
-                    dItemRender={(item, index, { iARIA, iChildren }, parent) => {
+                    dItemRender={(item, index, { aria, vsList }, parent) => {
                       const { value: itemValue, disabled: itemDisabled, children } = item;
 
                       const itemNode = dCustomItem ? dCustomItem(item) : itemValue;
@@ -357,14 +348,14 @@ function AutoComplete<T extends DAutoCompleteItem>(
                             >
                               <div className={`${dPrefix}auto-complete__option-content`}>{itemNode}</div>
                             </li>
-                            {iChildren}
+                            {vsList}
                           </ul>
                         );
                       }
 
                       return (
                         <li
-                          {...iARIA}
+                          {...aria}
                           key={itemValue}
                           id={getItemId(itemValue)}
                           className={getClassName(`${dPrefix}auto-complete__option`, {
@@ -398,32 +389,32 @@ function AutoComplete<T extends DAutoCompleteItem>(
                     )}
                     onScrollEnd={onScrollBottom}
                   >
-                    {({ vsScrollRef, vsRender, vsOnScroll }) => (
-                      <ul
-                        ref={vsScrollRef}
-                        id={listId}
-                        className={`${dPrefix}auto-complete__list`}
-                        style={{ pointerEvents: dLoading ? 'none' : undefined }}
-                        tabIndex={-1}
-                        role="listbox"
-                        aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
-                        onScroll={vsOnScroll}
-                      >
-                        {dList.length === 0 ? (
-                          <li className={`${dPrefix}auto-complete__empty`}>
-                            <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
-                          </li>
-                        ) : (
-                          vsRender
-                        )}
-                      </ul>
-                    )}
+                    {({ render, vsList }) =>
+                      render(
+                        <ul
+                          id={listId}
+                          className={`${dPrefix}auto-complete__list`}
+                          style={{ pointerEvents: dLoading ? 'none' : undefined }}
+                          tabIndex={-1}
+                          role="listbox"
+                          aria-activedescendant={isUndefined(focusItem) ? undefined : getItemId(focusItem.value)}
+                        >
+                          {dList.length === 0 ? (
+                            <li className={`${dPrefix}auto-complete__empty`}>
+                              <div className={`${dPrefix}auto-complete__option-content`}>{t('No Data')}</div>
+                            </li>
+                          ) : (
+                            vsList
+                          )}
+                        </ul>
+                      )
+                    }
                   </DVirtualScroll>
                 </div>
               );
             }}
           </DTransition>,
-          containerEl
+          containerRef.current
         )}
     </>
   );

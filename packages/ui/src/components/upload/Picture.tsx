@@ -1,6 +1,6 @@
 import type { DId } from '../../utils/types';
 import type { DUploadFile } from './Upload';
-import type { DUploadActionPropsWithPrivate } from './UploadAction';
+import type { DUploadActionPrivateProps } from './UploadAction';
 
 import { isNumber } from 'lodash';
 import React, { useState } from 'react';
@@ -9,10 +9,10 @@ import { useImmer, useMount } from '@react-devui/hooks';
 import { FileTwoTone } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
 import { TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 import { DProgress } from '../progress';
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DPictureProps {
   children: React.ReactNode;
@@ -112,13 +112,7 @@ export function DPicture(props: DPictureProps): JSX.Element | null {
                       )}
                       <div className={`${dPrefix}upload__picture-actions`}>
                         {React.Children.map(actions, (action: any) =>
-                          React.cloneElement<DUploadActionPropsWithPrivate>(action, {
-                            ...action.props,
-                            onClick: (e) => {
-                              action.props.onClick?.(e);
-
-                              e.stopPropagation();
-                            },
+                          React.cloneElement<DUploadActionPrivateProps>(action, {
                             __file: file,
                             __defaultActions: dDefaultActions,
                             __onRemove: () => {

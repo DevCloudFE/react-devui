@@ -3,8 +3,8 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useForkRef, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName, isSimpleArrayEqual } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DTableEmpty } from './TableEmpty';
 import { DTableExpand } from './TableExpand';
 import { DTableFilter } from './TableFilter';
@@ -39,9 +39,8 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
 
   //#region Ref
   const elRef = useRef<HTMLDivElement>(null);
-  //#endregion
-
   const combineElRef = useForkRef(elRef, ref);
+  //#endregion
 
   const [fixed, setFixed] = useState<('left' | 'right')[]>([]);
 
@@ -63,7 +62,6 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
       setFixed(newFixed);
     }
   };
-
   useIsomorphicLayoutEffect(() => {
     if (elRef.current) {
       getFixed(elRef.current);

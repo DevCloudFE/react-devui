@@ -1,7 +1,6 @@
 import { isUndefined } from 'lodash';
 
 import { getOriginalSize } from '../getOriginalSize';
-import { POSITION_CONFIG } from './config';
 
 export type DPopupPlacement =
   | 'top'
@@ -23,7 +22,7 @@ export function getPopupPosition(
   config: {
     placement: DPopupPlacement;
     offset?: number;
-    inWindow?: boolean;
+    inWindow?: number | false;
   }
 ): { top: number; left: number };
 export function getPopupPosition(
@@ -32,7 +31,7 @@ export function getPopupPosition(
   config: {
     placement: DPopupPlacement;
     offset?: number;
-    inWindow?: boolean;
+    inWindow?: number | false;
   },
   space: [number, number, number, number]
 ): { top: number; left: number; placement: DPopupPlacement } | undefined;
@@ -42,7 +41,7 @@ export function getPopupPosition(
   config: {
     placement: DPopupPlacement;
     offset?: number;
-    inWindow?: boolean;
+    inWindow?: number | false;
   },
   space?: [number, number, number, number]
 ): { top: number; left: number; placement?: DPopupPlacement } | undefined {
@@ -50,9 +49,9 @@ export function getPopupPosition(
   const { placement, offset = 10, inWindow = false } = config;
 
   const updatePosition = (position: any) => {
-    if (inWindow) {
-      position.top = Math.min(Math.max(position.top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
-      position.left = Math.min(Math.max(position.left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
+    if (inWindow !== false) {
+      position.top = Math.min(Math.max(position.top, inWindow), window.innerHeight - height - inWindow);
+      position.left = Math.min(Math.max(position.left, inWindow), window.innerWidth - width - inWindow);
     }
     return position;
   };

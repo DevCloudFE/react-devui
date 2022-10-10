@@ -19,7 +19,7 @@ npm install @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/u
 按需引入：
 
 ```scss
-@import '~@react-devui/ui/styles/base';
+@import '~@react-devui/ui/styles/custom';
 
 @import '~@react-devui/ui/styles/components/button';
 ```
@@ -31,24 +31,26 @@ npm install @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/u
 建议配置 `layout` 参数，它提供了您页面的布局信息，这样我们就可以自动完成某些工作（如更新弹窗位置）。
 
 ```tsx
-import type { DConfigContextData } from '@react-devui/ui/hooks/d-config';
+import type { DRootProps } from '@react-devui/ui';
 
 import { useMemo } from 'react';
 
 import { DRoot } from '@react-devui/ui';
 
 export default function App() {
-  const rootContext = useMemo<DConfigContextData>(
+  const rootContext = useMemo<DRootProps['context']>(
     () => ({
-      layout: { scrollEl: 'main', resizeEl: 'article' },
+      layout: { pageScrollEl: '#app-main', contentResizeEl: '#app-content' },
     }),
     []
   );
 
   return (
-    <DRoot dContext={rootContext}>
-      <main style={{ overflow: 'auto' }}>
-        <article style={{ height: '200vh' }}>Some content...</article>
+    <DRoot context={rootContext}>
+      <main id="app-main" style={{ overflow: 'auto' }}>
+        <section id="app-content" style={{ height: '200vh' }}>
+          Some content...
+        </section>
       </main>
     </DRoot>
   );

@@ -55,9 +55,6 @@ export { DFab, DFabButton, DFabBacktop } from './fab';
 export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
 export { DForm, useForm, FormControl, FormGroup, Validators } from './form';
 
-export type { DRowProps, DColProps } from './grid';
-export { DRow, DCol } from './grid';
-
 export type { DImageProps, DImagePreviewProps } from './image';
 export { DImage } from './image';
 

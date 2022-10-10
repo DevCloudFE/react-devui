@@ -1,8 +1,8 @@
 import type { ImmerHook } from './useImmer';
 
-import { freeze, produce } from 'immer';
+import { freeze } from 'immer';
 
-import { useForceUpdate } from './useForceUpdate';
+import { useImmer } from './useImmer';
 import { useUnmount } from './useUnmount';
 
 export function createGlobalState<S>(): () => ImmerHook<S | undefined>;
@@ -11,31 +11,25 @@ export function createGlobalState<S>(initialValue?: S): () => ImmerHook<S | unde
   const store = {
     state: freeze(typeof initialValue === 'function' ? initialValue() : initialValue, true),
     setState(updater: any) {
-      const prev = store.state;
-      if (typeof updater === 'function') {
-        store.state = produce(store.state, updater);
-      } else {
-        store.state = freeze(updater);
-      }
-      if (!Object.is(store.state, prev)) {
-        for (const update of store.updates) {
-          update();
-        }
+      for (const update of store.updates) {
+        update(updater);
       }
     },
-    updates: new Set<() => void>(),
+    updates: new Set<(...args: any[]) => any>(),
   };
 
   return () => {
-    const forceUpdate = useForceUpdate();
-    if (!store.updates.has(forceUpdate)) {
-      store.updates.add(forceUpdate);
+    const [state, setState] = useImmer(store.state);
+    store.state = state;
+
+    if (!store.updates.has(setState)) {
+      store.updates.add(setState);
     }
 
     useUnmount(() => {
-      store.updates.delete(forceUpdate);
+      store.updates.delete(setState);
     });
 
-    return [store.state, store.setState];
+    return [state, store.setState];
   };
 }

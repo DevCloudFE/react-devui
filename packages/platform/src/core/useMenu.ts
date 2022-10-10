@@ -33,8 +33,8 @@ export function useMenu() {
         }
       }
 
-      const tKey = [...item.path.split('/'), isUndefined(item.children) ? '' : 'index'].filter((key) => key).join('.');
-      const title = t(tKey, { ns: 'title' });
+      const { title: _title, titleI18n } = item;
+      const title = _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
       const obj: DMenuItem<string> = {
         id: item.path,
         title: item.type === 'item' ? React.createElement(Link, { className: 'app-menu-link', tabIndex: -1, to: item.path }, title) : title,

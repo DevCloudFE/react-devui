@@ -1,27 +1,63 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import type { DConfigContextData } from '../../hooks/d-config/contex';
+import type { DPartialConfigContextData } from './contex';
 import type { DIconContextData } from '@react-devui/icons/Icon';
 
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { DIconContext } from '@react-devui/icons/Icon';
 
 import { dayjs } from '../../dayjs';
-import { DConfigContext } from '../../hooks/d-config/contex';
 import { Notification } from './Notification';
 import { Toast } from './Toast';
+import { DConfigContextManager } from './contex';
+import { DConfigContext } from './contex';
+import resources from './resources.json';
+
+const ROOT = new DConfigContextManager({
+  namespace: 'd',
+  componentConfigs: {},
+  i18n: {
+    lang: 'en-US',
+    resources,
+  },
+  layout: {
+    pageScrollEl: ':root',
+  },
+  globalScroll: false,
+});
 
 export interface DRootProps {
   children: React.ReactNode;
-  dContext?: DConfigContextData;
+  context?: DPartialConfigContextData;
 }
 
 export function DRoot(props: DRootProps): JSX.Element | null {
-  const { children, dContext } = props;
+  const { children, context: _context } = props;
 
-  const lang = dContext?.i18n?.lang ?? 'zh-CN';
+  const parent = useContext(DConfigContext);
 
-  switch (lang) {
+  const [context, iconContext] = useMemo<[DConfigContextManager, DIconContextData]>(() => {
+    const context = new DConfigContextManager((parent ?? ROOT).mergeContext(_context ?? {}));
+    if (parent) {
+      context.setParent(parent);
+    }
+
+    const namespace = context.namespace;
+    const iconProps = context.componentConfigs.DIcon;
+
+    return [
+      context,
+      {
+        props: iconProps,
+        namespace,
+        twoToneColor: (theme) => [
+          theme ? `var(--${namespace}-color-${theme})` : `var(--${namespace}-text-color)`,
+          theme ? `var(--${namespace}-background-color-${theme})` : `rgb(var(--${namespace}-text-color-rgb) / 10%)`,
+        ],
+      },
+    ];
+  }, [_context, parent]);
+
+  switch (context.i18n.lang) {
     case 'en-US':
       dayjs.locale('en');
       break;
@@ -34,27 +70,17 @@ export function DRoot(props: DRootProps): JSX.Element | null {
       break;
   }
 
-  const iconProps = dContext?.componentConfigs?.DIcon;
-  const namespace = dContext?.namespace ?? 'd';
-  const iconContext = useMemo<DIconContextData>(() => {
-    const prefix = `${namespace}-`;
-    return {
-      props: iconProps,
-      namespace,
-      twoToneColor: (theme) => [
-        theme ? `var(--${prefix}color-${theme})` : `var(--${prefix}text-color)`,
-        theme ? `var(--${prefix}background-color-${theme})` : `rgb(var(--${prefix}text-color-rgb) / 10%)`,
-      ],
-    };
-  }, [iconProps, namespace]);
-
   return (
-    <DConfigContext.Provider value={dContext}>
-      <DIconContext.Provider value={iconContext}>
-        {children}
-        <Notification></Notification>
-        <Toast></Toast>
-      </DIconContext.Provider>
+    <DConfigContext.Provider value={context}>
+      {parent ? (
+        children
+      ) : (
+        <DIconContext.Provider value={iconContext}>
+          {children}
+          <Notification></Notification>
+          <Toast></Toast>
+        </DIconContext.Provider>
+      )}
     </DConfigContext.Provider>
   );
 }

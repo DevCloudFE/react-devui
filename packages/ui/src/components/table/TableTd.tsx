@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useComponentConfig, usePrefixConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCell } from './Cell';
 
 export interface DTableTdProps extends React.TdHTMLAttributes<HTMLTableCellElement> {

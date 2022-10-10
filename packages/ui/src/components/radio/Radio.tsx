@@ -1,27 +1,30 @@
+import type { DCloneHTMLElement } from '../../utils/types';
 import type { DFormControl } from '../form';
 
-import { useState } from 'react';
+import { isUndefined } from 'lodash';
 
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useWave, useGeneralContext, useDValue } from '../../hooks';
+import { useWave, useGeneralContext, useDValue, useFocusVisible } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
-import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DRadioGroup } from './RadioGroup';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
+  dRef?: {
+    input?: React.ForwardedRef<HTMLInputElement>;
+  };
   dFormControl?: DFormControl;
   dModel?: boolean;
   dDisabled?: boolean;
-  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.Ref<HTMLInputElement>;
+  dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (checked: boolean) => void;
 }
 
-export interface DRadioPropsWithPrivate extends DRadioProps {
+export interface DRadioPrivateProps {
   __type?: 'outline' | 'fill';
 }
 
@@ -32,16 +35,16 @@ export const DRadio: {
 } = (props) => {
   const {
     children,
+    dRef,
     dFormControl,
     dModel,
     dDisabled = false,
-    dInputProps,
-    dInputRef,
+    dInputRender,
     onModelChange,
     __type,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props as DRadioPropsWithPrivate);
+  } = useComponentConfig(COMPONENT_NAME, props as DRadioProps & DRadioPrivateProps);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -50,7 +53,7 @@ export const DRadio: {
 
   const [waveNode, wave] = useWave();
 
-  const [focusVisible, setFocusVisible] = useState(false);
+  const [focusVisible, renderFocusVisible] = useFocusVisible();
 
   const formControlInject = useFormControl(dFormControl);
   const [checked, changeChecked] = useDValue<boolean>(false, dModel, onModelChange, undefined, formControlInject);
@@ -58,61 +61,63 @@ export const DRadio: {
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
-    <DBaseDesign dCompose={{ active: checked || focusVisible, disabled: disabled }}>
-      <label
-        {...restProps}
-        className={getClassName(restProps.className, `${dPrefix}radio`, {
-          [`${dPrefix}radio--button`]: __type,
-          [`${dPrefix}radio--button-${__type}`]: __type,
-          [`${dPrefix}radio--${gSize}`]: gSize,
-          'is-checked': checked,
-          'is-focus-visible': focusVisible,
-          'is-disabled': disabled,
-        })}
-        onClick={(e) => {
-          restProps.onClick?.(e);
+    <DBaseDesign
+      dComposeDesign={{
+        active: checked || focusVisible,
+        disabled: disabled,
+      }}
+      dFormDesign={false}
+    >
+      {({ render: renderBaseDesign }) =>
+        renderBaseDesign(
+          <label
+            {...restProps}
+            className={getClassName(restProps.className, `${dPrefix}radio`, {
+              [`${dPrefix}radio--button`]: __type,
+              [`${dPrefix}radio--button-${__type}`]: __type,
+              [`${dPrefix}radio--${gSize}`]: gSize,
+              'is-checked': checked,
+              'is-focus-visible': focusVisible,
+              'is-disabled': disabled,
+            })}
+            onClick={(e) => {
+              restProps.onClick?.(e);
 
-          if (__type === 'fill' || __type === 'outline') {
-            wave(`var(--${dPrefix}color-primary)`);
-          }
-        }}
-      >
-        <div className={`${dPrefix}radio__input-wrapper`}>
-          <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-            {({ fvOnFocus, fvOnBlur, fvOnKeyDown }) => (
-              <DBaseInput
-                {...dInputProps}
-                ref={dInputRef}
-                className={getClassName(dInputProps?.className, `${dPrefix}radio__input`)}
-                type="radio"
-                checked={checked}
-                disabled={disabled}
-                aria-checked={checked}
-                onChange={(e) => {
-                  dInputProps?.onChange?.(e);
+              if (__type === 'fill' || __type === 'outline') {
+                wave(`var(--${dPrefix}color-primary)`);
+              }
+            }}
+          >
+            <div className={`${dPrefix}radio__input-wrapper`}>
+              {
+                <DBaseInput dFormControl={dFormControl} dLabelFor>
+                  {({ render: renderBaseInput }) => {
+                    const input = renderFocusVisible(
+                      renderBaseInput(
+                        <input
+                          ref={dRef?.input}
+                          className={`${dPrefix}radio__input`}
+                          type="radio"
+                          checked={checked}
+                          disabled={disabled}
+                          aria-checked={checked}
+                          onChange={() => {
+                            changeChecked(true);
+                          }}
+                        />
+                      )
+                    );
 
-                  changeChecked(true);
-                }}
-                onFocus={(e) => {
-                  dInputProps?.onFocus?.(e);
-                  fvOnFocus(e);
-                }}
-                onBlur={(e) => {
-                  dInputProps?.onBlur?.(e);
-                  fvOnBlur(e);
-                }}
-                onKeyDown={(e) => {
-                  dInputProps?.onKeyDown?.(e);
-                  fvOnKeyDown(e);
-                }}
-                dFormControl={dFormControl}
-              />
-            )}
-          </DFocusVisible>
-        </div>
-        {checkNodeExist(children) && <div className={`${dPrefix}radio__label`}>{children}</div>}
-        {waveNode}
-      </label>
+                    return isUndefined(dInputRender) ? input : dInputRender(input);
+                  }}
+                </DBaseInput>
+              }
+            </div>
+            {checkNodeExist(children) && <div className={`${dPrefix}radio__label`}>{children}</div>}
+            {waveNode}
+          </label>
+        )
+      }
     </DBaseDesign>
   );
 };

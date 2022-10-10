@@ -3,7 +3,8 @@ import React, { useEffect, useRef } from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useContextRequired } from '../../hooks';
+import { useContextRequired } from '../../hooks';
+import { usePrefixConfig } from '../root';
 import { DTableContext } from './Table';
 
 const ZINDEX_CONFIG = {
@@ -15,15 +16,17 @@ const ZINDEX_CONFIG = {
 
 export interface DCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   dTag: 'th' | 'td';
-  dWidth?: number | string;
-  dFixed?: {
-    top?: number | string;
-    right?: number | string;
-    bottom?: number | string;
-    left?: number | string;
-  };
-  dAlign?: 'left' | 'right' | 'center';
-  dEllipsis?: boolean;
+  dWidth: number | string | undefined;
+  dFixed:
+    | {
+        top?: number | string;
+        right?: number | string;
+        bottom?: number | string;
+        left?: number | string;
+      }
+    | undefined;
+  dAlign: 'left' | 'right' | 'center';
+  dEllipsis: boolean;
 }
 
 export function DCell(props: DCellProps): JSX.Element | null {
@@ -32,8 +35,8 @@ export function DCell(props: DCellProps): JSX.Element | null {
     dTag,
     dWidth,
     dFixed,
-    dAlign = 'left',
-    dEllipsis = false,
+    dAlign,
+    dEllipsis,
 
     ...restProps
   } = props;

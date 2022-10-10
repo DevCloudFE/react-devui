@@ -1,47 +1,36 @@
+import type { DCloneHTMLElement } from '../../utils/types';
+import type React from 'react';
+
 import { isUndefined } from 'lodash';
-import { useId, useRef } from 'react';
-import ReactDOM from 'react-dom';
+import { useEffect, useRef } from 'react';
+import { fromEvent } from 'rxjs';
 
-import { useAsync, useElement, useEvent, useResize } from '@react-devui/hooks';
+import { useAsync, useEvent, useRefExtra, useResize } from '@react-devui/hooks';
 
-import { useLayout } from '../../hooks';
-
-export interface DPopupPopupRenderProps {
-  'data-popup-popupid': string;
-  pOnMouseEnter?: React.MouseEventHandler;
-  pOnMouseLeave?: React.MouseEventHandler;
-  pOnClick?: React.MouseEventHandler;
-}
-
-export interface DPopupRenderProps {
-  'data-popup-triggerid': string;
-  pOnMouseEnter?: React.MouseEventHandler;
-  pOnMouseLeave?: React.MouseEventHandler;
-  pOnClick?: React.MouseEventHandler;
-}
+import { cloneHTMLElement } from '../../utils';
+import { useGlobalScroll, useLayout } from '../root';
 
 export interface DPopupProps {
-  children: (props: DPopupRenderProps) => JSX.Element | null;
-  dPopup: (props: DPopupPopupRenderProps) => JSX.Element | null;
-  dVisible?: boolean;
-  dContainer: HTMLElement | null;
-  dTrigger?: 'hover' | 'click';
-  dDisabled?: boolean;
+  children: (props: { renderTrigger: DCloneHTMLElement; renderPopup: DCloneHTMLElement }) => JSX.Element | null;
+  dVisible: boolean;
+  dTrigger: 'hover' | 'click';
   dEscClosable?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
-  dUpdatePosition?: () => void;
-  onVisibleChange?: (visible: boolean) => void;
+  dUpdatePosition: {
+    fn: () => void;
+    triggerRef: React.RefObject<HTMLElement>;
+    popupRef: React.RefObject<HTMLElement>;
+    extraScrollRefs: (React.RefObject<HTMLElement> | undefined)[];
+  };
+  onVisibleChange: (visible: boolean) => void;
 }
 
 export function DPopup(props: DPopupProps): JSX.Element | null {
   const {
     children,
-    dPopup,
-    dVisible = false,
-    dContainer,
-    dTrigger = 'hover',
-    dDisabled = false,
+    dVisible,
+    dTrigger,
     dEscClosable = true,
     dMouseEnterDelay = 150,
     dMouseLeaveDelay = 200,
@@ -50,7 +39,11 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
   } = props;
 
   //#region Context
-  const { dScrollEl, dResizeEl } = useLayout();
+  const { dPageScrollRef, dContentResizeRef } = useLayout();
+  //#endregion
+
+  //#region Ref
+  const windowRef = useRefExtra(() => window);
   //#endregion
 
   const dataRef = useRef<{
@@ -60,21 +53,14 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
 
   const async = useAsync();
 
-  const uniqueId = useId();
-
-  const scrollEl = useElement(dScrollEl);
-  const resizeEl = useElement(dResizeEl);
-  const triggerEl = useElement(`[data-popup-triggerid="${uniqueId}"]`);
-  const popupEl = useElement(`[data-popup-popupid="${uniqueId}"]`);
-
   const handleTrigger = (visible?: boolean, behavior?: 'hover' | 'popup-hover') => {
     dataRef.current.clearTid?.();
 
     const changeVisible = () => {
       if (isUndefined(visible)) {
-        onVisibleChange?.(!dVisible);
+        onVisibleChange(!dVisible);
       } else if (!Object.is(dVisible, visible)) {
-        onVisibleChange?.(visible);
+        onVisibleChange(visible);
       }
     };
 
@@ -102,90 +88,115 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
     }
   };
 
-  useEvent(
-    window,
-    'click',
-    () => {
-      if (!dDisabled && dVisible && dTrigger === 'click') {
-        dataRef.current.clearClickOut = async.requestAnimationFrame(() => {
-          handleTrigger(false);
-        });
-      }
-    },
-    { capture: true }
-  );
-
-  useEvent<KeyboardEvent>(window, 'keydown', (e) => {
-    if (!dDisabled && dVisible && dEscClosable && e.code === 'Escape') {
-      handleTrigger(false);
+  const globalScroll = useGlobalScroll(dUpdatePosition.fn, !dVisible);
+  useEffect(() => {
+    if (dVisible && !globalScroll) {
+      const ob = fromEvent(
+        [dPageScrollRef, ...dUpdatePosition.extraScrollRefs].map((ref) => ref?.current).filter((el) => el) as HTMLElement[],
+        'scroll',
+        { passive: true }
+      ).subscribe({
+        next: () => {
+          dUpdatePosition.fn();
+        },
+      });
+      return () => {
+        ob.unsubscribe();
+      };
     }
   });
 
-  const updatePosition = () => {
-    if (!dDisabled && dVisible) {
-      dUpdatePosition?.();
-    }
-  };
-  useResize(triggerEl, updatePosition);
-  useResize(popupEl, updatePosition);
-  useResize(dContainer, updatePosition);
-  useResize(resizeEl, updatePosition);
-  useEvent(dContainer, 'scroll', updatePosition, { passive: true });
-  useEvent(scrollEl, 'scroll', updatePosition, { passive: true });
+  useResize(dUpdatePosition.triggerRef, dUpdatePosition.fn, !dVisible);
+  useResize(dUpdatePosition.popupRef, dUpdatePosition.fn, !dVisible);
+  useResize(dContentResizeRef, dUpdatePosition.fn, !dVisible);
 
-  const childProps: DPopupRenderProps = { 'data-popup-triggerid': uniqueId };
-  if (!dDisabled) {
-    switch (dTrigger) {
-      case 'hover':
-        childProps.pOnMouseEnter = () => {
-          handleTrigger(true, 'hover');
-        };
-        childProps.pOnMouseLeave = () => {
-          handleTrigger(false, 'hover');
-        };
-        break;
-
-      case 'click':
-        childProps.pOnClick = () => {
-          dataRef.current.clearClickOut?.();
-          handleTrigger();
-        };
-        break;
-
-      default:
-        break;
-    }
-  }
-  const child = children(childProps);
-
-  const popupProps: DPopupPopupRenderProps = { 'data-popup-popupid': uniqueId };
-  if (!dDisabled && dVisible) {
-    switch (dTrigger) {
-      case 'hover':
-        popupProps.pOnMouseEnter = () => {
-          handleTrigger(true, 'popup-hover');
-        };
-        popupProps.pOnMouseLeave = () => {
-          handleTrigger(false, 'popup-hover');
-        };
-        break;
-
-      case 'click':
-        popupProps.pOnClick = () => {
-          dataRef.current.clearClickOut?.();
-        };
-        break;
-
-      default:
-        break;
-    }
-  }
-  const popupNode = dPopup(popupProps);
-
-  return (
-    <>
-      {child}
-      {!dDisabled && dContainer && ReactDOM.createPortal(popupNode, dContainer)}
-    </>
+  useEvent(
+    windowRef,
+    'click',
+    () => {
+      dataRef.current.clearClickOut = async.requestAnimationFrame(() => {
+        handleTrigger(false);
+      });
+    },
+    { capture: true },
+    !dVisible || dTrigger !== 'click'
   );
+
+  useEvent<KeyboardEvent>(
+    windowRef,
+    'keydown',
+    (e) => {
+      if (e.code === 'Escape') {
+        handleTrigger(false);
+      }
+    },
+    {},
+    !dVisible || !dEscClosable
+  );
+
+  return children({
+    renderTrigger: (el) => {
+      const triggerProps: React.HTMLAttributes<HTMLElement> = {};
+      switch (dTrigger) {
+        case 'hover':
+          triggerProps.onMouseEnter = (e) => {
+            el.props.onMouseEnter?.(e);
+
+            handleTrigger(true, 'hover');
+          };
+          triggerProps.onMouseLeave = (e) => {
+            el.props.onMouseLeave?.(e);
+
+            handleTrigger(false, 'hover');
+          };
+          break;
+
+        case 'click':
+          triggerProps.onClick = (e) => {
+            el.props.onClick?.(e);
+
+            dataRef.current.clearClickOut?.();
+            handleTrigger();
+          };
+          break;
+
+        default:
+          break;
+      }
+
+      return cloneHTMLElement(el, triggerProps);
+    },
+    renderPopup: (el) => {
+      const popupProps: React.HTMLAttributes<HTMLElement> = {};
+      if (dVisible) {
+        switch (dTrigger) {
+          case 'hover':
+            popupProps.onMouseEnter = (e) => {
+              el.props.onMouseEnter?.(e);
+
+              handleTrigger(true, 'popup-hover');
+            };
+            popupProps.onMouseLeave = (e) => {
+              el.props.onMouseLeave?.(e);
+
+              handleTrigger(false, 'popup-hover');
+            };
+            break;
+
+          case 'click':
+            popupProps.onClick = (e) => {
+              el.props.onClick?.(e);
+
+              dataRef.current.clearClickOut?.();
+            };
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return cloneHTMLElement(el, popupProps);
+    },
+  });
 }

@@ -1,5 +1,3 @@
-import { POSITION_CONFIG } from './config';
-
 type DVerticalSidePlacement = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
 
 interface DVerticalSidePosition {
@@ -15,7 +13,7 @@ export function getVerticalSidePosition(
   config: {
     placement: DVerticalSidePlacement;
     offset?: number;
-    inWindow?: boolean;
+    inWindow?: number | false;
   }
 ): DVerticalSidePosition {
   const { width, height } = popupSize;
@@ -83,8 +81,8 @@ export function getVerticalSidePosition(
       placement === 'top' || placement === 'top-left' || placement === 'top-right'
         ? targetRect.top - height - offset
         : targetRect.top + targetRect.height + offset;
-    if (inWindow) {
-      top = Math.min(Math.max(top, POSITION_CONFIG.space), window.innerHeight - height - POSITION_CONFIG.space);
+    if (inWindow !== false) {
+      top = Math.min(Math.max(top, inWindow), window.innerHeight - height - inWindow);
     }
 
     let left =
@@ -93,8 +91,8 @@ export function getVerticalSidePosition(
         : placement === 'top-left' || placement === 'bottom-left'
         ? targetRect.left
         : targetRect.left + targetRect.width - width;
-    if (inWindow) {
-      left = Math.min(Math.max(left, POSITION_CONFIG.space), window.innerWidth - width - POSITION_CONFIG.space);
+    if (inWindow !== false) {
+      left = Math.min(Math.max(left, inWindow), window.innerWidth - width - inWindow);
     }
 
     const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
@@ -107,8 +105,8 @@ export function getVerticalSidePosition(
     };
 
     if (
-      (placement.includes('top') && top === POSITION_CONFIG.space) ||
-      (placement.includes('bottom') && top === window.innerHeight - height - POSITION_CONFIG.space)
+      inWindow !== false &&
+      ((placement.includes('top') && top === inWindow) || (placement.includes('bottom') && top === window.innerHeight - height - inWindow))
     ) {
       if (prevPosition) {
         return prevPosition;

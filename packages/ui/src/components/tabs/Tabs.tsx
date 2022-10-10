@@ -2,15 +2,16 @@ import type { DId, DSize } from '../../utils/types';
 import type { DDropdownItem } from '../dropdown';
 
 import { nth } from 'lodash';
-import React, { useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { useEventCallback, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
+import { useEventCallback, useId, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
 import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useTranslation, useDValue } from '../../hooks';
+import { useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DDropdown } from '../dropdown';
+import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 
 export interface DTabsRef {
   updateIndicator: () => void;
@@ -139,8 +140,8 @@ function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useResize(tablistWrapperRef.current, refreshTabs);
-  useResize(tablistRef.current, refreshTabs);
+  useResize(tablistWrapperRef, refreshTabs);
+  useResize(tablistRef, refreshTabs);
 
   const updateIndicator = useEventCallback(() => {
     if (tablistRef.current && indicatorRef.current) {

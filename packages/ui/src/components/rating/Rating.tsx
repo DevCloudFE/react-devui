@@ -1,14 +1,16 @@
 import type { DFormControl } from '../form';
 
 import { isFunction } from 'lodash';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { StarFilled } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DStar } from './Star';
 
 export interface DRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -62,7 +64,7 @@ export function DRating(props: DRatingProps): JSX.Element | null {
         [`${dPrefix}rating--read-only`]: dReadOnly,
         'is-disabled': disabled,
       })}
-      role={restProps.role ?? 'radiogroup'}
+      role="radiogroup"
       onMouseLeave={(e) => {
         restProps.onMouseLeave?.(e);
 

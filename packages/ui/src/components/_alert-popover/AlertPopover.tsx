@@ -1,16 +1,20 @@
-import React, { useRef } from 'react';
+import type { DCloneHTMLElement } from '../../utils/types';
+
+import { useRef } from 'react';
 
 import { useAsync, useMount } from '@react-devui/hooks';
 
+import { cloneHTMLElement } from '../../utils';
+
 export interface DAlertPopoverProps {
-  children: React.ReactElement;
+  children: (props: { render: DCloneHTMLElement }) => JSX.Element | null;
   dDuration: number;
-  dEscClosable?: boolean;
-  onClose?: () => void;
+  dEscClosable: boolean;
+  onClose: (() => void) | undefined;
 }
 
 export function DAlertPopover(props: DAlertPopoverProps): JSX.Element | null {
-  const { children, dDuration, dEscClosable = true, onClose } = props;
+  const { children, dDuration, dEscClosable, onClose } = props;
 
   const dataRef = useRef<{
     clearTid?: () => void;
@@ -26,31 +30,33 @@ export function DAlertPopover(props: DAlertPopoverProps): JSX.Element | null {
     }
   });
 
-  return React.cloneElement<React.HTMLAttributes<HTMLDivElement>>(children, {
-    ...children.props,
-    tabIndex: children.props.tabIndex ?? -1,
-    role: children.props.role ?? 'alert',
-    onMouseEnter: (e) => {
-      children.props.onMouseEnter?.(e);
+  return children({
+    render: (el) =>
+      cloneHTMLElement(el, {
+        tabIndex: el.props.tabIndex ?? -1,
+        role: el.props.role ?? 'alert',
+        onMouseEnter: (e) => {
+          el.props.onMouseEnter?.(e);
 
-      dataRef.current.clearTid?.();
-    },
-    onMouseLeave: (e) => {
-      children.props.onMouseLeave?.(e);
+          dataRef.current.clearTid?.();
+        },
+        onMouseLeave: (e) => {
+          el.props.onMouseLeave?.(e);
 
-      if (dDuration > 0) {
-        dataRef.current.clearTid = async.setTimeout(() => {
-          onClose?.();
-        }, dDuration * 1000);
-      }
-    },
-    onKeyDown: (e) => {
-      children.props.onKeyDown?.(e);
+          if (dDuration > 0) {
+            dataRef.current.clearTid = async.setTimeout(() => {
+              onClose?.();
+            }, dDuration * 1000);
+          }
+        },
+        onKeyDown: (e) => {
+          el.props.onKeyDown?.(e);
 
-      if (dEscClosable && e.code === 'Escape') {
-        dataRef.current.clearTid?.();
-        onClose?.();
-      }
-    },
+          if (dEscClosable && e.code === 'Escape') {
+            dataRef.current.clearTid?.();
+            onClose?.();
+          }
+        },
+      }),
   });
 }

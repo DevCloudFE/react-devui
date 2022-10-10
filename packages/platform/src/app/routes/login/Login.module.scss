@@ -58,21 +58,21 @@
 
   @include e(footer) {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column-reverse;
+    align-items: center;
     width: 100%;
     max-width: 900px;
     margin-top: 60px;
     color: var(--d-text-color-sub);
     border-top: 1px solid var(--d-color-border);
 
-    & > div {
-      margin-top: 12px;
+    @include media-breakpoint-up(md) {
+      flex-direction: row;
+      justify-content: space-between;
     }
 
-    @include m(phone) {
-      flex-direction: column-reverse;
-      align-items: center;
-      justify-content: unset;
+    & > div {
+      margin-top: 12px;
     }
   }
 

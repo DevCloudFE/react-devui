@@ -1,16 +1,18 @@
 import type { DId, DSize } from '../../utils/types';
 import type { DFormControl } from '../form';
-import type { DRadioPropsWithPrivate } from './Radio';
+import type { DRadioPrivateProps } from './Radio';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { useId } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { useGeneralContext, useDValue } from '../../hooks';
+import { cloneHTMLElement, registerComponentMate } from '../../utils';
 import { DCompose } from '../compose';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DRadio } from './Radio';
 
 export interface DRadioItem<V extends DId> {
@@ -53,7 +55,6 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   //#endregion
 
   const uniqueId = useId();
-  const getId = (value: V) => `${dPrefix}radio-group-${value}-${uniqueId}`;
 
   const formControlInject = useFormControl(dFormControl);
   const [value, changeValue] = useDValue<V | null, V>(nth(dList, 0)?.value ?? null, dModel, onModelChange, undefined, formControlInject);
@@ -77,29 +78,33 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
         'is-change': isChange,
       })}
       dDisabled={disabled}
-      role={restProps.role ?? 'radiogroup'}
+      role="radiogroup"
       dSize={size}
       dVertical={dVertical}
     >
       {dList.map((item) =>
-        React.createElement<DRadioPropsWithPrivate>(
-          DRadio,
-          {
-            key: item.value,
-            dModel: item.value === value,
-            dDisabled: item.disabled,
-            dInputProps: {
-              ...(item.value === value ? { id: getId(item.value), 'data-form-label-for': true } : undefined),
-              name: dName ?? uniqueId,
-              value: item.value,
-            },
-            onModelChange: () => {
+        React.cloneElement<DRadioPrivateProps>(
+          <DRadio
+            key={item.value}
+            dModel={item.value === value}
+            dDisabled={item.disabled}
+            dInputRender={(el) =>
+              cloneHTMLElement(el, {
+                value: item.value,
+                name: dName ?? uniqueId,
+                ['data-form-item-label-for' as string]: item.value === value,
+              })
+            }
+            onModelChange={() => {
               changeValue(item.value);
               setIsChange(true);
-            },
+            }}
+          >
+            {item.label}
+          </DRadio>,
+          {
             __type: dType,
-          },
-          item.label
+          }
         )
       )}
     </DCompose>

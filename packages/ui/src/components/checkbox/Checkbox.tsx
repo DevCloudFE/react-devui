@@ -1,20 +1,26 @@
+import type { DCloneHTMLElement } from '../../utils/types';
 import type { DFormControl } from '../form';
+
+import { isUndefined } from 'lodash';
 
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCheckboxGroup } from './CheckboxGroup';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
+  dRef?: {
+    input?: React.ForwardedRef<HTMLInputElement>;
+  };
   dFormControl?: DFormControl;
   dModel?: boolean;
   dDisabled?: boolean;
   dIndeterminate?: boolean;
-  dInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  dInputRef?: React.Ref<HTMLInputElement>;
+  dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (checked: boolean) => void;
 }
 
@@ -25,12 +31,12 @@ export const DCheckbox: {
 } = (props) => {
   const {
     children,
+    dRef,
     dFormControl,
     dModel,
     dDisabled = false,
     dIndeterminate = false,
-    dInputProps,
-    dInputRef,
+    dInputRender,
     onModelChange,
 
     ...restProps
@@ -62,20 +68,24 @@ export const DCheckbox: {
       })}
     >
       <div className={`${dPrefix}checkbox__state-container`}>
-        <DBaseInput
-          {...dInputProps}
-          ref={dInputRef}
-          className={getClassName(dInputProps?.className, `${dPrefix}checkbox__input`)}
-          type="checkbox"
-          disabled={disabled}
-          aria-checked={dIndeterminate ? 'mixed' : checked}
-          onChange={(e) => {
-            dInputProps?.onChange?.(e);
+        <DBaseInput dFormControl={dFormControl} dLabelFor>
+          {({ render: renderBaseInput }) => {
+            const input = renderBaseInput(
+              <input
+                ref={dRef?.input}
+                className={`${dPrefix}checkbox__input`}
+                type="checkbox"
+                disabled={disabled}
+                aria-checked={dIndeterminate ? 'mixed' : checked}
+                onChange={() => {
+                  changeChecked(!checked);
+                }}
+              />
+            );
 
-            changeChecked(!checked);
+            return isUndefined(dInputRender) ? input : dInputRender(input);
           }}
-          dFormControl={dFormControl}
-        />
+        </DBaseInput>
         {dIndeterminate ? (
           <div className={`${dPrefix}checkbox__indeterminate`}></div>
         ) : (

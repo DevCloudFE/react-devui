@@ -1,27 +1,24 @@
 import type { UnitType } from 'dayjs';
 
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { first, fromEvent, Subject, takeUntil } from 'rxjs';
 
-import { useAsync, useEvent } from '@react-devui/hooks';
+import { useAsync, useUnmount } from '@react-devui/hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
-import { usePrefixConfig, useTranslation } from '../../hooks';
-
-export interface DPanelRef {
-  updateView: (time: Date) => void;
-}
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DPanelProps {
-  dDate: Date | null;
-  dAnotherDate: Date | null;
-  dConfigDate?: (date: Date) => { disabled?: boolean };
-  onDateChange?: (time: Date) => void;
+  dDateCurrentSelected: Date | null;
+  dDateAnotherSelected: Date | null;
+  dConfigDate: ((date: Date) => { disabled?: boolean }) | undefined;
+  onDateChange: (time: Date) => void;
 }
 
-function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Element | null {
-  const { dDate, dAnotherDate, dConfigDate, onDateChange } = props;
+function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>): JSX.Element | null {
+  const { dDateCurrentSelected, dDateAnotherSelected, dConfigDate, onDateChange } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -36,13 +33,21 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
   const async = useAsync();
   const [t, lang] = useTranslation();
 
-  const activeDate = dDate ? dayjs(dDate) : dayjs().set('hour', 0).set('minute', 0).set('second', 0);
-  const anotherDate = dAnotherDate ? dayjs(dAnotherDate) : null;
+  const onDestroy$ = useMemo(() => new Subject<void>(), []);
+  const dayjsCurrentSelected = dDateCurrentSelected
+    ? dayjs(dDateCurrentSelected)
+    : dayjs().set('hour', 0).set('minute', 0).set('second', 0);
+  const dayjsAnotherSelected = dDateAnotherSelected ? dayjs(dDateAnotherSelected) : null;
 
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
-  const [_showDate, setShowDate] = useState<Date>(activeDate.toDate());
+  const [_showDate, setShowDate] = useState<Date>(dayjsCurrentSelected.toDate());
   const showDate = dayjs(_showDate);
+
+  const handleButtonMouseUp = () => {
+    dataRef.current.clearLoop?.();
+    dataRef.current.clearTid?.();
+  };
 
   const handleButtonDown = (unit: UnitType, value: number) => {
     const loop = () => {
@@ -53,11 +58,14 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
       dataRef.current.clearLoop = async.setTimeout(() => loop(), 50);
     };
     dataRef.current.clearTid = async.setTimeout(() => loop(), 400);
-  };
 
-  const handleButtonMouseUp = () => {
-    dataRef.current.clearLoop?.();
-    dataRef.current.clearTid?.();
+    fromEvent(window, 'mouseup')
+      .pipe(takeUntil(onDestroy$), first())
+      .subscribe({
+        next: () => {
+          handleButtonMouseUp();
+        },
+      });
   };
 
   const getButtonProps = (unit: UnitType, value: number) =>
@@ -95,15 +103,14 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
     return month;
   })();
 
-  useEvent(window, 'mouseup', handleButtonMouseUp);
+  useUnmount(() => {
+    handleButtonMouseUp();
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      updateView: setShowDate,
-    }),
-    []
-  );
+    onDestroy$.next();
+    onDestroy$.complete();
+  });
+
+  useImperativeHandle(ref, () => setShowDate, []);
 
   return (
     <div className={`${dPrefix}date-picker__panel`}>
@@ -140,9 +147,18 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
               {week.map((_d, index2) => {
                 const d = dayjs(_d);
                 const { disabled } = dConfigDate?.(_d) ?? {};
-                const isActive = dDate && d.isSame(activeDate, 'date');
-                const isAnother = anotherDate && d.isSame(anotherDate, 'date');
-                const isHover = !isActive && !isAnother && anotherDate && d.isSame(hoverDate, 'date');
+                const isCurrentSelected = dDateCurrentSelected && d.isSame(dayjsCurrentSelected, 'date');
+                const isAnotherSelected = dayjsAnotherSelected && d.isSame(dayjsAnotherSelected, 'date');
+                const isHover = !isCurrentSelected && !isAnotherSelected && dayjsAnotherSelected && d.isSame(hoverDate, 'date');
+                const isBetween =
+                  !isCurrentSelected &&
+                  !isCurrentSelected &&
+                  !isHover &&
+                  dDateCurrentSelected &&
+                  dayjsAnotherSelected &&
+                  d.isBetween(dayjsCurrentSelected, dayjsAnotherSelected, 'date');
+                const isBetweenHover =
+                  !isCurrentSelected && hoverDate && dayjsAnotherSelected && d.isBetween(hoverDate, dayjsAnotherSelected, 'date');
 
                 return (
                   <td
@@ -150,7 +166,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
                     style={{ pointerEvents: disabled ? 'none' : undefined }}
                     onClick={() => {
                       setShowDate(_d);
-                      onDateChange?.(_d);
+                      onDateChange(_d);
                     }}
                     onMouseEnter={() => {
                       dataRef.current.clearHoverTid?.();
@@ -164,13 +180,12 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<DPanelRef>): JSX.Elem
                     <div
                       className={getClassName(`${dPrefix}date-picker__cell`, {
                         [`${dPrefix}date-picker__cell--out-month`]: d.get('month') !== showDate.get('month'),
-                        [`${dPrefix}date-picker__cell--today`]: !isActive && !isAnother && d.isSame(dayjs(), 'date'),
-                        'is-active': isActive,
-                        'is-another': !isActive && isAnother,
+                        [`${dPrefix}date-picker__cell--today`]: !isCurrentSelected && !isAnotherSelected && d.isSame(dayjs(), 'date'),
+                        'is-current-selected': isCurrentSelected,
+                        'is-another-selected': !isCurrentSelected && isAnotherSelected,
                         'is-hover': isHover,
-                        'is-between':
-                          !isActive && !isAnother && !isHover && dDate && anotherDate && d.isBetween(activeDate, anotherDate, 'date'),
-                        'is-between-hover': !isActive && hoverDate && anotherDate && d.isBetween(hoverDate, anotherDate, 'date'),
+                        'is-between': isBetween,
+                        'is-between-hover': isBetweenHover,
                         'is-disabled': disabled,
                       })}
                     >

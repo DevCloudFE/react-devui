@@ -4,25 +4,25 @@ import React, { useState } from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useTranslation } from '../../hooks';
 import { DButton } from '../button';
+import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dClassNamePrefix: string;
-  dAlign?: 'left' | 'center' | 'right';
-  dActions?: React.ReactNode[];
-  dCancelProps?: DButtonProps;
-  dOkProps?: DButtonProps;
-  onCancelClick?: () => void | false | Promise<void | false>;
-  onOkClick?: () => void | false | Promise<void | false>;
-  onClose?: () => void;
+  dAlign: 'left' | 'center' | 'right';
+  dActions: React.ReactNode[];
+  dCancelProps: DButtonProps | undefined;
+  dOkProps: DButtonProps | undefined;
+  onCancelClick: (() => void | false | Promise<void | false>) | undefined;
+  onOkClick: (() => void | false | Promise<void | false>) | undefined;
+  onClose: (() => void) | undefined;
 }
 
 export function DFooter(props: DFooterProps): JSX.Element | null {
   const {
     dClassNamePrefix,
-    dAlign = 'right',
-    dActions = ['cancel', 'ok'],
+    dAlign,
+    dActions,
     dCancelProps,
     dOkProps,
     onCancelClick,

@@ -1,3 +1,5 @@
+@import 'mixins/date-input';
+
 $time-picker-cell-height: 28px;
 
 @include b(time-picker) {

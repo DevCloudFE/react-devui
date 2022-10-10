@@ -1,8 +1,8 @@
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DEmpty } from '../empty';
+import { useComponentConfig, usePrefixConfig } from '../root';
 import { DTableTd } from './TableTd';
 
 export interface DTableEmptyProps extends React.HTMLAttributes<HTMLTableRowElement> {

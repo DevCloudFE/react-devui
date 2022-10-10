@@ -2,8 +2,9 @@ import type { DSize } from '../../utils/types';
 
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext } from '../../hooks';
+import { useGeneralContext } from '../../hooks';
 import { convertHex, registerComponentMate } from '../../utils';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DTagProps extends React.HTMLAttributes<HTMLDivElement> {
   dType?: 'primary' | 'fill' | 'outline';

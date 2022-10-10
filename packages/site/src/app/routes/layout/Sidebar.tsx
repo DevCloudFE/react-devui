@@ -1,15 +1,14 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import type { DMenuItem } from '@react-devui/ui/components/menu';
-import type { DLang } from '@react-devui/ui/hooks/i18n';
+import type { DLang } from '@react-devui/ui/utils/types';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import menu from 'packages/site/dist/menu.json';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { useLocalStorage } from '@react-devui/hooks';
+import { useStorage } from '@react-devui/hooks';
 import { AppstoreOutlined, BookOutlined, RightOutlined } from '@react-devui/icons';
 import { DDrawer, DMenu } from '@react-devui/ui';
-import { useMediaQuery } from '@react-devui/ui/hooks';
 
 export interface AppSidebarProps {
   menuOpen: boolean;
@@ -20,8 +19,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
   const { menuOpen, onMenuOpenChange } = props;
 
   const { t } = useTranslation();
-  const [language] = useLocalStorage<DLang>('language', 'en-US');
-  const breakpointsMatched = useMediaQuery();
+  const languageStorage = useStorage<DLang>('language', 'en-US');
 
   const location = useLocation();
   const page = location.pathname.startsWith('/docs') ? 'Docs' : location.pathname.startsWith('/components') ? 'Components' : null;
@@ -83,7 +81,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
                 title: (
                   <Link tabIndex={-1} to={child.to}>
                     {child.title}
-                    {language !== 'en-US' && (
+                    {languageStorage.value !== 'en-US' && (
                       <span className="app-layout-sidebar__menu-subtitle">{t(`menu.components.${child.title}`)}</span>
                     )}
                   </Link>
@@ -96,39 +94,37 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
     ></DMenu>
   );
 
-  return breakpointsMatched.includes('md') ? (
-    page ? (
-      <div className="app-layout-sidebar">{menuNode}</div>
-    ) : null
-  ) : (
-    <DDrawer
-      className="app-layout-sidebar__drawer"
-      dVisible={menuOpen}
-      dHeader={
-        <DDrawer.Header>
-          <Link className="app-layout-sidebar__header-logo" to="/">
-            <img src="/assets/logo.svg" alt="Logo" width="24" height="24" />
-            <span>DevUI</span>
+  return (
+    <>
+      {page ? <div className="d-none d-md-block app-layout-sidebar">{menuNode}</div> : null}
+      <DDrawer
+        className="d-md-none app-layout-sidebar__drawer"
+        dVisible={menuOpen}
+        dHeader={
+          <DDrawer.Header>
+            <Link className="app-layout-sidebar__header-logo" to="/">
+              <img src="/assets/logo.svg" alt="Logo" width="24" height="24" />
+              <span>DevUI</span>
+            </Link>
+          </DDrawer.Header>
+        }
+        dWidth={280}
+        onVisibleChange={onMenuOpenChange}
+      >
+        <div className="app-layout-sidebar__button-container">
+          <Link className="app-layout-sidebar__link-button" to="/docs">
+            <BookOutlined />
+            {t('Docs')}
+            <RightOutlined />
           </Link>
-        </DDrawer.Header>
-      }
-      dWidth={280}
-      onVisibleChange={onMenuOpenChange}
-    >
-      <div className="app-layout-sidebar__button-container">
-        <Link className="app-layout-sidebar__link-button" to="/docs">
-          <BookOutlined />
-          {t('Docs')}
-          <RightOutlined />
-        </Link>
-        <Link className="app-layout-sidebar__link-button" to="/components">
-          <AppstoreOutlined />
-          {t('Components')}
-          <RightOutlined />
-        </Link>
-      </div>
-
-      {page && menuNode}
-    </DDrawer>
+          <Link className="app-layout-sidebar__link-button" to="/components">
+            <AppstoreOutlined />
+            {t('Components')}
+            <RightOutlined />
+          </Link>
+        </div>
+        {page && menuNode}
+      </DDrawer>
+    </>
   );
 }

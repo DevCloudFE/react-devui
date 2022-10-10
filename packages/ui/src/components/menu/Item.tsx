@@ -1,42 +1,30 @@
 import type { DMenuMode } from './Menu';
 
+import { useEffect, useState } from 'react';
+
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig } from '../../hooks';
+import { usePrefixConfig } from '../root';
 import { DTooltip } from '../tooltip';
 
 export interface DItemProps {
   children: React.ReactNode;
   dId: string;
-  dDisabled?: boolean;
+  dLevel: number;
+  dStep: number;
+  dSpace: number;
+  dIcon: React.ReactNode | undefined;
   dPosinset: [number, number];
   dMode: DMenuMode;
   dInNav: boolean;
   dActive: boolean;
   dFocusVisible: boolean;
-  dIcon?: React.ReactNode;
-  dStep: number;
-  dSpace: number;
-  dLevel?: number;
+  dDisabled: boolean;
   onItemClick: () => void;
 }
 
 export function DItem(props: DItemProps): JSX.Element | null {
-  const {
-    children,
-    dId,
-    dDisabled,
-    dPosinset,
-    dMode,
-    dInNav,
-    dActive,
-    dFocusVisible,
-    dIcon,
-    dStep,
-    dSpace,
-    dLevel = 0,
-    onItemClick,
-  } = props;
+  const { children, dId, dLevel, dStep, dSpace, dIcon, dPosinset, dMode, dInNav, dActive, dFocusVisible, dDisabled, onItemClick } = props;
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -44,12 +32,18 @@ export function DItem(props: DItemProps): JSX.Element | null {
 
   const inHorizontalNav = dMode === 'horizontal' && dInNav;
 
+  const _iconMode = dMode === 'icon' && dInNav;
+  const [iconMode, setIconMode] = useState(_iconMode);
+  useEffect(() => {
+    setIconMode(_iconMode);
+  }, [_iconMode]);
+
   const liNode = (
     <li
       id={dId}
       className={getClassName(`${dPrefix}menu__item`, `${dPrefix}menu__item--basic`, {
         [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
-        [`${dPrefix}menu__item--icon`]: dMode === 'icon' && dInNav,
+        [`${dPrefix}menu__item--icon`]: iconMode,
         'is-active': dActive,
         'is-disabled': dDisabled,
       })}
@@ -72,9 +66,11 @@ export function DItem(props: DItemProps): JSX.Element | null {
     </li>
   );
 
-  return (
-    <DTooltip dDisabled={!(dMode === 'icon' && dInNav)} dTitle={children} dPlacement="right">
+  return iconMode ? (
+    <DTooltip dTitle={children} dPlacement="right">
       {liNode}
     </DTooltip>
+  ) : (
+    liNode
   );
 }

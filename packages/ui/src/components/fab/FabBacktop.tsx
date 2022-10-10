@@ -1,21 +1,22 @@
 import type { DTransitionState } from '../_transition';
 import type { DFabButtonProps } from './FabButton';
-import type { DElementSelector } from '@react-devui/hooks/useElement';
+import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
 
+import { isString } from 'lodash';
 import React, { useRef, useState } from 'react';
 
-import { useElement, useEvent, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
+import { useEvent, useIsomorphicLayoutEffect, useRefExtra, useResize } from '@react-devui/hooks';
 import { VerticalAlignTopOutlined } from '@react-devui/icons';
-import { checkNodeExist, scrollTo } from '@react-devui/utils';
+import { checkNodeExist, scrollTo, toPx } from '@react-devui/utils';
 
-import { useComponentConfig, useLayout } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
+import { useComponentConfig, useGlobalScroll, useLayout } from '../root';
 import { DFabButton } from './FabButton';
 
 export interface DFabBacktopProps extends DFabButtonProps {
-  dPage?: DElementSelector;
-  dDistance?: number;
+  dPage?: DRefExtra;
+  dDistance?: number | string;
   dScrollBehavior?: 'instant' | 'smooth';
 }
 
@@ -31,15 +32,16 @@ function FabBacktop(props: DFabBacktopProps, ref: React.ForwardedRef<HTMLButtonE
   } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
-  const { dScrollEl, dResizeEl } = useLayout();
+  const { dPageScrollRef, dContentResizeRef } = useLayout();
+  //#endregion
+
+  //#region Ref
+  const pageRef = useRefExtra(dPage ?? (() => dPageScrollRef.current));
   //#endregion
 
   const dataRef = useRef<{
     clearTid?: () => void;
   }>({});
-
-  const pageEl = useElement(dPage ?? dScrollEl);
-  const resizeEl = useElement(dResizeEl);
 
   const [visible, setVisible] = useState(false);
 
@@ -56,19 +58,20 @@ function FabBacktop(props: DFabBacktopProps, ref: React.ForwardedRef<HTMLButtonE
   };
 
   const updateBackTop = () => {
-    if (!pageEl) {
-      return;
+    if (pageRef.current) {
+      const distance = isString(dDistance) ? toPx(dDistance, true) : dDistance;
+      setVisible(pageRef.current.scrollTop >= distance);
     }
-
-    setVisible(pageEl.scrollTop >= dDistance);
   };
   useIsomorphicLayoutEffect(() => {
     updateBackTop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useResize(resizeEl, updateBackTop);
-  useEvent(pageEl, 'scroll', updateBackTop, { passive: true });
+  const globalScroll = useGlobalScroll(updateBackTop);
+  useEvent(pageRef, 'scroll', updateBackTop, { passive: true }, globalScroll);
+
+  useResize(dContentResizeRef, updateBackTop);
 
   return (
     <DTransition dIn={visible} dDuring={TTANSITION_DURING_BASE}>
@@ -83,9 +86,9 @@ function FabBacktop(props: DFabBacktopProps, ref: React.ForwardedRef<HTMLButtonE
           onClick={(e) => {
             restProps.onClick?.(e);
 
-            if (pageEl) {
+            if (pageRef.current) {
               dataRef.current.clearTid?.();
-              dataRef.current.clearTid = scrollTo(pageEl, {
+              dataRef.current.clearTid = scrollTo(pageRef.current, {
                 top: 0,
                 behavior: dScrollBehavior,
               });

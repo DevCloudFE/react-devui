@@ -6,11 +6,12 @@ import React, { useRef, useState } from 'react';
 import { useForkRef, useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { usePrefixConfig, useComponentConfig, useGeneralContext, useDValue } from '../../hooks';
+import { useGeneralContext, useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
+import { useComponentConfig, usePrefixConfig } from '../root';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
@@ -43,9 +44,8 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
 
   //#region Ref
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  //#endregion
-
   const combineTextareaRef = useForkRef(textareaRef, ref);
+  //#endregion
 
   const lineHeight = gSize === 'larger' ? 28 : gSize === 'smaller' ? 20 : 24;
 
@@ -97,31 +97,44 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
 
   return (
     <>
-      <DBaseDesign dFormControl={dFormControl}>
-        <DBaseInput
-          {...restProps}
-          ref={combineTextareaRef}
-          className={getClassName(restProps.className, `${dPrefix}textarea`, {
-            [`${dPrefix}textarea--${gSize}`]: gSize,
-          })}
-          style={{
-            ...restProps.style,
-            ...heightStyle,
-            lineHeight: `${lineHeight}px`,
-            minHeight: `${lineHeight + 8}px`,
-            resize: resizable ? undefined : 'none',
-          }}
-          value={value}
-          disabled={disabled}
-          onChange={(e) => {
-            restProps.onChange?.(e);
+      <DBaseDesign
+        dComposeDesign={false}
+        dFormDesign={{
+          control: dFormControl,
+        }}
+      >
+        {({ render: renderBaseDesign }) =>
+          renderBaseDesign(
+            <DBaseInput dFormControl={dFormControl} dLabelFor>
+              {({ render: renderBaseInput }) =>
+                renderBaseInput(
+                  <textarea
+                    {...restProps}
+                    ref={combineTextareaRef}
+                    className={getClassName(restProps.className, `${dPrefix}textarea`, {
+                      [`${dPrefix}textarea--${gSize}`]: gSize,
+                    })}
+                    style={{
+                      ...restProps.style,
+                      ...heightStyle,
+                      lineHeight: `${lineHeight}px`,
+                      minHeight: `${lineHeight + 8}px`,
+                      resize: resizable ? undefined : 'none',
+                    }}
+                    value={value}
+                    disabled={disabled}
+                    onChange={(e) => {
+                      restProps.onChange?.(e);
 
-            changeValue(e.currentTarget.value);
-            getRowNum();
-          }}
-          dTag="textarea"
-          dFormControl={dFormControl}
-        />
+                      changeValue(e.currentTarget.value);
+                      getRowNum();
+                    }}
+                  />
+                )
+              }
+            </DBaseInput>
+          )
+        }
       </DBaseDesign>
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>
