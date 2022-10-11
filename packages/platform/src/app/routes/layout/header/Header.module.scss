@@ -9,7 +9,7 @@
   width: 100%;
   height: 64px;
   padding: 0 16px 0 0;
-  color: map.get($colors, 'white');
+  color: map.get($d-colors, 'white');
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   background-color: #001529;
   box-shadow: 0 2px 8px 0 var(--d-shadow-color);

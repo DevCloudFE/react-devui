@@ -14,7 +14,7 @@
   $selector: &;
   $disabled-selector: ':disabled:not(.is-loading)';
 
-  --#{$variable-prefix}fab-size: 56px;
+  --#{$d-prefix}fab-size: 56px;
 
   position: relative;
   display: inline-block;
@@ -29,16 +29,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: var(--#{$variable-prefix}fab-size);
-    height: var(--#{$variable-prefix}fab-size);
+    min-width: var(--#{$d-prefix}fab-size);
+    height: var(--#{$d-prefix}fab-size);
     padding: 0;
     margin: 0;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 4px;
-    box-shadow: var(--#{$variable-prefix}fab-shadow);
-    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
-      color var(--#{$variable-prefix}animation-duration-base) linear,
-      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    box-shadow: var(--#{$d-prefix}fab-shadow);
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear,
+      background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:disabled {
       pointer-events: none;
@@ -59,31 +58,31 @@
       }
     }
 
-    @each $theme, $rgb in $themes {
+    @each $theme, $rgb in $d-themes {
       @include theme(#{$theme}) {
-        --#{$variable-prefix}fab-color: var(--#{$variable-prefix}color-#{$theme});
-        --#{$variable-prefix}fab-color-lighter: var(--#{$variable-prefix}color-#{$theme}-lighter);
-        --#{$variable-prefix}fab-color-darker: var(--#{$variable-prefix}color-#{$theme}-darker);
-        --#{$variable-prefix}fab-text-hover-background: var(--#{$variable-prefix}background-color-#{$theme}-hover);
-        --#{$variable-prefix}fab-text-active-background: var(--#{$variable-prefix}background-color-#{$theme});
+        --#{$d-prefix}fab-color: var(--#{$d-prefix}color-#{$theme});
+        --#{$d-prefix}fab-color-lighter: var(--#{$d-prefix}color-#{$theme}-lighter);
+        --#{$d-prefix}fab-color-darker: var(--#{$d-prefix}color-#{$theme}-darker);
+        --#{$d-prefix}fab-text-hover-background: var(--#{$d-prefix}background-color-#{$theme}-hover);
+        --#{$d-prefix}fab-text-active-background: var(--#{$d-prefix}background-color-#{$theme});
       }
     }
 
     @include m(primary) {
-      color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}fab-color);
-      border: 1px solid var(--#{$variable-prefix}fab-color);
+      color: map.get($d-colors, 'white');
+      background-color: var(--#{$d-prefix}fab-color);
+      border: 1px solid var(--#{$d-prefix}fab-color);
 
       &:hover,
       &:focus,
       &.is-loading {
-        background-color: var(--#{$variable-prefix}fab-color-lighter);
-        border-color: var(--#{$variable-prefix}fab-color-lighter);
+        background-color: var(--#{$d-prefix}fab-color-lighter);
+        border-color: var(--#{$d-prefix}fab-color-lighter);
       }
 
       &:active {
-        background-color: var(--#{$variable-prefix}fab-color-darker);
-        border-color: var(--#{$variable-prefix}fab-color-darker);
+        background-color: var(--#{$d-prefix}fab-color-darker);
+        border-color: var(--#{$d-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
@@ -92,116 +91,116 @@
     }
 
     @include m(secondary) {
-      color: var(--#{$variable-prefix}text-color);
+      color: var(--#{$d-prefix}text-color);
       background-color: transparent;
-      border: 1px solid var(--#{$variable-prefix}color-border);
+      border: 1px solid var(--#{$d-prefix}color-border);
 
       &:hover,
       &:focus,
       &.is-loading {
-        color: var(--#{$variable-prefix}fab-color-lighter);
-        border-color: var(--#{$variable-prefix}fab-color-lighter);
+        color: var(--#{$d-prefix}fab-color-lighter);
+        border-color: var(--#{$d-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}fab-color-darker);
-        border-color: var(--#{$variable-prefix}fab-color-darker);
+        color: var(--#{$d-prefix}fab-color-darker);
+        border-color: var(--#{$d-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
-        color: var(--#{$variable-prefix}color-disabled);
+        color: var(--#{$d-prefix}color-disabled);
         pointer-events: none;
-        background-color: var(--#{$variable-prefix}background-color-disabled);
+        background-color: var(--#{$d-prefix}background-color-disabled);
       }
     }
 
     @include m(outline) {
-      color: var(--#{$variable-prefix}fab-color);
+      color: var(--#{$d-prefix}fab-color);
       background-color: transparent;
-      border: 1px solid var(--#{$variable-prefix}fab-color);
+      border: 1px solid var(--#{$d-prefix}fab-color);
 
       &:hover,
       &:focus,
       &.is-loading {
-        color: var(--#{$variable-prefix}fab-color-lighter);
-        border-color: var(--#{$variable-prefix}fab-color-lighter);
+        color: var(--#{$d-prefix}fab-color-lighter);
+        border-color: var(--#{$d-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}fab-color-darker);
-        border-color: var(--#{$variable-prefix}fab-color-darker);
+        color: var(--#{$d-prefix}fab-color-darker);
+        border-color: var(--#{$d-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
-        color: var(--#{$variable-prefix}color-disabled);
-        border-color: var(--#{$variable-prefix}color-border);
+        color: var(--#{$d-prefix}color-disabled);
+        border-color: var(--#{$d-prefix}color-border);
       }
     }
 
     @include m(dashed) {
-      color: var(--#{$variable-prefix}fab-color);
+      color: var(--#{$d-prefix}fab-color);
       background-color: transparent;
-      border: 1px dashed var(--#{$variable-prefix}fab-color);
+      border: 1px dashed var(--#{$d-prefix}fab-color);
 
       &:hover,
       &:focus,
       &.is-loading {
-        color: var(--#{$variable-prefix}fab-color-lighter);
-        border-color: var(--#{$variable-prefix}fab-color-lighter);
+        color: var(--#{$d-prefix}fab-color-lighter);
+        border-color: var(--#{$d-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}fab-color-darker);
-        border-color: var(--#{$variable-prefix}fab-color-darker);
+        color: var(--#{$d-prefix}fab-color-darker);
+        border-color: var(--#{$d-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
-        color: var(--#{$variable-prefix}color-disabled);
-        border-color: var(--#{$variable-prefix}color-border);
+        color: var(--#{$d-prefix}color-disabled);
+        border-color: var(--#{$d-prefix}color-border);
       }
     }
 
     @include m(text) {
-      color: var(--#{$variable-prefix}text-color);
+      color: var(--#{$d-prefix}text-color);
       background-color: transparent;
       border: none;
 
       &:hover,
       &:focus,
       &.is-loading {
-        color: var(--#{$variable-prefix}fab-color-lighter);
-        background-color: var(--#{$variable-prefix}fab-text-hover-background);
+        color: var(--#{$d-prefix}fab-color-lighter);
+        background-color: var(--#{$d-prefix}fab-text-hover-background);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}fab-color-darker);
-        background-color: var(--#{$variable-prefix}fab-text-active-background);
+        color: var(--#{$d-prefix}fab-color-darker);
+        background-color: var(--#{$d-prefix}fab-text-active-background);
       }
 
       &#{$disabled-selector} {
-        color: var(--#{$variable-prefix}color-disabled);
+        color: var(--#{$d-prefix}color-disabled);
         pointer-events: none;
-        background-color: var(--#{$variable-prefix}background-color-disabled);
+        background-color: var(--#{$d-prefix}background-color-disabled);
       }
     }
 
     @include m(link) {
-      color: var(--#{$variable-prefix}fab-color);
+      color: var(--#{$d-prefix}fab-color);
       background-color: transparent;
       border: none;
 
       &:hover,
       &:focus,
       &.is-loading {
-        color: var(--#{$variable-prefix}fab-color-lighter);
+        color: var(--#{$d-prefix}fab-color-lighter);
       }
 
       &:active {
-        color: var(--#{$variable-prefix}fab-color-darker);
+        color: var(--#{$d-prefix}fab-color-darker);
       }
 
       &#{$disabled-selector} {
-        color: var(--#{$variable-prefix}color-disabled);
+        color: var(--#{$d-prefix}color-disabled);
       }
     }
 
@@ -210,7 +209,7 @@
     }
 
     @include m(round) {
-      border-radius: calc(var(--#{$variable-prefix}fab-size) / 2);
+      border-radius: calc(var(--#{$d-prefix}fab-size) / 2);
     }
   }
 
@@ -218,13 +217,12 @@
     position: absolute;
     font-size: 1.2em;
     opacity: 0;
-    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear,
-      transform var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: opacity var(--#{$d-prefix}animation-duration-base) linear, transform var(--#{$d-prefix}animation-duration-base) linear;
   }
 
   @include e(button-content) {
     opacity: 1;
-    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: opacity var(--#{$d-prefix}animation-duration-base) linear;
 
     & > svg:only-child {
       font-size: 1.2em;
@@ -232,7 +230,7 @@
   }
 
   @include e(actions) {
-    --#{$variable-prefix}fab-size: 40px;
+    --#{$d-prefix}fab-size: 40px;
 
     position: absolute;
     z-index: 5;

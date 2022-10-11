@@ -1,5 +1,5 @@
 @mixin progress-circle {
-  --#{$variable-prefix}progress-font-size: 22px;
+  --#{$d-prefix}progress-font-size: 22px;
 
   justify-content: center;
 
@@ -8,7 +8,7 @@
   }
 
   @include e(label-icon) {
-    font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.5);
+    font-size: calc(var(--#{$d-prefix}progress-font-size) * 1.5);
   }
 }
 
@@ -18,7 +18,7 @@
   vertical-align: top;
 
   @include m(line) {
-    --#{$variable-prefix}progress-font-size: 14px;
+    --#{$d-prefix}progress-font-size: 14px;
 
     @include e(label) {
       flex-shrink: 0;
@@ -27,7 +27,7 @@
     }
 
     @include e(label-icon) {
-      font-size: calc(var(--#{$variable-prefix}progress-font-size) * 1.2);
+      font-size: calc(var(--#{$d-prefix}progress-font-size) * 1.2);
     }
   }
 
@@ -40,18 +40,18 @@
   }
 
   @include e(label) {
-    font-size: var(--#{$variable-prefix}progress-font-size);
+    font-size: var(--#{$d-prefix}progress-font-size);
 
     @include m(success) {
-      color: var(--#{$variable-prefix}color-success);
+      color: var(--#{$d-prefix}color-success);
     }
 
     @include m(warning) {
-      color: var(--#{$variable-prefix}color-warning);
+      color: var(--#{$d-prefix}color-warning);
     }
 
     @include m(error) {
-      color: var(--#{$variable-prefix}color-danger);
+      color: var(--#{$d-prefix}color-danger);
     }
   }
 }

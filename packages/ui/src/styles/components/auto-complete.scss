@@ -2,9 +2,9 @@ $auto-complete-option-height: 32px;
 
 @include b(auto-complete) {
   position: fixed;
-  background-color: var(--#{$variable-prefix}background-color);
-  border-radius: var(--#{$variable-prefix}border-radius);
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
+  background-color: var(--#{$d-prefix}background-color);
+  border-radius: var(--#{$d-prefix}border-radius);
+  box-shadow: var(--#{$d-prefix}shadow-popup);
 
   @include e(list) {
     position: relative;
@@ -24,19 +24,19 @@ $auto-complete-option-height: 32px;
     height: $auto-complete-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:not(.is-selected):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include when(selected) {
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      background-color: var(--#{$d-prefix}background-color-primary);
     }
   }
 
@@ -52,7 +52,7 @@ $auto-complete-option-height: 32px;
     height: $auto-complete-option-height;
     padding: 0 12px;
     font-size: 0.9em;
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
   }
 
   @include e(option-content) {
@@ -66,7 +66,7 @@ $auto-complete-option-height: 32px;
     align-items: center;
     height: $auto-complete-option-height;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 
   @include e(loading) {
@@ -77,12 +77,12 @@ $auto-complete-option-height: 32px;
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-primary);
-    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+    color: var(--#{$d-prefix}color-primary);
+    background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
 
     @include m(empty) {
       justify-content: flex-start;
-      background-color: var(--#{$variable-prefix}background-color);
+      background-color: var(--#{$d-prefix}background-color);
     }
   }
 }

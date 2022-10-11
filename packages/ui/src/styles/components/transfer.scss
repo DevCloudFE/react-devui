@@ -7,13 +7,13 @@ $transfer-option-height: 32px;
 
   &[data-form-invalid-warning='true'] {
     @include e(panel, true) {
-      border-color: var(--#{$variable-prefix}color-warning) !important;
+      border-color: var(--#{$d-prefix}color-warning) !important;
     }
   }
 
   &[data-form-invalid-error='true'] {
     @include e(panel, true) {
-      border-color: var(--#{$variable-prefix}color-danger) !important;
+      border-color: var(--#{$d-prefix}color-danger) !important;
     }
   }
 
@@ -30,16 +30,16 @@ $transfer-option-height: 32px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 12px;
 
-    .#{$variable-prefix}button {
-      --#{$variable-prefix}size: 24px;
+    .#{$d-prefix}button {
+      --#{$d-prefix}size: 24px;
     }
   }
 
   @include e(panel) {
     flex: 1 0 0;
     overflow: hidden;
-    border: 1px solid var(--#{$variable-prefix}color-border);
-    border-radius: var(--#{$variable-prefix}border-radius);
+    border: 1px solid var(--#{$d-prefix}color-border);
+    border-radius: var(--#{$d-prefix}border-radius);
   }
 
   @include e(header) {
@@ -47,7 +47,7 @@ $transfer-option-height: 32px;
     align-items: center;
     height: 41px;
     padding: 0 12px;
-    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+    border-bottom: 1px solid var(--#{$d-prefix}color-divider);
   }
 
   @include e(header-statistic) {
@@ -77,8 +77,8 @@ $transfer-option-height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--#{$variable-prefix}color-primary);
-    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+    color: var(--#{$d-prefix}color-primary);
+    background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
   }
 
   @include e(list) {
@@ -98,14 +98,14 @@ $transfer-option-height: 32px;
     height: $transfer-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
   }

@@ -22,7 +22,7 @@ $menu-item-height: 40px;
       height: 1px;
       pointer-events: none;
       content: '';
-      background-color: var(--#{$variable-prefix}background-color-indicator);
+      background-color: var(--#{$d-prefix}background-color-indicator);
     }
   }
 
@@ -30,7 +30,7 @@ $menu-item-height: 40px;
     display: flex;
     align-items: center;
     height: $menu-item-height;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 
   @include e(item) {
@@ -41,22 +41,21 @@ $menu-item-height: 40px;
     margin: 0;
     list-style: none;
     cursor: pointer;
-    transition: height var(--#{$variable-prefix}animation-duration-base) linear,
-      color var(--#{$variable-prefix}animation-duration-base) linear,
-      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: height var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear,
+      background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
     }
 
-    &:not(.#{$variable-prefix}menu__item--horizontal):hover {
-      background-color: var(--#{$variable-prefix}background-color-primary-hover);
+    &:not(.#{$d-prefix}menu__item--horizontal):hover {
+      background-color: var(--#{$d-prefix}background-color-primary-hover);
     }
 
     @include when(active) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
 
-      &:not(.#{$variable-prefix}menu__item--horizontal) {
+      &:not(.#{$d-prefix}menu__item--horizontal) {
         @include e(indicator) {
           & > div::before {
             transform: scaleY(1);
@@ -84,14 +83,14 @@ $menu-item-height: 40px;
         height: 2px;
         content: '';
         background-color: transparent;
-        transition: background-color var(--#{$variable-prefix}animation-duration-base) linear,
-          transform var(--#{$variable-prefix}animation-duration-base) linear;
+        transition: background-color var(--#{$d-prefix}animation-duration-base) linear,
+          transform var(--#{$d-prefix}animation-duration-base) linear;
         transform: scaleX(0.8);
       }
 
       @include when(active) {
         &::after {
-          background-color: var(--#{$variable-prefix}color-primary);
+          background-color: var(--#{$d-prefix}color-primary);
           transform: scaleX(1);
         }
       }
@@ -115,36 +114,36 @@ $menu-item-height: 40px;
     @include m(basic) {
       padding: 0 16px;
 
-      &.#{$variable-prefix}menu__item--horizontal {
+      &.#{$d-prefix}menu__item--horizontal {
         &:hover::after {
-          background-color: var(--#{$variable-prefix}color-primary);
+          background-color: var(--#{$d-prefix}color-primary);
           transform: scaleX(1);
         }
       }
     }
 
     @include m(sub) {
-      &:not(.#{$variable-prefix}menu__item--horizontal) {
+      &:not(.#{$d-prefix}menu__item--horizontal) {
         padding-right: 32px;
       }
 
-      &.#{$variable-prefix}menu__item--horizontal {
+      &.#{$d-prefix}menu__item--horizontal {
         @include when(expand) {
           &::after {
-            background-color: var(--#{$variable-prefix}color-primary);
+            background-color: var(--#{$d-prefix}color-primary);
             transform: scaleX(1);
           }
         }
       }
 
-      &.#{$variable-prefix}menu__item--icon {
+      &.#{$d-prefix}menu__item--icon {
         @include e(sub-arrow) {
           opacity: 0;
         }
       }
 
       @include when(expand) {
-        color: var(--#{$variable-prefix}color-primary);
+        color: var(--#{$d-prefix}color-primary);
       }
     }
   }
@@ -159,7 +158,7 @@ $menu-item-height: 40px;
       left: -8px;
       width: 2px;
       height: 100%;
-      background-color: var(--#{$variable-prefix}background-color-indicator);
+      background-color: var(--#{$d-prefix}background-color-indicator);
 
       &::before {
         position: absolute;
@@ -169,8 +168,8 @@ $menu-item-height: 40px;
         width: 2px;
         height: calc(100% - 16px);
         content: '';
-        background-color: var(--#{$variable-prefix}color-primary);
-        transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+        background-color: var(--#{$d-prefix}color-primary);
+        transition: transform var(--#{$d-prefix}animation-duration-base) linear;
         transform: scaleY(0);
       }
     }
@@ -206,8 +205,8 @@ $menu-item-height: 40px;
     flex-shrink: 0;
     width: calc(1.1em + 8px);
     font-size: 1.1em;
-    transition: width var(--#{$variable-prefix}animation-duration-base) linear,
-      padding var(--#{$variable-prefix}animation-duration-base) linear, font-size var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: width var(--#{$d-prefix}animation-duration-base) linear, padding var(--#{$d-prefix}animation-duration-base) linear,
+      font-size var(--#{$d-prefix}animation-duration-base) linear;
     transform-origin: left;
   }
 
@@ -223,7 +222,7 @@ $menu-item-height: 40px;
     width: 13px;
     height: 3px;
     pointer-events: none;
-    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: transform var(--#{$d-prefix}animation-duration-base) linear;
     transform: rotate(90deg) scale(0.5);
     transform-origin: 12px center;
 
@@ -251,8 +250,7 @@ $menu-item-height: 40px;
       background-color: currentcolor;
       /* stylelint-disable-next-line declaration-property-value-allowed-list */
       border-radius: 3px;
-      transition: color var(--#{$variable-prefix}animation-duration-base) linear,
-        transform var(--#{$variable-prefix}animation-duration-base) linear;
+      transition: color var(--#{$d-prefix}animation-duration-base) linear, transform var(--#{$d-prefix}animation-duration-base) linear;
       transform-origin: 12px center;
     }
 
@@ -276,9 +274,9 @@ $menu-item-height: 40px;
 
       position: fixed;
       padding: 4px;
-      background-color: var(--#{$variable-prefix}background-color);
-      border-radius: var(--#{$variable-prefix}border-radius);
-      box-shadow: var(--#{$variable-prefix}shadow-popup);
+      background-color: var(--#{$d-prefix}background-color);
+      border-radius: var(--#{$d-prefix}border-radius);
+      box-shadow: var(--#{$d-prefix}shadow-popup);
 
       @include e(item) {
         padding: 0 $padding-size;
@@ -314,6 +312,6 @@ $menu-item-height: 40px;
     padding: 0 16px;
     margin: 0;
     font-size: 0.9em;
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
   }
 }

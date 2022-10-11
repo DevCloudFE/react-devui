@@ -59,22 +59,22 @@
   }
 
   @include e(icon) {
-    color: var(--#{$variable-prefix}color-primary);
+    color: var(--#{$d-prefix}color-primary);
 
     @include when(completed) {
-      color: var(--#{$variable-prefix}color-success);
+      color: var(--#{$d-prefix}color-success);
     }
 
     @include when(active) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
     }
 
     @include when(wait) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
     }
 
     @include when(error) {
-      color: var(--#{$variable-prefix}color-danger);
+      color: var(--#{$d-prefix}color-danger);
     }
   }
 
@@ -83,13 +83,13 @@
     z-index: 5;
     width: 12px;
     height: 12px;
-    background-color: var(--#{$variable-prefix}background-color);
+    background-color: var(--#{$d-prefix}background-color);
     border: 2px solid currentcolor;
     border-radius: 50%;
   }
 
   @include e(separator) {
-    background-color: var(--#{$variable-prefix}background-color-indicator);
+    background-color: var(--#{$d-prefix}background-color-indicator);
 
     @include m(hidden) {
       background-color: transparent;

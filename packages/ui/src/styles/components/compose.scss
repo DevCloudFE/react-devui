@@ -83,22 +83,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--#{$variable-prefix}size);
-  height: var(--#{$variable-prefix}size);
-  padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
+  min-width: var(--#{$d-prefix}size);
+  height: var(--#{$d-prefix}size);
+  padding: 0 calc(var(--#{$d-prefix}padding-size) - 1px);
   white-space: nowrap;
-  border: 1px solid var(--#{$variable-prefix}color-border);
-  border-radius: var(--#{$variable-prefix}border-radius);
+  border: 1px solid var(--#{$d-prefix}color-border);
+  border-radius: var(--#{$d-prefix}border-radius);
 
   @include component-size;
 
   @include when(disabled) {
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
     pointer-events: none;
-    background-color: var(--#{$variable-prefix}background-color-disabled);
+    background-color: var(--#{$d-prefix}background-color-disabled);
   }
 
   @include m(gray) {
-    background-color: var(--#{$variable-prefix}background-color-light-gray);
+    background-color: var(--#{$d-prefix}background-color-light-gray);
   }
 }

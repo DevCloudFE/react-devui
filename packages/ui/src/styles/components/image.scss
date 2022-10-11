@@ -17,9 +17,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$variable-prefix}background-color-actions-mask);
+    background-color: var(--#{$d-prefix}background-color-actions-mask);
     opacity: 0;
-    transition: opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: opacity var(--#{$d-prefix}animation-duration-base) linear;
   }
 
   @include e(action) {
@@ -31,18 +31,18 @@
     padding: 0;
     margin: 0;
     font: inherit;
-    color: #{map.get($colors, 'white')};
+    color: #{map.get($d-colors, 'white')};
     vertical-align: top;
     cursor: pointer;
     background-color: transparent;
     border: none;
     outline: none;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
     appearance: none;
 
     &:hover,
     &:focus {
-      background-color: var(--#{$variable-prefix}background-color-light-hover);
+      background-color: var(--#{$d-prefix}background-color-light-hover);
     }
 
     &:disabled {
@@ -71,17 +71,16 @@
     margin: 0;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 18px;
-    color: var(--#{$variable-prefix}text-color);
-    background-color: var(--#{$variable-prefix}background-color);
+    color: var(--#{$d-prefix}text-color);
+    background-color: var(--#{$d-prefix}background-color);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 1px 4px 0 var(--#{$variable-prefix}shadow-color);
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear,
-      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    box-shadow: 0 1px 4px 0 var(--#{$d-prefix}shadow-color);
+    transition: color var(--#{$d-prefix}animation-duration-base) linear, background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover {
-      color: var(--#{$variable-prefix}color-primary);
-      background-color: var(--#{$variable-prefix}background-color-gray);
+      color: var(--#{$d-prefix}color-primary);
+      background-color: var(--#{$d-prefix}background-color-gray);
     }
 
     @include m(prev) {
@@ -109,7 +108,7 @@
     padding: 0 10px;
     margin: 0;
     list-style: none;
-    background-color: var(--#{$variable-prefix}background-color);
+    background-color: var(--#{$d-prefix}background-color);
   }
 
   @include e(toolbar-page) {
@@ -157,7 +156,7 @@
     padding: 8px;
     margin: 0;
     list-style: none;
-    background-color: var(--#{$variable-prefix}background-color);
+    background-color: var(--#{$d-prefix}background-color);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 8px;
     transform: translateX(-50%);
@@ -168,16 +167,16 @@
     width: 52px;
     height: 52px;
     cursor: pointer;
-    background-color: var(--#{$variable-prefix}background-color-hover);
+    background-color: var(--#{$d-prefix}background-color-hover);
     border: 1px solid transparent;
-    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(active) {
-      border-color: var(--#{$variable-prefix}color-primary);
+      border-color: var(--#{$d-prefix}color-primary);
     }
   }
 

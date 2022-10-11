@@ -2,9 +2,9 @@ $dropdown-item-height: 32px;
 
 @mixin dropdown-popup() {
   position: fixed;
-  background-color: var(--#{$variable-prefix}background-color);
-  border-radius: var(--#{$variable-prefix}border-radius);
-  box-shadow: var(--#{$variable-prefix}shadow-popup);
+  background-color: var(--#{$d-prefix}background-color);
+  border-radius: var(--#{$d-prefix}border-radius);
+  box-shadow: var(--#{$d-prefix}shadow-popup);
 }
 
 @mixin dropdown-list() {
@@ -37,7 +37,7 @@ $dropdown-item-height: 32px;
     width: 100%;
     height: $dropdown-item-height;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 
   @include e(item) {
@@ -48,14 +48,14 @@ $dropdown-item-height: 32px;
     margin: 0;
     list-style: none;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
@@ -67,7 +67,7 @@ $dropdown-item-height: 32px;
       padding: 0 24px 0 12px;
 
       @include when(expand) {
-        background-color: var(--#{$variable-prefix}background-color-hover);
+        background-color: var(--#{$d-prefix}background-color-hover);
       }
     }
   }
@@ -110,6 +110,6 @@ $dropdown-item-height: 32px;
     padding: 0 12px;
     margin: 0;
     font-size: 0.9em;
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
   }
 }

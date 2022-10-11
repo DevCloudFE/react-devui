@@ -4,19 +4,19 @@
   position: fixed;
   right: 20px;
   left: 20px;
-  z-index: var(--#{$variable-prefix}zindex-max);
+  z-index: var(--#{$d-prefix}zindex-max);
   display: flex;
   flex-direction: column;
   pointer-events: none;
 }
 
-##{$variable-prefix}toast-t-root {
+##{$d-prefix}toast-t-root {
   top: 20px;
 
   @include toast-root;
 }
 
-##{$variable-prefix}toast-b-root {
+##{$d-prefix}toast-b-root {
   bottom: 20px;
 
   @include toast-root;
@@ -29,6 +29,6 @@
   padding: 10px 16px;
   margin: 0 auto 12px;
   pointer-events: all;
-  background-color: var(--#{$variable-prefix}background-color);
-  box-shadow: var(--#{$variable-prefix}shadow-dialog);
+  background-color: var(--#{$d-prefix}background-color);
+  box-shadow: var(--#{$d-prefix}shadow-dialog);
 }

@@ -1,10 +1,17 @@
-@import 'vendor/ui';
-@import 'vendor/highlight';
 @import 'vendor/bootstrap';
+@import 'vendor/highlight';
+@import 'vendor/ui';
 
 @import 'variables';
 
 @import 'root';
-@import 'components';
-@import 'routes';
+
 @import 'app';
+
+@import 'components/component-route';
+@import 'components/fcp-loader';
+@import 'components/footer';
+@import 'components/md-route';
+
+@import 'routes/home';
+@import 'routes/layout';

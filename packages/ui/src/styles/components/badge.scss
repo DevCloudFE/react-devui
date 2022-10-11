@@ -5,9 +5,9 @@
   z-index: 1;
   transform: translate(-50%, -50%);
 
-  @each $theme, $rgb in $themes {
+  @each $theme, $rgb in $d-themes {
     @include theme(#{$theme}) {
-      --#{$variable-prefix}badge-color: var(--#{$variable-prefix}color-#{$theme});
+      --#{$d-prefix}badge-color: var(--#{$d-prefix}color-#{$theme});
     }
   }
 
@@ -31,8 +31,8 @@
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 12px;
     line-height: 20px;
-    color: map.get($colors, 'white');
-    background-color: var(--#{$variable-prefix}badge-color);
+    color: map.get($d-colors, 'white');
+    background-color: var(--#{$d-prefix}badge-color);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 10px;
   }
@@ -40,6 +40,6 @@
   @include e(number-container) {
     display: inline-flex;
     flex-direction: column;
-    transition: transform var(--#{$variable-prefix}animation-duration-base) ease-out;
+    transition: transform var(--#{$d-prefix}animation-duration-base) ease-out;
   }
 }

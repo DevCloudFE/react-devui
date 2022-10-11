@@ -9,21 +9,21 @@
 
   &:hover {
     @include e(input) {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
     }
   }
 
   @include component-size;
 
   @include when(disabled) {
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
     pointer-events: none;
 
     @include e(input-wrapper) {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
+      background-color: var(--#{$d-prefix}background-color-disabled);
 
       &::after {
-        background-color: var(--#{$variable-prefix}color-disabled);
+        background-color: var(--#{$d-prefix}color-disabled);
       }
     }
   }
@@ -31,7 +31,7 @@
   @include when(checked) {
     &:not(.is-disabled) {
       @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
+        border-color: var(--#{$d-prefix}color-primary);
       }
 
       @include e(input-wrapper) {
@@ -52,25 +52,25 @@
 
   @include m(button) {
     gap: 0;
-    height: var(--#{$variable-prefix}size);
+    height: var(--#{$d-prefix}size);
     white-space: nowrap;
     cursor: pointer;
-    border: 1px solid var(--#{$variable-prefix}color-border);
-    border-radius: var(--#{$variable-prefix}border-radius);
-    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
-      background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    border: 1px solid var(--#{$d-prefix}color-border);
+    border-radius: var(--#{$d-prefix}border-radius);
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear,
+      background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     @include when(disabled) {
-      background-color: var(--#{$variable-prefix}background-color-disabled);
+      background-color: var(--#{$d-prefix}background-color-disabled);
 
       @include when(checked) {
-        color: rgb(var(--#{$variable-prefix}color-primary-rgb) / 50%);
+        color: rgb(var(--#{$d-prefix}color-primary-rgb) / 50%);
       }
     }
 
     @include when(focus-visible) {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+      border-color: var(--#{$d-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-normal));
     }
 
     @include e(input-wrapper) {
@@ -83,33 +83,33 @@
       display: inline-flex;
       align-items: center;
       height: 100%;
-      padding: 0 calc(var(--#{$variable-prefix}padding-size) - 1px);
-      transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+      padding: 0 calc(var(--#{$d-prefix}padding-size) - 1px);
+      transition: color var(--#{$d-prefix}animation-duration-base) linear;
     }
   }
 
   @include m(button-outline) {
     &:hover {
-      color: var(--#{$variable-prefix}color-primary-lighter);
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(checked) {
-      color: var(--#{$variable-prefix}color-primary);
-      border-color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
+      border-color: var(--#{$d-prefix}color-primary);
     }
   }
 
   @include m(button-fill) {
     &:hover {
-      color: var(--#{$variable-prefix}color-primary-lighter);
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(checked) {
-      color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}color-primary);
-      border-color: var(--#{$variable-prefix}color-primary);
+      color: map.get($d-colors, 'white');
+      background-color: var(--#{$d-prefix}color-primary);
+      border-color: var(--#{$d-prefix}color-primary);
     }
   }
 
@@ -122,14 +122,14 @@
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background-color: var(--#{$variable-prefix}background-color-input);
+    background-color: var(--#{$d-prefix}background-color-input);
     border-radius: 50%;
 
     &::before {
       position: absolute;
       inset: 0;
       content: '';
-      border: 1px solid var(--#{$variable-prefix}color-primary);
+      border: 1px solid var(--#{$d-prefix}color-primary);
       border-radius: 50%;
       opacity: 0;
     }
@@ -138,11 +138,10 @@
       position: absolute;
       inset: 4px;
       content: '';
-      background-color: var(--#{$variable-prefix}color-primary);
+      background-color: var(--#{$d-prefix}color-primary);
       border-radius: 50%;
       opacity: 0;
-      transition: transform var(--#{$variable-prefix}animation-duration-fast) linear,
-        opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+      transition: transform var(--#{$d-prefix}animation-duration-fast) linear, opacity var(--#{$d-prefix}animation-duration-fast) linear;
       transform: scale(0);
     }
   }
@@ -153,23 +152,23 @@
     z-index: 1;
     margin: 0;
     cursor: inherit;
-    border: 1px solid var(--#{$variable-prefix}color-border);
+    border: 1px solid var(--#{$d-prefix}color-border);
     border-radius: 50%;
     outline: none;
-    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
     appearance: none;
 
     &:focus {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+      border-color: var(--#{$d-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-normal));
     }
   }
 }
 
 @include b(radio-group) {
   @include when(change) {
-    .#{$variable-prefix}radio,
-    .#{$variable-prefix}radio__label {
+    .#{$d-prefix}radio,
+    .#{$d-prefix}radio__label {
       transition: none;
     }
   }

@@ -22,21 +22,21 @@
 
   &:hover {
     @include e(input) {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
     }
   }
 
   @include when(disabled) {
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
     pointer-events: none;
 
     @include e(state-container) {
       &::before {
-        border-color: var(--#{$variable-prefix}color-disabled);
+        border-color: var(--#{$d-prefix}color-disabled);
       }
 
       &::after {
-        background-color: var(--#{$variable-prefix}color-disabled);
+        background-color: var(--#{$d-prefix}color-disabled);
       }
     }
   }
@@ -44,7 +44,7 @@
   @include when(checked) {
     &:not(.is-disabled) {
       @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
+        border-color: var(--#{$d-prefix}color-primary);
       }
 
       @include e(state-container) {
@@ -70,7 +70,7 @@
   @include when(indeterminate) {
     &:not(.is-disabled) {
       @include e(input) {
-        border-color: var(--#{$variable-prefix}color-primary);
+        border-color: var(--#{$d-prefix}color-primary);
       }
     }
 
@@ -95,15 +95,15 @@
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background-color: var(--#{$variable-prefix}background-color-input);
-    border-radius: var(--#{$variable-prefix}border-radius);
+    background-color: var(--#{$d-prefix}background-color-input);
+    border-radius: var(--#{$d-prefix}border-radius);
 
     &::before {
       position: absolute;
       inset: 0;
       content: '';
-      border: 1px solid var(--#{$variable-prefix}color-primary);
-      border-radius: var(--#{$variable-prefix}border-radius);
+      border: 1px solid var(--#{$d-prefix}color-primary);
+      border-radius: var(--#{$d-prefix}border-radius);
       opacity: 0;
     }
 
@@ -111,11 +111,10 @@
       position: absolute;
       inset: 0;
       content: '';
-      background-color: var(--#{$variable-prefix}color-primary);
-      border-radius: var(--#{$variable-prefix}border-radius);
+      background-color: var(--#{$d-prefix}color-primary);
+      border-radius: var(--#{$d-prefix}border-radius);
       opacity: 0;
-      transition: transform var(--#{$variable-prefix}animation-duration-fast) linear,
-        opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+      transition: transform var(--#{$d-prefix}animation-duration-fast) linear, opacity var(--#{$d-prefix}animation-duration-fast) linear;
     }
   }
 
@@ -124,7 +123,7 @@
     inset: 0;
     z-index: 1;
     overflow: hidden;
-    border-radius: var(--#{$variable-prefix}border-radius);
+    border-radius: var(--#{$d-prefix}border-radius);
 
     &::after {
       position: absolute;
@@ -134,8 +133,8 @@
       width: 10px;
       height: 6px;
       content: '';
-      border-bottom: 2px solid map.get($colors, 'white');
-      border-left: 2px solid map.get($colors, 'white');
+      border-bottom: 2px solid map.get($d-colors, 'white');
+      border-left: 2px solid map.get($d-colors, 'white');
       transform: rotate(-45deg);
     }
   }
@@ -147,7 +146,7 @@
     z-index: 1;
     width: 8px;
     height: 2px;
-    background-color: map.get($colors, 'white');
+    background-color: map.get($d-colors, 'white');
   }
 
   @include e(input) {
@@ -156,14 +155,14 @@
     z-index: 5;
     margin: 0;
     cursor: inherit;
-    border: 1px solid var(--#{$variable-prefix}color-border);
-    border-radius: var(--#{$variable-prefix}border-radius);
-    transition: border-color var(--#{$variable-prefix}animation-duration-base) linear;
+    border: 1px solid var(--#{$d-prefix}color-border);
+    border-radius: var(--#{$d-prefix}border-radius);
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
     appearance: none;
 
     &:focus {
-      border-color: var(--#{$variable-prefix}color-primary-lighter);
-      box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+      border-color: var(--#{$d-prefix}color-primary-lighter);
+      box-shadow: 0 0 0 3px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-normal));
     }
   }
 }

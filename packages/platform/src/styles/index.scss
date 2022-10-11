@@ -1,8 +1,13 @@
-@import 'vendor/ui';
 @import 'vendor/bootstrap';
+@import 'vendor/ui';
 
 @import 'variables';
 
-@import 'root';
-@import 'components';
 @import 'app';
+
+@import 'root';
+
+@import 'components/fcp-loader';
+@import 'components/language';
+@import 'components/list';
+@import 'components/route-header';

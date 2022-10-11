@@ -74,14 +74,14 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: flex-end;
-    min-height: var(--#{$variable-prefix}size);
-    padding-right: var(--#{$variable-prefix}margin-size);
+    min-height: var(--#{$d-prefix}size);
+    padding-right: var(--#{$d-prefix}margin-size);
 
     @include m(required) {
       &::before {
         display: inline-block;
         margin-right: 4px;
-        color: var(--#{$variable-prefix}color-danger);
+        color: var(--#{$d-prefix}color-danger);
         content: '*';
       }
     }
@@ -101,7 +101,7 @@
     margin-left: 4px;
     font-size: 0.9em;
     line-height: 1;
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
   }
 
   @include e(item-content) {
@@ -109,13 +109,13 @@
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: var(--#{$variable-prefix}size);
+    min-height: var(--#{$d-prefix}size);
 
-    .#{$variable-prefix}select,
-    .#{$variable-prefix}cascader,
-    .#{$variable-prefix}tree-select,
-    .#{$variable-prefix}compose,
-    .#{$variable-prefix}input {
+    .#{$d-prefix}select,
+    .#{$d-prefix}cascader,
+    .#{$d-prefix}tree-select,
+    .#{$d-prefix}compose,
+    .#{$d-prefix}input {
       width: 100%;
     }
   }
@@ -133,7 +133,7 @@
       width: 100%;
       height: 100%;
       content: '';
-      background-color: var(--#{$variable-prefix}color-border);
+      background-color: var(--#{$d-prefix}color-border);
     }
 
     &::after {
@@ -153,7 +153,7 @@
 
       &::after {
         left: 0;
-        background: linear-gradient(90deg, transparent, var(--#{$variable-prefix}color-primary));
+        background: linear-gradient(90deg, transparent, var(--#{$d-prefix}color-primary));
         animation: form-pending-top 1s linear infinite;
         animation-fill-mode: backwards;
       }
@@ -167,7 +167,7 @@
 
       &::after {
         top: -100%;
-        background: linear-gradient(180deg, transparent, var(--#{$variable-prefix}color-primary));
+        background: linear-gradient(180deg, transparent, var(--#{$d-prefix}color-primary));
         animation: form-pending-right 1s linear infinite;
         animation-delay: 0.25s;
         animation-fill-mode: backwards;
@@ -182,7 +182,7 @@
 
       &::after {
         right: 0;
-        background: linear-gradient(270deg, transparent, var(--#{$variable-prefix}color-primary));
+        background: linear-gradient(270deg, transparent, var(--#{$d-prefix}color-primary));
         animation: form-pending-bottom 1s linear 0.5s infinite;
         animation-fill-mode: backwards;
       }
@@ -196,7 +196,7 @@
 
       &::after {
         bottom: -100%;
-        background: linear-gradient(360deg, transparent, var(--#{$variable-prefix}color-primary));
+        background: linear-gradient(360deg, transparent, var(--#{$d-prefix}color-primary));
         animation: form-pending-left 1s linear infinite;
         animation-delay: 0.75s;
         animation-fill-mode: backwards;
@@ -210,20 +210,20 @@
     align-items: center;
     justify-content: center;
     width: 2em;
-    height: var(--#{$variable-prefix}size);
+    height: var(--#{$d-prefix}size);
     font-size: 1.1em;
 
     @include when(pending) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
     }
     @include when(error) {
-      color: var(--#{$variable-prefix}color-danger);
+      color: var(--#{$d-prefix}color-danger);
     }
     @include when(warning) {
-      color: var(--#{$variable-prefix}color-warning);
+      color: var(--#{$d-prefix}color-warning);
     }
     @include when(success) {
-      color: var(--#{$variable-prefix}color-success);
+      color: var(--#{$d-prefix}color-success);
     }
   }
 
@@ -238,11 +238,11 @@
     @include utils-ellipsis;
 
     @include m(error) {
-      color: var(--#{$variable-prefix}color-danger);
+      color: var(--#{$d-prefix}color-danger);
     }
 
     @include m(warning) {
-      color: var(--#{$variable-prefix}color-warning);
+      color: var(--#{$d-prefix}color-warning);
     }
   }
 }

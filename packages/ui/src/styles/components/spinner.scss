@@ -22,8 +22,8 @@
   display: flex;
   justify-content: center;
   overflow: hidden;
-  color: var(--#{$variable-prefix}color-primary);
-  background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+  color: var(--#{$d-prefix}color-primary);
+  background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
 
   @include e(container) {
     position: absolute;

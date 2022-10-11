@@ -1,11 +1,11 @@
 @include b(accordion) {
   @include e(item) {
-    border-top: 1px solid var(--#{$variable-prefix}color-border);
-    border-right: 1px solid var(--#{$variable-prefix}color-border);
-    border-left: 1px solid var(--#{$variable-prefix}color-border);
+    border-top: 1px solid var(--#{$d-prefix}color-border);
+    border-right: 1px solid var(--#{$d-prefix}color-border);
+    border-left: 1px solid var(--#{$d-prefix}color-border);
 
     @include m(last) {
-      border-bottom: 1px solid var(--#{$variable-prefix}color-border);
+      border-bottom: 1px solid var(--#{$d-prefix}color-border);
     }
   }
 
@@ -15,10 +15,10 @@
     align-items: center;
     padding: 12px 16px;
     cursor: pointer;
-    background-color: var(--#{$variable-prefix}background-color-light-gray);
+    background-color: var(--#{$d-prefix}background-color-light-gray);
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
@@ -35,11 +35,11 @@
 
   @include e(item-arrow) {
     font-size: 0.9em;
-    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: transform var(--#{$d-prefix}animation-duration-base) linear;
   }
 
   @include e(item-region) {
     padding: 16px;
-    border-top: 1px solid var(--#{$variable-prefix}color-border);
+    border-top: 1px solid var(--#{$d-prefix}color-border);
   }
 }

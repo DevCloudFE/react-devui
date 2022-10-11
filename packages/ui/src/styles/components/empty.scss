@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 8px 0;
   align-items: center;
-  color: rgb(var(--#{$variable-prefix}text-color-rgb) / 28%);
+  color: rgb(var(--#{$d-prefix}text-color-rgb) / 28%);
 
   @include e(description) {
     text-align: center;

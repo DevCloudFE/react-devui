@@ -14,11 +14,11 @@ $tree-option-height: 32px;
   outline: none;
 
   &[data-form-invalid-warning='true'] {
-    border-color: var(--#{$variable-prefix}color-warning) !important;
+    border-color: var(--#{$d-prefix}color-warning) !important;
   }
 
   &[data-form-invalid-error='true'] {
-    border-color: var(--#{$variable-prefix}color-danger) !important;
+    border-color: var(--#{$d-prefix}color-danger) !important;
   }
 
   @include when(disabled) {
@@ -28,7 +28,7 @@ $tree-option-height: 32px;
 
   @include m(line) {
     @include e(option-group) {
-      &[role='treeitem']:not(.#{$variable-prefix}tree__option-group--root)::after {
+      &[role='treeitem']:not(.#{$d-prefix}tree__option-group--root)::after {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -36,18 +36,18 @@ $tree-option-height: 32px;
         width: 1px;
         pointer-events: none;
         content: '';
-        background-color: var(--#{$variable-prefix}background-color-indicator);
+        background-color: var(--#{$d-prefix}background-color-indicator);
       }
     }
 
     @include e(option) {
-      &:not(.#{$variable-prefix}tree__option--root) {
+      &:not(.#{$d-prefix}tree__option--root) {
         &::before,
         &::after {
           position: absolute;
           pointer-events: none;
           content: '';
-          background-color: var(--#{$variable-prefix}background-color-indicator);
+          background-color: var(--#{$d-prefix}background-color-indicator);
         }
 
         &::before {
@@ -74,7 +74,7 @@ $tree-option-height: 32px;
           }
         }
 
-        &.#{$variable-prefix}tree__option--first::before {
+        &.#{$d-prefix}tree__option--first::before {
           top: 0;
           height: 50%;
         }
@@ -91,10 +91,10 @@ $tree-option-height: 32px;
     height: $tree-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:not(.is-selected):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     &[role='treeitem'] {
@@ -102,12 +102,12 @@ $tree-option-height: 32px;
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include when(selected) {
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      background-color: var(--#{$d-prefix}background-color-primary);
     }
   }
 
@@ -132,7 +132,7 @@ $tree-option-height: 32px;
   }
 
   @include e(option-arrow) {
-    transition: transform var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: transform var(--#{$d-prefix}animation-duration-base) linear;
   }
 
   @include e(option-group) {
@@ -143,7 +143,7 @@ $tree-option-height: 32px;
     margin: 0;
     list-style: none;
 
-    &[role='group']:not(.#{$variable-prefix}tree__option-group--root) {
+    &[role='group']:not(.#{$d-prefix}tree__option-group--root) {
       padding-left: 34px;
     }
   }
@@ -155,7 +155,7 @@ $tree-option-height: 32px;
     height: $tree-option-height;
     padding: 0 12px;
     margin-left: 22px;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 
   @include e(search-list) {
@@ -175,19 +175,19 @@ $tree-option-height: 32px;
     height: $tree-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:not(.is-selected):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include when(selected) {
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      background-color: var(--#{$d-prefix}background-color-primary);
     }
   }
 
@@ -202,6 +202,6 @@ $tree-option-height: 32px;
     align-items: center;
     height: $tree-option-height;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 }

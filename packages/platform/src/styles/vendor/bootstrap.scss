@@ -1,24 +1,26 @@
-$grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1400px,
-);
-$enable-important-utilities: true;
+// Custom.scss
+// Option B: Include parts of Bootstrap
 
-@import '~bootstrap/scss/mixins/breakpoints';
-@import '~bootstrap/scss/mixins/utilities';
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import '~bootstrap/scss/functions';
 
-$utilities: (
-  'display': (
-    responsive: true,
-    print: true,
-    property: display,
-    class: d,
-    values: inline inline-block block grid table table-row table-cell flex inline-flex none,
-  ),
-);
+// 2. Include any default variable overrides here
 
+// 3. Include remainder of required Bootstrap stylesheets
+@import '~bootstrap/scss/variables';
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import '~bootstrap/scss/maps';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+
+// 6. Optionally include any other parts as needed
+@import '~bootstrap/scss/utilities';
+@import '~bootstrap/scss/grid';
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
 @import '~bootstrap/scss/utilities/api';
+
+// 8. Add additional custom code here

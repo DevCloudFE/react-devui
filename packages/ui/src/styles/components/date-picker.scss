@@ -8,9 +8,9 @@
     position: fixed;
     overflow: auto hidden;
     white-space: nowrap;
-    background-color: var(--#{$variable-prefix}background-color);
-    border-radius: var(--#{$variable-prefix}border-radius);
-    box-shadow: var(--#{$variable-prefix}shadow-popup);
+    background-color: var(--#{$d-prefix}background-color);
+    border-radius: var(--#{$d-prefix}border-radius);
+    box-shadow: var(--#{$d-prefix}shadow-popup);
   }
 
   @include e(header) {
@@ -18,7 +18,7 @@
     align-items: center;
     height: 41px;
     padding: 0 8px;
-    border-bottom: 1px solid var(--#{$variable-prefix}color-divider);
+    border-bottom: 1px solid var(--#{$d-prefix}color-divider);
   }
 
   @include e(header-content) {
@@ -32,18 +32,18 @@
     height: 100%;
     padding: 0;
     margin: 0;
-    color: var(--#{$variable-prefix}color-icon-decorator);
+    color: var(--#{$d-prefix}color-icon-decorator);
     background-color: transparent;
     border: none;
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$variable-prefix}color-primary-darker);
+      color: var(--#{$d-prefix}color-primary-darker);
     }
   }
 
@@ -51,8 +51,8 @@
     display: inline-block;
     vertical-align: top;
 
-    & + .#{$variable-prefix}time-picker__panel {
-      border-left: 1px solid var(--#{$variable-prefix}color-divider);
+    & + .#{$d-prefix}time-picker__panel {
+      border-left: 1px solid var(--#{$d-prefix}color-divider);
     }
   }
 
@@ -77,17 +77,17 @@
     cursor: pointer;
 
     &:not(.is-active, .is-hover, .is-another, .is-between, .is-between-hover):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
-      background-color: var(--#{$variable-prefix}background-color-disabled);
+      background-color: var(--#{$d-prefix}background-color-disabled);
     }
 
     @include m(out-month) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
     }
 
     @include m(today) {
@@ -95,27 +95,27 @@
         position: absolute;
         inset: 2px;
         content: '';
-        border: 1px solid var(--#{$variable-prefix}color-primary);
+        border: 1px solid var(--#{$d-prefix}color-primary);
       }
     }
 
     @include when(current-selected) {
-      color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}color-primary);
+      color: map.get($d-colors, 'white');
+      background-color: var(--#{$d-prefix}color-primary);
     }
 
     @include when(another-selected) {
-      color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}color-primary-lighter);
+      color: map.get($d-colors, 'white');
+      background-color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(hover) {
-      color: map.get($colors, 'white');
-      background-color: var(--#{$variable-prefix}color-primary-lighter);
+      color: map.get($d-colors, 'white');
+      background-color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(between) {
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      background-color: var(--#{$d-prefix}background-color-primary);
     }
 
     @include when(between-hover) {
@@ -123,7 +123,7 @@
         position: absolute;
         inset: 0;
         content: '';
-        background-color: var(--#{$variable-prefix}background-color-primary);
+        background-color: var(--#{$d-prefix}background-color-primary);
       }
     }
   }
@@ -134,7 +134,7 @@
     align-items: center;
     justify-content: center;
     min-height: 41px;
-    border-top: 1px solid var(--#{$variable-prefix}color-divider);
+    border-top: 1px solid var(--#{$d-prefix}color-divider);
 
     @include m(custom) {
       justify-content: flex-start;

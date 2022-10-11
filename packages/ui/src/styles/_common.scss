@@ -1,17 +1,17 @@
 @include b(mask) {
   position: absolute;
   inset: 0;
-  background-color: var(--#{$variable-prefix}mask-background-color);
+  background-color: var(--#{$d-prefix}mask-background-color);
 }
 
 @include b(wave) {
   @keyframes wave-wave {
     0% {
-      box-shadow: 0 0 0 0 var(--#{$variable-prefix}wave-color);
+      box-shadow: 0 0 0 0 var(--#{$d-prefix}wave-color);
     }
 
     100% {
-      box-shadow: 0 0 0 6px var(--#{$variable-prefix}wave-color);
+      box-shadow: 0 0 0 6px var(--#{$d-prefix}wave-color);
     }
   }
   @keyframes wave-fade-out {
@@ -36,5 +36,5 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  border: 1px dashed var(--#{$variable-prefix}color-primary-lighter);
+  border: 1px dashed var(--#{$d-prefix}color-primary-lighter);
 }

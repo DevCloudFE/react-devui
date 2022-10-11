@@ -17,35 +17,35 @@
     flex-direction: column;
     max-width: 100%;
     max-height: 100%;
-    background-color: var(--#{$variable-prefix}background-color);
-    box-shadow: 0 8px 40px 0 var(--#{$variable-prefix}shadow-color);
+    background-color: var(--#{$d-prefix}background-color);
+    box-shadow: 0 8px 40px 0 var(--#{$d-prefix}shadow-color);
 
     @include m(top) {
       top: 0;
       left: 0;
       width: 100%;
-      border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
+      border-radius: 0 0 var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius);
     }
 
     @include m(bottom) {
       bottom: 0;
       left: 0;
       width: 100%;
-      border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
+      border-radius: var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius) 0 0;
     }
 
     @include m(left) {
       top: 0;
       left: 0;
       height: 100%;
-      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
+      border-radius: 0 var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius) 0;
     }
 
     @include m(right) {
       top: 0;
       right: 0;
       height: 100%;
-      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
+      border-radius: var(--#{$d-prefix}border-radius) 0 0 var(--#{$d-prefix}border-radius);
     }
   }
 

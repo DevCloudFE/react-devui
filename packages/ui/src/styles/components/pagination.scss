@@ -1,5 +1,5 @@
 @include b(pagination) {
-  --#{$variable-prefix}pagination-size: 32px;
+  --#{$d-prefix}pagination-size: 32px;
 
   display: flex;
   flex-wrap: wrap;
@@ -17,7 +17,7 @@
   }
 
   @include m(mini) {
-    --#{$variable-prefix}pagination-size: 24px;
+    --#{$d-prefix}pagination-size: 24px;
 
     gap: 4px 8px;
 
@@ -57,43 +57,42 @@
 
     @include m(button) {
       justify-content: center;
-      min-width: var(--#{$variable-prefix}pagination-size);
-      height: var(--#{$variable-prefix}pagination-size);
+      min-width: var(--#{$d-prefix}pagination-size);
+      height: var(--#{$d-prefix}pagination-size);
       cursor: pointer;
       user-select: none;
-      border-radius: var(--#{$variable-prefix}border-radius);
-      transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
-        color var(--#{$variable-prefix}animation-duration-base) linear;
+      border-radius: var(--#{$d-prefix}border-radius);
+      transition: border-color var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear;
 
       &:hover,
       &:focus {
-        color: var(--#{$variable-prefix}color-primary-lighter);
-        border-color: var(--#{$variable-prefix}color-primary-lighter);
+        color: var(--#{$d-prefix}color-primary-lighter);
+        border-color: var(--#{$d-prefix}color-primary-lighter);
       }
 
       @include when(disabled) {
-        color: var(--#{$variable-prefix}color-disabled);
+        color: var(--#{$d-prefix}color-disabled);
         pointer-events: none;
       }
 
       @include when(active) {
-        color: var(--#{$variable-prefix}color-primary);
-        border-color: var(--#{$variable-prefix}color-primary);
+        color: var(--#{$d-prefix}color-primary);
+        border-color: var(--#{$d-prefix}color-primary);
       }
     }
 
     @include m(number) {
       outline: none;
-      transition: border-color var(--#{$variable-prefix}animation-duration-base) linear,
-        color var(--#{$variable-prefix}animation-duration-base) linear, box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
+      transition: border-color var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear,
+        box-shadow var(--#{$d-prefix}animation-duration-base) linear;
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px rgb(var(--#{$variable-prefix}color-primary-rgb) / var(--#{$variable-prefix}shadow-normal));
+        box-shadow: 0 0 0 3px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-normal));
       }
     }
 
     @include m(border) {
-      border: 1px solid var(--#{$variable-prefix}color-border);
+      border: 1px solid var(--#{$d-prefix}color-border);
     }
 
     @include m(jump5) {
@@ -109,9 +108,9 @@
       }
 
       @include e(jump5-icon) {
-        color: var(--#{$variable-prefix}color-primary);
+        color: var(--#{$d-prefix}color-primary);
         opacity: 0;
-        transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+        transition: opacity var(--#{$d-prefix}animation-duration-fast) linear;
       }
     }
   }
@@ -122,8 +121,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--#{$variable-prefix}color-disabled);
-    transition: opacity var(--#{$variable-prefix}animation-duration-fast) linear;
+    color: var(--#{$d-prefix}color-disabled);
+    transition: opacity var(--#{$d-prefix}animation-duration-fast) linear;
     transform: scale(1.5);
   }
 

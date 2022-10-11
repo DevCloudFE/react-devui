@@ -6,7 +6,7 @@
   gap: 0 40px;
   justify-content: space-around;
   padding: 20px;
-  background-color: map.get($colors, 'black');
+  background-color: map.get($d-colors, 'black');
   border-top: 1px solid var(--d-color-border);
 
   a {
@@ -14,7 +14,7 @@
     gap: 0 4px;
     align-items: center;
     font: inherit;
-    color: map.get($colors, 'white');
+    color: map.get($d-colors, 'white');
     text-decoration: none;
     transition: color var(--d-animation-duration-fast) linear;
 
@@ -33,7 +33,7 @@
   @include e(col-title) {
     margin-bottom: 8px;
     font-weight: 500;
-    color: map.get($colors, 'white');
+    color: map.get($d-colors, 'white');
 
     @include font-size(1.1rem);
   }

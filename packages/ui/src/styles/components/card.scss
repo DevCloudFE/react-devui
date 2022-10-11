@@ -1,19 +1,19 @@
 @include b(card) {
-  background-color: var(--#{$variable-prefix}background-color);
-  border-radius: var(--#{$variable-prefix}border-radius);
-  transition: box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
+  background-color: var(--#{$d-prefix}background-color);
+  border-radius: var(--#{$d-prefix}border-radius);
+  transition: box-shadow var(--#{$d-prefix}animation-duration-base) linear;
 
   @include m(border) {
-    border: 1px solid var(--#{$variable-prefix}color-border);
+    border: 1px solid var(--#{$d-prefix}color-border);
   }
 
   @include m(shadow) {
-    box-shadow: 0 2px 8px 0 var(--#{$variable-prefix}shadow-color);
+    box-shadow: 0 2px 8px 0 var(--#{$d-prefix}shadow-color);
   }
 
   @include m(shadow-hover) {
     &:hover {
-      box-shadow: 0 2px 8px 0 var(--#{$variable-prefix}shadow-color);
+      box-shadow: 0 2px 8px 0 var(--#{$d-prefix}shadow-color);
     }
   }
 
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     padding: 16px;
-    border-bottom: 1px solid var(--#{$variable-prefix}color-border);
+    border-bottom: 1px solid var(--#{$d-prefix}color-border);
   }
 
   @include e(header-title) {
@@ -43,7 +43,7 @@
   @include e(actions) {
     display: flex;
     height: 48px;
-    border-top: 1px solid var(--#{$variable-prefix}color-border);
+    border-top: 1px solid var(--#{$d-prefix}color-border);
   }
 
   @include e(action) {
@@ -54,18 +54,18 @@
     padding: 0;
     margin: 0;
     font: inherit;
-    color: var(--#{$variable-prefix}color-icon-decorator);
+    color: var(--#{$d-prefix}color-icon-decorator);
     vertical-align: top;
     cursor: pointer;
     background-color: transparent;
     border: none;
     outline: none;
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
     appearance: none;
 
     &:hover,
     &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     &:disabled {

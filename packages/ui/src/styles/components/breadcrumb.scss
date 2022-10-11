@@ -10,23 +10,23 @@
   }
 
   @include e(item) {
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
 
     @include m(link) {
       cursor: pointer;
-      transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+      transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
       &:hover {
-        color: var(--#{$variable-prefix}text-color);
+        color: var(--#{$d-prefix}text-color);
       }
     }
 
     @include m(last) {
-      color: var(--#{$variable-prefix}text-color);
+      color: var(--#{$d-prefix}text-color);
     }
   }
 
   @include e(separator) {
-    color: var(--#{$variable-prefix}text-color-sub);
+    color: var(--#{$d-prefix}text-color-sub);
   }
 }

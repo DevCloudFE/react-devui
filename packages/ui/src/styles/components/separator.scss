@@ -4,7 +4,7 @@
   padding: 0;
   margin: 16px 0;
   list-style: none;
-  background-color: var(--#{$variable-prefix}color-divider);
+  background-color: var(--#{$d-prefix}color-divider);
   border: none;
 
   @include m(text) {
@@ -16,16 +16,16 @@
     &::before {
       height: 1px;
       content: '';
-      background-color: var(--#{$variable-prefix}color-divider);
+      background-color: var(--#{$d-prefix}color-divider);
     }
 
     &::after {
       height: 1px;
       content: '';
-      background-color: var(--#{$variable-prefix}color-divider);
+      background-color: var(--#{$d-prefix}color-divider);
     }
 
-    &.#{$variable-prefix}separator--vertical {
+    &.#{$d-prefix}separator--vertical {
       width: auto;
       margin: 0 24px;
 

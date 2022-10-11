@@ -5,7 +5,7 @@
     flex-direction: column-reverse;
   }
 
-  &.#{$variable-prefix}tabs--center {
+  &.#{$d-prefix}tabs--center {
     @include e(tab) {
       @include m(first) {
         margin-left: auto;
@@ -17,7 +17,7 @@
     }
   }
 
-  &:not(.#{$variable-prefix}tabs--slider) {
+  &:not(.#{$d-prefix}tabs--slider) {
     @include e(button) {
       @include m(add) {
         @if $direction == top {
@@ -49,7 +49,7 @@
   }
 
   @include e(tablist) {
-    gap: var(--#{$variable-prefix}tabs-tab-gap);
+    gap: var(--#{$d-prefix}tabs-tab-gap);
     min-width: 100%;
 
     &::after {
@@ -69,8 +69,8 @@
     left: 0;
     width: 0;
     height: 2px;
-    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: left var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear,
+      width var(--#{$d-prefix}animation-duration-base) linear;
 
     @if $direction == top {
       bottom: -2px;
@@ -82,24 +82,24 @@
     left: 0;
     width: 0;
     height: 100%;
-    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: left var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear,
+      width var(--#{$d-prefix}animation-duration-base) linear;
   }
   @include e(wrap-indicator) {
     left: 0;
     width: 0;
     height: calc(100% + 1px);
-    transition: left var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear, width var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: left var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear,
+      width var(--#{$d-prefix}animation-duration-base) linear;
 
     @if $direction == top {
       top: 0;
       border-bottom: none;
-      border-radius: var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0 0;
+      border-radius: var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius) 0 0;
     } @else {
       bottom: 0;
       border-top: none;
-      border-radius: 0 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius);
+      border-radius: 0 0 var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius);
     }
   }
 
@@ -109,13 +109,13 @@
 
   @include e(button) {
     width: 52px;
-    height: var(--#{$variable-prefix}tabs-tab-size);
+    height: var(--#{$d-prefix}tabs-tab-size);
 
     @include m(more) {
-      box-shadow: -3px 0 8px -2px var(--#{$variable-prefix}shadow-color);
+      box-shadow: -3px 0 8px -2px var(--#{$d-prefix}shadow-color);
 
       @include when(end) {
-        border-left-color: var(--#{$variable-prefix}background-color-indicator);
+        border-left-color: var(--#{$d-prefix}background-color-indicator);
       }
     }
   }
@@ -128,7 +128,7 @@
     flex-direction: row-reverse;
   }
 
-  &.#{$variable-prefix}tabs--center {
+  &.#{$d-prefix}tabs--center {
     @include e(tab) {
       @include m(first) {
         margin-top: auto;
@@ -151,7 +151,7 @@
   }
 
   @include e(tab) {
-    padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+    padding: 0 var(--#{$d-prefix}tabs-tab-padding);
 
     @if $direction == left {
       justify-content: flex-end;
@@ -196,9 +196,8 @@
   @include e(indicator) {
     top: 0;
     width: 2px;
-    height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    height: var(--#{$d-prefix}tabs-tab-size);
+    transition: top var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear;
 
     @if $direction == left {
       right: -2px;
@@ -210,26 +209,24 @@
   @include e(slider-indicator) {
     top: 0;
     width: 100%;
-    height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    height: var(--#{$d-prefix}tabs-tab-size);
+    transition: top var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear;
   }
 
   @include e(wrap-indicator) {
     top: 0;
     width: calc(100% + 1px);
-    height: var(--#{$variable-prefix}tabs-tab-size);
-    transition: top var(--#{$variable-prefix}animation-duration-slow) linear,
-      opacity var(--#{$variable-prefix}animation-duration-base) linear;
+    height: var(--#{$d-prefix}tabs-tab-size);
+    transition: top var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear;
 
     @if $direction == left {
       left: 0;
       border-right: none;
-      border-radius: 0 var(--#{$variable-prefix}border-radius) var(--#{$variable-prefix}border-radius) 0;
+      border-radius: 0 var(--#{$d-prefix}border-radius) var(--#{$d-prefix}border-radius) 0;
     } @else {
       right: 0;
       border-left: none;
-      border-radius: var(--#{$variable-prefix}border-radius) 0 0 var(--#{$variable-prefix}border-radius);
+      border-radius: var(--#{$d-prefix}border-radius) 0 0 var(--#{$d-prefix}border-radius);
     }
   }
 
@@ -244,9 +241,9 @@
     height: 36px;
 
     @include m(more) {
-      box-shadow: 0 -3px 8px -2px var(--#{$variable-prefix}shadow-color);
+      box-shadow: 0 -3px 8px -2px var(--#{$d-prefix}shadow-color);
       @include when(end) {
-        border-top-color: var(--#{$variable-prefix}background-color-indicator);
+        border-top-color: var(--#{$d-prefix}background-color-indicator);
       }
     }
   }
@@ -255,10 +252,10 @@
 @include b(tabs) {
   $selector: &;
 
-  --#{$variable-prefix}tabs-tab-size: 44px;
-  --#{$variable-prefix}tabs-slider-tab-size: 36px;
-  --#{$variable-prefix}tabs-tab-gap: 0 32px;
-  --#{$variable-prefix}tabs-tab-padding: 16px;
+  --#{$d-prefix}tabs-tab-size: 44px;
+  --#{$d-prefix}tabs-slider-tab-size: 36px;
+  --#{$d-prefix}tabs-tab-gap: 0 32px;
+  --#{$d-prefix}tabs-tab-padding: 16px;
 
   position: relative;
   display: flex;
@@ -280,42 +277,42 @@
   }
 
   @include m(larger) {
-    --#{$variable-prefix}tabs-tab-size: 52px;
-    --#{$variable-prefix}tabs-slider-tab-size: 44px;
-    --#{$variable-prefix}tabs-tab-gap: 36px;
-    --#{$variable-prefix}tabs-tab-padding: 20px;
+    --#{$d-prefix}tabs-tab-size: 52px;
+    --#{$d-prefix}tabs-slider-tab-size: 44px;
+    --#{$d-prefix}tabs-tab-gap: 36px;
+    --#{$d-prefix}tabs-tab-padding: 20px;
 
     @include font-size(1.15rem);
   }
 
   @include m(smaller) {
-    --#{$variable-prefix}tabs-tab-size: 36px;
-    --#{$variable-prefix}tabs-slider-tab-size: 32px;
-    --#{$variable-prefix}tabs-tab-gap: 20px;
-    --#{$variable-prefix}tabs-tab-padding: 12px;
+    --#{$d-prefix}tabs-tab-size: 36px;
+    --#{$d-prefix}tabs-slider-tab-size: 32px;
+    --#{$d-prefix}tabs-tab-gap: 20px;
+    --#{$d-prefix}tabs-tab-padding: 12px;
 
     @include font-size(0.9rem);
   }
 
   @include m(slider) {
-    --#{$variable-prefix}tabs-tab-size: var(--#{$variable-prefix}tabs-slider-tab-size);
+    --#{$d-prefix}tabs-tab-size: var(--#{$d-prefix}tabs-slider-tab-size);
 
     &#{$selector}--top,
     &#{$selector}--bottom {
       @include e(tab) {
-        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+        padding: 0 var(--#{$d-prefix}tabs-tab-padding);
       }
     }
 
     @include e(tablist-wrapper) {
       padding: 0;
-      border-radius: var(--#{$variable-prefix}border-radius);
+      border-radius: var(--#{$d-prefix}border-radius);
     }
 
     @include e(tablist) {
       gap: 0;
       min-width: unset;
-      background-color: var(--#{$variable-prefix}tabs-background-color-slider);
+      background-color: var(--#{$d-prefix}tabs-background-color-slider);
 
       &::after {
         content: none;
@@ -327,7 +324,7 @@
     &#{$selector}--top,
     &#{$selector}--bottom {
       @include e(tab) {
-        padding: 0 var(--#{$variable-prefix}tabs-tab-padding);
+        padding: 0 var(--#{$d-prefix}tabs-tab-padding);
       }
     }
 
@@ -347,7 +344,7 @@
     &::after {
       position: absolute;
       content: '';
-      background-color: var(--#{$variable-prefix}background-color-indicator);
+      background-color: var(--#{$d-prefix}background-color-indicator);
     }
   }
 
@@ -355,7 +352,7 @@
     position: absolute;
     z-index: 1;
     pointer-events: none;
-    background-color: var(--#{$variable-prefix}color-primary);
+    background-color: var(--#{$d-prefix}color-primary);
     opacity: 0;
   }
 
@@ -372,31 +369,30 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background-color: var(--#{$variable-prefix}background-color);
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    background-color: var(--#{$d-prefix}background-color);
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$variable-prefix}color-primary-darker);
+      color: var(--#{$d-prefix}color-primary-darker);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include m(add) {
-      border: 1px solid var(--#{$variable-prefix}background-color-indicator);
+      border: 1px solid var(--#{$d-prefix}background-color-indicator);
     }
 
     @include m(more) {
       border: 1px solid transparent;
-      transition: color var(--#{$variable-prefix}animation-duration-base) linear,
-        box-shadow var(--#{$variable-prefix}animation-duration-base) linear;
+      transition: color var(--#{$d-prefix}animation-duration-base) linear, box-shadow var(--#{$d-prefix}animation-duration-base) linear;
 
       @include when(end) {
         box-shadow: none;
@@ -414,9 +410,9 @@
       position: absolute;
       inset: 3px;
       content: '';
-      background-color: var(--#{$variable-prefix}background-color);
-      border-radius: var(--#{$variable-prefix}border-radius);
-      box-shadow: 0 2px 4px 0 var(--#{$variable-prefix}shadow-color);
+      background-color: var(--#{$d-prefix}background-color);
+      border-radius: var(--#{$d-prefix}border-radius);
+      box-shadow: 0 2px 4px 0 var(--#{$d-prefix}shadow-color);
     }
   }
 
@@ -424,14 +420,14 @@
     position: absolute;
     z-index: 1;
     pointer-events: none;
-    background-color: var(--#{$variable-prefix}background-color-light-gray);
-    border: 1px solid var(--#{$variable-prefix}background-color-indicator);
+    background-color: var(--#{$d-prefix}background-color-light-gray);
+    border: 1px solid var(--#{$d-prefix}background-color-indicator);
     opacity: 0;
   }
 
   @include e(dropdown-item) {
     @include when(active) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
     }
   }
 
@@ -441,17 +437,17 @@
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    height: var(--#{$variable-prefix}tabs-tab-size);
+    height: var(--#{$d-prefix}tabs-tab-size);
     cursor: pointer;
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:focus,
     &:hover {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     @include when(active) {
-      color: var(--#{$variable-prefix}color-primary);
+      color: var(--#{$d-prefix}color-primary);
     }
 
     @include when(disabled) {
@@ -462,15 +458,15 @@
 
   @include e(close) {
     margin: 0 0 0 4px;
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$variable-prefix}color-primary-darker);
+      color: var(--#{$d-prefix}color-primary-darker);
     }
   }
 }

@@ -18,7 +18,7 @@
   letter-spacing: inherit;
   outline: none;
   appearance: none;
-  caret-color: var(--#{$variable-prefix}color-primary);
+  caret-color: var(--#{$d-prefix}color-primary);
 }
 
 @mixin utils-ellipsis {

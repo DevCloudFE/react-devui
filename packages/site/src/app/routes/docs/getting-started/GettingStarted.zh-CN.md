@@ -19,7 +19,14 @@ npm install @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/u
 按需引入：
 
 ```scss
-@import '~@react-devui/ui/styles/custom';
+@import '~@react-devui/ui/styles/variables';
+
+@import '~@react-devui/ui/styles/mixins';
+
+@import '~@react-devui/ui/styles/root';
+@import '~@react-devui/ui/styles/reboot';
+@import '~@react-devui/ui/styles/animations';
+@import '~@react-devui/ui/styles/common';
 
 @import '~@react-devui/ui/styles/components/button';
 ```

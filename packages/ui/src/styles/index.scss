@@ -1,4 +1,11 @@
-@import 'custom';
+@import 'variables';
+
+@import 'mixins';
+
+@import 'root';
+@import 'reboot';
+@import 'animations';
+@import 'common';
 
 @import 'components/accordion';
 @import 'components/alert';

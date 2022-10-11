@@ -1,15 +1,16 @@
-$cascader-option-height: 32px;
 @import 'mixins/selectbox';
+
+$cascader-option-height: 32px;
 
 @include b(cascader) {
   @include component-selectbox;
 
   @include when(disabled) {
     @include e(multiple-tag) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
     }
     @include e(multiple-count) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
     }
   }
 
@@ -21,16 +22,16 @@ $cascader-option-height: 32px;
 
   @include e(close) {
     margin: 0 0 0 4px;
-    color: var(--#{$variable-prefix}color-icon-decorator);
-    transition: color var(--#{$variable-prefix}animation-duration-base) linear;
+    color: var(--#{$d-prefix}color-icon-decorator);
+    transition: color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$variable-prefix}color-primary-darker);
+      color: var(--#{$d-prefix}color-primary-darker);
     }
   }
 
@@ -38,9 +39,9 @@ $cascader-option-height: 32px;
     position: fixed;
     overflow: auto hidden;
     white-space: nowrap;
-    background-color: var(--#{$variable-prefix}background-color);
-    border-radius: var(--#{$variable-prefix}border-radius);
-    box-shadow: var(--#{$variable-prefix}shadow-popup);
+    background-color: var(--#{$d-prefix}background-color);
+    border-radius: var(--#{$d-prefix}border-radius);
+    box-shadow: var(--#{$d-prefix}shadow-popup);
   }
 
   @include e(list) {
@@ -54,7 +55,7 @@ $cascader-option-height: 32px;
     list-style: none;
 
     & + & {
-      border-left: 1px solid var(--#{$variable-prefix}color-divider);
+      border-left: 1px solid var(--#{$d-prefix}color-divider);
     }
   }
 
@@ -67,23 +68,23 @@ $cascader-option-height: 32px;
     height: $cascader-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$variable-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
 
     &:not(.is-selected):hover {
-      background-color: var(--#{$variable-prefix}background-color-hover);
+      background-color: var(--#{$d-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$variable-prefix}color-disabled);
+      color: var(--#{$d-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include when(selected) {
-      background-color: var(--#{$variable-prefix}background-color-primary);
+      background-color: var(--#{$d-prefix}background-color-primary);
     }
 
     @include when(focus) {
-      color: var(--#{$variable-prefix}color-primary-lighter);
+      color: var(--#{$d-prefix}color-primary-lighter);
     }
   }
 
@@ -106,7 +107,7 @@ $cascader-option-height: 32px;
     align-items: center;
     height: $cascader-option-height;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-disabled);
+    color: var(--#{$d-prefix}color-disabled);
   }
 
   @include e(loading) {
@@ -117,12 +118,12 @@ $cascader-option-height: 32px;
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    color: var(--#{$variable-prefix}color-primary);
-    background-color: rgb(var(--#{$variable-prefix}background-color-rgb) / 80%);
+    color: var(--#{$d-prefix}color-primary);
+    background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
 
     @include m(empty) {
       justify-content: flex-start;
-      background-color: var(--#{$variable-prefix}background-color);
+      background-color: var(--#{$d-prefix}background-color);
     }
   }
 }
