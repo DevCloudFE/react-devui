@@ -84,11 +84,11 @@ function List<V extends DId, T extends DCascaderItem<V>>(
       };
       switch (key) {
         case 'next':
-          focusNode(vsRef.current?.scrollByStep(1));
+          focusNode(vsRef.current?.scrollToStep(1));
           break;
 
         case 'prev':
-          focusNode(vsRef.current?.scrollByStep(-1));
+          focusNode(vsRef.current?.scrollToStep(-1));
           break;
 
         case 'first':

@@ -18,7 +18,8 @@ export type DVirtualScrollPerformance<T> = Pick<
 
 export interface DVirtualScrollRef<T> {
   scrollToItem: (item: T) => void;
-  scrollByStep: (step: number) => T | undefined;
+  scrollToStep: (step: 1 | -1) => T | undefined;
+  scrollToNested: () => T | undefined;
   scrollToStart: () => T | undefined;
   scrollToEnd: () => T | undefined;
 }
@@ -92,8 +93,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     let firstFocusableItem: T | undefined;
     let lastFocusableItem: T | undefined;
 
-    const items = new Map<DId, { item: T; accSize: number; nestedSize: number }>();
-    const reduceArr = (arr: T[]) => {
+    const items = new Map<DId, { item: T; level: number; accSize: number; nestedSize: number }>();
+    const reduceArr = (arr: T[], level = 0) => {
       let size = 0;
       for (const item of arr) {
         if (checkFocusable(item)) {
@@ -103,20 +104,22 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           }
         }
 
-        size += getItemSize(item);
-        accSize += getItemSize(item);
+        const key = dItemKey(item);
+        const itemSize = getItemSize(item);
+        size += itemSize;
+        accSize += itemSize;
 
-        const data = { item, accSize, nestedSize: 0 };
-        items.set(dItemKey(item), data);
+        const data = { item, level, accSize, nestedSize: 0 };
+        items.set(key, data);
 
         const nestedData = dItemNested?.(item);
-        if (nestedData && nestedData.list && (isUndefined(dExpands) || dExpands.has(dItemKey(item)))) {
+        if (nestedData && nestedData.list && (isUndefined(dExpands) || dExpands.has(key))) {
           if (nestedData.list.length === 0) {
             data.nestedSize = nestedData.emptySize ?? 0;
             size += data.nestedSize;
             accSize += data.nestedSize;
           } else {
-            data.nestedSize = reduceArr(nestedData.list);
+            data.nestedSize = reduceArr(nestedData.list, level + 1);
             size += data.nestedSize;
           }
         }
@@ -198,7 +201,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
               childrenList = getList(nestedList.length === 0 ? [EMPTY] : nestedList, parent.concat([item as T]));
             } else {
               childrenList = dataRef.current.listCache.get(key) ?? [];
-              if (dExpands.has(dItemKey(item as T))) {
+              if (dExpands.has(key)) {
                 childrenList = getList(nestedList.length === 0 ? [EMPTY] : nestedList, parent.concat([item as T]));
                 dataRef.current.listCache.set(key, childrenList);
               }
@@ -324,10 +327,10 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     return lastFocusableItem;
   });
 
-  const scrollByStep = useEventCallback((step: number) => {
+  const scrollToStep = useEventCallback((step: 1 | -1) => {
     if (!isUndefined(paddingSize)) {
       if (isUndefined(dFocusItem)) {
-        return step > 0 ? scrollToStart() : scrollToEnd();
+        return;
       }
 
       let findItem: T | undefined;
@@ -337,18 +340,19 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
         let index = -1;
         let findIndex = -1;
         const accSizeList = [];
+        const focusKey = dItemKey(dFocusItem);
         for (const iterator of itemsMap) {
           index += 1;
-          if (dItemKey(iterator[1].item) === dItemKey(dFocusItem)) {
+          if (iterator[0] === focusKey) {
             findIndex = index;
           }
           accSizeList.push(iterator[1]);
         }
 
         if (findIndex !== -1) {
-          if (step < 0) {
-            for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
-              const accSizeItem = nth(accSizeList, index);
+          if (step === 1) {
+            for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
+              const accSizeItem = nth(accSizeList, index % accSizeList.length);
               if (accSizeItem && checkFocusable(accSizeItem.item)) {
                 findItem = accSizeItem.item;
                 offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
@@ -356,8 +360,8 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
               }
             }
           } else {
-            for (let index = findIndex + 1, n = 0; n < accSizeList.length; index++, n++) {
-              const accSizeItem = nth(accSizeList, index % accSizeList.length);
+            for (let index = findIndex - 1, n = 0; n < accSizeList.length; index--, n++) {
+              const accSizeItem = nth(accSizeList, index);
               if (accSizeItem && checkFocusable(accSizeItem.item)) {
                 findItem = accSizeItem.item;
                 offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
@@ -375,7 +379,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
             scrollTo(offsetSize[1] - listElClientSize + paddingSize);
           } else {
-            if (step > 0) {
+            if (step === 1) {
               if (offsetSize[1] > listElScrollPosition + listElClientSize) {
                 scrollTo(offsetSize[1] - listElClientSize + paddingSize);
               }
@@ -392,15 +396,73 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     }
   });
 
+  const scrollToNested = useEventCallback(() => {
+    if (!isUndefined(paddingSize)) {
+      if (isUndefined(dFocusItem)) {
+        return;
+      }
+
+      let findItem: T | undefined;
+      let offsetSize: [number, number] | undefined;
+
+      if (listRef.current) {
+        let index = -1;
+        let findIndex = -1;
+        let level = 0;
+        const accSizeList = [];
+        const focusKey = dItemKey(dFocusItem);
+        for (const iterator of itemsMap) {
+          index += 1;
+          if (iterator[0] === focusKey) {
+            findIndex = index;
+            level = iterator[1].level;
+          }
+          accSizeList.push(iterator[1]);
+        }
+
+        if (findIndex !== -1) {
+          for (let index = findIndex + 1; index < accSizeList.length; index++) {
+            const accSizeItem = accSizeList[index];
+            if (accSizeItem.level <= level) {
+              return;
+            }
+            if (checkFocusable(accSizeItem.item)) {
+              findItem = accSizeItem.item;
+              offsetSize = [accSizeItem.accSize - getItemSize(findItem) + paddingSize, accSizeItem.accSize + paddingSize];
+              break;
+            }
+          }
+        }
+
+        if (!isUndefined(offsetSize)) {
+          const listElScrollPosition = listRef.current[dHorizontal ? 'scrollLeft' : 'scrollTop'];
+          const listElClientSize = listRef.current[dHorizontal ? 'clientWidth' : 'clientHeight'];
+          if (listElScrollPosition > offsetSize[1]) {
+            scrollTo(offsetSize[0] - paddingSize);
+          } else if (offsetSize[0] > listElScrollPosition + listElClientSize) {
+            scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+          } else {
+            if (offsetSize[1] > listElScrollPosition + listElClientSize) {
+              scrollTo(offsetSize[1] - listElClientSize + paddingSize);
+            }
+          }
+        }
+      }
+
+      return findItem;
+    }
+  });
+
   useImperativeHandle(
     ref,
     () => ({
       scrollToItem,
-      scrollByStep,
+      scrollToStep,
+      scrollToNested,
       scrollToStart,
       scrollToEnd,
     }),
-    [scrollByStep, scrollToEnd, scrollToStart, scrollToItem]
+    [scrollToItem, scrollToStep, scrollToNested, scrollToStart, scrollToEnd]
   );
 
   return children({

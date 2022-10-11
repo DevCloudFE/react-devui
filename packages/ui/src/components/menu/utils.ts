@@ -5,7 +5,7 @@ export function checkEnableItem<ID extends DId, T extends DMenuItem<ID>>(item: T
   return (item.type === 'item' || item.type === 'sub') && !item.disabled;
 }
 
-export function getSameLevelItems<ID extends DId, T extends DMenuItem<ID>>(arr: T[]) {
+export function getSameLevelEnableItems<ID extends DId, T extends DMenuItem<ID>>(arr: T[]) {
   const items: T[] = [];
   const reduceArr = (arr: T[]) => {
     for (const item of arr) {

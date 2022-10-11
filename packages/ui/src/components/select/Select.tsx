@@ -441,11 +441,11 @@ function Select<V extends DId, T extends DSelectItem<V>>(
           onFocusChange={(key) => {
             switch (key) {
               case 'next':
-                changeFocusItem(vsRef.current?.scrollByStep(1));
+                changeFocusItem(vsRef.current?.scrollToStep(1));
                 break;
 
               case 'prev':
-                changeFocusItem(vsRef.current?.scrollByStep(-1));
+                changeFocusItem(vsRef.current?.scrollToStep(-1));
                 break;
 
               case 'first':

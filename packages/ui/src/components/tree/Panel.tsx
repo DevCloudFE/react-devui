@@ -78,11 +78,11 @@ function Panel<V extends DId, T extends DTreeItem<V>>(
 
       switch (key) {
         case 'next':
-          focusNode(vsRef.current?.scrollByStep(1));
+          focusNode(vsRef.current?.scrollToStep(1));
           break;
 
         case 'prev':
-          focusNode(vsRef.current?.scrollByStep(-1));
+          focusNode(vsRef.current?.scrollToStep(-1));
           break;
 
         case 'first':
@@ -105,7 +105,7 @@ function Panel<V extends DId, T extends DTreeItem<V>>(
         case 'next-level':
           if (!dFocusItem.isLeaf) {
             if (isExpand) {
-              focusNode(vsRef.current?.scrollByStep(1));
+              focusNode(vsRef.current?.scrollToNested());
             } else {
               onExpandChange(dFocusItem);
             }

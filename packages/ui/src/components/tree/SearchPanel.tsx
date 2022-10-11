@@ -65,11 +65,11 @@ function SearchPanel<V extends DId, T extends DTreeItem<V>>(
     };
     switch (key) {
       case 'next':
-        focusItem(vsRef.current?.scrollByStep(1));
+        focusItem(vsRef.current?.scrollToStep(1));
         break;
 
       case 'prev':
-        focusItem(vsRef.current?.scrollByStep(-1));
+        focusItem(vsRef.current?.scrollToStep(-1));
         break;
 
       case 'first':

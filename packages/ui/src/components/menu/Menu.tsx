@@ -15,7 +15,7 @@ import { useComponentConfig, usePrefixConfig } from '../root';
 import { DGroup } from './Group';
 import { DItem } from './Item';
 import { DSub } from './Sub';
-import { checkEnableItem, getSameLevelItems } from './utils';
+import { checkEnableItem, getSameLevelEnableItems } from './utils';
 
 export interface DMenuRef {
   updatePosition: () => void;
@@ -236,7 +236,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
 
         if (isFocus) {
           handleKeyDown = (e) => {
-            const sameLevelItems = getSameLevelItems((nth(subParents, -1)?.children as T[]) ?? dList);
+            const sameLevelItems = getSameLevelEnableItems((nth(subParents, -1)?.children as T[]) ?? dList);
             const focusItem = (val?: T) => {
               if (val) {
                 setFocusIds(subParents.map((parentItem) => parentItem.id).concat([val.id]));
@@ -251,7 +251,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 addPopupId(itemId);
               }
               if (children) {
-                const newFocusItem = nth(getSameLevelItems(children), 0);
+                const newFocusItem = nth(getSameLevelEnableItems(children), 0);
                 if (newFocusItem) {
                   setFocusIds(_subParents.map((parentItem) => parentItem.id).concat([newFocusItem.id]));
                 }
@@ -425,7 +425,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                     setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
 
                     if (dMode === 'vertical') {
-                      const sameLevelItems = getSameLevelItems((nth(subParents, -1)?.children as T[]) ?? dList);
+                      const sameLevelItems = getSameLevelEnableItems((nth(subParents, -1)?.children as T[]) ?? dList);
                       handleSubExpand(sameLevelItems);
                     }
                   }
