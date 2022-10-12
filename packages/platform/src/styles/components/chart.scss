@@ -1,0 +1,8 @@
+@include b(chart) {
+  position: relative;
+
+  @include e(container) {
+    position: absolute;
+    inset: 0;
+  }
+}

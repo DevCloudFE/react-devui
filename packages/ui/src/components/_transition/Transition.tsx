@@ -1,7 +1,7 @@
 import { isArray, isNumber } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useAsync, useForceUpdate } from '@react-devui/hooks';
+import { useAsync } from '@react-devui/hooks';
 
 export type DTransitionState = 'enter' | 'entering' | 'entered' | 'leave' | 'leaving' | 'leaved';
 
@@ -41,9 +41,8 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
   });
 
   const async = useAsync();
-  const forceUpdate = useForceUpdate();
 
-  const [startTransition, setStartTransition] = useState(0);
+  const [stateChange, setStateChange] = useState(0);
 
   if (dataRef.current.prevIn !== dIn) {
     dataRef.current.prevIn = dIn;
@@ -72,12 +71,12 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
       onEnter?.();
       nextFrame(() => {
         dataRef.current.state = 'entering';
-        setStartTransition((draft) => draft + 1);
+        setStateChange((draft) => draft + 1);
       });
     } else if (state === 'leave') {
       nextFrame(() => {
         dataRef.current.state = 'leaving';
-        setStartTransition((draft) => draft + 1);
+        setStateChange((draft) => draft + 1);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,16 +84,21 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
 
   useEffect(() => {
     if (dataRef.current.state === 'entering' || dataRef.current.state === 'leaving') {
-      dataRef.current.clearTid?.();
       const during = isNumber(dDuring) ? dDuring : dIn ? dDuring.enter : dDuring.leave;
       dataRef.current.clearTid = async.setTimeout(() => {
-        dIn ? afterEnter?.() : afterLeave?.();
         dataRef.current.state = dIn ? 'entered' : 'leaved';
-        forceUpdate();
+        setStateChange((draft) => draft + 1);
       }, during);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startTransition]);
+  }, [stateChange]);
+
+  useEffect(() => {
+    if (dataRef.current.state === 'entered' || dataRef.current.state === 'leaved') {
+      dIn ? afterEnter?.() : afterLeave?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stateChange]);
 
   const shouldRender = (() => {
     if (dataRef.current.isFirstEnter && !dMountBeforeFirstEnter) {

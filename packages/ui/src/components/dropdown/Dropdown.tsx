@@ -420,10 +420,10 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
     >
       {({ renderTrigger, renderPopup }) => (
         <>
-          {renderTrigger(
-            <DFocusVisible onFocusVisibleChange={setFocusVisible}>
-              {({ render: renderFocusVisible }) =>
-                renderFocusVisible(
+          <DFocusVisible onFocusVisibleChange={setFocusVisible}>
+            {({ render: renderFocusVisible }) =>
+              renderFocusVisible(
+                renderTrigger(
                   React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
                     id: triggerId,
                     tabIndex: children.props.tabIndex ?? 0,
@@ -471,9 +471,9 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                     },
                   })
                 )
-              }
-            </DFocusVisible>
-          )}
+              )
+            }
+          </DFocusVisible>
           {containerRef.current &&
             ReactDOM.createPortal(
               <DTransition

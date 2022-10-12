@@ -1,3 +1,6 @@
+export type { AppChartProps } from './chart';
+export { AppChart } from './chart';
+
 export { AppFCPLoader } from './fcp-loader';
 
 export { AppLanguage } from './language';

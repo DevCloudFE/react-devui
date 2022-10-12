@@ -18,7 +18,7 @@ import AppLayout from './routes/layout/Layout';
 import AppLoginRoute from './routes/login/Login';
 
 const AppAMapRoute = React.lazy(() => import('./routes/dashboard/AMap'));
-const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/ECharts'));
+const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/echarts/ECharts'));
 
 const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
 const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
@@ -94,19 +94,6 @@ export function AppRoutes() {
               },
               {
                 path: 'amap',
-                element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppAMapRoute />
-                  </React.Suspense>
-                ),
-                data: {
-                  titleI18n: 'dashboard.amap',
-                  acl: ROUTES_ACL.dashboard.amap,
-                  canActivate: [ACLGuard],
-                },
-              },
-              {
-                path: 'amap/:ssssss',
                 element: (
                   <React.Suspense fallback={<AppFCPLoader />}>
                     <AppAMapRoute />
