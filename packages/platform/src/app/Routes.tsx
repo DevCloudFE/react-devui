@@ -1,7 +1,7 @@
 import type { Control, ControlMode } from '../core/useACL';
 import type { DBreadcrumbItem } from '@react-devui/ui/components/breadcrumb';
 import type { DId } from '@react-devui/ui/utils/types';
-import type { RouteObject } from 'react-router-dom';
+import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
 import { isUndefined, nth } from 'lodash';
 import React, { useEffect } from 'react';
@@ -24,7 +24,7 @@ const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
 const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
 
 export interface RouteStateContextData {
-  matchRoutes: ReturnType<typeof matchRoutes<RouteItem>>;
+  matchRoutes: RouteMatch<string, RouteItem>[] | null;
 }
 export const RouteStateContext = React.createContext<RouteStateContextData>({
   matchRoutes: null,
@@ -48,10 +48,14 @@ export interface RouteData {
   cache?: string;
 }
 
-export interface RouteItem extends Omit<RouteObject, 'children'> {
-  children?: RouteItem[];
+export interface IndexRouteItem extends IndexRouteObject {
   data?: RouteData;
 }
+export interface NonIndexRouteItem extends Omit<NonIndexRouteObject, 'children'> {
+  children?: NonIndexRouteItem[];
+  data?: RouteData;
+}
+export type RouteItem = IndexRouteItem | NonIndexRouteItem;
 
 // I have a great implementation of route caching, but considering the synchronization of data between pages (like modifying list or detail page data), I ended up not introducing route caching.
 export function AppRoutes() {

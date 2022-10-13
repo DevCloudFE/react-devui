@@ -23,7 +23,7 @@ export default function ECharts(): JSX.Element | null {
       <div className={styles['app-echarts']}>
         <div className="row" style={{ gap: 'var(--bs-gutter-x) 0' }}>
           {options.map((option, index) => (
-            <div key={index} className="col-6">
+            <div key={index} className="col-12 col-xxl-6">
               <DCard>
                 <DCard.Content>
                   <AppChart style={{ height: 320 }} aOption={option} />
