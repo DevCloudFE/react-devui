@@ -1,8 +1,10 @@
-@include b(chart) {
+@include b(amap) {
   position: relative;
+  width: 100%;
 
   @include e(container) {
     position: absolute;
     inset: 0;
+    overflow: hidden;
   }
 }

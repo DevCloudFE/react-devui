@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useMount } from '@react-devui/hooks';
 import { DCard } from '@react-devui/ui';
 
-import { AppChart, AppRouteHeader } from '../../../components';
+import { AppECharts, AppRouteHeader } from '../../../components';
 import styles from './ECharts.module.scss';
 import { getOptions } from './options';
 
@@ -26,7 +26,7 @@ export default function ECharts(): JSX.Element | null {
             <div key={index} className="col-12 col-xxl-6">
               <DCard>
                 <DCard.Content>
-                  <AppChart style={{ height: 320 }} aOption={option} />
+                  <AppECharts style={{ height: 320 }} aOption={option} />
                 </DCard.Content>
               </DCard>
             </div>

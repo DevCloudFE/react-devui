@@ -17,7 +17,7 @@ import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
 import AppLoginRoute from './routes/login/Login';
 
-const AppAMapRoute = React.lazy(() => import('./routes/dashboard/AMap'));
+const AppAMapRoute = React.lazy(() => import('./routes/dashboard/amap/AMap'));
 const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/echarts/ECharts'));
 
 const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));

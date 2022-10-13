@@ -5,7 +5,11 @@
     "module": "commonjs",
     "types": ["jest", "node"]
   },
-  "files": ["../../node_modules/@nrwl/react/typings/cssmodule.d.ts", "../../node_modules/@nrwl/react/typings/image.d.ts"],
+  "files": [
+    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nrwl/react/typings/image.d.ts",
+    "../../node_modules/@amap/amap-jsapi-types/index.d.ts"
+  ],
   "include": [
     "**/*.test.ts",
     "**/*.spec.ts",

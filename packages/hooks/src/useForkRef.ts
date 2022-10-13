@@ -1,7 +1,7 @@
 import { isFunction, isObject } from 'lodash';
 import { useCallback } from 'react';
 
-function setRef(ref: any, value: any): void {
+export function setRef(ref: any, value: any): void {
   if (isFunction(ref)) {
     ref(value);
   } else if (isObject(ref) && 'current' in ref) {

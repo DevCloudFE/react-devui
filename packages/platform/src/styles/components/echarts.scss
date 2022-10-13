@@ -1,0 +1,10 @@
+@include b(echarts) {
+  position: relative;
+  width: 100%;
+
+  @include e(container) {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+}

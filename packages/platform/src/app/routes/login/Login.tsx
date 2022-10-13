@@ -57,6 +57,23 @@ export default function Login(): JSX.Element | null {
       })
   );
 
+  const handleSubmit = () => {
+    const [http] = createHttp();
+    setLoginLoading(true);
+    http<{ user: UserState; token: string }>({
+      url: '/api/login',
+      method: 'post',
+      data: { username: accountForm.get('username').value },
+    }).subscribe({
+      next: (res) => {
+        setLoginLoading(false);
+        TOKEN.set(res.token);
+        init(res.user);
+        navigate(from ?? '/', { replace: true });
+      },
+    });
+  };
+
   const loginSameNode = (
     <>
       <DForm.Item>
@@ -68,28 +85,7 @@ export default function Login(): JSX.Element | null {
         </a>
       </DForm.Item>
       <DForm.Item>
-        <DButton
-          type="submit"
-          disabled={loginType === 'account' ? !accountForm.valid : !phoneForm.valid}
-          onClick={() => {
-            const [http] = createHttp();
-            setLoginLoading(true);
-            http<{ user: UserState; token: string }>({
-              url: '/api/login',
-              method: 'post',
-              data: { username: accountForm.get('username').value },
-            }).subscribe({
-              next: (res) => {
-                setLoginLoading(false);
-                TOKEN.set(res.token);
-                init(res.user);
-                navigate(from ?? '/', { replace: true });
-              },
-            });
-          }}
-          dLoading={loginloading}
-          dBlock
-        >
+        <DButton type="submit" disabled={loginType === 'account' ? !accountForm.valid : !phoneForm.valid} dLoading={loginloading} dBlock>
           {t('routes.login.Login')}
         </DButton>
       </DForm.Item>
@@ -118,7 +114,7 @@ export default function Login(): JSX.Element | null {
                 id: 'account',
                 title: t('routes.login.Account Login'),
                 panel: (
-                  <DForm dUpdate={updateAccountForm} dLabelWidth={0}>
+                  <DForm onSubmit={handleSubmit} dUpdate={updateAccountForm} dLabelWidth={0}>
                     <DForm.Group dFormGroup={accountForm}>
                       <DForm.Item
                         dFormControls={{
@@ -151,7 +147,7 @@ export default function Login(): JSX.Element | null {
                 id: 'phone',
                 title: t('routes.login.Phone Login'),
                 panel: (
-                  <DForm dUpdate={updatePhoneForm} dLabelWidth={0}>
+                  <DForm onSubmit={handleSubmit} dUpdate={updatePhoneForm} dLabelWidth={0}>
                     <DForm.Group dFormGroup={phoneForm}>
                       <DForm.Item dFormControls={{ phone: t('routes.login.Please enter your phone number') }}>
                         {({ phone }) => (

@@ -18,4 +18,7 @@ export interface NotificationItem {
 }
 export const useNotificationState = createGlobalState<NotificationItem[]>();
 
-export const useMenuExpandsState = createGlobalState<string[]>();
+export interface MenuState {
+  expands: string[];
+}
+export const useMenuState = createGlobalState<MenuState>();

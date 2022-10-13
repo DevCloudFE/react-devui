@@ -2,6 +2,7 @@ import type { NotificationItem, UserState } from '../config/state';
 
 import { isNull } from 'lodash';
 
+import { useMenuState } from '../config/state';
 import { useNotificationState } from '../config/state';
 import { useUserState } from '../config/state';
 import { TOKEN, TOKEN_REFRESH, TOKEN_REFRESH_OFFSET } from '../config/token';
@@ -16,6 +17,7 @@ export function useInit() {
 
   const [, setUser] = useUserState();
   const [, setNotification] = useNotificationState();
+  const [, setExpands] = useMenuState();
 
   const refreshToken = () => {
     CLEAR_TOKEN_REFRESH?.();
@@ -67,9 +69,14 @@ export function useInit() {
     });
   };
 
+  const resetMenu = () => {
+    setExpands(undefined);
+  };
+
   return (user: UserState) => {
     refreshToken();
     handleUser(user);
     getNotification();
+    resetMenu();
   };
 }

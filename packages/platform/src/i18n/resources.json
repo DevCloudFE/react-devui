@@ -47,6 +47,14 @@
           "500": "Sorry, there was an error with the server",
           "Back Home": "Back Home"
         },
+        "dashboard": {
+          "amap": {
+            "Please enter your JSAPI key": "Please enter your JSAPI key!",
+            "Security key": "Security key",
+            "OK": "OK",
+            "No JSAPI key": "No JSAPI key!"
+          }
+        },
         "test": {
           "acl": {
             "Switch between different users to compare effects": "Switch between different users to compare effects",
@@ -123,6 +131,14 @@
           "404": "抱歉，你访问的页面不存在",
           "500": "抱歉，服务器出错了",
           "Back Home": "返回首页"
+        },
+        "dashboard": {
+          "amap": {
+            "Please enter your JSAPI key": "请输入 JSAPI key！",
+            "Security key": "安全密钥",
+            "OK": "确 定",
+            "No JSAPI key": "无 JSAPI key!"
+          }
         },
         "test": {
           "acl": {

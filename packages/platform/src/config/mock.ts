@@ -64,23 +64,27 @@ if (environment.mock) {
         {
           user: username === 'admin' ? admin : user,
           token: `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
-            JSON.stringify({ exp: ~~(Date.now() / 1000) + 6 * 60 * 60, admin: username === 'admin' })
+            JSON.stringify({
+              exp: ~~(Date.now() / 1000) + 6 * 60 * 60,
+              admin: username === 'admin',
+            })
           )}.signature`,
         },
       ])
     );
   }
 
-  mock
-    .onPost('/api/auth/refresh')
-    .reply(
-      withDelay(500, [
-        200,
-        `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
-          JSON.stringify({ exp: ~~(Date.now() / 1000) + 6 * 60 * 60 })
-        )}.signature`,
-      ])
-    );
+  mock.onPost('/api/auth/refresh').reply(
+    withDelay(500, [
+      200,
+      `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
+        JSON.stringify({
+          exp: ~~(Date.now() / 1000) + 6 * 60 * 60,
+          admin: (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin,
+        })
+      )}.signature`,
+    ])
+  );
 
   for (const status of [401, 403, 404, 500]) {
     mock.onPost('/api/test/http', { status }).reply(status);

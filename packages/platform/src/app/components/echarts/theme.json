@@ -154,6 +154,11 @@
       "breadcrumb": {
         "itemStyle": {
           "color": "var(--d-color-icon-decorator)"
+        },
+        "emphasis": {
+          "itemStyle": {
+            "color": "var(--d-color-primary-lighter)"
+          }
         }
       }
     },
@@ -283,7 +288,7 @@
       },
       "emphasis": {
         "iconStyle": {
-          "borderColor": "var(--d-text-color)"
+          "borderColor": "var(--d-color-primary-lighter)"
         }
       }
     },

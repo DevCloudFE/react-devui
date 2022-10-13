@@ -8,6 +8,7 @@ import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
+import { STORAGE_KEY } from '../../../../config/storage';
 import { AppLanguage } from '../../../components';
 import styles from './Header.module.scss';
 import { AppNotification } from './notification/Notification';
@@ -27,7 +28,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
   const textRef = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
-  const themeStorage = useStorage<AppTheme>('theme', 'light');
+  const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
 
   useEffect(() => {
     if (menuMode === 'vertical' && textRef.current) {

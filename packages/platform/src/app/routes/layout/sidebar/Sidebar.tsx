@@ -5,7 +5,7 @@ import { useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { DDrawer, DMenu } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { useMenuExpandsState } from '../../../../config/state';
+import { useMenuState } from '../../../../config/state';
 import { useMenu } from '../../../../core';
 import styles from './Sidebar.module.scss';
 
@@ -21,8 +21,8 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
   const [menu, allItem] = useMenu();
   const location = useLocation();
 
-  const [expands, setExpands] = useMenuExpandsState();
-  const hasInit = !isUndefined(expands);
+  const [menuState, setMenuState] = useMenuState();
+  const hasInit = !isUndefined(menuState);
   const activeItem = (() => {
     let maxMatch = 0;
     let active = null;
@@ -40,10 +40,12 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
 
   useIsomorphicLayoutEffect(() => {
     if (!hasInit) {
-      setExpands(isNull(activeItem) ? [] : activeItem.parentSub);
+      setMenuState({
+        expands: isNull(activeItem) ? [] : activeItem.parentSub,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hasInit]);
 
   const menuNode = (md: boolean) => {
     return hasInit ? (
@@ -52,8 +54,12 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
         dList={menu}
         dMode={md ? menuMode : 'vertical'}
         dActive={activeItem?.id ?? null}
-        dExpands={expands}
-        onExpandsChange={setExpands}
+        dExpands={menuState.expands}
+        onExpandsChange={(expands) => {
+          setMenuState((draft) => {
+            draft!.expands = expands;
+          });
+        }}
       ></DMenu>
     ) : null;
   };
