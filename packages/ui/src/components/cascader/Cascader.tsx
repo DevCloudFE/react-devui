@@ -330,7 +330,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
             changeSelect(Array.from(checkeds.keys()));
           }}
         >
-          <DTag className={`${dPrefix}cascader__multiple-count`} dSize={size}>
+          <DTag className={`${dPrefix}cascader__multiple-count`} tabIndex={-1} dSize={size}>
             {(select as Set<V>).size}
           </DTag>
         </DDropdown>

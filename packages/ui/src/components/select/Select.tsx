@@ -354,7 +354,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
             changeSelectByClick(id);
           }}
         >
-          <DTag className={`${dPrefix}select__multiple-count`} dSize={size}>
+          <DTag className={`${dPrefix}select__multiple-count`} tabIndex={-1} dSize={size}>
             {(select as Set<V>).size}
           </DTag>
         </DDropdown>

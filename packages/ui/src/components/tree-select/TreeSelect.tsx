@@ -361,7 +361,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
             changeSelect(Array.from(checkeds.keys()));
           }}
         >
-          <DTag className={`${dPrefix}tree-select__multiple-count`} dSize={size}>
+          <DTag className={`${dPrefix}tree-select__multiple-count`} tabIndex={-1} dSize={size}>
             {(select as Set<V>).size}
           </DTag>
         </DDropdown>
