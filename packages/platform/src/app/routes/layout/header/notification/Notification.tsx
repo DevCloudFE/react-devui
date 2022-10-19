@@ -9,7 +9,7 @@ import { DAvatar, DBadge, DButton, DPopover, DSeparator, DTabs } from '@react-de
 import { WINDOW_SPACE } from '@react-devui/ui/utils';
 import { getClassName } from '@react-devui/utils';
 
-import { useNotificationState } from '../../../../../config/state';
+import { useNotificationState } from '../../../../../core';
 import { AppList } from '../../../../components';
 import styles from './Notification.module.scss';
 

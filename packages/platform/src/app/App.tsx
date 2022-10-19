@@ -1,4 +1,4 @@
-import type { UserState } from '../config/state';
+import type { UserState } from '../core/state';
 import type { DRootProps } from '@react-devui/ui';
 import type { DLang } from '@react-devui/ui/utils/types';
 

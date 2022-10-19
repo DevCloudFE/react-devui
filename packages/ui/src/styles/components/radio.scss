@@ -101,6 +101,8 @@
   }
 
   @include m(button-fill) {
+    background-color: var(--#{$d-prefix}background-color);
+
     &:hover {
       color: var(--#{$d-prefix}color-primary-lighter);
       border-color: var(--#{$d-prefix}color-primary-lighter);

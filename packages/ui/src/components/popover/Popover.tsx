@@ -124,8 +124,8 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   })();
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
-    top: -9999,
-    left: -9999,
+    top: '-200vh',
+    left: '-200vw',
   });
   const [placement, setPlacement] = useState<DPopupPlacement>(dPlacement);
   const [transformOrigin, setTransformOrigin] = useState<string>();

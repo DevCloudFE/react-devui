@@ -1,9 +1,8 @@
 import { isUndefined, isNumber, isArray } from 'lodash';
-import { useContext } from 'react';
 
 import { getClassName } from '@react-devui/utils';
 
-import { DIconContext } from './Icon';
+import { useIconContext } from './hooks';
 
 export interface DIconBaseProps extends React.SVGAttributes<SVGElement> {
   dSize?: number | string | [number | string, number | string];
@@ -24,15 +23,13 @@ export function useIconDefinition(props: DIconBaseProps) {
     ...restProps
   } = props;
 
-  const prefix = `${useContext(DIconContext).namespace}-`;
+  const context = useIconContext();
 
   const [width, height] = isArray(dSize) ? dSize : [dSize, dSize];
 
   const svgProps: React.SVGAttributes<SVGElement> = {
     ...restProps,
-    className: getClassName(restProps.className, `${prefix}icon`, {
-      [`t-${dTheme}`]: dTheme,
-    }),
+    className: getClassName(restProps.className, context.className(dTheme)),
     style: {
       ...restProps.style,
       transform: isUndefined(dRotate) ? undefined : `rotate(${dRotate}deg)`,

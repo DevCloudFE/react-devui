@@ -2,19 +2,4 @@
 
 @include b(amap) {
   @include app-route;
-
-  @include e(empty) {
-    position: relative;
-    padding-top: 61.8%;
-    font-weight: 500;
-    background-color: var(--d-mask-background-color);
-
-    & > div {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
 }

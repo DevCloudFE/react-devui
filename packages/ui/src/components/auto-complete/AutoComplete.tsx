@@ -94,8 +94,8 @@ function AutoComplete<T extends DAutoCompleteItem>(
   const maxZIndex = useMaxIndex(visible);
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
-    top: -9999,
-    left: -9999,
+    top: '-200vh',
+    left: '-200vw',
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {

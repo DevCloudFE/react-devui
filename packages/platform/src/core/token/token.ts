@@ -2,8 +2,8 @@ import { isNull } from 'lodash';
 
 import { useStorage } from '@react-devui/hooks';
 
-import { base64url } from '../app/utils';
-import { environment } from '../environments';
+import { base64url } from '../../app/utils';
+import { environment } from '../../environments';
 
 export const TOKEN_KEY = 'token';
 export const TOKEN_TYPE: 'JWT' | 'CUSTOM' = 'JWT';
@@ -23,6 +23,14 @@ export abstract class Token {
 
   public get value(): string | null {
     return useStorage.SERVICE.getItem(TOKEN_KEY);
+  }
+
+  public get expired(): boolean {
+    if (isNull(this.expiration)) {
+      return false;
+    } else {
+      return this.expiration - TOKEN_EXPIRATION_OFFSET <= Date.now();
+    }
   }
 
   set(val: string | null) {

@@ -5,7 +5,7 @@ import { useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { DDrawer, DMenu } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { useMenuState } from '../../../../config/state';
+import { useMenuState } from '../../../../core';
 import { useMenu } from '../../../../core';
 import styles from './Sidebar.module.scss';
 

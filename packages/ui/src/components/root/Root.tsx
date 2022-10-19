@@ -4,6 +4,7 @@ import type { DIconContextData } from '@react-devui/icons/Icon';
 import { useContext, useMemo } from 'react';
 
 import { DIconContext } from '@react-devui/icons/Icon';
+import { getClassName } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
 import { Notification } from './Notification';
@@ -48,7 +49,7 @@ export function DRoot(props: DRootProps): JSX.Element | null {
       context,
       {
         props: iconProps,
-        namespace,
+        className: (theme) => getClassName(`${namespace}-icon`, { [`t-${theme}`]: theme }),
         twoToneColor: (theme) => [
           theme ? `var(--${namespace}-color-${theme})` : `var(--${namespace}-text-color)`,
           theme ? `var(--${namespace}-background-color-${theme})` : `rgb(var(--${namespace}-text-color-rgb) / 10%)`,

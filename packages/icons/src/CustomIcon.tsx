@@ -2,8 +2,8 @@ import type { DIconBaseProps } from './useIconDefinition';
 
 import React from 'react';
 
+import { useIconProps } from './hooks';
 import { useIconDefinition } from './useIconDefinition';
-import { useIconProps } from './useIconProps';
 
 export type DCustomIconeProps = DIconBaseProps;
 

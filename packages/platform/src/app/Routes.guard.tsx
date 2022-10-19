@@ -4,8 +4,7 @@ import { isNull, isObject } from 'lodash';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { LOGIN_PATH, PREV_ROUTE_KEY } from '../config/other';
-import { TOKEN, TOKEN_EXPIRATION_OFFSET } from '../config/token';
-import { useACL } from '../core';
+import { TOKEN, useACL } from '../core';
 
 export function useACLGuard(): CanActivateFn {
   const acl = useACL();
@@ -35,11 +34,8 @@ export function useTokenGuard(): CanActivateFn {
       return <Navigate to={LOGIN_PATH} state={{ [PREV_ROUTE_KEY]: location }} replace />;
     }
 
-    const expiration = TOKEN.expiration;
-    if (!isNull(expiration)) {
-      if (expiration - TOKEN_EXPIRATION_OFFSET <= Date.now()) {
-        return <Navigate to={LOGIN_PATH} state={{ [PREV_ROUTE_KEY]: location }} replace />;
-      }
+    if (TOKEN.expired) {
+      return <Navigate to={LOGIN_PATH} state={{ [PREV_ROUTE_KEY]: location }} replace />;
     }
 
     return true;

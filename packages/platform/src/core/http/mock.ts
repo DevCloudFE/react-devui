@@ -1,13 +1,13 @@
-import type { NotificationItem, UserState } from './state';
-import type { JWTToken, JWTTokenPayload } from './token';
+import type { UserState, NotificationItem } from '../state';
+import type { JWTToken, JWTTokenPayload } from '../token';
 
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-import { base64url } from '../app/utils';
-import { environment } from '../environments';
-import { ROUTES_ACL } from './acl';
-import { TOKEN } from './token';
+import { base64url } from '../../app/utils';
+import { ROUTES_ACL } from '../../config/acl';
+import { environment } from '../../environments';
+import { TOKEN } from '../token';
 
 if (environment.mock) {
   const mock = new MockAdapter(axios);
@@ -58,33 +58,41 @@ if (environment.mock) {
     .reply(withDelay(500, [200, (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
 
   for (const username of ['admin', 'user']) {
-    mock.onPost('/api/login', { username }).reply(
-      withDelay(500, [
-        200,
-        {
-          user: username === 'admin' ? admin : user,
-          token: `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
-            JSON.stringify({
-              exp: ~~(Date.now() / 1000) + 6 * 60 * 60,
-              admin: username === 'admin',
-            })
-          )}.signature`,
-        },
-      ])
-    );
+    mock.onPost('/api/login', { username }).reply(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([
+            200,
+            {
+              user: username === 'admin' ? admin : user,
+              token: `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
+                JSON.stringify({
+                  exp: ~~((Date.now() + 2 * 60 * 60 * 1000) / 1000),
+                  admin: username === 'admin',
+                })
+              )}.signature`,
+            },
+          ]);
+        }, 500);
+      });
+    });
   }
 
-  mock.onPost('/api/auth/refresh').reply(
-    withDelay(500, [
-      200,
-      `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
-        JSON.stringify({
-          exp: ~~(Date.now() / 1000) + 6 * 60 * 60,
-          admin: (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin,
-        })
-      )}.signature`,
-    ])
-  );
+  mock.onPost('/api/auth/refresh').reply(() => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          200,
+          `${base64url.encode(JSON.stringify({}))}.${base64url.encode(
+            JSON.stringify({
+              exp: ~~((Date.now() + 2 * 60 * 60 * 1000) / 1000),
+              admin: (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin,
+            })
+          )}.signature`,
+        ]);
+      }, 500);
+    });
+  });
 
   for (const status of [401, 403, 404, 500]) {
     mock.onPost('/api/test/http', { status }).reply(status);

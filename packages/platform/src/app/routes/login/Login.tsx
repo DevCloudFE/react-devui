@@ -1,5 +1,5 @@
 import type { PREV_ROUTE_KEY } from '../../../config/other';
-import type { UserState } from '../../../config/state';
+import type { UserState } from '../../../core/state';
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,8 +10,7 @@ import { LockOutlined, MobileOutlined, UserOutlined } from '@react-devui/icons';
 import { DButton, DCheckbox, DForm, DInput, DTabs, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { TOKEN } from '../../../config/token';
-import { useHttp, useInit } from '../../../core';
+import { TOKEN, useHttp, useInit } from '../../../core';
 import { AppLanguage } from '../../components';
 import styles from './Login.module.scss';
 import { BASE64_DATA } from './base64.out';

@@ -1,10 +1,10 @@
 import type { DIconBaseProps } from './useIconDefinition';
 import type { AbstractNode, IconDefinition } from '@ant-design/icons-svg/es/types';
 
-import React, { useContext } from 'react';
+import React from 'react';
 
+import { useIconContext, useIconProps } from './hooks';
 import { useIconDefinition } from './useIconDefinition';
-import { useIconProps } from './useIconProps';
 
 interface DRenderIconOptions {
   placeholders: {
@@ -33,16 +33,10 @@ function renderAbstractNode(node: AbstractNode, options: DRenderIconOptions): JS
 
 export interface DIconContextData {
   props?: Omit<DIconProps, 'dIcon'>;
-  namespace: string;
-  twoToneColor: (theme?: DIconProps['dTheme']) => [string, string];
+  className: (theme: DIconProps['dTheme']) => string;
+  twoToneColor: (theme: DIconProps['dTheme']) => [string, string];
 }
-export const DIconContext = React.createContext<DIconContextData>({
-  namespace: 'd',
-  twoToneColor: (theme) => [
-    theme ? `var(--d-color-${theme})` : `var(--d-text-color)`,
-    theme ? `var(--d-background-color-${theme})` : `rgb(var(--d-text-color-rgb) / 10%)`,
-  ],
-});
+export const DIconContext = React.createContext<DIconContextData | null>(null);
 
 export interface DIconProps extends Omit<DIconBaseProps, 'children'> {
   dTwoToneColor?: [string, string];
@@ -58,7 +52,9 @@ function Icon(props: DIconProps, ref: React.ForwardedRef<SVGSVGElement>): JSX.El
     ...restProps
   } = useIconProps(props);
 
-  const twoToneColorByTheme = useContext(DIconContext).twoToneColor;
+  const context = useIconContext();
+
+  const twoToneColorByTheme = context.twoToneColor;
   const twoToneColor = dTwoToneColor ?? twoToneColorByTheme(dTheme);
 
   const svgProps = useIconDefinition({ ...restProps, dTheme });

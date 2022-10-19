@@ -92,8 +92,8 @@ function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element
   }, [_iconMode]);
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
-    top: -9999,
-    left: -9999,
+    top: '-200vh',
+    left: '-200vw',
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {

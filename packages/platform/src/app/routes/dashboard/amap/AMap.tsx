@@ -1,58 +1,68 @@
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
-import { useStorage } from '@react-devui/hooks';
-import { DButton, DForm, DInput, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
+import { useImmer } from '@react-devui/hooks';
+import { DRadio } from '@react-devui/ui';
 
-import { STORAGE_KEY } from '../../../../config/storage';
-import { AppAMap } from '../../../components';
+import { AppMap } from '../../../components';
 import styles from './AMap.module.scss';
+import points from './points';
 
 export default function AMap(): JSX.Element | null {
-  const { t } = useTranslation();
-  const amapStorage = useStorage<{ key: string; securityJsCode: string | null }>(...STORAGE_KEY.amap);
-
-  const [form, updateForm] = useForm(
-    () =>
-      new FormGroup({
-        key: new FormControl(amapStorage.value?.key ?? '', Validators.required),
-        securityJsCode: new FormControl(amapStorage.value?.securityJsCode ?? ''),
-      })
-  );
+  const [mapTmp, setMapTmp] = useState('Marker');
+  const [infoWindow, setInfoWindow] = useImmer<{ visible: boolean; position?: [number, number] }>({ visible: false });
 
   return (
     <div className={styles['app-amap']}>
-      <DForm
+      <DRadio.Group
         className="mb-3"
-        onSubmit={() => {
-          amapStorage.set({
-            key: form.value.key,
-            securityJsCode: form.value.securityJsCode ? form.value.securityJsCode : null,
-          });
+        dList={['Marker', 'MarkerCluster', 'InfoWindow'].map((tmp) => ({
+          label: tmp,
+          value: tmp,
+        }))}
+        dModel={mapTmp}
+        dType="fill"
+        onModelChange={setMapTmp}
+      />
+      <AppMap
+        style={{ paddingTop: '61.8%' }}
+        aOptions={{
+          center: [104.937478, 35.439575],
+          zoom: 5,
         }}
-        dLayout="vertical"
-        dUpdate={updateForm}
       >
-        <DForm.Group dFormGroup={form}>
-          <DForm.Item dFormControls={{ key: t('routes.dashboard.amap.Please enter your JSAPI key') }} dLabel="Key">
-            {({ key }) => <DInput dFormControl={key} dPlaceholder="Key" />}
-          </DForm.Item>
-          <DForm.Item dFormControls={{ securityJsCode: {} }} dLabel={t('routes.dashboard.amap.Security key')}>
-            {({ securityJsCode }) => <DInput dFormControl={securityJsCode} dPlaceholder={t('routes.dashboard.amap.Security key')} />}
-          </DForm.Item>
-          <DForm.Item>
-            <DButton type="submit" disabled={!form.valid}>
-              {t('routes.dashboard.amap.OK')}
-            </DButton>
-          </DForm.Item>
-        </DForm.Group>
-      </DForm>
-      {amapStorage.value ? (
-        <AppAMap style={{ paddingTop: '61.8%' }} aKey={amapStorage.value.key} aSecurityJsCode={amapStorage.value.securityJsCode}></AppAMap>
-      ) : (
-        <div className={styles['app-amap__empty']}>
-          <div>{t('routes.dashboard.amap.No JSAPI key')}</div>
-        </div>
-      )}
+        {mapTmp === 'Marker' ? (
+          <AppMap.Marker aOptions={{ position: [116.406315, 39.908775] }}></AppMap.Marker>
+        ) : mapTmp === 'MarkerCluster' ? (
+          <AppMap.MarkerCluster aList={points as { lnglat: [number, number] }[]} />
+        ) : (
+          <>
+            <AppMap.Marker
+              aOptions={{ position: [116.406315, 39.908775] }}
+              aLabel="Click me!"
+              onUpdate={(marker) => {
+                marker.on('click', () => {
+                  setInfoWindow((draft) => {
+                    draft.visible = !draft.visible;
+                    draft.position = marker.getPosition() as any;
+                  });
+                });
+              }}
+            ></AppMap.Marker>
+            <AppMap.InfoWindow
+              aVisible={infoWindow.visible}
+              aPosition={infoWindow.position}
+              aHeader="Title"
+              onClose={() => {
+                setInfoWindow((draft) => {
+                  draft.visible = false;
+                });
+              }}
+            >
+              InfoWindow
+            </AppMap.InfoWindow>
+          </>
+        )}
+      </AppMap>
     </div>
   );
 }

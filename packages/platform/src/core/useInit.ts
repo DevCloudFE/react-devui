@@ -1,15 +1,9 @@
-import type { NotificationItem, UserState } from '../config/state';
+import type { UserState, NotificationItem } from './state';
 
-import { isNull } from 'lodash';
-
-import { useMenuState } from '../config/state';
-import { useNotificationState } from '../config/state';
-import { useUserState } from '../config/state';
-import { TOKEN, TOKEN_REFRESH, TOKEN_REFRESH_OFFSET } from '../config/token';
+import { useHttp } from './http';
+import { useUserState, useNotificationState, useMenuState } from './state';
+import { useRefreshToken } from './token';
 import { useACL } from './useACL';
-import { useHttp } from './useHttp';
-
-let CLEAR_TOKEN_REFRESH: (() => void) | undefined;
 
 export function useInit() {
   const createHttp = useHttp();
@@ -19,33 +13,7 @@ export function useInit() {
   const [, setNotification] = useNotificationState();
   const [, setExpands] = useMenuState();
 
-  const refreshToken = () => {
-    CLEAR_TOKEN_REFRESH?.();
-    if (TOKEN_REFRESH) {
-      const refresh = () => {
-        const expiration = TOKEN.expiration;
-        if (!isNull(expiration)) {
-          const [http, abort] = createHttp({ unmount: false });
-          const tid = window.setTimeout(() => {
-            http<string>({
-              url: '/api/auth/refresh',
-              method: 'post',
-            }).subscribe({
-              next: (res) => {
-                TOKEN.set(res);
-                refresh();
-              },
-            });
-          }, expiration - Date.now() - TOKEN_REFRESH_OFFSET);
-          CLEAR_TOKEN_REFRESH = () => {
-            clearTimeout(tid);
-            abort();
-          };
-        }
-      };
-      refresh();
-    }
-  };
+  const refreshToken = useRefreshToken();
 
   const handleUser = (user: UserState) => {
     setUser(user);
