@@ -5,13 +5,13 @@ import { DCard } from '@react-devui/ui';
 
 import { AppChart, AppRouteHeader } from '../../../components';
 import styles from './ECharts.module.scss';
-import { getOptions } from './options';
+import { barOptions, lineOptions, nightingaleOptions, pieOptions, scatterOptions, stackedBarOptions, stackedLineOptions } from './options';
 
 export default function ECharts(): JSX.Element | null {
   const [options, setOptions] = useState<echarts.EChartsOption[]>([]);
 
   useMount(() => {
-    setOptions(getOptions() as echarts.EChartsOption[]);
+    setOptions([lineOptions, stackedLineOptions, barOptions, stackedBarOptions, pieOptions, nightingaleOptions, scatterOptions]);
   });
 
   return (

@@ -20,6 +20,9 @@
       },
       "symbolSize": "8",
       "symbol": "emptyCircle",
+      "label": {
+        "color": "var(--d-text-color-sub)"
+      },
       "smooth": false
     },
     "radar": {
@@ -37,6 +40,9 @@
       "itemStyle": {
         "barBorderWidth": 0,
         "barBorderColor": "#ccc"
+      },
+      "label": {
+        "color": "var(--d-text-color-sub)"
       }
     },
     "pie": {
@@ -298,6 +304,7 @@
       }
     },
     "tooltip": {
+      "borderWidth": 0,
       "axisPointer": {
         "lineStyle": {
           "color": "#cccccc",
