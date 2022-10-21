@@ -4,20 +4,26 @@ import type { DMenuItem } from '@react-devui/ui/components/menu';
 import { isObject, isUndefined } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { NotificationService } from '@react-devui/ui';
+import { createGlobalState } from '@react-devui/hooks';
 
 import { MENU } from '../config/menu';
-import { LOGIN_PATH } from '../config/other';
 import { useACL } from './useACL';
+
+export interface MenuState {
+  expands: string[];
+}
+const useMenuState = createGlobalState<MenuState>({
+  expands: [],
+});
 
 export function useMenu() {
   const acl = useACL();
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const [menuState, setMenuState] = useMenuState();
 
-  const allItem: { id: string; parentSub: string[] }[] = [];
+  let firstPath: string | undefined = undefined;
   const reduceMenu = (arr: MenuItem[], parentSub: string[] = []): DMenuItem<string>[] => {
     const newArr: DMenuItem<string>[] = [];
     for (const item of arr) {
@@ -49,7 +55,9 @@ export function useMenu() {
         }
       } else {
         newArr.push(obj);
-        allItem.push({ id: item.path, parentSub });
+        if (!obj.disabled && isUndefined(firstPath)) {
+          firstPath = obj.id;
+        }
       }
     }
     return newArr;
@@ -57,16 +65,12 @@ export function useMenu() {
 
   const menu = reduceMenu(MENU);
 
-  //#region Handle no menu
-  if (allItem.length === 0) {
-    NotificationService.open({
-      dTitle: t('User has no menu'),
-      dDescription: t('Please contact the administrator'),
-      dType: 'error',
-    });
-    navigate(LOGIN_PATH, { replace: true });
-  }
-  //#endregion
-
-  return [menu, allItem] as const;
+  return [
+    {
+      menu,
+      expands: menuState.expands,
+      firstPath,
+    },
+    setMenuState,
+  ] as const;
 }

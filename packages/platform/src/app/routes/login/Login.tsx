@@ -96,7 +96,7 @@ export default function Login(): JSX.Element | null {
       <AppLanguage className={styles['app-login__lang']} />
       <div>
         <img
-          className={getClassName(styles['app-login__bg'], 'd-none d-md-inline')}
+          className={getClassName(styles['app-login__bg'], 'd-none d-lg-inline')}
           src={`data:image/png;base64,${BASE64_DATA.bg}`}
           alt="bg"
         />

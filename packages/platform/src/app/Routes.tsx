@@ -4,15 +4,16 @@ import type { DId } from '@react-devui/ui/utils/types';
 import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
 import { isUndefined, nth } from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
 import { ROUTES_ACL } from '../config/acl';
-import { LOGIN_PATH, TITLE_CONFIG } from '../config/other';
-import { useMenu } from '../core';
+import { LOGIN_PATH } from '../config/other';
 import { useACLGuard, useTokenGuard } from './Routes.guard';
 import { AppFCPLoader } from './components';
+import { usePageTitle } from './hooks';
+import AppHomeRoute from './routes/Home';
 import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
 import AppLoginRoute from './routes/login/Login';
@@ -62,7 +63,6 @@ export function AppRoutes() {
   const ACLGuard = useACLGuard();
   const tokenGuard = useTokenGuard();
   const location = useLocation();
-  const [, allItem] = useMenu();
   const { t } = useTranslation();
 
   const matches = matchRoutes(
@@ -83,19 +83,12 @@ export function AppRoutes() {
         },
         children: [
           {
-            index: true,
-            element: '/',
+            path: '',
+            element: <AppHomeRoute />,
           },
           {
             path: 'dashboard',
-            data: {
-              titleI18n: 'dashboard.',
-            },
             children: [
-              {
-                index: true,
-                element: '/dashboard',
-              },
               {
                 path: 'amap',
                 element: (
@@ -126,14 +119,7 @@ export function AppRoutes() {
           },
           {
             path: 'test',
-            data: {
-              titleI18n: 'test.',
-            },
             children: [
-              {
-                index: true,
-                element: '/test',
-              },
               {
                 path: 'acl',
                 element: (
@@ -165,37 +151,8 @@ export function AppRoutes() {
         ],
       },
       {
-        path: 'exception',
-        data: {
-          titleI18n: 'exception.',
-        },
-        children: [
-          {
-            index: true,
-            element: '/exception',
-          },
-          {
-            path: '403',
-            element: <AppExceptionRoute status={403} />,
-            data: {
-              titleI18n: 'exception.403',
-            },
-          },
-          {
-            path: '404',
-            element: <AppExceptionRoute status={404} />,
-            data: {
-              titleI18n: 'exception.404',
-            },
-          },
-          {
-            path: '500',
-            element: <AppExceptionRoute status={500} />,
-            data: {
-              titleI18n: 'exception.500',
-            },
-          },
-        ],
+        path: 'exception/:status',
+        element: <AppExceptionRoute />,
       },
       {
         path: '*',
@@ -226,30 +183,12 @@ export function AppRoutes() {
       }
     }
 
-    const currentRoute = matches[matches.length - 1].route;
-    if (currentRoute.index === true) {
-      const firstMenu = allItem.find((item) => item.id.startsWith(currentRoute.element as string));
-      return <Navigate to={isUndefined(firstMenu) ? '/exception/404' : firstMenu.id} replace />;
-    }
     return renderMatches(matches);
   })();
 
-  useEffect(() => {
-    const { title: _title, titleI18n } = nth(matches, -1)?.route.data ?? {};
-    const title = _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
-    if (isUndefined(title)) {
-      document.title = TITLE_CONFIG.default;
-    } else {
-      const arr = [title];
-      if (TITLE_CONFIG.prefix) {
-        arr.unshift(TITLE_CONFIG.prefix);
-      }
-      if (TITLE_CONFIG.suffix) {
-        arr.push(TITLE_CONFIG.suffix);
-      }
-      document.title = arr.join(TITLE_CONFIG.separator ?? ' - ');
-    }
-  });
+  const { title: _title, titleI18n } = nth(matches, -1)?.route.data ?? {};
+  const title = _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
+  usePageTitle(title);
 
   return (
     <RouteStateContext.Provider

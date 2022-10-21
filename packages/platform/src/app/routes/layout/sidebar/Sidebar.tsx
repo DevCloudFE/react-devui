@@ -1,11 +1,10 @@
-import { isNull, isUndefined } from 'lodash';
+import type { DMenuItem } from '@react-devui/ui/components/menu';
+
 import { useLocation } from 'react-router-dom';
 
-import { useIsomorphicLayoutEffect } from '@react-devui/hooks';
 import { DDrawer, DMenu } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { useMenuState } from '../../../../core';
 import { useMenu } from '../../../../core';
 import styles from './Sidebar.module.scss';
 
@@ -18,51 +17,42 @@ export interface AppSidebarProps {
 export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
   const { menuMode, menuOpen, onMenuOpenChange } = props;
 
-  const [menu, allItem] = useMenu();
   const location = useLocation();
 
-  const [menuState, setMenuState] = useMenuState();
-  const hasInit = !isUndefined(menuState);
-  const activeItem = (() => {
-    let maxMatch = 0;
-    let active = null;
-    for (const item of allItem) {
-      if (location.pathname.startsWith(item.id)) {
-        const match = item.id.match(/\//g)?.length ?? 0;
-        if (match > maxMatch) {
-          maxMatch = match;
-          active = item;
+  const [{ menu, expands }, setMenu] = useMenu();
+
+  const active = ((): string | null => {
+    const reduceArr = (arr: DMenuItem<string>[]): string | null => {
+      for (const item of arr) {
+        if (item.id.startsWith(location.pathname)) {
+          return item.id;
+        }
+        if (item.children) {
+          const res = reduceArr(item.children);
+          if (res) {
+            return res;
+          }
         }
       }
-    }
-    return active;
+      return null;
+    };
+    return reduceArr(menu) ?? null;
   })();
 
-  useIsomorphicLayoutEffect(() => {
-    if (!hasInit) {
-      setMenuState({
-        expands: isNull(activeItem) ? [] : activeItem.parentSub,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasInit]);
-
-  const menuNode = (md: boolean) => {
-    return hasInit ? (
-      <DMenu
-        dWidth={md ? 200 : '100%'}
-        dList={menu}
-        dMode={md ? menuMode : 'vertical'}
-        dActive={activeItem?.id ?? null}
-        dExpands={menuState.expands}
-        onExpandsChange={(expands) => {
-          setMenuState((draft) => {
-            draft!.expands = expands;
-          });
-        }}
-      ></DMenu>
-    ) : null;
-  };
+  const menuNode = (md: boolean) => (
+    <DMenu
+      dWidth={md ? 200 : '100%'}
+      dList={menu}
+      dMode={md ? menuMode : 'vertical'}
+      dActive={active}
+      dExpands={expands}
+      onExpandsChange={(expands) => {
+        setMenu((draft) => {
+          draft.expands = expands;
+        });
+      }}
+    ></DMenu>
+  );
 
   return (
     <>
