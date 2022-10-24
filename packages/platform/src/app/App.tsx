@@ -18,7 +18,7 @@ export type AppTheme = 'light' | 'dark';
 
 export function App() {
   const { i18n } = useTranslation();
-  const createHttp = useHttp();
+  const http = useHttp();
   const init = useInit();
   const navigate = useNavigate();
   const async = useAsync();
@@ -29,11 +29,11 @@ export function App() {
   useMount(() => {
     i18n.changeLanguage(languageStorage.value);
 
-    const [http] = createHttp();
-    http<UserState>({
-      url: '/api/auth/me',
+    const [authReq] = http<UserState>({
+      url: '/auth/me',
       method: 'get',
-    }).subscribe({
+    });
+    authReq.subscribe({
       next: (res) => {
         setLoading(false);
         init(res);

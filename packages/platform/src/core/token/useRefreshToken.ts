@@ -6,7 +6,7 @@ import { TOKEN_REFRESH, TOKEN, TOKEN_REFRESH_OFFSET } from './token';
 let CLEAR_TOKEN_REFRESH: (() => void) | undefined;
 
 export function useRefreshToken() {
-  const createHttp = useHttp();
+  const http = useHttp();
 
   return () => {
     CLEAR_TOKEN_REFRESH?.();
@@ -14,12 +14,15 @@ export function useRefreshToken() {
       const refresh = () => {
         const expiration = TOKEN.expiration;
         if (!isNull(expiration) && !TOKEN.expired) {
-          const [http, abort] = createHttp({ unmount: false });
-          const tid = window.setTimeout(() => {
-            http<string>({
-              url: '/api/auth/refresh',
+          const [refreshTokenReq, abortRefreshTokenReq] = http<string>(
+            {
+              url: '/auth/refresh',
               method: 'post',
-            }).subscribe({
+            },
+            { unmount: false }
+          );
+          const tid = window.setTimeout(() => {
+            refreshTokenReq.subscribe({
               next: (res) => {
                 TOKEN.set(res);
                 refresh();
@@ -28,7 +31,7 @@ export function useRefreshToken() {
           }, expiration - Date.now() - TOKEN_REFRESH_OFFSET);
           CLEAR_TOKEN_REFRESH = () => {
             clearTimeout(tid);
-            abort();
+            abortRefreshTokenReq();
           };
         }
       };

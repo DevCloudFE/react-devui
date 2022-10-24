@@ -83,7 +83,7 @@ export function AppRoutes() {
         },
         children: [
           {
-            path: '',
+            index: true,
             element: <AppHomeRoute />,
           },
           {
@@ -151,7 +151,7 @@ export function AppRoutes() {
         ],
       },
       {
-        path: 'exception/:status',
+        path: '/exception/:status',
         element: <AppExceptionRoute />,
       },
       {

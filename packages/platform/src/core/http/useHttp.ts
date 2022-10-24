@@ -32,7 +32,7 @@ export function useHttp() {
     }
   });
 
-  return useEventCallback((options?: { unmount?: boolean }) => {
+  return useEventCallback(<T = any, D = any>(config: AxiosRequestConfig<D>, options?: { unmount?: boolean }) => {
     const { unmount = true } = options ?? {};
 
     const onDestroy$ = new Subject<void>();
@@ -46,52 +46,51 @@ export function useHttp() {
       dataRef.current.abortFns.add(abort);
     }
 
+    const headers = { ...config.headers };
+    if (!isNull(TOKEN.value)) {
+      headers['Authorization'] = `Bearer ${TOKEN.value}`;
+    }
+
     return [
-      <T = any, D = any>(config: AxiosRequestConfig<D>) => {
-        const headers = { ...config.headers };
-        if (!isNull(TOKEN.value)) {
-          headers['Authorization'] = `Bearer ${TOKEN.value}`;
-        }
+      from(
+        axios({
+          ...config,
+          baseURL: environment.http.baseURL,
+          url: environment.http.transformURL(config.url!),
+          headers,
+          signal: controller.signal,
+        }) as Promise<AxiosResponse<T, D>>
+      ).pipe(
+        takeUntil(onDestroy$),
+        catchError((error: AxiosError<T, D>) => {
+          if (error.response) {
+            switch (error.response.status) {
+              case 401:
+                ToastService.open({
+                  dContent: t('User not authorized'),
+                  dType: 'error',
+                });
+                navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
+                return EMPTY;
 
-        return from(
-          axios({
-            ...config,
-            baseURL: environment.baseURL,
-            headers,
-            signal: controller.signal,
-          }) as Promise<AxiosResponse<T, D>>
-        ).pipe(
-          takeUntil(onDestroy$),
-          catchError((error: AxiosError<T, D>) => {
-            if (error.response) {
-              switch (error.response.status) {
-                case 401:
-                  ToastService.open({
-                    dContent: t('User not authorized'),
-                    dType: 'error',
-                  });
-                  navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
-                  return EMPTY;
+              case 403:
+              case 404:
+              case 500:
+                navigate(`/exception/${error.response.status}`);
+                return EMPTY;
 
-                case 403:
-                case 404:
-                case 500:
-                  navigate(`/exception/${error.response.status}`);
-                  return EMPTY;
-
-                default:
-                  break;
-              }
-            } else if (error.request) {
-              // The request was made but no response was received.
-            } else {
-              // Something happened in setting up the request that triggered an Error.
+              default:
+                break;
             }
-            return throwError(() => error);
-          }),
-          map((res) => res.data)
-        );
-      },
+          } else if (error.request) {
+            // The request was made but no response was received.
+          } else {
+            // Something happened in setting up the request that triggered an Error.
+          }
+          return throwError(() => error);
+        }),
+        map((res) => res.data)
+      ),
       abort,
     ] as const;
   });

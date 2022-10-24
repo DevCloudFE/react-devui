@@ -11,7 +11,7 @@ import { useACL } from './useACL';
 import { useMenu } from './useMenu';
 
 export function useInit() {
-  const createHttp = useHttp();
+  const http = useHttp();
   const acl = useACL();
 
   const [, setUser] = useUserState();
@@ -64,11 +64,14 @@ export function useInit() {
 
   const getNotification = () => {
     setNotification(undefined);
-    const [http] = createHttp({ unmount: false });
-    http<NotificationItem[]>({
-      url: '/api/notification',
-      method: 'get',
-    }).subscribe({
+    const [notificationReq] = http<NotificationItem[]>(
+      {
+        url: '/notification',
+        method: 'get',
+      },
+      { unmount: false }
+    );
+    notificationReq.subscribe({
       next: (res) => {
         setNotification(res);
       },

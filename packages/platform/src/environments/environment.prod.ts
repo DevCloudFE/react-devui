@@ -1,5 +1,10 @@
 export const environment = {
   production: true,
-  baseURL: 'https://example.com',
-  mock: true,
+  http: {
+    mock: true,
+    baseURL: 'https://example.com',
+    transformURL: (url: string) => {
+      return '/api/v1' + url;
+    },
+  },
 };

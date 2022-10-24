@@ -5,7 +5,7 @@ import { AppRouteHeader } from '../../../components';
 import styles from './Http.module.scss';
 
 export default function Http(): JSX.Element | null {
-  const createHttp = useHttp();
+  const http = useHttp();
 
   return (
     <>
@@ -21,12 +21,12 @@ export default function Http(): JSX.Element | null {
                 <DButton
                   key={status}
                   onClick={() => {
-                    const [http] = createHttp();
-                    http({
-                      url: '/api/test/http',
+                    const [testReq] = http({
+                      url: '/test/http',
                       method: 'post',
                       data: { status },
-                    }).subscribe();
+                    });
+                    testReq.subscribe();
                   }}
                 >
                   {status}

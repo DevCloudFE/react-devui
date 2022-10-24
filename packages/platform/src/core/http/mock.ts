@@ -9,7 +9,7 @@ import { ROUTES_ACL } from '../../config/acl';
 import { environment } from '../../environments';
 import { TOKEN } from '../token';
 
-if (environment.mock) {
+if (environment.http.mock) {
   const mock = new MockAdapter(axios);
   const withDelay =
     <T>(delay: number, response: T) =>
@@ -51,14 +51,14 @@ if (environment.mock) {
     },
   ];
 
-  mock.onGet('/api/notification').reply(withDelay(500, [200, notification]));
+  mock.onGet(environment.http.transformURL('/notification')).reply(withDelay(500, [200, notification]));
 
   mock
-    .onGet('/api/auth/me')
+    .onGet(environment.http.transformURL('/auth/me'))
     .reply(withDelay(500, [200, (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
 
   for (const username of ['admin', 'user']) {
-    mock.onPost('/api/login', { username }).reply(() => {
+    mock.onPost(environment.http.transformURL('/login'), { username }).reply(() => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve([
@@ -78,7 +78,7 @@ if (environment.mock) {
     });
   }
 
-  mock.onPost('/api/auth/refresh').reply(() => {
+  mock.onPost(environment.http.transformURL('/auth/refresh')).reply(() => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
@@ -95,6 +95,6 @@ if (environment.mock) {
   });
 
   for (const status of [401, 403, 404, 500]) {
-    mock.onPost('/api/test/http', { status }).reply(status);
+    mock.onPost(environment.http.transformURL('/test/http'), { status }).reply(status);
   }
 }

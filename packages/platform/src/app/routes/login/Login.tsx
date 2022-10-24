@@ -17,7 +17,7 @@ import { BASE64_DATA } from './base64.out';
 
 export default function Login(): JSX.Element | null {
   const { t } = useTranslation();
-  const createHttp = useHttp();
+  const http = useHttp();
   const [loginloading, setLoginLoading] = useState(false);
   const init = useInit();
   const async = useAsync();
@@ -57,13 +57,13 @@ export default function Login(): JSX.Element | null {
   );
 
   const handleSubmit = () => {
-    const [http] = createHttp();
     setLoginLoading(true);
-    http<{ user: UserState; token: string }>({
-      url: '/api/login',
+    const [loginReq] = http<{ user: UserState; token: string }>({
+      url: '/login',
       method: 'post',
       data: { username: accountForm.get('username').value },
-    }).subscribe({
+    });
+    loginReq.subscribe({
       next: (res) => {
         setLoginLoading(false);
         TOKEN.set(res.token);
