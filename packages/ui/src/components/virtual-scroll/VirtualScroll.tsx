@@ -168,7 +168,17 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
     const getList = (arr: (T | typeof EMPTY)[], parent: T[] = []): React.ReactNode[] => {
       const fillSize = [0, 0];
       const list: React.ReactNode[] = [];
-      const setsize = arr.filter((item) => item !== EMPTY && (dItemNested?.(item)?.inAriaSetsize ?? true)).length;
+      const setsize = arr.filter((item) => {
+        if (item === EMPTY) {
+          return false;
+        } else {
+          const nestedData = dItemNested?.(item);
+          if (nestedData && nestedData.list) {
+            return nestedData.inAriaSetsize;
+          }
+        }
+        return true;
+      }).length;
 
       for (const [index, item] of arr.entries()) {
         let key: DId = '';
