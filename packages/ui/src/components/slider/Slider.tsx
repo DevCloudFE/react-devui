@@ -246,27 +246,6 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, isLeft = true) => {
-    const val = toNumber(e.currentTarget.value);
-    if (dRange) {
-      const index = isLeft ? 0 : 1;
-      changeValue((draft) => {
-        const offset = val - draft[index];
-        const isAdd = offset > 0;
-        draft[index] = val;
-        if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
-          const _index = isLeft ? 1 : 0;
-          draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
-          if (draft[1] - draft[0] < dRangeMinDistance) {
-            draft[index] = getValue(draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance), isAdd ? 'floor' : 'ceil');
-          }
-        }
-      });
-    } else {
-      changeValue(val);
-    }
-  };
-
   useEffect(() => {
     if (thumbPoint) {
       tooltipLeftRef.current?.updatePosition();
@@ -414,7 +393,29 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
                   min={dMin}
                   step={dStep ?? undefined}
                   aria-orientation={dVertical ? 'vertical' : 'horizontal'}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const val = toNumber(e.currentTarget.value);
+                    if (dRange) {
+                      const index = isLeft ? 0 : 1;
+                      changeValue((draft) => {
+                        const offset = val - draft[index];
+                        const isAdd = offset > 0;
+                        draft[index] = val;
+                        if (isNumber(dRangeMinDistance) && draft[1] - draft[0] < dRangeMinDistance) {
+                          const _index = isLeft ? 1 : 0;
+                          draft[_index] = getValue(draft[_index] + offset, isAdd ? 'ceil' : 'floor');
+                          if (draft[1] - draft[0] < dRangeMinDistance) {
+                            draft[index] = getValue(
+                              draft[_index] + (isAdd ? -dRangeMinDistance : dRangeMinDistance),
+                              isAdd ? 'floor' : 'ceil'
+                            );
+                          }
+                        }
+                      });
+                    } else {
+                      changeValue(val);
+                    }
+                  }}
                   onFocus={() => {
                     setFocusDot(isLeft ? 'left' : 'right');
                   }}
