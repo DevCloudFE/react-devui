@@ -74,7 +74,7 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
   const heightStyle = (() => {
     let overflow: 'hidden' | undefined;
     let height: number | undefined;
-    let minHeight: number | undefined;
+    let minHeight: number = lineHeight + 8;
     let maxHeight: number | undefined;
 
     if (!isUndefined(dRows)) {
@@ -118,7 +118,6 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
                       ...restProps.style,
                       ...heightStyle,
                       lineHeight: `${lineHeight}px`,
-                      minHeight: `${lineHeight + 8}px`,
                       resize: resizable ? undefined : 'none',
                     }}
                     value={value}
