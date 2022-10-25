@@ -3,13 +3,13 @@
 
 @include b(alert) {
   padding: 12px 16px;
-  background-color: var(--#{$d-prefix}alert-background-color, var(--#{$d-prefix}background-color-light-gray));
-  border: 1px solid var(--#{$d-prefix}alert-border-color, var(--#{$d-prefix}color-border));
+  background-color: var(--#{$rd-prefix}alert-background-color, var(--#{$rd-prefix}background-color-light-gray));
+  border: 1px solid var(--#{$rd-prefix}alert-border-color, var(--#{$rd-prefix}color-border));
 
-  @each $theme, $rgb in $d-themes {
+  @each $theme, $rgb in $rd-themes {
     @include theme(#{$theme}) {
-      --#{$d-prefix}alert-border-color: var(--#{$d-prefix}color-#{$theme});
-      --#{$d-prefix}alert-background-color: var(--#{$d-prefix}background-color-#{$theme});
+      --#{$rd-prefix}alert-border-color: var(--#{$rd-prefix}color-#{$theme});
+      --#{$rd-prefix}alert-background-color: var(--#{$rd-prefix}background-color-#{$theme});
     }
   }
 

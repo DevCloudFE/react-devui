@@ -1,5 +1,5 @@
 @include b(slides) {
-  --swiper-theme-color: var(--#{$d-prefix}color-primary);
+  --swiper-theme-color: var(--#{$rd-prefix}color-primary);
 
   .swiper-button-prev {
     top: 50%;
@@ -27,21 +27,21 @@
     margin: 0;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 18px;
-    color: var(--#{$d-prefix}text-color);
-    background-color: var(--#{$d-prefix}background-color);
+    color: var(--#{$rd-prefix}text-color);
+    background-color: var(--#{$rd-prefix}background-color);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 1px 4px 0 var(--#{$d-prefix}shadow-color);
-    transition: opacity var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear,
-      background-color var(--#{$d-prefix}animation-duration-base) linear;
+    box-shadow: 0 1px 4px 0 var(--#{$rd-prefix}shadow-color);
+    transition: opacity var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
+      background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &::after {
       content: none;
     }
 
     &:hover {
-      color: var(--#{$d-prefix}color-primary);
-      background-color: var(--#{$d-prefix}background-color-gray);
+      color: var(--#{$rd-prefix}color-primary);
+      background-color: var(--#{$rd-prefix}background-color-gray);
     }
   }
 

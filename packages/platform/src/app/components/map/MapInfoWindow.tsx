@@ -62,7 +62,7 @@ export function AppMapInfoWindow(props: AppMapInfoWindowProps): JSX.Element | nu
       if (isUndefined(aPosition)) {
         throw new Error('`aPosition` is required when `aVisible` is `true`!');
       }
-      (infoWindow.open as any)(map, aPosition);
+      infoWindow.open(map, aPosition);
 
       return () => {
         map.clearInfoWindow();

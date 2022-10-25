@@ -5,7 +5,7 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
-  color: var(--d-text-color);
+  color: var(--#{$rd-prefix}text-color);
   background-color: var(--app-background-color);
   text-size-adjust: 100%;
 
@@ -14,17 +14,17 @@ body {
 
 .app-link {
   font: inherit;
-  color: var(--#{$d-prefix}color-primary);
+  color: var(--#{$rd-prefix}color-primary);
   text-decoration: none;
-  transition: color var(--#{$d-prefix}animation-duration-fast) linear;
+  transition: color var(--#{$rd-prefix}animation-duration-fast) linear;
 
   &:hover,
   &:focus {
-    color: var(--#{$d-prefix}color-primary-lighter);
+    color: var(--#{$rd-prefix}color-primary-lighter);
   }
 
   &:active {
-    color: var(--#{$d-prefix}color-primary-darker);
+    color: var(--#{$rd-prefix}color-primary-darker);
   }
 }
 

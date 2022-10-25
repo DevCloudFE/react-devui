@@ -37,9 +37,9 @@
     flex-direction: column;
     max-width: calc(100% - 32px);
     margin: 0 auto;
-    background-color: var(--#{$d-prefix}background-color);
-    border-radius: var(--#{$d-prefix}border-radius);
-    box-shadow: 0 8px 40px 0 var(--#{$d-prefix}shadow-color);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
+    box-shadow: 0 8px 40px 0 var(--#{$rd-prefix}shadow-color);
   }
 
   @include e(body) {

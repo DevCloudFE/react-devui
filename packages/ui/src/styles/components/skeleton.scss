@@ -7,21 +7,21 @@
 @include b(skeleton) {
   position: relative;
   overflow: hidden;
-  background-color: var(--#{$d-prefix}background-color-gray);
+  background-color: var(--#{$rd-prefix}background-color-gray);
 
   &::after {
     position: absolute;
     inset: 0;
     z-index: 1;
     content: '';
-    background: linear-gradient(100deg, transparent 20%, var(--#{$d-prefix}skeleton-background-color-wave) 50%, transparent 70%);
+    background: linear-gradient(100deg, transparent 20%, var(--#{$rd-prefix}skeleton-background-color-wave) 50%, transparent 70%);
     transform: translateX(-100%);
     animation: skeleton-wave 2s linear infinite;
   }
 
   @include m(text) {
     width: 100%;
-    border-radius: var(--#{$d-prefix}border-radius);
+    border-radius: var(--#{$rd-prefix}border-radius);
   }
 
   @include m(circular) {
@@ -29,7 +29,7 @@
   }
 
   @include m(rect) {
-    border-radius: var(--#{$d-prefix}border-radius);
+    border-radius: var(--#{$rd-prefix}border-radius);
   }
 
   @include e(placeholder) {

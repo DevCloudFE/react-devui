@@ -5,7 +5,7 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-weight: 400;
-  color: var(--d-text-color);
+  color: var(--#{$rd-prefix}text-color);
   background-color: var(--app-background-color);
   text-size-adjust: 100%;
 
@@ -27,13 +27,13 @@ body {
 }
 
 .app-icon-button {
-  color: var(--d-color-icon-decorator);
+  color: var(--#{$rd-prefix}color-icon-decorator);
   cursor: pointer;
   user-select: none;
-  transition: color var(--d-animation-duration-base) linear;
+  transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
   &:hover {
-    color: var(--d-color-primary);
+    color: var(--#{$rd-prefix}color-primary);
   }
 }
 
@@ -46,10 +46,10 @@ h6 {
   .anchor {
     display: inline-block;
     margin-left: 8px;
-    color: var(--d-color-primary);
+    color: var(--#{$rd-prefix}color-primary);
     text-decoration: none;
     opacity: 0;
-    transition: opacity var(--d-animation-duration-base) linear;
+    transition: opacity var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:focus-visible {
       opacity: 1;
@@ -109,7 +109,7 @@ h3 {
     empty-cells: show;
     border-spacing: 0;
     border-collapse: collapse;
-    border: 1px solid var(--d-color-border);
+    border: 1px solid var(--#{$rd-prefix}color-border);
 
     th {
       font-weight: 400;
@@ -121,7 +121,7 @@ h3 {
     td {
       padding: 16px 24px;
       text-align: left;
-      border: 1px solid var(--d-color-divider);
+      border: 1px solid var(--#{$rd-prefix}color-divider);
     }
 
     th:nth-of-type(1) {
@@ -152,18 +152,18 @@ h3 {
 // demo general style
 .app-component-route__demos {
   &:not([data-demo='Form']) {
-    .d-compose:not(.d-radio-group) {
+    .rd-compose:not(.rd-radio-group) {
       margin-right: 8px;
       margin-bottom: 12px;
     }
   }
 
-  .d-radio-group {
+  .rd-radio-group {
     margin-bottom: 16px;
   }
 
   section[id='FormSupportComponentsDemo'] {
-    .d-radio-group {
+    .rd-radio-group {
       margin-bottom: unset;
     }
   }
@@ -174,19 +174,19 @@ h3 {
   section[id^='Notification'],
   section[id^='Stepper'],
   section[id^='Toast'] {
-    .d-button {
+    .rd-button {
       margin-right: 8px;
       margin-bottom: 12px;
     }
 
-    .d-button--block {
+    .rd-button--block {
       margin-right: 0;
       margin-bottom: 10px;
     }
 
     /* stylelint-disable-next-line no-descending-specificity */
-    .d-compose {
-      .d-button {
+    .rd-compose {
+      .rd-button {
         margin-right: 0;
         margin-bottom: 0;
       }
@@ -210,13 +210,13 @@ h3 {
       )
   {
     section[id^='#{$id}'] {
-      .d-#{$selector} {
+      .rd-#{$selector} {
         margin-right: 8px;
         margin-bottom: 12px;
       }
 
-      .d-compose {
-        .d-#{$selector} {
+      .rd-compose {
+        .rd-#{$selector} {
           margin-right: 0;
           margin-bottom: 0;
         }
@@ -225,14 +225,14 @@ h3 {
   }
 
   section[id^='Avatar'] {
-    .d-avatar {
+    .rd-avatar {
       margin-right: 24px;
       margin-bottom: 12px;
     }
   }
 
   section[id^='Alert'] {
-    .d-alert {
+    .rd-alert {
       margin-bottom: 20px;
     }
   }
@@ -246,20 +246,20 @@ h3 {
       margin-right: 24px;
       margin-bottom: 12px;
       text-align: center;
-      background: var(--d-background-color-primary);
+      background: var(--#{$rd-prefix}background-color-primary);
       /* stylelint-disable-next-line declaration-property-value-allowed-list */
       border-radius: 6px;
     }
   }
 
   section[id^='Checkbox'] {
-    .d-checkbox {
+    .rd-checkbox {
       margin-right: 8px;
       margin-bottom: 12px;
     }
 
-    .d-checkbox-group {
-      .d-checkbox {
+    .rd-checkbox-group {
+      .rd-checkbox {
         margin-right: 0;
         margin-bottom: 0;
       }
@@ -267,7 +267,7 @@ h3 {
   }
 
   section[id^='Form'] {
-    .d-form--inline {
+    .rd-form--inline {
       min-width: 800px;
     }
   }
@@ -278,32 +278,32 @@ h3 {
       align-items: center;
       justify-content: center;
       height: 48px;
-      color: map.get($d-colors, 'white');
-      background-color: var(--d-color-primary);
+      color: map.get($rd-colors, 'white');
+      background-color: var(--#{$rd-prefix}color-primary);
     }
 
     .app-demo-col--lighter {
-      background-color: var(--d-color-primary-lighter);
+      background-color: var(--#{$rd-prefix}color-primary-lighter);
     }
   }
 
   section[id^='Menu'] {
-    .d-menu:not(.d-menu--horizontal) {
+    .rd-menu:not(.rd-menu--horizontal) {
       max-width: 100%;
-      border-right: 1px solid var(--d-color-divider);
+      border-right: 1px solid var(--#{$rd-prefix}color-divider);
     }
   }
 
   section[id^='Progress'] {
-    .d-progress--dashboard,
-    .d-progress--circle {
+    .rd-progress--dashboard,
+    .rd-progress--circle {
       margin-right: 8px;
       margin-bottom: 12px;
     }
   }
 
   section[id^='Stepper'] {
-    .d-stepper:not(.d-stepper--vertical) {
+    .rd-stepper:not(.rd-stepper--vertical) {
       min-width: 600px;
     }
   }
@@ -315,24 +315,24 @@ h3 {
       justify-content: center;
       width: 100%;
       height: 100%;
-      color: map.get($d-colors, 'white');
+      color: map.get($rd-colors, 'white');
       background: rgb(54 77 121);
     }
   }
 
   section[id^='Table'] {
-    .d-table {
+    .rd-table {
       min-width: 600px;
     }
 
-    .d-pagination {
+    .rd-pagination {
       justify-content: flex-end;
       margin-top: 20px;
     }
   }
 
   section[id^='Transfer'] {
-    .d-transfer {
+    .rd-transfer {
       min-width: 400px;
     }
   }

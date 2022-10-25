@@ -38,8 +38,8 @@
     color: #eef0f3;
     white-space: nowrap;
     pointer-events: none;
-    background-color: var(--d-tooltip-background-color);
-    border-radius: var(--d-border-radius);
+    background-color: var(--#{$rd-prefix}tooltip-background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
     transform: translateX(100%);
   }
 
@@ -58,7 +58,7 @@
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 14px;
     line-height: 1;
-    color: map.get($d-colors, 'white');
+    color: map.get($rd-colors, 'white');
   }
 
   @include e(marker-cluster-ripple) {
@@ -90,16 +90,16 @@
   @include e(info-window) {
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 14px;
-    background-color: var(--d-background-color);
-    border-radius: var(--d-border-radius);
-    box-shadow: var(--d-shadow-popup);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
+    box-shadow: var(--#{$rd-prefix}shadow-popup);
   }
 
   @include e(info-window-header) {
     display: flex;
     align-items: center;
     padding: 6px 12px;
-    border-bottom: 1px solid var(--d-color-divider);
+    border-bottom: 1px solid var(--#{$rd-prefix}color-divider);
   }
 
   @include e(info-window-title) {
@@ -111,9 +111,9 @@
   }
 
   @include e(info-window-close) {
-    --d-size: calc(1.05em * 1.2) !important;
+    --#{$rd-prefix}size: calc(1.05em * 1.2) !important;
 
-    .d-button__icon {
+    .rd-button__icon {
       font-size: 1.05em !important;
     }
   }

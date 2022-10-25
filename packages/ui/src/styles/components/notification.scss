@@ -2,32 +2,32 @@
 
 @mixin notification-root {
   position: fixed;
-  z-index: var(--#{$d-prefix}zindex-max);
+  z-index: var(--#{$rd-prefix}zindex-max);
   pointer-events: none;
 }
 
-##{$d-prefix}notification-lt-root {
+##{$rd-prefix}notification-lt-root {
   top: 20px;
   left: 20px;
 
   @include notification-root;
 }
 
-##{$d-prefix}notification-rt-root {
+##{$rd-prefix}notification-rt-root {
   top: 20px;
   right: 20px;
 
   @include notification-root;
 }
 
-##{$d-prefix}notification-lb-root {
+##{$rd-prefix}notification-lb-root {
   bottom: 20px;
   left: 20px;
 
   @include notification-root;
 }
 
-##{$d-prefix}notification-rb-root {
+##{$rd-prefix}notification-rb-root {
   right: 20px;
   bottom: 20px;
 
@@ -42,7 +42,7 @@
   padding: 16px 24px;
   margin-bottom: 20px;
   pointer-events: all;
-  background-color: var(--#{$d-prefix}background-color);
+  background-color: var(--#{$rd-prefix}background-color);
   outline: none;
-  box-shadow: var(--#{$d-prefix}shadow-dialog);
+  box-shadow: var(--#{$rd-prefix}shadow-dialog);
 }

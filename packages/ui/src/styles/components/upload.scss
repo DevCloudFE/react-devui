@@ -17,15 +17,16 @@
     height: 24px;
     padding: 0;
     margin: 0;
-    color: var(--#{$d-prefix}upload-action-color);
+    color: var(--#{$rd-prefix}upload-action-color);
     background-color: transparent;
     border: none;
-    transition: color var(--#{$d-prefix}animation-duration-base) linear, background-color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear,
+      background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$d-prefix}upload-action-color-lighter);
-      background-color: var(--#{$d-prefix}upload-action-background-color-hover);
+      color: var(--#{$rd-prefix}upload-action-color-lighter);
+      background-color: var(--#{$rd-prefix}upload-action-background-color-hover);
     }
 
     &:disabled,
@@ -40,9 +41,9 @@
   }
 
   @include e(list) {
-    --#{$d-prefix}upload-action-color: rgb(var(--#{$d-prefix}text-color-rgb) / 50%);
-    --#{$d-prefix}upload-action-color-lighter: var(--#{$d-prefix}text-color);
-    --#{$d-prefix}upload-action-background-color-hover: var(--#{$d-prefix}background-color-hover);
+    --#{$rd-prefix}upload-action-color: rgb(var(--#{$rd-prefix}text-color-rgb) / 50%);
+    --#{$rd-prefix}upload-action-color-lighter: var(--#{$rd-prefix}text-color);
+    --#{$rd-prefix}upload-action-background-color-hover: var(--#{$rd-prefix}background-color-hover);
 
     display: flex;
     flex-direction: column;
@@ -59,10 +60,10 @@
     align-items: center;
     width: 100%;
     height: 24px;
-    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover {
-      background-color: var(--#{$d-prefix}background-color-hover);
+      background-color: var(--#{$rd-prefix}background-color-hover);
 
       @include e(list-actions) {
         opacity: 1;
@@ -74,11 +75,11 @@
     }
 
     @include m(picture) {
-      --#{$d-prefix}upload-picture-list-item-border-color: var(--#{$d-prefix}color-border);
+      --#{$rd-prefix}upload-picture-list-item-border-color: var(--#{$rd-prefix}color-border);
 
       height: 66px;
       padding: 8px;
-      border: 1px solid var(--#{$d-prefix}upload-picture-list-item-border-color);
+      border: 1px solid var(--#{$rd-prefix}upload-picture-list-item-border-color);
 
       @include e(list-icon) {
         display: inline-flex;
@@ -104,23 +105,23 @@
     }
 
     @include m(error) {
-      --#{$d-prefix}upload-action-color: var(--#{$d-prefix}color-danger);
-      --#{$d-prefix}upload-action-color-lighter: var(--#{$d-prefix}color-danger);
-      --#{$d-prefix}upload-picture-list-item-border-color: var(--#{$d-prefix}color-danger);
+      --#{$rd-prefix}upload-action-color: var(--#{$rd-prefix}color-danger);
+      --#{$rd-prefix}upload-action-color-lighter: var(--#{$rd-prefix}color-danger);
+      --#{$rd-prefix}upload-picture-list-item-border-color: var(--#{$rd-prefix}color-danger);
 
       @include e(list-icon) {
-        color: var(--#{$d-prefix}color-danger);
+        color: var(--#{$rd-prefix}color-danger);
       }
 
       @include e(list-link) {
-        color: var(--#{$d-prefix}color-danger);
+        color: var(--#{$rd-prefix}color-danger);
       }
     }
   }
 
   @include e(list-icon) {
     width: 24px;
-    color: var(--#{$d-prefix}upload-action-color);
+    color: var(--#{$rd-prefix}upload-action-color);
   }
 
   @include e(list-link) {
@@ -129,18 +130,18 @@
     display: inline-block;
     flex: 1 0 0;
     font-size: 0.9em;
-    color: var(--#{$d-prefix}text-color);
+    color: var(--#{$rd-prefix}text-color);
     text-decoration: none;
 
     @include when(active) {
-      color: var(--#{$d-prefix}color-primary);
+      color: var(--#{$rd-prefix}color-primary);
     }
   }
 
   @include e(list-actions) {
     margin-left: auto;
     opacity: 0;
-    transition: opacity var(--#{$d-prefix}animation-duration-base) linear;
+    transition: opacity var(--#{$rd-prefix}animation-duration-base) linear;
   }
 
   @include e(list-progress-wrapper) {
@@ -152,9 +153,9 @@
   }
 
   @include e(picture) {
-    --#{$d-prefix}upload-action-color: #{map.get($d-colors, 'white')};
-    --#{$d-prefix}upload-action-color-lighter: #{map.get($d-colors, 'white')};
-    --#{$d-prefix}upload-action-background-color-hover: var(--#{$d-prefix}background-color-light-hover);
+    --#{$rd-prefix}upload-action-color: #{map.get($rd-colors, 'white')};
+    --#{$rd-prefix}upload-action-color-lighter: #{map.get($rd-colors, 'white')};
+    --#{$rd-prefix}upload-action-background-color-hover: var(--#{$rd-prefix}background-color-light-hover);
 
     display: flex;
     flex-wrap: wrap;
@@ -176,8 +177,8 @@
     padding: 8px;
     margin: 0;
     vertical-align: top;
-    background-color: var(--#{$d-prefix}background-color-light-gray);
-    border: 1px solid var(--#{$d-prefix}color-border);
+    background-color: var(--#{$rd-prefix}background-color-light-gray);
+    border: 1px solid var(--#{$rd-prefix}color-border);
 
     &:hover {
       @include e(picture-actions) {
@@ -190,18 +191,18 @@
     }
 
     @include m(button) {
-      --#{$d-prefix}upload-action-color: #{map.get($d-colors, 'white')};
-      --#{$d-prefix}upload-action-color-lighter: #{map.get($d-colors, 'white')};
-      --#{$d-prefix}upload-action-background-color-hover: var(--#{$d-prefix}background-color-light-hover);
+      --#{$rd-prefix}upload-action-color: #{map.get($rd-colors, 'white')};
+      --#{$rd-prefix}upload-action-color-lighter: #{map.get($rd-colors, 'white')};
+      --#{$rd-prefix}upload-action-background-color-hover: var(--#{$rd-prefix}background-color-light-hover);
 
       cursor: pointer;
       border-style: dashed;
       outline: none;
-      transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
+      transition: border-color var(--#{$rd-prefix}animation-duration-base) linear;
 
-      &:not(.#{$d-prefix}upload__picture-item--error):hover,
-      &:not(.#{$d-prefix}upload__picture-item--error):focus {
-        border-color: var(--#{$d-prefix}color-primary);
+      &:not(.#{$rd-prefix}upload__picture-item--error):hover,
+      &:not(.#{$rd-prefix}upload__picture-item--error):focus {
+        border-color: var(--#{$rd-prefix}color-primary);
       }
     }
 
@@ -210,10 +211,10 @@
     }
 
     @include m(error) {
-      border-color: var(--#{$d-prefix}color-danger);
+      border-color: var(--#{$rd-prefix}color-danger);
 
       @include e(picture-name) {
-        color: var(--#{$d-prefix}color-danger);
+        color: var(--#{$rd-prefix}color-danger);
       }
     }
   }
@@ -237,9 +238,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--#{$d-prefix}background-color-actions-mask);
+    background-color: var(--#{$rd-prefix}background-color-actions-mask);
     opacity: 0;
-    transition: opacity var(--#{$d-prefix}animation-duration-base) linear;
+    transition: opacity var(--#{$rd-prefix}animation-duration-base) linear;
   }
 
   @include e(picture-button-icon) {

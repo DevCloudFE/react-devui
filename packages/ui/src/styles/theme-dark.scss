@@ -2,7 +2,7 @@
 /* stylelint-disable declaration-property-value-allowed-list */
 @use 'sass:color';
 
-$d-dark-themes: (
+$rd-dark-themes: (
   'primary': 94 124 224,
   'success': 47 223 117,
   'warning': 255 213 52,
@@ -11,57 +11,57 @@ $d-dark-themes: (
 
 body.dark {
   /** shadow **/
-  --#{$d-prefix}shadow-color: rgb(0 0 0 / 48%);
-  --#{$d-prefix}shadow-popup: rgb(0 0 0 / 24%) 0 0 20px 2px, rgb(0 0 0 / 32%) 0 4px 10px 0;
-  --#{$d-prefix}shadow-dialog: rgb(0 0 0 / 24%) 0 0 32px 2px, rgb(0 0 0 / 32%) 0 4px 12px 0;
-  --#{$d-prefix}shadow-normal: 26%;
-  --#{$d-prefix}shadow-darker: 40%;
+  --#{$rd-prefix}shadow-color: rgb(0 0 0 / 48%);
+  --#{$rd-prefix}shadow-popup: rgb(0 0 0 / 24%) 0 0 20px 2px, rgb(0 0 0 / 32%) 0 4px 10px 0;
+  --#{$rd-prefix}shadow-dialog: rgb(0 0 0 / 24%) 0 0 32px 2px, rgb(0 0 0 / 32%) 0 4px 12px 0;
+  --#{$rd-prefix}shadow-normal: 26%;
+  --#{$rd-prefix}shadow-darker: 40%;
 
   /** basic **/
-  --#{$d-prefix}text-color: rgb(213 218 222);
-  --#{$d-prefix}text-color-rgb: 213 218 222;
-  --#{$d-prefix}text-color-sub: #adaeb2;
-  --#{$d-prefix}background-color: rgb(43 43 43);
-  --#{$d-prefix}background-color-rgb: 43 43 43;
-  --#{$d-prefix}background-color-light-gray: rgb(39 39 39);
-  --#{$d-prefix}background-color-gray: rgb(67 67 67);
-  --#{$d-prefix}background-color-input: rgb(27 27 27);
-  --#{$d-prefix}background-color-disabled: rgb(59 59 59);
-  --#{$d-prefix}background-color-hover: rgb(255 255 255 / 6%);
-  --#{$d-prefix}background-color-light-hover: rgb(0 0 0 / 24%);
-  --#{$d-prefix}background-color-indicator: #3d3e40;
-  --#{$d-prefix}background-color-actions-mask: rgb(255 255 255 / 20%);
-  --#{$d-prefix}color-divider: rgb(57 57 57);
-  --#{$d-prefix}color-border: rgb(71 71 71);
-  --#{$d-prefix}color-disabled: #5d5d5e;
-  --#{$d-prefix}color-icon-decorator: #676869;
+  --#{$rd-prefix}text-color: rgb(213 218 222);
+  --#{$rd-prefix}text-color-rgb: 213 218 222;
+  --#{$rd-prefix}text-color-sub: #adaeb2;
+  --#{$rd-prefix}background-color: rgb(43 43 43);
+  --#{$rd-prefix}background-color-rgb: 43 43 43;
+  --#{$rd-prefix}background-color-light-gray: rgb(39 39 39);
+  --#{$rd-prefix}background-color-gray: rgb(67 67 67);
+  --#{$rd-prefix}background-color-input: rgb(27 27 27);
+  --#{$rd-prefix}background-color-disabled: rgb(59 59 59);
+  --#{$rd-prefix}background-color-hover: rgb(255 255 255 / 6%);
+  --#{$rd-prefix}background-color-light-hover: rgb(0 0 0 / 24%);
+  --#{$rd-prefix}background-color-indicator: #3d3e40;
+  --#{$rd-prefix}background-color-actions-mask: rgb(255 255 255 / 20%);
+  --#{$rd-prefix}color-divider: rgb(57 57 57);
+  --#{$rd-prefix}color-border: rgb(71 71 71);
+  --#{$rd-prefix}color-disabled: #5d5d5e;
+  --#{$rd-prefix}color-icon-decorator: #676869;
 
-  @each $theme, $rgb in $d-dark-themes {
+  @each $theme, $rgb in $rd-dark-themes {
     /** rgb **/
-    --#{$d-prefix}color-#{$theme}-rgb: #{$rgb};
+    --#{$rd-prefix}color-#{$theme}-rgb: #{$rgb};
 
     /** theme **/
-    --#{$d-prefix}color-#{$theme}: rgb(#{$rgb});
+    --#{$rd-prefix}color-#{$theme}: rgb(#{$rgb});
 
     /** lighter **/
-    --#{$d-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
+    --#{$rd-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
 
     /** darker **/
-    --#{$d-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+    --#{$rd-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
 
     /** background **/
-    --#{$d-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -84%)};
-    --#{$d-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -90%)};
+    --#{$rd-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -84%)};
+    --#{$rd-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -90%)};
   }
 
   /** component **/
-  --#{$d-prefix}avatar-background-color: #666;
-  --#{$d-prefix}fab-shadow: 0 3px 5px -1px rgb(255 255 255 / 12%), 0 2px 6px 0 rgb(255 255 255 / 8%), 0 1px 8px 0 rgb(255 255 255 / 6%);
-  --#{$d-prefix}mask-background-color: rgb(0 0 0 / 40%);
-  --#{$d-prefix}rating-background-color: rgb(27 27 27);
-  --#{$d-prefix}skeleton-background-color-wave: rgb(255 255 255 / 4%);
-  --#{$d-prefix}switch-background-color: #5f6164;
-  --#{$d-prefix}tabs-background-color-slider: rgb(63 63 63);
-  --#{$d-prefix}tag-background-color-fill: hsl(0deg 0% 50%);
-  --#{$d-prefix}tooltip-background-color: #686a72;
+  --#{$rd-prefix}avatar-background-color: #666;
+  --#{$rd-prefix}fab-shadow: 0 3px 5px -1px rgb(255 255 255 / 12%), 0 2px 6px 0 rgb(255 255 255 / 8%), 0 1px 8px 0 rgb(255 255 255 / 6%);
+  --#{$rd-prefix}mask-background-color: rgb(0 0 0 / 40%);
+  --#{$rd-prefix}rating-background-color: rgb(27 27 27);
+  --#{$rd-prefix}skeleton-background-color-wave: rgb(255 255 255 / 4%);
+  --#{$rd-prefix}switch-background-color: #5f6164;
+  --#{$rd-prefix}tabs-background-color-slider: rgb(63 63 63);
+  --#{$rd-prefix}tag-background-color-fill: hsl(0deg 0% 50%);
+  --#{$rd-prefix}tooltip-background-color: #686a72;
 }

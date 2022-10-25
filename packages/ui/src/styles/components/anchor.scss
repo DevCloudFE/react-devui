@@ -12,7 +12,7 @@
     bottom: 0;
     width: 2px;
     pointer-events: none;
-    background-color: var(--#{$d-prefix}background-color-indicator);
+    background-color: var(--#{$rd-prefix}background-color-indicator);
   }
 
   @include e(indicator-wrapper) {
@@ -20,22 +20,22 @@
     left: 1px;
     z-index: 5;
     opacity: 0;
-    transition: top var(--#{$d-prefix}animation-duration-slow) linear, opacity var(--#{$d-prefix}animation-duration-base) linear;
+    transition: top var(--#{$rd-prefix}animation-duration-slow) linear, opacity var(--#{$rd-prefix}animation-duration-base) linear;
     transform: translate(-50%, -50%);
   }
 
   @include e(dot-indicator) {
     width: 8px;
     height: 8px;
-    background-color: var(--#{$d-prefix}background-color);
-    border: 2px solid var(--#{$d-prefix}color-primary);
+    background-color: var(--#{$rd-prefix}background-color);
+    border: 2px solid var(--#{$rd-prefix}color-primary);
     border-radius: 50%;
   }
 
   @include e(line-indicator) {
     width: 2px;
     height: 20px;
-    background-color: var(--#{$d-prefix}color-primary);
+    background-color: var(--#{$rd-prefix}color-primary);
   }
 
   @include e(link) {
@@ -44,17 +44,17 @@
     align-items: center;
     min-height: 28px;
     padding-left: 4px;
-    color: var(--#{$d-prefix}text-color);
+    color: var(--#{$rd-prefix}text-color);
     text-decoration: none;
     overflow-wrap: break-word;
-    transition: color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover {
-      color: var(--#{$d-prefix}color-primary-lighter);
+      color: var(--#{$rd-prefix}color-primary-lighter);
     }
 
     @include when(active) {
-      color: var(--#{$d-prefix}color-primary);
+      color: var(--#{$rd-prefix}color-primary);
     }
   }
 }

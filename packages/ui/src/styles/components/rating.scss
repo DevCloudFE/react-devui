@@ -4,7 +4,7 @@
   gap: 0 0.35em;
   align-items: center;
   font-size: 1.2em;
-  color: var(--#{$d-prefix}color-warning);
+  color: var(--#{$rd-prefix}color-warning);
 
   @include when(disabled) {
     pointer-events: none;
@@ -17,7 +17,7 @@
 
   @include e(star) {
     position: relative;
-    transition: transform var(--#{$d-prefix}animation-duration-fast) linear;
+    transition: transform var(--#{$rd-prefix}animation-duration-fast) linear;
 
     &:hover {
       transform: scale(1.2);
@@ -29,8 +29,8 @@
   }
 
   @include e(icon) {
-    color: var(--#{$d-prefix}rating-background-color);
-    transition: color var(--#{$d-prefix}animation-duration-fast) linear;
+    color: var(--#{$rd-prefix}rating-background-color);
+    transition: color var(--#{$rd-prefix}animation-duration-fast) linear;
 
     @include when(checked) {
       color: inherit;

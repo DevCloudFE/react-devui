@@ -1,18 +1,18 @@
 /* stylelint-disable declaration-property-value-allowed-list */
-$d-namespace: 'd' !default;
-$d-prefix: '#{$d-namespace}-' !default;
+$rd-namespace: 'rd' !default;
+$rd-prefix: '#{$rd-namespace}-' !default;
 
-$d-themes: (
+$rd-themes: (
   'primary': 94 124 224,
   'success': 45 211 111,
   'warning': 255 196 9,
   'danger': 235 68 90,
 ) !default;
 
-$d-colors: (
+$rd-colors: (
   'white': #fff,
   'black': #000,
 ) !default;
 
-$d-placeholder-color: rgb(var(--#{$d-prefix}text-color-rgb) / 24%) !default;
-$d-placeholder-disabled-color: rgb(var(--#{$d-prefix}text-color-rgb) / 8%) !default;
+$rd-placeholder-color: rgb(var(--#{$rd-prefix}text-color-rgb) / 24%) !default;
+$rd-placeholder-disabled-color: rgb(var(--#{$rd-prefix}text-color-rgb) / 8%) !default;

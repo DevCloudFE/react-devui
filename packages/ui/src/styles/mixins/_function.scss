@@ -4,7 +4,7 @@
 @function containsModifier($selector) {
   $selector: selectortostring($selector);
 
-  @if str-index($selector, $modifier-separator) {
+  @if str-index($selector, $rd-modifier-separator) {
     @return true;
   } @else {
     @return false;
@@ -14,7 +14,7 @@
 @function containThemeFlag($selector) {
   $selector: selectortostring($selector);
 
-  @if str-index($selector, '.' + $theme-prefix) {
+  @if str-index($selector, '.' + $rd-theme-prefix) {
     @return true;
   } @else {
     @return false;
@@ -24,7 +24,7 @@
 @function containWhenFlag($selector) {
   $selector: selectortostring($selector);
 
-  @if str-index($selector, '.' + $state-prefix) {
+  @if str-index($selector, '.' + $rd-state-prefix) {
     @return true;
   } @else {
     @return false;

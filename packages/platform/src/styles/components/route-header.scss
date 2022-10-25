@@ -3,7 +3,7 @@
   top: 0;
   z-index: 1;
   padding: 12px 20px 0;
-  background-color: var(--d-background-color);
+  background-color: var(--#{$rd-prefix}background-color);
 
   @include e(breadcrumb) {
     height: 40px;

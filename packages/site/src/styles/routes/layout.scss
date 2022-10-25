@@ -6,8 +6,8 @@
   width: 100%;
   height: 64px;
   padding: 0 20px;
-  background-color: var(--d-background-color);
-  box-shadow: 0 2px 8px 0 var(--d-shadow-color);
+  background-color: var(--#{$rd-prefix}background-color);
+  box-shadow: 0 2px 8px 0 var(--#{$rd-prefix}shadow-color);
 
   @include e(logo-container) {
     display: inline-flex;
@@ -37,26 +37,26 @@
     height: 36px;
     padding: 0;
     margin: 0;
-    color: var(--d-text-color);
+    color: var(--#{$rd-prefix}text-color);
     text-decoration: none;
     background-color: transparent;
-    border: 1px solid var(--d-color-border);
+    border: 1px solid var(--#{$rd-prefix}color-border);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 8px;
-    transition: border-color var(--d-animation-duration-base) linear, color var(--d-animation-duration-base) linear,
-      background-color var(--d-animation-duration-base) linear;
+    transition: border-color var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
+      background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     @include font-size(1.2rem);
 
     &:hover,
     &:focus {
-      color: var(--d-color-primary-lighter);
-      background-color: var(--d-background-color-primary-hover);
+      color: var(--#{$rd-prefix}color-primary-lighter);
+      background-color: var(--#{$rd-prefix}background-color-primary-hover);
     }
 
     &:active {
-      color: var(--d-color-primary-darker);
-      background-color: var(--d-background-color-primary);
+      color: var(--#{$rd-prefix}color-primary-darker);
+      background-color: var(--#{$rd-prefix}background-color-primary);
     }
 
     @include m(menu) {
@@ -87,7 +87,7 @@
       display: block;
       width: 28px;
       height: 2px;
-      background-color: var(--d-text-color);
+      background-color: var(--#{$rd-prefix}text-color);
       /* stylelint-disable-next-line declaration-property-value-allowed-list */
       border-radius: 2px;
       /* stylelint-disable-next-line declaration-property-value-disallowed-list */
@@ -109,7 +109,7 @@
 
     @include when(active) {
       div {
-        background-color: var(--d-color-primary-lighter);
+        background-color: var(--#{$rd-prefix}color-primary-lighter);
       }
 
       div:nth-child(1) {
@@ -137,7 +137,7 @@
       content: none;
     }
 
-    .d-menu__item--horizontal {
+    .rd-menu__item--horizontal {
       height: 100%;
 
       &::after {
@@ -168,7 +168,7 @@
   height: calc(100% - 64px);
   padding: 0;
   overflow: auto;
-  background-color: var(--d-background-color);
+  background-color: var(--#{$rd-prefix}background-color);
 
   &::after {
     position: absolute;
@@ -177,7 +177,7 @@
     width: 1px;
     height: calc(100% - 40px);
     content: '';
-    background-color: var(--d-color-divider);
+    background-color: var(--#{$rd-prefix}color-divider);
   }
 
   @include e(menu) {
@@ -200,12 +200,12 @@
   }
 
   @include e(drawer) {
-    .d-drawer__header-title {
+    .rd-drawer__header-title {
       display: flex;
       align-items: center;
     }
 
-    .d-drawer__body {
+    .rd-drawer__body {
       padding: 0;
     }
   }
@@ -235,7 +235,7 @@
     padding: 0 20px 0 16px;
     color: inherit;
     text-decoration: none;
-    border: 1px solid var(--d-color-border);
+    border: 1px solid var(--#{$rd-prefix}color-border);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     border-radius: 10px;
 

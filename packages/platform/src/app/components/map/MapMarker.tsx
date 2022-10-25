@@ -47,9 +47,9 @@ export function AppMapMarker(props: AppMapMarkerProps): JSX.Element | null {
               : aOptions.offset,
           },
           AMAP_V1
-            ? ({
+            ? {
                 resizeEnable: aOptions['reresizeEnable'] ?? true,
-              } as any)
+              }
             : {}
         )
       );

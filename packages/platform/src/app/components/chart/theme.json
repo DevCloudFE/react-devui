@@ -5,10 +5,10 @@
     "textStyle": {},
     "title": {
       "textStyle": {
-        "color": "var(--d-text-color)"
+        "color": "var(--rd-text-color)"
       },
       "subtextStyle": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       }
     },
     "line": {
@@ -21,7 +21,7 @@
       "symbolSize": "8",
       "symbol": "emptyCircle",
       "label": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "smooth": false
     },
@@ -42,12 +42,12 @@
         "barBorderColor": "#ccc"
       },
       "label": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       }
     },
     "pie": {
       "label": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "itemStyle": {
         "borderWidth": 0,
@@ -159,11 +159,11 @@
     "treemap": {
       "breadcrumb": {
         "itemStyle": {
-          "color": "var(--d-color-icon-decorator)"
+          "color": "var(--rd-color-icon-decorator)"
         },
         "emphasis": {
           "itemStyle": {
-            "color": "var(--d-color-primary-lighter)"
+            "color": "var(--rd-color-primary-lighter)"
           }
         }
       }
@@ -172,7 +172,7 @@
       "axisLine": {
         "show": true,
         "lineStyle": {
-          "color": "var(--d-color-border)"
+          "color": "var(--rd-color-border)"
         }
       },
       "axisTick": {
@@ -183,12 +183,12 @@
       },
       "axisLabel": {
         "show": true,
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "splitLine": {
         "show": true,
         "lineStyle": {
-          "color": ["var(--d-color-divider)"]
+          "color": ["var(--rd-color-divider)"]
         }
       },
       "splitArea": {
@@ -202,7 +202,7 @@
       "axisLine": {
         "show": true,
         "lineStyle": {
-          "color": "var(--d-color-border)"
+          "color": "var(--rd-color-border)"
         }
       },
       "axisTick": {
@@ -213,12 +213,12 @@
       },
       "axisLabel": {
         "show": true,
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "splitLine": {
         "show": true,
         "lineStyle": {
-          "color": ["var(--d-color-divider)"]
+          "color": ["var(--rd-color-divider)"]
         }
       },
       "splitArea": {
@@ -232,7 +232,7 @@
       "axisLine": {
         "show": true,
         "lineStyle": {
-          "color": "var(--d-color-border)"
+          "color": "var(--rd-color-border)"
         }
       },
       "axisTick": {
@@ -243,12 +243,12 @@
       },
       "axisLabel": {
         "show": true,
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "splitLine": {
         "show": true,
         "lineStyle": {
-          "color": ["var(--d-color-divider)"]
+          "color": ["var(--rd-color-divider)"]
         }
       },
       "splitArea": {
@@ -262,7 +262,7 @@
       "axisLine": {
         "show": true,
         "lineStyle": {
-          "color": "var(--d-color-border)"
+          "color": "var(--rd-color-border)"
         }
       },
       "axisTick": {
@@ -273,12 +273,12 @@
       },
       "axisLabel": {
         "show": true,
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "splitLine": {
         "show": true,
         "lineStyle": {
-          "color": ["var(--d-color-divider)"]
+          "color": ["var(--rd-color-divider)"]
         }
       },
       "splitArea": {
@@ -290,17 +290,17 @@
     },
     "toolbox": {
       "iconStyle": {
-        "borderColor": "var(--d-color-icon-decorator)"
+        "borderColor": "var(--rd-color-icon-decorator)"
       },
       "emphasis": {
         "iconStyle": {
-          "borderColor": "var(--d-color-primary-lighter)"
+          "borderColor": "var(--rd-color-primary-lighter)"
         }
       }
     },
     "legend": {
       "textStyle": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       }
     },
     "tooltip": {
@@ -318,47 +318,47 @@
     },
     "timeline": {
       "lineStyle": {
-        "color": "var(--d-color-border)",
+        "color": "var(--rd-color-border)",
         "width": 1
       },
       "itemStyle": {
-        "color": "var(--d-color-icon-decorator)",
+        "color": "var(--rd-color-icon-decorator)",
         "borderWidth": 1
       },
       "controlStyle": {
-        "color": "var(--d-color-icon-decorator)",
-        "borderColor": "var(--d-color-icon-decorator)",
+        "color": "var(--rd-color-icon-decorator)",
+        "borderColor": "var(--rd-color-icon-decorator)",
         "borderWidth": 0.5
       },
       "checkpointStyle": {
-        "color": "var(--d-color-primary-lighter)",
-        "borderColor": "var(--d-color-primary-lighter)"
+        "color": "var(--rd-color-primary-lighter)",
+        "borderColor": "var(--rd-color-primary-lighter)"
       },
       "label": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       },
       "progress": {
         "lineStyle": {
-          "color": "var(--d-color-primary)"
+          "color": "var(--rd-color-primary)"
         },
         "itemStyle": {
-          "color": "var(--d-color-primary)"
+          "color": "var(--rd-color-primary)"
         },
         "label": {
-          "color": "var(--d-color-primary)"
+          "color": "var(--rd-color-primary)"
         }
       },
       "emphasis": {
         "itemStyle": {
-          "color": "var(--d-color-primary-lighter)"
+          "color": "var(--rd-color-primary-lighter)"
         },
         "controlStyle": {
-          "color": "var(--d-color-primary-lighter)",
-          "borderColor": "var(--d-color-primary-lighter)",
+          "color": "var(--rd-color-primary-lighter)",
+          "borderColor": "var(--rd-color-primary-lighter)",
           "borderWidth": 0.5
         },
         "label": {
-          "color": "var(--d-color-primary-lighter)"
+          "color": "var(--rd-color-primary-lighter)"
         }
       }
     },
@@ -369,7 +369,7 @@
       "backgroundColor": "transparent",
       "handleSize": "100%",
       "textStyle": {
-        "color": "var(--d-text-color-sub)"
+        "color": "var(--rd-text-color-sub)"
       }
     },
     "markPoint": {

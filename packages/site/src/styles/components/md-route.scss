@@ -1,7 +1,7 @@
 @include b(md-route) {
   code.hljs {
-    background-color: var(--d-background-color) !important;
-    border: 1px solid var(--d-color-divider);
+    background-color: var(--#{$rd-prefix}background-color) !important;
+    border: 1px solid var(--#{$rd-prefix}color-divider);
   }
 
   @include e(content) {
@@ -33,10 +33,10 @@
     height: 60px;
     padding: 0;
     margin: 0;
-    color: var(--d-color-primary-lighter);
+    color: var(--#{$rd-prefix}color-primary-lighter);
     background-color: var(--app-anchor-toggler-color);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 2px 20px 2px var(--d-shadow-color);
+    box-shadow: 0 2px 20px 2px var(--#{$rd-prefix}shadow-color);
   }
 }

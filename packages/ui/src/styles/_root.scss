@@ -4,86 +4,86 @@
 
 :root {
   /** z-index **/
-  --#{$d-prefix}zindex-absolute: 100;
-  --#{$d-prefix}zindex-sticky: 900;
-  --#{$d-prefix}zindex-fixed: 1000;
-  --#{$d-prefix}zindex-max: 10000;
+  --#{$rd-prefix}zindex-absolute: 100;
+  --#{$rd-prefix}zindex-sticky: 900;
+  --#{$rd-prefix}zindex-fixed: 1000;
+  --#{$rd-prefix}zindex-max: 10000;
 
   /** size **/
-  --#{$d-prefix}size: 36px;
-  --#{$d-prefix}size-smaller: 32px;
-  --#{$d-prefix}size-larger: 40px;
-  --#{$d-prefix}padding-size: 16px;
-  --#{$d-prefix}padding-size-smaller: 12px;
-  --#{$d-prefix}padding-size-larger: 20px;
-  --#{$d-prefix}horizontal-space-size: 12px;
-  --#{$d-prefix}horizontal-space-size-smaller: 10px;
-  --#{$d-prefix}horizontal-space-size-larger: 14px;
-  --#{$d-prefix}margin-size: 8px;
-  --#{$d-prefix}margin-size-smaller: 6px;
-  --#{$d-prefix}margin-size-larger: 10px;
+  --#{$rd-prefix}size: 36px;
+  --#{$rd-prefix}size-smaller: 32px;
+  --#{$rd-prefix}size-larger: 40px;
+  --#{$rd-prefix}padding-size: 16px;
+  --#{$rd-prefix}padding-size-smaller: 12px;
+  --#{$rd-prefix}padding-size-larger: 20px;
+  --#{$rd-prefix}horizontal-space-size: 12px;
+  --#{$rd-prefix}horizontal-space-size-smaller: 10px;
+  --#{$rd-prefix}horizontal-space-size-larger: 14px;
+  --#{$rd-prefix}margin-size: 8px;
+  --#{$rd-prefix}margin-size-smaller: 6px;
+  --#{$rd-prefix}margin-size-larger: 10px;
 
   /** animation **/
-  --#{$d-prefix}animation-duration-slow: 300ms;
-  --#{$d-prefix}animation-duration-base: 200ms;
-  --#{$d-prefix}animation-duration-fast: 100ms;
+  --#{$rd-prefix}animation-duration-slow: 300ms;
+  --#{$rd-prefix}animation-duration-base: 200ms;
+  --#{$rd-prefix}animation-duration-fast: 100ms;
 
   /** border-radius **/
-  --#{$d-prefix}border-radius: 2px;
-  --#{$d-prefix}border-radius-larger: 4px;
+  --#{$rd-prefix}border-radius: 2px;
+  --#{$rd-prefix}border-radius-larger: 4px;
 
   /** shadow **/
-  --#{$d-prefix}shadow-color: rgb(0 0 0 / 20%);
-  --#{$d-prefix}shadow-popup: rgb(0 0 0 / 6%) 0 0 20px 2px, rgb(0 0 0 / 10%) 0 4px 10px 0;
-  --#{$d-prefix}shadow-dialog: rgb(0 0 0 / 6%) 0 0 32px 2px, rgb(0 0 0 / 10%) 0 4px 12px 0;
-  --#{$d-prefix}shadow-normal: 16%;
-  --#{$d-prefix}shadow-darker: 26%;
+  --#{$rd-prefix}shadow-color: rgb(0 0 0 / 20%);
+  --#{$rd-prefix}shadow-popup: rgb(0 0 0 / 6%) 0 0 20px 2px, rgb(0 0 0 / 10%) 0 4px 10px 0;
+  --#{$rd-prefix}shadow-dialog: rgb(0 0 0 / 6%) 0 0 32px 2px, rgb(0 0 0 / 10%) 0 4px 12px 0;
+  --#{$rd-prefix}shadow-normal: 16%;
+  --#{$rd-prefix}shadow-darker: 26%;
 
   /** basic **/
-  --#{$d-prefix}text-color: rgb(36 41 47);
-  --#{$d-prefix}text-color-rgb: 36 41 47;
-  --#{$d-prefix}text-color-sub: #7f8287;
-  --#{$d-prefix}background-color: rgb(255 255 255);
-  --#{$d-prefix}background-color-rgb: 255 255 255;
-  --#{$d-prefix}background-color-light-gray: rgb(247 247 247);
-  --#{$d-prefix}background-color-gray: rgb(239 239 239);
-  --#{$d-prefix}background-color-input: rgb(255 255 255);
-  --#{$d-prefix}background-color-disabled: rgb(247 247 247);
-  --#{$d-prefix}background-color-hover: rgb(0 0 0 / 4%);
-  --#{$d-prefix}background-color-light-hover: rgb(255 255 255 / 16%);
-  --#{$d-prefix}background-color-indicator: #dfe1e6;
-  --#{$d-prefix}background-color-actions-mask: rgb(0 0 0 / 20%);
-  --#{$d-prefix}color-divider: rgb(239 239 239);
-  --#{$d-prefix}color-border: rgb(219 219 219);
-  --#{$d-prefix}color-disabled: #d1d4d7;
-  --#{$d-prefix}color-icon-decorator: #b2b3b5;
+  --#{$rd-prefix}text-color: rgb(36 41 47);
+  --#{$rd-prefix}text-color-rgb: 36 41 47;
+  --#{$rd-prefix}text-color-sub: #7f8287;
+  --#{$rd-prefix}background-color: rgb(255 255 255);
+  --#{$rd-prefix}background-color-rgb: 255 255 255;
+  --#{$rd-prefix}background-color-light-gray: rgb(247 247 247);
+  --#{$rd-prefix}background-color-gray: rgb(239 239 239);
+  --#{$rd-prefix}background-color-input: rgb(255 255 255);
+  --#{$rd-prefix}background-color-disabled: rgb(247 247 247);
+  --#{$rd-prefix}background-color-hover: rgb(0 0 0 / 4%);
+  --#{$rd-prefix}background-color-light-hover: rgb(255 255 255 / 16%);
+  --#{$rd-prefix}background-color-indicator: #dfe1e6;
+  --#{$rd-prefix}background-color-actions-mask: rgb(0 0 0 / 20%);
+  --#{$rd-prefix}color-divider: rgb(239 239 239);
+  --#{$rd-prefix}color-border: rgb(219 219 219);
+  --#{$rd-prefix}color-disabled: #d1d4d7;
+  --#{$rd-prefix}color-icon-decorator: #b2b3b5;
 
-  @each $theme, $rgb in $d-themes {
+  @each $theme, $rgb in $rd-themes {
     /** rgb **/
-    --#{$d-prefix}color-#{$theme}-rgb: #{$rgb};
+    --#{$rd-prefix}color-#{$theme}-rgb: #{$rgb};
 
     /** theme **/
-    --#{$d-prefix}color-#{$theme}: rgb(#{$rgb});
+    --#{$rd-prefix}color-#{$theme}: rgb(#{$rgb});
 
     /** lighter **/
-    --#{$d-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
+    --#{$rd-prefix}color-#{$theme}-lighter: #{color.scale(rgb($rgb), $lightness: 30%)};
 
     /** darker **/
-    --#{$d-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
+    --#{$rd-prefix}color-#{$theme}-darker: #{color.scale(rgb($rgb), $lightness: -10%, $saturation: -10%)};
 
     /** background **/
-    --#{$d-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -90%)};
-    --#{$d-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -96%)};
+    --#{$rd-prefix}background-color-#{$theme}: #{color.scale(rgb($rgb), $alpha: -90%)};
+    --#{$rd-prefix}background-color-#{$theme}-hover: #{color.scale(rgb($rgb), $alpha: -96%)};
   }
 
   /** component **/
-  --#{$d-prefix}avatar-background-color: #bdbdbd;
-  --#{$d-prefix}fab-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 14px 0 rgb(0 0 0 / 12%);
-  --#{$d-prefix}mask-background-color: rgb(0 0 0 / 20%);
-  --#{$d-prefix}rating-background-color: rgb(227 227 227);
-  --#{$d-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
-  --#{$d-prefix}switch-background-color: #d4d6d9;
-  --#{$d-prefix}tabs-background-color-slider: rgb(243 243 243);
-  --#{$d-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
-  --#{$d-prefix}tooltip-background-color: #464d6e;
+  --#{$rd-prefix}avatar-background-color: #bdbdbd;
+  --#{$rd-prefix}fab-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 14px 0 rgb(0 0 0 / 12%);
+  --#{$rd-prefix}mask-background-color: rgb(0 0 0 / 20%);
+  --#{$rd-prefix}rating-background-color: rgb(227 227 227);
+  --#{$rd-prefix}skeleton-background-color-wave: rgb(255 255 255 / 50%);
+  --#{$rd-prefix}switch-background-color: #d4d6d9;
+  --#{$rd-prefix}tabs-background-color-slider: rgb(243 243 243);
+  --#{$rd-prefix}tag-background-color-fill: hsl(0deg 0% 58%);
+  --#{$rd-prefix}tooltip-background-color: #464d6e;
 }

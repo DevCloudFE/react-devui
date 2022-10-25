@@ -1,5 +1,5 @@
 @mixin b($block) {
-  $B: $d-namespace + '-' + $block !global;
+  $B: $rd-block-prefix + '-' + $block !global;
 
   .#{$B} {
     @content;
@@ -11,7 +11,7 @@
   $selector: &;
   $currentSelector: '';
   @each $unit in $element {
-    $currentSelector: #{$currentSelector + '.' + $B + $element-separator + $unit + ','};
+    $currentSelector: #{$currentSelector + '.' + $B + $rd-element-separator + $unit + ','};
   }
 
   @if hitAllSpecialNestRule($selector) {
@@ -35,7 +35,7 @@
   $selector: &;
   $currentSelector: '';
   @each $unit in $modifier {
-    $currentSelector: #{$currentSelector + & + $modifier-separator + $unit + ','};
+    $currentSelector: #{$currentSelector + & + $rd-modifier-separator + $unit + ','};
   }
 
   @at-root {
@@ -48,7 +48,7 @@
 // Signify that a class is responsible for adding a Theme to a view.
 @mixin theme($theme) {
   @at-root {
-    &.#{$theme-prefix + $theme} {
+    &.#{$rd-theme-prefix + $theme} {
       @content;
     }
   }
@@ -58,7 +58,7 @@
 // styled a certain way because of a state or condition.
 @mixin when($state) {
   @at-root {
-    &.#{$state-prefix + $state} {
+    &.#{$rd-state-prefix + $state} {
       @content;
     }
   }

@@ -3,11 +3,11 @@
 
 @keyframes stepper-active {
   0% {
-    box-shadow: 0 0 0 4px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-normal));
+    box-shadow: 0 0 0 4px rgb(var(--#{$rd-prefix}color-primary-rgb) / var(--#{$rd-prefix}shadow-normal));
   }
 
   100% {
-    box-shadow: 0 0 0 6px rgb(var(--#{$d-prefix}color-primary-rgb) / var(--#{$d-prefix}shadow-darker));
+    box-shadow: 0 0 0 6px rgb(var(--#{$rd-prefix}color-primary-rgb) / var(--#{$rd-prefix}shadow-darker));
   }
 }
 
@@ -40,7 +40,7 @@
     flex-direction: column;
 
     @include e(step) {
-      &:not(.#{$d-prefix}stepper__step--last) {
+      &:not(.#{$rd-prefix}stepper__step--last) {
         padding-bottom: 20px;
       }
     }
@@ -58,21 +58,21 @@
   @include m(button) {
     @include e(step) {
       cursor: pointer;
-      transition: color var(--#{$d-prefix}animation-duration-base) linear;
+      transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
       @include when(wait) {
         @include e(step-icon) {
-          transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
+          transition: border-color var(--#{$rd-prefix}animation-duration-base) linear;
         }
       }
 
       &:hover,
       &:focus {
-        color: var(--#{$d-prefix}color-primary-lighter);
+        color: var(--#{$rd-prefix}color-primary-lighter);
 
         @include when(wait) {
           @include e(step-icon) {
-            border: 1px solid var(--#{$d-prefix}color-primary-lighter);
+            border: 1px solid var(--#{$rd-prefix}color-primary-lighter);
           }
         }
       }
@@ -84,29 +84,29 @@
     display: flex;
     flex-direction: column;
 
-    &:not(.#{$d-prefix}stepper__step--last) {
+    &:not(.#{$rd-prefix}stepper__step--last) {
       flex: 1 0 0;
     }
 
     @include when(completed) {
       @include e(step-icon) {
-        color: map.get($d-colors, 'white');
-        background-color: var(--#{$d-prefix}color-primary);
+        color: map.get($rd-colors, 'white');
+        background-color: var(--#{$rd-prefix}color-primary);
       }
 
       @include e(step-separator) {
         &::after {
-          background-color: var(--#{$d-prefix}color-primary);
+          background-color: var(--#{$rd-prefix}color-primary);
         }
       }
     }
 
     @include when(active) {
       @include e(step-icon) {
-        color: map.get($d-colors, 'white');
-        background-color: var(--#{$d-prefix}color-primary);
+        color: map.get($rd-colors, 'white');
+        background-color: var(--#{$rd-prefix}color-primary);
 
-        &:not(.#{$d-prefix}stepper__step-icon--progress) {
+        &:not(.#{$rd-prefix}stepper__step-icon--progress) {
           animation: stepper-active 1.2s linear infinite alternate;
           animation-fill-mode: both;
         }
@@ -114,24 +114,24 @@
     }
 
     @include when(wait) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
 
       @include e(step-icon) {
-        border: 1px solid var(--#{$d-prefix}color-disabled);
+        border: 1px solid var(--#{$rd-prefix}color-disabled);
       }
     }
 
     @include when(error) {
-      color: var(--#{$d-prefix}color-danger);
+      color: var(--#{$rd-prefix}color-danger);
 
       @include e(step-icon) {
-        color: map.get($d-colors, 'white');
-        background-color: var(--#{$d-prefix}color-danger);
+        color: map.get($rd-colors, 'white');
+        background-color: var(--#{$rd-prefix}color-danger);
       }
 
       @include e(step-separator) {
         &::after {
-          background-color: var(--#{$d-prefix}color-danger);
+          background-color: var(--#{$rd-prefix}color-danger);
         }
       }
     }
@@ -178,7 +178,7 @@
       position: absolute;
       inset: 0 10px;
       content: '';
-      background-color: var(--#{$d-prefix}background-color-indicator);
+      background-color: var(--#{$rd-prefix}background-color-indicator);
     }
   }
 }

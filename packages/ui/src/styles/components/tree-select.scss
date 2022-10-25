@@ -5,10 +5,10 @@
 
   @include when(disabled) {
     @include e(multiple-tag) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
     }
     @include e(multiple-count) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
     }
   }
 
@@ -20,27 +20,27 @@
 
   @include e(close) {
     margin: 0 0 0 4px;
-    color: var(--#{$d-prefix}color-icon-decorator);
-    transition: color var(--#{$d-prefix}animation-duration-base) linear;
+    color: var(--#{$rd-prefix}color-icon-decorator);
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$d-prefix}color-primary-lighter);
+      color: var(--#{$rd-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$d-prefix}color-primary-darker);
+      color: var(--#{$rd-prefix}color-primary-darker);
     }
   }
 
   @include e(popup) {
     position: fixed;
     overflow: auto hidden;
-    background-color: var(--#{$d-prefix}background-color);
-    border-radius: var(--#{$d-prefix}border-radius);
-    box-shadow: var(--#{$d-prefix}shadow-popup);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
+    box-shadow: var(--#{$rd-prefix}shadow-popup);
 
-    .#{$d-prefix}tree {
+    .#{$rd-prefix}tree {
       max-height: 264px;
       padding: 4px 0;
       overflow: hidden auto;
@@ -55,12 +55,12 @@
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    color: var(--#{$d-prefix}color-primary);
-    background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
+    color: var(--#{$rd-prefix}color-primary);
+    background-color: rgb(var(--#{$rd-prefix}background-color-rgb) / 80%);
 
     @include m(empty) {
       justify-content: flex-start;
-      background-color: var(--#{$d-prefix}background-color);
+      background-color: var(--#{$rd-prefix}background-color);
     }
   }
 }

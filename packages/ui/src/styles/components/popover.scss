@@ -117,10 +117,10 @@
     z-index: 1;
     max-width: calc(100% - 32px);
     pointer-events: all;
-    background-color: var(--#{$d-prefix}background-color);
-    border-radius: var(--#{$d-prefix}border-radius);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
     outline: none;
-    box-shadow: var(--#{$d-prefix}shadow-popup);
+    box-shadow: var(--#{$rd-prefix}shadow-popup);
   }
 
   @include e(header) {
@@ -132,10 +132,10 @@
   }
 
   @include e(header-actions) {
-    .#{$d-prefix}button {
-      --#{$d-prefix}size: calc(1.05em * 1.2);
+    .#{$rd-prefix}button {
+      --#{$rd-prefix}size: calc(1.05em * 1.2);
 
-      .#{$d-prefix}button__icon {
+      .#{$rd-prefix}button__icon {
         font-size: 1.05em;
       }
     }
@@ -150,9 +150,9 @@
     padding: 0 12px 10px;
     border-top: none;
 
-    .#{$d-prefix}button {
-      --#{$d-prefix}size: 28px;
-      --#{$d-prefix}padding-size: 10px;
+    .#{$rd-prefix}button {
+      --#{$rd-prefix}size: 28px;
+      --#{$rd-prefix}padding-size: 10px;
     }
   }
 

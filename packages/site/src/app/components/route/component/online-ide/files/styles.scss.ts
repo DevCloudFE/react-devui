@@ -2,7 +2,7 @@ export default `@import '~@react-devui/ui/styles/index';
 
 body {
   margin: 0;
-  color: var(--d-text-color);
+  color: var(--#{$rd-prefix}text-color);
 }
 
 main {

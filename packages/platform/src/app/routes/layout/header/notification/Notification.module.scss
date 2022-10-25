@@ -1,13 +1,13 @@
 @import '~styles/module';
 
 @include b(notification) {
-  :global .d-popover__body {
+  :global .rd-popover__body {
     width: 320px;
     padding: 0;
   }
 
   @include m(spinner) {
-    :global .d-popover__body {
+    :global .rd-popover__body {
       width: unset;
       padding: 16px 32px;
     }
@@ -17,10 +17,10 @@
     padding-right: 16px;
     padding-left: 16px;
     cursor: pointer;
-    transition: background-color var(--d-animation-duration-base) linear;
+    transition: background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover {
-      background-color: var(--d-background-color-hover);
+      background-color: var(--#{$rd-prefix}background-color-hover);
     }
 
     @include m(read) {
@@ -33,9 +33,9 @@
     display: flex;
     align-items: stretch;
     height: 44px;
-    border-top: 1px solid var(--d-color-divider);
+    border-top: 1px solid var(--#{$rd-prefix}color-divider);
 
-    :global .d-button {
+    :global .rd-button {
       flex-grow: 1;
     }
   }

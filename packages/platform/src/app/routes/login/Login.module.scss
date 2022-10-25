@@ -35,7 +35,7 @@
 
   @include e(description) {
     margin: 10px 0 0;
-    color: rgb(var(--d-text-color-rgb) / 80%);
+    color: rgb(var(--#{$rd-prefix}text-color-rgb) / 80%);
     text-align: center;
   }
 
@@ -63,8 +63,8 @@
     width: 100%;
     max-width: 900px;
     margin-top: 60px;
-    color: var(--d-text-color-sub);
-    border-top: 1px solid var(--d-color-border);
+    color: var(--#{$rd-prefix}text-color-sub);
+    border-top: 1px solid var(--#{$rd-prefix}color-border);
 
     @include media-breakpoint-up(md) {
       flex-direction: row;

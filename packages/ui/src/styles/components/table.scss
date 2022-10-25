@@ -3,8 +3,8 @@
 $table-filter-option-height: 32px;
 
 @include b(table) {
-  --#{$d-prefix}table-padding-size: 16px;
-  --#{$d-prefix}table-border-color: var(--#{$d-prefix}color-divider);
+  --#{$rd-prefix}table-padding-size: 16px;
+  --#{$rd-prefix}table-border-color: var(--#{$rd-prefix}color-divider);
 
   position: relative;
   width: 100%;
@@ -28,17 +28,17 @@ $table-filter-option-height: 32px;
 
   th {
     font-weight: 500;
-    background-color: var(--#{$d-prefix}background-color-light-gray);
+    background-color: var(--#{$rd-prefix}background-color-light-gray);
   }
 
   td {
-    background-color: var(--#{$d-prefix}background-color);
-    border-bottom: 1px solid var(--#{$d-prefix}table-border-color);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-bottom: 1px solid var(--#{$rd-prefix}table-border-color);
   }
 
   thead {
     th {
-      border-bottom: 1px solid var(--#{$d-prefix}color-border);
+      border-bottom: 1px solid var(--#{$rd-prefix}color-border);
 
       &:not(:last-child)::after {
         position: absolute;
@@ -47,7 +47,7 @@ $table-filter-option-height: 32px;
         width: 1px;
         height: 1.6em;
         content: '';
-        background-color: var(--#{$d-prefix}color-border);
+        background-color: var(--#{$rd-prefix}color-border);
         transform: translateY(-50%);
       }
     }
@@ -55,16 +55,16 @@ $table-filter-option-height: 32px;
 
   tbody {
     th {
-      border-bottom: 1px solid var(--#{$d-prefix}table-border-color);
+      border-bottom: 1px solid var(--#{$rd-prefix}table-border-color);
     }
   }
 
   @include m(border) {
-    --#{$d-prefix}table-border-color: var(--#{$d-prefix}color-border);
+    --#{$rd-prefix}table-border-color: var(--#{$rd-prefix}color-border);
 
     table {
-      border-top: 1px solid var(--#{$d-prefix}table-border-color);
-      border-left: 1px solid var(--#{$d-prefix}table-border-color);
+      border-top: 1px solid var(--#{$rd-prefix}table-border-color);
+      border-left: 1px solid var(--#{$rd-prefix}table-border-color);
     }
 
     thead {
@@ -74,17 +74,17 @@ $table-filter-option-height: 32px;
     }
 
     th {
-      border-right: 1px solid var(--#{$d-prefix}table-border-color);
+      border-right: 1px solid var(--#{$rd-prefix}table-border-color);
     }
 
     td {
-      border-right: 1px solid var(--#{$d-prefix}table-border-color);
+      border-right: 1px solid var(--#{$rd-prefix}table-border-color);
     }
   }
 
   @include e(cell) {
     position: relative;
-    padding: var(--#{$d-prefix}table-padding-size);
+    padding: var(--#{$rd-prefix}table-padding-size);
 
     @include m(fixed-left) {
       &::before {
@@ -95,15 +95,15 @@ $table-filter-option-height: 32px;
         width: 30px;
         pointer-events: none;
         content: '';
-        transition: box-shadow var(--#{$d-prefix}animation-duration-base) linear;
+        transition: box-shadow var(--#{$rd-prefix}animation-duration-base) linear;
         transform: translateX(100%);
       }
 
-      &.#{$d-prefix}table__cell--fixed-shadow {
+      &.#{$rd-prefix}table__cell--fixed-shadow {
         $selector: &;
 
         &::before {
-          box-shadow: inset 8px 0 12px -10px var(--#{$d-prefix}shadow-color);
+          box-shadow: inset 8px 0 12px -10px var(--#{$rd-prefix}shadow-color);
         }
 
         @at-root {
@@ -125,13 +125,13 @@ $table-filter-option-height: 32px;
         width: 30px;
         pointer-events: none;
         content: '';
-        transition: box-shadow var(--#{$d-prefix}animation-duration-base) linear;
+        transition: box-shadow var(--#{$rd-prefix}animation-duration-base) linear;
         transform: translateX(-100%);
       }
 
-      &.#{$d-prefix}table__cell--fixed-shadow {
+      &.#{$rd-prefix}table__cell--fixed-shadow {
         &::before {
-          box-shadow: inset -8px 0 12px -10px var(--#{$d-prefix}shadow-color);
+          box-shadow: inset -8px 0 12px -10px var(--#{$rd-prefix}shadow-color);
         }
       }
     }
@@ -204,22 +204,22 @@ $table-filter-option-height: 32px;
     min-height: 20px;
     padding: 0;
     margin: 0;
-    color: rgb(var(--#{$d-prefix}text-color-rgb) / 28%);
+    color: rgb(var(--#{$rd-prefix}text-color-rgb) / 28%);
     background-color: transparent;
     border: none;
-    transition: color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: rgb(var(--#{$d-prefix}text-color-rgb) / 42%);
+      color: rgb(var(--#{$rd-prefix}text-color-rgb) / 42%);
     }
 
     &:active {
-      color: rgb(var(--#{$d-prefix}text-color-rgb) / 42%);
+      color: rgb(var(--#{$rd-prefix}text-color-rgb) / 42%);
     }
 
     @include when(active) {
-      color: var(--#{$d-prefix}color-primary);
+      color: var(--#{$rd-prefix}color-primary);
     }
 
     @include m(sort) {
@@ -235,7 +235,7 @@ $table-filter-option-height: 32px;
     }
 
     @include when(active) {
-      color: var(--#{$d-prefix}color-primary);
+      color: var(--#{$rd-prefix}color-primary);
     }
   }
 
@@ -247,19 +247,19 @@ $table-filter-option-height: 32px;
     height: 17px;
     padding: 0;
     margin: 0;
-    color: var(--#{$d-prefix}text-color);
+    color: var(--#{$rd-prefix}text-color);
     background-color: transparent;
-    border: 1px solid var(--#{$d-prefix}color-border);
-    border-radius: var(--#{$d-prefix}border-radius);
-    transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
+    border: 1px solid var(--#{$rd-prefix}color-border);
+    border-radius: var(--#{$rd-prefix}border-radius);
+    transition: border-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      border-color: var(--#{$d-prefix}color-primary-lighter);
+      border-color: var(--#{$rd-prefix}color-primary-lighter);
     }
 
     &:active {
-      border-color: var(--#{$d-prefix}color-primary-darker);
+      border-color: var(--#{$rd-prefix}color-primary-darker);
     }
 
     &::before {
@@ -270,7 +270,7 @@ $table-filter-option-height: 32px;
       height: 1px;
       content: '';
       background-color: currentcolor;
-      transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+      transition: transform var(--#{$rd-prefix}animation-duration-base) linear;
     }
 
     &::after {
@@ -281,7 +281,7 @@ $table-filter-option-height: 32px;
       width: 1px;
       content: '';
       background-color: currentcolor;
-      transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+      transition: transform var(--#{$rd-prefix}animation-duration-base) linear;
     }
 
     @include when(expand) {
@@ -298,27 +298,27 @@ $table-filter-option-height: 32px;
   @include e(empty-content) {
     pointer-events: none;
 
-    .#{$d-prefix}table__cell-content {
+    .#{$rd-prefix}table__cell-content {
       min-height: 120px;
     }
   }
 
   @include e(filter-popup) {
-    .#{$d-prefix}popover__body {
+    .#{$rd-prefix}popover__body {
       padding: 0;
     }
 
-    .#{$d-prefix}popover__footer {
+    .#{$rd-prefix}popover__footer {
       justify-content: space-between;
       padding: 10px 12px;
-      border-top: 1px solid var(--#{$d-prefix}color-divider);
+      border-top: 1px solid var(--#{$rd-prefix}color-divider);
     }
   }
 
   @include e(filter-search) {
     @include overwrite-component(input) {
-      --#{$d-prefix}size: 30px;
-      --#{$d-prefix}horizontal-space-size: 8px;
+      --#{$rd-prefix}size: 30px;
+      --#{$rd-prefix}horizontal-space-size: 8px;
 
       display: flex;
       margin: 10px 12px;
@@ -344,14 +344,14 @@ $table-filter-option-height: 32px;
     height: $table-filter-option-height;
     padding: 0 12px;
     cursor: pointer;
-    transition: background-color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover {
-      background-color: var(--#{$d-prefix}background-color-hover);
+      background-color: var(--#{$rd-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
       pointer-events: none;
     }
   }
@@ -361,7 +361,7 @@ $table-filter-option-height: 32px;
     align-items: center;
     height: $table-filter-option-height;
     padding: 0 12px;
-    color: var(--#{$d-prefix}color-disabled);
+    color: var(--#{$rd-prefix}color-disabled);
   }
 
   @include e(loading) {
@@ -372,12 +372,12 @@ $table-filter-option-height: 32px;
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    color: var(--#{$d-prefix}color-primary);
-    background-color: rgb(var(--#{$d-prefix}background-color-rgb) / 80%);
+    color: var(--#{$rd-prefix}color-primary);
+    background-color: rgb(var(--#{$rd-prefix}background-color-rgb) / 80%);
 
     @include m(empty) {
       justify-content: flex-start;
-      background-color: var(--#{$d-prefix}background-color);
+      background-color: var(--#{$rd-prefix}background-color);
     }
   }
 }

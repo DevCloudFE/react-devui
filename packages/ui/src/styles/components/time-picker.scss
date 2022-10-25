@@ -7,9 +7,9 @@ $time-picker-cell-height: 28px;
 
   @include e(popup) {
     position: fixed;
-    background-color: var(--#{$d-prefix}background-color);
-    border-radius: var(--#{$d-prefix}border-radius);
-    box-shadow: var(--#{$d-prefix}shadow-popup);
+    background-color: var(--#{$rd-prefix}background-color);
+    border-radius: var(--#{$rd-prefix}border-radius);
+    box-shadow: var(--#{$rd-prefix}shadow-popup);
   }
 
   @include e(header) {
@@ -17,7 +17,7 @@ $time-picker-cell-height: 28px;
     align-items: center;
     justify-content: center;
     height: 41px;
-    border-bottom: 1px solid var(--#{$d-prefix}color-divider);
+    border-bottom: 1px solid var(--#{$rd-prefix}color-divider);
   }
 
   @include e(panel) {
@@ -55,16 +55,16 @@ $time-picker-cell-height: 28px;
     cursor: pointer;
 
     &:not(.is-active):hover {
-      background-color: var(--#{$d-prefix}background-color-hover);
+      background-color: var(--#{$rd-prefix}background-color-hover);
     }
 
     @include when(disabled) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
       pointer-events: none;
     }
 
     @include when(active) {
-      background-color: var(--#{$d-prefix}background-color-primary);
+      background-color: var(--#{$rd-prefix}background-color-primary);
     }
   }
 
@@ -73,6 +73,6 @@ $time-picker-cell-height: 28px;
     align-items: center;
     justify-content: center;
     min-height: 41px;
-    border-top: 1px solid var(--#{$d-prefix}color-divider);
+    border-top: 1px solid var(--#{$rd-prefix}color-divider);
   }
 }

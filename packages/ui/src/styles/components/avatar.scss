@@ -13,17 +13,17 @@
   }
 
   @include m(square) {
-    border-radius: var(--#{$d-prefix}border-radius);
+    border-radius: var(--#{$rd-prefix}border-radius);
   }
 
   @include m(icon) {
-    color: map.get($d-colors, 'white');
-    background-color: var(--#{$d-prefix}avatar-background-color);
+    color: map.get($rd-colors, 'white');
+    background-color: var(--#{$rd-prefix}avatar-background-color);
   }
 
   @include m(text) {
-    color: map.get($d-colors, 'white');
-    background-color: var(--#{$d-prefix}avatar-background-color);
+    color: map.get($rd-colors, 'white');
+    background-color: var(--#{$rd-prefix}avatar-background-color);
   }
 
   @include e(img) {

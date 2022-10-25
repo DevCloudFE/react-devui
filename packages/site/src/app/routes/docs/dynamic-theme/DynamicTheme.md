@@ -23,12 +23,12 @@ export default function App() {
 
 ## Variable conflict
 
-All our css variables have namespaces added, the default is `d`, if our css variables conflict with your project, you can modify `$d-namespace`.
+All our css variables have namespaces added, the default is `rd`, if our css variables conflict with your project, you can modify `$rd-namespace`.
 
-Note: `$d-namespace` also affects stylesheets, so you need to modify the `DRoot` configuration:
+Note: `$rd-namespace` also affects stylesheets, so you need to modify the `DRoot` configuration:
 
 ```scss
-$d-namespace: 'app';
+$rd-namespace: 'app';
 ```
 
 ```tsx

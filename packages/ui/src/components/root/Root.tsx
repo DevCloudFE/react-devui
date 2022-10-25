@@ -14,7 +14,7 @@ import { DConfigContext } from './contex';
 import resources from './resources.json';
 
 const ROOT = new DConfigContextManager({
-  namespace: 'd',
+  namespace: 'rd',
   componentConfigs: {},
   i18n: {
     lang: 'en-US',

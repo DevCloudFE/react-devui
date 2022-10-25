@@ -26,6 +26,6 @@
   }
 
   @include e(description) {
-    color: var(--d-text-color-sub);
+    color: var(--#{$rd-prefix}text-color-sub);
   }
 }

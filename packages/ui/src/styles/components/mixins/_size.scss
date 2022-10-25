@@ -1,18 +1,18 @@
 @mixin component-size {
   @include m(smaller) {
-    --#{$d-prefix}size: var(--#{$d-prefix}size-smaller);
-    --#{$d-prefix}padding-size: var(--#{$d-prefix}padding-size-smaller);
-    --#{$d-prefix}horizontal-space-size: var(--#{$d-prefix}horizontal-space-size-smaller);
-    --#{$d-prefix}margin-size: var(--#{$d-prefix}margin-size-smaller);
+    --#{$rd-prefix}size: var(--#{$rd-prefix}size-smaller);
+    --#{$rd-prefix}padding-size: var(--#{$rd-prefix}padding-size-smaller);
+    --#{$rd-prefix}horizontal-space-size: var(--#{$rd-prefix}horizontal-space-size-smaller);
+    --#{$rd-prefix}margin-size: var(--#{$rd-prefix}margin-size-smaller);
 
     @include font-size(0.9rem);
   }
 
   @include m(larger) {
-    --#{$d-prefix}size: var(--#{$d-prefix}size-larger);
-    --#{$d-prefix}padding-size: var(--#{$d-prefix}padding-size-larger);
-    --#{$d-prefix}horizontal-space-size: var(--#{$d-prefix}horizontal-space-size-larger);
-    --#{$d-prefix}margin-size: var(--#{$d-prefix}margin-size-larger);
+    --#{$rd-prefix}size: var(--#{$rd-prefix}size-larger);
+    --#{$rd-prefix}padding-size: var(--#{$rd-prefix}padding-size-larger);
+    --#{$rd-prefix}horizontal-space-size: var(--#{$rd-prefix}horizontal-space-size-larger);
+    --#{$rd-prefix}margin-size: var(--#{$rd-prefix}margin-size-larger);
 
     @include font-size(1.15rem);
   }

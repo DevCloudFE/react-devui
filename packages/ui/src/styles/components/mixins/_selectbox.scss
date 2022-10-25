@@ -4,56 +4,56 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: var(--#{$d-prefix}size);
-  padding: 0 calc(var(--#{$d-prefix}horizontal-space-size) - 1px);
+  height: var(--#{$rd-prefix}size);
+  padding: 0 calc(var(--#{$rd-prefix}horizontal-space-size) - 1px);
   vertical-align: top;
   cursor: pointer;
-  background-color: var(--#{$d-prefix}background-color-input);
-  border: 1px solid var(--#{$d-prefix}color-border);
-  border-radius: var(--#{$d-prefix}border-radius);
-  transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
+  background-color: var(--#{$rd-prefix}background-color-input);
+  border: 1px solid var(--#{$rd-prefix}color-border);
+  border-radius: var(--#{$rd-prefix}border-radius);
+  transition: border-color var(--#{$rd-prefix}animation-duration-base) linear;
 
   &:hover {
-    border-color: var(--#{$d-prefix}color-primary-lighter);
+    border-color: var(--#{$rd-prefix}color-primary-lighter);
   }
 
   &[data-form-invalid-warning='true'] {
-    border-color: var(--#{$d-prefix}color-warning) !important;
+    border-color: var(--#{$rd-prefix}color-warning) !important;
 
     .#{$B}__search {
-      caret-color: var(--#{$d-prefix}color-warning) !important;
+      caret-color: var(--#{$rd-prefix}color-warning) !important;
     }
   }
 
   &[data-form-invalid-error='true'] {
-    border-color: var(--#{$d-prefix}color-danger) !important;
+    border-color: var(--#{$rd-prefix}color-danger) !important;
 
     .#{$B}__search {
-      caret-color: var(--#{$d-prefix}color-danger) !important;
+      caret-color: var(--#{$rd-prefix}color-danger) !important;
     }
   }
 
   @include component-size;
 
   @include when(focus) {
-    border-color: var(--#{$d-prefix}color-primary-lighter);
+    border-color: var(--#{$rd-prefix}color-primary-lighter);
   }
 
   @include when(expanded) {
-    border-color: var(--#{$d-prefix}color-primary);
+    border-color: var(--#{$rd-prefix}color-primary);
   }
 
   @include when(disabled) {
-    color: var(--#{$d-prefix}color-disabled);
+    color: var(--#{$rd-prefix}color-disabled);
     pointer-events: none;
-    background-color: var(--#{$d-prefix}background-color-disabled);
+    background-color: var(--#{$rd-prefix}background-color-disabled);
 
     @include e(icon) {
-      color: var(--#{$d-prefix}color-disabled);
+      color: var(--#{$rd-prefix}color-disabled);
     }
 
     @include e(placeholder) {
-      color: $d-placeholder-disabled-color;
+      color: $rd-placeholder-disabled-color;
     }
   }
 
@@ -84,7 +84,7 @@
     z-index: 5;
     padding: 0;
     margin: 0;
-    color: var(--#{$d-prefix}text-color);
+    color: var(--#{$rd-prefix}text-color);
     background-color: transparent;
     border: none;
 
@@ -99,7 +99,7 @@
     inset: 0;
     display: flex;
     align-items: center;
-    color: $d-placeholder-color;
+    color: $rd-placeholder-color;
     user-select: none;
   }
 
@@ -109,19 +109,19 @@
 
   @include e(clear) {
     position: absolute;
-    right: calc(var(--#{$d-prefix}horizontal-space-size) - 1px);
+    right: calc(var(--#{$rd-prefix}horizontal-space-size) - 1px);
     z-index: 5;
     font-size: 0.9em;
-    color: var(--#{$d-prefix}color-icon-decorator);
-    transition: color var(--#{$d-prefix}animation-duration-base) linear;
+    color: var(--#{$rd-prefix}color-icon-decorator);
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$d-prefix}color-primary-lighter);
+      color: var(--#{$rd-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$d-prefix}color-primary-darker);
+      color: var(--#{$rd-prefix}color-primary-darker);
     }
   }
 
@@ -130,11 +130,11 @@
     flex-shrink: 0;
     margin-left: 4px;
     font-size: 0.9em;
-    color: var(--#{$d-prefix}color-icon-decorator);
-    transition: transform var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear;
+    color: var(--#{$rd-prefix}color-icon-decorator);
+    transition: transform var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear;
 
     @include when(arrow-up) {
-      color: var(--#{$d-prefix}color-primary);
+      color: var(--#{$rd-prefix}color-primary);
       transform: rotate(180deg);
     }
   }

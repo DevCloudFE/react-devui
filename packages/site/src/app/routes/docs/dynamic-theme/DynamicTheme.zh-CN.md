@@ -23,12 +23,12 @@ export default function App() {
 
 ## 变量冲突
 
-我们的 css 变量均添加了命名空间，默认为 `d`，如果我们的 css 变量与您项目冲突，可以修改 `$d-namespace`。
+我们的 css 变量均添加了命名空间，默认为 `rd`，如果我们的 css 变量与您项目冲突，可以修改 `$rd-namespace`。
 
-注意：`$d-namespace` 同样影响样式表，所以您需要修改 `DRoot` 的配置：
+注意：`$rd-namespace` 同样影响样式表，所以您需要修改 `DRoot` 的配置：
 
 ```scss
-$d-namespace: 'app';
+$rd-namespace: 'app';
 ```
 
 ```tsx

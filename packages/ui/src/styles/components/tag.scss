@@ -1,52 +1,52 @@
 @use 'sass:map';
 
 @include b(tag) {
-  --#{$d-prefix}tag-padding-size: 8px;
-  --#{$d-prefix}tag-size: 28px;
+  --#{$rd-prefix}tag-padding-size: 8px;
+  --#{$rd-prefix}tag-size: 28px;
 
   display: inline-flex;
   align-items: center;
-  height: var(--#{$d-prefix}tag-size);
-  padding: 0 var(--#{$d-prefix}tag-padding-size);
+  height: var(--#{$rd-prefix}tag-size);
+  padding: 0 var(--#{$rd-prefix}tag-padding-size);
   white-space: nowrap;
   vertical-align: top;
-  border-radius: var(--#{$d-prefix}border-radius);
+  border-radius: var(--#{$rd-prefix}border-radius);
 
   @include font-size(0.9rem);
 
-  @each $theme, $rgb in $d-themes {
+  @each $theme, $rgb in $rd-themes {
     @include theme(#{$theme}) {
-      --#{$d-prefix}tag-color: var(--#{$d-prefix}color-#{$theme});
-      --#{$d-prefix}tag-background-color: var(--#{$d-prefix}background-color-#{$theme});
+      --#{$rd-prefix}tag-color: var(--#{$rd-prefix}color-#{$theme});
+      --#{$rd-prefix}tag-background-color: var(--#{$rd-prefix}background-color-#{$theme});
     }
   }
 
   @include m(primary) {
-    color: var(--#{$d-prefix}tag-color, var(--#{$d-prefix}text-color));
-    background-color: var(--#{$d-prefix}tag-background-color, var(--#{$d-prefix}background-color-gray));
+    color: var(--#{$rd-prefix}tag-color, var(--#{$rd-prefix}text-color));
+    background-color: var(--#{$rd-prefix}tag-background-color, var(--#{$rd-prefix}background-color-gray));
   }
 
   @include m(fill) {
-    color: map.get($d-colors, 'white');
-    background-color: var(--#{$d-prefix}tag-color, var(--#{$d-prefix}tag-background-color-fill));
+    color: map.get($rd-colors, 'white');
+    background-color: var(--#{$rd-prefix}tag-color, var(--#{$rd-prefix}tag-background-color-fill));
   }
 
   @include m(outline) {
-    padding: 0 calc(var(--#{$d-prefix}tag-padding-size) - 1px);
-    color: var(--#{$d-prefix}tag-color, var(--#{$d-prefix}text-color));
-    border: 1px solid var(--#{$d-prefix}tag-color, var(--#{$d-prefix}color-border));
+    padding: 0 calc(var(--#{$rd-prefix}tag-padding-size) - 1px);
+    color: var(--#{$rd-prefix}tag-color, var(--#{$rd-prefix}text-color));
+    border: 1px solid var(--#{$rd-prefix}tag-color, var(--#{$rd-prefix}color-border));
   }
 
   @include m(smaller) {
-    --#{$d-prefix}tag-padding-size: 6px;
-    --#{$d-prefix}tag-size: 24px;
+    --#{$rd-prefix}tag-padding-size: 6px;
+    --#{$rd-prefix}tag-size: 24px;
 
     @include font-size(0.75rem);
   }
 
   @include m(larger) {
-    --#{$d-prefix}tag-padding-size: 10px;
-    --#{$d-prefix}tag-size: 32px;
+    --#{$rd-prefix}tag-padding-size: 10px;
+    --#{$rd-prefix}tag-size: 32px;
 
     @include font-size(1rem);
   }

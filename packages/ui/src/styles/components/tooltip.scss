@@ -10,8 +10,8 @@
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   color: #eef0f3;
   white-space: pre;
-  background-color: var(--#{$d-prefix}tooltip-background-color);
-  border-radius: var(--#{$d-prefix}border-radius-larger);
+  background-color: var(--#{$rd-prefix}tooltip-background-color);
+  border-radius: var(--#{$rd-prefix}border-radius-larger);
 
   @include m(top) {
     @include tooltip-arrow {

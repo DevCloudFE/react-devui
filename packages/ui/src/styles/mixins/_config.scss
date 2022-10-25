@@ -1,4 +1,5 @@
-$element-separator: '__';
-$modifier-separator: '--';
-$theme-prefix: 't-';
-$state-prefix: 'is-';
+$rd-block-prefix: $rd-namespace !default;
+$rd-element-separator: '__' !default;
+$rd-modifier-separator: '--' !default;
+$rd-theme-prefix: 't-' !default;
+$rd-state-prefix: 'is-' !default; ;

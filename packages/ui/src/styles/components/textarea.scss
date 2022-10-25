@@ -5,44 +5,44 @@
 
   display: block;
   width: 100%;
-  padding: 3px calc(var(--#{$d-prefix}horizontal-space-size) - 1px);
+  padding: 3px calc(var(--#{$rd-prefix}horizontal-space-size) - 1px);
   margin: 0;
-  color: var(--#{$d-prefix}text-color);
+  color: var(--#{$rd-prefix}text-color);
   resize: vertical;
-  background-color: var(--#{$d-prefix}background-color-input);
-  border: 1px solid var(--#{$d-prefix}color-border);
-  border-radius: var(--#{$d-prefix}border-radius);
-  transition: border-color var(--#{$d-prefix}animation-duration-base) linear;
+  background-color: var(--#{$rd-prefix}background-color-input);
+  border: 1px solid var(--#{$rd-prefix}color-border);
+  border-radius: var(--#{$rd-prefix}border-radius);
+  transition: border-color var(--#{$rd-prefix}animation-duration-base) linear;
 
   &[data-form-invalid-warning='true'] {
-    border-color: var(--#{$d-prefix}color-warning) !important;
-    caret-color: var(--#{$d-prefix}color-warning) !important;
+    border-color: var(--#{$rd-prefix}color-warning) !important;
+    caret-color: var(--#{$rd-prefix}color-warning) !important;
   }
 
   &[data-form-invalid-error='true'] {
-    border-color: var(--#{$d-prefix}color-danger) !important;
-    caret-color: var(--#{$d-prefix}color-danger) !important;
+    border-color: var(--#{$rd-prefix}color-danger) !important;
+    caret-color: var(--#{$rd-prefix}color-danger) !important;
   }
 
   &:hover {
-    border-color: var(--#{$d-prefix}color-primary-lighter);
+    border-color: var(--#{$rd-prefix}color-primary-lighter);
   }
 
   &:focus {
-    border-color: var(--#{$d-prefix}color-primary);
+    border-color: var(--#{$rd-prefix}color-primary);
   }
 
   &::placeholder {
-    color: $d-placeholder-color;
+    color: $rd-placeholder-color;
   }
 
   &:disabled {
-    color: var(--#{$d-prefix}color-disabled);
+    color: var(--#{$rd-prefix}color-disabled);
     pointer-events: none;
-    background-color: var(--#{$d-prefix}background-color-disabled);
+    background-color: var(--#{$rd-prefix}background-color-disabled);
 
     &::placeholder {
-      color: $d-placeholder-disabled-color;
+      color: $rd-placeholder-disabled-color;
     }
   }
 
@@ -51,7 +51,7 @@
   @include e(count) {
     font-variant-numeric: tabular-nums;
     line-height: 28px;
-    color: var(--#{$d-prefix}text-color-sub);
+    color: var(--#{$rd-prefix}text-color-sub);
     text-align: right;
   }
 }

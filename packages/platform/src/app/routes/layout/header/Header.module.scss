@@ -9,10 +9,10 @@
   width: 100%;
   height: 64px;
   padding: 0 16px 0 0;
-  color: map.get($d-colors, 'white');
+  color: map.get($rd-colors, 'white');
   /* stylelint-disable-next-line declaration-property-value-allowed-list */
   background-color: #001529;
-  box-shadow: 0 2px 8px 0 var(--d-shadow-color);
+  box-shadow: 0 2px 8px 0 var(--#{$rd-prefix}shadow-color);
 
   @include e(logo-container) {
     display: inline-flex;
@@ -30,7 +30,7 @@
 
   @include e(logo-title-wrapper) {
     overflow: hidden;
-    transition: width var(--d-animation-duration-base) linear;
+    transition: width var(--#{$rd-prefix}animation-duration-base) linear;
   }
 
   @include e(logo-title) {
@@ -52,7 +52,7 @@
     text-decoration: none;
     background-color: transparent;
     border: none;
-    transition: background-color var(--d-animation-duration-base) linear;
+    transition: background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover {
       /* stylelint-disable-next-line declaration-property-value-allowed-list */

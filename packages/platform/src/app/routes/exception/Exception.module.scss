@@ -48,7 +48,7 @@
     margin-bottom: 16px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 24px;
-    color: var(--d-text-color-sub);
+    color: var(--#{$rd-prefix}text-color-sub);
     text-align: center;
 
     @include media-breakpoint-up(md) {

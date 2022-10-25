@@ -1,12 +1,12 @@
 @mixin component-toast {
   display: flex;
   align-items: center;
-  border-radius: var(--#{$d-prefix}border-radius);
+  border-radius: var(--#{$rd-prefix}border-radius);
 
-  @each $theme, $rgb in $d-themes {
+  @each $theme, $rgb in $rd-themes {
     @include theme(#{$theme}) {
       @include e(icon) {
-        color: var(--#{$d-prefix}color-#{$theme});
+        color: var(--#{$rd-prefix}color-#{$theme});
       }
     }
   }
@@ -27,9 +27,9 @@
     gap: 0 4px;
     align-items: center;
 
-    .#{$d-prefix}button {
-      --#{$d-prefix}size: 28px;
-      --#{$d-prefix}padding-size: 10px;
+    .#{$rd-prefix}button {
+      --#{$rd-prefix}size: 28px;
+      --#{$rd-prefix}padding-size: 10px;
     }
   }
 
@@ -38,18 +38,18 @@
 
     padding: 0;
     margin: 0;
-    color: rgb(var(--#{$d-prefix}text-color-rgb) / 50%);
+    color: rgb(var(--#{$rd-prefix}text-color-rgb) / 50%);
     background-color: transparent;
     border: none;
-    transition: color var(--#{$d-prefix}animation-duration-base) linear;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
     &:focus {
-      color: var(--#{$d-prefix}color-primary-lighter);
+      color: var(--#{$rd-prefix}color-primary-lighter);
     }
 
     &:active {
-      color: var(--#{$d-prefix}color-primary-darker);
+      color: var(--#{$rd-prefix}color-primary-darker);
     }
   }
 }
