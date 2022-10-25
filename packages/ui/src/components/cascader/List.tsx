@@ -76,12 +76,33 @@ function List<V extends DId, T extends DCascaderItem<V>>(
   const shouldInitFocus = dRoot && isUndefined(dFocusItem);
 
   const handleKeyDown = useEventCallback<ComboboxKeyDownRef>((key) => {
-    if (isFocus || shouldInitFocus) {
-      const focusNode = (node: AbstractTreeNode<V, T> | undefined) => {
-        if (node) {
-          onFocusChange(node);
-        }
-      };
+    const focusNode = (node: AbstractTreeNode<V, T> | undefined) => {
+      if (node) {
+        onFocusChange(node);
+      }
+    };
+    if (shouldInitFocus) {
+      switch (key) {
+        case 'next':
+          focusNode(vsRef.current?.scrollToStart());
+          break;
+
+        case 'prev':
+          focusNode(vsRef.current?.scrollToEnd());
+          break;
+
+        case 'first':
+          focusNode(vsRef.current?.scrollToStart());
+          break;
+
+        case 'last':
+          focusNode(vsRef.current?.scrollToEnd());
+          break;
+
+        default:
+          break;
+      }
+    } else if (isFocus) {
       switch (key) {
         case 'next':
           focusNode(vsRef.current?.scrollToStep(1));
