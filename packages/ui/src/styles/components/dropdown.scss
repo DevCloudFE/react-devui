@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 $dropdown-item-height: 32px;
 
 @mixin dropdown-popup() {
@@ -87,11 +89,13 @@ $dropdown-item-height: 32px;
   }
 
   @include e(sub-arrow) {
-    position: absolute;
-    right: 6px;
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
+    @include overwrite-component(icon) {
+      position: absolute;
+      right: 6px;
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+    }
   }
 
   @include e(group-list) {

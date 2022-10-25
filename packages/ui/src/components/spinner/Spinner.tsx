@@ -113,7 +113,7 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
               {checkNodeExist(children) ? (
                 children
               ) : (
-                <DCustomIcon className={`${dPrefix}spinner__spinner`} viewBox="0 0 50 50">
+                <DCustomIcon className={`${dPrefix}spinner__spinner-icon`} viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="21" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></circle>
                 </DCustomIcon>
               )}

@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 @include b(accordion) {
   @include e(item) {
     border-top: 1px solid var(--#{$d-prefix}color-border);
@@ -34,8 +36,10 @@
   }
 
   @include e(item-arrow) {
-    font-size: 0.9em;
-    transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+    @include overwrite-component(icon) {
+      font-size: 0.9em;
+      transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+    }
   }
 
   @include e(item-region) {

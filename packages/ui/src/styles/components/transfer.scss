@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 $transfer-option-height: 32px;
 
 @include b(transfer) {
@@ -6,13 +8,13 @@ $transfer-option-height: 32px;
   width: 100%;
 
   &[data-form-invalid-warning='true'] {
-    @include e(panel, true) {
+    .#{$B}__panel {
       border-color: var(--#{$d-prefix}color-warning) !important;
     }
   }
 
   &[data-form-invalid-error='true'] {
-    @include e(panel, true) {
+    .#{$B}__panel {
       border-color: var(--#{$d-prefix}color-danger) !important;
     }
   }
@@ -62,8 +64,10 @@ $transfer-option-height: 32px;
   }
 
   @include e(search) {
-    display: flex;
-    margin: 10px 12px;
+    @include overwrite-component(input) {
+      display: flex;
+      margin: 10px 12px;
+    }
   }
 
   @include e(list-container) {
@@ -117,7 +121,9 @@ $transfer-option-height: 32px;
   }
 
   @include e(empty) {
-    justify-content: center;
-    height: 100%;
+    @include overwrite-component(empty) {
+      justify-content: center;
+      height: 100%;
+    }
   }
 }

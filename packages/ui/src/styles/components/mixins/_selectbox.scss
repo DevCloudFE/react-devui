@@ -20,7 +20,7 @@
   &[data-form-invalid-warning='true'] {
     border-color: var(--#{$d-prefix}color-warning) !important;
 
-    @include e(search, true) {
+    .#{$B}__search {
       caret-color: var(--#{$d-prefix}color-warning) !important;
     }
   }
@@ -28,7 +28,7 @@
   &[data-form-invalid-error='true'] {
     border-color: var(--#{$d-prefix}color-danger) !important;
 
-    @include e(search, true) {
+    .#{$B}__search {
       caret-color: var(--#{$d-prefix}color-danger) !important;
     }
   }

@@ -1,4 +1,5 @@
 @import 'size';
+@import 'overwrite';
 
 @mixin component-date-input {
   position: relative;
@@ -20,11 +21,11 @@
   &[data-form-invalid-warning='true'] {
     border-color: var(--#{$d-prefix}color-warning) !important;
 
-    @include e(input, true) {
+    .#{$B}__input {
       caret-color: var(--#{$d-prefix}color-warning) !important;
     }
 
-    @include e(indicator, true) {
+    .#{$B}__indicator {
       background-color: var(--#{$d-prefix}color-warning) !important;
     }
   }
@@ -32,11 +33,11 @@
   &[data-form-invalid-error='true'] {
     border-color: var(--#{$d-prefix}color-danger) !important;
 
-    @include e(input, true) {
+    .#{$B}__input {
       caret-color: var(--#{$d-prefix}color-danger) !important;
     }
 
-    @include e(indicator, true) {
+    .#{$B}__indicator {
       background-color: var(--#{$d-prefix}color-danger) !important;
     }
   }
@@ -106,9 +107,11 @@
   }
 
   @include e(separator) {
-    flex-shrink: 0;
-    margin: 0 8px;
-    color: var(--#{$d-prefix}color-icon-decorator);
+    @include overwrite-component(icon) {
+      flex-shrink: 0;
+      margin: 0 8px;
+      color: var(--#{$d-prefix}color-icon-decorator);
+    }
   }
 
   @include e(indicator) {

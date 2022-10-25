@@ -1,4 +1,5 @@
 @use 'sass:map';
+@import 'mixins/overwrite';
 
 @include b(image) {
   position: relative;
@@ -119,7 +120,9 @@
   }
 
   @include e(toolbar-page-input) {
-    width: 60px;
+    @include overwrite-component(input) {
+      width: 60px;
+    }
   }
 
   @include e(toolbar-rotate) {
@@ -127,8 +130,10 @@
   }
 
   @include e(toolbar-zoom-input) {
-    width: 80px;
-    margin: 0 4px;
+    @include overwrite-component(input) {
+      width: 80px;
+      margin: 0 4px;
+    }
   }
 
   @include e(toolbar-close) {

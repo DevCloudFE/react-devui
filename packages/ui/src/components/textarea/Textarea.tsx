@@ -103,10 +103,10 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
           control: dFormControl,
         }}
       >
-        {({ render: renderBaseDesign }) =>
-          renderBaseDesign(
-            <DBaseInput dFormControl={dFormControl} dLabelFor>
-              {({ render: renderBaseInput }) =>
+        {({ render: renderBaseDesign }) => (
+          <DBaseInput dFormControl={dFormControl} dLabelFor>
+            {({ render: renderBaseInput }) =>
+              renderBaseDesign(
                 renderBaseInput(
                   <textarea
                     {...restProps}
@@ -131,10 +131,10 @@ function Textarea(props: DTextareaProps, ref: React.ForwardedRef<DTextareaRef>):
                     }}
                   />
                 )
-              }
-            </DBaseInput>
-          )
-        }
+              )
+            }
+          </DBaseInput>
+        )}
       </DBaseDesign>
       {dShowCount !== false && (
         <div className={`${dPrefix}textarea__count`}>

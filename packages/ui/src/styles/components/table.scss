@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 $table-filter-option-height: 32px;
 
 @include b(table) {
@@ -227,8 +229,10 @@ $table-filter-option-height: 32px;
   }
 
   @include e(th-sort-icon) {
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    font-size: 12px;
+    @include overwrite-component(icon) {
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      font-size: 12px;
+    }
 
     @include when(active) {
       color: var(--#{$d-prefix}color-primary);
@@ -300,11 +304,6 @@ $table-filter-option-height: 32px;
   }
 
   @include e(filter-popup) {
-    .#{$d-prefix}input {
-      --#{$d-prefix}size: 30px;
-      --#{$d-prefix}horizontal-space-size: 8px;
-    }
-
     .#{$d-prefix}popover__body {
       padding: 0;
     }
@@ -317,8 +316,13 @@ $table-filter-option-height: 32px;
   }
 
   @include e(filter-search) {
-    display: flex;
-    margin: 10px 12px;
+    @include overwrite-component(input) {
+      --#{$d-prefix}size: 30px;
+      --#{$d-prefix}horizontal-space-size: 8px;
+
+      display: flex;
+      margin: 10px 12px;
+    }
   }
 
   @include e(filter-list) {

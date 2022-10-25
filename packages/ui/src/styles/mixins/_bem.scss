@@ -6,7 +6,7 @@
   }
 }
 
-@mixin e($element, $nesting: false) {
+@mixin e($element) {
   $E: $element !global;
   $selector: &;
   $currentSelector: '';
@@ -14,7 +14,7 @@
     $currentSelector: #{$currentSelector + '.' + $B + $element-separator + $unit + ','};
   }
 
-  @if hitAllSpecialNestRule($selector) or $nesting {
+  @if hitAllSpecialNestRule($selector) {
     @at-root {
       #{$selector} {
         #{$currentSelector} {

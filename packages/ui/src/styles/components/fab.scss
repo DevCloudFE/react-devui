@@ -1,4 +1,5 @@
 @use 'sass:map';
+@import 'mixins/overwrite';
 
 @keyframes fab-popup {
   0% {
@@ -214,10 +215,12 @@
   }
 
   @include e(close-icon) {
-    position: absolute;
-    font-size: 1.2em;
-    opacity: 0;
-    transition: opacity var(--#{$d-prefix}animation-duration-base) linear, transform var(--#{$d-prefix}animation-duration-base) linear;
+    @include overwrite-component(icon) {
+      position: absolute;
+      font-size: 1.2em;
+      opacity: 0;
+      transition: opacity var(--#{$d-prefix}animation-duration-base) linear, transform var(--#{$d-prefix}animation-duration-base) linear;
+    }
   }
 
   @include e(button-content) {

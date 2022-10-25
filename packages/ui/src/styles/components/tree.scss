@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 $tree-option-height: 32px;
 
 @include b(tree) {
@@ -132,7 +134,9 @@ $tree-option-height: 32px;
   }
 
   @include e(option-arrow) {
-    transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+    @include overwrite-component(icon) {
+      transition: transform var(--#{$d-prefix}animation-duration-base) linear;
+    }
   }
 
   @include e(option-group) {

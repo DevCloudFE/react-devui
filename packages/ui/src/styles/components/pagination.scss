@@ -1,15 +1,19 @@
+@import 'mixins/overwrite';
+
 @include b(pagination) {
   --#{$d-prefix}pagination-size: 32px;
+  --#{$d-prefix}pagination-space: 16px;
+  --#{$d-prefix}pagination-button-space: 8px;
 
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 8px 0;
   align-items: center;
   padding: 0;
   margin: 0;
 
   @include when(change) {
-    @include e(item) {
+    @include e(button) {
       @include m(number) {
         transition: none;
       }
@@ -18,67 +22,71 @@
 
   @include m(mini) {
     --#{$d-prefix}pagination-size: 24px;
+    --#{$d-prefix}pagination-space: 8px;
+    --#{$d-prefix}pagination-button-space: 2px;
 
-    gap: 4px 8px;
+    gap: 4px 0;
 
     @include font-size(0.8rem);
 
-    @include e(list) {
-      gap: 4px 2px;
+    @include e(button) {
+      &:not(.is-active) {
+        border: none;
+      }
+    }
+
+    @include e(size) {
+      height: 26px;
+      padding: 0 6px;
     }
 
     @include e(jump-wrapper) {
       gap: 0 2px;
     }
 
-    @include e(item) {
-      @include m(button) {
-        &:not(.is-active) {
-          border: none;
-        }
-      }
+    @include e(jump-input) {
+      width: 3em;
+      height: 26px;
+      padding: 0 6px;
     }
   }
 
-  @include e(list) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  @include e(item) {
+  @include e(total) {
     position: relative;
     display: inline-flex;
     align-items: center;
+    margin-right: var(--#{$d-prefix}pagination-space);
     vertical-align: top;
+  }
 
-    @include m(button) {
-      justify-content: center;
-      min-width: var(--#{$d-prefix}pagination-size);
-      height: var(--#{$d-prefix}pagination-size);
-      cursor: pointer;
-      user-select: none;
-      border-radius: var(--#{$d-prefix}border-radius);
-      transition: border-color var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear;
+  @include e(button) {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--#{$d-prefix}pagination-size);
+    height: var(--#{$d-prefix}pagination-size);
+    margin-right: var(--#{$d-prefix}pagination-button-space);
+    vertical-align: top;
+    cursor: pointer;
+    user-select: none;
+    border-radius: var(--#{$d-prefix}border-radius);
+    transition: border-color var(--#{$d-prefix}animation-duration-base) linear, color var(--#{$d-prefix}animation-duration-base) linear;
 
-      &:hover,
-      &:focus {
-        color: var(--#{$d-prefix}color-primary-lighter);
-        border-color: var(--#{$d-prefix}color-primary-lighter);
-      }
+    &:hover,
+    &:focus {
+      color: var(--#{$d-prefix}color-primary-lighter);
+      border-color: var(--#{$d-prefix}color-primary-lighter);
+    }
 
-      @include when(disabled) {
-        color: var(--#{$d-prefix}color-disabled);
-        pointer-events: none;
-      }
+    @include when(disabled) {
+      color: var(--#{$d-prefix}color-disabled);
+      pointer-events: none;
+    }
 
-      @include when(active) {
-        color: var(--#{$d-prefix}color-primary);
-        border-color: var(--#{$d-prefix}color-primary);
-      }
+    @include when(active) {
+      color: var(--#{$d-prefix}color-primary);
+      border-color: var(--#{$d-prefix}color-primary);
     }
 
     @include m(number) {
@@ -126,14 +134,20 @@
     transform: scale(1.5);
   }
 
-  @include e(size-select, true) {
-    width: auto;
-    font-size: inherit;
-
-    @include m(mini) {
-      height: 26px;
-      padding: 0 6px;
+  @include e(size) {
+    @include overwrite-component(select) {
+      width: auto;
+      margin-right: var(--#{$d-prefix}pagination-space);
+      font-size: inherit;
     }
+  }
+
+  @include e(jump) {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-right: var(--#{$d-prefix}pagination-space);
+    vertical-align: top;
   }
 
   @include e(jump-wrapper) {
@@ -142,14 +156,10 @@
     align-items: center;
   }
 
-  @include e(jump-input, true) {
-    width: 4.5em;
-    font-size: inherit;
-
-    @include m(mini) {
-      width: 3em;
-      height: 26px;
-      padding: 0 6px;
+  @include e(jump-input) {
+    @include overwrite-component(input) {
+      width: 4.5em;
+      font-size: inherit;
     }
   }
 }

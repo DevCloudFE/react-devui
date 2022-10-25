@@ -6,22 +6,20 @@
     "stylelint-config-prettier"
   ],
   "rules": {
-    "custom-property-pattern": null,
-    "no-invalid-position-at-import-rule": null,
+    "import-notation": null,
     "selector-class-pattern": null,
-    "block-no-empty": null,
-    "selector-pseudo-class-no-unknown": [
-      true,
-      {
-        "ignorePseudoClasses": ["global"]
-      }
-    ]
+    "block-no-empty": null
   },
   "overrides": [
     {
       "files": ["*.scss", "**/*.scss"],
       "rules": {
-        "function-no-unknown": null,
+        "selector-pseudo-class-no-unknown": [
+          true,
+          {
+            "ignorePseudoClasses": ["global"]
+          }
+        ],
         "declaration-property-value-allowed-list": {
           "/color/": ["/var/", "/\\$/", "currentcolor", "transparent", "unset", "inherit"],
           "font-size": ["/var/", "/\\$/", "/[0-9]+em$/", "unset", "inherit"],
@@ -29,13 +27,7 @@
         },
         "declaration-property-value-disallowed-list": {
           "transition": ["/all/", "/[0-9]ms/"]
-        },
-        "annotation-no-unknown": [
-          true,
-          {
-            "ignoreAnnotations": ["default", "global"]
-          }
-        ]
+        }
       }
     },
     {

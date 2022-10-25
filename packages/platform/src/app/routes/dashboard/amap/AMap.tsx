@@ -25,10 +25,12 @@ export default function AMap(): JSX.Element | null {
       />
       <AppMap
         style={{ paddingTop: '61.8%' }}
-        aOptions={{
-          center: [104.937478, 35.439575],
-          zoom: 5,
-        }}
+        aOptions={
+          {
+            center: [104.937478, 35.439575],
+            zoom: 5,
+          } as any
+        }
       >
         {mapTmp === 'Marker' ? (
           <AppMap.Marker aOptions={{ position: [116.406315, 39.908775] }}></AppMap.Marker>

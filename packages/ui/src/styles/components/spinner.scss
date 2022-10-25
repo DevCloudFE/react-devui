@@ -1,3 +1,5 @@
+@import 'mixins/overwrite';
+
 @keyframes spinner-dash {
   0% {
     stroke-dasharray: 1, 150;
@@ -36,8 +38,10 @@
     display: inline-flex;
   }
 
-  @include e(spinner) {
-    animation: spin 2s linear infinite;
+  @include e(spinner-icon) {
+    @include overwrite-component(icon) {
+      animation: spin 2s linear infinite;
+    }
 
     circle {
       animation: spinner-dash 1.5s linear infinite;

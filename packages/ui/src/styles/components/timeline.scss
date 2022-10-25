@@ -2,7 +2,7 @@
   @include e(text-container) {
     display: flex;
 
-    @include e(text, true) {
+    .#{$B}__text {
       padding: 0 8px;
       text-align: center;
     }
@@ -11,14 +11,14 @@
   @include e(icon-container) {
     display: flex;
 
-    @include e(icon, true) {
+    .#{$B}__icon {
       position: relative;
       display: flex;
       flex: 1 0 0;
       align-items: center;
     }
 
-    @include e(separator, true) {
+    .#{$B}__separator {
       flex: 1 0 0;
       height: 2px;
     }
@@ -28,24 +28,24 @@
     display: flex;
     align-items: stretch;
 
-    @include m(gap) {
-      height: 20px;
-    }
-
-    @include e(text, true) {
+    .#{$B}__text {
       display: inline-flex;
       align-items: center;
     }
 
-    @include e(icon, true) {
+    .#{$B}__icon {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
     }
 
-    @include e(separator, true) {
+    .#{$B}__separator {
       flex: 1 0 0;
       width: 2px;
+    }
+
+    @include m(gap) {
+      height: 20px;
     }
   }
 

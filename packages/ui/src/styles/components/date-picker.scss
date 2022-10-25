@@ -1,5 +1,6 @@
 @use 'sass:map';
 @import 'mixins/date-input';
+@import 'mixins/overwrite';
 
 @include b(date-picker) {
   @include component-date-input;
@@ -143,6 +144,8 @@
   }
 
   @include e(footer-button) {
-    cursor: pointer;
+    @include overwrite-component(tag) {
+      cursor: pointer;
+    }
   }
 }

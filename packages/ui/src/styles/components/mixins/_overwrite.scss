@@ -1,0 +1,5 @@
+@mixin overwrite-component($component) {
+  &#{'.' + $d-prefix + $component} {
+    @content;
+  }
+}
