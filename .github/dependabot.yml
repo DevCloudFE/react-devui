@@ -12,3 +12,4 @@ updates:
       day: 'monday'
     ignore:
       - dependency-name: '@nrwl*'
+      - dependency-name: '@types/node'
