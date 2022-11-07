@@ -115,7 +115,7 @@
     .#{$rd-prefix}cascader,
     .#{$rd-prefix}tree-select,
     .#{$rd-prefix}compose,
-    .#{$rd-prefix}input {
+    .#{$rd-prefix}input:not(.#{$rd-prefix}input--number) {
       width: 100%;
     }
   }

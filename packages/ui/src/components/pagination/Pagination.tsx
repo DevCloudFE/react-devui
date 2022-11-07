@@ -16,18 +16,17 @@ export interface DPaginationProps extends Omit<React.HTMLAttributes<HTMLElement>
   dTotal: number;
   dPageSize?: number;
   dPageSizeList?: number[];
-  dCompose?: ('total' | 'pages' | 'size' | 'jump')[];
+  dCompose?: ('total' | 'pages' | 'page-size' | 'jump')[];
   dCustomRender?: {
     total?: (range: [number, number]) => React.ReactNode;
     prev?: React.ReactNode;
     page?: (page: number) => React.ReactNode;
     next?: React.ReactNode;
-    size?: (size: number) => React.ReactNode;
+    pageSize?: (pageSize: number) => React.ReactNode;
     jump?: (input: React.ReactNode) => React.ReactNode;
   };
   dMini?: boolean;
-  onActiveChange?: (page: number) => void;
-  onPageSizeChange?: (size: number) => void;
+  onPaginationChange?: (page: number, pageSize: number) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DPagination' as const });
@@ -40,8 +39,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     dCompose = ['pages'],
     dCustomRender,
     dMini = false,
-    onActiveChange,
-    onPageSizeChange,
+    onPaginationChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -56,10 +54,15 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
   const [t] = useTranslation();
 
-  const [active, _changeActive] = useDValue<number>(1, dActive, onActiveChange);
-  const changeActive = (active: number, max = lastPage) => {
-    _changeActive(Math.max(Math.min(active, max), 1));
+  const [active, _changeActive] = useDValue<number>(1, dActive);
+  const changeActive = (_active: number) => {
     setIsChange(true);
+    const newActive = Math.max(Math.min(_active, lastPage), 1);
+    _changeActive(newActive);
+
+    if (!Object.is(newActive, active)) {
+      onPaginationChange?.(newActive, pageSize);
+    }
   };
 
   const [isChange, setIsChange] = useState(false);
@@ -70,12 +73,16 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     }
   });
 
-  const [pageSize, _changePageSize] = useDValue<number>(dPageSizeList[0] ?? 10, dPageSize, onPageSizeChange);
-  const changePageSize = (size: number) => {
-    _changePageSize(size);
+  const [pageSize, _changePageSize] = useDValue<number>(dPageSizeList[0] ?? 10, dPageSize);
+  const changePageSize = (_pageSize: number) => {
+    _changePageSize(_pageSize);
 
-    const lastPage = Math.max(Math.ceil(dTotal / size), 1);
-    changeActive(active, lastPage);
+    const lastPage = Math.max(Math.ceil(dTotal / _pageSize), 1);
+    const newActive = Math.max(Math.min(active, lastPage), 1);
+
+    if (!Object.is(newActive, active) || !Object.is(_pageSize, pageSize)) {
+      onPaginationChange?.(newActive, _pageSize);
+    }
   };
 
   const [jumpValue, setJumpValue] = useState('');
@@ -144,7 +151,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
     ];
   })();
 
-  const sizeNode = (() => {
+  const pageSizeNode = (() => {
     const list = dPageSizeList.map((size) => ({
       label: size.toString(),
       value: size,
@@ -152,12 +159,12 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
     return (
       <DSelect
-        key="size"
-        className={`${dPrefix}pagination__size`}
-        style={{ marginRight: dCompose[dCompose.length - 1] === 'size' ? 0 : undefined }}
+        key="page-size"
+        className={`${dPrefix}pagination__page-size`}
+        style={{ marginRight: dCompose[dCompose.length - 1] === 'page-size' ? 0 : undefined }}
         dList={list}
         dModel={pageSize}
-        dCustomItem={(item) => (dCustomRender && dCustomRender.size ? dCustomRender.size(item.value) : item.label)}
+        dCustomItem={(item) => (dCustomRender && dCustomRender.pageSize ? dCustomRender.pageSize(item.value) : item.label)}
         dCustomSelected={(select) => `${select.label}${t('Pagination', ' / Page')}`}
         onModelChange={(value) => {
           if (!isNull(value)) {
@@ -240,9 +247,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           let pages: (number | 'prev5' | 'next5')[] = [];
 
           if (lastPage <= 7) {
-            pages = Array(lastPage)
-              .fill(0)
-              .map((n, index) => index + 1);
+            pages = Array.from({ length: lastPage }).map((_, index) => index + 1);
           } else {
             for (let n = -3; n <= 3; n++) {
               pages.push(active + n);
@@ -313,7 +318,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                           'is-active': active === n,
                         }
                       )}
-                      tabIndex={active === n ? 0 : -1}
+                      tabIndex={0}
                       data-number={n}
                       onClick={() => {
                         changeActive(n);
@@ -362,8 +367,8 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           );
         }
 
-        if (item === 'size') {
-          return sizeNode;
+        if (item === 'page-size') {
+          return pageSizeNode;
         }
 
         if (item === 'jump') {

@@ -1,0 +1,42 @@
+@include b(table-filter) {
+  @include e(search) {
+    display: flex;
+    flex-direction: column;
+
+    @include media-breakpoint-up(md) {
+      flex-direction: row;
+    }
+  }
+
+  @include e(search-input) {
+    width: 100%;
+    margin: 0 0 12px;
+
+    @include media-breakpoint-up(md) {
+      flex: 1 0 0;
+      max-width: 18em;
+      margin: 0 12px 0 0;
+    }
+  }
+
+  @include e(button-container) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 8px;
+    align-items: center;
+  }
+
+  @include e(filter) {
+    display: flex;
+
+    & + & {
+      margin-top: 8px;
+    }
+  }
+
+  @include e(filter-label) {
+    display: inline-flex;
+    align-items: center;
+    height: var(--#{$rd-prefix}size);
+  }
+}

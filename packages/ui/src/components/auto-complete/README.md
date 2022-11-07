@@ -1,5 +1,5 @@
 ---
-group: Data Entry
+group: Other
 title: AutoComplete
 aria: combobox
 compose: true

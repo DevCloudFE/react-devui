@@ -1,0 +1,19 @@
+@include b(status-dot) {
+  display: inline-flex;
+  gap: 0 8px;
+  align-items: center;
+  vertical-align: top;
+
+  @each $theme, $rgb in $rd-themes {
+    @include theme(#{$theme}) {
+      --app-status-dot-color: var(--#{$rd-prefix}color-#{$theme});
+    }
+  }
+
+  @include e(dot) {
+    width: 6px;
+    height: 6px;
+    background-color: var(--app-status-dot-color, var(--#{$rd-prefix}tag-background-color-fill));
+    border-radius: 50%;
+  }
+}

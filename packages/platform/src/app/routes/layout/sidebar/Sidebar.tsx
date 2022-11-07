@@ -1,7 +1,3 @@
-import type { DMenuItem } from '@react-devui/ui/components/menu';
-
-import { useLocation } from 'react-router-dom';
-
 import { DDrawer, DMenu } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
@@ -17,34 +13,14 @@ export interface AppSidebarProps {
 export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
   const { menuMode, menuOpen, onMenuOpenChange } = props;
 
-  const location = useLocation();
-
-  const [{ menu, expands }, setMenu] = useMenu();
-
-  const active = ((): string | null => {
-    const reduceArr = (arr: DMenuItem<string>[]): string | null => {
-      for (const item of arr) {
-        if (item.id.startsWith(location.pathname)) {
-          return item.id;
-        }
-        if (item.children) {
-          const res = reduceArr(item.children);
-          if (res) {
-            return res;
-          }
-        }
-      }
-      return null;
-    };
-    return reduceArr(menu) ?? null;
-  })();
+  const [{ menu, active, expands }, setMenu] = useMenu();
 
   const menuNode = (md: boolean) => (
     <DMenu
       dWidth={md ? 200 : '100%'}
       dList={menu}
       dMode={md ? menuMode : 'vertical'}
-      dActive={active}
+      dActive={active?.path}
       dExpands={expands}
       onExpandsChange={(expands) => {
         setMenu((draft) => {

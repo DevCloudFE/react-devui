@@ -23,11 +23,13 @@
   "sideEffects": false,
   "dependencies": {
     "@react-devui/utils": "file:../utils",
-    "immer": "^9.0.15",
+    "immer": "^9.0.16",
     "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rxjs": "^7.5.7"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "publishConfig": {
     "access": "public",

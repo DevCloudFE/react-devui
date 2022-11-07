@@ -58,9 +58,15 @@ Object.entries(workspace.projects).forEach(([projectName, projectPath]) => {
                             const importStr = ((node as ts.ImportDeclaration).moduleSpecifier as ts.StringLiteral).text;
                             if (!isBuiltinModule(importStr) && SKIP_IMPORT.every((skip) => !importStr.startsWith(skip))) {
                               const dependence = getModuleName(importStr);
-                              projectPackageJson['dependencies'][dependence] = dependence.startsWith('@react-devui')
+                              const version = dependence.startsWith('@react-devui')
                                 ? 'file:../' + dependence.split('/')[1]
                                 : packageJson.devDependencies[dependence];
+                              if (projectPackageJson['peerDependencies'] && dependence in projectPackageJson['peerDependencies']) {
+                                delete projectPackageJson['dependencies'][dependence];
+                                projectPackageJson['peerDependencies'][dependence] = version;
+                              } else {
+                                projectPackageJson['dependencies'][dependence] = version;
+                              }
                             }
                           }
                         });

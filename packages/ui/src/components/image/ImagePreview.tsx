@@ -291,8 +291,8 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
               <button
                 className={getClassName(`${dPrefix}image-preview__navigation-button`, `${dPrefix}image-preview__navigation-button--prev`)}
                 onClick={() => {
-                  changeActiveIndex((draft) => {
-                    return draft === 0 ? dList.length - 1 : draft - 1;
+                  changeActiveIndex((prevActiveIndex) => {
+                    return prevActiveIndex === 0 ? dList.length - 1 : prevActiveIndex - 1;
                   });
                 }}
               >
@@ -301,8 +301,8 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
               <button
                 className={getClassName(`${dPrefix}image-preview__navigation-button`, `${dPrefix}image-preview__navigation-button--next`)}
                 onClick={() => {
-                  changeActiveIndex((draft) => {
-                    return draft === dList.length - 1 ? 0 : draft + 1;
+                  changeActiveIndex((prevActiveIndex) => {
+                    return prevActiveIndex === dList.length - 1 ? 0 : prevActiveIndex + 1;
                   });
                 }}
               >

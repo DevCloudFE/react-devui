@@ -57,7 +57,7 @@ function Affix(props: DAffixProps, ref: React.ForwardedRef<DAffixRef>): JSX.Elem
       const targetTop = getOffsetToRoot(targetRef.current);
       const distance = isString(dTop) ? toPx(dTop, true) : dTop;
 
-      setSticky(targetRef.current.scrollTop + distance >= getOffsetToRoot(offsetEl as HTMLElement) - targetTop);
+      setSticky(Math.ceil(targetRef.current.scrollTop) + distance >= getOffsetToRoot(offsetEl as HTMLElement) - targetTop);
       setPositionStyle({
         width: offsetRect.width,
         height: offsetRect.height,

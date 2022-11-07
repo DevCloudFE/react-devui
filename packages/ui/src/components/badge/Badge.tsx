@@ -15,6 +15,7 @@ export interface DBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dMax?: number;
   dDot?: boolean;
   dOffset?: [number | string, number | string];
+  dAlone?: boolean;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge' as const });
@@ -27,6 +28,7 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
     dMax = Infinity,
     dDot = false,
     dOffset = [0, '100%'],
+    dAlone = false,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -91,11 +93,16 @@ export function DBadge(props: DBadgeProps): JSX.Element | null {
             className={getClassName(restProps.className, `${dPrefix}badge`, {
               [`t-${dTheme}`]: dTheme,
               [`${dPrefix}badge--dot`]: dDot,
+              [`${dPrefix}badge--alone`]: dAlone,
             })}
             style={{
               ...restProps.style,
-              top: dOffset[0],
-              left: dOffset[1],
+              ...(dAlone
+                ? {}
+                : {
+                    top: dOffset[0],
+                    left: dOffset[1],
+                  }),
               [`--${dPrefix}badge-color`]: dColor,
             }}
             title={restProps.title ?? (dDot ? undefined : dValue.toString())}

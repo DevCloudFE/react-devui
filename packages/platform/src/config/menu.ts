@@ -1,6 +1,6 @@
 import type { Control, ControlMode } from '../core/useACL';
 
-import { DashboardOutlined, ExceptionOutlined, ExperimentOutlined } from '@react-devui/icons';
+import { DashboardOutlined, ExceptionOutlined, ExperimentOutlined, ProfileOutlined } from '@react-devui/icons';
 
 import { ROUTES_ACL } from './acl';
 
@@ -39,6 +39,20 @@ export const MENU: MenuItem[] = [
         type: 'item',
         titleI18n: 'dashboard.echarts',
         acl: ROUTES_ACL.dashboard.echarts,
+      },
+    ],
+  },
+  {
+    path: '/list',
+    type: 'sub',
+    titleI18n: 'list.',
+    icon: ProfileOutlined,
+    children: [
+      {
+        path: '/list/standard-table',
+        type: 'item',
+        titleI18n: 'list.standard-table',
+        acl: ROUTES_ACL.list['standard-table'],
       },
     ],
   },

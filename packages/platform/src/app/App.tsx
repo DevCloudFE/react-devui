@@ -29,11 +29,10 @@ export function App() {
   useMount(() => {
     i18n.changeLanguage(languageStorage.value);
 
-    const [authReq] = http<UserState>({
+    http<UserState>({
       url: '/auth/me',
       method: 'get',
-    });
-    authReq.subscribe({
+    }).subscribe({
       next: (res) => {
         setLoading(false);
         init(res);

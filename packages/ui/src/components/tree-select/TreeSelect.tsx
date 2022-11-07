@@ -46,6 +46,7 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends
   dSize?: DSize;
   dLoading?: boolean;
   dSearchable?: boolean;
+  dSearchValue?: string;
   dClearable?: boolean;
   dShowLine?: boolean;
   dDisabled?: boolean;
@@ -61,7 +62,7 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  onSearch?: (value: string) => void;
+  onSearchValueChange?: (value: string) => void;
   onClear?: () => void;
   onFirstExpand?: (value: T['value'], item: T) => void;
   onExpandsChange?: (ids: T['value'][], items: T[]) => void;
@@ -85,6 +86,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     dSize,
     dLoading = false,
     dSearchable = false,
+    dSearchValue,
     dClearable = false,
     dShowLine = false,
     dDisabled = false,
@@ -97,7 +99,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     dInputRender,
     onModelChange,
     onVisibleChange,
-    onSearch,
+    onSearchValueChange,
     onClear,
     onFirstExpand,
     onExpandsChange,
@@ -130,7 +132,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
   const getGroupId = (val: V) => `${dPrefix}tree-group-${val}-${uniqueId}`;
   const getItemId = (val: V) => `${dPrefix}tree-item-${val}-${uniqueId}`;
 
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
 
@@ -457,8 +459,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
 
                   const val = e.currentTarget.value;
                   if (dSearchable) {
-                    setSearchValue(val);
-                    onSearch?.(val);
+                    changeSearchValue(val);
                   }
                 },
               })

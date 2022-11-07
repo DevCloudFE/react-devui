@@ -28,15 +28,16 @@
     "axios": "^1.1.2",
     "axios-mock-adapter": "^1.21.2",
     "bootstrap": "^5.2.2",
-    "core-js": "^3.25.5",
+    "core-js": "^3.26.0",
     "echarts": "^5.4.0",
     "i18next": "^21.10.0",
+    "immer": "^9.0.16",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^11.18.6",
     "react-router-dom": "^6.4.2",
-    "regenerator-runtime": "^0.13.9",
+    "regenerator-runtime": "^0.13.10",
     "rxjs": "^7.5.7"
   }
 }

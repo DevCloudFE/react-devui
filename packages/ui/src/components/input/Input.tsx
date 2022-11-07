@@ -25,7 +25,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dType?: React.HTMLInputTypeAttribute;
   dPrefix?: React.ReactNode;
   dSuffix?: React.ReactNode;
-  dPasswordToggle?: boolean;
+  dPassword?: boolean;
   dNumbetButton?: boolean;
   dClearable?: boolean;
   dSize?: DSize;
@@ -37,6 +37,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dDisabled?: boolean;
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: string) => void;
+  onPasswordChange?: (value: boolean) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' as const });
@@ -54,12 +55,13 @@ export function DInput(props: DInputProps): JSX.Element | null {
     dModel,
     dPrefix: dPrefixNode,
     dSuffix,
-    dPasswordToggle = true,
+    dPassword,
     dNumbetButton = true,
     dClearable = false,
     dSize,
     dInputRender,
     onModelChange,
+    onPasswordChange,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -88,6 +90,8 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const [t] = useTranslation();
   const forceUpdate = useForceUpdate();
 
+  const [password, changePassword] = useDValue<boolean>(true, dPassword, onPasswordChange);
+
   const onDestroy$ = useMemo(() => new Subject<void>(), []);
   const formControlInject = useFormControl(dFormControl);
   const [_value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
@@ -96,7 +100,6 @@ export function DInput(props: DInputProps): JSX.Element | null {
   }
 
   const [isFocus, setIsFocus] = useState(false);
-  const [password, setPassword] = useState(true);
 
   const size = dSize ?? gSize;
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
@@ -262,9 +265,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
                 role="button"
                 aria-label={t('Input', password ? 'Password is not visible' : 'Password is visible')}
                 onClick={() => {
-                  if (dPasswordToggle) {
-                    setPassword(!password);
-                  }
+                  changePassword((prevPassword) => !prevPassword);
                 }}
               >
                 {password ? <EyeInvisibleOutlined /> : <EyeOutlined />}

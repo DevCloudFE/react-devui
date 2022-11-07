@@ -71,12 +71,12 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
       onEnter?.();
       nextFrame(() => {
         dataRef.current.state = 'entering';
-        setStateChange((draft) => draft + 1);
+        setStateChange((prevStateChange) => prevStateChange + 1);
       });
     } else if (state === 'leave') {
       nextFrame(() => {
         dataRef.current.state = 'leaving';
-        setStateChange((draft) => draft + 1);
+        setStateChange((prevStateChange) => prevStateChange + 1);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,7 +87,7 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
       const during = isNumber(dDuring) ? dDuring : dIn ? dDuring.enter : dDuring.leave;
       dataRef.current.clearTid = async.setTimeout(() => {
         dataRef.current.state = dIn ? 'entered' : 'leaved';
-        setStateChange((draft) => draft + 1);
+        setStateChange((prevStateChange) => prevStateChange + 1);
       }, during);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

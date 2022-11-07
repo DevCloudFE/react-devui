@@ -52,7 +52,7 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
       newFixed = [];
     } else if (scrollLeft === 0) {
       newFixed = ['right'];
-    } else if (scrollLeft === maxScrollLeft) {
+    } else if (Math.ceil(scrollLeft) >= maxScrollLeft) {
       newFixed = ['left'];
     } else {
       newFixed = ['left', 'right'];

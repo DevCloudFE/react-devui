@@ -7,6 +7,11 @@
       "components": {
         "language": {
           "Change language": "Change language"
+        },
+        "table-filter": {
+          "Search": "Search",
+          "Reset": "Reset",
+          "Advanced Search": "Advanced Search"
         }
       },
       "routes": {
@@ -66,10 +71,15 @@
     },
     "title": {
       "login": "Login",
+      "home": "Home",
       "dashboard": {
         "": "Dashboard",
         "amap": "AMap",
         "echarts": "ECharts"
+      },
+      "list": {
+        "": "List",
+        "standard-table": "Standard Table"
       },
       "test": {
         "": "Test",
@@ -92,6 +102,11 @@
       "components": {
         "language": {
           "Change language": "改变语言"
+        },
+        "table-filter": {
+          "Search": "查询",
+          "Reset": "重置",
+          "Advanced Search": "高级搜索"
         }
       },
       "routes": {
@@ -151,10 +166,15 @@
     },
     "title": {
       "login": "登录",
+      "home": "首页",
       "dashboard": {
         "": "仪表盘",
         "amap": "高德地图",
         "echarts": "ECharts"
+      },
+      "list": {
+        "": "列表",
+        "standard-table": "标准表格"
       },
       "test": {
         "": "测试",

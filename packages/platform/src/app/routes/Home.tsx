@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { useMenu } from '../../core';
 
 export default function Home(): JSX.Element | null {
-  const [{ firstPath }] = useMenu();
+  const [{ firstCanActive }] = useMenu();
 
-  return isUndefined(firstPath) ? null : <Navigate to={firstPath} replace />;
+  return isUndefined(firstCanActive) ? null : <Navigate to={firstCanActive.path} replace />;
 }

@@ -28,21 +28,14 @@ export function DNumber(props: DNumberProps): JSX.Element | null {
 
   useEffect(() => {
     if (containerRef.current && dataRef.current.prevValue !== dValue) {
-      let newNums: number[] = Array(10)
-        .fill(0)
-        .map((n, i) => i);
+      let newNums: number[] = Array.from({ length: 10 }).map((_, i) => i);
       if (dDown) {
-        newNums = newNums.concat(
-          Array(dataRef.current.prevValue + 1)
-            .fill(0)
-            .map((n, i) => i)
-        );
+        newNums = newNums.concat(Array.from({ length: dataRef.current.prevValue + 1 }).map((_, i) => i));
         newNums = newNums.slice(newNums.length - 10, newNums.length);
         containerRef.current.style.cssText = 'transform:translateY(-900%);transition:none;';
       } else {
-        newNums = Array(10 - dataRef.current.prevValue)
-          .fill(0)
-          .map((n, i) => dataRef.current.prevValue + i)
+        newNums = Array.from({ length: 10 - dataRef.current.prevValue })
+          .map((_, i) => dataRef.current.prevValue + i)
           .concat(newNums);
         newNums = newNums.slice(0, 10);
         containerRef.current.style.cssText = 'transform:translateY(0);transition:none;';

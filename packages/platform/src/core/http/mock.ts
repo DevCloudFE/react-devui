@@ -1,3 +1,4 @@
+import type { DeviceDoc } from '../../app/hooks/api/types';
 import type { UserState, NotificationItem } from '../state';
 import type { JWTToken, JWTTokenPayload } from '../token';
 
@@ -50,6 +51,15 @@ if (environment.http.mock) {
       list: Array.from({ length: 3 }).map((_, i) => ({ message: `This is message ${i}`, read: false })),
     },
   ];
+  const deviceList = Array.from({ length: 108 }).map<DeviceDoc>((_, i) => ({
+    id: i,
+    create_time: Date.now() + 60 * 60 * 1000,
+    update_time: Date.now() + 60 * 60 * 1000,
+    name: `Device ${i}`,
+    model: `Model ${~~(Math.random() * 9) % 3}`,
+    price: ~~(Math.random() * 1000),
+    status: ~~(Math.random() * 9) % 3,
+  }));
 
   mock.onGet(environment.http.transformURL('/notification')).reply(withDelay(500, [200, notification]));
 
@@ -97,4 +107,23 @@ if (environment.http.mock) {
   for (const status of [401, 403, 404, 500]) {
     mock.onPost(environment.http.transformURL('/test/http'), { status }).reply(status);
   }
+
+  mock.onGet(environment.http.transformURL('/device')).reply((config) => {
+    const data = JSON.parse(config.data);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          200,
+          {
+            resources: deviceList.slice((data.page - 1) * data.page_size, data.page * data.page_size),
+            metadata: {
+              page: data.page,
+              page_size: data.page_size,
+              total_size: deviceList.length,
+            },
+          },
+        ]);
+      }, 500);
+    });
+  });
 }

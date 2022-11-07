@@ -6,7 +6,7 @@ import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { useEventCallback, useId, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
 import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@react-devui/icons';
-import { getClassName } from '@react-devui/utils';
+import { checkScrollEnd, getClassName } from '@react-devui/utils';
 
 import { useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
@@ -104,13 +104,7 @@ function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, 
         ? tablistWrapperEl.scrollWidth > tablistWrapperEl.clientWidth
         : tablistWrapperEl.scrollHeight > tablistWrapperEl.clientHeight;
       setListOverflow(isOverflow);
-      setScrollEnd(
-        Math.abs(
-          isHorizontal
-            ? tablistWrapperEl.scrollWidth - tablistWrapperEl.scrollLeft - tablistWrapperEl.clientWidth
-            : tablistWrapperEl.scrollHeight - tablistWrapperEl.scrollTop - tablistWrapperEl.clientHeight
-        ) < 1
-      );
+      setScrollEnd(checkScrollEnd(tablistWrapperEl)[isHorizontal ? 'x' : 'y']);
 
       if (isOverflow) {
         const tablistWrapperRect = tablistWrapperEl.getBoundingClientRect();

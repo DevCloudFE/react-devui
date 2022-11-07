@@ -73,7 +73,7 @@ function Anchor<T extends DAnchorItem>(props: DAnchorProps<T>, ref: React.Forwar
           if (el && pageRef.current) {
             const top = getOffsetToRoot(el);
             const distance = isString(dDistance) ? toPx(dDistance, true) : dDistance;
-            if (pageRef.current.scrollTop + distance >= top - pageTop) {
+            if (Math.ceil(pageRef.current.scrollTop) + distance >= top - pageTop) {
               if (isUndefined(nearestEl)) {
                 nearestEl = [href, top];
               } else if (top > nearestEl[1]) {

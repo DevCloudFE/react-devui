@@ -31,7 +31,7 @@
       "Next page": "Next page",
       " / Page": " / Page"
     },
-    "DForm": {
+    "Form": {
       "Optional": "(optional)"
     },
     "TimePicker": {
@@ -94,7 +94,7 @@
       "Next page": "下一页",
       " / Page": "条/页"
     },
-    "DForm": {
+    "Form": {
       "Optional": "(可选)"
     },
     "TimePicker": {

@@ -1,9 +1,5 @@
-import type { MenuItem } from '../config/menu';
 import type { UserState, NotificationItem } from './state';
 
-import { isObject } from 'lodash';
-
-import { MENU } from '../config/menu';
 import { useHttp } from './http';
 import { useUserState, useNotificationState } from './state';
 import { useRefreshToken } from './token';
@@ -28,53 +24,26 @@ export function useInit() {
     acl.setFull(user.role === 'admin');
     acl.set(user.permission);
     //#endregion
-
-    //#region Menu
-    const reduceMenu = (arr: MenuItem[], parentSub: string[] = []): string[] | undefined => {
-      for (const item of arr) {
-        if (item.acl) {
-          const params =
-            isObject(item.acl) && 'control' in item.acl
-              ? item.acl
-              : {
-                  control: item.acl,
-                };
-          if (!acl.can(params.control, params.mode)) {
-            continue;
-          }
-        }
-
-        if (!item.disabled) {
-          if (item.type === 'sub') {
-            const expands = reduceMenu(item.children!, parentSub.concat([item.path]));
-            if (expands) {
-              return expands;
-            }
-          } else {
-            return parentSub;
-          }
-        }
-      }
-    };
-    setMenu((draft) => {
-      draft.expands = reduceMenu(MENU) ?? [];
-    });
-    //#endregion
   };
 
   const getNotification = () => {
     setNotification(undefined);
-    const [notificationReq] = http<NotificationItem[]>(
+    http<NotificationItem[]>(
       {
         url: '/notification',
         method: 'get',
       },
       { unmount: false }
-    );
-    notificationReq.subscribe({
+    ).subscribe({
       next: (res) => {
         setNotification(res);
       },
+    });
+  };
+
+  const resetMenu = () => {
+    setMenu((draft) => {
+      draft.expands = undefined;
     });
   };
 
@@ -82,5 +51,6 @@ export function useInit() {
     refreshToken();
     handleUser(user);
     getNotification();
+    resetMenu();
   };
 }

@@ -1,6 +1,5 @@
-import { isUndefined, nth } from 'lodash';
+import { nth } from 'lodash';
 import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { getClassName } from '@react-devui/utils';
 
@@ -20,12 +19,10 @@ export function AppRouteHeaderHeader(props: AppRouteHeaderHeaderProps): JSX.Elem
 
   const { matchRoutes } = useContext(RouteStateContext);
 
-  const { t } = useTranslation();
-
   const title = (() => {
     if (matchRoutes) {
-      const { title: _title, titleI18n } = nth(matchRoutes, -1)!.route.data ?? {};
-      return _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
+      const { title } = nth(matchRoutes, -1)!.route.data ?? {};
+      return title;
     }
     return undefined;
   })();

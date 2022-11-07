@@ -7,4 +7,7 @@ export const ROUTES_ACL = {
     acl: 'routes.test.acl',
     http: 'routes.test.http',
   },
+  list: {
+    'standard-table': 'routes.list.standard-table',
+  },
 };

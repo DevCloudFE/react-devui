@@ -35,6 +35,7 @@ export interface DTableFilterProps<V extends DId, T extends DTableFilterItem<V>>
   dVisible?: boolean;
   dLoading?: boolean;
   dSearchable?: boolean;
+  dSearchValue?: string;
   dMultiple?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSearch?: {
@@ -44,7 +45,7 @@ export interface DTableFilterProps<V extends DId, T extends DTableFilterItem<V>>
   dPopupClassName?: string;
   onSelectedChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  onSearch?: (value: string) => void;
+  onSearchValueChange?: (value: string) => void;
   onScrollBottom?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
@@ -59,13 +60,14 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
     dVisible,
     dLoading = false,
     dSearchable = false,
+    dSearchValue,
     dMultiple = false,
     dCustomItem,
     dCustomSearch,
     dPopupClassName,
     onSelectedChange,
     onVisibleChange,
-    onSearch,
+    onSearchValueChange,
     onScrollBottom,
     afterVisibleChange,
 
@@ -106,7 +108,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
     return items;
   }, [dList]);
 
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
   const canSelectItem = useCallback((item: T) => !item.disabled, []);
 
@@ -258,8 +260,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
               dPrefix={<SearchOutlined />}
               dPlaceholder={t('Search')}
               onModelChange={(val) => {
-                setSearchValue(val);
-                onSearch?.(val);
+                changeSearchValue(val);
               }}
             ></DInput>
           )}

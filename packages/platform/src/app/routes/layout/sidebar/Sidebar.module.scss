@@ -3,6 +3,7 @@
 @include b(sidebar) {
   position: relative;
   z-index: 5;
+  flex-shrink: 0;
   height: 100%;
   padding: 0;
   overflow: hidden auto;

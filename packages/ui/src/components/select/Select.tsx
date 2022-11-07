@@ -47,6 +47,7 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dSize?: DSize;
   dLoading?: boolean;
   dSearchable?: boolean;
+  dSearchValue?: string;
   dClearable?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -61,7 +62,7 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  onSearch?: (value: string) => void;
+  onSearchValueChange?: (value: string) => void;
   onClear?: () => void;
   onCreateItem?: (item: T) => void;
   onScrollBottom?: () => void;
@@ -83,6 +84,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     dSize,
     dLoading = false,
     dSearchable = false,
+    dSearchValue,
     dClearable = false,
     dDisabled = false,
     dMultiple = false,
@@ -95,7 +97,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     onModelChange,
     onVisibleChange,
     onClear,
-    onSearch,
+    onSearchValueChange,
     onCreateItem,
     onScrollBottom,
     afterVisibleChange,
@@ -135,7 +137,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     return items;
   }, [dList]);
 
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
   const canSelectItem = useCallback((item: T) => !item.disabled && !item.children, []);
 
@@ -487,8 +489,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
 
                   const val = e.currentTarget.value;
                   if (dSearchable) {
-                    setSearchValue(val);
-                    onSearch?.(val);
+                    changeSearchValue(val);
                   }
                 },
               })

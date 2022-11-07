@@ -1,5 +1,6 @@
 export { getHorizontalSidePosition, getPopupPosition, getVerticalSidePosition } from './position';
 export { checkNodeExist } from './checkNodeExist';
+export { checkScrollEnd } from './checkScrollEnd';
 export { copy } from './copy';
 export { findNested } from './findNested';
 export { getClassName } from './getClassName';

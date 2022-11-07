@@ -1,33 +1,23 @@
 // https://cloud.google.com/apis/design
 
+import type { StandardFields, StandardGetParams, StandardListRes } from './types';
+
 import { useEventCallback } from '@react-devui/hooks';
 
-import { useHttp } from '../../core';
-
-export interface StandardFields {
-  create_time: number;
-  update_time: number;
-}
-
-export interface ErrorStandardFields {
-  error: {
-    code: string;
-    message: string;
-  };
-}
+import { useHttp } from '../../../core';
 
 export function useAPI(url: string) {
   const http = useHttp();
 
   return {
-    list: useEventCallback(<T extends StandardFields = any, D = any>(data?: D) =>
-      http<T[], D>({
+    list: useEventCallback(<T extends StandardFields = any, D extends StandardGetParams = StandardGetParams>(data?: D) =>
+      http<StandardListRes<T>, D>({
         url,
         method: 'get',
         data,
       })
     ),
-    get: useEventCallback(<T extends StandardFields = any, D = any>(id: number, data?: D) =>
+    get: useEventCallback(<T extends StandardFields = any, D extends StandardGetParams = StandardGetParams>(id: number, data?: D) =>
       http<T, D>({
         url: `${url}/${id}`,
         method: 'get',

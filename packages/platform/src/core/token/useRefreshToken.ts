@@ -14,24 +14,26 @@ export function useRefreshToken() {
       const refresh = () => {
         const expiration = TOKEN.expiration;
         if (!isNull(expiration) && !TOKEN.expired) {
-          const [refreshTokenReq, abortRefreshTokenReq] = http<string>(
-            {
-              url: '/auth/refresh',
-              method: 'post',
-            },
-            { unmount: false }
-          );
           const tid = window.setTimeout(() => {
+            const refreshTokenReq = http<string>(
+              {
+                url: '/auth/refresh',
+                method: 'post',
+              },
+              { unmount: false }
+            );
             refreshTokenReq.subscribe({
               next: (res) => {
                 TOKEN.set(res);
                 refresh();
               },
             });
+            CLEAR_TOKEN_REFRESH = () => {
+              refreshTokenReq.abort();
+            };
           }, expiration - Date.now() - TOKEN_REFRESH_OFFSET);
           CLEAR_TOKEN_REFRESH = () => {
             clearTimeout(tid);
-            abortRefreshTokenReq();
           };
         }
       };

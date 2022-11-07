@@ -60,7 +60,7 @@ function FabBacktop(props: DFabBacktopProps, ref: React.ForwardedRef<HTMLButtonE
   const updateBackTop = () => {
     if (pageRef.current) {
       const distance = isString(dDistance) ? toPx(dDistance, true) : dDistance;
-      setVisible(pageRef.current.scrollTop >= distance);
+      setVisible(Math.ceil(pageRef.current.scrollTop) >= distance);
     }
   };
   useIsomorphicLayoutEffect(() => {

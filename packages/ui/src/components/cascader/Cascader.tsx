@@ -53,6 +53,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
   dSize?: DSize;
   dLoading?: boolean;
   dSearchable?: boolean;
+  dSearchValue?: string;
   dClearable?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -67,7 +68,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: any, item: any) => void;
   onVisibleChange?: (visible: boolean) => void;
-  onSearch?: (value: string) => void;
+  onSearchValueChange?: (value: string) => void;
   onClear?: () => void;
   onFirstFocus?: (value: T['value'], item: T) => void;
   afterVisibleChange?: (visible: boolean) => void;
@@ -88,6 +89,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     dSize,
     dLoading = false,
     dSearchable = false,
+    dSearchValue,
     dClearable = false,
     dDisabled = false,
     dMultiple = false,
@@ -99,7 +101,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     dInputRender,
     onModelChange,
     onVisibleChange,
-    onSearch,
+    onSearchValueChange,
     onClear,
     onFirstFocus,
     afterVisibleChange,
@@ -157,7 +159,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     return nodes;
   }, [renderNodes]);
 
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
   const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
@@ -426,8 +428,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
 
                   const val = e.currentTarget.value;
                   if (dSearchable) {
-                    setSearchValue(val);
-                    onSearch?.(val);
+                    changeSearchValue(val);
                   }
                 },
               })

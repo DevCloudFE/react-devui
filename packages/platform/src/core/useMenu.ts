@@ -4,27 +4,29 @@ import type { DMenuItem } from '@react-devui/ui/components/menu';
 import { isObject, isUndefined } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-import { createGlobalState } from '@react-devui/hooks';
+import { createGlobalState, useMount } from '@react-devui/hooks';
 
 import { MENU } from '../config/menu';
 import { useACL } from './useACL';
 
 export interface MenuState {
-  expands: string[];
+  expands?: string[];
 }
-const useMenuState = createGlobalState<MenuState>({
-  expands: [],
-});
+const useMenuState = createGlobalState<MenuState>({});
 
 export function useMenu() {
   const acl = useACL();
   const { t } = useTranslation();
+  const location = useLocation();
   const [menuState, setMenuState] = useMenuState();
 
-  let firstPath: string | undefined = undefined;
-  const reduceMenu = (arr: MenuItem[], parentSub: string[] = []): DMenuItem<string>[] => {
+  const res: {
+    active?: { path: string; parentSub: MenuItem[] };
+    firstCanActive?: { path: string; parentSub: MenuItem[] };
+  } = {};
+  const reduceMenu = (arr: MenuItem[], parentSub: MenuItem[]): DMenuItem<string>[] => {
     const newArr: DMenuItem<string>[] = [];
     for (const item of arr) {
       if (item.acl) {
@@ -49,27 +51,46 @@ export function useMenu() {
       };
 
       if (item.children) {
-        obj.children = reduceMenu(item.children, parentSub.concat(item.type === 'sub' ? [item.path] : []));
+        obj.children = reduceMenu(item.children, parentSub.concat(item.type === 'sub' ? [item] : []));
         if (obj.children.length > 0) {
           newArr.push(obj);
         }
       } else {
         newArr.push(obj);
-        if (!obj.disabled && isUndefined(firstPath)) {
-          firstPath = obj.id;
+        if (item.path.startsWith(location.pathname)) {
+          res.active = {
+            path: item.path,
+            parentSub,
+          };
+        }
+        if (!item.disabled && isUndefined(res.firstCanActive)) {
+          res.firstCanActive = {
+            path: item.path,
+            parentSub,
+          };
         }
       }
     }
     return newArr;
   };
+  const menu = reduceMenu(MENU, []);
+  const getDefaultExpands = () =>
+    (location.pathname === '/' ? res.firstCanActive?.parentSub : res.active?.parentSub)?.map((item) => item.path);
 
-  const menu = reduceMenu(MENU);
+  useMount(() => {
+    if (isUndefined(menuState.expands)) {
+      setMenuState((draft) => {
+        draft.expands = getDefaultExpands();
+      });
+    }
+  });
 
   return [
     {
       menu,
-      expands: menuState.expands,
-      firstPath,
+      active: location.pathname === '/' ? res.firstCanActive : res.active,
+      firstCanActive: res.firstCanActive,
+      expands: menuState.expands ?? getDefaultExpands(),
     },
     setMenuState,
   ] as const;

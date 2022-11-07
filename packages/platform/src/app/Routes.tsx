@@ -1,9 +1,7 @@
 import type { Control, ControlMode } from '../core/useACL';
-import type { DBreadcrumbItem } from '@react-devui/ui/components/breadcrumb';
-import type { DId } from '@react-devui/ui/utils/types';
 import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
-import { isUndefined, nth } from 'lodash';
+import { nth } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
@@ -21,6 +19,8 @@ import AppLoginRoute from './routes/login/Login';
 const AppAMapRoute = React.lazy(() => import('./routes/dashboard/amap/AMap'));
 const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/echarts/ECharts'));
 
+const AppStandardTableRoute = React.lazy(() => import('./routes/list/standard-table/StandardTable'));
+
 const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
 const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
 
@@ -35,8 +35,13 @@ export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
   title?: string;
-  titleI18n?: string;
-  breadcrumb?: DBreadcrumbItem<DId> | false;
+  breadcrumb?:
+    | {
+        title?: string;
+        link?: boolean;
+        separator?: React.ReactNode;
+      }
+    | false;
   acl?:
     | {
         control: Control | Control[];
@@ -71,13 +76,17 @@ export function AppRoutes() {
         path: LOGIN_PATH,
         element: <AppLoginRoute />,
         data: {
-          titleI18n: 'login',
+          title: t('login', { ns: 'title' }),
         },
       },
       {
         path: '/',
         element: <AppLayout />,
         data: {
+          breadcrumb: {
+            title: t('home', { ns: 'title' }),
+            link: true,
+          },
           canActivate: [tokenGuard],
           canActivateChild: [tokenGuard],
         },
@@ -88,6 +97,11 @@ export function AppRoutes() {
           },
           {
             path: 'dashboard',
+            data: {
+              breadcrumb: {
+                title: t('dashboard.', { ns: 'title' }),
+              },
+            },
             children: [
               {
                 path: 'amap',
@@ -97,7 +111,10 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
-                  titleI18n: 'dashboard.amap',
+                  title: t('dashboard.amap', { ns: 'title' }),
+                  breadcrumb: {
+                    link: true,
+                  },
                   acl: ROUTES_ACL.dashboard.amap,
                   canActivate: [ACLGuard],
                 },
@@ -110,7 +127,10 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
-                  titleI18n: 'dashboard.echarts',
+                  title: t('dashboard.echarts', { ns: 'title' }),
+                  breadcrumb: {
+                    link: true,
+                  },
                   acl: ROUTES_ACL.dashboard.echarts,
                   canActivate: [ACLGuard],
                 },
@@ -118,7 +138,38 @@ export function AppRoutes() {
             ],
           },
           {
+            path: 'list',
+            data: {
+              breadcrumb: {
+                title: t('list.', { ns: 'title' }),
+              },
+            },
+            children: [
+              {
+                path: 'standard-table',
+                element: (
+                  <React.Suspense fallback={<AppFCPLoader />}>
+                    <AppStandardTableRoute />
+                  </React.Suspense>
+                ),
+                data: {
+                  title: t('list.standard-table', { ns: 'title' }),
+                  breadcrumb: {
+                    link: true,
+                  },
+                  acl: ROUTES_ACL.list['standard-table'],
+                  canActivate: [ACLGuard],
+                },
+              },
+            ],
+          },
+          {
             path: 'test',
+            data: {
+              breadcrumb: {
+                title: t('test.', { ns: 'title' }),
+              },
+            },
             children: [
               {
                 path: 'acl',
@@ -128,7 +179,7 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
-                  titleI18n: 'test.acl',
+                  title: t('test.acl', { ns: 'title' }),
                   acl: ROUTES_ACL.test.acl,
                   canActivate: [ACLGuard],
                 },
@@ -141,7 +192,7 @@ export function AppRoutes() {
                   </React.Suspense>
                 ),
                 data: {
-                  titleI18n: 'test.http',
+                  title: t('test.http', { ns: 'title' }),
                   acl: ROUTES_ACL.test.http,
                   canActivate: [ACLGuard],
                 },
@@ -186,8 +237,7 @@ export function AppRoutes() {
     return renderMatches(matches);
   })();
 
-  const { title: _title, titleI18n } = nth(matches, -1)?.route.data ?? {};
-  const title = _title ?? (isUndefined(titleI18n) ? undefined : t(titleI18n, { ns: 'title' }));
+  const { title } = nth(matches, -1)?.route.data ?? {};
   usePageTitle(title);
 
   return (

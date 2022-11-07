@@ -3,6 +3,8 @@
 @include b(badge) {
   position: absolute;
   z-index: 1;
+  display: inline-block;
+  vertical-align: top;
   transform: translate(-50%, -50%);
 
   @each $theme, $rgb in $rd-themes {
@@ -19,6 +21,11 @@
       /* stylelint-disable-next-line declaration-property-value-allowed-list */
       border-radius: 3px;
     }
+  }
+
+  @include m(alone) {
+    position: relative;
+    transform: none;
   }
 
   @include e(wrapper) {

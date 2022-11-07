@@ -20,7 +20,7 @@
 @include b(spinner) {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: var(--#{$rd-prefix}zindex-absolute);
   display: flex;
   justify-content: center;
   overflow: hidden;

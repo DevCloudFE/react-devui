@@ -71,24 +71,22 @@ export function DRating(props: DRatingProps): JSX.Element | null {
         setHoverValue(null);
       }}
     >
-      {Array(dTotal)
-        .fill(0)
-        .map((v, i) => (
-          <DStar
-            key={i + 1}
-            dFormControl={dFormControl}
-            dName={dName ?? uniqueId}
-            dDisabled={disabled || dReadOnly}
-            dValue={i + 1}
-            dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : checkNodeExist(dCustomIcon) ? dCustomIcon : <StarFilled />}
-            dChecked={value}
-            dHoverValue={hoverValue}
-            dHalf={dHalf}
-            dTooltip={dTooltip}
-            onCheck={(v) => changeValue(v)}
-            onHoverChange={(v) => setHoverValue(v)}
-          ></DStar>
-        ))}
+      {Array.from({ length: dTotal }).map((_, i) => (
+        <DStar
+          key={i + 1}
+          dFormControl={dFormControl}
+          dName={dName ?? uniqueId}
+          dDisabled={disabled || dReadOnly}
+          dValue={i + 1}
+          dIcon={isFunction(dCustomIcon) ? dCustomIcon(i + 1) : checkNodeExist(dCustomIcon) ? dCustomIcon : <StarFilled />}
+          dChecked={value}
+          dHoverValue={hoverValue}
+          dHalf={dHalf}
+          dTooltip={dTooltip}
+          onCheck={(v) => changeValue(v)}
+          onHoverChange={(v) => setHoverValue(v)}
+        ></DStar>
+      ))}
     </div>
   );
 }

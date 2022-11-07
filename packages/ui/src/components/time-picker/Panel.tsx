@@ -8,20 +8,9 @@ import { getClassName, scrollTo } from '@react-devui/utils';
 import { dayjs } from '../../dayjs';
 import { usePrefixConfig } from '../root';
 
-const H12 = freeze([
-  '12',
-  ...Array(11)
-    .fill(0)
-    .map((n, i) => `${i + 1 < 10 ? '0' : ''}${i + 1}`),
-]);
+const H12 = freeze(['12', ...Array.from({ length: 11 }).map((_, i) => `${i + 1 < 10 ? '0' : ''}${i + 1}`)]);
 
-const [H24, M60, S60] = [24, 60, 60].map((num) =>
-  freeze(
-    Array(num)
-      .fill(0)
-      .map((n, i) => `${i < 10 ? '0' : ''}${i}`)
-  )
-);
+const [H24, M60, S60] = [24, 60, 60].map((num) => freeze(Array.from({ length: num }).map((_, i) => `${i < 10 ? '0' : ''}${i}`)));
 
 export interface DPanelProps {
   dTime: Date | null;

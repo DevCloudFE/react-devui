@@ -1,7 +1,7 @@
 import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
@@ -31,6 +31,7 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
   dActions?: React.ReactNode[];
   dLoading?: [boolean?, boolean?];
   dSearchable?: boolean;
+  dSearchValues?: [string, string];
   dDisabled?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSearch?: {
@@ -39,7 +40,7 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
   };
   onModelChange?: (value: T['value'][], item: T[]) => void;
   onSelectedChange?: (value: T['value'][], item: T[]) => void;
-  onSearch?: (value: string, direction: 'left' | 'right') => void;
+  onSearchValuesChange?: (value: [string, string]) => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
 
@@ -54,12 +55,13 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     dActions = ['right', 'left'],
     dLoading = [false, false],
     dSearchable = false,
+    dSearchValues,
     dDisabled = false,
     dCustomItem,
     dCustomSearch,
     onModelChange,
     onSelectedChange,
-    onSearch,
+    onSearchValuesChange,
     onScrollBottom,
 
     ...restProps
@@ -101,8 +103,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
-  const [searchValueLeft, setSearchValueLeft] = useState('');
-  const [searchValueRight, setSearchValueRight] = useState('');
+  const [searchValues, changeSearchValues] = useDValue<[string, string]>(['', ''], dSearchValues, onSearchValuesChange);
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
@@ -131,7 +132,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
       const isLeft = !valueRight.has(item.value);
       const newItem = Object.assign({}, item);
 
-      const searchValue = isLeft ? searchValueLeft : searchValueRight;
+      const searchValue = searchValues[isLeft ? 0 : 1];
       if (!searchValue || filterFn(searchValue, item)) {
         newItem[IS_SELECTED] = false;
         if (selected.has(item.value)) {
@@ -160,10 +161,10 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
       }
     });
 
-    if (searchValueLeft && sortFn) {
+    if (searchValues[0] && sortFn) {
       listL.sort(sortFn);
     }
-    if (searchValueRight && sortFn) {
+    if (searchValues[1] && sortFn) {
       listR.sort(sortFn);
     }
 
@@ -171,7 +172,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     const stateR: boolean | 'mixed' = emptyR ? false : checkAllR ? true : hasSelectedR ? 'mixed' : false;
 
     return [listL, listR, selectedNumL, selectedNumR, stateL, stateR];
-  }, [dList, filterFn, searchValueLeft, searchValueRight, selected, sortFn, valueRight]);
+  }, [dList, filterFn, searchValues, selected, sortFn, valueRight]);
 
   const handleSelectedChange = (val: V) => {
     changeSelected((draft) => {
@@ -256,8 +257,9 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
                 handleAllSelected(selected, true);
               }}
               onSearch={(val) => {
-                setSearchValueLeft(val);
-                onSearch?.(val, 'left');
+                changeSearchValues((draft) => {
+                  draft[0] = val;
+                });
               }}
               onScrollBottom={() => {
                 onScrollBottom?.('left');
@@ -303,8 +305,9 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
                 handleAllSelected(selected, false);
               }}
               onSearch={(val) => {
-                setSearchValueRight(val);
-                onSearch?.(val, 'right');
+                changeSearchValues((draft) => {
+                  draft[1] = val;
+                });
               }}
               onScrollBottom={() => {
                 onScrollBottom?.('right');

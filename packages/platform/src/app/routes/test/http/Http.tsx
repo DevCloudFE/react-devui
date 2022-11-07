@@ -21,12 +21,11 @@ export default function Http(): JSX.Element | null {
                 <DButton
                   key={status}
                   onClick={() => {
-                    const [testReq] = http({
+                    http({
                       url: '/test/http',
                       method: 'post',
                       data: { status },
-                    });
-                    testReq.subscribe();
+                    }).subscribe();
                   }}
                 >
                   {status}

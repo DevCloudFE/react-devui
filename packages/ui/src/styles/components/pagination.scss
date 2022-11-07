@@ -35,7 +35,7 @@
       }
     }
 
-    @include e(size) {
+    @include e(page-size) {
       height: 26px;
       padding: 0 6px;
     }
@@ -71,6 +71,7 @@
     cursor: pointer;
     user-select: none;
     border-radius: var(--#{$rd-prefix}border-radius);
+    outline: none;
     transition: border-color var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear;
 
     &:hover,
@@ -90,7 +91,6 @@
     }
 
     @include m(number) {
-      outline: none;
       transition: border-color var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
         box-shadow var(--#{$rd-prefix}animation-duration-base) linear;
 
@@ -134,7 +134,7 @@
     transform: scale(1.5);
   }
 
-  @include e(size) {
+  @include e(page-size) {
     @include overwrite-component(select) {
       width: auto;
       margin-right: var(--#{$rd-prefix}pagination-space);

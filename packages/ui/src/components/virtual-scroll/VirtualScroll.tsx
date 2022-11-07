@@ -4,7 +4,7 @@ import { isBoolean, isNumber, isUndefined, nth } from 'lodash';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import { useEventCallback, useForkRef, useIsomorphicLayoutEffect, useRefExtra, useResize } from '@react-devui/hooks';
-import { toPx } from '@react-devui/utils';
+import { checkScrollEnd, toPx } from '@react-devui/utils';
 
 import { cloneHTMLElement, registerComponentMate } from '../../utils';
 import { useComponentConfig } from '../root';
@@ -484,11 +484,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
 
           setScrollPosition(e.currentTarget[dHorizontal ? 'scrollLeft' : 'scrollTop']);
 
-          if (
-            dHorizontal
-              ? e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth
-              : e.currentTarget.scrollTop + e.currentTarget.clientHeight === e.currentTarget.scrollHeight
-          ) {
+          if (checkScrollEnd(e.currentTarget)[dHorizontal ? 'x' : 'y']) {
             onScrollEnd?.();
           }
         },

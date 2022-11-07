@@ -25,14 +25,16 @@
     "@react-devui/hooks": "file:../hooks",
     "@react-devui/icons": "file:../icons",
     "@react-devui/utils": "file:../utils",
-    "dayjs": "^1.11.5",
-    "immer": "^9.0.15",
+    "immer": "^9.0.16",
     "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rfs": "^9.0.6",
     "rxjs": "^7.5.7",
     "swiper": "^8.4.4"
+  },
+  "peerDependencies": {
+    "dayjs": "^1.11.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "publishConfig": {
     "access": "public",
