@@ -5,14 +5,14 @@ body {
   color: var(--#{$rd-prefix}text-color);
 }
 
-main {
+#app-main {
   width: 100%;
   height: 100vh;
   padding: 20px;
   overflow: auto;
 }
 
-article {
+#app-content {
   height: 200vh;
 }
 `;

@@ -12,6 +12,7 @@ export default function (name: string) {
     "@react-devui/icons": "${lernaJson.version}",
     "@react-devui/ui": "${lernaJson.version}",
     "@react-devui/utils": "${lernaJson.version}",
+    "dayjs": "${packageJson.devDependencies['dayjs']}",
     "react": "${packageJson.devDependencies['react']}",
     "react-dom": "${packageJson.devDependencies['react-dom']}",
     "react-scripts": "latest",
