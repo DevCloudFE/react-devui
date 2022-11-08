@@ -21,6 +21,8 @@
   "license": "MIT",
   "author": "Xie Jay <xiejay97@gmail.com>",
   "sideEffects": false,
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "dependencies": {
     "lodash": "^4.17.21"
   },
