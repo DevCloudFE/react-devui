@@ -13,7 +13,7 @@
     "lint:style": "stylelint **/*.{css,scss,html,md}",
     "lint:style:fix": "yarn lint:style --fix",
     "prepare": "husky install && chmod ug+x .husky/*",
-    "prepublishOnly": "yarn util:update-dependencies && nx run-many --target=build --parallel=7 --exclude=site,vscode-extension",
+    "prepublishOnly": "nx run-many --target=build --parallel=7 --exclude=site,vscode-extension",
     "publish:vscode-extension": "yarn build:vscode-extension && cd dist/packages/vscode-extension && vsce publish --yarn",
     "serve:site": "nx serve site",
     "test:affected": "nx affected --target=test --parallel=7",
@@ -21,6 +21,7 @@
     "util:check-update": "yarn upgrade-interactive --latest",
     "util:sort-package-json": "sort-package-json 'package.json' 'packages/*/package.json'",
     "util:update-dependencies": "ts-node -P ./tools/tsconfig.json ./tools/update-dependencies.ts",
+    "preversion": "yarn util:update-dependencies --check",
     "version": "prettier lerna.json --write"
   },
   "dependencies": {},

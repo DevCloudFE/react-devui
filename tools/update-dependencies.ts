@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import path from 'path';
 
 import { existsSync, outputJsonSync, readdirSync, readFileSync, readJsonSync, statSync } from 'fs-extra';
@@ -13,13 +13,17 @@ const ROOT_PATH = path.join(__dirname, '..');
 const TSCONFIG_OPTIONS = ['tsconfig.app.json', 'tsconfig.lib.json'];
 const SKIP_IMPORT = ['.', 'packages', 'vscode'];
 
+const checkMode = process.argv.includes('--check');
+
 const table = createStream({
   columnDefault: { width: 50 },
   columnCount: 2,
   columns: [{ width: 40 }, { width: 10, alignment: 'center' }],
 });
 
-console.info(`Update package.json...`);
+if (!checkMode) {
+  console.info(`Update package.json...`);
+}
 
 const getModuleName = (importStr: string) => {
   const arr = importStr.split('/');
@@ -111,9 +115,16 @@ Object.entries(workspace.projects).forEach(([projectName, projectPath]) => {
 
     Promise.all([handleTS(), handleSCSS()]).then(() => {
       outputJsonSync(packagePath, projectPackageJson);
-      exec(`yarn prettier ${packagePath} --write`);
-      exec('yarn util:sort-package-json');
-      table.write([projectName, '✅']);
+      execSync(`yarn prettier ${packagePath} --write`);
+      execSync(`yarn sort-package-json "${packagePath}"`);
+      if (!checkMode) {
+        table.write([projectName, '✅']);
+      } else {
+        const out = execSync('git status --porcelain', { encoding: 'utf8' });
+        if (out) {
+          throw new Error('Make sure all files has been committed!');
+        }
+      }
     });
   }
 });
