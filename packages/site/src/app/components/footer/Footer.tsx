@@ -10,7 +10,7 @@ export function AppFooter(props: React.HTMLAttributes<HTMLDivElement>): JSX.Elem
     <footer {...props} className={getClassName(props.className, 'app-footer')}>
       <div className="app-footer__col">
         <div className="app-footer__col-title">{t('footer.Resources')}</div>
-        <a href="https://rd-platform.surge.sh" target="_blank" rel="noreferrer">
+        <a href="https://admin.react-devui.com" target="_blank" rel="noreferrer">
           RD-Platform
         </a>
         <a href="https://devui.design" target="_blank" rel="noreferrer">
