@@ -29,6 +29,7 @@ export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   dContainer?: DRefExtra | false;
   dPlacement?: DPopupPlacement;
   dEscClosable?: boolean;
+  dDestroyAfterClose?: boolean;
   dArrow?: boolean;
   dModal?: boolean;
   dDistance?: number;
@@ -53,6 +54,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
     dContainer,
     dPlacement = 'top',
     dEscClosable = true,
+    dDestroyAfterClose = false,
     dArrow = true,
     dModal = false,
     dDistance = 10,
@@ -292,6 +294,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
               <DTransition
                 dIn={visible}
                 dDuring={TTANSITION_DURING}
+                dDestroyWhenLeaved={dDestroyAfterClose}
                 onEnter={updatePosition}
                 afterEnter={() => {
                   afterVisibleChange?.(true);

@@ -26,6 +26,7 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
   dSkipFirstTransition?: boolean;
+  dDestroyAfterClose?: boolean;
   dType?: {
     type: 'success' | 'warning' | 'error' | 'info';
     title?: React.ReactNode;
@@ -54,6 +55,7 @@ export const DModal: {
     dMaskClosable = true,
     dEscClosable = true,
     dSkipFirstTransition = true,
+    dDestroyAfterClose = true,
     dType,
     dHeader,
     dFooter,
@@ -137,6 +139,7 @@ export const DModal: {
         dIn={visible}
         dDuring={TTANSITION_DURING_BASE}
         dSkipFirstTransition={dSkipFirstTransition}
+        dDestroyWhenLeaved={dDestroyAfterClose}
         onEnter={() => {
           if (isUndefined(ROOT_DATA.clickEvent) || performance.now() - ROOT_DATA.clickEvent.time > 100) {
             dataRef.current.transformOrigin = undefined;

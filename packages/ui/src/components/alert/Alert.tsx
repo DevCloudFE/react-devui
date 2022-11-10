@@ -60,6 +60,7 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
         },
         leaved: { display: 'none' },
       }}
+      dDestroyWhenLeaved
       afterEnter={() => {
         afterVisibleChange?.(true);
       }}

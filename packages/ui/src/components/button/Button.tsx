@@ -106,6 +106,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
                   },
                   leaved: { display: 'none' },
                 }}
+                dDestroyWhenLeaved
               >
                 {(collapseRef, collapseStyle) => buttonIcon(true, collapseRef, collapseStyle)}
               </DCollapseTransition>

@@ -93,6 +93,7 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
           containerRef.current.style.height = `${spinnerRef.current.clientHeight}px`;
         }
       }}
+      dDestroyWhenLeaved
       afterEnter={() => {
         afterVisibleChange?.(true);
       }}

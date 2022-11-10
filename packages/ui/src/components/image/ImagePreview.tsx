@@ -238,6 +238,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
       <DTransition
         dIn={visible}
         dDuring={TTANSITION_DURING_BASE}
+        dDestroyWhenLeaved
         afterEnter={() => {
           afterVisibleChange?.(true);
         }}

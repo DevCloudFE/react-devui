@@ -11,13 +11,24 @@ export interface DTransitionProps {
   dDuring: number | { enter: number; leave: number };
   dMountBeforeFirstEnter?: boolean;
   dSkipFirstTransition?: boolean | [boolean, boolean];
+  dDestroyWhenLeaved?: boolean;
   onEnter?: () => void;
   afterEnter?: () => void;
   afterLeave?: () => void;
 }
 
 export function DTransition(props: DTransitionProps): JSX.Element | null {
-  const { children, dIn, dDuring, dMountBeforeFirstEnter = true, dSkipFirstTransition = true, onEnter, afterEnter, afterLeave } = props;
+  const {
+    children,
+    dIn,
+    dDuring,
+    dMountBeforeFirstEnter = true,
+    dSkipFirstTransition = true,
+    dDestroyWhenLeaved = false,
+    onEnter,
+    afterEnter,
+    afterLeave,
+  } = props;
 
   const initState = useMemo<DTransitionState>(() => {
     const [skipEnter, skipLeave] = isArray(dSkipFirstTransition) ? dSkipFirstTransition : [dSkipFirstTransition, dSkipFirstTransition];
@@ -101,6 +112,10 @@ export function DTransition(props: DTransitionProps): JSX.Element | null {
   }, [stateChange]);
 
   const shouldRender = (() => {
+    if (state === 'leaved' && dDestroyWhenLeaved) {
+      return false;
+    }
+
     if (dataRef.current.isFirstEnter && !dMountBeforeFirstEnter) {
       return false;
     }
