@@ -37,6 +37,7 @@ export default function (name: string) {
       '@react-devui/utils': `${lernaJson.version}`,
       '@types/react': `${packageJson.devDependencies['@types/react']}`,
       '@types/react-dom': `${packageJson.devDependencies['@types/react-dom']}`,
+      dayjs: `${packageJson.devDependencies['dayjs']}`,
       react: `${packageJson.devDependencies['react']}`,
       'react-dom': `${packageJson.devDependencies['react-dom']}`,
       sass: 'latest',

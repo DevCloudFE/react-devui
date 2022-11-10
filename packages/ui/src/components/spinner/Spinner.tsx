@@ -16,6 +16,7 @@ export interface DSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   dText?: React.ReactNode;
   dDelay?: number;
   dSize?: number;
+  dAlone?: boolean;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -27,6 +28,7 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
     dText,
     dDelay,
     dSize = '28px',
+    dAlone = false,
     afterVisibleChange,
 
     ...restProps
@@ -87,8 +89,8 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
       dIn={visible}
       dDuring={TTANSITION_DURING_BASE}
       onEnter={() => {
-        if (spinnerRef.current && containerRef.current) {
-          containerRef.current.style.top = `${(spinnerRef.current.clientHeight - containerRef.current.clientHeight) / 2}px`;
+        if (!dAlone && spinnerRef.current && containerRef.current) {
+          containerRef.current.style.height = `${spinnerRef.current.clientHeight}px`;
         }
       }}
       afterEnter={() => {
@@ -102,7 +104,9 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
         <div
           {...restProps}
           ref={spinnerRef}
-          className={getClassName(restProps.className, `${dPrefix}spinner`)}
+          className={getClassName(restProps.className, `${dPrefix}spinner`, {
+            [`${dPrefix}spinner--alone`]: dAlone,
+          })}
           style={{
             ...restProps.style,
             ...transitionStyles[state],

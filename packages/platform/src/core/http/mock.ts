@@ -32,7 +32,7 @@ if (environment.http.mock) {
     name: 'user',
     avatar: '/assets/imgs/avatar.png',
     role: 'user',
-    permission: [0, ROUTES_ACL.test.acl, ROUTES_ACL.test.http],
+    permission: [0, ROUTES_ACL['/test/acl'], ROUTES_ACL['/test/http']],
   };
   const notification: NotificationItem[] = [
     {
@@ -61,14 +61,14 @@ if (environment.http.mock) {
     status: ~~(Math.random() * 9) % 3,
   }));
 
-  mock.onGet(environment.http.transformURL('/notification')).reply(withDelay(500, [200, notification]));
+  mock.onGet('/api/v1/notification').reply(withDelay(500, [200, notification]));
 
   mock
-    .onGet(environment.http.transformURL('/auth/me'))
+    .onGet('/api/v1/auth/me')
     .reply(withDelay(500, [200, (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
 
   for (const username of ['admin', 'user']) {
-    mock.onPost(environment.http.transformURL('/login'), { username }).reply(() => {
+    mock.onPost('/api/v1/login', { username }).reply(() => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve([
@@ -88,7 +88,7 @@ if (environment.http.mock) {
     });
   }
 
-  mock.onPost(environment.http.transformURL('/auth/refresh')).reply(() => {
+  mock.onPost('/api/v1/auth/refresh').reply(() => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
@@ -105,10 +105,10 @@ if (environment.http.mock) {
   });
 
   for (const status of [401, 403, 404, 500]) {
-    mock.onPost(environment.http.transformURL('/test/http'), { status }).reply(status);
+    mock.onPost('/api/v1/test/http', { status }).reply(status);
   }
 
-  mock.onGet(environment.http.transformURL('/device')).reply((config) => {
+  mock.onGet('/api/v1/device').reply((config) => {
     const data = JSON.parse(config.data);
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -126,4 +126,25 @@ if (environment.http.mock) {
       }, 500);
     });
   });
+
+  mock.onGet(/\/api\/v1\/device\/[0-9]+/).reply((config) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([200, deviceList.find((device) => device.id === Number(config.url!.match(/[0-9]+$/)![0]))]);
+      }, 500);
+    });
+  });
+
+  mock.onGet('/api/v1/device/model').reply(
+    withDelay(500, [
+      200,
+      {
+        resources: Array.from({ length: 4 }).map((_, index) => ({
+          name: `Model ${index}`,
+          disabled: index === 3,
+        })),
+        metadata: {},
+      },
+    ])
+  );
 }

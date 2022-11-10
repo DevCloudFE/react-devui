@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useMount } from '@react-devui/hooks';
 import { DCard } from '@react-devui/ui';
@@ -9,6 +10,7 @@ import { barOptions, lineOptions, nightingaleOptions, pieOptions, scatterOptions
 
 export default function ECharts(): JSX.Element | null {
   const [options, setOptions] = useState<echarts.EChartsOption[]>([]);
+  const { t } = useTranslation();
 
   useMount(() => {
     setOptions([lineOptions, stackedLineOptions, barOptions, stackedBarOptions, pieOptions, nightingaleOptions, scatterOptions]);
@@ -17,7 +19,12 @@ export default function ECharts(): JSX.Element | null {
   return (
     <>
       <AppRouteHeader>
-        <AppRouteHeader.Breadcrumb />
+        <AppRouteHeader.Breadcrumb
+          aList={[
+            { id: '/dashboard', title: t('Dashboard', { ns: 'title' }) },
+            { id: '/dashboard/echarts', title: t('ECharts', { ns: 'title' }) },
+          ]}
+        />
         <AppRouteHeader.Header />
       </AppRouteHeader>
       <div className={styles['app-echarts']}>

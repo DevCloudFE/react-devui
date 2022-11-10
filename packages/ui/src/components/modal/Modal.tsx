@@ -5,7 +5,7 @@ import { isNumber, isString, isUndefined } from 'lodash';
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useAsync, useEvent, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
+import { useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
@@ -13,7 +13,7 @@ import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
-import { useComponentConfig, usePrefixConfig } from '../root';
+import { ROOT_DATA, useComponentConfig, usePrefixConfig } from '../root';
 import { DModalFooter } from './ModalFooter';
 import { DModalHeader } from './ModalHeader';
 
@@ -25,6 +25,7 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
+  dSkipFirstTransition?: boolean;
   dType?: {
     type: 'success' | 'warning' | 'error' | 'info';
     title?: React.ReactNode;
@@ -52,6 +53,7 @@ export const DModal: {
     dMask = true,
     dMaskClosable = true,
     dEscClosable = true,
+    dSkipFirstTransition = true,
     dType,
     dHeader,
     dFooter,
@@ -77,22 +79,14 @@ export const DModal: {
     }
     return el;
   }, true);
-  const windowRef = useRefExtra(() => window);
   //#endregion
 
   const dataRef = useRef<{
-    clearTid?: () => void;
-    x: number;
-    y: number;
     transformOrigin?: string;
     prevActiveEl: HTMLElement | null;
   }>({
-    x: 0,
-    y: 0,
     prevActiveEl: null,
   });
-
-  const async = useAsync();
 
   const uniqueId = useId();
   const titleId = `${dPrefix}modal-title-${uniqueId}`;
@@ -124,21 +118,6 @@ export const DModal: {
     }
   }, [visible]);
 
-  useEvent<MouseEvent>(
-    windowRef,
-    'click',
-    (e) => {
-      dataRef.current.x = e.clientX;
-      dataRef.current.y = e.clientY;
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = async.setTimeout(() => {
-        dataRef.current.clearTid = undefined;
-      }, 20);
-    },
-    { capture: true },
-    visible
-  );
-
   const headerNode = (() => {
     if (dHeader) {
       const node = isString(dHeader) ? <DModalHeader>{dHeader}</DModalHeader> : dHeader;
@@ -157,13 +136,14 @@ export const DModal: {
       <DTransition
         dIn={visible}
         dDuring={TTANSITION_DURING_BASE}
+        dSkipFirstTransition={dSkipFirstTransition}
         onEnter={() => {
-          if (isUndefined(dataRef.current.clearTid)) {
+          if (isUndefined(ROOT_DATA.clickEvent) || performance.now() - ROOT_DATA.clickEvent.time > 100) {
             dataRef.current.transformOrigin = undefined;
           } else if (modalContentRef.current) {
             const left = `${(window.innerWidth - modalContentRef.current.clientWidth) / 2}px`;
             const top = dTop === 'center' ? `${(window.innerHeight - modalContentRef.current.clientHeight) / 2}px` : topStyle;
-            dataRef.current.transformOrigin = `calc(${dataRef.current.x}px - ${left}) calc(${dataRef.current.y}px - ${top})`;
+            dataRef.current.transformOrigin = `calc(${ROOT_DATA.clickEvent.e.clientX}px - ${left}) calc(${ROOT_DATA.clickEvent.e.clientY}px - ${top})`;
           }
         }}
         afterEnter={() => {

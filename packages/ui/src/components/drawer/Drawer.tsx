@@ -28,6 +28,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dMask?: boolean;
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
+  dSkipFirstTransition?: boolean;
   dHeader?: React.ReactElement | string;
   dFooter?: React.ReactElement;
   dChildDrawer?: React.ReactElement;
@@ -57,6 +58,7 @@ export const DDrawer: {
     dMask = true,
     dMaskClosable = true,
     dEscClosable = true,
+    dSkipFirstTransition = true,
     dHeader,
     dFooter,
     dChildDrawer,
@@ -229,6 +231,7 @@ export const DDrawer: {
       <DTransition
         dIn={visible}
         dDuring={TTANSITION_DURING_BASE}
+        dSkipFirstTransition={dSkipFirstTransition}
         afterEnter={() => {
           afterVisibleChange?.(true);
         }}

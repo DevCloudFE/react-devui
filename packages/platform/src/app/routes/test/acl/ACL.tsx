@@ -16,7 +16,12 @@ export default function ACL(): JSX.Element | null {
   return (
     <>
       <AppRouteHeader>
-        <AppRouteHeader.Breadcrumb />
+        <AppRouteHeader.Breadcrumb
+          aList={[
+            { id: '/test', title: t('Test', { ns: 'title' }) },
+            { id: '/test/acl', title: t('ACL', { ns: 'title' }) },
+          ]}
+        />
         <AppRouteHeader.Header />
       </AppRouteHeader>
       <div className={styles['app-acl']}>

@@ -57,7 +57,7 @@ export function useMenu() {
         }
       } else {
         newArr.push(obj);
-        if (item.path.startsWith(location.pathname)) {
+        if (item.path === location.pathname || (item.greedyMatch && location.pathname.startsWith(item.path + '/'))) {
           res.active = {
             path: item.path,
             parentSub,

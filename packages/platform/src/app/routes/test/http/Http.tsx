@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { DButton, DCard } from '@react-devui/ui';
 
 import { useHttp } from '../../../../core';
@@ -6,11 +8,17 @@ import styles from './Http.module.scss';
 
 export default function Http(): JSX.Element | null {
   const http = useHttp();
+  const { t } = useTranslation();
 
   return (
     <>
       <AppRouteHeader>
-        <AppRouteHeader.Breadcrumb />
+        <AppRouteHeader.Breadcrumb
+          aList={[
+            { id: '/test', title: t('Test', { ns: 'title' }) },
+            { id: '/test/http', title: t('Http', { ns: 'title' }) },
+          ]}
+        />
         <AppRouteHeader.Header />
       </AppRouteHeader>
       <div className={styles['app-http']}>

@@ -3,6 +3,7 @@ import type { DIconContextData } from '@react-devui/icons/Icon';
 
 import { useContext, useMemo } from 'react';
 
+import { useRefExtra, useEvent } from '@react-devui/hooks';
 import { DIconContext } from '@react-devui/icons/Icon';
 import { getClassName } from '@react-devui/utils';
 
@@ -26,6 +27,13 @@ const ROOT = new DConfigContextManager({
   globalScroll: false,
 });
 
+export const ROOT_DATA: {
+  clickEvent?: {
+    time: number;
+    e: MouseEvent;
+  };
+} = {};
+
 export interface DRootProps {
   children: React.ReactNode;
   context?: DPartialConfigContextData;
@@ -35,6 +43,8 @@ export function DRoot(props: DRootProps): JSX.Element | null {
   const { children, context: _context } = props;
 
   const parent = useContext(DConfigContext);
+
+  const windowRef = useRefExtra(() => window);
 
   const [context, iconContext] = useMemo<[DConfigContextManager, DIconContextData]>(() => {
     const context = new DConfigContextManager((parent ?? ROOT).mergeContext(_context ?? {}));
@@ -70,6 +80,18 @@ export function DRoot(props: DRootProps): JSX.Element | null {
     default:
       break;
   }
+
+  useEvent<MouseEvent>(
+    windowRef,
+    'click',
+    (e) => {
+      ROOT_DATA.clickEvent = {
+        time: performance.now(),
+        e,
+      };
+    },
+    { capture: true }
+  );
 
   return (
     <DConfigContext.Provider value={context}>

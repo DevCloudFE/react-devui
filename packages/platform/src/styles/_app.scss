@@ -16,7 +16,7 @@ body {
   font: inherit;
   color: var(--#{$rd-prefix}color-primary);
   text-decoration: none;
-  transition: color var(--#{$rd-prefix}animation-duration-fast) linear;
+  transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
   &:hover,
   &:focus {
@@ -37,5 +37,27 @@ body {
     position: absolute;
     inset: 0;
     content: '';
+  }
+}
+
+.app-colon {
+  &::after {
+    margin-left: 2px;
+    content: ':';
+  }
+}
+
+.app-title {
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.app-label {
+  margin-right: 8px;
+  color: var(--#{$rd-prefix}text-color-sub);
+
+  &::after {
+    margin-left: 2px;
+    content: ':';
   }
 }

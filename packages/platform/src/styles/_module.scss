@@ -9,5 +9,6 @@
 @import '~@react-devui/ui/styles/mixins';
 
 @mixin app-route {
+  position: relative;
   padding: 20px;
 }

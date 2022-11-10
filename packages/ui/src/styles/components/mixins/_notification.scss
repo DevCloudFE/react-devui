@@ -32,6 +32,10 @@
     font-weight: 500;
   }
 
+  @include e(description) {
+    color: var(--#{$rd-prefix}text-color-sub);
+  }
+
   @include e(header-actions) {
     display: inline-flex;
     flex-shrink: 0;

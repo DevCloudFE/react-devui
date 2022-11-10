@@ -24,6 +24,31 @@
     padding-bottom: 16px;
   }
 
+  @include e(header-title-container) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  @include e(header-back) {
+    @include utils-button(true);
+
+    padding: 0;
+    margin: 0 8px 0 0;
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
+
+    &:hover,
+    &:focus {
+      color: var(--#{$rd-prefix}color-primary-lighter);
+    }
+
+    &:active {
+      color: var(--#{$rd-prefix}color-primary-darker);
+    }
+  }
+
   @include e(header-title) {
     font-size: 1.5em;
     font-weight: 500;

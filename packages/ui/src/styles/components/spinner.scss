@@ -27,11 +27,18 @@
   color: var(--#{$rd-prefix}color-primary);
   background-color: rgb(var(--#{$rd-prefix}background-color-rgb) / 80%);
 
+  @include m(alone) {
+    position: relative;
+    inset: unset;
+    background-color: transparent;
+  }
+
   @include e(container) {
-    position: absolute;
+    position: relative;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
   }
 
   @include e(icon) {

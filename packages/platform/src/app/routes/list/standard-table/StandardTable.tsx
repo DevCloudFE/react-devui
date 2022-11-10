@@ -1,26 +1,32 @@
 import type { DeviceDoc } from '../../../hooks/api/types';
+import type { DSelectItem } from '@react-devui/ui/components/select';
 
-import { isNull } from 'lodash';
+import { isNull, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
-import { useImmer } from '@react-devui/hooks';
+import { useImmer, useMount } from '@react-devui/hooks';
 import { DownOutlined, PlusOutlined } from '@react-devui/icons';
-import { DButton, DCard, DCheckbox, DDropdown, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
+import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useAPI, useQueryParams } from '../../../hooks';
 import styles from './StandardTable.module.scss';
+import { AppDeviceModal } from './device-modal/DeviceModal';
 
 interface DeviceQueryParams {
   keyword: string;
   sort: 'id' | '-id' | null;
-  model: number | null;
+  model: string | null;
   status: number[];
   page: number;
   pageSize: number;
 }
 
 export default function StandardTable(): JSX.Element | null {
+  const { t } = useTranslation();
+  const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
   const [deviceQuery, setDeviceQuery] = useQueryParams<DeviceQueryParams>({
     keyword: '',
@@ -38,6 +44,32 @@ export default function StandardTable(): JSX.Element | null {
   });
   const allDeviceSelected =
     deviceTable.selected.size === 0 ? false : deviceTable.selected.size === deviceTable.list.length ? true : 'mixed';
+
+  const [paramsOfDeviceModal, setParamsOfDeviceModal] = useImmer<{
+    visible: boolean;
+    device: DeviceDoc | undefined;
+  }>();
+
+  const [paramsOfDeleteModal, setParamsOfDeleteModal] = useImmer<{
+    visible: boolean;
+    device: DeviceDoc;
+  }>();
+
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
+
+  useMount(() => {
+    modelApi.list().subscribe({
+      next: (res) => {
+        setModelList(
+          res.resources.map((model) => ({
+            label: model.name,
+            value: model.name,
+            disabled: model.disabled,
+          }))
+        );
+      },
+    });
+  });
 
   const [updateDeviceTable, setUpdateDeviceTable] = useState(0);
   useEffect(() => {
@@ -70,9 +102,64 @@ export default function StandardTable(): JSX.Element | null {
 
   return (
     <>
+      {paramsOfDeleteModal && (
+        <DModal
+          dVisible={paramsOfDeleteModal.visible}
+          dFooter={<DModal.Footer />}
+          dType={{
+            type: 'warning',
+            title: 'Delete device',
+            description: `Confirm to delete ${paramsOfDeleteModal.device.name}?`,
+          }}
+          dMaskClosable={false}
+          dSkipFirstTransition={false}
+          onVisibleChange={(visible) => {
+            setParamsOfDeleteModal((draft) => {
+              if (draft) {
+                draft.visible = visible;
+              }
+            });
+          }}
+        />
+      )}
+      <AppDeviceModal
+        aVisible={paramsOfDeviceModal?.visible}
+        aDevice={paramsOfDeviceModal?.device}
+        aModelList={modelList}
+        onVisibleChange={(visible) => {
+          setParamsOfDeviceModal((draft) => {
+            if (draft) {
+              draft.visible = visible;
+            }
+          });
+        }}
+        onSubmit={() => {
+          setParamsOfDeviceModal((draft) => {
+            if (draft) {
+              draft.visible = false;
+            }
+          });
+        }}
+      />
       <AppRouteHeader>
-        <AppRouteHeader.Breadcrumb />
-        <AppRouteHeader.Header aActions={[<DButton dIcon={<PlusOutlined />}>Add</DButton>]} />
+        <AppRouteHeader.Breadcrumb
+          aList={[
+            { id: '/list', title: t('List', { ns: 'title' }) },
+            { id: '/list/standard-table', title: t('Standard Table', { ns: 'title' }) },
+          ]}
+        />
+        <AppRouteHeader.Header
+          aActions={[
+            <DButton
+              onClick={() => {
+                setParamsOfDeviceModal({ visible: true, device: undefined });
+              }}
+              dIcon={<PlusOutlined />}
+            >
+              Add
+            </DButton>,
+          ]}
+        />
       </AppRouteHeader>
       <div className={styles['app-standard-table']}>
         <DCard>
@@ -86,11 +173,8 @@ export default function StandardTable(): JSX.Element | null {
                   node: (
                     <DSelect
                       style={{ width: '16em' }}
-                      dList={Array.from({ length: 4 }).map((_, index) => ({
-                        label: `Model ${index}`,
-                        value: index,
-                        disabled: index === 3,
-                      }))}
+                      dList={modelList ?? []}
+                      dLoading={isUndefined(modelList)}
                       dPlaceholder="Model"
                       dModel={deviceQuery.model}
                       dClearable
@@ -209,7 +293,9 @@ export default function StandardTable(): JSX.Element | null {
                         </DTable.Td>
                         <DTable.Td>{new Date(data.create_time).toLocaleString()}</DTable.Td>
                         <DTable.Td dWidth={140} dFixed={{ right: 0 }} dNowrap>
-                          <DButton dType="link">View</DButton>
+                          <Link className="app-link" to={`/list/standard-table/${data.id}`}>
+                            View
+                          </Link>
                           <DSeparator dVertical></DSeparator>
                           <DDropdown
                             dList={[
@@ -217,6 +303,20 @@ export default function StandardTable(): JSX.Element | null {
                               { id: 'delete', label: 'Delete', type: 'item' },
                             ]}
                             dPlacement="bottom-right"
+                            onItemClick={(action) => {
+                              switch (action) {
+                                case 'edit':
+                                  setParamsOfDeviceModal({ visible: true, device: data });
+                                  break;
+
+                                case 'delete':
+                                  setParamsOfDeleteModal({ visible: true, device: data });
+                                  break;
+
+                                default:
+                                  break;
+                              }
+                            }}
                           >
                             <DButton dType="link">More</DButton>
                           </DDropdown>

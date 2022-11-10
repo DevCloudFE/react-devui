@@ -66,7 +66,7 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
             {t('components.table-filter.Reset')}
           </DButton>
           {aFilterList && (
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center" style={{ width: 120 }}>
               <DButton
                 className="me-2"
                 dType="link"
@@ -90,7 +90,9 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
           {aFilterList.map(({ label, node }) => (
             <div key={label} className="app-table-filter__filter">
               <label className="app-table-filter__filter-label">
-                <div style={{ width: labelWidth }}>{label}:</div>
+                <div className="app-colon" style={{ width: labelWidth }}>
+                  {label}
+                </div>
               </label>
               {React.cloneElement(node, {
                 style: { ...node.props.style, maxWidth: `calc(100% - ${isNumber(labelWidth) ? labelWidth + 'px' : labelWidth})` },

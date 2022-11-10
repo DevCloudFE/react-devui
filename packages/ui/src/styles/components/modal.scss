@@ -54,6 +54,16 @@
     font-size: 1.75em;
   }
 
+  @include e(title) {
+    margin-bottom: 4px;
+    font-size: 1.1em;
+    font-weight: 500;
+  }
+
+  @include e(description) {
+    color: var(--#{$rd-prefix}text-color-sub);
+  }
+
   @include e(type-wrapper) {
     flex-grow: 1;
   }

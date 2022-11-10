@@ -70,28 +70,21 @@
       }
     },
     "title": {
-      "login": "Login",
-      "home": "Home",
-      "dashboard": {
-        "": "Dashboard",
-        "amap": "AMap",
-        "echarts": "ECharts"
-      },
-      "list": {
-        "": "List",
-        "standard-table": "Standard Table"
-      },
-      "test": {
-        "": "Test",
-        "acl": "ACL",
-        "http": "Http"
-      },
-      "exception": {
-        "": "Exception",
-        "403": "403",
-        "404": "404",
-        "500": "500"
-      }
+      "Home": "Home",
+      "Login": "Login",
+      "Dashboard": "Dashboard",
+      "AMap": "AMap",
+      "ECharts": "ECharts",
+      "List": "List",
+      "Standard Table": "Standard Table",
+      "Device Detail": "Device Detail",
+      "Test": "Test",
+      "ACL": "ACL",
+      "Http": "Http",
+      "Exception": "Exception",
+      "403": "403",
+      "404": "404",
+      "500": "500"
     }
   },
   "zh-CN": {
@@ -165,28 +158,21 @@
       }
     },
     "title": {
-      "login": "登录",
-      "home": "首页",
-      "dashboard": {
-        "": "仪表盘",
-        "amap": "高德地图",
-        "echarts": "ECharts"
-      },
-      "list": {
-        "": "列表",
-        "standard-table": "标准表格"
-      },
-      "test": {
-        "": "测试",
-        "acl": "ACL",
-        "http": "Http"
-      },
-      "exception": {
-        "": "异常页",
-        "403": "403",
-        "404": "404",
-        "500": "500"
-      }
+      "Home": "首页",
+      "Login": "登录",
+      "Dashboard": "仪表盘",
+      "AMap": "高德地图",
+      "ECharts": "ECharts",
+      "List": "列表",
+      "Standard Table": "标准表格",
+      "Device Detail": "设备详情",
+      "Test": "测试",
+      "ACL": "ACL",
+      "Http": "Http",
+      "Exception": "异常页",
+      "403": "403",
+      "404": "404",
+      "500": "500"
     }
   }
 }

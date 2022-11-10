@@ -16,13 +16,14 @@ import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
 import AppLoginRoute from './routes/login/Login';
 
-const AppAMapRoute = React.lazy(() => import('./routes/dashboard/amap/AMap'));
-const AppEChartsRoute = React.lazy(() => import('./routes/dashboard/echarts/ECharts'));
-
-const AppStandardTableRoute = React.lazy(() => import('./routes/list/standard-table/StandardTable'));
-
-const AppACLRoute = React.lazy(() => import('./routes/test/acl/ACL'));
-const AppHttpRoute = React.lazy(() => import('./routes/test/http/Http'));
+const ROUTES = {
+  '/dashboard/amap': React.lazy(() => import('./routes/dashboard/amap/AMap')),
+  '/dashboard/echarts': React.lazy(() => import('./routes/dashboard/echarts/ECharts')),
+  '/list/standard-table': React.lazy(() => import('./routes/list/standard-table/StandardTable')),
+  '/list/standard-table/:id': React.lazy(() => import('./routes/list/standard-table/detail/Detail')),
+  '/test/acl': React.lazy(() => import('./routes/test/acl/ACL')),
+  '/test/http': React.lazy(() => import('./routes/test/http/Http')),
+};
 
 export interface RouteStateContextData {
   matchRoutes: RouteMatch<string, RouteItem>[] | null;
@@ -35,13 +36,6 @@ export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
   title?: string;
-  breadcrumb?:
-    | {
-        title?: string;
-        link?: boolean;
-        separator?: React.ReactNode;
-      }
-    | false;
   acl?:
     | {
         control: Control | Control[];
@@ -76,17 +70,13 @@ export function AppRoutes() {
         path: LOGIN_PATH,
         element: <AppLoginRoute />,
         data: {
-          title: t('login', { ns: 'title' }),
+          title: t('Login', { ns: 'title' }),
         },
       },
       {
         path: '/',
         element: <AppLayout />,
         data: {
-          breadcrumb: {
-            title: t('home', { ns: 'title' }),
-            link: true,
-          },
           canActivate: [tokenGuard],
           canActivateChild: [tokenGuard],
         },
@@ -97,41 +87,26 @@ export function AppRoutes() {
           },
           {
             path: 'dashboard',
-            data: {
-              breadcrumb: {
-                title: t('dashboard.', { ns: 'title' }),
-              },
-            },
             children: [
               {
+                index: true,
+                element: <Navigate to="/exception/404" replace />,
+              },
+              {
                 path: 'amap',
-                element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppAMapRoute />
-                  </React.Suspense>
-                ),
+                element: <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/dashboard/amap'])}</React.Suspense>,
                 data: {
-                  title: t('dashboard.amap', { ns: 'title' }),
-                  breadcrumb: {
-                    link: true,
-                  },
-                  acl: ROUTES_ACL.dashboard.amap,
+                  title: t('AMap', { ns: 'title' }),
+                  acl: ROUTES_ACL['/dashboard/amap'],
                   canActivate: [ACLGuard],
                 },
               },
               {
                 path: 'echarts',
-                element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppEChartsRoute />
-                  </React.Suspense>
-                ),
+                element: <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/dashboard/echarts'])}</React.Suspense>,
                 data: {
-                  title: t('dashboard.echarts', { ns: 'title' }),
-                  breadcrumb: {
-                    link: true,
-                  },
-                  acl: ROUTES_ACL.dashboard.echarts,
+                  title: t('ECharts', { ns: 'title' }),
+                  acl: ROUTES_ACL['/dashboard/echarts'],
                   canActivate: [ACLGuard],
                 },
               },
@@ -139,25 +114,28 @@ export function AppRoutes() {
           },
           {
             path: 'list',
-            data: {
-              breadcrumb: {
-                title: t('list.', { ns: 'title' }),
-              },
-            },
             children: [
               {
+                index: true,
+                element: <Navigate to="/exception/404" replace />,
+              },
+              {
                 path: 'standard-table',
+                element: <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/list/standard-table'])}</React.Suspense>,
+                data: {
+                  title: t('Standard Table', { ns: 'title' }),
+                  acl: ROUTES_ACL['/list/standard-table'],
+                  canActivate: [ACLGuard],
+                },
+              },
+              {
+                path: 'standard-table/:id',
                 element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppStandardTableRoute />
-                  </React.Suspense>
+                  <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/list/standard-table/:id'])}</React.Suspense>
                 ),
                 data: {
-                  title: t('list.standard-table', { ns: 'title' }),
-                  breadcrumb: {
-                    link: true,
-                  },
-                  acl: ROUTES_ACL.list['standard-table'],
+                  title: t('Device Detail', { ns: 'title' }),
+                  acl: ROUTES_ACL['/list/standard-table/:id'],
                   canActivate: [ACLGuard],
                 },
               },
@@ -165,35 +143,26 @@ export function AppRoutes() {
           },
           {
             path: 'test',
-            data: {
-              breadcrumb: {
-                title: t('test.', { ns: 'title' }),
-              },
-            },
             children: [
               {
+                index: true,
+                element: <Navigate to="/exception/404" replace />,
+              },
+              {
                 path: 'acl',
-                element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppACLRoute />
-                  </React.Suspense>
-                ),
+                element: <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/test/acl'])}</React.Suspense>,
                 data: {
-                  title: t('test.acl', { ns: 'title' }),
-                  acl: ROUTES_ACL.test.acl,
+                  title: t('ACL', { ns: 'title' }),
+                  acl: ROUTES_ACL['/test/acl'],
                   canActivate: [ACLGuard],
                 },
               },
               {
                 path: 'http',
-                element: (
-                  <React.Suspense fallback={<AppFCPLoader />}>
-                    <AppHttpRoute />
-                  </React.Suspense>
-                ),
+                element: <React.Suspense fallback={<AppFCPLoader />}>{React.createElement(ROUTES['/test/http'])}</React.Suspense>,
                 data: {
-                  title: t('test.http', { ns: 'title' }),
-                  acl: ROUTES_ACL.test.http,
+                  title: t('Http', { ns: 'title' }),
+                  acl: ROUTES_ACL['/test/http'],
                   canActivate: [ACLGuard],
                 },
               },
