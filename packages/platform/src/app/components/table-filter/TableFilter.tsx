@@ -66,7 +66,7 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
             {t('components.table-filter.Reset')}
           </DButton>
           {aFilterList && (
-            <div className="d-flex align-items-center" style={{ width: 120 }}>
+            <div className="d-flex align-items-center">
               <DButton
                 className="me-2"
                 dType="link"
