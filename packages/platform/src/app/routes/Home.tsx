@@ -1,7 +1,7 @@
 import { isUndefined } from 'lodash';
 import { Navigate } from 'react-router-dom';
 
-import { useMenu } from '../../core';
+import { useMenu } from '../core';
 
 export default function Home(): JSX.Element | null {
   const [{ firstCanActive }] = useMenu();

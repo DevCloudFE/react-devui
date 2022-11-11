@@ -12,8 +12,8 @@ import { catchError, EMPTY, from, map, Subject, takeUntil, throwError } from 'rx
 import { useEventCallback, useUnmount } from '@react-devui/hooks';
 import { ToastService } from '@react-devui/ui';
 
+import { environment } from '../../../environments';
 import { LOGIN_PATH, PREV_ROUTE_KEY } from '../../config/other';
-import { environment } from '../../environments';
 import { TOKEN } from '../token';
 import './mock';
 

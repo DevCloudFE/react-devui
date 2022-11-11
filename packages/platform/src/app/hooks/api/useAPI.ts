@@ -4,7 +4,7 @@ import type { StandardFields, StandardGetParams, StandardListRes } from './types
 
 import { useEventCallback } from '@react-devui/hooks';
 
-import { useHttp } from '../../../core';
+import { useHttp } from '../../core';
 
 export function useAPI(url: string) {
   const http = useHttp();

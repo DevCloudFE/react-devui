@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { useStorage } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { STORAGE_KEY } from '../../../config/storage';
+import { STORAGE_KEY } from '../../config/storage';
 import { AppMapInfoWindow } from './MapInfoWindow';
 import { AppMapMarker } from './MapMarker';
 import { AppMapMarkerCluster } from './MapMarkerCluster';

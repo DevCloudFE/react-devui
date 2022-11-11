@@ -2,8 +2,8 @@ import { isNull } from 'lodash';
 
 import { useStorage } from '@react-devui/hooks';
 
-import { base64url } from '../../app/utils';
-import { environment } from '../../environments';
+import { environment } from '../../../environments';
+import { base64url } from '../../utils';
 
 export const TOKEN_KEY = 'token';
 export const TOKEN_TYPE: 'JWT' | 'CUSTOM' = 'JWT';

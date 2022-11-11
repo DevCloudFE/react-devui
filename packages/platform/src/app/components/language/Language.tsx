@@ -8,7 +8,7 @@ import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon } from '@react-devui/icons';
 import { DDropdown } from '@react-devui/ui';
 
-import { STORAGE_KEY } from '../../../config/storage';
+import { STORAGE_KEY } from '../../config/storage';
 
 export function AppLanguage(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);

@@ -8,8 +8,8 @@ import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { STORAGE_KEY } from '../../../../config/storage';
 import { AppLanguage } from '../../../components';
+import { STORAGE_KEY } from '../../../config/storage';
 import styles from './Header.module.scss';
 import { AppNotification } from './notification/Notification';
 import { AppUser } from './user/User';

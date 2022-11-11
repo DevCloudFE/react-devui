@@ -1,4 +1,4 @@
-import type { Control, ControlMode } from '../core/useACL';
+import type { Control, ControlMode } from './core/useACL';
 import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
 import { nth } from 'lodash';
@@ -6,10 +6,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
-import { ROUTES_ACL } from '../config/acl';
-import { LOGIN_PATH } from '../config/other';
 import { useACLGuard, useTokenGuard } from './Routes.guard';
 import { AppFCPLoader } from './components';
+import { ROUTES_ACL } from './config/acl';
+import { LOGIN_PATH } from './config/other';
 import { usePageTitle } from './hooks';
 import AppHomeRoute from './routes/Home';
 import AppExceptionRoute from './routes/exception/Exception';

@@ -1,13 +1,13 @@
-import type { DeviceDoc } from '../../app/hooks/api/types';
+import type { DeviceDoc } from '../../hooks/api/types';
 import type { UserState, NotificationItem } from '../state';
 import type { JWTToken, JWTTokenPayload } from '../token';
 
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-import { base64url } from '../../app/utils';
+import { environment } from '../../../environments';
 import { ROUTES_ACL } from '../../config/acl';
-import { environment } from '../../environments';
+import { base64url } from '../../utils';
 import { TOKEN } from '../token';
 
 if (environment.http.mock) {

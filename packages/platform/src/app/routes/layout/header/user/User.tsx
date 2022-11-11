@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@react-devui/icons';
 import { DAvatar, DDropdown } from '@react-devui/ui';
 
-import { LOGIN_PATH } from '../../../../../config/other';
-import { useUserState, TOKEN } from '../../../../../core';
+import { LOGIN_PATH } from '../../../../config/other';
+import { useUserState, TOKEN } from '../../../../core';
 
 export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const [user] = useUserState();

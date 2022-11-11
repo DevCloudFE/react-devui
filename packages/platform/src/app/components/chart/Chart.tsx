@@ -7,7 +7,7 @@ import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useAsync, useResize, useStorage } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { STORAGE_KEY } from '../../../config/storage';
+import { STORAGE_KEY } from '../../config/storage';
 import chartTheme from './theme.json';
 
 echarts.registerTheme('light', chartTheme.light);

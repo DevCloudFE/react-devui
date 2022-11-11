@@ -1,7 +1,7 @@
 import { DDrawer, DMenu } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
-import { useMenu } from '../../../../core';
+import { useMenu } from '../../../core';
 import styles from './Sidebar.module.scss';
 
 export interface AppSidebarProps {

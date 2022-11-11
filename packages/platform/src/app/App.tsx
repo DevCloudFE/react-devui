@@ -1,4 +1,4 @@
-import type { UserState } from '../core/state';
+import type { UserState } from './core/state';
 import type { DRootProps } from '@react-devui/ui';
 import type { DLang } from '@react-devui/ui/utils/types';
 
@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAsync, useMount, useStorage } from '@react-devui/hooks';
 import { DRoot } from '@react-devui/ui';
 
-import { LOGIN_PATH } from '../config/other';
-import { STORAGE_KEY } from '../config/storage';
-import { useHttp, useInit } from '../core';
 import { AppRoutes } from './Routes';
+import { LOGIN_PATH } from './config/other';
+import { STORAGE_KEY } from './config/storage';
+import { useHttp, useInit } from './core';
 
 export type AppTheme = 'light' | 'dark';
 
