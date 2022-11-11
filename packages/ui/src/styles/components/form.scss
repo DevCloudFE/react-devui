@@ -75,7 +75,7 @@
     align-items: center;
     justify-content: flex-end;
     min-height: var(--#{$rd-prefix}size);
-    padding-right: var(--#{$rd-prefix}margin-size);
+    padding-right: 8px;
 
     @include m(required) {
       &::before {

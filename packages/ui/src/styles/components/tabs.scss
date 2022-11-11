@@ -276,15 +276,6 @@
     @include tabs-vertical(right);
   }
 
-  @include m(larger) {
-    --#{$rd-prefix}tabs-tab-size: 52px;
-    --#{$rd-prefix}tabs-slider-tab-size: 44px;
-    --#{$rd-prefix}tabs-tab-gap: 36px;
-    --#{$rd-prefix}tabs-tab-padding: 20px;
-
-    @include font-size(1.15rem);
-  }
-
   @include m(smaller) {
     --#{$rd-prefix}tabs-tab-size: 36px;
     --#{$rd-prefix}tabs-slider-tab-size: 32px;
@@ -292,6 +283,15 @@
     --#{$rd-prefix}tabs-tab-padding: 12px;
 
     @include font-size(0.9rem);
+  }
+
+  @include m(larger) {
+    --#{$rd-prefix}tabs-tab-size: 52px;
+    --#{$rd-prefix}tabs-slider-tab-size: 44px;
+    --#{$rd-prefix}tabs-tab-gap: 36px;
+    --#{$rd-prefix}tabs-tab-padding: 20px;
+
+    @include font-size(1.15rem);
   }
 
   @include m(slider) {
