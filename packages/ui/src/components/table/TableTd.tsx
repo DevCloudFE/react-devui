@@ -25,7 +25,7 @@ export function DTableTd(props: DTableTdProps): JSX.Element | null {
     dFixed,
     dAlign = 'left',
     dEllipsis = false,
-    dNowrap = true,
+    dNowrap = false,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
