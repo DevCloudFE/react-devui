@@ -28,7 +28,7 @@ export default function StandardTable(): JSX.Element | null {
   const { t } = useTranslation();
   const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
-  const [deviceQuery, setDeviceQuery] = useQueryParams<DeviceQueryParams>({
+  const [initDeviceQuery, saveDeviceQuery] = useQueryParams<DeviceQueryParams>({
     keyword: '',
     sort: '-id',
     model: null,
@@ -36,6 +36,7 @@ export default function StandardTable(): JSX.Element | null {
     page: 1,
     pageSize: 10,
   });
+  const [deviceQuery, setDeviceQuery] = useImmer(initDeviceQuery);
   const [deviceTable, setDeviceTable] = useImmer({
     loading: true,
     list: [] as DeviceDoc[],
@@ -73,6 +74,8 @@ export default function StandardTable(): JSX.Element | null {
 
   const [updateDeviceTable, setUpdateDeviceTable] = useState(0);
   useEffect(() => {
+    saveDeviceQuery(deviceQuery);
+
     const apiQuery: any = {
       page: deviceQuery.page,
       page_size: deviceQuery.pageSize,
