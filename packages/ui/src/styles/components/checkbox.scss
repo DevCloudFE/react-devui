@@ -36,7 +36,15 @@
       }
 
       &::after {
-        background-color: var(--#{$rd-prefix}color-disabled);
+        background-color: var(--#{$rd-prefix}background-color-disabled);
+        opacity: 1;
+      }
+    }
+
+    @include e(tick) {
+      &::after {
+        border-bottom-color: var(--#{$rd-prefix}color-disabled);
+        border-left-color: var(--#{$rd-prefix}color-disabled);
       }
     }
   }

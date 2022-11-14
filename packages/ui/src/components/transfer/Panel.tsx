@@ -79,10 +79,9 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
           onModelChange={(checked) => {
             onAllSelected(checked);
           }}
-        ></DCheckbox>
-        <div className={`${dPrefix}transfer__header-statistic`}>
+        >
           {dSelectedNum}/{dList.length}
-        </div>
+        </DCheckbox>
         {checkNodeExist(dTitle) && <div className={`${dPrefix}transfer__header-title`}>{dTitle}</div>}
       </div>
       {dSearchable && (

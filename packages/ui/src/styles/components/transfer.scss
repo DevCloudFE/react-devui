@@ -52,10 +52,6 @@ $transfer-option-height: 32px;
     border-bottom: 1px solid var(--#{$rd-prefix}color-divider);
   }
 
-  @include e(header-statistic) {
-    margin-left: 8px;
-  }
-
   @include e(header-title) {
     @include utils-ellipsis;
 
