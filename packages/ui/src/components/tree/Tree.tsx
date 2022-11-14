@@ -180,6 +180,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
         renderFocusVisible(
           <DPanel
             {...restProps}
+            ref={comboboxKeyDownRef}
             className={getClassName(restProps.className, {
               'is-disabled': disabled,
             })}
