@@ -100,7 +100,9 @@ export default function Detail(): JSX.Element | null {
       </AppRouteHeader>
       <div className={styles['app-detail']}>
         {isUndefined(device) ? (
-          <DSpinner dVisible dAlone></DSpinner>
+          <div className="d-flex justify-content-center">
+            <DSpinner dVisible dAlone></DSpinner>
+          </div>
         ) : (
           <>
             <DCard>

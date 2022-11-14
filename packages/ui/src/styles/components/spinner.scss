@@ -30,6 +30,7 @@
   @include m(alone) {
     position: relative;
     inset: unset;
+    display: inline-flex;
     background-color: transparent;
   }
 
