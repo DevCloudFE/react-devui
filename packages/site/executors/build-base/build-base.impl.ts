@@ -320,7 +320,9 @@ class GenerateSite {
       mdRouteTmp = mdRouteTmp.replace(
         langRegExp,
         new TextEncoder()
-          .encode(readFileSync(path.join(ROUTES_DIR, ...paths, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md').toString())
+          .encode(
+            readFileSync(path.join(ROUTES_DIR, ...paths, routeName + (lang === 'en-US' ? '' : `.${lang}`)) + '.md', { encoding: 'utf8' })
+          )
           .join()
       );
     });
@@ -381,9 +383,9 @@ class GenerateSite {
   updateTmp() {
     this.resources = readJsonSync(path.join(__dirname, 'files', 'resources.json'));
     this.menuGroups = readJsonSync(path.join(__dirname, 'files', 'menu-groups.json'));
-    this.routesTmp = readFileSync(path.join(__dirname, 'files', 'routes.txt')).toString();
-    this.componentRouteTmp = readFileSync(path.join(__dirname, 'files', 'ComponentRoute.txt')).toString();
-    this.mdRouteTmp = readFileSync(path.join(__dirname, 'files', 'MdRoute.txt')).toString();
+    this.routesTmp = readFileSync(path.join(__dirname, 'files', 'routes.txt'), { encoding: 'utf8' });
+    this.componentRouteTmp = readFileSync(path.join(__dirname, 'files', 'ComponentRoute.txt'), { encoding: 'utf8' });
+    this.mdRouteTmp = readFileSync(path.join(__dirname, 'files', 'MdRoute.txt'), { encoding: 'utf8' });
 
     this.menuConfig = [];
     this.menuGroups.forEach((item) => {

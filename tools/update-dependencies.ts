@@ -54,7 +54,7 @@ Object.entries(workspace.projects).forEach(([projectName, projectPath]) => {
                   if (statSync(filePath).isDirectory()) {
                     reduceDir(filePath, [...paths, file]);
                   } else if (tsFiles.includes(filePath)) {
-                    ts.createSourceFile(file, readFileSync(filePath).toString(), ts.ScriptTarget.Latest)
+                    ts.createSourceFile(file, readFileSync(filePath, { encoding: 'utf8' }), ts.ScriptTarget.Latest)
                       .getChildren()
                       .forEach((node) => {
                         node.getChildren().forEach((node) => {
@@ -95,7 +95,7 @@ Object.entries(workspace.projects).forEach(([projectName, projectPath]) => {
             if (statSync(filePath).isDirectory()) {
               reduceDir(filePath, [...paths, file]);
             } else if (file.endsWith('.scss')) {
-              const content = readFileSync(filePath).toString();
+              const content = readFileSync(filePath, { encoding: 'utf8' });
               if (content.includes('~')) {
                 const importArr = content.match(/(?<=@import ('|")~).+(?=('|"))/g);
                 if (importArr) {

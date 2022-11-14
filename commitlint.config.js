@@ -19,7 +19,7 @@ function parseMessage(message) {
 }
 
 function getScopesRule() {
-  const messages = fs.readFileSync(message, { encoding: 'utf-8' });
+  const messages = fs.readFileSync(message, { encoding: 'utf8' });
   const parsed = parseMessage(messages.split('\n')[0]);
   if (parsed) {
     const { scope } = parsed;
