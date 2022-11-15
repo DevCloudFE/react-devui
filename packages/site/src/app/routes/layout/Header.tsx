@@ -1,4 +1,5 @@
 import type { AppTheme } from '../../App';
+import type { DDropdownItem } from '@react-devui/ui/components/dropdown';
 import type { DLang } from '@react-devui/ui/utils/types';
 
 import { useTranslation } from 'react-i18next';
@@ -6,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { useStorage } from '@react-devui/hooks';
 import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
-import { DMenu } from '@react-devui/ui';
+import { DDropdown, DMenu, DSeparator } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
 export interface AppHeaderProps {
@@ -23,17 +24,6 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
 
   const location = useLocation();
   const activeId = location.pathname.startsWith('/docs') ? 'docs' : location.pathname.startsWith('/components') ? 'components' : null;
-
-  const switchLang =
-    languageStorage.value === 'en-US'
-      ? {
-          label: '切换语言为中文',
-          text: '中 文',
-        }
-      : {
-          label: 'Switch language to English',
-          text: 'English',
-        };
 
   return (
     <header className="app-layout-header">
@@ -81,18 +71,44 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
         dMode="horizontal"
         dActive={activeId}
       ></DMenu>
+      <DSeparator className="d-none d-md-inline-flex" style={{ margin: '16px 12px' }} dVertical />
       <div className="app-layout-header__button-container">
-        <button
-          className="app-layout-header__button app-layout-header__button--text"
-          aria-label={switchLang.label}
-          onClick={() => {
-            const val = languageStorage.value === 'en-US' ? 'zh-CN' : 'en-US';
-            languageStorage.set(val);
-            i18n.changeLanguage(val);
+        <DDropdown
+          dList={(
+            [
+              ['🇨🇳', '简体中文', 'zh-CN'],
+              ['🇺🇸', 'English', 'en-US'],
+            ] as [string, string, DLang][]
+          ).map<DDropdownItem<DLang>>((item) => ({
+            id: item[2],
+            label: (
+              <>
+                <div className="app-layout-header__language-item-region">{item[0]}</div>
+                <span className="app-layout-header__language-item-lng">{item[1]}</span>
+              </>
+            ),
+            type: 'item',
+          }))}
+          onItemClick={(id) => {
+            languageStorage.set(id);
+            i18n.changeLanguage(id);
           }}
         >
-          {switchLang.text}
-        </button>
+          <button
+            className="app-layout-header__button"
+            aria-label={t('Change language')}
+            onClick={() => {
+              const val = languageStorage.value === 'en-US' ? 'zh-CN' : 'en-US';
+              languageStorage.set(val);
+              i18n.changeLanguage(val);
+            }}
+          >
+            <DCustomIcon viewBox="0 0 24 24">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z "></path>
+            </DCustomIcon>
+          </button>
+        </DDropdown>
         <button
           className="app-layout-header__button"
           aria-label={t(themeStorage.value === 'light' ? 'Dark theme' : 'Light theme')}

@@ -40,23 +40,18 @@
     color: var(--#{$rd-prefix}text-color);
     text-decoration: none;
     background-color: transparent;
-    border: 1px solid var(--#{$rd-prefix}color-border);
-    /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    border-radius: 8px;
-    transition: border-color var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
-      background-color var(--#{$rd-prefix}animation-duration-base) linear;
+    border: none;
+    transition: color var(--#{$rd-prefix}animation-duration-base) linear;
 
     @include font-size(1.2rem);
 
     &:hover,
     &:focus {
       color: var(--#{$rd-prefix}color-primary-lighter);
-      background-color: var(--#{$rd-prefix}background-color-primary-hover);
     }
 
     &:active {
       color: var(--#{$rd-prefix}color-primary-darker);
-      background-color: var(--#{$rd-prefix}background-color-primary);
     }
 
     @include m(menu) {
@@ -64,15 +59,12 @@
       margin-right: auto;
       border: none;
     }
+  }
 
-    @include m(text) {
-      padding: 0 11px;
-      background-color: transparent !important;
-      /* stylelint-disable-next-line declaration-property-value-allowed-list */
-      border-radius: 2px;
-
-      @include font-size(1rem);
-    }
+  @include e(language-item-region) {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 1.1em;
   }
 
   @include e(hamburger) {
@@ -88,8 +80,7 @@
       width: 28px;
       height: 2px;
       background-color: var(--#{$rd-prefix}text-color);
-      /* stylelint-disable-next-line declaration-property-value-allowed-list */
-      border-radius: 2px;
+      border-radius: 50%;
       /* stylelint-disable-next-line declaration-property-value-disallowed-list */
       transition: all 300ms linear;
       transform-origin: center;
@@ -131,7 +122,6 @@
   @include e(menu) {
     min-width: unset;
     height: 100%;
-    margin-right: 20px;
 
     &::after {
       content: none;
@@ -237,7 +227,7 @@
     text-decoration: none;
     border: 1px solid var(--#{$rd-prefix}color-border);
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
-    border-radius: 10px;
+    border-radius: 8px;
 
     svg:last-child {
       margin-left: auto;

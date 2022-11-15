@@ -74,8 +74,7 @@ code:not(.hljs) {
   margin: 0 1px;
   font-family: Consolas, Menlo, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   background-color: var(--app-code-background-color);
-  /* stylelint-disable-next-line declaration-property-value-allowed-list */
-  border-radius: 2px;
+  border-radius: var(--#{$rd-prefix}border-radius);
 }
 
 h1 {
@@ -248,8 +247,7 @@ h3 {
       margin-bottom: 12px;
       text-align: center;
       background: var(--#{$rd-prefix}background-color-primary);
-      /* stylelint-disable-next-line declaration-property-value-allowed-list */
-      border-radius: 6px;
+      border-radius: var(--#{$rd-prefix}border-radius);
     }
   }
 
