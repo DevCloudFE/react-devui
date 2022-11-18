@@ -103,9 +103,9 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
       slideEls.forEach((el) => {
         const index = Number((el as HTMLDivElement).dataset['index']);
         if (index < activeIndex) {
-          size += el[dVertical ? 'clientHeight' : 'clientWidth'];
+          size += el[dVertical ? 'offsetHeight' : 'offsetWidth'];
         } else if (index === activeIndex) {
-          slidesRef.current!.style.height = el.clientHeight + 'px';
+          slidesRef.current!.style.height = (el as HTMLDivElement).offsetHeight + 'px';
         }
       });
 
@@ -152,15 +152,15 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
       if (distance > 0) {
         let size = 0;
         for (let index = activeIndex - 1; index >= 0; index--) {
-          size += els[index][dVertical ? 'clientHeight' : 'clientWidth'];
+          size += els[index][dVertical ? 'offsetHeight' : 'offsetWidth'];
         }
         const distanceValue =
           Math.abs(distance) > size
             ? size +
               Math.sin(
-                Math.min((Math.abs(distance) - size) / (els[0][dVertical ? 'clientHeight' : 'clientWidth'] * 3), 1) * (Math.PI / 2)
+                Math.min((Math.abs(distance) - size) / (els[0][dVertical ? 'offsetHeight' : 'offsetWidth'] * 3), 1) * (Math.PI / 2)
               ) *
-                els[0][dVertical ? 'clientHeight' : 'clientWidth']
+                els[0][dVertical ? 'offsetHeight' : 'offsetWidth']
             : distance;
         setDragDistance(distanceValue);
         setDragOpacity({
@@ -168,22 +168,22 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
           value:
             activeIndex === 0
               ? 1
-              : Math.max(1 - Math.abs(distanceValue) / els[activeIndex - 1][dVertical ? 'clientHeight' : 'clientWidth'], 0),
+              : Math.max(1 - Math.abs(distanceValue) / els[activeIndex - 1][dVertical ? 'offsetHeight' : 'offsetWidth'], 0),
         });
       } else {
         let size = 0;
         for (let index = activeIndex + 1; index < dList.length; index++) {
-          size += els[index][dVertical ? 'clientHeight' : 'clientWidth'];
+          size += els[index][dVertical ? 'offsetHeight' : 'offsetWidth'];
         }
         const distanceValue =
           Math.abs(distance) > size
             ? -(
                 size +
                 Math.sin(
-                  Math.min((Math.abs(distance) - size) / (els[dList.length - 1][dVertical ? 'clientHeight' : 'clientWidth'] * 3), 1) *
+                  Math.min((Math.abs(distance) - size) / (els[dList.length - 1][dVertical ? 'offsetHeight' : 'offsetWidth'] * 3), 1) *
                     (Math.PI / 2)
                 ) *
-                  els[dList.length - 1][dVertical ? 'clientHeight' : 'clientWidth']
+                  els[dList.length - 1][dVertical ? 'offsetHeight' : 'offsetWidth']
               )
             : distance;
         setDragDistance(distanceValue);
@@ -192,7 +192,7 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
           value:
             activeIndex === dList.length - 1
               ? 1
-              : Math.min(Math.abs(distanceValue) / els[activeIndex + 1][dVertical ? 'clientHeight' : 'clientWidth'], 1),
+              : Math.min(Math.abs(distanceValue) / els[activeIndex + 1][dVertical ? 'offsetHeight' : 'offsetWidth'], 1),
         });
       }
     }
@@ -210,8 +210,8 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
         let newIndex = activeIndex;
         let size = 0;
         for (let index = activeIndex - 1; index >= 0; index--) {
-          if (Math.abs(dragDistance) > size + els[index][dVertical ? 'clientHeight' : 'clientWidth'] / 2) {
-            size += els[index][dVertical ? 'clientHeight' : 'clientWidth'];
+          if (Math.abs(dragDistance) > size + els[index][dVertical ? 'offsetHeight' : 'offsetWidth'] / 2) {
+            size += els[index][dVertical ? 'offsetHeight' : 'offsetWidth'];
             newIndex = index;
           } else {
             break;
@@ -228,8 +228,8 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
         let newIndex = activeIndex;
         let size = 0;
         for (let index = activeIndex + 1; index < dList.length; index++) {
-          if (Math.abs(dragDistance) > size + els[index][dVertical ? 'clientHeight' : 'clientWidth'] / 2) {
-            size += els[index][dVertical ? 'clientHeight' : 'clientWidth'];
+          if (Math.abs(dragDistance) > size + els[index][dVertical ? 'offsetHeight' : 'offsetWidth'] / 2) {
+            size += els[index][dVertical ? 'offsetHeight' : 'offsetWidth'];
             newIndex = index;
           } else {
             break;

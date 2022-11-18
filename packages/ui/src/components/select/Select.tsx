@@ -8,7 +8,7 @@ import React, { useState, useCallback, useMemo, useRef, useImperativeHandle } fr
 
 import { useEventCallback, useId } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@react-devui/icons';
-import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { findNested, getClassName, getVerticalSidePosition } from '@react-devui/utils';
 
 import { useGeneralContext, useDValue } from '../../hooks';
 import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
@@ -304,8 +304,8 @@ function Select<V extends DId, T extends DSelectItem<V>>(
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (visible && boxRef.current && popupRef.current) {
-      const width = Math.min(boxRef.current.getBoundingClientRect().width, window.innerWidth - WINDOW_SPACE * 2);
-      const { height } = getOriginalSize(popupRef.current);
+      const width = Math.min(boxRef.current.offsetWidth, window.innerWidth - WINDOW_SPACE * 2);
+      const height = popupRef.current.offsetHeight;
       const { top, left, transformOrigin } = getVerticalSidePosition(
         boxRef.current,
         { width, height },

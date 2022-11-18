@@ -5,7 +5,7 @@ import React, { useState, useRef, useImperativeHandle, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEventCallback, useRefExtra } from '@react-devui/hooks';
-import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { checkNodeExist, getClassName, getHorizontalSidePosition, getVerticalSidePosition } from '@react-devui/utils';
 
 import { useMaxIndex } from '../../hooks';
 import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
@@ -98,12 +98,11 @@ function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (isVisible && ulRef.current && liRef.current) {
-      const size = getOriginalSize(ulRef.current);
-      const height = size.height;
+      const height = ulRef.current.offsetHeight;
 
-      let width = size.width;
+      let width = ulRef.current.offsetWidth;
       if (inHorizontalNav) {
-        width = liRef.current.getBoundingClientRect().width - 32;
+        width = liRef.current.offsetWidth - 32;
       }
 
       const { top, left, transformOrigin } = inHorizontalNav

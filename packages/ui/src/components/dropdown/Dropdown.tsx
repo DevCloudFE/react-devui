@@ -5,7 +5,7 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
-import { getClassName, getOriginalSize, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
+import { getClassName, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
@@ -181,7 +181,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   const [arrowPosition, setArrowPosition] = useState<React.CSSProperties>();
   const updatePosition = useEventCallback(() => {
     if (visible && childRef.current && dropdownRef.current) {
-      const { width, height } = getOriginalSize(dropdownRef.current);
+      const [width, height] = [dropdownRef.current.offsetWidth, dropdownRef.current.offsetHeight];
       const { top, left, transformOrigin, arrowPosition } = getVerticalSidePosition(
         childRef.current,
         { width, height },

@@ -1,7 +1,5 @@
 import { isUndefined } from 'lodash';
 
-import { getOriginalSize } from '../getOriginalSize';
-
 export type DPopupPlacement =
   | 'top'
   | 'top-left'
@@ -45,7 +43,7 @@ export function getPopupPosition(
   },
   space?: [number, number, number, number]
 ): { top: number; left: number; placement?: DPopupPlacement } | undefined {
-  const { width, height } = getOriginalSize(popupEl);
+  const [width, height] = [popupEl.offsetWidth, popupEl.offsetHeight];
   const { placement, offset = 10, inWindow = false } = config;
 
   const updatePosition = (position: any) => {

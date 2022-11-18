@@ -90,7 +90,7 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
       dDuring={TTANSITION_DURING_BASE}
       onEnter={() => {
         if (!dAlone && spinnerRef.current && containerRef.current) {
-          containerRef.current.style.height = `${spinnerRef.current.clientHeight}px`;
+          containerRef.current.style.height = `${spinnerRef.current.offsetHeight}px`;
         }
       }}
       dDestroyWhenLeaved

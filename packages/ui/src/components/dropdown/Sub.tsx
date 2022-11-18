@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 import { useEventCallback, useRefExtra } from '@react-devui/hooks';
 import { RightOutlined } from '@react-devui/icons';
-import { checkNodeExist, getClassName, getHorizontalSidePosition, getOriginalSize } from '@react-devui/utils';
+import { checkNodeExist, getClassName, getHorizontalSidePosition } from '@react-devui/utils';
 
 import { TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { DPopup } from '../_popup';
@@ -58,7 +58,7 @@ function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (isVisible && ulRef.current && liRef.current) {
-      const { width, height } = getOriginalSize(ulRef.current);
+      const [width, height] = [ulRef.current.offsetWidth, ulRef.current.offsetHeight];
       const { top, left, transformOrigin } = getHorizontalSidePosition(
         liRef.current,
         { width, height },

@@ -60,7 +60,7 @@ export function DNotification(props: DNotificationProps & { dVisible: boolean })
 
           case 'leave':
             if (panelRef.current) {
-              const { height } = panelRef.current.getBoundingClientRect();
+              const height = panelRef.current.offsetHeight;
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;

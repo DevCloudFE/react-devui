@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 
 import { useAsync, useEvent, useEventCallback, useForceUpdate, useForkRef, useImmer, useRefExtra, useResize } from '@react-devui/hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
-import { checkNodeExist, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { checkNodeExist, getClassName, getVerticalSidePosition } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
 import { useDValue, useMaxIndex } from '../../hooks';
@@ -210,7 +210,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (visible && boxRef.current && popupRef.current) {
-      const { height } = getOriginalSize(popupRef.current);
+      const height = popupRef.current.offsetHeight;
       const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
       const width = Math.min(popupRef.current.scrollWidth, maxWidth);
       const { top, left, transformOrigin } = getVerticalSidePosition(

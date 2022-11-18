@@ -59,7 +59,7 @@ export function DToast(props: DToastProps & { dVisible: boolean }): JSX.Element 
 
           case 'leave':
             if (panelRef.current) {
-              const { height } = panelRef.current.getBoundingClientRect();
+              const height = panelRef.current.offsetHeight;
               transitionStyle = { height, overflow: 'hidden' };
             }
             break;

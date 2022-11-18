@@ -89,7 +89,7 @@ export function DProgress(props: DProgressProps): JSX.Element | null {
           if (progressRef.current) {
             const el = progressRef.current.querySelector(`[data-progress-svg="${uniqueId}"]`);
             if (el) {
-              setLineWidth(el.getBoundingClientRect().width);
+              setLineWidth(el.clientWidth);
             }
           }
         });

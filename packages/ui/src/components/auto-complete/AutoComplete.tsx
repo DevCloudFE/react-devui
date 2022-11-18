@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 
 import { useEvent, useEventCallback, useId, useRefExtra, useResize } from '@react-devui/hooks';
 import { LoadingOutlined } from '@react-devui/icons';
-import { findNested, getClassName, getOriginalSize, getVerticalSidePosition } from '@react-devui/utils';
+import { findNested, getClassName, getVerticalSidePosition } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
 import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
@@ -100,8 +100,8 @@ function AutoComplete<T extends DAutoCompleteItem>(
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (visible && boxRef.current && popupRef.current) {
-      const boxWidth = boxRef.current.getBoundingClientRect().width;
-      const { height } = getOriginalSize(popupRef.current);
+      const boxWidth = boxRef.current.offsetWidth;
+      const height = popupRef.current.offsetHeight;
       const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
       const width = Math.min(Math.max(popupRef.current.scrollWidth, boxWidth), maxWidth);
       const { top, left, transformOrigin } = getVerticalSidePosition(

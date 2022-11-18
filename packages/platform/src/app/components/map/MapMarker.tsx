@@ -37,10 +37,11 @@ export function AppMapMarker(props: AppMapMarkerProps): JSX.Element | null {
                   div.innerHTML = elRef.current.outerHTML;
                   div.style.cssText = 'position:fixed;top:-200vh;left:-200vw;';
                   document.body.appendChild(div);
-                  const rect = div.firstElementChild!.getBoundingClientRect();
+                  const width = (div.firstElementChild as HTMLElement).offsetWidth;
+                  const height = (div.firstElementChild as HTMLElement).offsetHeight;
                   document.body.removeChild(div);
 
-                  return new AMap.Pixel(-(rect.width / 2), -rect.height);
+                  return new AMap.Pixel(-(width / 2), -height);
                 })()
               : isArray(aOptions.offset)
               ? new AMap.Pixel(...aOptions.offset)

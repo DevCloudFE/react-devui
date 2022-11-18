@@ -59,8 +59,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
             ref.current.style.width = 'auto';
             ref.current.style.paddingLeft = getSizeStyle(dOriginalSize.padding?.[3]);
             ref.current.style.paddingRight = getSizeStyle(dOriginalSize.padding?.[1]);
-            const { width } = ref.current.getBoundingClientRect();
-            dataRef.current.width = width;
+            dataRef.current.width = ref.current.offsetWidth;
             ref.current.style.cssText = cssText;
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             ref.current.offsetTop;
@@ -69,8 +68,7 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
             ref.current.style.height = 'auto';
             ref.current.style.paddingTop = getSizeStyle(dOriginalSize.padding?.[0]);
             ref.current.style.paddingBottom = getSizeStyle(dOriginalSize.padding?.[2]);
-            const { height } = ref.current.getBoundingClientRect();
-            dataRef.current.height = height;
+            dataRef.current.height = ref.current.offsetHeight;
             ref.current.style.cssText = cssText;
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             ref.current.offsetTop;

@@ -144,8 +144,8 @@ export const DModal: {
           if (isUndefined(ROOT_DATA.clickEvent) || performance.now() - ROOT_DATA.clickEvent.time > 100) {
             dataRef.current.transformOrigin = undefined;
           } else if (modalContentRef.current) {
-            const left = `${(window.innerWidth - modalContentRef.current.clientWidth) / 2}px`;
-            const top = dTop === 'center' ? `${(window.innerHeight - modalContentRef.current.clientHeight) / 2}px` : topStyle;
+            const left = `${(window.innerWidth - modalContentRef.current.offsetWidth) / 2}px`;
+            const top = dTop === 'center' ? `${(window.innerHeight - modalContentRef.current.offsetHeight) / 2}px` : topStyle;
             dataRef.current.transformOrigin = `calc(${ROOT_DATA.clickEvent.e.clientX}px - ${left}) calc(${ROOT_DATA.clickEvent.e.clientY}px - ${top})`;
           }
         }}
