@@ -60,7 +60,7 @@ export function AppRoute(props: AppRouteProps): JSX.Element | null {
           <li>
             <a
               className="app-component-route__tag-link"
-              href={`https://www.w3.org/WAI/ARIA/apg/patterns/${aria}/`}
+              href={aria.startsWith('http') ? aria : `https://www.w3.org/WAI/ARIA/apg/patterns/${aria}/`}
               target="_blank"
               rel="noreferrer"
             >
