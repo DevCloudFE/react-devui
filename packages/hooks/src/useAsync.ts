@@ -11,9 +11,10 @@ class AsyncInstance {
     }
   }
 
-  setTimeout(handler: TimerHandler, timeout?: number) {
+  setTimeout(handler: TimerHandler, timeout?: number, clearFn?: () => void) {
     const tid = window.setTimeout(handler, timeout);
     const clear = () => {
+      clearFn?.();
       clearTimeout(tid);
     };
     this.clearFns.add(clear);
@@ -21,9 +22,10 @@ class AsyncInstance {
     return clear;
   }
 
-  requestAnimationFrame(...args: Parameters<typeof requestAnimationFrame>) {
-    const tid = requestAnimationFrame(...args);
+  requestAnimationFrame(cb: FrameRequestCallback, clearFn?: () => void) {
+    const tid = requestAnimationFrame(cb);
     const clear = () => {
+      clearFn?.();
       cancelAnimationFrame(tid);
     };
     this.clearFns.add(clear);

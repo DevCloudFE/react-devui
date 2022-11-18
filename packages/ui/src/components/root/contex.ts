@@ -33,7 +33,7 @@ import type { DSelectProps } from '../select';
 import type { DSeparatorProps } from '../separator';
 import type { DSkeletonProps } from '../skeleton';
 import type { DSliderProps } from '../slider';
-import type { DSlidesProps, DSlidesSlideProps } from '../slides';
+import type { DSlidesProps } from '../slides';
 import type { DSpinnerProps } from '../spinner';
 import type { DStepperProps } from '../stepper';
 import type { DSwitchProps } from '../switch';
@@ -115,8 +115,7 @@ export type DComponentConfig = {
   DSeparator: DSeparatorProps;
   DSkeleton: DSkeletonProps;
   DSlider: DSliderProps;
-  DSlides: DSlidesProps;
-  'DSlides.Slide': DSlidesSlideProps;
+  DSlides: DSlidesProps<any, any>;
   DSpinner: DSpinnerProps;
   DStepper: DStepperProps<any>;
   DSwitch: DSwitchProps;

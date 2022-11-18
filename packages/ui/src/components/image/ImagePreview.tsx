@@ -158,7 +158,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
     }
   }, [visible]);
 
-  const listenWindow = visible && isDragging;
+  const listenDragEvent = visible && isDragging;
 
   useEvent<TouchEvent>(
     windowRef,
@@ -197,7 +197,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
       handleMove();
     },
     { passive: false },
-    !listenWindow
+    !listenDragEvent
   );
 
   useEvent<MouseEvent>(
@@ -219,7 +219,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
       handleMove();
     },
     {},
-    !listenWindow
+    !listenDragEvent
   );
 
   useEvent(
@@ -229,7 +229,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
       setIsDragging(false);
     },
     {},
-    !listenWindow
+    !listenDragEvent
   );
 
   return (

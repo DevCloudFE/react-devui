@@ -2,15 +2,6 @@ import { useMemo } from 'react';
 
 const STR = 'abcdefghijklmnopqrstuvwxyz';
 
-function randomString(length: number) {
-  let result = '';
-  for (let i = length; i > 0; --i) {
-    result += STR[Math.floor(Math.random() * STR.length)];
-  }
-  return result;
-}
-const [prefix, suffix] = [randomString(2), randomString(2)];
-
 const ID = [-1];
 export function useId(): string {
   return useMemo(() => {
@@ -25,6 +16,7 @@ export function useId(): string {
     };
     reduce(0);
 
-    return `${prefix}${ID.map((charIndex) => STR[charIndex]).join('')}${suffix}`;
+    return `${useId.PREFIX}${ID.map((charIndex) => STR[charIndex]).join('')}`;
   }, []);
 }
+useId.PREFIX = 'ID';

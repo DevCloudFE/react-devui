@@ -100,7 +100,7 @@ export { DSkeleton } from './skeleton';
 export type { DSliderProps } from './slider';
 export { DSlider } from './slider';
 
-export type { DSlidesProps, DSlidesSlideProps } from './slides';
+export type { DSlidesProps } from './slides';
 export { DSlides } from './slides';
 
 export type { DSpinnerProps } from './spinner';

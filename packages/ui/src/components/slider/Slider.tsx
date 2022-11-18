@@ -259,7 +259,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
     }
   }, [focusDot, _value, thumbPoint]);
 
-  const listenWindow = !isNull(draggableDot) || !isNull(thumbPoint);
+  const listenDragEvent = !isNull(draggableDot) || !isNull(thumbPoint);
 
   useEvent<TouchEvent>(
     windowRef,
@@ -277,7 +277,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     },
     { passive: false },
-    !listenWindow
+    !listenDragEvent
   );
   useEvent<MouseEvent>(
     windowRef,
@@ -295,7 +295,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       }
     },
     {},
-    !listenWindow
+    !listenDragEvent
   );
   useEvent(
     windowRef,
@@ -305,7 +305,7 @@ export function DSlider(props: DSliderProps): JSX.Element | null {
       setThumbPoint(null);
     },
     {},
-    !listenWindow
+    !listenDragEvent
   );
 
   const marks = (() => {

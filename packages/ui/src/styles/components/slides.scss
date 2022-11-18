@@ -1,26 +1,149 @@
 @include b(slides) {
-  --swiper-theme-color: var(--#{$rd-prefix}color-primary);
+  position: relative;
+  overflow: hidden;
+  transition: height var(--#{$rd-prefix}animation-duration-base) linear;
 
-  .swiper-button-prev {
-    top: 50%;
-    right: unset;
-    bottom: unset;
-    left: 12px;
-    transform: translateY(-50%);
+  @include m(vertical) {
+    @include e(container) {
+      flex-direction: column;
+    }
+
+    @include e(arrow) {
+      @include m(prev) {
+        top: 12px;
+        right: unset;
+        bottom: unset;
+        left: 50%;
+        transform: translate(-50%, 0) rotate(90deg);
+
+        @include when(hidden) {
+          transform: translate(-50%, -50%) rotate(90deg);
+        }
+      }
+
+      @include m(next) {
+        top: unset;
+        right: unset;
+        bottom: 12px;
+        left: 50%;
+        transform: translate(-50%, 0) rotate(90deg);
+
+        @include when(hidden) {
+          transform: translate(-50%, 50%) rotate(90deg);
+        }
+      }
+    }
+
+    @include e(pagination) {
+      right: 10px;
+      bottom: unset;
+      flex-direction: column;
+      width: unset;
+      height: 100%;
+
+      @include when(hidden) {
+        transform: translate(100%, 0);
+      }
+
+      @include m(dynamic) {
+        top: calc(50% - 40px);
+        left: unset;
+        width: unset;
+        height: 80px;
+      }
+    }
+
+    @include e(pagination-radio) {
+      margin: 4px 0;
+    }
   }
 
-  .swiper-button-next {
-    top: 50%;
-    right: 12px;
-    bottom: unset;
-    left: unset;
-    transform: translateY(-50%);
+  @include m(fade) {
+    @include e(slide) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity var(--#{$rd-prefix}animation-duration-base) linear;
+    }
   }
 
-  .swiper-button-prev,
-  .swiper-button-next {
+  @include e(container) {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    transition: transform var(--#{$rd-prefix}animation-duration-base) linear;
+  }
+
+  @include e(slide) {
+    flex: 0 0 100%;
+    margin-bottom: auto;
+  }
+
+  @include e(pagination) {
+    position: absolute;
+    bottom: 12px;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity var(--#{$rd-prefix}animation-duration-base) linear, transform var(--#{$rd-prefix}animation-duration-base) linear;
+
+    @include when(hidden) {
+      opacity: 0;
+      transform: translate(0, 100%);
+    }
+
+    @include m(dynamic) {
+      left: calc(50% - 40px);
+      justify-content: flex-start;
+      width: 80px;
+    }
+  }
+
+  @include e(pagination-radio) {
+    position: relative;
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    pointer-events: all;
+    cursor: pointer;
+    background: var(--#{$rd-prefix}background-color-actions-mask);
+    border-radius: 50%;
+    transition: transform var(--#{$rd-prefix}animation-duration-base) linear, left var(--#{$rd-prefix}animation-duration-base) linear,
+      top var(--#{$rd-prefix}animation-duration-base) linear;
+    appearance: none;
+
+    @include when(checked) {
+      background: var(--#{$rd-prefix}color-primary);
+    }
+
+    @include m(prev-1) {
+      transform: scale(0.66);
+    }
+
+    @include m(prev-2) {
+      transform: scale(0.33);
+    }
+
+    @include m(next-1) {
+      transform: scale(0.66);
+    }
+
+    @include m(next-2) {
+      transform: scale(0.33);
+    }
+  }
+
+  @include e(arrow) {
     @include utils-button;
 
+    position: absolute;
+    z-index: 5;
     width: 36px;
     height: 36px;
     padding: 0;
@@ -33,33 +156,40 @@
     border-radius: 50%;
     box-shadow: 0 1px 4px 0 var(--#{$rd-prefix}shadow-color);
     transition: opacity var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
-      background-color var(--#{$rd-prefix}animation-duration-base) linear;
+      background-color var(--#{$rd-prefix}animation-duration-base) linear, transform var(--#{$rd-prefix}animation-duration-base) linear;
 
-    &::after {
-      content: none;
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
     }
 
-    &:hover {
+    &:not(:disabled):hover {
       color: var(--#{$rd-prefix}color-primary);
       background-color: var(--#{$rd-prefix}background-color-gray);
     }
-  }
 
-  @include m(vertical) {
-    .swiper-button-prev {
-      top: 12px;
-      right: unset;
-      bottom: unset;
-      left: 50%;
-      transform: translateX(-50%) rotate(90deg);
+    @include when(hidden) {
+      opacity: 0;
     }
 
-    .swiper-button-next {
-      top: unset;
-      right: unset;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%) rotate(90deg);
+    @include m(prev) {
+      top: 50%;
+      left: 16px;
+      transform: translate(0, -50%);
+
+      @include when(hidden) {
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @include m(next) {
+      top: 50%;
+      right: 16px;
+      transform: translate(0, -50%);
+
+      @include when(hidden) {
+        transform: translate(50%, -50%);
+      }
     }
   }
 }

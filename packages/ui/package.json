@@ -30,8 +30,7 @@
     "immer": "^9.0.16",
     "lodash": "^4.17.21",
     "rfs": "^9.0.6",
-    "rxjs": "^7.5.7",
-    "swiper": "^8.4.4"
+    "rxjs": "^7.5.7"
   },
   "peerDependencies": {
     "dayjs": "^1.11.6",
