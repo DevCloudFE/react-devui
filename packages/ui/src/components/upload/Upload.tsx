@@ -63,8 +63,6 @@ export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement
   onRemove?: (file: DUploadFile) => void;
 }
 
-const UID_KEY = Symbol();
-
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload' as const });
 function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element | null {
   const {
@@ -120,59 +118,57 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
           const xhr = new XMLHttpRequest();
 
           let uid: DId = getUID();
-          const update = (obj: any, add: boolean) => {
-            if (add) {
-              const fileURL = URL.createObjectURL(file);
-              dataRef.current.fileURLs.push(fileURL);
-              const addFile = {
-                uid,
-                [UID_KEY]: uid,
-                url: fileURL,
-                thumbUrl: file.type.startsWith('image') ? fileURL : undefined,
-                name: file.name,
-                originFile: file,
-                response: xhr.response,
-                ...obj,
-              };
+          const add = (obj: any) => {
+            const fileURL = URL.createObjectURL(file);
+            dataRef.current.fileURLs.push(fileURL);
+            const addFile = {
+              uid,
+              url: fileURL,
+              thumbUrl: file.type.startsWith('image') ? fileURL : undefined,
+              name: file.name,
+              originFile: file,
+              response: xhr.response,
+              ...obj,
+            };
 
-              if (isNumber(dMax) && fileList.length + addList.length >= dMax) {
-                if (dMax === 1) {
-                  uid = addFile.uid = addFile[UID_KEY] = fileList[0].uid;
-                  changeFileList([addFile]);
-                  onModelChange?.([addFile], {
-                    type: 'update',
-                    files: [addFile],
-                  });
-                  return;
-                }
-                return true;
-              }
-
-              addList.push(addFile);
-            } else {
-              let hasChange = true;
-              const newList = changeFileList((draft) => {
-                const index = draft.findIndex((f) => f[UID_KEY] === uid);
-                if (index !== -1) {
-                  draft[index] = Object.assign(draft[index], { response: xhr.response, ...obj });
-                } else {
-                  hasChange = false;
-                }
-              });
-              if (hasChange) {
-                onModelChange?.(newList, {
+            if (isNumber(dMax) && fileList.length + addList.length >= dMax) {
+              if (dMax === 1) {
+                uid = addFile.uid = fileList[0].uid;
+                changeFileList([addFile]);
+                onModelChange?.([addFile], {
                   type: 'update',
-                  files: [newList.find((f) => f[UID_KEY] === uid)!],
+                  files: [addFile],
                 });
+                return;
               }
+              return true;
+            }
+
+            addList.push(addFile);
+          };
+          const update = (obj: any) => {
+            let hasChange = true;
+            const newList = changeFileList((draft) => {
+              const index = draft.findIndex((f) => f.uid === uid);
+              if (index !== -1) {
+                draft[index] = Object.assign(draft[index], { response: xhr.response, ...obj });
+              } else {
+                hasChange = false;
+              }
+            });
+            if (hasChange) {
+              onModelChange?.(newList, {
+                type: 'update',
+                files: [newList.find((f) => f.uid === uid)!],
+              });
             }
           };
 
           const upload = (condition: boolean | string | Blob) => {
             if (condition === false) {
-              update({ status: null }, true);
+              add({ status: null });
             } else {
-              const abort = update({ status: 'progress', percent: 0 }, true);
+              const abort = add({ status: 'progress', percent: 0 });
               if (abort) {
                 return;
               }
@@ -180,14 +176,14 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
               xhr.upload.addEventListener('progress', (e) => {
                 if (e.lengthComputable) {
                   const percent = Math.round((e.loaded * 100) / e.total);
-                  update({ status: 'progress', percent }, false);
+                  update({ status: 'progress', percent });
                 }
               });
               xhr.addEventListener('error', () => {
-                update({ status: 'error', percent: undefined }, false);
+                update({ status: 'error', percent: undefined });
               });
               xhr.addEventListener('load', () => {
-                update({ status: xhr.status >= 200 && xhr.status < 300 ? 'load' : 'error', percent: undefined }, false);
+                update({ status: xhr.status >= 200 && xhr.status < 300 ? 'load' : 'error', percent: undefined });
               });
 
               const {
@@ -228,6 +224,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
           }
         }
       }
+
       if (addList.length > 0) {
         const newList = changeFileList((draft) => draft.concat(addList));
         onModelChange?.(newList, {
