@@ -63,8 +63,11 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
   //#endregion
 
   const dataRef = useRef<{
+    startDragTime: number;
     clearTid?: () => void;
-  }>({});
+  }>({
+    startDragTime: 0,
+  });
 
   const async = useAsync();
 
@@ -214,7 +217,13 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
             break;
           }
         }
-        changeActiveId(dList[newIndex].id);
+        if (newIndex === activeIndex) {
+          if (performance.now() - dataRef.current.startDragTime < 300 && Math.abs(dragDistance) > 30) {
+            changeActiveId(dList[Math.max(newIndex - 1, 0)].id);
+          }
+        } else {
+          changeActiveId(dList[newIndex].id);
+        }
       } else {
         let newIndex = activeIndex;
         let size = 0;
@@ -226,7 +235,13 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
             break;
           }
         }
-        changeActiveId(dList[newIndex].id);
+        if (newIndex === activeIndex) {
+          if (performance.now() - dataRef.current.startDragTime < 300 && Math.abs(dragDistance) > 30) {
+            changeActiveId(dList[Math.min(newIndex + 1, dList.length - 1)].id);
+          }
+        } else {
+          changeActiveId(dList[newIndex].id);
+        }
       }
     }
     setDragStartPosition(undefined);
@@ -302,10 +317,12 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
 
           if (e.button === 0) {
             setDragStartPosition(e[dVertical ? 'clientY' : 'clientX']);
+            dataRef.current.startDragTime = performance.now();
           }
         }}
         onTouchStart={(e) => {
           setDragStartPosition(e.touches[0][dVertical ? 'clientY' : 'clientX']);
+          dataRef.current.startDragTime = performance.now();
         }}
         onTouchEnd={() => {
           handleDragEnd();

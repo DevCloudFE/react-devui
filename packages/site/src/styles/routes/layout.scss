@@ -80,7 +80,8 @@
       width: 28px;
       height: 2px;
       background-color: var(--#{$rd-prefix}text-color);
-      border-radius: 50%;
+      /* stylelint-disable-next-line declaration-property-value-allowed-list */
+      border-radius: 1px;
       /* stylelint-disable-next-line declaration-property-value-disallowed-list */
       transition: all 300ms linear;
       transform-origin: center;
