@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.0](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.11...v1.0.0-alpha.0) (2022-11-18)
+
+### Code Refactoring
+
+- **ui:** refactor `slides` component ([c71e227](https://github.com/DevCloudFE/react-devui/commit/c71e227e1b2974f762f9b9b38dbc402e9dea1337))
+
+### Features
+
+- **platform:** add detail route ([a06e2a3](https://github.com/DevCloudFE/react-devui/commit/a06e2a39f7e6bf5fadd5292ef7d73bd763bb2744))
+
+### BREAKING CHANGES
+
+- **ui:** remove `swiper`
+
 # [0.1.0-alpha.11](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.10...v0.1.0-alpha.11) (2022-11-08)
 
 **Note:** Version bump only for package @react-devui/hooks

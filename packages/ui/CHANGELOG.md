@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.0](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.11...v1.0.0-alpha.0) (2022-11-18)
+
+### Bug Fixes
+
+- **ui:** `dSkipFirstTransition` should be `false` to keep mask transition ([22c1f9e](https://github.com/DevCloudFE/react-devui/commit/22c1f9eb82ac90f56ccc2c3609f13bb9d90b5d6a))
+- **ui:** add stopPropagation to upload-action ([67172c7](https://github.com/DevCloudFE/react-devui/commit/67172c7fc20bd9409a5ae1fb2f5d6f594989e493))
+- **ui:** clearable when date not null ([3d4333a](https://github.com/DevCloudFE/react-devui/commit/3d4333af57c80098ef2a90240b61cba8a87ae52b))
+- **ui:** default value of `dNowrap` should be false ([f809548](https://github.com/DevCloudFE/react-devui/commit/f80954853a0fee5593cc3501f8b255e19748c09e))
+- **ui:** fix miss tree panel's `ref` ([2503338](https://github.com/DevCloudFE/react-devui/commit/2503338a70f112310f81e253a9b3bc7ceeee1911))
+- **ui:** fix update upload list ([763e429](https://github.com/DevCloudFE/react-devui/commit/763e4290e24c7f581df39073592e4a2bc8b36900))
+- **ui:** spinner should display inline when `dAlone` is true ([c5ec01d](https://github.com/DevCloudFE/react-devui/commit/c5ec01d2c9f56cfc3573a1eb60a97ecd97d254a4))
+
+### Code Refactoring
+
+- **ui:** refactor `slides` component ([c71e227](https://github.com/DevCloudFE/react-devui/commit/c71e227e1b2974f762f9b9b38dbc402e9dea1337))
+
+### Features
+
+- **platform:** add detail route ([a06e2a3](https://github.com/DevCloudFE/react-devui/commit/a06e2a39f7e6bf5fadd5292ef7d73bd763bb2744))
+- **ui:** `slides` support swipe gesture ([2f2ce7d](https://github.com/DevCloudFE/react-devui/commit/2f2ce7d289b53943492dfff3ca75efe8ac738974))
+- **ui:** support destroy node after element hided ([060c0cd](https://github.com/DevCloudFE/react-devui/commit/060c0cdc3695591d7873453c26ab2b1e66d81d6c))
+
+### BREAKING CHANGES
+
+- **ui:** remove `swiper`
+
 # [0.1.0-alpha.11](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.10...v0.1.0-alpha.11) (2022-11-08)
 
 **Note:** Version bump only for package @react-devui/ui

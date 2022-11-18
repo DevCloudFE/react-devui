@@ -1,6 +1,6 @@
 {
   "name": "@react-devui/utils",
-  "version": "0.1.0-alpha.11",
+  "version": "1.0.0-alpha.0",
   "description": "DevUI utils based on React",
   "keywords": [
     "ui",
