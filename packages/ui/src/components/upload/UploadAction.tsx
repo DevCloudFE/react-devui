@@ -51,6 +51,9 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
       href={__file.url}
       title={restProps.title ?? t('Upload', 'Preview file')}
       onClick={(e) => {
+        restProps.onClick?.(e);
+
+        e.stopPropagation();
         if (!isUndefined(defaultAction)) {
           e.preventDefault();
 
@@ -70,6 +73,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
       onClick={(e) => {
         restProps.onClick?.(e);
 
+        e.stopPropagation();
         if (!isUndefined(defaultAction)) {
           defaultAction(__file);
         } else {
@@ -89,6 +93,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
       onClick={(e) => {
         restProps.onClick?.(e);
 
+        e.stopPropagation();
         __onRemove?.();
       }}
       title={restProps.title ?? t('Upload', 'Remove file')}
@@ -101,6 +106,11 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
       ref={ref}
       className={getClassName(restProps.className, `${dPrefix}upload__item-action`)}
       type={restProps['type'] ?? 'button'}
+      onClick={(e) => {
+        restProps.onClick?.(e);
+
+        e.stopPropagation();
+      }}
     >
       {children}
     </button>
