@@ -199,7 +199,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     forceUpdate();
   };
 
-  const clearable = dClearable && !visible && !dDisabled;
+  const clearable = dClearable && !isNull(_value) && !visible && !dDisabled;
 
   const maxZIndex = useMaxIndex(visible);
 

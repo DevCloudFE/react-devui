@@ -77,7 +77,7 @@
     height: 26px;
     cursor: pointer;
 
-    &:not(.is-active, .is-hover, .is-another, .is-between, .is-between-hover):hover {
+    &:not(.is-current-selected, .is-another-selected, .is-hover, .is-between, .is-between-hover):hover {
       background-color: var(--#{$rd-prefix}background-color-hover);
     }
 
