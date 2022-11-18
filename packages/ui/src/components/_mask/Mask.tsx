@@ -41,6 +41,8 @@ export function DMask(props: DMaskProps): JSX.Element | null {
     <DTransition
       dIn={dVisible}
       dDuring={TTANSITION_DURING_FAST}
+      // TODO: Should it be controllable?
+      dSkipFirstTransition={false}
       afterEnter={() => {
         afterVisibleChange?.(true);
       }}
