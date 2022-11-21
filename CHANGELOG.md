@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.1](https://github.com/DevCloudFE/react-devui/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2022-11-21)
+
+### Performance Improvements
+
+- `createGlobalState` export `set` method without state ([f695966](https://github.com/DevCloudFE/react-devui/commit/f6959667a39afb703cad7c0a7fe60e748e2139cf))
+- **platform:** use `React.memo` render routes ([75a332d](https://github.com/DevCloudFE/react-devui/commit/75a332d59e3c4e16dd299d3814faebe4df07cea3))
+
 # [1.0.0-alpha.0](https://github.com/DevCloudFE/react-devui/compare/v0.1.0-alpha.11...v1.0.0-alpha.0) (2022-11-18)
 
 ### Bug Fixes
