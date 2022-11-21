@@ -58,7 +58,7 @@ export interface NonIndexRouteItem extends Omit<NonIndexRouteObject, 'children'>
 export type RouteItem = IndexRouteItem | NonIndexRouteItem;
 
 // I have a great implementation of route caching, but considering the synchronization of data between pages (like modifying list or detail page data), I ended up not introducing route caching.
-export function AppRoutes() {
+export const AppRoutes = React.memo(() => {
   const ACLGuard = useACLGuard();
   const tokenGuard = useTokenGuard();
   const location = useLocation();
@@ -218,4 +218,4 @@ export function AppRoutes() {
       {element}
     </RouteStateContext.Provider>
   );
-}
+});
