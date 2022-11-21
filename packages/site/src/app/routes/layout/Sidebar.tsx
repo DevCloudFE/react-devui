@@ -109,7 +109,9 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
           </DDrawer.Header>
         }
         dWidth={280}
-        onVisibleChange={onMenuOpenChange}
+        onClose={() => {
+          onMenuOpenChange(false);
+        }}
       >
         <div className="app-layout-sidebar__button-container">
           <Link className="app-layout-sidebar__link-button" to="/docs">

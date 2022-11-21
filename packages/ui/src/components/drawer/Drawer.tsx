@@ -33,7 +33,7 @@ export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dHeader?: React.ReactElement | string;
   dFooter?: React.ReactElement;
   dChildDrawer?: React.ReactElement;
-  onVisibleChange?: (visible: boolean) => void;
+  onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -64,7 +64,7 @@ export const DDrawer: {
     dHeader,
     dFooter,
     dChildDrawer,
-    onVisibleChange,
+    onClose,
     afterVisibleChange,
     __zIndex,
     __onVisibleChange,
@@ -127,7 +127,7 @@ export const DDrawer: {
         : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
   };
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onClose);
 
   const isFixed = isUndefined(dContainer);
 

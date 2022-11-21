@@ -37,7 +37,9 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
         dVisible={menuOpen}
         dWidth={200}
         dPlacement="left"
-        onVisibleChange={onMenuOpenChange}
+        onClose={() => {
+          onMenuOpenChange(false);
+        }}
       >
         {menuNode(false)}
       </DDrawer>

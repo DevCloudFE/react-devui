@@ -35,7 +35,7 @@ export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   };
   dHeader?: React.ReactElement | string;
   dFooter?: React.ReactElement;
-  onVisibleChange?: (visible: boolean) => void;
+  onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -59,7 +59,7 @@ export const DModal: {
     dType,
     dHeader,
     dFooter,
-    onVisibleChange,
+    onClose,
     afterVisibleChange,
 
     ...restProps
@@ -96,7 +96,7 @@ export const DModal: {
 
   const topStyle = dTop + (isNumber(dTop) ? 'px' : '');
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onClose);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {

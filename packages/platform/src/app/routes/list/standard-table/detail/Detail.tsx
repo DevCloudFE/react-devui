@@ -56,10 +56,10 @@ export default function Detail(): JSX.Element | null {
         aVisible={paramsOfEditModal?.visible}
         aDevice={device}
         aModelList={modelList}
-        onVisibleChange={(visible) => {
+        onClose={() => {
           setParamsOfEditModal((draft) => {
             if (draft) {
-              draft.visible = visible;
+              draft.visible = false;
             }
           });
         }}

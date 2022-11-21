@@ -14,7 +14,7 @@ export interface DAlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dTitle: React.ReactNode;
   dDescription?: React.ReactNode;
   dActions?: React.ReactNode[];
-  onVisibleChange?: (visible: boolean) => void;
+  onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -27,7 +27,7 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
     dTitle,
     dDescription,
     dActions = [],
-    onVisibleChange,
+    onClose,
     afterVisibleChange,
 
     ...restProps
@@ -37,7 +37,7 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const [visible, changeVisible] = useDValue<boolean>(true, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(true, dVisible, onClose);
 
   return (
     <DCollapseTransition

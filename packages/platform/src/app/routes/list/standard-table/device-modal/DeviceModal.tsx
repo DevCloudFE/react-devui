@@ -10,12 +10,12 @@ export interface AppDeviceModalProps {
   aVisible?: boolean;
   aDevice?: DeviceDoc;
   aModelList?: DSelectItem<string>[];
-  onVisibleChange?: (visible: boolean) => void;
+  onClose?: () => void;
   onSubmit?: () => void;
 }
 
 export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
-  const { aVisible = false, aDevice, aModelList, onVisibleChange, onSubmit } = props;
+  const { aVisible = false, aDevice, aModelList, onClose, onSubmit } = props;
 
   const [form, updateForm] = useForm(
     () =>
@@ -44,7 +44,7 @@ export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
         ></DModal.Footer>
       }
       dMaskClosable={false}
-      onVisibleChange={onVisibleChange}
+      onClose={onClose}
     >
       <DForm id="device-form" onSubmit={onSubmit} dUpdate={updateForm} dLabelWidth="6em">
         <DForm.Group dFormGroup={form}>

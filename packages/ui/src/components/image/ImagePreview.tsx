@@ -23,7 +23,7 @@ export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement>
   dMaskClosable?: boolean;
   dEscClosable?: boolean;
   onActiveChange?: (index: number) => void;
-  onVisibleChange?: (visible: boolean) => void;
+  onClose?: () => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -38,7 +38,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
     dMaskClosable = true,
     dEscClosable = true,
     onActiveChange,
-    onVisibleChange,
+    onClose,
     afterVisibleChange,
 
     ...restProps
@@ -95,7 +95,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
   const [scale, setScale] = useImmer(new Map<string, number>());
   const activeScale = scale.get(activeSrc) ?? 1;
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onClose);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {

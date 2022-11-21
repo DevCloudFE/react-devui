@@ -116,10 +116,10 @@ export default function StandardTable(): JSX.Element | null {
           }}
           dMaskClosable={false}
           dSkipFirstTransition={false}
-          onVisibleChange={(visible) => {
+          onClose={() => {
             setParamsOfDeleteModal((draft) => {
               if (draft) {
-                draft.visible = visible;
+                draft.visible = false;
               }
             });
           }}
@@ -129,10 +129,10 @@ export default function StandardTable(): JSX.Element | null {
         aVisible={paramsOfDeviceModal?.visible}
         aDevice={paramsOfDeviceModal?.device}
         aModelList={modelList}
-        onVisibleChange={(visible) => {
+        onClose={() => {
           setParamsOfDeviceModal((draft) => {
             if (draft) {
-              draft.visible = visible;
+              draft.visible = false;
             }
           });
         }}
