@@ -95,3 +95,4 @@ export function useMenu() {
     setMenuState,
   ] as const;
 }
+useMenu.set = useMenuState.set;

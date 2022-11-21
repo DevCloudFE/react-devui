@@ -1,13 +1,13 @@
-import type { ImmerHook } from './useImmer';
+import type { ImmerHook, Updater } from './useImmer';
 
 import { freeze, produce } from 'immer';
 import { useState } from 'react';
 
 import { useUnmount } from './useUnmount';
 
-export function createGlobalState<S>(): () => ImmerHook<S | undefined>;
-export function createGlobalState<S>(initialValue: S): () => ImmerHook<S>;
-export function createGlobalState<S>(initialValue?: S): () => ImmerHook<S | undefined> {
+export function createGlobalState<S>(): { (): ImmerHook<S | undefined>; set: Updater<S | undefined> };
+export function createGlobalState<S>(initialValue: S): { (): ImmerHook<S>; set: Updater<S> };
+export function createGlobalState<S>(initialValue?: S): { (): ImmerHook<S | undefined>; set: Updater<S | undefined> } {
   const store = {
     state: freeze(typeof initialValue === 'function' ? initialValue() : initialValue, true),
     setState(updater: any) {
@@ -24,17 +24,22 @@ export function createGlobalState<S>(initialValue?: S): () => ImmerHook<S | unde
     updates: new Set<(...args: any[]) => any>(),
   };
 
-  return () => {
-    const [state, setState] = useState(store.state);
+  return Object.assign<any, any>(
+    () => {
+      const [state, setState] = useState(store.state);
 
-    if (!store.updates.has(setState)) {
-      store.updates.add(setState);
+      if (!store.updates.has(setState)) {
+        store.updates.add(setState);
+      }
+
+      useUnmount(() => {
+        store.updates.delete(setState);
+      });
+
+      return [state, store.setState];
+    },
+    {
+      set: store.setState,
     }
-
-    useUnmount(() => {
-      store.updates.delete(setState);
-    });
-
-    return [state, store.setState];
-  };
+  );
 }

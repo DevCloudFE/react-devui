@@ -10,15 +10,10 @@ export function useInit() {
   const http = useHttp();
   const acl = useACL();
 
-  const [, setUser] = useUserState();
-  const [, setNotification] = useNotificationState();
-
-  const [, setMenu] = useMenu();
-
   const refreshToken = useRefreshToken();
 
   const handleUser = (user: UserState) => {
-    setUser(user);
+    useUserState.set(user);
 
     //#region ACL
     acl.setFull(user.role === 'admin');
@@ -27,7 +22,7 @@ export function useInit() {
   };
 
   const getNotification = () => {
-    setNotification(undefined);
+    useNotificationState.set(undefined);
     http<NotificationItem[]>(
       {
         url: '/notification',
@@ -36,13 +31,13 @@ export function useInit() {
       { unmount: false }
     ).subscribe({
       next: (res) => {
-        setNotification(res);
+        useNotificationState.set(res);
       },
     });
   };
 
   const resetMenu = () => {
-    setMenu((draft) => {
+    useMenu.set((draft) => {
       draft.expands = undefined;
     });
   };

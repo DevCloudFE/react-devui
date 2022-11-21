@@ -28,7 +28,6 @@ export function useHttp() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const [, setToasts] = useToasts();
 
   useUnmount(() => {
     for (const abort of dataRef.current.abortFns) {
@@ -70,7 +69,7 @@ export function useHttp() {
               if (error.response) {
                 switch (error.response.status) {
                   case 401:
-                    setToasts((draft) => {
+                    useToasts.set((draft) => {
                       const key = getGlobalKey();
                       draft.push({
                         key,
@@ -78,9 +77,19 @@ export function useHttp() {
                         dVisible: true,
                         dType: 'error',
                         onClose: () => {
-                          setToasts((draft) => {
+                          useToasts.set((draft) => {
                             draft.find((n) => n.key === key)!.dVisible = false;
                           });
+                        },
+                        afterVisibleChange: (visible) => {
+                          if (!visible) {
+                            useToasts.set((draft) => {
+                              draft.splice(
+                                draft.findIndex((n) => n.key === key),
+                                1
+                              );
+                            });
+                          }
                         },
                       });
                     });
