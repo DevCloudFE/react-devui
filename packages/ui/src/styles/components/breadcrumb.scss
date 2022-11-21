@@ -2,22 +2,27 @@
   @include e(list) {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 8px;
+    gap: 4px 2px;
     align-items: center;
     padding: 0;
-    margin: 0;
+    margin: 0 -6px;
     list-style: none;
   }
 
   @include e(item) {
+    padding: 0 6px;
+    line-height: 1.5;
     color: var(--#{$rd-prefix}text-color-sub);
+    border-radius: var(--#{$rd-prefix}border-radius);
 
     @include m(link) {
       cursor: pointer;
-      transition: color var(--#{$rd-prefix}animation-duration-base) linear;
+      transition: color var(--#{$rd-prefix}animation-duration-base) linear,
+        background-color var(--#{$rd-prefix}animation-duration-base) linear;
 
       &:hover {
         color: var(--#{$rd-prefix}text-color);
+        background-color: var(--#{$rd-prefix}background-color-gray);
       }
     }
 
