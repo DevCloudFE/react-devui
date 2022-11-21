@@ -8,8 +8,6 @@ import { DIconContext } from '@react-devui/icons/Icon';
 import { getClassName } from '@react-devui/utils';
 
 import { dayjs } from '../../dayjs';
-import { Notification } from './Notification';
-import { Toast } from './Toast';
 import { DConfigContextManager } from './contex';
 import { DConfigContext } from './contex';
 import resources from './resources.json';
@@ -95,15 +93,7 @@ export function DRoot(props: DRootProps): JSX.Element | null {
 
   return (
     <DConfigContext.Provider value={context}>
-      {parent ? (
-        children
-      ) : (
-        <DIconContext.Provider value={iconContext}>
-          {children}
-          <Notification></Notification>
-          <Toast></Toast>
-        </DIconContext.Provider>
-      )}
+      {parent ? children : <DIconContext.Provider value={iconContext}>{children}</DIconContext.Provider>}
     </DConfigContext.Provider>
   );
 }

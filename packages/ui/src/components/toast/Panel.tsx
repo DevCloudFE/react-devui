@@ -7,21 +7,20 @@ import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import { usePrefixConfig, useTranslation } from '../root';
 
-export interface DPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface DPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   dClassNamePrefix: string;
   dType: 'success' | 'warning' | 'error' | 'info' | undefined;
   dIcon: React.ReactNode | undefined;
-  dContent: React.ReactNode;
   dActions: React.ReactNode[] | undefined;
   onClose: (() => void) | undefined;
 }
 
 function Panel(props: DPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
   const {
+    children,
     dClassNamePrefix,
     dType,
     dIcon,
-    dContent,
     dActions = ['close'],
     onClose,
 
@@ -64,7 +63,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
         </div>
       )}
       <div id={contentId} className={getClassName(`${prefix}__content`)}>
-        {dContent}
+        {children}
       </div>
       <div className={`${prefix}__actions`}>
         {React.Children.map(dActions, (action) =>

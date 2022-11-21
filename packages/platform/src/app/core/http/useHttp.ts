@@ -10,10 +10,11 @@ import { concatMap, of } from 'rxjs';
 import { catchError, EMPTY, from, map, Subject, takeUntil, throwError } from 'rxjs';
 
 import { useEventCallback, useUnmount } from '@react-devui/hooks';
-import { ToastService } from '@react-devui/ui';
 
 import { environment } from '../../../environments';
 import { LOGIN_PATH, PREV_ROUTE_KEY } from '../../config/other';
+import { getGlobalKey } from '../../utils/vars';
+import { useToasts } from '../state';
 import { TOKEN } from '../token';
 import './mock';
 
@@ -27,6 +28,7 @@ export function useHttp() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const [, setToasts] = useToasts();
 
   useUnmount(() => {
     for (const abort of dataRef.current.abortFns) {
@@ -68,9 +70,19 @@ export function useHttp() {
               if (error.response) {
                 switch (error.response.status) {
                   case 401:
-                    ToastService.open({
-                      dContent: t('User not authorized'),
-                      dType: 'error',
+                    setToasts((draft) => {
+                      const key = getGlobalKey();
+                      draft.push({
+                        key,
+                        children: t('User not authorized'),
+                        dVisible: true,
+                        dType: 'error',
+                        onClose: () => {
+                          setToasts((draft) => {
+                            draft.find((n) => n.key === key)!.dVisible = false;
+                          });
+                        },
+                      });
                     });
                     navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
                     return EMPTY;

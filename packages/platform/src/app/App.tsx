@@ -7,12 +7,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { useAsync, useMount, useStorage } from '@react-devui/hooks';
+import { DNotification, DToast } from '@react-devui/ui';
 import { DRoot } from '@react-devui/ui';
 
 import { AppRoutes } from './Routes';
 import { LOGIN_PATH } from './config/other';
 import { STORAGE_KEY } from './config/storage';
 import { useHttp, useInit } from './core';
+import { useNotifications, useToasts } from './core/state';
 
 export type AppTheme = 'light' | 'dark';
 
@@ -25,6 +27,8 @@ export function App() {
   const [loading, setLoading] = useState(true);
   const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
   const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
+  const [notifications] = useNotifications();
+  const [toasts] = useToasts();
 
   useMount(() => {
     i18n.changeLanguage(languageStorage.value);
@@ -77,7 +81,17 @@ export function App() {
     [languageStorage.value]
   );
 
-  return <DRoot context={rootContext}>{loading ? null : <AppRoutes />}</DRoot>;
+  return (
+    <DRoot context={rootContext}>
+      {loading ? null : <AppRoutes />}
+      {notifications.map(({ key, ...props }) => (
+        <DNotification {...props} key={key}></DNotification>
+      ))}
+      {toasts.map(({ key, ...props }) => (
+        <DToast {...props} key={key}></DToast>
+      ))}
+    </DRoot>
+  );
 }
 
 export default App;

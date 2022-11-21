@@ -68,7 +68,7 @@ export type { DModalProps, DModalHeaderProps, DModalFooterProps } from './modal'
 export { DModal } from './modal';
 
 export type { DNotificationProps } from './notification';
-export { NotificationService } from './notification';
+export { DNotification } from './notification';
 
 export type { DPaginationProps } from './pagination';
 export { DPagination } from './pagination';
@@ -139,7 +139,7 @@ export type { DTimelineProps } from './timeline';
 export { DTimeline } from './timeline';
 
 export type { DToastProps } from './toast';
-export { ToastService } from './toast';
+export { DToast } from './toast';
 
 export type { DTooltipProps } from './tooltip';
 export { DTooltip } from './tooltip';

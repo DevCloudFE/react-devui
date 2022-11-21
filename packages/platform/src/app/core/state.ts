@@ -1,3 +1,5 @@
+import type { DNotificationProps, DToastProps } from '@react-devui/ui';
+
 import { createGlobalState } from '@react-devui/hooks';
 
 export interface UserState {
@@ -17,3 +19,7 @@ export interface NotificationItem {
   }[];
 }
 export const useNotificationState = createGlobalState<NotificationItem[]>();
+
+export const useNotifications = createGlobalState<(DNotificationProps & { key: string | number })[]>([]);
+
+export const useToasts = createGlobalState<(DToastProps & { key: string | number })[]>([]);

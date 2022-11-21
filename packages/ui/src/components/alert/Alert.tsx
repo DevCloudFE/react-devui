@@ -92,6 +92,7 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
           <DToastPanel
             {...restProps}
             ref={collapseRef}
+            children={dTitle}
             className={getClassName(restProps.className, `${dPrefix}alert--toast`)}
             style={{
               ...restProps.style,
@@ -100,7 +101,6 @@ export function DAlert(props: DAlertProps): JSX.Element | null {
             dClassNamePrefix="alert"
             dType={dType}
             dIcon={dIcon}
-            dContent={dTitle}
             dActions={dActions}
             onClose={() => {
               changeVisible(false);
