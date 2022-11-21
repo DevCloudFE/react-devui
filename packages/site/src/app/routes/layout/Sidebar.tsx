@@ -68,6 +68,24 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
                 ),
                 type: 'item',
               },
+              {
+                id: 'GlobalConfiguration',
+                title: (
+                  <Link tabIndex={-1} to="/docs/GlobalConfiguration">
+                    {t('docs-menu.GlobalConfiguration')}
+                  </Link>
+                ),
+                type: 'item',
+              },
+              {
+                id: 'FAQ',
+                title: (
+                  <Link tabIndex={-1} to="/docs/FAQ">
+                    FAQ
+                  </Link>
+                ),
+                type: 'item',
+              },
             ] as DMenuItem<string>[])
           : menu.map<DMenuItem<string>>((group) => ({
               id: group.title,

@@ -33,7 +33,7 @@ npm install @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/u
 
 ## 引入根组件
 
-您需要在项目的根组件（如`App.tsx`）上引入 `DRoot`，`DRoot` 是必须的并且它提供了全局配置。
+您需要在项目的根组件（如`App.tsx`）上引入 `DRoot`，`DRoot` 是必须的并且它提供了[全局配置](/docs/GlobalConfiguration)。
 
 建议配置 `layout` 参数，它提供了您页面的布局信息，这样我们就可以自动完成某些工作（如更新弹窗位置）。
 

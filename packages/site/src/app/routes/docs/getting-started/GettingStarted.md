@@ -33,7 +33,7 @@ Import on demand:
 
 ## Import the root component
 
-You need to import `DRoot` on the root component of your project (like `App.tsx`), `DRoot` is required and it provides global configuration.
+You need to import `DRoot` on the root component of your project (like `App.tsx`), `DRoot` is required and it provides [global configuration](/docs/GlobalConfiguration).
 
 It is recommended to configure the `layout` parameter, which provides the layout information of your page, so that we can automatically do some work (such as updating the popup position).
 

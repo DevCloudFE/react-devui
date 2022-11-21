@@ -20,32 +20,3 @@ export default function App() {
   }, [theme]);
 }
 ```
-
-## Variable conflict
-
-All our css variables have namespaces added, the default is `rd`, if our css variables conflict with your project, you can modify `$rd-namespace`.
-
-Note: `$rd-namespace` also affects stylesheets, so you need to modify the `DRoot` configuration:
-
-```scss
-$rd-namespace: 'app';
-```
-
-```tsx
-import type { DRootProps } from '@react-devui/ui';
-
-import { useMemo } from 'react';
-
-import { DRoot } from '@react-devui/ui';
-
-export default function App() {
-  const rootContext = useMemo<DRootProps['context']>(
-    () => ({
-      namespace: 'app',
-    }),
-    []
-  );
-
-  return <DRoot context={rootContext}>Some content...</DRoot>;
-}
-```

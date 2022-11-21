@@ -1,6 +1,6 @@
 # 国际化
 
-这里是[完整配置](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/hooks/i18n/resources.json)。
+这里是[完整配置](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/components/root/resources.json)。
 
 ## 修改语言
 
@@ -25,9 +25,9 @@ export default function App() {
 }
 ```
 
-## 修改语言显示
+## 部分修改
 
-支持修改语言显示：
+支持部分修改：
 
 ```tsx
 import type { DRootProps } from '@react-devui/ui';
@@ -69,7 +69,11 @@ export default function App() {
     () => ({
       i18n: {
         resources: {
-          'ja-JP': { DatePicker: { Now: '今' } },
+          lang: 'ja-JP',
+          'ja-JP': {
+            DatePicker: { Now: '今' },
+            ...otherConfig,
+          },
         },
       },
     }),

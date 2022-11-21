@@ -1,6 +1,6 @@
 # Internationalization
 
-Here is the [full configuration](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/hooks/i18n/resources.json).
+Here is the [full configuration](https://github.com/DevCloudFE/react-devui/blob/main/packages/ui/src/components/root/resources.json).
 
 ## Modify language
 
@@ -25,9 +25,9 @@ export default function App() {
 }
 ```
 
-## Modify language display
+## Modify modification
 
-Support to modify the language display:
+Partially modifications are supported:
 
 ```tsx
 import type { DRootProps } from '@react-devui/ui';
@@ -68,8 +68,10 @@ export default function App() {
   const rootContext = useMemo<DRootProps['context']>(
     () => ({
       i18n: {
+        lang: 'ja-JP',
         resources: {
           'ja-JP': { DatePicker: { Now: '今' } },
+          ...otherConfig,
         },
       },
     }),

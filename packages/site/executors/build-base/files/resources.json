@@ -30,7 +30,8 @@
         "Overview": "Overview",
         "Getting Started": "Getting Started",
         "Dynamic Theme": "Dynamic Theme",
-        "Internationalization": "Internationalization"
+        "Internationalization": "Internationalization",
+        "GlobalConfiguration": "GlobalConfiguration"
       },
       "menu": {
         "components-group": {},
@@ -71,7 +72,8 @@
         "Overview": "概述",
         "Getting Started": "快速开始",
         "Dynamic Theme": "动态主题",
-        "Internationalization": "国际化"
+        "Internationalization": "国际化",
+        "GlobalConfiguration": "全局配置"
       },
       "menu": {
         "components-group": {},
