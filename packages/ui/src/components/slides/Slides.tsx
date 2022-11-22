@@ -127,7 +127,10 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
       dataRef.current.clearTid = async.setTimeout(
         () => {
           dataRef.current.clearTid = undefined;
-          changeActiveId(dList[(activeIndex + 1) % dList.length].id);
+          const id = nth(dList, (activeIndex + 1) % dList.length)?.id;
+          if (!isUndefined(id)) {
+            changeActiveId(id);
+          }
         },
         autoplay.delay,
         () => {
@@ -219,10 +222,16 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
         }
         if (newIndex === activeIndex) {
           if (performance.now() - dataRef.current.startDragTime < 300 && Math.abs(dragDistance) > 30) {
-            changeActiveId(dList[Math.max(newIndex - 1, 0)].id);
+            const id = nth(dList, Math.max(newIndex - 1, 0))?.id;
+            if (!isUndefined(id)) {
+              changeActiveId(id);
+            }
           }
         } else {
-          changeActiveId(dList[newIndex].id);
+          const id = nth(dList, newIndex)?.id;
+          if (!isUndefined(id)) {
+            changeActiveId(id);
+          }
         }
       } else {
         let newIndex = activeIndex;
@@ -237,10 +246,16 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
         }
         if (newIndex === activeIndex) {
           if (performance.now() - dataRef.current.startDragTime < 300 && Math.abs(dragDistance) > 30) {
-            changeActiveId(dList[Math.min(newIndex + 1, dList.length - 1)].id);
+            const id = nth(dList, Math.min(newIndex + 1, dList.length - 1))?.id;
+            if (!isUndefined(id)) {
+              changeActiveId(id);
+            }
           }
         } else {
-          changeActiveId(dList[newIndex].id);
+          const id = nth(dList, newIndex)?.id;
+          if (!isUndefined(id)) {
+            changeActiveId(id);
+          }
         }
       }
     }
@@ -363,7 +378,10 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
             tabIndex={-1}
             disabled={activeIndex === 0}
             onClick={() => {
-              changeActiveId(dList[activeIndex - 1].id);
+              const id = nth(dList, activeIndex - 1)?.id;
+              if (!isUndefined(id)) {
+                changeActiveId(id);
+              }
             }}
           >
             <LeftOutlined />
@@ -375,7 +393,10 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
             tabIndex={-1}
             disabled={activeIndex === dList.length - 1}
             onClick={() => {
-              changeActiveId(dList[activeIndex + 1].id);
+              const id = nth(dList, activeIndex + 1)?.id;
+              if (!isUndefined(id)) {
+                changeActiveId(id);
+              }
             }}
           >
             <RightOutlined />

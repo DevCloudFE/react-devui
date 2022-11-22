@@ -1,4 +1,4 @@
-import { isNumber, isUndefined } from 'lodash';
+import { isNumber, isUndefined, nth } from 'lodash';
 
 import { CheckOutlined, CloseOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
@@ -46,7 +46,7 @@ export function DStepper<T extends DStepperItem>(props: DStepperProps<T>): JSX.E
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const active = dActive ?? dList[0].step ?? 1;
+  const active = dActive ?? nth(dList, 0)?.step ?? 1;
 
   return (
     <div
