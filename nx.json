@@ -16,8 +16,7 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    ".eslintrc.json": "*",
-    "tools/**/*": "*"
+    ".eslintrc.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
