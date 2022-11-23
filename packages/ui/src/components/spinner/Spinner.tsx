@@ -27,7 +27,7 @@ export function DSpinner(props: DSpinnerProps): JSX.Element | null {
     dVisible = true,
     dText,
     dDelay,
-    dSize = '28px',
+    dSize = 28,
     dAlone = false,
     afterVisibleChange,
 

@@ -27,7 +27,7 @@ export interface DFormControl {
   };
 }
 
-export type DValidateStatus = 'success' | 'warning' | 'error' | 'pending';
+type DValidateStatus = 'success' | 'warning' | 'error' | 'pending';
 
 export type DErrorInfo =
   | string

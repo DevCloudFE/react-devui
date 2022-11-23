@@ -31,7 +31,7 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
   dActions?: React.ReactNode[];
   dLoading?: [boolean?, boolean?];
   dSearchable?: boolean;
-  dSearchValues?: [string, string];
+  dSearchValue?: [string, string];
   dDisabled?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSearch?: {
@@ -40,7 +40,7 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
   };
   onModelChange?: (value: T['value'][], item: T[]) => void;
   onSelectedChange?: (value: T['value'][], item: T[]) => void;
-  onSearchValuesChange?: (value: [string, string]) => void;
+  onSearchValueChange?: (value: [string, string]) => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
 
@@ -55,13 +55,13 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     dActions = ['right', 'left'],
     dLoading = [false, false],
     dSearchable = false,
-    dSearchValues,
+    dSearchValue,
     dDisabled = false,
     dCustomItem,
     dCustomSearch,
     onModelChange,
     onSelectedChange,
-    onSearchValuesChange,
+    onSearchValueChange,
     onScrollBottom,
 
     ...restProps
@@ -103,7 +103,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
 
   const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
-  const [searchValues, changeSearchValues] = useDValue<[string, string]>(['', ''], dSearchValues, onSearchValuesChange);
+  const [searchValues, changeSearchValue] = useDValue<[string, string]>(['', ''], dSearchValue, onSearchValueChange);
 
   const _filterFn = dCustomSearch?.filter;
   const filterFn = useCallback(
@@ -257,7 +257,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
                 handleAllSelected(selected, true);
               }}
               onSearch={(val) => {
-                changeSearchValues((draft) => {
+                changeSearchValue((draft) => {
                   draft[0] = val;
                 });
               }}
@@ -305,7 +305,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
                 handleAllSelected(selected, false);
               }}
               onSearch={(val) => {
-                changeSearchValues((draft) => {
+                changeSearchValue((draft) => {
                   draft[1] = val;
                 });
               }}

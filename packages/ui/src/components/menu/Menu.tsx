@@ -33,8 +33,8 @@ export interface DMenuItem<ID extends DId> {
 }
 
 export interface DMenuProps<ID extends DId, T extends DMenuItem<ID>> extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
-  dWidth?: string | number;
   dList: T[];
+  dWidth?: string | number;
   dActive?: ID | null;
   dExpands?: ID[];
   dMode?: DMenuMode;
@@ -47,8 +47,8 @@ export interface DMenuProps<ID extends DId, T extends DMenuItem<ID>> extends Omi
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DMenu' as const });
 function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>, ref: React.ForwardedRef<DMenuRef>): JSX.Element | null {
   const {
-    dWidth = 'auto',
     dList,
+    dWidth = 'auto',
     dActive,
     dExpands,
     dMode = 'vertical',

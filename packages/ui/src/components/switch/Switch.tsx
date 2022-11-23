@@ -39,8 +39,8 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     dModel,
     dLabelPlacement = 'right',
     dStateContent,
-    dLoading = false,
     dDisabled = false,
+    dLoading = false,
     dInputRender,
     onModelChange,
 
