@@ -37,6 +37,7 @@ export interface DInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   dDisabled?: boolean;
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (value: string) => void;
+  onClear?: () => void;
   onPasswordChange?: (value: boolean) => void;
 }
 
@@ -44,23 +45,24 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DInput' as c
 export function DInput(props: DInputProps): JSX.Element | null {
   const {
     dRef,
-    dType,
-    dMax,
-    dMin,
-    dStep,
-    dInteger = false,
-    dPlaceholder,
-    dDisabled = false,
     dFormControl,
     dModel,
+    dType,
     dPrefix: dPrefixNode,
     dSuffix,
     dPassword,
     dNumbetButton = true,
     dClearable = false,
     dSize,
+    dMax,
+    dMin,
+    dStep,
+    dInteger = false,
+    dPlaceholder,
+    dDisabled = false,
     dInputRender,
     onModelChange,
+    onClear,
     onPasswordChange,
 
     ...restProps
@@ -254,6 +256,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
                 aria-label={t('Clear')}
                 onClick={() => {
                   changeValue('');
+                  onClear?.();
                 }}
               >
                 <CloseCircleFilled />

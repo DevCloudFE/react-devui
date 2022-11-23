@@ -50,6 +50,7 @@ export interface DTimePickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   onModelChange?: (date: any) => void;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
+  onClear?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTimePicker' as const });
@@ -74,6 +75,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
     onModelChange,
     onVisibleChange,
     afterVisibleChange,
+    onClear,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -123,6 +125,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
         updatePanelRef.current?.(date);
       }}
       afterVisibleChange={afterVisibleChange}
+      onClear={onClear}
     >
       {({ date, isFocus, changeDate, renderPopup }) =>
         renderPopup(

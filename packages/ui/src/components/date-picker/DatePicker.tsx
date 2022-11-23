@@ -47,6 +47,7 @@ export interface DDatePickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   onModelChange?: (date: any) => void;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
+  onClear?: () => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DDatePicker' as const });
@@ -72,6 +73,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
     onModelChange,
     onVisibleChange,
     afterVisibleChange,
+    onClear,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -133,6 +135,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
         updateTimePickerPanelRef.current?.(date);
       }}
       afterVisibleChange={afterVisibleChange}
+      onClear={onClear}
     >
       {({ date, isFocus, changeDate, renderPopup }) => {
         const index = isFocus[0] ? 0 : 1;

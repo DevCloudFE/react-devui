@@ -57,6 +57,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onVisibleChange: ((visible: boolean) => void) | undefined;
   onUpdatePanel: ((date: Date) => void) | undefined;
   afterVisibleChange: ((visible: boolean) => void) | undefined;
+  onClear: (() => void) | undefined;
 }
 
 function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef>): JSX.Element | null {
@@ -81,6 +82,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     onVisibleChange,
     onUpdatePanel,
     afterVisibleChange,
+    onClear,
 
     ...restProps
   } = props;
@@ -417,6 +419,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                     e.stopPropagation();
 
                     _changeValue(null);
+                    onClear?.();
                   }}
                 >
                   <CloseCircleFilled />
