@@ -20,14 +20,9 @@ We agree that `undefined` represents that the component is in an uncontrolled st
 
 ## What is the general null value of the controlled component
 
-The null value of the controlled component is divided into the following situations:
+The null value of the controlled component is generally defined as `null`, please refer to the component API for the actual situation.
 
-- String type: `''`
-- number: `null`
-- array: `[]`
-- Other: `null`
-
-## How to modify `dayjs` configuration
+## How to modify dayjs configuration
 
 First of all, we should ensure that the project is the only `dayjs` globally, so the `dayjs` of the component library is placed in `peerDependencies`.
 
