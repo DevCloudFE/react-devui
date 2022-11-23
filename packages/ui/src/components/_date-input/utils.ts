@@ -34,14 +34,14 @@ export function deepCompareDate(a: Date | null | [Date, Date], b: Date | null | 
   return false;
 }
 
-export function orderDate(date: [Date, Date], order: 'ascend' | 'descend' | null, unit?: OpUnitType): boolean {
+export function orderDate(date: [Date, Date], order: 'ascend' | 'descend' | false, unit?: OpUnitType): boolean {
   if ((order === 'ascend' && dayjs(date[0]).isAfter(date[1], unit)) || (order === 'descend' && dayjs(date[0]).isBefore(date[1], unit))) {
     return true;
   }
   return false;
 }
 
-export function orderTime(time: [Date, Date], order: 'ascend' | 'descend' | null): boolean {
+export function orderTime(time: [Date, Date], order: 'ascend' | 'descend' | false): boolean {
   const t1 = dayjs(time[0]).set('year', 2000).set('month', 0).set('date', 1);
   const t2 = dayjs(time[1]).set('year', 2000).set('month', 0).set('date', 1);
 

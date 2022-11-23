@@ -29,7 +29,7 @@ export interface DTimePickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   dFormat?: string;
   dVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
-  dOrder?: 'ascend' | 'descend' | null;
+  dOrder?: 'ascend' | 'descend' | false;
   dPlaceholder?: string | [string?, string?];
   dRange?: boolean;
   dSize?: DSize;
