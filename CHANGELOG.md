@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.0.0](https://github.com/DevCloudFE/react-devui/compare/v1.0.0-alpha.1...v18.0.0) (2022-11-23)
+
+### Bug Fixes
+
+- **ui:** fix get item by index maybe undefined ([d25d315](https://github.com/DevCloudFE/react-devui/commit/d25d31542d4236763f0eeecb1aa262024a992656))
+
+### Features
+
+- **ui:** add `onClear` event ([740dec0](https://github.com/DevCloudFE/react-devui/commit/740dec0d1308206d4870603faba3dfeeeeef45f6))
+
 # [1.0.0-alpha.1](https://github.com/DevCloudFE/react-devui/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2022-11-21)
 
 ### Performance Improvements
