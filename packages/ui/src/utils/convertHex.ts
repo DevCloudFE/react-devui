@@ -14,5 +14,5 @@ export function convertHex(hexCode: string, opacity = 1) {
     opacity = opacity / 100;
   }
 
-  return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+  return `rgb(${r} ${g} ${b} / ${opacity})`;
 }

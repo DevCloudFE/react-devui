@@ -128,7 +128,7 @@
       content: none;
     }
 
-    .rd-menu__item--horizontal {
+    .#{$rd-prefix}menu__item--horizontal {
       height: 100%;
 
       &::after {
@@ -191,12 +191,12 @@
   }
 
   @include e(drawer) {
-    .rd-drawer__header-title {
+    .#{$rd-prefix}drawer__header-title {
       display: flex;
       align-items: center;
     }
 
-    .rd-drawer__body {
+    .#{$rd-prefix}drawer__body {
       padding: 0;
     }
   }

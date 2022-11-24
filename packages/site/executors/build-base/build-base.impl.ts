@@ -224,6 +224,8 @@ class GenerateSite {
       }
 
       let componentRouteTmp = this.componentRouteTmp;
+      let tsxSources = '';
+      let scssSources = '';
       componentRouteTmp = componentRouteTmp.replace(/__Route__/g, meta.title['en-US']);
       componentRouteTmp = componentRouteTmp.replace(/__import__/g, importStr);
       LANGS.forEach((lang) => {
@@ -233,34 +235,34 @@ class GenerateSite {
         let linksStr = '';
         demoList.forEach((demo) => {
           if (demo) {
+            const id = demo.get(lang)!.id!;
+
             let demoStr = String.raw`
 <AppDemoBox
-  id="__id__"
+  id="${id}"
   renderer={<__renderer__Demo />}
   title="__title__"
   description={[__description__]}
-  tsxSource={[__tsxSource__]}
-  scssSource={[__scssSource__]}
+  tsxSource={tsxSources['${id}']}
+  scssSource={scssSources['${id}']}
 />
 `;
-            demoStr = demoStr.replace(/__id__/g, demo.get(lang)!.id!);
             demoStr = demoStr.replace(/__renderer__/g, demo.get(lang)!.name!);
             demoStr = demoStr.replace(/__title__/g, demo.get(lang)!.title!);
             demoStr = demoStr.replace(/__description__/g, new TextEncoder().encode(demo.get(lang)!.description!).join());
-            demoStr = demoStr.replace(
-              /__tsxSource__/g,
-              new TextEncoder().encode(demo.get(lang)!.tsx!.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)![0]).join()
-            );
-            demoStr = demoStr.replace(
-              /__scssSource__/g,
-              demo.get(lang)!.scss ? new TextEncoder().encode(demo.get(lang)!.scss!.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)![0]).join() : ''
-            );
-
+            tsxSources += String.raw`
+'${id}': [${new TextEncoder().encode(demo.get(lang)!.tsx!.match(/(?<=```tsx\n)[\s\S]*?(?=```)/g)![0]).join()}],`;
+            if (demo.get(lang)!.scss) {
+              scssSources += String.raw`
+'${id}': [${new TextEncoder().encode(demo.get(lang)!.scss!.match(/(?<=```scss\n)[\s\S]*?(?=```)/g)![0]).join()}],`;
+            }
             demosStr += demoStr;
 
-            linksStr += String.raw`{ title: '${demo.get(lang)!.title!}', href: '${demo.get(lang)!.id!}' }, `;
+            linksStr += String.raw`{ title: '${demo.get(lang)!.title!}', href: '${id}' }, `;
           }
         });
+        componentRouteTmp = componentRouteTmp.replace(/__tsxSources__/g, tsxSources);
+        componentRouteTmp = componentRouteTmp.replace(/__scssSources__/g, scssSources);
 
         let routeArticleProps = String.raw`
 {

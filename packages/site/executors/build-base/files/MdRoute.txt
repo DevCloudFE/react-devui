@@ -1,9 +1,9 @@
 // @ts-nocheck
 
 import { AppMdRoute } from 'packages/site/src/app/components';
-import { useEffect } from 'react';
+import React from 'react';
 
-export default function __Route__() {
+function __Route__() {
   const props = {
     'en-US': { html: [__en-US__] },
     'zh-CN': { html: [__zh-CN__] },
@@ -11,3 +11,5 @@ export default function __Route__() {
 
   return <AppMdRoute {...props} />;
 }
+
+export default React.memo(__Route__);

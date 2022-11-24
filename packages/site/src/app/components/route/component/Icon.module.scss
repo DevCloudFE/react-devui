@@ -1,0 +1,56 @@
+@import '../../../../styles/module';
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.header-search {
+  flex: 1 0 0;
+  min-width: 16em;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 8px;
+  padding: 0;
+  margin: 20px 0 0;
+  list-style: none;
+}
+
+.icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 68px;
+  cursor: pointer;
+  transition: background-color var(--#{$rd-prefix}animation-duration-base) linear;
+
+  :global(.#{$rd-prefix}icon) {
+    transition: transform var(--#{$rd-prefix}animation-duration-base) linear;
+  }
+
+  &:hover {
+    background-color: var(--#{$rd-prefix}background-color-hover);
+
+    :global(.#{$rd-prefix}icon) {
+      transform: scale(1.2);
+    }
+  }
+}
+
+.icon-name {
+  width: calc(100% - 8px);
+  margin-top: 8px;
+  overflow: hidden;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  font-size: xx-small;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

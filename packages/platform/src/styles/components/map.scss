@@ -113,7 +113,7 @@
   @include e(info-window-close) {
     --#{$rd-prefix}size: calc(1.05em * 1.2) !important;
 
-    .rd-button__icon {
+    .#{$rd-prefix}button__icon {
       font-size: 1.05em !important;
     }
   }

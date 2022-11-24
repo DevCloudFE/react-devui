@@ -9,6 +9,7 @@ import { DCustomIcon } from '@react-devui/icons';
 
 import { AppRoute as AppMdRoute } from '../md/Route';
 import marked, { toString } from '../utils';
+import { AppIcon } from './Icon';
 import { BASE64_DATA } from './base64.out';
 
 export interface AppRouteProps {
@@ -96,6 +97,7 @@ export function AppRoute(props: AppRouteProps): JSX.Element | null {
           </li>
         )}
       </ul>
+      {title === 'Icon' ? <AppIcon /> : null}
       <h2 id="component-route-examples" className="app-component-route__examples-title">
         {t('Examples')}
       </h2>

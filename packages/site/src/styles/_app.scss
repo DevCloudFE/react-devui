@@ -151,18 +151,18 @@ h3 {
 // demo general style
 .app-component-route__demos {
   &:not([data-demo='Form']) {
-    .rd-compose:not(.rd-radio-group) {
+    .#{$rd-prefix}compose:not(.#{$rd-prefix}radio-group) {
       margin-right: 8px;
       margin-bottom: 12px;
     }
   }
 
-  .rd-radio-group {
+  .#{$rd-prefix}radio-group {
     margin-bottom: 16px;
   }
 
   section[id='FormSupportComponentsDemo'] {
-    .rd-radio-group {
+    .#{$rd-prefix}radio-group {
       margin-bottom: unset;
     }
   }
@@ -173,19 +173,19 @@ h3 {
   section[id^='Notification'],
   section[id^='Stepper'],
   section[id^='Toast'] {
-    .rd-button {
+    .#{$rd-prefix}button {
       margin-right: 8px;
       margin-bottom: 12px;
     }
 
-    .rd-button--block {
+    .#{$rd-prefix}button--block {
       margin-right: 0;
       margin-bottom: 10px;
     }
 
     /* stylelint-disable-next-line no-descending-specificity */
-    .rd-compose {
-      .rd-button {
+    .#{$rd-prefix}compose {
+      .#{$rd-prefix}button {
         margin-right: 0;
         margin-bottom: 0;
       }
@@ -210,13 +210,13 @@ h3 {
       )
   {
     section[id^='#{$id}'] {
-      .rd-#{$selector} {
+      .#{$rd-prefix}#{$selector} {
         margin-right: 8px;
         margin-bottom: 12px;
       }
 
-      .rd-compose {
-        .rd-#{$selector} {
+      .#{$rd-prefix}compose {
+        .#{$rd-prefix}#{$selector} {
           margin-right: 0;
           margin-bottom: 0;
         }
@@ -225,14 +225,14 @@ h3 {
   }
 
   section[id^='Avatar'] {
-    .rd-avatar {
+    .#{$rd-prefix}avatar {
       margin-right: 24px;
       margin-bottom: 12px;
     }
   }
 
   section[id^='Alert'] {
-    .rd-alert {
+    .#{$rd-prefix}alert {
       margin-bottom: 20px;
     }
   }
@@ -252,13 +252,13 @@ h3 {
   }
 
   section[id^='Checkbox'] {
-    .rd-checkbox {
+    .#{$rd-prefix}checkbox {
       margin-right: 8px;
       margin-bottom: 12px;
     }
 
-    .rd-checkbox-group {
-      .rd-checkbox {
+    .#{$rd-prefix}checkbox-group {
+      .#{$rd-prefix}checkbox {
         margin-right: 0;
         margin-bottom: 0;
       }
@@ -266,7 +266,7 @@ h3 {
   }
 
   section[id^='Form'] {
-    .rd-form--inline {
+    .#{$rd-prefix}form--inline {
       min-width: 800px;
     }
   }
@@ -287,22 +287,22 @@ h3 {
   }
 
   section[id^='Menu'] {
-    .rd-menu:not(.rd-menu--horizontal) {
+    .#{$rd-prefix}menu:not(.#{$rd-prefix}menu--horizontal) {
       max-width: 100%;
       border-right: 1px solid var(--#{$rd-prefix}color-divider);
     }
   }
 
   section[id^='Progress'] {
-    .rd-progress--dashboard,
-    .rd-progress--circle {
+    .#{$rd-prefix}progress--dashboard,
+    .#{$rd-prefix}progress--circle {
       margin-right: 8px;
       margin-bottom: 12px;
     }
   }
 
   section[id^='Stepper'] {
-    .rd-stepper:not(.rd-stepper--vertical) {
+    .#{$rd-prefix}stepper:not(.#{$rd-prefix}stepper--vertical) {
       min-width: 600px;
     }
   }
@@ -319,23 +319,23 @@ h3 {
   }
 
   section[id^='Table'] {
-    .rd-table {
+    .#{$rd-prefix}table {
       min-width: 600px;
     }
 
-    .rd-pagination {
+    .#{$rd-prefix}pagination {
       justify-content: flex-end;
       margin-top: 20px;
     }
   }
 
   section[id^='Transfer'] {
-    .rd-transfer {
+    .#{$rd-prefix}transfer {
       min-width: 400px;
     }
   }
 
-  .app-demo-container {
+  .app-demo-text-container {
     display: flex;
     flex-direction: column;
     gap: 20px 0;

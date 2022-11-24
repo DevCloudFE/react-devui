@@ -1,13 +1,13 @@
 @import '~styles/module';
 
 @include b(notification) {
-  :global .rd-popover__body {
+  :global(.#{$rd-prefix}popover__body) {
     width: 320px;
     padding: 0;
   }
 
   @include m(spinner) {
-    :global .rd-popover__body {
+    :global(.#{$rd-prefix}popover__body) {
       width: unset;
       padding: 16px 32px;
     }
@@ -35,7 +35,7 @@
     height: 44px;
     border-top: 1px solid var(--#{$rd-prefix}color-divider);
 
-    :global .rd-button {
+    :global(.#{$rd-prefix}button) {
       flex-grow: 1;
     }
   }

@@ -16,7 +16,7 @@ export interface AppDemoBoxProps {
   title: string;
   description: number[];
   tsxSource: number[];
-  scssSource: number[];
+  scssSource?: number[];
 }
 
 export function AppDemoBox(props: AppDemoBoxProps): JSX.Element | null {
@@ -26,7 +26,7 @@ export function AppDemoBox(props: AppDemoBoxProps): JSX.Element | null {
 
   const description = marked(toString(props.description));
   const tsxSource = toString(props.tsxSource);
-  const scssSource = props.scssSource.length > 0 ? toString(props.scssSource) : undefined;
+  const scssSource = props.scssSource ? toString(props.scssSource) : undefined;
 
   const tsx = marked(String.raw`
 ${'```tsx'}
