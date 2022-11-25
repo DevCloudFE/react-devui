@@ -39,6 +39,7 @@ export function useHttp() {
     <T = any, D = any>(config: AxiosRequestConfig<D>, options?: { unmount?: boolean }): Observable<T> & { abort: () => void } => {
       const { unmount = true } = options ?? {};
 
+      const isLogin = location.pathname === LOGIN_PATH;
       const onDestroy$ = new Subject<void>();
       const controller = new AbortController();
       const abort = () => {
@@ -51,7 +52,7 @@ export function useHttp() {
       }
 
       const headers = { ...config.headers };
-      if (!isNull(TOKEN.value)) {
+      if (!isLogin && !isNull(TOKEN.value)) {
         headers['Authorization'] = `Bearer ${TOKEN.value}`;
       }
 
@@ -100,7 +101,7 @@ export function useHttp() {
                   case 403:
                   case 404:
                   case 500:
-                    if (location.pathname !== LOGIN_PATH) {
+                    if (!isLogin) {
                       navigate(`/exception/${error.response.status}`);
                     }
                     break;
