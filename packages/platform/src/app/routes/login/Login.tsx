@@ -74,7 +74,7 @@ export default function Login(): JSX.Element | null {
       },
       error: (error) => {
         setLoginLoading(false);
-        useNotifications.set((draft) => {
+        useNotifications.setState((draft) => {
           const key = getGlobalKey();
           draft.push({
             key,
@@ -83,13 +83,13 @@ export default function Login(): JSX.Element | null {
             dDescription: error.response!.statusText,
             dType: 'error',
             onClose: () => {
-              useNotifications.set((draft) => {
+              useNotifications.setState((draft) => {
                 draft.find((n) => n.key === key)!.dVisible = false;
               });
             },
             afterVisibleChange: (visible) => {
               if (!visible) {
-                useNotifications.set((draft) => {
+                useNotifications.setState((draft) => {
                   draft.splice(
                     draft.findIndex((n) => n.key === key),
                     1

@@ -5,9 +5,15 @@ import { useState } from 'react';
 
 import { useUnmount } from './useUnmount';
 
-export function createGlobalState<S>(): { (): ImmerHook<S | undefined>; set: Updater<S | undefined> };
-export function createGlobalState<S>(initialValue: S): { (): ImmerHook<S>; set: Updater<S> };
-export function createGlobalState<S>(initialValue?: S): { (): ImmerHook<S | undefined>; set: Updater<S | undefined> } {
+interface GlobalStateHook<S> {
+  (): ImmerHook<S>;
+  readonly state: S;
+  setState: Updater<S>;
+}
+
+export function createGlobalState<S>(): GlobalStateHook<S | undefined>;
+export function createGlobalState<S>(initialValue: S): GlobalStateHook<S>;
+export function createGlobalState<S>(initialValue?: S): GlobalStateHook<S | undefined> {
   const store = {
     state: freeze(typeof initialValue === 'function' ? initialValue() : initialValue, true),
     setState(updater: any) {
@@ -24,7 +30,7 @@ export function createGlobalState<S>(initialValue?: S): { (): ImmerHook<S | unde
     updates: new Set<(...args: any[]) => any>(),
   };
 
-  return Object.assign<any, any>(
+  return new Proxy(
     () => {
       const [state, setState] = useState(store.state);
 
@@ -39,7 +45,15 @@ export function createGlobalState<S>(initialValue?: S): { (): ImmerHook<S | unde
       return [state, store.setState];
     },
     {
-      set: store.setState,
+      get(target, prop, receiver) {
+        if (prop === 'state') {
+          return store.state;
+        }
+        if (prop === 'setState') {
+          return store.setState;
+        }
+        return Reflect.get(target, prop, receiver);
+      },
     }
-  );
+  ) as any;
 }

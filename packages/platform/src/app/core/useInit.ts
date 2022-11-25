@@ -13,7 +13,7 @@ export function useInit() {
   const refreshToken = useRefreshToken();
 
   const handleUser = (user: UserState) => {
-    useUserState.set(user);
+    useUserState.setState(user);
 
     //#region ACL
     acl.setFull(user.role === 'admin');
@@ -22,7 +22,7 @@ export function useInit() {
   };
 
   const getNotification = () => {
-    useNotificationState.set(undefined);
+    useNotificationState.setState(undefined);
     http<NotificationItem[]>(
       {
         url: '/notification',
@@ -31,13 +31,13 @@ export function useInit() {
       { unmount: false }
     ).subscribe({
       next: (res) => {
-        useNotificationState.set(res);
+        useNotificationState.setState(res);
       },
     });
   };
 
   const resetMenu = () => {
-    useMenu.set((draft) => {
+    useMenu.setState((draft) => {
       draft.expands = undefined;
     });
   };

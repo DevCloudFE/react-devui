@@ -71,7 +71,7 @@ export function useHttp() {
               if (error.response) {
                 switch (error.response.status) {
                   case 401:
-                    useToasts.set((draft) => {
+                    useToasts.setState((draft) => {
                       const key = getGlobalKey();
                       draft.push({
                         key,
@@ -79,13 +79,13 @@ export function useHttp() {
                         dVisible: true,
                         dType: 'error',
                         onClose: () => {
-                          useToasts.set((draft) => {
+                          useToasts.setState((draft) => {
                             draft.find((n) => n.key === key)!.dVisible = false;
                           });
                         },
                         afterVisibleChange: (visible) => {
                           if (!visible) {
-                            useToasts.set((draft) => {
+                            useToasts.setState((draft) => {
                               draft.splice(
                                 draft.findIndex((n) => n.key === key),
                                 1
