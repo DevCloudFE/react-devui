@@ -29,7 +29,7 @@
         },
         "login": {
           "Login": "Login",
-          "description": "RD-Platform provides solutions for enterprise-level background management systems",
+          "description": "provides solutions for enterprise-level background management systems",
           "Account Login": "Account Login",
           "Phone Login": "Phone Login",
           "Username": "Username: 'admin' or 'user'",
@@ -117,7 +117,7 @@
         },
         "login": {
           "Login": "登 录",
-          "description": "RD-Platform 提供了企业级后台管理系统的解决方案",
+          "description": "提供了企业级后台管理系统的解决方案",
           "Account Login": "账号密码登录",
           "Phone Login": "手机号登录",
           "Username": "用户名：'admin' 或 'user'",

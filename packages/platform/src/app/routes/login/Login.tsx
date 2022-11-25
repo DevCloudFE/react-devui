@@ -11,6 +11,7 @@ import { DButton, DCheckbox, DForm, DInput, DTabs, FormControl, FormGroup, useFo
 import { getClassName } from '@react-devui/utils';
 
 import { AppLanguage } from '../../components';
+import { APP_NAME } from '../../config/other';
 import { TOKEN, useHttp, useInit } from '../../core';
 import { useNotifications } from '../../core/state';
 import { getGlobalKey } from '../../utils/vars';
@@ -132,9 +133,11 @@ export default function Login(): JSX.Element | null {
         <div className={styles['app-login__login-container']}>
           <div className={styles['app-login__title-container']}>
             <img className={styles['app-login__logo']} src="/assets/logo.svg" alt="Logo" />
-            <span>RD-Platform</span>
+            <span>{APP_NAME}</span>
           </div>
-          <div className={styles['app-login__description']}>{t('routes.login.description')}</div>
+          <div className={styles['app-login__description']}>
+            {APP_NAME} {t('routes.login.description')}
+          </div>
           <DTabs
             className={styles['app-login__tabs']}
             dList={[

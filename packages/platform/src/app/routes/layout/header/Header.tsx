@@ -9,6 +9,7 @@ import { DCustomIcon, MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } fro
 import { getClassName } from '@react-devui/utils';
 
 import { AppLanguage } from '../../../components';
+import { APP_NAME } from '../../../config/other';
 import { STORAGE_KEY } from '../../../config/storage';
 import styles from './Header.module.scss';
 import { AppNotification } from './notification/Notification';
@@ -52,7 +53,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
           style={{ width: menuMode === 'vertical' ? sidebarWidth - 64 : 0 }}
         >
           <div className={styles['app-header__logo-title']} ref={textRef}>
-            RD-Platform
+            {APP_NAME}
           </div>
         </div>
       </Link>
