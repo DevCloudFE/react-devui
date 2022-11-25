@@ -7,7 +7,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { concatMap, of } from 'rxjs';
-import { catchError, EMPTY, from, map, Subject, takeUntil, throwError } from 'rxjs';
+import { catchError, from, map, Subject, takeUntil, throwError } from 'rxjs';
 
 import { useEventCallback, useUnmount } from '@react-devui/hooks';
 
@@ -65,6 +65,7 @@ export function useHttp() {
         concatMap((req) =>
           from(axios(req) as Promise<AxiosResponse<T, D>>).pipe(
             takeUntil(onDestroy$),
+            map((res) => res.data),
             catchError((error: AxiosError<T, D>) => {
               if (error.response) {
                 switch (error.response.status) {
@@ -94,13 +95,15 @@ export function useHttp() {
                       });
                     });
                     navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
-                    return EMPTY;
+                    break;
 
                   case 403:
                   case 404:
                   case 500:
-                    navigate(`/exception/${error.response.status}`);
-                    return EMPTY;
+                    if (location.pathname !== LOGIN_PATH) {
+                      navigate(`/exception/${error.response.status}`);
+                    }
+                    break;
 
                   default:
                     break;
@@ -111,8 +114,7 @@ export function useHttp() {
                 // Something happened in setting up the request that triggered an Error.
               }
               return throwError(() => error);
-            }),
-            map((res) => res.data)
+            })
           )
         )
       );
