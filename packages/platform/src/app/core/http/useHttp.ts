@@ -13,8 +13,7 @@ import { useEventCallback, useUnmount } from '@react-devui/hooks';
 
 import { environment } from '../../../environments';
 import { LOGIN_PATH, PREV_ROUTE_KEY } from '../../config/other';
-import { getGlobalKey } from '../../utils/vars';
-import { useToasts } from '../state';
+import { ToastService } from '../../utils';
 import { TOKEN } from '../token';
 import './mock';
 
@@ -71,29 +70,9 @@ export function useHttp() {
               if (error.response) {
                 switch (error.response.status) {
                   case 401:
-                    useToasts.setState((draft) => {
-                      const key = getGlobalKey();
-                      draft.push({
-                        key,
-                        children: t('User not authorized'),
-                        dVisible: true,
-                        dType: 'error',
-                        onClose: () => {
-                          useToasts.setState((draft) => {
-                            draft.find((n) => n.key === key)!.dVisible = false;
-                          });
-                        },
-                        afterVisibleChange: (visible) => {
-                          if (!visible) {
-                            useToasts.setState((draft) => {
-                              draft.splice(
-                                draft.findIndex((n) => n.key === key),
-                                1
-                              );
-                            });
-                          }
-                        },
-                      });
+                    ToastService.open({
+                      children: t('User not authorized'),
+                      dType: 'error',
                     });
                     navigate(LOGIN_PATH, { state: { [PREV_ROUTE_KEY]: location } });
                     break;

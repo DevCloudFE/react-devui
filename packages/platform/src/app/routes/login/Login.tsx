@@ -13,8 +13,7 @@ import { getClassName } from '@react-devui/utils';
 import { AppLanguage } from '../../components';
 import { APP_NAME } from '../../config/other';
 import { TOKEN, useHttp, useInit } from '../../core';
-import { useNotifications } from '../../core/state';
-import { getGlobalKey } from '../../utils/vars';
+import { NotificationService } from '../../utils';
 import styles from './Login.module.scss';
 import { BASE64_DATA } from './base64.out';
 
@@ -74,30 +73,10 @@ export default function Login(): JSX.Element | null {
       },
       error: (error) => {
         setLoginLoading(false);
-        useNotifications.setState((draft) => {
-          const key = getGlobalKey();
-          draft.push({
-            key,
-            dVisible: true,
-            dTitle: error.response!.status,
-            dDescription: error.response!.statusText,
-            dType: 'error',
-            onClose: () => {
-              useNotifications.setState((draft) => {
-                draft.find((n) => n.key === key)!.dVisible = false;
-              });
-            },
-            afterVisibleChange: (visible) => {
-              if (!visible) {
-                useNotifications.setState((draft) => {
-                  draft.splice(
-                    draft.findIndex((n) => n.key === key),
-                    1
-                  );
-                });
-              }
-            },
-          });
+        NotificationService.open({
+          dTitle: error.response!.status,
+          dDescription: error.response!.statusText,
+          dType: 'error',
         });
       },
     });
