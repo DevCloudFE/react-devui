@@ -31,7 +31,19 @@ inquirer
       const eslintrcJsonPath = path.join(ROOT_PATH, '.eslintrc.json');
       eslintrcJson.overrides.forEach((_, index) => {
         if (eslintrcJson.overrides[index].rules && eslintrcJson.overrides[index].rules!['@nrwl/nx/enforce-module-boundaries']) {
-          delete eslintrcJson.overrides[index].rules!['@nrwl/nx/enforce-module-boundaries'];
+          eslintrcJson.overrides[index].rules!['@nrwl/nx/enforce-module-boundaries'] = [
+            'error',
+            {
+              enforceBuildableLibDependency: true,
+              allow: [],
+              depConstraints: [
+                {
+                  sourceTag: 'scope:platform',
+                  onlyDependOnLibsWithTags: ['scope:platform'],
+                },
+              ],
+            },
+          ];
         }
       });
       outputJsonSync(eslintrcJsonPath, eslintrcJson);
