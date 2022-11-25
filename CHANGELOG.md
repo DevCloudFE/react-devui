@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.0.1](https://github.com/DevCloudFE/react-devui/compare/v18.0.0...v18.0.1) (2022-11-25)
+
+### Bug Fixes
+
+- **platform:** dont add `Authorization` when in login page ([a225419](https://github.com/DevCloudFE/react-devui/commit/a225419d986660318548574561aa560ed41b5ace))
+
+### Features
+
+- **platform:** add `APP_NAME` config ([ad607ca](https://github.com/DevCloudFE/react-devui/commit/ad607ca18bdb60c780e0fd770a733a2c735b511e))
+
 # [18.0.0](https://github.com/DevCloudFE/react-devui/compare/v1.0.0-alpha.1...v18.0.0) (2022-11-23)
 
 ### Bug Fixes
