@@ -1,15 +1,17 @@
 import { isUndefined } from 'lodash';
 import { useEffect } from 'react';
 
+import { APP_NAME } from '../config/other';
+
 export const TITLE_CONFIG: {
   default: string;
   separator: string;
   prefix?: string;
   suffix?: string;
 } = {
-  default: 'Platform',
+  default: APP_NAME,
   separator: ' - ',
-  suffix: 'Platform',
+  suffix: APP_NAME,
 };
 
 export function usePageTitle(title?: string) {
