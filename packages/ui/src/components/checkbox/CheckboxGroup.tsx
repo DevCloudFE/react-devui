@@ -9,7 +9,7 @@ import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCheckbox } from './Checkbox';
 
-export interface DCheckboxList<V extends DId> {
+export interface DCheckboxItem<V extends DId> {
   label: React.ReactNode;
   value: V;
   disabled?: boolean;
@@ -17,7 +17,7 @@ export interface DCheckboxList<V extends DId> {
 export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
   dModel?: V[];
-  dList: DCheckboxList<V>[];
+  dList: DCheckboxItem<V>[];
   dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: V[]) => void;
