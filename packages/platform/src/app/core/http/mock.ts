@@ -6,7 +6,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
 import { environment } from '../../../environments';
-import { ROUTES_ACL } from '../../config/acl';
+import { ROLE_ACL, ROUTES_ACL } from '../../config/acl';
 import { base64url } from '../../utils';
 import { TOKEN } from '../token';
 
@@ -24,14 +24,11 @@ if (environment.http.mock) {
 
   const admin: UserState = {
     name: 'admin',
-    avatar: '/assets/imgs/avatar.png',
-    role: 'admin',
-    permission: [],
+    permission: [ROLE_ACL.super_admin],
   };
   const user: UserState = {
     name: 'user',
     avatar: '/assets/imgs/avatar.png',
-    role: 'user',
     permission: [0, ROUTES_ACL['/test/acl'], ROUTES_ACL['/test/http']],
   };
   const notification: NotificationItem[] = [

@@ -1,5 +1,6 @@
 import type { UserState, NotificationItem } from './state';
 
+import { ROLE_ACL } from '../config/acl';
 import { useHttp } from './http';
 import { useUserState, useNotificationState } from './state';
 import { useRefreshToken } from './token';
@@ -16,7 +17,7 @@ export function useInit() {
     useUserState.setState(user);
 
     //#region ACL
-    acl.setFull(user.role === 'admin');
+    acl.setFull(user.permission.includes(ROLE_ACL.super_admin));
     acl.set(user.permission);
     //#endregion
   };

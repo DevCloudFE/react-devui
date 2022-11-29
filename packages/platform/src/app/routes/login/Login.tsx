@@ -60,11 +60,14 @@ export default function Login(): JSX.Element | null {
 
   const handleSubmit = () => {
     setLoginLoading(true);
-    http<{ user: UserState; token: string }>({
-      url: '/auth/login',
-      method: 'post',
-      data: { username: accountForm.get('username').value },
-    }).subscribe({
+    http<{ user: UserState; token: string }>(
+      {
+        url: '/auth/login',
+        method: 'post',
+        data: { username: accountForm.get('username').value },
+      },
+      { authorization: false }
+    ).subscribe({
       next: (res) => {
         setLoginLoading(false);
         TOKEN.set(res.token);

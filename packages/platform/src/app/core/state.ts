@@ -4,8 +4,7 @@ import { createGlobalState } from '@react-devui/hooks';
 
 export interface UserState {
   name: string;
-  avatar: string;
-  role: 'admin' | 'user';
+  avatar?: string;
   permission: (string | number)[];
 }
 export const useUserState = createGlobalState<UserState>();

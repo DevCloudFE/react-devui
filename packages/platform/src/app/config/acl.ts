@@ -6,3 +6,7 @@ export const ROUTES_ACL = {
   '/list/standard-table': 'routes.list.standard-table',
   '/list/standard-table/:id': 'routes.list.standard-table.detail',
 };
+
+export const ROLE_ACL = {
+  super_admin: 'role.super_admin',
+};

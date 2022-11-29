@@ -34,7 +34,11 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
       }}
     >
       <button {...props} aria-label={t('routes.layout.My account')}>
-        <DAvatar dImg={{ src: user.avatar, alt: 'avatar' }} dSize={28}></DAvatar>
+        <DAvatar
+          dImg={user.avatar ? { src: user.avatar, alt: 'avatar' } : undefined}
+          dText={user.name[0].toUpperCase()}
+          dSize={28}
+        ></DAvatar>
         <span className="d-none d-md-block">{user.name}</span>
       </button>
     </DDropdown>

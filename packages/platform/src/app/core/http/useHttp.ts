@@ -35,8 +35,11 @@ export function useHttp() {
   });
 
   return useEventCallback(
-    <T = any, D = any>(config: AxiosRequestConfig<D>, options?: { unmount?: boolean }): Observable<T> & { abort: () => void } => {
-      const { unmount = true } = options ?? {};
+    <T = any, D = any>(
+      config: AxiosRequestConfig<D>,
+      options?: { unmount?: boolean; authorization?: boolean }
+    ): Observable<T> & { abort: () => void } => {
+      const { unmount = true, authorization = true } = options ?? {};
 
       const isLogin = location.pathname === LOGIN_PATH;
       const onDestroy$ = new Subject<void>();
@@ -51,7 +54,7 @@ export function useHttp() {
       }
 
       const headers = { ...config.headers };
-      if (!isLogin && !isNull(TOKEN.value)) {
+      if (authorization && !isNull(TOKEN.value)) {
         headers['Authorization'] = `Bearer ${TOKEN.value}`;
       }
 
