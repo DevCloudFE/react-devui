@@ -68,7 +68,7 @@ if (environment.http.mock) {
     .reply(withDelay(500, [200, (TOKEN as JWTToken<JWTTokenPayload & { admin: boolean }>).payload?.admin ? admin : user]));
 
   for (const username of ['admin', 'user']) {
-    mock.onPost('/api/v1/login', { username }).reply(() => {
+    mock.onPost('/api/v1/auth/login', { username }).reply(() => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve([

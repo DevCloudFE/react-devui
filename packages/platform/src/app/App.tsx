@@ -2,50 +2,45 @@ import type { UserState } from './core/state';
 import type { DRootProps } from '@react-devui/ui';
 import type { DLang } from '@react-devui/ui/utils/types';
 
+import { isNull } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { useAsync, useMount, useStorage } from '@react-devui/hooks';
 import { DNotification, DToast } from '@react-devui/ui';
 import { DRoot } from '@react-devui/ui';
 
 import { AppRoutes } from './Routes';
-import { LOGIN_PATH } from './config/other';
 import { STORAGE_KEY } from './config/storage';
-import { useHttp, useInit } from './core';
+import { TOKEN, useHttp, useInit } from './core';
 import { useNotifications, useToasts } from './core/state';
 
 export type AppTheme = 'light' | 'dark';
 
 export function App() {
-  const { i18n } = useTranslation();
   const http = useHttp();
   const init = useInit();
-  const navigate = useNavigate();
   const async = useAsync();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isNull(TOKEN.value));
   const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
   const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
   const [notifications] = useNotifications();
   const [toasts] = useToasts();
 
   useMount(() => {
-    i18n.changeLanguage(languageStorage.value);
-
-    http<UserState>({
-      url: '/auth/me',
-      method: 'get',
-    }).subscribe({
-      next: (res) => {
-        setLoading(false);
-        init(res);
-      },
-      error: () => {
-        setLoading(false);
-        navigate(LOGIN_PATH);
-      },
-    });
+    if (!isNull(TOKEN.value)) {
+      http<UserState>({
+        url: '/auth/me',
+        method: 'get',
+      }).subscribe({
+        next: (res) => {
+          setLoading(false);
+          init(res);
+        },
+        error: () => {
+          setLoading(false);
+        },
+      });
+    }
   });
 
   useEffect(() => {
