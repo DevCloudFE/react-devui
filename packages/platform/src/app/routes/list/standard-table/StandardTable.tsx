@@ -221,6 +221,7 @@ export default function StandardTable(): JSX.Element | null {
               }}
               onResetClick={() => {
                 setDeviceQuery((draft) => {
+                  draft.keyword = '';
                   draft.model = null;
                   draft.status = [];
                 });
