@@ -31,7 +31,11 @@
 
     @include e(button) {
       &:not(.is-active) {
-        border: none;
+        border-color: transparent;
+      }
+
+      @include m(number) {
+        padding: 0 4px;
       }
     }
 
@@ -91,6 +95,7 @@
     }
 
     @include m(number) {
+      padding: 0 8px;
       transition: border-color var(--#{$rd-prefix}animation-duration-base) linear, color var(--#{$rd-prefix}animation-duration-base) linear,
         box-shadow var(--#{$rd-prefix}animation-duration-base) linear;
 
