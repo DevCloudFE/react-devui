@@ -10,18 +10,18 @@ export function useAPI(url: string) {
   const http = useHttp();
 
   return {
-    list: useEventCallback(<T extends StandardFields = any, D extends StandardGetParams = StandardGetParams>(data?: D) =>
-      http<StandardListRes<T>, D>({
+    list: useEventCallback(<T extends StandardFields = any, P extends StandardGetParams = StandardGetParams>(params?: P) =>
+      http<StandardListRes<T>>({
         url,
         method: 'get',
-        data,
+        params,
       })
     ),
-    get: useEventCallback(<T extends StandardFields = any, D extends StandardGetParams = StandardGetParams>(id: number, data?: D) =>
-      http<T, D>({
+    get: useEventCallback(<T extends StandardFields = any, P extends StandardGetParams = StandardGetParams>(id: number, params?: P) =>
+      http<T>({
         url: `${url}/${id}`,
         method: 'get',
-        data,
+        params,
       })
     ),
     create: useEventCallback(<T extends StandardFields = any, D = any>(data: D) =>

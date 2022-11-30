@@ -106,16 +106,16 @@ if (environment.http.mock) {
   }
 
   mock.onGet('/api/v1/device').reply((config) => {
-    const data = JSON.parse(config.data);
+    const params = config.params;
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
           200,
           {
-            resources: deviceList.slice((data.page - 1) * data.page_size, data.page * data.page_size),
+            resources: deviceList.slice((params.page - 1) * params.page_size, params.page * params.page_size),
             metadata: {
-              page: data.page,
-              page_size: data.page_size,
+              page: params.page,
+              page_size: params.page_size,
               total_size: deviceList.length,
             },
           },
