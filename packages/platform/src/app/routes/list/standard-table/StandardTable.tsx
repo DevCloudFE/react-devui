@@ -12,8 +12,8 @@ import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSe
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useAPI, useQueryParams } from '../../../hooks';
+import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
-import { AppDeviceModal } from './device-modal/DeviceModal';
 
 interface DeviceQueryParams {
   keyword: string;

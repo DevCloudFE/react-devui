@@ -1,4 +1,4 @@
-import type { DeviceDoc } from '../../../../hooks/api/types';
+import type { DeviceDoc } from '../../../hooks/api/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
