@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.0.2](https://github.com/DevCloudFE/react-devui/compare/v18.0.1...v18.0.2) (2022-11-30)
+
+### Bug Fixes
+
+- **platform:** adjust init ([6a0ab44](https://github.com/DevCloudFE/react-devui/commit/6a0ab44888bfa52e62a285f50dfe776507aad34e))
+- **platform:** clear `keyword` when reset ([4816227](https://github.com/DevCloudFE/react-devui/commit/4816227c471281c0863488647b288db42417b1b4))
+- **platform:** use `params` in `get` request ([c7c4c06](https://github.com/DevCloudFE/react-devui/commit/c7c4c06f1d2436de8d1fade9984d76a3974094cd))
+- **ui:** fix max-index in dev env ([f4628a9](https://github.com/DevCloudFE/react-devui/commit/f4628a939e7bebb770374d007b528db354030dee))
+- **ui:** rename `DCheckboxList` to `DCheckboxItem` ([ee94f54](https://github.com/DevCloudFE/react-devui/commit/ee94f549f7f8feb264579d8db3b11d30b1a2ddd6))
+
 ## [18.0.1](https://github.com/DevCloudFE/react-devui/compare/v18.0.0...v18.0.1) (2022-11-25)
 
 ### Bug Fixes
