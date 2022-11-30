@@ -13,7 +13,7 @@ export interface DHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dActions: React.ReactNode[];
   dCloseProps: DButtonProps | undefined;
   dAriaLabelledby: string | undefined;
-  onCloseClick: (() => void | false | Promise<void | false>) | undefined;
+  onCloseClick: (() => void | boolean | Promise<boolean>) | undefined;
   onClose: (() => void) | undefined;
 }
 

@@ -13,8 +13,8 @@ export interface DFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   dActions: React.ReactNode[];
   dCancelProps: DButtonProps | undefined;
   dOkProps: DButtonProps | undefined;
-  onCancelClick: (() => void | false | Promise<void | false>) | undefined;
-  onOkClick: (() => void | false | Promise<void | false>) | undefined;
+  onCancelClick: (() => void | boolean | Promise<boolean>) | undefined;
+  onOkClick: (() => void | boolean | Promise<boolean>) | undefined;
   onClose: (() => void) | undefined;
 }
 

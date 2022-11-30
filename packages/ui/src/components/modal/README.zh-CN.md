@@ -55,7 +55,7 @@ interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
 interface DModalHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dActions?: React.ReactNode[];
   dCloseProps?: DButtonProps;
-  onCloseClick?: () => void | false | Promise<void | false>;
+  onCloseClick?: () => void | boolean | Promise<boolean>;
 }
 ```
 
@@ -75,8 +75,8 @@ interface DModalFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   dActions?: React.ReactNode[];
   dCancelProps?: DButtonProps;
   dOkProps?: DButtonProps;
-  onCancelClick?: () => void | false | Promise<void | false>;
-  onOkClick?: () => void | false | Promise<void | false>;
+  onCancelClick?: () => void | boolean | Promise<boolean>;
+  onOkClick?: () => void | boolean | Promise<boolean>;
 }
 ```
 

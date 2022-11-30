@@ -7,7 +7,7 @@ import { useComponentConfig } from '../root';
 export interface DPopoverHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   dActions?: React.ReactNode[];
   dCloseProps?: DButtonProps;
-  onCloseClick?: () => void | false | Promise<void | false>;
+  onCloseClick?: () => void | boolean | Promise<boolean>;
 }
 
 export interface DPopoverHeaderPrivateProps {

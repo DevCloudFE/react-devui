@@ -9,8 +9,8 @@ export interface DDrawerFooterProps extends Omit<React.HTMLAttributes<HTMLDivEle
   dActions?: React.ReactNode[];
   dCancelProps?: DButtonProps;
   dOkProps?: DButtonProps;
-  onCancelClick?: () => void | false | Promise<void | false>;
-  onOkClick?: () => void | false | Promise<void | false>;
+  onCancelClick?: () => void | boolean | Promise<boolean>;
+  onOkClick?: () => void | boolean | Promise<boolean>;
 }
 
 export interface DDrawerFooterPrivateProps {
