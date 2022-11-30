@@ -6,9 +6,24 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { useImmer, useMount } from '@react-devui/hooks';
+import { useAsync, useImmer, useMount } from '@react-devui/hooks';
 import { DownOutlined, PlusOutlined } from '@react-devui/icons';
-import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
+import {
+  DButton,
+  DCard,
+  DCheckbox,
+  DDropdown,
+  DModal,
+  DPagination,
+  DSelect,
+  DSeparator,
+  DSpinner,
+  DTable,
+  FormControl,
+  FormGroup,
+  useForm,
+  Validators,
+} from '@react-devui/ui';
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useAPI, useQueryParams } from '../../../hooks';
@@ -26,6 +41,7 @@ interface DeviceQueryParams {
 
 export default function StandardTable(): JSX.Element | null {
   const { t } = useTranslation();
+  const async = useAsync();
   const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
   const [initDeviceQuery, saveDeviceQuery] = useQueryParams<DeviceQueryParams>({
@@ -57,6 +73,14 @@ export default function StandardTable(): JSX.Element | null {
   }>();
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
+
+  const [deviceForm, updateDeviceForm] = useForm(
+    () =>
+      new FormGroup({
+        name: new FormControl('', Validators.required),
+        model: new FormControl<string | null>(null, Validators.required),
+      })
+  );
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -108,7 +132,17 @@ export default function StandardTable(): JSX.Element | null {
       {paramsOfDeleteModal && (
         <DModal
           dVisible={paramsOfDeleteModal.visible}
-          dFooter={<DModal.Footer />}
+          dFooter={
+            <DModal.Footer
+              onOkClick={() =>
+                new Promise((r) => {
+                  async.setTimeout(() => {
+                    r(true);
+                  }, 500);
+                })
+              }
+            />
+          }
           dType={{
             type: 'warning',
             title: 'Delete device',
@@ -125,25 +159,29 @@ export default function StandardTable(): JSX.Element | null {
           }}
         />
       )}
-      <AppDeviceModal
-        aVisible={paramsOfDeviceModal?.visible}
-        aDevice={paramsOfDeviceModal?.device}
-        aModelList={modelList}
-        onClose={() => {
-          setParamsOfDeviceModal((draft) => {
-            if (draft) {
-              draft.visible = false;
-            }
-          });
-        }}
-        onSubmit={() => {
-          setParamsOfDeviceModal((draft) => {
-            if (draft) {
-              draft.visible = false;
-            }
-          });
-        }}
-      />
+      {paramsOfDeviceModal && (
+        <AppDeviceModal
+          aVisible={paramsOfDeviceModal.visible}
+          aHeader={`${paramsOfDeviceModal.device ? 'Edit' : 'Add'} Device`}
+          aForm={deviceForm}
+          aUpdateForm={updateDeviceForm}
+          aModelList={modelList}
+          onClose={() => {
+            setParamsOfDeviceModal((draft) => {
+              if (draft) {
+                draft.visible = false;
+              }
+            });
+          }}
+          onSubmit={() =>
+            new Promise((r) => {
+              async.setTimeout(() => {
+                r(true);
+              }, 500);
+            })
+          }
+        />
+      )}
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -156,6 +194,8 @@ export default function StandardTable(): JSX.Element | null {
             <DButton
               onClick={() => {
                 setParamsOfDeviceModal({ visible: true, device: undefined });
+                deviceForm.reset();
+                updateDeviceForm();
               }}
               dIcon={<PlusOutlined />}
             >
@@ -312,6 +352,8 @@ export default function StandardTable(): JSX.Element | null {
                               switch (action) {
                                 case 'edit':
                                   setParamsOfDeviceModal({ visible: true, device: data });
+                                  deviceForm.reset({ name: data.name, model: data.model });
+                                  updateDeviceForm();
                                   break;
 
                                 case 'delete':

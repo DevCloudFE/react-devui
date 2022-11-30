@@ -1,53 +1,38 @@
-import type { DeviceDoc } from '../../../hooks/api/types';
+import type { FormGroup } from '@react-devui/ui';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import { useEffect } from 'react';
 
-import { useForm, FormGroup, FormControl, Validators, DForm, DInput, DModal, DSelect } from '@react-devui/ui';
+import { useId } from '@react-devui/hooks';
+import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
 export interface AppDeviceModalProps {
-  aVisible?: boolean;
-  aDevice?: DeviceDoc;
-  aModelList?: DSelectItem<string>[];
-  onClose?: () => void;
-  onSubmit?: () => void;
+  aVisible: boolean;
+  aHeader: string;
+  aForm: FormGroup;
+  aUpdateForm: any;
+  aModelList: DSelectItem<string>[] | undefined;
+  onClose: () => void;
+  onSubmit: () => void | boolean | Promise<boolean>;
 }
 
 export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
-  const { aVisible = false, aDevice, aModelList, onClose, onSubmit } = props;
+  const { aVisible, aHeader, aForm, aUpdateForm, aModelList, onClose, onSubmit } = props;
 
-  const [form, updateForm] = useForm(
-    () =>
-      new FormGroup({
-        name: new FormControl('', Validators.required),
-        model: new FormControl<string | null>(null, Validators.required),
-      })
-  );
-
-  useEffect(() => {
-    form.reset(aDevice ? { name: aDevice.name, model: aDevice.model } : undefined);
-    updateForm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aDevice]);
+  const uniqueId = useId();
+  const id = `app-form-${uniqueId}`;
 
   return (
     <DModal
       dVisible={aVisible}
-      dHeader={<DModal.Header>{aDevice ? 'Edit' : 'Add'} Device</DModal.Header>}
-      dFooter={
-        <DModal.Footer
-          dOkProps={{ type: 'submit', form: 'device-form', disabled: !form.valid }}
-          onOkClick={() => {
-            return false;
-          }}
-        ></DModal.Footer>
-      }
+      dHeader={aHeader}
+      dFooter={<DModal.Footer dOkProps={{ type: 'submit', form: id, disabled: !aForm.valid }} onOkClick={onSubmit}></DModal.Footer>}
       dMaskClosable={false}
+      dSkipFirstTransition={false}
       onClose={onClose}
     >
-      <DForm id="device-form" onSubmit={onSubmit} dUpdate={updateForm} dLabelWidth="6em">
-        <DForm.Group dFormGroup={form}>
+      <DForm id={id} dUpdate={aUpdateForm} dLabelWidth="6em">
+        <DForm.Group dFormGroup={aForm}>
           <DForm.Item dFormControls={{ name: 'Please enter name!' }} dLabel="Name">
             {({ name }) => <DInput dFormControl={name} dPlaceholder="Name" />}
           </DForm.Item>

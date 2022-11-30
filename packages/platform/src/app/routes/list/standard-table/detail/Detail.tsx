@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { useImmer, useMount } from '@react-devui/hooks';
+import { useAsync, useImmer, useMount } from '@react-devui/hooks';
 import { EditOutlined } from '@react-devui/icons';
-import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
+import { DButton, DCard, DSeparator, DSpinner, DTable, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 
 import { AppRouteHeader } from '../../../../components';
 import { useAPI } from '../../../../hooks';
@@ -17,6 +17,7 @@ import styles from './Detail.module.scss';
 
 export default function Detail(): JSX.Element | null {
   const { t } = useTranslation();
+  const async = useAsync();
 
   const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
@@ -28,6 +29,14 @@ export default function Detail(): JSX.Element | null {
   const [paramsOfEditModal, setParamsOfEditModal] = useImmer<{
     visible: boolean;
   }>();
+
+  const [deviceForm, updateDeviceForm] = useForm(
+    () =>
+      new FormGroup({
+        name: new FormControl('', Validators.required),
+        model: new FormControl<string | null>(null, Validators.required),
+      })
+  );
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
@@ -52,25 +61,29 @@ export default function Detail(): JSX.Element | null {
 
   return (
     <>
-      <AppDeviceModal
-        aVisible={paramsOfEditModal?.visible}
-        aDevice={device}
-        aModelList={modelList}
-        onClose={() => {
-          setParamsOfEditModal((draft) => {
-            if (draft) {
-              draft.visible = false;
-            }
-          });
-        }}
-        onSubmit={() => {
-          setParamsOfEditModal((draft) => {
-            if (draft) {
-              draft.visible = false;
-            }
-          });
-        }}
-      />
+      {paramsOfEditModal && (
+        <AppDeviceModal
+          aVisible={paramsOfEditModal.visible}
+          aHeader={`${device ? 'Edit' : 'Add'} Device`}
+          aForm={deviceForm}
+          aUpdateForm={updateDeviceForm}
+          aModelList={modelList}
+          onClose={() => {
+            setParamsOfEditModal((draft) => {
+              if (draft) {
+                draft.visible = false;
+              }
+            });
+          }}
+          onSubmit={() =>
+            new Promise((r) => {
+              async.setTimeout(() => {
+                r(true);
+              }, 500);
+            })
+          }
+        />
+      )}
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -89,7 +102,11 @@ export default function Detail(): JSX.Element | null {
             <DButton
               disabled={isUndefined(device)}
               onClick={() => {
-                setParamsOfEditModal({ visible: true });
+                if (!isUndefined(device)) {
+                  setParamsOfEditModal({ visible: true });
+                  deviceForm.reset({ name: device.name, model: device.model });
+                  updateDeviceForm();
+                }
               }}
               dIcon={<EditOutlined />}
             >
