@@ -28,13 +28,25 @@ export function App() {
 
   useMount(() => {
     if (!isNull(TOKEN.value)) {
-      http<UserState>({
-        url: '/auth/me',
-        method: 'get',
+      http<string>({
+        url: '/auth/refresh',
+        method: 'post',
       }).subscribe({
         next: (res) => {
-          setLoading(false);
-          init(res);
+          TOKEN.set(res);
+
+          http<UserState>({
+            url: '/auth/me',
+            method: 'get',
+          }).subscribe({
+            next: (res) => {
+              setLoading(false);
+              init(res);
+            },
+            error: () => {
+              setLoading(false);
+            },
+          });
         },
         error: () => {
           setLoading(false);
