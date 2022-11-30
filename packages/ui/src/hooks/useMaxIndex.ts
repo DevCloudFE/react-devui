@@ -1,3 +1,4 @@
+import { isUndefined } from 'lodash';
 import { useMemo, useRef } from 'react';
 
 import { useId, useUnmount } from '@react-devui/hooks';
@@ -26,22 +27,20 @@ export function useMaxIndex(condition?: boolean) {
   const dPrefix = usePrefixConfig();
 
   const dataRef = useRef<{
-    prevIndex?: string;
+    prevMaxZIndex?: number;
   }>({});
 
   const id = useId();
 
-  const zIndex = useMemo(() => {
-    MAX_INDEX_MANAGER.deleteRecord(id);
-
+  const maxZIndex = useMemo(() => {
     if (condition) {
-      const maxZIndex = MAX_INDEX_MANAGER.getMaxIndex(id);
-      return `calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`;
+      return MAX_INDEX_MANAGER.getMaxIndex(id);
     }
 
-    return dataRef.current.prevIndex;
-  }, [condition, dPrefix, id]);
-  dataRef.current.prevIndex = zIndex;
+    return dataRef.current.prevMaxZIndex;
+  }, [condition, id]);
+  dataRef.current.prevMaxZIndex = maxZIndex;
+  const zIndex = isUndefined(maxZIndex) ? undefined : `calc(var(--${dPrefix}zindex-fixed) + ${maxZIndex})`;
 
   useUnmount(() => {
     MAX_INDEX_MANAGER.deleteRecord(id);
