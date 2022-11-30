@@ -1,7 +1,7 @@
 import type { DeviceDoc } from '../../../hooks/api/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
-import { isNull, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -18,7 +18,7 @@ import { AppDeviceModal } from './device-modal/DeviceModal';
 interface DeviceQueryParams {
   keyword: string;
   sort: 'id' | '-id' | null;
-  model: string | null;
+  model: string[];
   status: number[];
   page: number;
   pageSize: number;
@@ -31,7 +31,7 @@ export default function StandardTable(): JSX.Element | null {
   const [initDeviceQuery, saveDeviceQuery] = useQueryParams<DeviceQueryParams>({
     keyword: '',
     sort: '-id',
-    model: null,
+    model: [],
     status: [],
     page: 1,
     pageSize: 10,
@@ -180,6 +180,7 @@ export default function StandardTable(): JSX.Element | null {
                       dLoading={isUndefined(modelList)}
                       dPlaceholder="Model"
                       dModel={deviceQuery.model}
+                      dMultiple
                       dClearable
                       onModelChange={(value) => {
                         setDeviceQuery((draft) => {
@@ -188,7 +189,7 @@ export default function StandardTable(): JSX.Element | null {
                       }}
                     />
                   ),
-                  isEmpty: isNull(deviceQuery.model),
+                  isEmpty: deviceQuery.model.length === 0,
                 },
                 {
                   label: 'Status',
@@ -222,7 +223,7 @@ export default function StandardTable(): JSX.Element | null {
               onResetClick={() => {
                 setDeviceQuery((draft) => {
                   draft.keyword = '';
-                  draft.model = null;
+                  draft.model = [];
                   draft.status = [];
                 });
               }}
