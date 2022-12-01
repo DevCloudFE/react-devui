@@ -1,4 +1,4 @@
-import { isObject, isString } from 'lodash';
+import { isNull, isObject, isString, isUndefined } from 'lodash';
 
 export function getClassName(...args: any[]) {
   const className: string[] = [];
@@ -7,8 +7,8 @@ export function getClassName(...args: any[]) {
     if (isString(item)) {
       className.push(item);
     } else if (isObject(item)) {
-      Object.keys(item).forEach((key) => {
-        if (item[key]) {
+      Object.entries(item).forEach(([key, value]) => {
+        if (value !== false && !isUndefined(value) && !isNull(value)) {
           className.push(key);
         }
       });
