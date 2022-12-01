@@ -1,0 +1,28 @@
+@include b(detail-view) {
+  @include m(vertical) {
+    @include e(item) {
+      flex-direction: column;
+    }
+
+    @include e(item-label) {
+      &::after {
+        content: none;
+      }
+    }
+  }
+
+  @include e(item) {
+    display: inline-flex;
+    gap: 8px;
+  }
+
+  @include e(item-label) {
+    flex-shrink: 0;
+    color: var(--#{$rd-prefix}text-color-sub);
+
+    &::after {
+      margin-left: 2px;
+      content: ':';
+    }
+  }
+}

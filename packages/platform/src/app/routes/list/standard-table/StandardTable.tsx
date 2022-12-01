@@ -252,6 +252,7 @@ export default function StandardTable(): JSX.Element | null {
                   isEmpty: deviceQuery.status.length === 0,
                 },
               ]}
+              aLabelWidth={72}
               aSearchValue={deviceQuery.keyword}
               aSearchPlaceholder="ID, Name"
               onSearchValueChange={(value) => {

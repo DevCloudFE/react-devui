@@ -10,7 +10,7 @@ import { useAsync, useImmer, useMount } from '@react-devui/hooks';
 import { EditOutlined } from '@react-devui/icons';
 import { DButton, DCard, DSeparator, DSpinner, DTable, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 
-import { AppRouteHeader } from '../../../../components';
+import { AppDetailView, AppRouteHeader } from '../../../../components';
 import { useAPI } from '../../../../hooks';
 import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
@@ -128,24 +128,24 @@ export default function Detail(): JSX.Element | null {
             <DCard>
               <DCard.Content>
                 <div className="app-title mb-3">Title 1</div>
-                <div className="row g-3">
-                  {Array.from({ length: 5 }).map((_, n) => (
-                    <div key={n} className="col-12 col-md-6 col-lg-4">
-                      <span className="app-label">Label {n}</span>
-                      <span>Content {n}</span>
-                    </div>
-                  ))}
-                </div>
+                <AppDetailView
+                  aGutter={3}
+                  aList={Array.from({ length: 5 }).map((_, n) => ({
+                    label: `Label ${n}`,
+                    content: n === 1 ? null : n === 3 ? 'This is a long long long long long long long long text' : `Content ${n}`,
+                  }))}
+                  aLabelWidth={72}
+                />
                 <DSeparator />
                 <div className="app-title mb-3">Title 2</div>
-                <div className="row g-3">
-                  {Array.from({ length: 5 }).map((_, n) => (
-                    <div key={n} className="col-12 col-md-6 col-lg-4">
-                      <span className="app-label">Label {n}</span>
-                      <span>Content {n}</span>
-                    </div>
-                  ))}
-                </div>
+                <AppDetailView
+                  aGutter={3}
+                  aList={Array.from({ length: 5 }).map((_, n) => ({
+                    label: `Label ${n}`,
+                    content: n === 1 ? null : n === 3 ? 'This is a long long long long long long long long text' : `Content ${n}`,
+                  }))}
+                  aVertical
+                />
               </DCard.Content>
             </DCard>
             <DCard className="mt-3">
