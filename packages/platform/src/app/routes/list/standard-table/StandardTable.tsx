@@ -44,7 +44,8 @@ export default function StandardTable(): JSX.Element | null {
   const async = useAsync();
   const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
-  const [initDeviceQuery, saveDeviceQuery] = useQueryParams<DeviceQueryParams>({
+
+  const [deviceQuerySaved, setDeviceQuerySaved] = useQueryParams<DeviceQueryParams>({
     keyword: '',
     sort: '-id',
     model: [],
@@ -52,7 +53,19 @@ export default function StandardTable(): JSX.Element | null {
     page: 1,
     pageSize: 10,
   });
-  const [deviceQuery, setDeviceQuery] = useImmer(initDeviceQuery);
+  const [deviceQuery, setDeviceQuery] = useImmer(deviceQuerySaved);
+  const queryEmptyStatus = (() => {
+    const getEmptyStatus = (query: DeviceQueryParams) => ({
+      keyword: query.keyword.length === 0,
+      model: query.model.length === 0,
+      status: query.status.length === 0,
+    });
+    return {
+      deviceQuerySaved: getEmptyStatus(deviceQuerySaved),
+      deviceQuery: getEmptyStatus(deviceQuery),
+    };
+  })();
+
   const [deviceTable, setDeviceTable] = useImmer({
     loading: true,
     list: [] as DeviceDoc[],
@@ -102,7 +115,7 @@ export default function StandardTable(): JSX.Element | null {
 
   const [updateDeviceTable, setUpdateDeviceTable] = useState(0);
   useEffect(() => {
-    saveDeviceQuery(deviceQuery);
+    setDeviceQuerySaved(deviceQuery);
 
     const apiQuery: any = {
       page: deviceQuery.page,
@@ -231,7 +244,7 @@ export default function StandardTable(): JSX.Element | null {
                       }}
                     />
                   ),
-                  isEmpty: deviceQuery.model.length === 0,
+                  isEmpty: queryEmptyStatus.deviceQuery.model,
                 },
                 {
                   label: 'Status',
@@ -249,7 +262,7 @@ export default function StandardTable(): JSX.Element | null {
                       }}
                     />
                   ),
-                  isEmpty: deviceQuery.status.length === 0,
+                  isEmpty: queryEmptyStatus.deviceQuery.status,
                 },
               ]}
               aLabelWidth={72}
@@ -269,6 +282,10 @@ export default function StandardTable(): JSX.Element | null {
                   draft.model = [];
                   draft.status = [];
                 });
+
+                if (Object.values(queryEmptyStatus.deviceQuerySaved).some((isEmpty) => !isEmpty)) {
+                  setUpdateDeviceTable((n) => n + 1);
+                }
               }}
             />
             <DTable style={{ overflow: 'auto hidden' }}>
