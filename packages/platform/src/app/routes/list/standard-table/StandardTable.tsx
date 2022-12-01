@@ -62,18 +62,17 @@ export default function StandardTable(): JSX.Element | null {
   const allDeviceSelected =
     deviceTable.selected.size === 0 ? false : deviceTable.selected.size === deviceTable.list.length ? true : 'mixed';
 
-  const [paramsOfDeviceModal, setParamsOfDeviceModal] = useImmer<{
-    visible: boolean;
-    device: DeviceDoc | undefined;
-  }>();
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
   const [paramsOfDeleteModal, setParamsOfDeleteModal] = useImmer<{
     visible: boolean;
     device: DeviceDoc;
   }>();
 
-  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
-
+  const [paramsOfDeviceModal, setParamsOfDeviceModal] = useImmer<{
+    visible: boolean;
+    device: DeviceDoc | undefined;
+  }>();
   const [deviceForm, updateDeviceForm] = useForm(
     () =>
       new FormGroup({
@@ -81,6 +80,11 @@ export default function StandardTable(): JSX.Element | null {
         model: new FormControl<string | null>(null, Validators.required),
       })
   );
+  const openDeviceModal = (device?: DeviceDoc) => {
+    setParamsOfDeviceModal({ visible: true, device });
+    deviceForm.reset(device ? { name: device.name, model: device.model } : undefined);
+    updateDeviceForm();
+  };
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -193,9 +197,7 @@ export default function StandardTable(): JSX.Element | null {
           aActions={[
             <DButton
               onClick={() => {
-                setParamsOfDeviceModal({ visible: true, device: undefined });
-                deviceForm.reset();
-                updateDeviceForm();
+                openDeviceModal();
               }}
               dIcon={<PlusOutlined />}
             >
@@ -351,9 +353,7 @@ export default function StandardTable(): JSX.Element | null {
                             onItemClick={(action) => {
                               switch (action) {
                                 case 'edit':
-                                  setParamsOfDeviceModal({ visible: true, device: data });
-                                  deviceForm.reset({ name: data.name, model: data.model });
-                                  updateDeviceForm();
+                                  openDeviceModal(data);
                                   break;
 
                                 case 'delete':

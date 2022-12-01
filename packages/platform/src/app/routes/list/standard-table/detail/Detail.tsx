@@ -26,19 +26,24 @@ export default function Detail(): JSX.Element | null {
   const id = Number(_id!);
 
   const [device, setDevice] = useState<DeviceDoc>();
+
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
+
   const [paramsOfEditModal, setParamsOfEditModal] = useImmer<{
     visible: boolean;
   }>();
-
-  const [deviceForm, updateDeviceForm] = useForm(
+  const [editForm, updateEditForm] = useForm(
     () =>
       new FormGroup({
         name: new FormControl('', Validators.required),
         model: new FormControl<string | null>(null, Validators.required),
       })
   );
-
-  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
+  const openEditModal = (device: DeviceDoc) => {
+    setParamsOfEditModal({ visible: true });
+    editForm.reset({ name: device.name, model: device.model });
+    updateEditForm();
+  };
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -65,8 +70,8 @@ export default function Detail(): JSX.Element | null {
         <AppDeviceModal
           aVisible={paramsOfEditModal.visible}
           aHeader={`${device ? 'Edit' : 'Add'} Device`}
-          aForm={deviceForm}
-          aUpdateForm={updateDeviceForm}
+          aForm={editForm}
+          aUpdateForm={updateEditForm}
           aModelList={modelList}
           onClose={() => {
             setParamsOfEditModal((draft) => {
@@ -103,9 +108,7 @@ export default function Detail(): JSX.Element | null {
               disabled={isUndefined(device)}
               onClick={() => {
                 if (!isUndefined(device)) {
-                  setParamsOfEditModal({ visible: true });
-                  deviceForm.reset({ name: device.name, model: device.model });
-                  updateDeviceForm();
+                  openEditModal(device);
                 }
               }}
               dIcon={<EditOutlined />}
