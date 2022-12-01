@@ -11,6 +11,7 @@ export interface AppDetailViewProps extends Omit<React.HTMLAttributes<HTMLDivEle
   }[];
   aCol?: number | true | Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number | true>;
   aGutter?: number | [number?, number?];
+  aLabelAlign?: 'left' | 'center' | 'right';
   aLabelWidth?: string | number;
   aEmpty?: React.ReactNode;
   aVertical?: boolean;
@@ -21,6 +22,7 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
     aList,
     aCol = { xs: 12, md: 6, lg: 4, xxl: 3 },
     aGutter,
+    aLabelAlign = 'left',
     aLabelWidth,
     aEmpty = '-',
     aVertical = false,
@@ -28,7 +30,7 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
     ...restProps
   } = props;
 
-  const [gutterX, gutterY] = isArray(aGutter) ? aGutter : [aGutter, aGutter];
+  const [gutterY, gutterX] = isArray(aGutter) ? aGutter : [aGutter, aGutter];
   const col = (() => {
     if (aCol === true) {
       return 'col';
@@ -81,7 +83,13 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
           : _isEmpty;
         return (
           <div key={label} className={getClassName('app-detail-view__item', col)}>
-            <div className="app-detail-view__item-label" style={{ width: labelWidth }}>
+            <div
+              className="app-detail-view__item-label"
+              style={{
+                width: labelWidth,
+                textAlign: aLabelAlign,
+              }}
+            >
               {label}
             </div>
             <div className="app-detail-view__item-content">{isEmpty ? aEmpty : content}</div>
