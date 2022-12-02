@@ -163,7 +163,11 @@ export default function StandardTable(): JSX.Element | null {
           dType={{
             type: 'warning',
             title: 'Delete device',
-            description: `Confirm to delete ${paramsOfDeleteModal.device.name}?`,
+            description: (
+              <>
+                Confirm to delete <strong>{paramsOfDeleteModal.device.name}</strong>?
+              </>
+            ),
           }}
           dMaskClosable={false}
           dSkipFirstTransition={false}
