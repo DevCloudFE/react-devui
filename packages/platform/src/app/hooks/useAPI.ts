@@ -1,37 +1,43 @@
 // https://cloud.google.com/apis/design
-
-import type { StandardFields, StandardGetParams, StandardListRes } from './types';
-
 import { useEventCallback } from '@react-devui/hooks';
 
-import { useHttp } from '../../core';
+import { useHttp } from '../core';
+
+interface StandardListRes<T> {
+  resources: T[];
+  metadata: {
+    page: number;
+    page_size: number;
+    total_size: number;
+  };
+}
 
 export function useAPI(url: string) {
   const http = useHttp();
 
   return {
-    list: useEventCallback(<T extends StandardFields = any, P extends StandardGetParams = StandardGetParams>(params?: P) =>
+    list: useEventCallback(<T = any, P = any>(params?: P) =>
       http<StandardListRes<T>>({
         url,
         method: 'get',
         params,
       })
     ),
-    get: useEventCallback(<T extends StandardFields = any, P extends StandardGetParams = StandardGetParams>(id: number, params?: P) =>
+    get: useEventCallback(<T = any, P = any>(id: number, params?: P) =>
       http<T>({
         url: `${url}/${id}`,
         method: 'get',
         params,
       })
     ),
-    create: useEventCallback(<T extends StandardFields = any, D = any>(data: D) =>
+    create: useEventCallback(<T = any, D = any>(data: D) =>
       http<T, D>({
         url,
         method: 'post',
         data,
       })
     ),
-    update: useEventCallback(<T extends StandardFields = any, D = any>(id: number, data: D) =>
+    update: useEventCallback(<T = any, D = any>(id: number, data: D) =>
       http<T, D>({
         url: `${url}/${id}`,
         method: 'put',

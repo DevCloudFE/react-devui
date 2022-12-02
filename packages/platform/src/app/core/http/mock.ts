@@ -1,4 +1,4 @@
-import type { DeviceDoc } from '../../hooks/api/types';
+import type { DeviceDoc } from '../../utils/types';
 import type { UserState, NotificationItem } from '../state';
 import type { JWTToken, JWTTokenPayload } from '../token';
 

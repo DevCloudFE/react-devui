@@ -1,4 +1,4 @@
-import type { StandardFields } from './api/types';
+import type { StandardFields } from '../utils/types';
 
 import { useImmer } from '@react-devui/hooks';
 

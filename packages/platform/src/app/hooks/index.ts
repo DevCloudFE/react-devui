@@ -1,3 +1,3 @@
-export { useAPI } from './api';
+export { useAPI } from './useAPI';
 export { usePageTitle } from './usePageTitle';
 export { useQueryParams } from './useQueryParams';

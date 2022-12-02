@@ -1,4 +1,4 @@
-import type { DeviceDoc } from '../../../hooks/api/types';
+import type { DeviceDoc, StandardQueryParams } from '../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -29,6 +29,8 @@ import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../component
 import { useAPI, useQueryParams } from '../../../hooks';
 import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
+
+type Device = DeviceDoc;
 
 interface DeviceQueryParams {
   keyword: string;
@@ -68,7 +70,7 @@ export default function StandardTable(): JSX.Element | null {
 
   const [deviceTable, setDeviceTable] = useImmer({
     loading: true,
-    list: [] as DeviceDoc[],
+    list: [] as Device[],
     totalSize: 0,
     selected: new Set<number>(),
   });
@@ -79,12 +81,12 @@ export default function StandardTable(): JSX.Element | null {
 
   const [paramsOfDeleteModal, setParamsOfDeleteModal] = useImmer<{
     visible: boolean;
-    device: DeviceDoc;
+    device: Device;
   }>();
 
   const [paramsOfDeviceModal, setParamsOfDeviceModal] = useImmer<{
     visible: boolean;
-    device: DeviceDoc | undefined;
+    device: Device | undefined;
   }>();
   const [deviceForm, updateDeviceForm] = useForm(
     () =>
@@ -93,7 +95,7 @@ export default function StandardTable(): JSX.Element | null {
         model: new FormControl<string | null>(null, Validators.required),
       })
   );
-  const openDeviceModal = (device?: DeviceDoc) => {
+  const openDeviceModal = (device?: Device) => {
     setParamsOfDeviceModal({ visible: true, device });
     deviceForm.reset(device ? { name: device.name, model: device.model } : undefined);
     updateDeviceForm();
@@ -117,7 +119,7 @@ export default function StandardTable(): JSX.Element | null {
   useEffect(() => {
     setDeviceQuerySaved(deviceQuery);
 
-    const apiQuery: any = {
+    const apiQuery: StandardQueryParams = {
       page: deviceQuery.page,
       page_size: deviceQuery.pageSize,
     };
@@ -128,7 +130,7 @@ export default function StandardTable(): JSX.Element | null {
     setDeviceTable((draft) => {
       draft.loading = true;
     });
-    deviceApi.list<DeviceDoc>(apiQuery).subscribe({
+    deviceApi.list<Device>(apiQuery).subscribe({
       next: (res) => {
         setDeviceQuery((draft) => {
           draft.page = res.metadata.page;

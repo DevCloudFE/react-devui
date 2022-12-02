@@ -1,4 +1,4 @@
-import type { DeviceDoc } from '../../../../hooks/api/types';
+import type { DeviceDoc } from '../../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -15,6 +15,8 @@ import { useAPI } from '../../../../hooks';
 import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
+type Device = DeviceDoc;
+
 export default function Detail(): JSX.Element | null {
   const { t } = useTranslation();
   const async = useAsync();
@@ -25,7 +27,7 @@ export default function Detail(): JSX.Element | null {
   const { id: _id } = useParams();
   const id = Number(_id!);
 
-  const [device, setDevice] = useState<DeviceDoc>();
+  const [device, setDevice] = useState<Device>();
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
@@ -39,7 +41,7 @@ export default function Detail(): JSX.Element | null {
         model: new FormControl<string | null>(null, Validators.required),
       })
   );
-  const openEditModal = (device: DeviceDoc) => {
+  const openEditModal = (device: Device) => {
     setParamsOfEditModal({ visible: true });
     editForm.reset({ name: device.name, model: device.model });
     updateEditForm();
