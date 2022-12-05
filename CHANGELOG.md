@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.0.3](https://github.com/DevCloudFE/react-devui/compare/v18.0.2...v18.0.3) (2022-12-05)
+
+### Bug Fixes
+
+- **platform:** should be empty until select list inited ([a9823b2](https://github.com/DevCloudFE/react-devui/commit/a9823b2dc6885dd9089689e278dde2fe98199a36))
+
+### Features
+
+- **platform:** add `aLabelAlign` prop to detail-view ([9710203](https://github.com/DevCloudFE/react-devui/commit/9710203e0384292b6e9b4b2fb5c60c351ec8011e))
+- **platform:** add detail-view component ([f752d3f](https://github.com/DevCloudFE/react-devui/commit/f752d3f9ece6a6fde6895392e4efc12a6f688217))
+- **platform:** add fn to handle http response ([b721e07](https://github.com/DevCloudFE/react-devui/commit/b721e0767b85392e121fda0e79d29f519343cc65))
+
 ## [18.0.2](https://github.com/DevCloudFE/react-devui/compare/v18.0.1...v18.0.2) (2022-11-30)
 
 ### Bug Fixes
