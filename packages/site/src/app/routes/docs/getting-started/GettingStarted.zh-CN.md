@@ -3,7 +3,7 @@
 ## 安装
 
 ```bash
-npm install @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/utils
+yarn add @react-devui/ui @react-devui/icons @react-devui/hooks @react-devui/utils
 ```
 
 ## 引入样式
