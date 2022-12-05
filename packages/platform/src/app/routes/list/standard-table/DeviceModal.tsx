@@ -38,7 +38,13 @@ export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
           </DForm.Item>
           <DForm.Item dFormControls={{ model: 'Please select model!' }} dLabel="Model">
             {({ model }) => (
-              <DSelect dFormControl={model} dList={aModelList ?? []} dLoading={isUndefined(aModelList)} dPlaceholder="Model" dClearable />
+              <DSelect
+                dFormControl={aModelList ? model : undefined}
+                dList={aModelList ?? []}
+                dLoading={isUndefined(aModelList)}
+                dPlaceholder="Model"
+                dClearable
+              />
             )}
           </DForm.Item>
         </DForm.Group>
