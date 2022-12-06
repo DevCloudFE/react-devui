@@ -1,36 +1,21 @@
-import type { DeviceDoc, StandardQueryParams } from '../../../utils/types';
+import type { DeviceDoc, OpenModalFn, StandardQueryParams } from '../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { useAsync, useImmer, useMount } from '@react-devui/hooks';
 import { DownOutlined, PlusOutlined } from '@react-devui/icons';
-import {
-  DButton,
-  DCard,
-  DCheckbox,
-  DDropdown,
-  DModal,
-  DPagination,
-  DSelect,
-  DSeparator,
-  DSpinner,
-  DTable,
-  FormControl,
-  FormGroup,
-  useForm,
-  Validators,
-} from '@react-devui/ui';
+import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useAPI, useQueryParams } from '../../../hooks';
 import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
 
-type Device = DeviceDoc;
+export type Device = DeviceDoc;
 
 interface DeviceQueryParams {
   keyword: string;
@@ -42,6 +27,8 @@ interface DeviceQueryParams {
 }
 
 export default function StandardTable(): JSX.Element | null {
+  const deviceModalRef = useRef<OpenModalFn<Device>>(null);
+
   const { t } = useTranslation();
   const async = useAsync();
   const modelApi = useAPI('/device/model');
@@ -83,23 +70,6 @@ export default function StandardTable(): JSX.Element | null {
     visible: boolean;
     device: Device;
   }>();
-
-  const [paramsOfDeviceModal, setParamsOfDeviceModal] = useImmer<{
-    visible: boolean;
-    device: Device | undefined;
-  }>();
-  const [deviceForm, updateDeviceForm] = useForm(
-    () =>
-      new FormGroup({
-        name: new FormControl('', Validators.required),
-        model: new FormControl<string | null>(null, Validators.required),
-      })
-  );
-  const openDeviceModal = (device?: Device) => {
-    setParamsOfDeviceModal({ visible: true, device });
-    deviceForm.reset(device ? { name: device.name, model: device.model } : undefined);
-    updateDeviceForm();
-  };
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -182,29 +152,7 @@ export default function StandardTable(): JSX.Element | null {
           }}
         />
       )}
-      {paramsOfDeviceModal && (
-        <AppDeviceModal
-          aVisible={paramsOfDeviceModal.visible}
-          aHeader={`${paramsOfDeviceModal.device ? 'Edit' : 'Add'} Device`}
-          aForm={deviceForm}
-          aUpdateForm={updateDeviceForm}
-          aModelList={modelList}
-          onClose={() => {
-            setParamsOfDeviceModal((draft) => {
-              if (draft) {
-                draft.visible = false;
-              }
-            });
-          }}
-          onSubmit={() =>
-            new Promise((r) => {
-              async.setTimeout(() => {
-                r(true);
-              }, 500);
-            })
-          }
-        />
-      )}
+      <AppDeviceModal ref={deviceModalRef} aModelList={modelList} />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -216,7 +164,7 @@ export default function StandardTable(): JSX.Element | null {
           aActions={[
             <DButton
               onClick={() => {
-                openDeviceModal();
+                deviceModalRef.current?.();
               }}
               dIcon={<PlusOutlined />}
             >
@@ -377,7 +325,7 @@ export default function StandardTable(): JSX.Element | null {
                             onItemClick={(action) => {
                               switch (action) {
                                 case 'edit':
-                                  openDeviceModal(data);
+                                  deviceModalRef.current?.(data);
                                   break;
 
                                 case 'delete':

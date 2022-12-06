@@ -1,38 +1,68 @@
-import type { FormGroup } from '@react-devui/ui';
+import type { OpenModalFn } from '../../../utils/types';
+import type { Device } from './StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
+import React, { useImperativeHandle, useState } from 'react';
 
-import { useId } from '@react-devui/hooks';
+import { useAsync, useEventCallback, useId } from '@react-devui/hooks';
+import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
 export interface AppDeviceModalProps {
-  aVisible: boolean;
-  aHeader: string;
-  aForm: FormGroup;
-  aUpdateForm: any;
   aModelList: DSelectItem<string>[] | undefined;
-  onClose: () => void;
-  onSubmit: () => void | boolean | Promise<boolean>;
 }
 
-export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
-  const { aVisible, aHeader, aForm, aUpdateForm, aModelList, onClose, onSubmit } = props;
+function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenModalFn<Device>>): JSX.Element | null {
+  const { aModelList } = props;
+
+  const async = useAsync();
 
   const uniqueId = useId();
   const id = `app-form-${uniqueId}`;
 
+  const [visible, setVisible] = useState(false);
+  const [device, setDevice] = useState<Device>();
+  const [form, updateForm] = useForm(
+    () =>
+      new FormGroup({
+        name: new FormControl('', Validators.required),
+        model: new FormControl<string | null>(null, Validators.required),
+      })
+  );
+
+  const open = useEventCallback<OpenModalFn<Device>>((device) => {
+    setVisible(true);
+    setDevice(device);
+    form.reset(device ? { name: device.name, model: device.model } : undefined);
+    updateForm();
+  });
+
+  useImperativeHandle(ref, () => open, [open]);
+
   return (
     <DModal
-      dVisible={aVisible}
-      dHeader={aHeader}
-      dFooter={<DModal.Footer dOkProps={{ type: 'submit', form: id, disabled: !aForm.valid }} onOkClick={onSubmit}></DModal.Footer>}
+      dVisible={visible}
+      dHeader={`${device ? 'Edit' : 'Add'} Device`}
+      dFooter={
+        <DModal.Footer
+          dOkProps={{ type: 'submit', form: id, disabled: !form.valid }}
+          onOkClick={() =>
+            new Promise((r) => {
+              async.setTimeout(() => {
+                r(true);
+              }, 500);
+            })
+          }
+        ></DModal.Footer>
+      }
       dMaskClosable={false}
-      dSkipFirstTransition={false}
-      onClose={onClose}
+      onClose={() => {
+        setVisible(false);
+      }}
     >
-      <DForm id={id} dUpdate={aUpdateForm} dLabelWidth="6em">
-        <DForm.Group dFormGroup={aForm}>
+      <DForm id={id} dUpdate={updateForm} dLabelWidth="6em">
+        <DForm.Group dFormGroup={form}>
           <DForm.Item dFormControls={{ name: 'Please enter name!' }} dLabel="Name">
             {({ name }) => <DInput dFormControl={name} dPlaceholder="Name" />}
           </DForm.Item>
@@ -52,3 +82,5 @@ export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
     </DModal>
   );
 }
+
+export const AppDeviceModal = React.forwardRef(DeviceModal);

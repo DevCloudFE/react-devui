@@ -1,3 +1,5 @@
+export type OpenModalFn<T> = (doc?: T) => void;
+
 export interface StandardQueryParams {
   sort?: string;
   page?: number;

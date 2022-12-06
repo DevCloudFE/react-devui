@@ -1,25 +1,25 @@
-import type { DeviceDoc } from '../../../../utils/types';
+import type { OpenModalFn } from '../../../../utils/types';
+import type { Device } from '../StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { useAsync, useImmer, useMount } from '@react-devui/hooks';
+import { useMount } from '@react-devui/hooks';
 import { EditOutlined } from '@react-devui/icons';
-import { DButton, DCard, DSeparator, DSpinner, DTable, FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
+import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppDetailView, AppRouteHeader } from '../../../../components';
 import { useAPI } from '../../../../hooks';
 import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
-type Device = DeviceDoc;
-
 export default function Detail(): JSX.Element | null {
+  const deviceModalRef = useRef<OpenModalFn<Device>>(null);
+
   const { t } = useTranslation();
-  const async = useAsync();
 
   const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
@@ -30,22 +30,6 @@ export default function Detail(): JSX.Element | null {
   const [device, setDevice] = useState<Device>();
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
-
-  const [paramsOfEditModal, setParamsOfEditModal] = useImmer<{
-    visible: boolean;
-  }>();
-  const [editForm, updateEditForm] = useForm(
-    () =>
-      new FormGroup({
-        name: new FormControl('', Validators.required),
-        model: new FormControl<string | null>(null, Validators.required),
-      })
-  );
-  const openEditModal = (device: Device) => {
-    setParamsOfEditModal({ visible: true });
-    editForm.reset({ name: device.name, model: device.model });
-    updateEditForm();
-  };
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -68,29 +52,7 @@ export default function Detail(): JSX.Element | null {
 
   return (
     <>
-      {paramsOfEditModal && (
-        <AppDeviceModal
-          aVisible={paramsOfEditModal.visible}
-          aHeader={`${device ? 'Edit' : 'Add'} Device`}
-          aForm={editForm}
-          aUpdateForm={updateEditForm}
-          aModelList={modelList}
-          onClose={() => {
-            setParamsOfEditModal((draft) => {
-              if (draft) {
-                draft.visible = false;
-              }
-            });
-          }}
-          onSubmit={() =>
-            new Promise((r) => {
-              async.setTimeout(() => {
-                r(true);
-              }, 500);
-            })
-          }
-        />
-      )}
+      <AppDeviceModal ref={deviceModalRef} aModelList={modelList} />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -109,9 +71,7 @@ export default function Detail(): JSX.Element | null {
             <DButton
               disabled={isUndefined(device)}
               onClick={() => {
-                if (!isUndefined(device)) {
-                  openEditModal(device);
-                }
+                deviceModalRef.current?.(device);
               }}
               dIcon={<EditOutlined />}
             >
