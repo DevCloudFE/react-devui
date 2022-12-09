@@ -3,6 +3,45 @@ import type { AsyncValidatorFn, ValidatorFn } from './validators';
 
 import { AbstractControl, VALID } from './abstract-control';
 
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+
+type GetFormControlPropertyFromArray<T, A> = Mutable<A> extends [infer K, ...infer R]
+  ? K extends keyof T
+    ? GetFormControlPropertyFromArray<T[K], R>
+    : null
+  : T;
+
+type GetFormControlProperty<T, S> = S extends `${infer K}.${infer R}`
+  ? K extends keyof T
+    ? GetFormControlProperty<T[K], R>
+    : null
+  : S extends keyof T
+  ? T[S]
+  : null;
+
+function find(control: AbstractControl, path: string[] | string, delimiter: string) {
+  if (path == null) return null;
+
+  if (!Array.isArray(path)) {
+    path = path.split(delimiter);
+  }
+  if (Array.isArray(path) && path.length === 0) return null;
+
+  // Not using Array.reduce here due to a Chrome 80 bug
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
+  let controlToFind: AbstractControl | null = control;
+  path.forEach((name) => {
+    if (controlToFind instanceof FormGroup) {
+      controlToFind = name in controlToFind.controls ? controlToFind.controls[name] : null;
+    } else {
+      controlToFind = null;
+    }
+  });
+  return controlToFind;
+}
+
 export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> extends AbstractControl<{ [K in keyof T]: T[K]['value'] }> {
   protected _value!: { [K in keyof T]: T[K]['value'] };
   protected _status: FormControlStatus = VALID;
@@ -15,6 +54,21 @@ export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> exte
     super(validators ?? null, asyncValidator ?? null);
     this._setUpControls();
     this.updateValueAndValidity(true);
+  }
+
+  get<S extends string>(path: S): AbstractControl<GetFormControlProperty<T, S>>;
+  get<S extends ArrayLike<string>>(path: S): AbstractControl<GetFormControlPropertyFromArray<T, S>>;
+  get(path: string[] | string): AbstractControl | null {
+    return find(this, path, '.');
+  }
+
+  getError(errorCode: string, path?: string[] | string): any {
+    const control = path ? this.get(path) : this;
+    return control && control.errors ? control.errors[errorCode] : null;
+  }
+
+  hasError(errorCode: string, path?: string[] | string): boolean {
+    return !!this.getError(errorCode, path);
   }
 
   addControl<K extends keyof T>(name: K, control: T[K]): void;

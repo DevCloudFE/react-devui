@@ -26,6 +26,14 @@ export class FormControl<V> extends AbstractControl<V> {
     this.updateValueAndValidity(true);
   }
 
+  getError(errorCode: string): any {
+    return this && this.errors ? this.errors[errorCode] : null;
+  }
+
+  hasError(errorCode: string): boolean {
+    return !!this.getError(errorCode);
+  }
+
   override setValue(value: V, onlySelf?: boolean): void {
     this._value = value;
     this.updateValueAndValidity(onlySelf);

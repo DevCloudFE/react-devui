@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
+import type { FormGroup } from './form-group';
 import type { AsyncValidatorFn, ValidationErrors, ValidatorFn } from './validators';
 import type { Subscription } from 'rxjs';
 
@@ -6,50 +7,9 @@ import { isArray } from 'lodash';
 import { from, Subject } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
-import { FormGroup } from './form-group';
-
 export type FormControlStatus = 'VALID' | 'INVALID' | 'PENDING' | 'DISABLED';
 
 export const [VALID, INVALID, PENDING, DISABLED] = ['VALID', 'INVALID', 'PENDING', 'DISABLED'] as FormControlStatus[];
-
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
-};
-
-type GetFormControlPropertyFromArray<T, A> = Mutable<A> extends [infer K, ...infer R]
-  ? K extends keyof T
-    ? GetFormControlPropertyFromArray<T[K], R>
-    : null
-  : T;
-
-type GetFormControlProperty<T, S> = S extends `${infer K}.${infer R}`
-  ? K extends keyof T
-    ? GetFormControlProperty<T[K], R>
-    : null
-  : S extends keyof T
-  ? T[S]
-  : null;
-
-function find(control: AbstractControl, path: string[] | string, delimiter: string) {
-  if (path == null) return null;
-
-  if (!Array.isArray(path)) {
-    path = path.split(delimiter);
-  }
-  if (Array.isArray(path) && path.length === 0) return null;
-
-  // Not using Array.reduce here due to a Chrome 80 bug
-  // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
-  let controlToFind: AbstractControl | null = control;
-  path.forEach((name) => {
-    if (controlToFind instanceof FormGroup) {
-      controlToFind = name in controlToFind.controls ? controlToFind.controls[name] : null;
-    } else {
-      controlToFind = null;
-    }
-  });
-  return controlToFind;
-}
 
 function mergeErrors(arrayOfErrors: (ValidationErrors | null)[]): ValidationErrors | null {
   const res: { [key: string]: any } = {};
@@ -321,21 +281,6 @@ export abstract class AbstractControl<V = any> {
     if (this._parent && !onlySelf) {
       this._parent.updateValueAndValidity(onlySelf);
     }
-  }
-
-  get<S extends string>(path: S): AbstractControl<GetFormControlProperty<V, S>>;
-  get<S extends ArrayLike<string>>(path: S): AbstractControl<GetFormControlPropertyFromArray<V, S>>;
-  get(path: string[] | string): AbstractControl | null {
-    return find(this, path, '.');
-  }
-
-  getError(errorCode: string, path?: string[] | string): any {
-    const control = path ? this.get(path) : this;
-    return control && control.errors ? control.errors[errorCode] : null;
-  }
-
-  hasError(errorCode: string, path?: string[] | string): boolean {
-    return !!this.getError(errorCode, path);
   }
 
   protected abstract _value: V;
