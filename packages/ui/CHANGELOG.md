@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.0.5](https://github.com/DevCloudFE/react-devui/compare/v18.0.4...v18.0.5) (2022-12-09)
+
+### Bug Fixes
+
+- **ui:** fix form ts error ([5b9c49a](https://github.com/DevCloudFE/react-devui/commit/5b9c49a5ba7a9e0c7246326ddb9fd8a632ae54ff))
+
 ## [18.0.4](https://github.com/DevCloudFE/react-devui/compare/v18.0.3...v18.0.4) (2022-12-09)
 
 ### Bug Fixes
