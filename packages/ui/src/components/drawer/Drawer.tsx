@@ -11,7 +11,7 @@ import { useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { getClassName, toPx } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
+import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE, checkNoExpandedEl } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
@@ -262,7 +262,7 @@ export const DDrawer: {
             onKeyDown={(e) => {
               restProps.onKeyDown?.(e);
 
-              if (dEscClosable && e.code === 'Escape') {
+              if (dEscClosable && checkNoExpandedEl(e.currentTarget) && e.code === 'Escape') {
                 changeVisible(false);
               }
 

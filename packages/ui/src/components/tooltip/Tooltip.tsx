@@ -5,11 +5,12 @@ import { isUndefined } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
+import { useEvent, useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
 import { getClassName, getPopupPosition } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate } from '../../utils';
+import { checkNoExpandedEl, registerComponentMate } from '../../utils';
+import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
@@ -64,6 +65,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   //#endregion
 
   //#region Ref
+  const windowRef = useRefExtra(() => window);
   const triggerRef = useRefExtra<HTMLElement>(() => document.querySelector(`[aria-describedby="${id}"]`));
   const popupRef = useRef<HTMLDivElement>(null);
   const containerRef = useRefExtra(
@@ -210,6 +212,18 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     }
   });
 
+  useEvent<KeyboardEvent>(
+    windowRef,
+    'keydown',
+    (e) => {
+      if (e.code === 'Escape' && popupRef.current && checkNoExpandedEl(popupRef.current)) {
+        changeVisible(false);
+      }
+    },
+    {},
+    !dEscClosable || !visible
+  );
+
   useImperativeHandle(
     ref,
     () => ({
@@ -222,7 +236,6 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
     <DPopup
       dVisible={visible}
       dTrigger={dTrigger}
-      dEscClosable={dEscClosable}
       dMouseEnterDelay={dMouseEnterDelay}
       dMouseLeaveDelay={dMouseLeaveDelay}
       dUpdatePosition={{
@@ -238,6 +251,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
           {renderTrigger(
             React.cloneElement(children, {
               'aria-describedby': id,
+              [EXPANDED_DATA]: visible,
             })
           )}
           {containerRef.current &&

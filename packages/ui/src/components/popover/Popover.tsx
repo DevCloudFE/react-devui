@@ -7,11 +7,12 @@ import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useEventCallback, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
+import { useEvent, useEventCallback, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
 import { getClassName, getPopupPosition } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, handleModalKeyDown, cloneHTMLElement } from '../../utils';
+import { registerComponentMate, handleModalKeyDown, cloneHTMLElement, checkNoExpandedEl } from '../../utils';
+import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
@@ -76,6 +77,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   //#endregion
 
   //#region Ref
+  const windowRef = useRefExtra(() => window);
   const triggerRef = useRefExtra(() => document.getElementById(triggerId));
   const popoverRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -232,6 +234,17 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   });
 
   useLockScroll(dModal && visible);
+  useEvent<KeyboardEvent>(
+    windowRef,
+    'keydown',
+    (e) => {
+      if (e.code === 'Escape' && popoverRef.current && checkNoExpandedEl(popoverRef.current)) {
+        changeVisible(false);
+      }
+    },
+    {},
+    !dEscClosable || !visible
+  );
 
   useEffect(() => {
     if (dModal) {
@@ -271,7 +284,6 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
     <DPopup
       dVisible={visible}
       dTrigger={dTrigger}
-      dEscClosable={dEscClosable}
       dMouseEnterDelay={dMouseEnterDelay}
       dMouseLeaveDelay={dMouseLeaveDelay}
       dUpdatePosition={{
@@ -287,6 +299,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
           {renderTrigger(
             cloneHTMLElement(children, {
               id: triggerId,
+              [EXPANDED_DATA]: visible,
             })
           )}
           {containerRef.current &&

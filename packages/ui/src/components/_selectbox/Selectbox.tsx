@@ -11,6 +11,7 @@ import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import { useMaxIndex } from '../../hooks';
 import { cloneHTMLElement } from '../../utils';
+import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DFocusVisible } from '../_focus-visible';
@@ -143,6 +144,7 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
           renderBaseDesign(
             <div
               {...restProps}
+              {...{ [EXPANDED_DATA]: dVisible }}
               ref={combineBoxRef}
               className={getClassName(restProps.className, prefix, {
                 [`${prefix}--${dSize}`]: dSize,

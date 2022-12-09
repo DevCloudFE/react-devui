@@ -12,6 +12,7 @@
   white-space: pre;
   background-color: var(--#{$rd-prefix}tooltip-background-color);
   border-radius: var(--#{$rd-prefix}border-radius-larger);
+  outline: none;
 
   @include m(top) {
     @include tooltip-arrow {

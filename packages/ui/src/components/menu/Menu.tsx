@@ -3,11 +3,12 @@ import type { DId } from '../../utils/types';
 import { isNull, isUndefined, nth } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 
-import { useId } from '@react-devui/hooks';
+import { useEvent, useId, useRefExtra } from '@react-devui/hooks';
 import { findNested, getClassName } from '@react-devui/utils';
 
 import { useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
+import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
 import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -62,6 +63,10 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
 
   //#region Context
   const dPrefix = usePrefixConfig();
+  //#endregion
+
+  //#region Ref
+  const windowRef = useRefExtra(() => window);
   //#endregion
 
   const dataRef = useRef<{
@@ -170,6 +175,18 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
     reduceArr(dList);
     setFocusIds(ids.length === 0 ? (isUndefined(firstId) ? [] : [firstId]) : ids);
   };
+
+  useEvent<KeyboardEvent>(
+    windowRef,
+    'keydown',
+    (e) => {
+      if (e.code === 'Escape') {
+        setPopupIds([]);
+      }
+    },
+    {},
+    popupIds.length === 0
+  );
 
   let handleKeyDown: React.KeyboardEventHandler<HTMLElement> | undefined;
   const nodes = (() => {
@@ -487,6 +504,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
                 <nav
                   {...restProps}
+                  {...{ [EXPANDED_DATA]: popupIds.length > 0 }}
                   ref={collapseRef}
                   className={getClassName(restProps.className, `${dPrefix}menu`, {
                     [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',

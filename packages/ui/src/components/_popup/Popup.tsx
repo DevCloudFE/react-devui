@@ -14,7 +14,6 @@ export interface DPopupProps {
   children: (props: { renderTrigger: DCloneHTMLElement; renderPopup: DCloneHTMLElement }) => JSX.Element | null;
   dVisible: boolean;
   dTrigger: 'hover' | 'click';
-  dEscClosable?: boolean;
   dMouseEnterDelay?: number;
   dMouseLeaveDelay?: number;
   dUpdatePosition: {
@@ -27,16 +26,7 @@ export interface DPopupProps {
 }
 
 export function DPopup(props: DPopupProps): JSX.Element | null {
-  const {
-    children,
-    dVisible,
-    dTrigger,
-    dEscClosable = true,
-    dMouseEnterDelay = 150,
-    dMouseLeaveDelay = 200,
-    dUpdatePosition,
-    onVisibleChange,
-  } = props;
+  const { children, dVisible, dTrigger, dMouseEnterDelay = 150, dMouseLeaveDelay = 200, dUpdatePosition, onVisibleChange } = props;
 
   //#region Context
   const { dPageScrollRef, dContentResizeRef } = useLayout();
@@ -120,18 +110,6 @@ export function DPopup(props: DPopupProps): JSX.Element | null {
     },
     { capture: true },
     !dVisible || dTrigger !== 'click'
-  );
-
-  useEvent<KeyboardEvent>(
-    windowRef,
-    'keydown',
-    (e) => {
-      if (e.code === 'Escape') {
-        handleTrigger(false);
-      }
-    },
-    {},
-    !dVisible || !dEscClosable
   );
 
   return children({

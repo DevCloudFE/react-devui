@@ -10,7 +10,7 @@ import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, Wa
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE } from '../../utils';
+import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE, checkNoExpandedEl } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { ROOT_DATA, useComponentConfig, usePrefixConfig } from '../root';
@@ -204,7 +204,7 @@ export const DModal: {
               onKeyDown={(e) => {
                 restProps.onKeyDown?.(e);
 
-                if (dEscClosable && e.code === 'Escape') {
+                if (dEscClosable && checkNoExpandedEl(e.currentTarget) && e.code === 'Escape') {
                   changeVisible(false);
                 }
 
