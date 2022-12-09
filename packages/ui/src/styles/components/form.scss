@@ -231,11 +231,12 @@
     float: right;
     min-height: calc(1.5em + 5px);
     padding: 2px 0;
-    font-size: 0.9em;
   }
 
   @include e(error) {
     @include utils-ellipsis;
+
+    font-size: 0.9em;
 
     @include m(error) {
       color: var(--#{$rd-prefix}color-danger);
