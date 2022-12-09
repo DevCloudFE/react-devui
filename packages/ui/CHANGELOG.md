@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.0.4](https://github.com/DevCloudFE/react-devui/compare/v18.0.3...v18.0.4) (2022-12-09)
+
+### Bug Fixes
+
+- **ui:** fix circular dependency ([1b21527](https://github.com/DevCloudFE/react-devui/commit/1b21527883a1b1b11c5741ee2d989e6b94be148f))
+
 ## [18.0.3](https://github.com/DevCloudFE/react-devui/compare/v18.0.2...v18.0.3) (2022-12-05)
 
 **Note:** Version bump only for package @react-devui/ui
