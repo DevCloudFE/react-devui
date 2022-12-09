@@ -25,7 +25,7 @@ Consider the following guidelines:
 - Make your changes in a new git branch:
 
   ```shell
-  git checkout -b issue-N/A main
+  git switch -c issue-N/A
   ```
 
 - Create your patch, **including appropriate test cases**.
@@ -77,12 +77,10 @@ Must be one of the following:
 
 - **empty**: Does not provide scope
 - **module**: Such as **site**
-- **module:\***: Such as **ui:button**
 
 Real world examples can look like this:
 
 ```shell
 chore: update dependencies
 feat(site): support themes
-fix(ui:button): fix `onClick` no response
 ```
