@@ -56,8 +56,8 @@ export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> exte
     this.updateValueAndValidity(true);
   }
 
-  get<S extends string>(path: S): AbstractControl<GetFormControlProperty<T, S>>;
-  get<S extends ArrayLike<string>>(path: S): AbstractControl<GetFormControlPropertyFromArray<T, S>>;
+  get<S extends string>(path: S): AbstractControl<GetFormControlProperty<{ [K in keyof T]: T[K]['value'] }, S>>;
+  get<S extends ArrayLike<string>>(path: S): AbstractControl<GetFormControlPropertyFromArray<{ [K in keyof T]: T[K]['value'] }, S>>;
   get(path: string[] | string): AbstractControl | null {
     return find(this, path, '.');
   }
