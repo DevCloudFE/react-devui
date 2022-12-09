@@ -68,4 +68,4 @@ Need unit test support (Jest) 🤝.
 
 ## License
 
-[![gitHub license](https://img.shields.io/github/license/DevCloudFE/react-devui?style=flat-square)](https://github.com/DevCloudFE/react-devui/actions/workflows/main.yml)
+[![gitHub license](https://img.shields.io/github/license/DevCloudFE/react-devui?style=flat-square)](/LICENSE)
