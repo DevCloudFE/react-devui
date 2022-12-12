@@ -83,10 +83,13 @@ export function DRoot(props: DRootProps): JSX.Element | null {
     windowRef,
     'click',
     (e) => {
-      ROOT_DATA.clickEvent = {
-        time: performance.now(),
-        e,
-      };
+      // Check if click by keydown.
+      if (!(e.clientX === 0 && e.clientY === 0)) {
+        ROOT_DATA.clickEvent = {
+          time: performance.now(),
+          e,
+        };
+      }
     },
     { capture: true }
   );
