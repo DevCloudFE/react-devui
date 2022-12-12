@@ -58,6 +58,18 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
           className="app-table-filter__search-input"
           dModel={searchValue}
           dPlaceholder={aSearchPlaceholder}
+          dInputRender={(el) =>
+            React.cloneElement<React.InputHTMLAttributes<HTMLInputElement>>(el, {
+              onKeyDown: (e) => {
+                el.props.onKeyDown?.(e);
+
+                if (e.code === 'Enter') {
+                  e.preventDefault();
+                  onSearchClick?.();
+                }
+              },
+            })
+          }
           onModelChange={changeSearchValue}
         />
         <div className="app-table-filter__button-container">
