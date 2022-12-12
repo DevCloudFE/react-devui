@@ -10,16 +10,16 @@ type Mutable<T> = {
 type GetFormControlPropertyFromArray<T, A> = Mutable<A> extends [infer K, ...infer R]
   ? K extends keyof T
     ? GetFormControlPropertyFromArray<T[K], R>
-    : null
+    : any
   : T;
 
 type GetFormControlProperty<T, S> = S extends `${infer K}.${infer R}`
   ? K extends keyof T
     ? GetFormControlProperty<T[K], R>
-    : null
+    : any
   : S extends keyof T
   ? T[S]
-  : null;
+  : any;
 
 function find(control: AbstractControl, path: string[] | string, delimiter: string) {
   if (path == null) return null;
