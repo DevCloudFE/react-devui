@@ -1,5 +1,5 @@
 import type { OpenModalFn } from '../../../../utils/types';
-import type { Device } from '../StandardTable';
+import type { DeviceData } from '../StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -17,7 +17,7 @@ import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
 export default function Detail(): JSX.Element | null {
-  const deviceModalRef = useRef<OpenModalFn<Device>>(null);
+  const deviceModalRef = useRef<OpenModalFn<DeviceData>>(null);
 
   const { t } = useTranslation();
 
@@ -27,7 +27,7 @@ export default function Detail(): JSX.Element | null {
   const { id: _id } = useParams();
   const id = Number(_id!);
 
-  const [device, setDevice] = useState<Device>();
+  const [device, setDevice] = useState<DeviceData>();
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 

@@ -15,7 +15,7 @@ import { useAPI, useQueryParams } from '../../../hooks';
 import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
 
-export type Device = DeviceDoc;
+export type DeviceData = DeviceDoc;
 
 interface DeviceQueryParams {
   keyword: string;
@@ -27,7 +27,7 @@ interface DeviceQueryParams {
 }
 
 export default function StandardTable(): JSX.Element | null {
-  const deviceModalRef = useRef<OpenModalFn<Device>>(null);
+  const deviceModalRef = useRef<OpenModalFn<DeviceData>>(null);
 
   const { t } = useTranslation();
   const async = useAsync();
@@ -57,7 +57,7 @@ export default function StandardTable(): JSX.Element | null {
 
   const [deviceTable, setDeviceTable] = useImmer({
     loading: true,
-    list: [] as Device[],
+    list: [] as DeviceData[],
     totalSize: 0,
     selected: new Set<number>(),
   });
@@ -68,7 +68,7 @@ export default function StandardTable(): JSX.Element | null {
 
   const [paramsOfDeleteModal, setParamsOfDeleteModal] = useImmer<{
     visible: boolean;
-    device: Device;
+    device: DeviceData;
   }>();
 
   useMount(() => {
@@ -100,7 +100,7 @@ export default function StandardTable(): JSX.Element | null {
     setDeviceTable((draft) => {
       draft.loading = true;
     });
-    deviceApi.list<Device>(apiQuery).subscribe({
+    deviceApi.list<DeviceData>(apiQuery).subscribe({
       next: (res) => {
         setDeviceQuery((draft) => {
           draft.page = res.metadata.page;

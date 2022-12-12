@@ -1,5 +1,5 @@
 import type { OpenModalFn } from '../../../utils/types';
-import type { Device } from './StandardTable';
+import type { DeviceData } from './StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -13,7 +13,7 @@ export interface AppDeviceModalProps {
   aModelList: DSelectItem<string>[] | undefined;
 }
 
-function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenModalFn<Device>>): JSX.Element | null {
+function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenModalFn<DeviceData>>): JSX.Element | null {
   const { aModelList } = props;
 
   const async = useAsync();
@@ -22,7 +22,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
   const id = `app-form-${uniqueId}`;
 
   const [visible, setVisible] = useState(false);
-  const [device, setDevice] = useState<Device>();
+  const [device, setDevice] = useState<DeviceData>();
   const [form, updateForm] = useForm(
     () =>
       new FormGroup({
@@ -31,7 +31,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
       })
   );
 
-  const open = useEventCallback<OpenModalFn<Device>>((device) => {
+  const open = useEventCallback<OpenModalFn<DeviceData>>((device) => {
     setVisible(true);
     setDevice(device);
     form.reset(device ? { name: device.name, model: device.model } : undefined);
