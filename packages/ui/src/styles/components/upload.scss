@@ -10,7 +10,7 @@
     font-size: 0.9em;
   }
 
-  @include e(item-action) {
+  @include e(action) {
     @include utils-button;
 
     min-width: 24px;

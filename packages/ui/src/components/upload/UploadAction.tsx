@@ -44,7 +44,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
 
   return dPreset === 'preview' ? (
     <a
-      className={getClassName(`${dPrefix}upload__item-action`, `${dPrefix}upload__item-action--preview`, {
+      className={getClassName(restProps.className, `${dPrefix}upload__action`, `${dPrefix}upload__action--preview`, {
         'is-disabled': isUndefined(__file.url),
       })}
       target={restProps['target'] ?? '_blank'}
@@ -67,7 +67,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
     <button
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}upload__item-action`)}
+      className={getClassName(restProps.className, `${dPrefix}upload__action`)}
       type={restProps['type'] ?? 'button'}
       disabled={isUndefined(__file.url)}
       onClick={(e) => {
@@ -88,7 +88,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
     <button
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}upload__item-action`)}
+      className={getClassName(restProps.className, `${dPrefix}upload__action`)}
       type={restProps['type'] ?? 'button'}
       onClick={(e) => {
         restProps.onClick?.(e);
@@ -104,7 +104,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
     <button
       {...restProps}
       ref={ref}
-      className={getClassName(restProps.className, `${dPrefix}upload__item-action`)}
+      className={getClassName(restProps.className, `${dPrefix}upload__action`)}
       type={restProps['type'] ?? 'button'}
       onClick={(e) => {
         restProps.onClick?.(e);

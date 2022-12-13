@@ -11,6 +11,7 @@ import { DTableFilter } from './TableFilter';
 import { DTableSearch } from './TableSearch';
 import { DTableTd } from './TableTd';
 import { DTableTh } from './TableTh';
+import { DTableThAction } from './TableThAction';
 
 export interface DTableContextData {
   gFixed: ('left' | 'right')[];
@@ -100,6 +101,7 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
 export const DTable: {
   (props: DTableProps & React.RefAttributes<HTMLDivElement>): ReturnType<typeof Table>;
   Th: typeof DTableTh;
+  ThAction: typeof DTableThAction;
   Td: typeof DTableTd;
   Empty: typeof DTableEmpty;
   Filter: typeof DTableFilter;
@@ -108,6 +110,7 @@ export const DTable: {
 } = React.forwardRef(Table) as any;
 
 DTable.Th = DTableTh;
+DTable.ThAction = DTableThAction;
 DTable.Td = DTableTd;
 DTable.Empty = DTableEmpty;
 DTable.Filter = DTableFilter;

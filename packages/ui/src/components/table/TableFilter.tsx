@@ -17,6 +17,7 @@ import { DPopover } from '../popover';
 import { DRadio } from '../radio';
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
+import { DTableThAction } from './TableThAction';
 
 export interface DTableFilterRef {
   updatePosition: () => void;
@@ -368,14 +369,14 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
       }}
       afterVisibleChange={afterVisibleChange}
     >
-      <button
+      <DTableThAction
         {...restProps}
         className={getClassName(restProps.className, {
           'is-active': hasSelected,
         })}
       >
         <FilterFilled dSize={12} />
-      </button>
+      </DTableThAction>
     </DPopover>
   );
 }

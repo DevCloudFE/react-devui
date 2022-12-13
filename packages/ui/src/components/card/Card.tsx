@@ -5,6 +5,7 @@ import { getClassName } from '@react-devui/utils';
 import { registerComponentMate } from '../../utils';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DSeparator } from '../separator';
+import { DCardAction } from './CardAction';
 import { DCardContent } from './CardContent';
 import { DCardHeader } from './CardHeader';
 
@@ -17,6 +18,7 @@ export interface DCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard' as const });
 export const DCard: {
   (props: DCardProps): JSX.Element | null;
+  Action: typeof DCardAction;
   Header: typeof DCardHeader;
   Content: typeof DCardContent;
 } = (props) => {
@@ -45,11 +47,9 @@ export const DCard: {
       {children}
       {dActions && (
         <div className={`${dPrefix}card__actions`}>
-          {React.Children.map(dActions as any[], (action, index) => (
+          {React.Children.map(dActions, (action, index) => (
             <>
-              {React.cloneElement(action, {
-                className: getClassName(action.props.className, `${dPrefix}card__action`),
-              })}
+              {action}
               {index !== dActions.length - 1 && <DSeparator style={{ margin: 8 }} dVertical></DSeparator>}
             </>
           ))}
@@ -59,5 +59,6 @@ export const DCard: {
   );
 };
 
+DCard.Action = DCardAction;
 DCard.Header = DCardHeader;
 DCard.Content = DCardContent;

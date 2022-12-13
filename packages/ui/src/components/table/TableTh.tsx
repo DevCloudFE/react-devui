@@ -88,16 +88,7 @@ export function DTableTh(props: DTableThProps): JSX.Element | null {
               )}
             </button>
           )}
-          {React.Children.map(dActions as any[], (action) =>
-            React.cloneElement(action, {
-              className: getClassName(action.props.className, `${dPrefix}table__th-action`),
-              onClick: (e: React.MouseEvent) => {
-                action.props.onClick?.(e);
-
-                e.stopPropagation();
-              },
-            })
-          )}
+          {React.Children.map(dActions, (action) => action)}
         </div>
       )}
     </DCell>

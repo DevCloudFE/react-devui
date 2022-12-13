@@ -25,7 +25,7 @@ export { DBreadcrumb } from './breadcrumb';
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 
-export type { DCardProps, DCardHeaderProps, DCardContentProps } from './card';
+export type { DCardProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from './card';
 export { DCard } from './card';
 
 export type { DCascaderProps } from './cascader';
@@ -55,7 +55,7 @@ export { DFab, DFabButton, DFabBacktop } from './fab';
 export type { DFormProps, DFormItemProps, DFormGroupProps } from './form';
 export { DForm, useForm, FormControl, FormGroup, Validators } from './form';
 
-export type { DImageProps, DImagePreviewProps } from './image';
+export type { DImageProps, DImageActionProps, DImagePreviewProps } from './image';
 export { DImage } from './image';
 
 export type { DInputProps } from './input';
@@ -115,6 +115,7 @@ export { DSwitch } from './switch';
 export type {
   DTableProps,
   DTableThProps,
+  DTableThActionProps,
   DTableTdProps,
   DTableEmptyProps,
   DTableFilterProps,

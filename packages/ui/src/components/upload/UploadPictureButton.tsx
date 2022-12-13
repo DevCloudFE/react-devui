@@ -59,8 +59,8 @@ export function DUploadPictureButton(props: DUploadPictureButtonProps): JSX.Elem
             </>
           )}
           <div className={`${dPrefix}upload__picture-actions`}>
-            {React.Children.map(dActions as any[], (action) =>
-              React.cloneElement<DUploadActionPrivateProps>(action, {
+            {React.Children.map(dActions, (action) =>
+              React.cloneElement<DUploadActionPrivateProps>(action as any, {
                 __file: dFile,
                 __defaultActions: dDefaultActions,
                 __onRemove: onRemove,

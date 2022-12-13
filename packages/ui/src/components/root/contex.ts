@@ -9,7 +9,7 @@ import type { DAvatarProps } from '../avatar';
 import type { DBadgeProps } from '../badge';
 import type { DBreadcrumbProps } from '../breadcrumb';
 import type { DButtonProps } from '../button';
-import type { DCardProps, DCardHeaderProps, DCardContentProps } from '../card';
+import type { DCardProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from '../card';
 import type { DCascaderProps } from '../cascader';
 import type { DCheckboxProps, DCheckboxGroupProps } from '../checkbox';
 import type { DComposeProps, DComposeItemProps } from '../compose';
@@ -19,7 +19,7 @@ import type { DDropdownProps } from '../dropdown';
 import type { DEmptyProps } from '../empty';
 import type { DFabProps, DFabButtonProps, DFabBacktopProps } from '../fab';
 import type { DFormProps, DFormGroupProps, DFormItemProps } from '../form';
-import type { DImageProps, DImagePreviewProps } from '../image';
+import type { DImageProps, DImageActionProps, DImagePreviewProps } from '../image';
 import type { DInputProps } from '../input';
 import type { DMenuProps } from '../menu';
 import type { DModalProps, DModalHeaderProps, DModalFooterProps } from '../modal';
@@ -40,6 +40,7 @@ import type { DSwitchProps } from '../switch';
 import type {
   DTableProps,
   DTableThProps,
+  DTableThActionProps,
   DTableTdProps,
   DTableEmptyProps,
   DTableFilterProps,
@@ -76,6 +77,7 @@ export type DComponentConfig = {
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
   DCard: DCardProps;
+  'DCard.Action': DCardActionProps;
   'DCard.Header': DCardHeaderProps;
   'DCard.Content': DCardContentProps;
   DCascader: DCascaderProps<any, any>;
@@ -96,6 +98,7 @@ export type DComponentConfig = {
   'DForm.Group': DFormGroupProps;
   'DForm.Item': DFormItemProps<any>;
   DImage: DImageProps;
+  'DImage.Action': DImageActionProps;
   'DImage.Preview': DImagePreviewProps;
   DInput: DInputProps;
   DMenu: DMenuProps<any, any>;
@@ -121,6 +124,7 @@ export type DComponentConfig = {
   DSwitch: DSwitchProps;
   DTable: DTableProps;
   'DTable.Th': DTableThProps;
+  'DTable.ThAction': DTableThActionProps;
   'DTable.Td': DTableTdProps;
   'DTable.Empty': DTableEmptyProps;
   'DTable.Filter': DTableFilterProps<any, any>;

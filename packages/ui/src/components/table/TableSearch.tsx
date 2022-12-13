@@ -10,6 +10,7 @@ import { DButton } from '../button';
 import { DInput } from '../input';
 import { DPopover } from '../popover';
 import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
+import { DTableThAction } from './TableThAction';
 
 export interface DTableSearchRef {
   updatePosition: () => void;
@@ -107,14 +108,14 @@ function TableSearch(props: DTableSearchProps, ref: React.ForwardedRef<DTableSea
       }}
       afterVisibleChange={afterVisibleChange}
     >
-      <button
+      <DTableThAction
         {...restProps}
         className={getClassName(restProps.className, {
           'is-active': dataRef.current.showValue.length > 0,
         })}
       >
         <SearchOutlined dSize={14} />
-      </button>
+      </DTableThAction>
     </DPopover>
   );
 }

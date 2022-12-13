@@ -3,8 +3,9 @@ import React, { useRef } from 'react';
 import { useForceUpdate } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { cloneHTMLElement, registerComponentMate } from '../../utils';
+import { registerComponentMate } from '../../utils';
 import { useComponentConfig, usePrefixConfig } from '../root';
+import { DImageAction } from './ImageAction';
 import { DImagePreview } from './ImagePreview';
 
 export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -17,6 +18,7 @@ export interface DImageProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DImage' as const });
 export const DImage: {
   (props: DImageProps): JSX.Element | null;
+  Action: typeof DImageAction;
   Preview: typeof DImagePreview;
 } = (props) => {
   const {
@@ -83,17 +85,10 @@ export const DImage: {
           }}
         />
       }
-      {dActions && (
-        <div className={`${dPrefix}image__actions`}>
-          {React.Children.map(dActions, (action) =>
-            cloneHTMLElement(action, {
-              className: getClassName(action.props.className, `${dPrefix}image__action`),
-            })
-          )}
-        </div>
-      )}
+      {dActions && <div className={`${dPrefix}image__actions`}>{React.Children.map(dActions, (action) => action)}</div>}
     </div>
   );
 };
 
+DImage.Action = DImageAction;
 DImage.Preview = DImagePreview;
