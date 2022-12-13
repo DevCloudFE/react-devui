@@ -9,17 +9,22 @@ import { useAsync, useEventCallback, useId } from '@react-devui/hooks';
 import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
+import { useAPI } from '../../../hooks';
+
 export interface AppDeviceModalProps {
-  aModelList: DSelectItem<string>[] | undefined;
+  onSuccess: () => void;
 }
 
 function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenModalFn<DeviceData>>): JSX.Element | null {
-  const { aModelList } = props;
+  const { onSuccess } = props;
 
+  const modelApi = useAPI('/device/model');
   const async = useAsync();
 
   const uniqueId = useId();
   const id = `app-form-${uniqueId}`;
+
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
   const [visible, setVisible] = useState(false);
   const [device, setDevice] = useState<DeviceData>();
@@ -34,8 +39,23 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
   const open = useEventCallback<OpenModalFn<DeviceData>>((device) => {
     setVisible(true);
     setDevice(device);
+
     form.reset(device ? { name: device.name, model: device.model } : undefined);
     updateForm();
+
+    if (isUndefined(modelList)) {
+      modelApi.list().subscribe({
+        next: (res) => {
+          setModelList(
+            res.resources.map((model) => ({
+              label: model.name,
+              value: model.name,
+              disabled: model.disabled,
+            }))
+          );
+        },
+      });
+    }
   });
 
   useImperativeHandle(ref, () => open, [open]);
@@ -50,6 +70,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
           onOkClick={() =>
             new Promise((r) => {
               async.setTimeout(() => {
+                onSuccess();
                 r(true);
               }, 500);
             })
@@ -69,9 +90,9 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
           <DForm.Item dFormControls={{ model: 'Please select model!' }} dLabel="Model">
             {({ model }) => (
               <DSelect
-                dFormControl={aModelList ? model : undefined}
-                dList={aModelList ?? []}
-                dLoading={isUndefined(aModelList)}
+                dFormControl={modelList ? model : undefined}
+                dList={modelList ?? []}
+                dLoading={isUndefined(modelList)}
                 dPlaceholder="Model"
                 dClearable
               />

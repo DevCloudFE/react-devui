@@ -152,7 +152,12 @@ export default function StandardTable(): JSX.Element | null {
           }}
         />
       )}
-      <AppDeviceModal ref={deviceModalRef} aModelList={modelList} />
+      <AppDeviceModal
+        ref={deviceModalRef}
+        onSuccess={() => {
+          setUpdateDeviceTable((n) => n + 1);
+        }}
+      />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[

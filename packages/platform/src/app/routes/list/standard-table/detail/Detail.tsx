@@ -1,13 +1,11 @@
 import type { OpenModalFn } from '../../../../utils/types';
 import type { DeviceData } from '../StandardTable';
-import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { useMount } from '@react-devui/hooks';
 import { EditOutlined } from '@react-devui/icons';
 import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
@@ -21,38 +19,34 @@ export default function Detail(): JSX.Element | null {
 
   const { t } = useTranslation();
 
-  const modelApi = useAPI('/device/model');
   const deviceApi = useAPI('/device');
 
   const { id: _id } = useParams();
   const id = Number(_id!);
 
+  const [deviceLoading, setDeviceLoading] = useState(true);
   const [device, setDevice] = useState<DeviceData>();
 
-  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
-
-  useMount(() => {
-    modelApi.list().subscribe({
-      next: (res) => {
-        setModelList(
-          res.resources.map((model) => ({
-            label: model.name,
-            value: model.name,
-            disabled: model.disabled,
-          }))
-        );
-      },
-    });
+  const [updateDevice, setUpdateDevice] = useState(0);
+  useEffect(() => {
+    setDeviceLoading(true);
     deviceApi.get(id).subscribe({
       next: (device) => {
+        setDeviceLoading(false);
         setDevice(device);
       },
     });
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateDevice]);
 
   return (
     <>
-      <AppDeviceModal ref={deviceModalRef} aModelList={modelList} />
+      <AppDeviceModal
+        ref={deviceModalRef}
+        onSuccess={() => {
+          setUpdateDevice((n) => n + 1);
+        }}
+      />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -87,6 +81,7 @@ export default function Detail(): JSX.Element | null {
           </div>
         ) : (
           <>
+            <DSpinner dVisible={deviceLoading}></DSpinner>
             <DCard>
               <DCard.Content>
                 <div className="app-title mb-3">Title 1</div>
