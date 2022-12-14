@@ -24,7 +24,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DUpload.Pict
 export function DUploadPictureButton(props: DUploadPictureButtonProps): JSX.Element | null {
   const {
     dFile,
-    dActions = [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />],
+    dActions = [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />] as React.ReactNode[],
     dDefaultActions,
     onRemove,
 

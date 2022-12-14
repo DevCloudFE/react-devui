@@ -30,10 +30,10 @@
     "immer": "^9.0.16",
     "lodash": "^4.17.21",
     "rfs": "^9.0.6",
-    "rxjs": "^7.5.7"
+    "rxjs": "^7.6.0"
   },
   "peerDependencies": {
-    "dayjs": "^1.11.6",
+    "dayjs": "^1.11.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

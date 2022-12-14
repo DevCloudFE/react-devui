@@ -89,7 +89,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
             ] as DMenuItem<string>[])
           : menu.map<DMenuItem<string>>((group) => ({
               id: group.title,
-              title: t(`menu.components-group.${group.title}`),
+              title: t(`menu.components-group.${group.title}` as any),
               type: 'group',
               children: (group.title === 'Other'
                 ? group.children.concat([{ title: 'Interface', to: '/components/Interface' }])
@@ -100,7 +100,7 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
                   <Link tabIndex={-1} to={child.to}>
                     {child.title}
                     {languageStorage.value !== 'en-US' && (
-                      <span className="app-layout-sidebar__menu-subtitle">{t(`menu.components.${child.title}`)}</span>
+                      <span className="app-layout-sidebar__menu-subtitle">{t(`menu.components.${child.title}` as any)}</span>
                     )}
                   </Link>
                 ),

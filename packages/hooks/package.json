@@ -27,7 +27,7 @@
     "@react-devui/utils": "file:../utils",
     "immer": "^9.0.16",
     "lodash": "^4.17.21",
-    "rxjs": "^7.5.7"
+    "rxjs": "^7.6.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",

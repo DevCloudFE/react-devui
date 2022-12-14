@@ -4,6 +4,8 @@
       "User has no menu": "User has no menu",
       "Please contact the administrator": "Please contact the administrator",
       "User not authorized": "User not authorized",
+      "Light theme": "Light theme",
+      "Dark theme": "Dark theme",
       "components": {
         "language": {
           "Change language": "Change language"
@@ -92,6 +94,8 @@
       "User has no menu": "用户无菜单",
       "Please contact the administrator": "请联系管理员",
       "User not authorized": "用户未授权",
+      "Light theme": "浅色主题",
+      "Dark theme": "深色主题",
       "components": {
         "language": {
           "Change language": "改变语言"

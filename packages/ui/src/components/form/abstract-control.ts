@@ -163,7 +163,7 @@ export abstract class AbstractControl<V = any> {
 
   public readonly asyncVerifyComplete$ = new Subject<AbstractControl<V>>();
 
-  clone(): typeof this {
+  clone(): this {
     return new Proxy(this, {});
   }
 

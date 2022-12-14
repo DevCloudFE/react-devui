@@ -23,7 +23,7 @@ export default function Exception(): JSX.Element | null {
       {React.createElement(status === '403' ? S403 : status === '404' ? S404 : S500, { className: styles['app-exception__bg'] })}
       <div className={styles['app-exception__info']}>
         <div className={styles['app-exception__status']}>{status}</div>
-        <div className={styles['app-exception__description']}>{t(`routes.exception.${status}`)}</div>
+        <div className={styles['app-exception__description']}>{t(`routes.exception.${status}` as any)}</div>
         <DButton
           onClick={() => {
             navigate('/', { replace: true });
