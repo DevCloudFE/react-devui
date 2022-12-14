@@ -61,6 +61,9 @@ inquirer
       execSync(`yarn prettier ${nxJsonPath} --write`);
 
       const packageJsonPath = path.join(ROOT_PATH, 'package.json');
+      for (const name of ['@ant-design/icons-svg']) {
+        delete packageJson.devDependencies[name];
+      }
       packageJson.devDependencies['@react-devui/hooks'] = VERSION;
       packageJson.devDependencies['@react-devui/icons'] = VERSION;
       packageJson.devDependencies['@react-devui/ui'] = VERSION;
