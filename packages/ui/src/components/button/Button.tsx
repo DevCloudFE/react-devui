@@ -14,6 +14,7 @@ import { useComponentConfig, usePrefixConfig } from '../root';
 export interface DButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   dType?: 'primary' | 'secondary' | 'outline' | 'dashed' | 'text' | 'link';
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
+  // TODO: Should add `aria-busy` for loading state?
   dLoading?: boolean;
   dBlock?: boolean;
   dVariant?: 'circle' | 'round';
