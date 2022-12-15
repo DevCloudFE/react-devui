@@ -35,7 +35,7 @@ export function DTableTd(props: DTableTdProps): JSX.Element | null {
   //#endregion
 
   return (
-    <DCell {...restProps} dTag="td" dWidth={dWidth} dFixed={dFixed} dAlign={dAlign} dEllipsis={dEllipsis}>
+    <DCell {...restProps} dTag="td" dWidth={dWidth} dFixed={dFixed} dAlign={dAlign} dEllipsis={dEllipsis} dNowrap={dNowrap}>
       {dNowrap ? children : <div className={`${dPrefix}table__cell-text`}>{children}</div>}
     </DCell>
   );

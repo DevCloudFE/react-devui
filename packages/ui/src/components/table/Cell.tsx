@@ -27,6 +27,7 @@ export interface DCellProps extends React.TdHTMLAttributes<HTMLTableCellElement>
     | undefined;
   dAlign: 'left' | 'right' | 'center';
   dEllipsis: boolean;
+  dNowrap: boolean;
 }
 
 export function DCell(props: DCellProps): JSX.Element | null {
@@ -37,6 +38,7 @@ export function DCell(props: DCellProps): JSX.Element | null {
     dFixed,
     dAlign,
     dEllipsis,
+    dNowrap,
 
     ...restProps
   } = props;
@@ -100,6 +102,7 @@ export function DCell(props: DCellProps): JSX.Element | null {
         [`${dPrefix}table__cell--fixed-left`]: fixedLeft,
         [`${dPrefix}table__cell--fixed-right`]: fixedRight,
         [`${dPrefix}table__cell--ellipsis`]: ellipsis,
+        [`${dPrefix}table__cell--nowrap`]: dNowrap,
       }),
       style: {
         ...restProps.style,

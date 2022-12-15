@@ -164,6 +164,10 @@ $table-filter-option-height: 32px;
       }
     }
 
+    @include m(nowrap) {
+      white-space: nowrap;
+    }
+
     @include m(th-sort) {
       cursor: pointer;
     }
@@ -180,7 +184,6 @@ $table-filter-option-height: 32px;
 
     display: flex;
     align-items: center;
-    white-space: nowrap;
 
     @at-root {
       th #{$selector} {
@@ -191,7 +194,6 @@ $table-filter-option-height: 32px;
 
   @include e(cell-text) {
     overflow-wrap: break-word;
-    white-space: normal;
   }
 
   @include e(th-actions) {

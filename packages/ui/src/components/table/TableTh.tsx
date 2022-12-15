@@ -25,6 +25,7 @@ export interface DTableThProps extends React.ThHTMLAttributes<HTMLTableCellEleme
   };
   dAlign?: 'left' | 'right' | 'center';
   dEllipsis?: boolean;
+  dNowrap?: boolean;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTable.Th' as const });
@@ -37,6 +38,7 @@ export function DTableTh(props: DTableThProps): JSX.Element | null {
     dFixed,
     dAlign = 'left',
     dEllipsis = false,
+    dNowrap = true,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -66,6 +68,7 @@ export function DTableTh(props: DTableThProps): JSX.Element | null {
       dFixed={dFixed}
       dAlign={dAlign}
       dEllipsis={dEllipsis}
+      dNowrap={dNowrap}
     >
       <div className={`${dPrefix}table__cell-text`}>{children}</div>
       {(dSort || dActions.length > 0) && (
