@@ -9,7 +9,7 @@
 <!-- prettier-ignore-start -->
 [![npm latest package](http://img.shields.io/npm/v/@react-devui/ui/latest.svg?style=flat-square)](https://www.npmjs.com/package/@react-devui/ui)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@react-devui/ui?style=flat-square)](https://bundlephobia.com/package/@react-devui/ui)
-[![gitHub workflow status](https://img.shields.io/github/workflow/status/DevCloudFE/react-devui/Main?style=flat-square)](https://github.com/DevCloudFE/react-devui/actions/workflows/main.yml)
+[![gitHub workflow status](https://img.shields.io/github/actions/workflow/status/DevCloudFE/react-devui/main.yml?branch=main&style=flat-square)](https://github.com/DevCloudFE/react-devui/actions/workflows/main.yml)
 <!-- prettier-ignore-end -->
 
 </div>
