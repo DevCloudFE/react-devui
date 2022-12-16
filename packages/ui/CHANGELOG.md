@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.1.0](https://github.com/DevCloudFE/react-devui/compare/v18.0.5...v18.1.0) (2022-12-16)
+
+### Bug Fixes
+
+- **ui:** check if click by keydown ([8eb70ca](https://github.com/DevCloudFE/react-devui/commit/8eb70ca48d2f53adbdc281bc48a906308632b1cf))
+
+### Code Refactoring
+
+- **ui:** no longer use `cloneElement` to change action ([e07e107](https://github.com/DevCloudFE/react-devui/commit/e07e10700b656aaf3ba5a8e7a8e02fee1e6dc18e))
+
+### Features
+
+- **ui:** add `dNowrap` for both td and th ([0541bca](https://github.com/DevCloudFE/react-devui/commit/0541bcad8294418d83e716c5b565c88ca36206ee))
+
+### BREAKING CHANGES
+
+- **ui:** provide action components
+
 ## [18.0.5](https://github.com/DevCloudFE/react-devui/compare/v18.0.4...v18.0.5) (2022-12-09)
 
 ### Bug Fixes
