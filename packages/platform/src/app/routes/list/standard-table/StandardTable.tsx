@@ -1,4 +1,4 @@
-import type { DeviceDoc, OpenModalFn, StandardQueryParams } from '../../../utils/types';
+import type { DeviceDoc, OpenSettingFn, StandardQueryParams } from '../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -27,7 +27,7 @@ interface DeviceQueryParams {
 }
 
 export default function StandardTable(): JSX.Element | null {
-  const deviceModalRef = useRef<OpenModalFn<DeviceData>>(null);
+  const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
 
   const { t } = useTranslation();
   const async = useAsync();

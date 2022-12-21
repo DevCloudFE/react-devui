@@ -1,4 +1,4 @@
-import type { OpenModalFn } from '../../../utils/types';
+import type { OpenSettingFn } from '../../../utils/types';
 import type { DeviceData } from './StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
@@ -15,7 +15,7 @@ export interface AppDeviceModalProps {
   onSuccess: () => void;
 }
 
-function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenModalFn<DeviceData>>): JSX.Element | null {
+function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSettingFn<DeviceData>>): JSX.Element | null {
   const { onSuccess } = props;
 
   const modelApi = useAPI('/device/model');
@@ -36,7 +36,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenMod
       })
   );
 
-  const open = useEventCallback<OpenModalFn<DeviceData>>((device) => {
+  const open = useEventCallback<OpenSettingFn<DeviceData>>((device) => {
     setVisible(true);
     setDevice(device);
 

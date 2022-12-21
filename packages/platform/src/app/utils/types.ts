@@ -1,4 +1,4 @@
-export type OpenModalFn<T> = (doc?: T) => void;
+export type OpenSettingFn<T> = (doc?: T) => void;
 
 export interface StandardQueryParams {
   sort?: string;

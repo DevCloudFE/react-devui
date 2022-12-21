@@ -1,4 +1,4 @@
-import type { OpenModalFn } from '../../../../utils/types';
+import type { OpenSettingFn } from '../../../../utils/types';
 import type { DeviceData } from '../StandardTable';
 
 import { isUndefined } from 'lodash';
@@ -15,7 +15,7 @@ import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
 export default function Detail(): JSX.Element | null {
-  const deviceModalRef = useRef<OpenModalFn<DeviceData>>(null);
+  const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
 
   const { t } = useTranslation();
 
