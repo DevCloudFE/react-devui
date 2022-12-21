@@ -5,7 +5,7 @@ import type { DSelectItem } from '@react-devui/ui/components/select';
 import { isUndefined } from 'lodash';
 import React, { useImperativeHandle, useState } from 'react';
 
-import { useAsync, useEventCallback, useId } from '@react-devui/hooks';
+import { useAsync, useEventCallback } from '@react-devui/hooks';
 import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
@@ -20,9 +20,6 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
 
   const modelApi = useAPI('/device/model');
   const async = useAsync();
-
-  const uniqueId = useId();
-  const id = `app-form-${uniqueId}`;
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
@@ -66,7 +63,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
       dHeader={`${device ? 'Edit' : 'Add'} Device`}
       dFooter={
         <DModal.Footer
-          dOkProps={{ type: 'submit', form: id, disabled: !form.valid }}
+          dOkProps={{ disabled: !form.valid }}
           onOkClick={() =>
             new Promise((r) => {
               async.setTimeout(() => {
@@ -82,7 +79,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
         setVisible(false);
       }}
     >
-      <DForm id={id} dUpdate={updateForm} dLabelWidth="6em">
+      <DForm dUpdate={updateForm} dLabelWidth="6em">
         <DForm.Group dFormGroup={form}>
           <DForm.Item dFormControls={{ name: 'Please enter name!' }} dLabel="Name">
             {({ name }) => <DInput dFormControl={name} dPlaceholder="Name" />}
