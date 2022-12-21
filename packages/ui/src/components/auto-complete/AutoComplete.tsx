@@ -231,7 +231,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                       onKeyDown: (e) => {
                         el.props.onKeyDown?.(e);
 
-                        if (e.code === 'Enter' && visible && focusItem) {
+                        if (e.code === 'Enter' && !e.shiftKey && visible && focusItem) {
                           changeVisible(false);
                           onItemClick?.(focusItem.value, focusItem);
                         }
