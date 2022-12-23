@@ -142,6 +142,7 @@
 
   @include e(tabpanel) {
     flex-grow: 1;
+    overflow: hidden;
 
     @if $direction == left {
       margin-left: 20px;
@@ -168,6 +169,7 @@
   }
 
   @include e(tablist-wrapper) {
+    flex-shrink: 0;
     overflow: hidden auto;
 
     @if $direction == left {
