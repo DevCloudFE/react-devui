@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import { useForkRef, useIsomorphicLayoutEffect } from '@react-devui/hooks';
+import { useAsync, useForkRef, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
 import { getClassName, isSimpleArrayEqual } from '@react-devui/utils';
 
 import { registerComponentMate } from '../../utils';
@@ -43,6 +43,12 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
   const combineElRef = useForkRef(elRef, ref);
   //#endregion
 
+  const dataRef = useRef<{
+    clearTid?: () => void;
+  }>({});
+
+  const async = useAsync();
+
   const [fixed, setFixed] = useState<('left' | 'right')[]>([]);
 
   const getFixed = (el: HTMLDivElement) => {
@@ -69,6 +75,16 @@ function Table(props: DTableProps, ref: React.ForwardedRef<HTMLDivElement>): JSX
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useResize(elRef, () => {
+    dataRef.current.clearTid?.();
+    dataRef.current.clearTid = async.setTimeout(() => {
+      dataRef.current.clearTid = undefined;
+      if (elRef.current) {
+        getFixed(elRef.current);
+      }
+    }, 100);
+  });
 
   const contextValue = useMemo<DTableContextData>(
     () => ({
