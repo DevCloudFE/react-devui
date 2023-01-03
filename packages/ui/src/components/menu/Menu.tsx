@@ -8,7 +8,7 @@ import { findNested, getClassName } from '@react-devui/utils';
 
 import { useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
-import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
+import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DFocusVisible } from '../_focus-visible';
 import { useNestedPopup } from '../_popup';
 import { DCollapseTransition } from '../_transition';
@@ -504,7 +504,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
                 <nav
                   {...restProps}
-                  {...{ [EXPANDED_DATA]: popupIds.length > 0 }}
+                  {...{ [ESC_CLOSABLE_DATA]: popupIds.length > 0 }}
                   ref={collapseRef}
                   className={getClassName(restProps.className, `${dPrefix}menu`, {
                     [`${dPrefix}menu--horizontal`]: dMode === 'horizontal',

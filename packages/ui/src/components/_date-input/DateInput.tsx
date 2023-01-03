@@ -12,7 +12,7 @@ import { checkNodeExist, getClassName, getVerticalSidePosition } from '@react-de
 import { dayjs } from '../../dayjs';
 import { useDValue, useMaxIndex } from '../../hooks';
 import { cloneHTMLElement, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
-import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
+import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DComboboxKeyboard } from '../_keyboard';
@@ -378,7 +378,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           renderBaseDesign(
             <div
               {...restProps}
-              {...{ [EXPANDED_DATA]: visible }}
+              {...{ [ESC_CLOSABLE_DATA]: visible }}
               ref={boxRef}
               className={getClassName(restProps.className, prefix, {
                 [`${prefix}--${dSize}`]: dSize,

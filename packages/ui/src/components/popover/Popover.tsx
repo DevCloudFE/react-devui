@@ -12,7 +12,7 @@ import { getClassName, getPopupPosition } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, handleModalKeyDown, cloneHTMLElement, checkNoExpandedEl } from '../../utils';
-import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
+import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
@@ -299,7 +299,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
           {renderTrigger(
             cloneHTMLElement(children, {
               id: triggerId,
-              [EXPANDED_DATA]: visible,
+              [ESC_CLOSABLE_DATA]: dEscClosable && visible,
             })
           )}
           {containerRef.current &&

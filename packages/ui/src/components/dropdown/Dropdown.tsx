@@ -9,7 +9,7 @@ import { getClassName, getVerticalSidePosition, scrollToView } from '@react-devu
 
 import { useMaxIndex, useDValue } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
-import { EXPANDED_DATA } from '../../utils/checkNoExpandedEl';
+import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';
 import { DTransition } from '../_transition';
@@ -445,7 +445,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                     'aria-haspopup': 'menu',
                     'aria-expanded': visible,
                     'aria-controls': id,
-                    [EXPANDED_DATA as string]: visible,
+                    [ESC_CLOSABLE_DATA as string]: visible,
                     onFocus: (e) => {
                       children.props.onFocus?.(e);
 
