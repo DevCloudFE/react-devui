@@ -16,6 +16,7 @@ export function useResize(target: React.RefObject<Element | null>, cb?: ResizeOb
       const observer = new ResizeObserver((entries, observer) => {
         if (
           !isUndefined(dataRef.current.prevBorderBoxSize) &&
+          !(entries[0].borderBoxSize[0].blockSize === 0 && entries[0].borderBoxSize[0].inlineSize === 0) &&
           (dataRef.current.prevBorderBoxSize.blockSize !== entries[0].borderBoxSize[0].blockSize ||
             dataRef.current.prevBorderBoxSize.inlineSize !== entries[0].borderBoxSize[0].inlineSize)
         ) {
