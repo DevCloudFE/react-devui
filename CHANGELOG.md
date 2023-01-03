@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.1.1](https://github.com/DevCloudFE/react-devui/compare/v18.1.0...v18.1.1) (2023-01-03)
+
+### Bug Fixes
+
+- **ui:** fix style of tabs ([6f06fda](https://github.com/DevCloudFE/react-devui/commit/6f06fdac4d2d2813ee4c7d66b6c5a6f47c1ab7ba))
+
+### Features
+
+- **ui:** auto-complete support `Shift` + `Enter` ([04d504a](https://github.com/DevCloudFE/react-devui/commit/04d504a541d8bb8d0f0e985661b3bf4378bd238c))
+
 # [18.1.0](https://github.com/DevCloudFE/react-devui/compare/v18.0.5...v18.1.0) (2022-12-16)
 
 ### Bug Fixes
