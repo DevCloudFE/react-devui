@@ -27,6 +27,7 @@ export interface DSubProps {
   dMode: DMenuMode;
   dInNav: boolean;
   dActive: boolean;
+  dIncludeActive: boolean;
   dExpand: boolean;
   dEmpty: boolean;
   dFocusVisible: boolean;
@@ -50,6 +51,7 @@ function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element
     dMode,
     dInNav,
     dActive,
+    dIncludeActive,
     dExpand,
     dEmpty,
     dFocusVisible,
@@ -145,7 +147,7 @@ function Sub(props: DSubProps, ref: React.ForwardedRef<() => void>): JSX.Element
         [`${dPrefix}menu__item--horizontal`]: inHorizontalNav,
         [`${dPrefix}menu__item--icon`]: iconMode,
         'is-active': dActive,
-        'is-expand': dMode === 'vertical' ? dExpand : isVisible,
+        'is-expand': dMode === 'vertical' ? dExpand && dIncludeActive : isVisible,
         'is-disabled': dDisabled,
       })}
       style={{ paddingLeft: dSpace + dLevel * dStep }}

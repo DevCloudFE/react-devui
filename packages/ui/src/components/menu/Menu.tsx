@@ -422,6 +422,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 dMode={dMode}
                 dInNav={inNav}
                 dActive={(dMode === 'vertical' ? !isExpand : isUndefined(popupState)) && activeIds.includes(itemId)}
+                dIncludeActive={activeIds.includes(itemId)}
                 dExpand={isExpand}
                 dEmpty={isEmpty}
                 dFocusVisible={focusVisible && isFocus}
