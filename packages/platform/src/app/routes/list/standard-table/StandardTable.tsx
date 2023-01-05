@@ -311,7 +311,10 @@ export default function StandardTable(): JSX.Element | null {
                         <DTable.Td>{data.model}</DTable.Td>
                         <DTable.Td>{data.price}</DTable.Td>
                         <DTable.Td dNowrap>
-                          <AppStatusDot aTheme={data.status === 0 ? 'success' : data.status === 1 ? 'warning' : 'danger'}>
+                          <AppStatusDot
+                            aTheme={data.status === 0 ? 'success' : data.status === 1 ? 'warning' : 'danger'}
+                            aWave={data.status === 2}
+                          >
                             {data.status === 0 ? 'Normal' : data.status === 1 ? 'Failure' : 'Alarm'}
                           </AppStatusDot>
                         </DTable.Td>

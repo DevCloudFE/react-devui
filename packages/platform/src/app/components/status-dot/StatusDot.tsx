@@ -3,6 +3,7 @@ import { getClassName } from '@react-devui/utils';
 export interface AppStatusDotProps extends React.HTMLAttributes<HTMLDivElement> {
   aTheme?: 'primary' | 'success' | 'warning' | 'danger';
   aColor?: string;
+  aWave?: boolean;
   aSize?: string | number;
 }
 
@@ -11,6 +12,7 @@ export function AppStatusDot(props: AppStatusDotProps): JSX.Element | null {
     children,
     aTheme,
     aColor,
+    aWave = false,
     aSize,
 
     ...restProps
@@ -21,6 +23,7 @@ export function AppStatusDot(props: AppStatusDotProps): JSX.Element | null {
       {...restProps}
       className={getClassName(restProps.className, 'app-status-dot', {
         [`t-${aTheme}`]: aTheme,
+        'app-status-dot--wave': aWave,
       })}
       style={{
         ...restProps.style,
