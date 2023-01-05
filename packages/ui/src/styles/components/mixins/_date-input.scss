@@ -66,6 +66,7 @@
     @include utils-input;
 
     flex: 1 0 0;
+    min-width: 0;
     padding: 0;
     margin: 0;
     color: var(--#{$rd-prefix}text-color);
