@@ -7,7 +7,7 @@ import { useRefExtra, useEvent } from '@react-devui/hooks';
 import { DIconContext } from '@react-devui/icons/Icon';
 import { getClassName } from '@react-devui/utils';
 
-import { dayjs } from '../../dayjs';
+import dayjs from '../../dayjs';
 import { DConfigContextManager } from './contex';
 import { DConfigContext } from './contex';
 import resources from './resources.json';

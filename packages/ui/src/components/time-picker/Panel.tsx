@@ -5,7 +5,7 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import { useEventCallback } from '@react-devui/hooks';
 import { getClassName, scrollTo } from '@react-devui/utils';
 
-import { dayjs } from '../../dayjs';
+import dayjs from '../../dayjs';
 import { usePrefixConfig } from '../root';
 
 const H12 = freeze(['12', ...Array.from({ length: 11 }).map((_, i) => `${i + 1 < 10 ? '0' : ''}${i + 1}`)]);

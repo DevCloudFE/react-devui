@@ -26,4 +26,4 @@
 
 首先我们应该确保项目是全局唯一的 `dayjs`，所以组件库的 `dayjs` 是放在 `peerDependencies` 中。
 
-您只需要在您的项目中配置 `dayjs` 即可，最佳实践是创建一个 `startup` 确保最开始的时候进行一些配置，可参考 [startup](https://github.com/DevCloudFE/react-devui/tree/main/packages/platform/src/startup) 。
+您只需要在您的项目中配置 `dayjs` 即可，最佳实践是创建一个 `dayjs.ts` 来共享 `dayjs` 配置，可参考 [dayjs.ts](https://github.com/DevCloudFE/react-devui/blob/main/packages/platform/src/app/dayjs.ts) 。

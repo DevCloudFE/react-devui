@@ -7,7 +7,7 @@ import { useAsync, useUnmount } from '@react-devui/hooks';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { dayjs } from '../../dayjs';
+import dayjs from '../../dayjs';
 import { usePrefixConfig, useTranslation } from '../root';
 
 export interface DPanelProps {

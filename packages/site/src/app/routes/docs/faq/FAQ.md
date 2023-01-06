@@ -26,4 +26,4 @@ The null value of the controlled component is generally defined as `null`, pleas
 
 First of all, we should ensure that the project is the only `dayjs` globally, so the `dayjs` of the component library is placed in `peerDependencies`.
 
-You only need to configure `dayjs` in your project, the best practice is to create a `startup` to ensure some configuration at the beginning, please refer to [startup](https://github.com/DevCloudFE/react-devui/tree/main/packages/platform/src/startup).
+You only need to configure `dayjs` in your project, the best practice is to create a `dayjs.ts` to share `dayjs` configuration, please refer to [dayjs.ts](https://github.com/DevCloudFE/react-devui/blob/main/packages/platform/src/app/dayjs.ts).

@@ -9,7 +9,7 @@ import { useAsync, useEvent, useEventCallback, useForceUpdate, useForkRef, useIm
 import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName, getVerticalSidePosition } from '@react-devui/utils';
 
-import { dayjs } from '../../dayjs';
+import dayjs from '../../dayjs';
 import { useDValue, useMaxIndex } from '../../hooks';
 import { cloneHTMLElement, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
