@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.1.2](https://github.com/DevCloudFE/react-devui/compare/v18.1.1...v18.1.2) (2023-01-06)
+
+### Bug Fixes
+
+- **ui:** fix textarea ts-type error ([c9d48d1](https://github.com/DevCloudFE/react-devui/commit/c9d48d190fc70dc1879d1fcf9bbc5d714d15a298))
+- **ui:** set `min-width` to `0` for input element ([3ccc7b1](https://github.com/DevCloudFE/react-devui/commit/3ccc7b162dd7bd5f54d42560b79ac5db3d8983c4))
+- **ui:** submenu should include active item when change color of expand ([128c5f3](https://github.com/DevCloudFE/react-devui/commit/128c5f3aca395cf841b1bf3eec6f1ee651a53fba))
+
+### Features
+
+- **ui:** support update fixed state when table resize ([9fac01a](https://github.com/DevCloudFE/react-devui/commit/9fac01a67695271de66f7baf4df66958067fe2e2))
+
 ## [18.1.1](https://github.com/DevCloudFE/react-devui/compare/v18.1.0...v18.1.1) (2023-01-03)
 
 ### Bug Fixes
