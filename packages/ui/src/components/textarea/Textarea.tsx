@@ -15,7 +15,7 @@ import { useComponentConfig, usePrefixConfig } from '../root';
 
 export type DTextareaRef = HTMLTextAreaElement;
 
-export interface DTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
+export interface DTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   dFormControl?: DFormControl;
   dModel?: string;
   dRows?: 'auto' | { minRows?: number; maxRows?: number };
