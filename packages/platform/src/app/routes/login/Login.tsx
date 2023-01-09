@@ -1,6 +1,7 @@
 import type { PREV_ROUTE_KEY } from '../../config/other';
 import type { UserState } from '../../core/state';
 
+import { isString } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,6 +12,7 @@ import { DButton, DCheckbox, DForm, DInput, DTabs, FormControl, FormGroup, useFo
 import { getClassName } from '@react-devui/utils';
 
 import { AppLanguage } from '../../components';
+import { LOGIN_PATH } from '../../config/other';
 import { APP_NAME } from '../../config/other';
 import { TOKEN, useHttp, useInit } from '../../core';
 import { NotificationService } from '../../utils';
@@ -72,7 +74,7 @@ export default function Login(): JSX.Element | null {
         setLoginLoading(false);
         TOKEN.set(res.token);
         init(res.user);
-        navigate(from ?? '/', { replace: true });
+        navigate(isString(from) && from !== LOGIN_PATH ? from : '/', { replace: true });
       },
       error: (error) => {
         setLoginLoading(false);
