@@ -1,4 +1,3 @@
-import { nth } from 'lodash';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,17 +20,9 @@ export function AppRouteHeaderHeader(props: AppRouteHeaderHeaderProps): JSX.Elem
     ...restProps
   } = props;
 
-  const { matchRoutes } = useContext(RouteStateContext);
+  const { title } = useContext(RouteStateContext);
 
   const navigate = useNavigate();
-
-  const title = (() => {
-    if (matchRoutes) {
-      const { title } = nth(matchRoutes, -1)!.route.data ?? {};
-      return title;
-    }
-    return undefined;
-  })();
 
   return (
     <div {...restProps} className={getClassName(restProps.className, 'app-route-header__header')}>

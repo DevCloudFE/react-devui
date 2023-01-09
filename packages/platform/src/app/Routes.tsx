@@ -1,16 +1,15 @@
 import type { Control, ControlMode } from './core/useACL';
 import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
-import { nth } from 'lodash';
-import React from 'react';
+import { isFunction, isUndefined, nth } from 'lodash';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchRoutes, Navigate, renderMatches, useLocation } from 'react-router-dom';
 
 import { useACLGuard, useTokenGuard } from './Routes.guard';
 import { AppFCPLoader } from './components';
 import { ROUTES_ACL } from './config/acl';
-import { LOGIN_PATH } from './config/other';
-import { usePageTitle } from './hooks';
+import { APP_NAME, LOGIN_PATH } from './config/other';
 import AppHomeRoute from './routes/Home';
 import AppExceptionRoute from './routes/exception/Exception';
 import AppLayout from './routes/layout/Layout';
@@ -25,8 +24,20 @@ const ROUTES = {
   '/test/http': React.lazy(() => import('./routes/test/http/Http')),
 };
 
+const TITLE_CONFIG: {
+  default: string;
+  separator: string;
+  prefix?: string;
+  suffix?: string;
+} = {
+  default: APP_NAME,
+  separator: ' - ',
+  suffix: APP_NAME,
+};
+
 export interface RouteStateContextData {
   matchRoutes: RouteMatch<string, RouteItem>[] | null;
+  title?: string;
 }
 export const RouteStateContext = React.createContext<RouteStateContextData>({
   matchRoutes: null,
@@ -35,7 +46,7 @@ export const RouteStateContext = React.createContext<RouteStateContextData>({
 export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
-  title?: string;
+  title?: string | ((params: any) => string);
   acl?:
     | {
         control: Control | Control[];
@@ -173,6 +184,9 @@ export const AppRoutes = React.memo(() => {
       {
         path: '/exception/:status',
         element: <AppExceptionRoute />,
+        data: {
+          title: (params) => params.status,
+        },
       },
       {
         path: '*',
@@ -206,13 +220,37 @@ export const AppRoutes = React.memo(() => {
     return renderMatches(matches);
   })();
 
-  const { title } = nth(matches, -1)?.route.data ?? {};
-  usePageTitle(title);
+  const title = (() => {
+    if (matches) {
+      const match = nth(matches, -1)!;
+      const { title } = match.route.data ?? {};
+      return isFunction(title) ? title(match.params) : title;
+    }
+    return undefined;
+  })();
+  useEffect(() => {
+    if (isUndefined(title)) {
+      document.title = TITLE_CONFIG.default;
+    } else {
+      const arr = [title];
+      if (TITLE_CONFIG.prefix) {
+        arr.unshift(TITLE_CONFIG.prefix);
+      }
+      if (TITLE_CONFIG.suffix) {
+        arr.push(TITLE_CONFIG.suffix);
+      }
+      document.title = arr.join(TITLE_CONFIG.separator ?? ' - ');
+    }
+    return () => {
+      document.title = TITLE_CONFIG.default;
+    };
+  });
 
   return (
     <RouteStateContext.Provider
       value={{
         matchRoutes: matches,
+        title,
       }}
     >
       {element}

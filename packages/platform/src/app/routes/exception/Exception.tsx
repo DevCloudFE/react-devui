@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { DButton } from '@react-devui/ui';
 
-import { usePageTitle } from '../../hooks';
 import { ReactComponent as S403 } from './403.svg';
 import { ReactComponent as S404 } from './404.svg';
 import { ReactComponent as S500 } from './500.svg';
@@ -15,8 +14,6 @@ export default function Exception(): JSX.Element | null {
   const navigate = useNavigate();
 
   const { status } = useParams();
-
-  usePageTitle(status);
 
   return (
     <div className={styles['app-exception']}>
