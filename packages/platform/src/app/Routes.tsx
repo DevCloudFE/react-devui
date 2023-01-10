@@ -46,7 +46,7 @@ export const RouteStateContext = React.createContext<RouteStateContextData>({
 export type CanActivateFn = (route: RouteItem) => true | React.ReactElement;
 
 export interface RouteData {
-  title?: string | ((params: any) => string);
+  title?: string;
   acl?:
     | {
         control: Control | Control[];
@@ -67,6 +67,15 @@ export interface NonIndexRouteItem extends Omit<NonIndexRouteObject, 'children'>
   data?: RouteData;
 }
 export type RouteItem = IndexRouteItem | NonIndexRouteItem;
+
+export interface IndexRouteItemInput extends IndexRouteObject {
+  data?: RouteData | ((params: any) => RouteData);
+}
+export interface NonIndexRouteItemInput extends Omit<NonIndexRouteObject, 'children'> {
+  children?: NonIndexRouteItemInput[];
+  data?: RouteData | ((params: any) => RouteData);
+}
+export type RouteItemInput = IndexRouteItemInput | NonIndexRouteItemInput;
 
 // I have a great implementation of route caching, but considering the synchronization of data between pages (like modifying list or detail page data), I ended up not introducing route caching.
 export const AppRoutes = React.memo(() => {
@@ -184,17 +193,24 @@ export const AppRoutes = React.memo(() => {
       {
         path: '/exception/:status',
         element: <AppExceptionRoute />,
-        data: {
-          title: (params) => params.status,
-        },
+        data: (params) => ({
+          title: params.status,
+        }),
       },
       {
         path: '*',
         element: <Navigate to="/exception/404" replace />,
       },
-    ] as RouteItem[],
+    ] as RouteItemInput[],
     location
-  );
+  ) as any as RouteMatch<string, RouteItem>[] | null;
+  if (matches) {
+    matches.forEach((matche) => {
+      if (isFunction(matche.route.data)) {
+        matche.route.data = matche.route.data(matche.params);
+      }
+    });
+  }
 
   const element: React.ReactNode = (() => {
     if (!matches) {
