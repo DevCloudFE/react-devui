@@ -471,4 +471,8 @@
       color: var(--#{$rd-prefix}color-primary-darker);
     }
   }
+
+  @include e(tabpanel) {
+    outline: none;
+  }
 }
