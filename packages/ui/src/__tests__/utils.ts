@@ -1,5 +1,5 @@
-import { render, RenderOptions } from '@testing-library/react';
-import React, { ReactElement } from 'react';
+import { render } from '@testing-library/react';
+import React from 'react';
 
 import { DRoot } from '../components/root';
 
@@ -7,7 +7,7 @@ const AllTheProviders: React.JSXElementConstructor<{ children: React.ReactElemen
   return React.createElement(DRoot, undefined, children);
 };
 
-const customRender = ((ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => render(ui, { wrapper: AllTheProviders, ...options }));
+const customRender = ((ui: any, options: any) => render(ui, { wrapper: AllTheProviders, ...options })) as typeof render;
 
 // re-export everything
 export * from '@testing-library/react';

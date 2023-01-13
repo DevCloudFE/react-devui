@@ -1,5 +1,4 @@
 import { render } from '../../__tests__/utils';
-
 import { DButton } from './index';
 
 describe('DButton', () => {
