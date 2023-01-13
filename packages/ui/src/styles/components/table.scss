@@ -27,11 +27,13 @@ $table-filter-option-height: 32px;
   }
 
   th {
+    padding: var(--#{$rd-prefix}table-padding-size);
     font-weight: 500;
     background-color: var(--#{$rd-prefix}background-color-light-gray);
   }
 
   td {
+    padding: var(--#{$rd-prefix}table-padding-size);
     background-color: var(--#{$rd-prefix}background-color);
     border-bottom: 1px solid var(--#{$rd-prefix}table-border-color);
   }
@@ -84,7 +86,6 @@ $table-filter-option-height: 32px;
 
   @include e(cell) {
     position: relative;
-    padding: var(--#{$rd-prefix}table-padding-size);
 
     @include m(fixed-left) {
       &::before {
