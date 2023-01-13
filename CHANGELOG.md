@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.1.3](https://github.com/DevCloudFE/react-devui/compare/v18.1.2...v18.1.3) (2023-01-13)
+
+### Bug Fixes
+
+- **platform:** fix navigate to login when login ([3e8b93c](https://github.com/DevCloudFE/react-devui/commit/3e8b93c72de4817ddbb9b55e56cf5fac07b215bf))
+- **platform:** remount route when location's path change ([1e78e57](https://github.com/DevCloudFE/react-devui/commit/1e78e57c2a8dd401bed0f9c324ceb989bd33b71b))
+
+### Features
+
+- **hooks:** useResize add skipEmpty param ([fbed91f](https://github.com/DevCloudFE/react-devui/commit/fbed91fa1d1e776196318e00320823ab82d4c304))
+- **platform:** route's data support pass params ([d04f94f](https://github.com/DevCloudFE/react-devui/commit/d04f94fbde1176c33a11e4a96f4c9501878657f9))
+
 ## [18.1.2](https://github.com/DevCloudFE/react-devui/compare/v18.1.1...v18.1.2) (2023-01-06)
 
 ### Bug Fixes
