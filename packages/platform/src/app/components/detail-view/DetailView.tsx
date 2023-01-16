@@ -8,6 +8,8 @@ export interface AppDetailViewProps extends Omit<React.HTMLAttributes<HTMLDivEle
     label: string;
     content: React.ReactNode;
     isEmpty?: boolean;
+    center?: boolean;
+    noWrapper?: boolean;
   }[];
   aCol?: number | true | Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number | true>;
   aGutter?: number | [number?, number?];
@@ -77,12 +79,19 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
         [`gy-${gutterY}`]: gutterY,
       })}
     >
-      {aList.map(({ label, content, isEmpty: _isEmpty }) => {
+      {aList.map(({ label, content: _content, isEmpty: _isEmpty, center, noWrapper }) => {
         const isEmpty = isUndefined(_isEmpty)
-          ? (isString(content) && content.length === 0) || isUndefined(content) || isNull(content)
+          ? (isString(_content) && _content.length === 0) || isUndefined(_content) || isNull(_content)
           : _isEmpty;
+        const content = isEmpty ? aEmpty : _content;
+
         return (
-          <div key={label} className={getClassName('app-detail-view__item', col)}>
+          <div
+            key={label}
+            className={getClassName('app-detail-view__item', col, {
+              'app-detail-view__item--center': center,
+            })}
+          >
             <div
               className="app-detail-view__item-label"
               style={{
@@ -92,7 +101,7 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
             >
               {label}
             </div>
-            <div className="app-detail-view__item-content">{isEmpty ? aEmpty : content}</div>
+            {noWrapper ? content : <div className="app-detail-view__item-content">{content}</div>}
           </div>
         );
       })}

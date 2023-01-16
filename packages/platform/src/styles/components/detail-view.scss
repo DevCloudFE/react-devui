@@ -14,6 +14,10 @@
   @include e(item) {
     display: inline-flex;
     gap: 8px 12px;
+
+    @include m(center) {
+      align-items: center;
+    }
   }
 
   @include e(item-label) {
