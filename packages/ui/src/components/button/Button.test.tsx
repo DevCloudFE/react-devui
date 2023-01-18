@@ -13,7 +13,7 @@ const getTypeClass = (dType: DButtonProps['dType'], prefix = dPrefix) => {
 const getThemeClass = (dTheme: DButtonProps['dTheme'], prefix = 't') => {
   return `${prefix}-${dTheme || 'primary'}`;
 };
-const getOtherClass = (ots?: 'icon' | DSize | 'block' | DButtonProps['dVariant'], separator = '--', prefix = dPrefix) => {
+const getOtherClass = (ots?: 'icon' | DSize | 'block' | DButtonProps['dVariant'] | 'icon-right', separator = '--', prefix = dPrefix) => {
   return !ots ? `${prefix}button` : `${prefix}button${separator}${ots || ''}`;
 };
 
@@ -173,14 +173,25 @@ describe('DButton', () => {
   describe('the icon property of DButton', () => {
     it('should render a button with icon', () => {
       const buttonText = 'Hello World';
-      const FackIcon = <div>icon</div>;
-      const { getByRole, getByText } = render(<DButton dIcon={FackIcon}>{buttonText}</DButton>);
+      const mockIcon = <div>icon</div>;
+      const { getByRole, getByText } = render(<DButton dIcon={mockIcon}>{buttonText}</DButton>);
       const button = getByRole('button');
       const icon = getByText('icon');
 
       expect(icon).toBeInTheDocument();
       expect(button.contains(icon)).toBe(true);
       expect(button.getElementsByClassName(getOtherClass('icon', '__'))).toBeTruthy();
+    });
+
+    it('should render a icon on the right', () => {
+      const mockIcon = <div>icon</div>;
+      const { getByRole } = render(
+        <DButton dIcon={mockIcon} dIconRight>
+          Hello World
+        </DButton>
+      );
+      const button = getByRole('button');
+      expect(button.className.includes(getOtherClass('icon-right'))).toBe(true);
     });
   });
 
