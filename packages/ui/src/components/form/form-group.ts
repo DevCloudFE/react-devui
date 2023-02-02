@@ -21,6 +21,11 @@ type GetFormControlProperty<T, S> = S extends `${infer K}.${infer R}`
   ? T[S]
   : any;
 
+type GetFormGroupT<C extends FormGroup<any>> = C extends FormGroup<infer T> ? T : unknown;
+type GetFormGroupValue<T extends { [K in keyof T]: AbstractControl }> = {
+  [K in keyof T]?: T[K] extends FormGroup ? GetFormGroupValue<GetFormGroupT<T[K]>> : T[K]['value'];
+};
+
 function find(control: AbstractControl, path: string[] | string, delimiter: string) {
   if (path == null) return null;
 
@@ -107,7 +112,7 @@ export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> exte
     });
     this.updateValueAndValidity(onlySelf);
   }
-  override patchValue(value: { [K in keyof T]?: T[K]['value'] } & { [K: string]: any }, onlySelf?: boolean): void {
+  override patchValue(value: GetFormGroupValue<T> & { [K: string]: any }, onlySelf?: boolean): void {
     Object.keys(value).forEach((name) => {
       if (this.controls[name]) {
         this.controls[name].patchValue(value[name], true);
@@ -115,7 +120,7 @@ export class FormGroup<T extends { [K in keyof T]: AbstractControl } = any> exte
     });
     this.updateValueAndValidity(onlySelf);
   }
-  override reset(value: { [K in keyof T]?: T[K]['value'] } & { [K: string]: any } = {}, onlySelf?: boolean): void {
+  override reset(value: GetFormGroupValue<T> & { [K: string]: any } = {}, onlySelf?: boolean): void {
     this._forEachChild((control, name) => {
       control.reset(value[name], true);
     });
