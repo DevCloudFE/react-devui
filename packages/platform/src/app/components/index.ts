@@ -14,6 +14,9 @@ export { AppList } from './list';
 export type { AppMapProps, AppMapMarkerClusterProps } from './map';
 export { AppMap } from './map';
 
+export type { AppResponsiveFormProps } from './responsive-form';
+export { AppResponsiveForm } from './responsive-form';
+
 export type { AppRouteHeaderProps, AppRouteHeaderBreadcrumbProps, AppRouteHeaderHeaderProps } from './route-header';
 export { AppRouteHeader } from './route-header';
 

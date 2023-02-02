@@ -9,6 +9,7 @@ import { useAsync, useEventCallback } from '@react-devui/hooks';
 import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
+import { AppResponsiveForm } from '../../../components';
 import { useAPI } from '../../../hooks';
 
 export interface AppDeviceModalProps {
@@ -79,24 +80,26 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
         setVisible(false);
       }}
     >
-      <DForm dUpdate={updateForm} dLabelWidth="6em">
-        <DForm.Group dFormGroup={form}>
-          <DForm.Item dFormControls={{ name: 'Please enter name!' }} dLabel="Name">
-            {({ name }) => <DInput dFormControl={name} dPlaceholder="Name" />}
-          </DForm.Item>
-          <DForm.Item dFormControls={{ model: 'Please select model!' }} dLabel="Model">
-            {({ model }) => (
-              <DSelect
-                dFormControl={modelList ? model : undefined}
-                dList={modelList ?? []}
-                dLoading={isUndefined(modelList)}
-                dPlaceholder="Model"
-                dClearable
-              />
-            )}
-          </DForm.Item>
-        </DForm.Group>
-      </DForm>
+      <AppResponsiveForm>
+        <DForm dUpdate={updateForm} dLabelWidth="6em">
+          <DForm.Group dFormGroup={form}>
+            <DForm.Item dFormControls={{ name: 'Please enter name!' }} dLabel="Name">
+              {({ name }) => <DInput dFormControl={name} dPlaceholder="Name" />}
+            </DForm.Item>
+            <DForm.Item dFormControls={{ model: 'Please select model!' }} dLabel="Model">
+              {({ model }) => (
+                <DSelect
+                  dFormControl={modelList ? model : undefined}
+                  dList={modelList ?? []}
+                  dLoading={isUndefined(modelList)}
+                  dPlaceholder="Model"
+                  dClearable
+                />
+              )}
+            </DForm.Item>
+          </DForm.Group>
+        </DForm>
+      </AppResponsiveForm>
     </DModal>
   );
 }
