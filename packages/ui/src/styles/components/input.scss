@@ -44,13 +44,8 @@
     border-color: var(--#{$rd-prefix}color-primary-lighter);
   }
 
-  @include m(number) {
-    &:not(.is-disabled) {
-      padding-right: 0;
-      @include e(suffix) {
-        margin-right: calc(var(--#{$rd-prefix}horizontal-space-size) - 1px);
-      }
-    }
+  @include m(button-right) {
+    padding-right: 0;
   }
 
   @include e(input) {

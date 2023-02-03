@@ -171,7 +171,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
             {...restProps}
             className={getClassName(restProps.className, `${dPrefix}input`, {
               [`${dPrefix}input--${size}`]: size,
-              [`${dPrefix}input--number`]: dType === 'number',
+              [`${dPrefix}input--button-right`]: dType === 'number' && dNumbetButton && !disabled && !checkNodeExist(dSuffix),
               'is-disabled': disabled,
               'is-focus': isFocus,
             })}
