@@ -70,10 +70,6 @@
       }
     }
 
-    @include m(first) {
-      margin-top: 8px;
-    }
-
     @include m(picture) {
       --#{$rd-prefix}upload-picture-list-item-border-color: var(--#{$rd-prefix}color-border);
 

@@ -14,7 +14,7 @@ import { DCollapseTransition } from '../_transition';
 import { DProgress } from '../progress';
 import { usePrefixConfig } from '../root';
 
-export interface DPictureListProps {
+export interface DPictureListProps extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
   dFileList: DUploadFile[];
   dDefaultActions?: {
     preview?: (file: DUploadFile) => void;
@@ -80,10 +80,7 @@ export function DPictureList(props: DPictureListProps): JSX.Element | null {
                 className={getClassName(
                   `${dPrefix}upload__list-item`,
                   `${dPrefix}upload__list-item--picture`,
-                  `${dPrefix}upload__list-item--${file.status}`,
-                  {
-                    [`${dPrefix}upload__list-item--first`]: index === 0,
-                  }
+                  `${dPrefix}upload__list-item--${file.status}`
                 )}
                 style={collapseStyle}
               >

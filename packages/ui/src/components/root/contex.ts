@@ -57,7 +57,7 @@ import type { DTooltipProps } from '../tooltip';
 import type { DTransferProps } from '../transfer';
 import type { DTreeProps } from '../tree';
 import type { DTreeSelectProps } from '../tree-select';
-import type { DUploadProps, DUploadActionProps, DUploadPictureButtonProps } from '../upload';
+import type { DUploadProps, DUploadActionProps, DUploadListProps, DUploadPictureButtonProps } from '../upload';
 import type { DVirtualScrollProps } from '../virtual-scroll';
 import type resources from './resources.json';
 import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
@@ -142,6 +142,7 @@ export type DComponentConfig = {
   DTreeSelect: DTreeSelectProps<any, any>;
   DUpload: DUploadProps;
   'DUpload.Action': DUploadActionProps;
+  'DUpload.List': DUploadListProps;
   'DUpload.PictureButton': DUploadPictureButtonProps;
   DVirtualScroll: DVirtualScrollProps<any>;
 } & { DIcon: Omit<DIconProps, 'dIcon'> };

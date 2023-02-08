@@ -1,7 +1,8 @@
 import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
+import type { DUploadListPrivateProps } from './UploadList';
 
-import { isNull, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import React, { useRef } from 'react';
 
 import { useForkRef, useUnmount } from '@react-devui/hooks';
@@ -11,10 +12,8 @@ import { useDValue } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
-import { DList } from './List';
-import { DPicture } from './Picture';
-import { DPictureList } from './PictureList';
 import { DUploadAction } from './UploadAction';
+import { DUploadList } from './UploadList';
 import { DUploadPictureButton } from './UploadPictureButton';
 
 export type DUploadFileStatus = 'load' | 'error' | 'progress' | null;
@@ -31,11 +30,13 @@ export interface DUploadFile {
   [index: string | symbol]: any;
 }
 
-export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  children: React.ReactElement | null;
+export interface DUploadProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'children'> {
+  children?: (nodes: { trigger: React.ReactNode; list: React.ReactNode }) => React.ReactNode;
   dFormControl?: DFormControl;
   dModel?: DUploadFile[];
-  dXHRRequest: {
+  dTrigger?: React.ReactElement;
+  dList?: React.ReactElement;
+  dXHRRequest?: {
     method?: string;
     url: string | URL;
     responseType?: XMLHttpRequestResponseType;
@@ -43,14 +44,8 @@ export interface DUploadProps extends React.InputHTMLAttributes<HTMLInputElement
     body?: (file: string | Blob) => Document | XMLHttpRequestBodyInit | null | undefined;
     custom?: (xhr: XMLHttpRequest) => void;
   };
-  dListType?: 'list' | 'picture' | 'picture-list' | false;
   dDrag?: boolean;
   dMax?: number;
-  dDefaultActions?: {
-    preview?: (file: DUploadFile) => void;
-    download?: (file: DUploadFile) => void;
-  };
-  dActions?: (file: DUploadFile, index: number) => React.ReactNode[];
   dCustomUpload?: (files: FileList) => void;
   dBeforeUpload?: (file: File, files: FileList) => boolean | string | Blob | Promise<boolean | string | Blob>;
   onModelChange?: (
@@ -69,12 +64,11 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
     children,
     dFormControl,
     dModel,
+    dTrigger,
+    dList,
     dXHRRequest,
-    dListType = 'list',
     dDrag = false,
     dMax,
-    dDefaultActions,
-    dActions,
     dCustomUpload,
     dBeforeUpload,
     onModelChange,
@@ -197,7 +191,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
                   return formData;
                 },
                 custom,
-              } = dXHRRequest;
+              } = dXHRRequest!;
 
               xhr.open(method, url);
               xhr.responseType = responseType;
@@ -235,64 +229,48 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
     }
   };
 
-  const child = (() => {
-    if (isNull(children)) {
-      return children;
-    }
+  const trigger = (() => {
+    if (dTrigger) {
+      let dragProps: React.HTMLAttributes<HTMLElement> = {};
+      if (dDrag) {
+        dragProps = {
+          onDragEnter: (e) => {
+            dTrigger.props.onDragEnter?.(e);
 
-    let dragProps: React.HTMLAttributes<HTMLElement> = {};
-    if (dDrag) {
-      dragProps = {
-        onDragEnter: (e) => {
-          children.props.onDragEnter?.(e);
+            e.stopPropagation();
+            e.preventDefault();
+          },
+          onDragOver: (e) => {
+            dTrigger.props.onDragOver?.(e);
 
-          e.stopPropagation();
-          e.preventDefault();
+            e.stopPropagation();
+            e.preventDefault();
+          },
+          onDrop: (e) => {
+            dTrigger.props.onDrop?.(e);
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+          },
+        };
+      }
+
+      return React.cloneElement<React.HTMLAttributes<HTMLElement>>(dTrigger, {
+        ...dragProps,
+        onClick: (e) => {
+          dTrigger.props.onClick?.(e);
+
+          if (inputRef.current) {
+            inputRef.current.click();
+          }
         },
-        onDragOver: (e) => {
-          children.props.onDragOver?.(e);
-
-          e.stopPropagation();
-          e.preventDefault();
-        },
-        onDrop: (e) => {
-          children.props.onDrop?.(e);
-
-          e.stopPropagation();
-          e.preventDefault();
-
-          const dt = e.dataTransfer;
-          const files = dt.files;
-          handleFiles(files);
-        },
-      };
-    }
-
-    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(children, {
-      ...dragProps,
-      onClick: (e) => {
-        children.props.onClick?.(e);
-
-        if (inputRef.current) {
-          inputRef.current.click();
-        }
-      },
-    });
-  })();
-
-  const listProps = {
-    dFileList: fileList,
-    dDefaultActions,
-    onRemove: (file: DUploadFile) => {
-      onRemove?.(file);
-
-      const newList = changeFileList((draft) => {
-        const index = draft.findIndex((f) => f.uid === file.uid);
-        draft.splice(index, 1);
       });
-      onModelChange?.(newList, { type: 'remove', files: [file] });
-    },
-  };
+    }
+  })();
 
   return (
     <>
@@ -312,23 +290,23 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
           e.currentTarget.value = '';
         }}
       ></input>
-      {dListType === 'list' ? (
-        <>
-          {child}
-          <DList {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="remove" />])}></DList>
-        </>
-      ) : dListType === 'picture' ? (
-        <DPicture {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="preview" />, <DUploadAction dPreset="remove" />])}>
-          {child}
-        </DPicture>
-      ) : dListType === 'picture-list' ? (
-        <>
-          {child}
-          <DPictureList {...listProps} dActions={dActions ?? (() => [<DUploadAction dPreset="remove" />])}></DPictureList>
-        </>
-      ) : (
-        child
-      )}
+      {children?.({
+        trigger,
+        list:
+          dList &&
+          React.cloneElement<DUploadListPrivateProps>(dList, {
+            __fileList: fileList,
+            __onRemove(file) {
+              onRemove?.(file);
+
+              const newList = changeFileList((draft) => {
+                const index = draft.findIndex((f) => f.uid === file.uid);
+                draft.splice(index, 1);
+              });
+              onModelChange?.(newList, { type: 'remove', files: [file] });
+            },
+          }),
+      })}
     </>
   );
 }
@@ -336,8 +314,10 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
 export const DUpload: {
   (props: DUploadProps & React.RefAttributes<HTMLInputElement>): ReturnType<typeof Upload>;
   Action: typeof DUploadAction;
+  List: typeof DUploadList;
   PictureButton: typeof DUploadPictureButton;
 } = React.forwardRef(Upload) as any;
 
 DUpload.Action = DUploadAction;
+DUpload.List = DUploadList;
 DUpload.PictureButton = DUploadPictureButton;

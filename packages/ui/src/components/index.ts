@@ -154,7 +154,7 @@ export { DTree } from './tree';
 export type { DTreeSelectProps } from './tree-select';
 export { DTreeSelect } from './tree-select';
 
-export type { DUploadProps, DUploadActionProps, DUploadPictureButtonProps } from './upload';
+export type { DUploadProps, DUploadActionProps, DUploadListProps, DUploadPictureButtonProps } from './upload';
 export { DUpload } from './upload';
 
 export type { DVirtualScrollProps } from './virtual-scroll';

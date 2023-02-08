@@ -14,8 +14,8 @@ import { DTransition } from '../_transition';
 import { DProgress } from '../progress';
 import { usePrefixConfig, useTranslation } from '../root';
 
-export interface DPictureProps {
-  children: React.ReactNode;
+export interface DPictureProps extends Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> {
+  children?: React.ReactNode;
   dFileList: DUploadFile[];
   dDefaultActions?: {
     preview?: (file: DUploadFile) => void;
