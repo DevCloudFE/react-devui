@@ -11,7 +11,7 @@ export interface AppDetailViewProps extends Omit<React.HTMLAttributes<HTMLDivEle
     center?: boolean;
     noWrapper?: boolean;
   }[];
-  aCol?: number | true | Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number | true>;
+  aCol?: number | true | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number | true>>;
   aGutter?: number | [number?, number?];
   aLabelAlign?: 'left' | 'center' | 'right';
   aLabelWidth?: string | number;
