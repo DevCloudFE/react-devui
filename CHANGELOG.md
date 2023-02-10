@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.2.0](https://github.com/DevCloudFE/react-devui/compare/v18.1.4...v18.2.0) (2023-02-10)
+
+### Bug Fixes
+
+- **platform:** fix ts error of detail-view ([9c161ea](https://github.com/DevCloudFE/react-devui/commit/9c161ea261b3961b23d91a022829b22cce3e721a))
+
+### Code Refactoring
+
+- **ui:** add `DUploadList` to display upload list ([cd4eff6](https://github.com/DevCloudFE/react-devui/commit/cd4eff69c4846cbf41841d4c7199c92bc9703732))
+
+### BREAKING CHANGES
+
+- **ui:** update api of upload.
+
 ## [18.1.4](https://github.com/DevCloudFE/react-devui/compare/v18.1.3...v18.1.4) (2023-02-03)
 
 ### Bug Fixes
