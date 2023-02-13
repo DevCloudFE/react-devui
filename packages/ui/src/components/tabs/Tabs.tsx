@@ -1,7 +1,7 @@
 import type { DId, DSize } from '../../utils/types';
 import type { DDropdownItem } from '../dropdown';
 
-import { nth } from 'lodash';
+import { isUndefined, nth } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { useEventCallback, useId, useIsomorphicLayoutEffect, useResize } from '@react-devui/hooks';
@@ -21,6 +21,7 @@ export interface DTabItem<ID extends DId> {
   id: ID;
   title: React.ReactNode;
   panel: React.ReactNode;
+  dropdownItem?: React.ReactNode;
   disabled?: boolean;
   closable?: boolean;
 }
@@ -343,7 +344,7 @@ function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, 
               {listOverflow && (
                 <DDropdown
                   dList={dropdownList.map<DDropdownItem<ID>>((tab) => {
-                    const { id: itemId, title: itemTitle, disabled: itemDisabled } = tab;
+                    const { id: itemId, title: itemTitle, dropdownItem: itemDropdownItem, disabled: itemDisabled } = tab;
 
                     return {
                       id: itemId,
@@ -353,7 +354,7 @@ function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, 
                             'is-active': itemId === activeId,
                           })}
                         >
-                          {itemTitle}
+                          {isUndefined(itemDropdownItem) ? itemTitle : itemDropdownItem}
                         </span>
                       ),
                       type: 'item',
