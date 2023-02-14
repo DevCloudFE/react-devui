@@ -32,7 +32,6 @@ export interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<
   dModel?: V | null | V[];
   dHeight?: number;
   dExpands?: V[];
-  dExpandAll?: boolean;
   dShowLine?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -51,7 +50,6 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
     dModel,
     dHeight,
     dExpands,
-    dExpandAll = false,
     dShowLine = false,
     dDisabled = false,
     dMultiple = false,
@@ -96,20 +94,18 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
       ),
     [dMultiple, dList]
   );
-  const [nodesMap, initExpandAll] = useMemo(() => {
+  const nodesMap = useMemo(() => {
     const nodes = new Map<V, AbstractTreeNode<V, T>>();
-    const expandAllNodes: V[] = [];
     const reduceArr = (arr: AbstractTreeNode<V, T>[]) => {
       for (const item of arr) {
         nodes.set(item.id, item);
         if (item.children) {
-          expandAllNodes.push(item.id);
           reduceArr(item.children);
         }
       }
     };
     reduceArr(renderNodes);
-    return [nodes, expandAllNodes];
+    return nodes;
   }, [renderNodes]);
 
   const formControlInject = useFormControl(dFormControl);
@@ -136,7 +132,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
     node.updateStatus(select);
   });
 
-  const [_expandIds, changeExpandIds] = useDValue<V[]>(dExpandAll ? initExpandAll : [], dExpands, (value) => {
+  const [_expandIds, changeExpandIds] = useDValue<V[]>([], dExpands, (value) => {
     if (onExpandsChange) {
       onExpandsChange(
         value,

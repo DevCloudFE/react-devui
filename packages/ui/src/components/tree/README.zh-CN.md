@@ -21,7 +21,6 @@ interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.H
   dModel?: V | null | V[];
   dHeight?: number;
   dExpands?: V[];
-  dExpandAll?: boolean;
   dShowLine?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -40,8 +39,7 @@ interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.H
 | dList | 数据列表 | - |  |
 | dModel | 已选项，受控，默认为 `dMultiple ? [] : null` | - |  |
 | dHeight | 设置列表高度 | - |  |
-| dExpands | 展开项，受控，默认为 `dExpandAll ? initExpandAll : []` | - |  |
-| dExpandAll | 是否展开全部 | `false` |  |
+| dExpands | 展开项，受控，默认为 `[]` | - |  |
 | dShowLine | 是否显示连接线 | `false` |  |
 | dDisabled | 是否禁用 | `false` |  |
 | dMultiple | 是否为多选 | `false` |  |

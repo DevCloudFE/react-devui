@@ -19,7 +19,6 @@ interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends React.
   dList: T[];
   dModel?: V | null | V[];
   dExpands?: V[];
-  dExpandAll?: boolean;
   dVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
@@ -56,8 +55,7 @@ interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends React.
 | dFormControl | Support Forms | - | |
 | dList | data list | - | |
 | dModel | selected, controlled, default `dMultiple ? [] : null` | - | |
-| dExpands | Expand items, controlled, default `dExpandAll ? initExpandAll : []` | - | |
-| dExpandAll | Whether to expand all | `false` | |
+| dExpands | Expand items, controlled, default `[]` | - | |
 | dVisible | Visible, controlled, default `false` | - | |
 | dPlaceholder | set the placeholder text of the selection box | - | |
 | dSize | set the selection box size | - | |

@@ -15,7 +15,6 @@ interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends React.
   dList: T[];
   dModel?: V | null | V[];
   dExpands?: V[];
-  dExpandAll?: boolean;
   dVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
@@ -52,8 +51,7 @@ interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends React.
 | dFormControl | 支持表单 | - |  |
 | dList | 数据列表 | - |  |
 | dModel | 已选项，受控，默认为 `dMultiple ? [] : null` | - |  |
-| dExpands | 展开项，受控，默认为 `dExpandAll ? initExpandAll : []` | - |  |
-| dExpandAll | 是否展开全部 | `false` |  |
+| dExpands | 展开项，受控，默认为 `[]` | - |  |
 | dVisible | 是否可见，受控，默认为 `false` | - |  |
 | dPlaceholder | 设置选择框占位文本 | - |  |
 | dSize | 设置选择框大小 | - |  |

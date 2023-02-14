@@ -24,7 +24,6 @@ interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.H
   dModel?: V | null | V[];
   dHeight?: number;
   dExpands?: V[];
-  dExpandAll?: boolean;
   dShowLine?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
@@ -43,8 +42,7 @@ interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<React.H
 | dList | data list | - | |
 | dModel | selected, controlled, default `dMultiple ? [] : null` | - | |
 | dHeight | set list height | - | |
-| dExpands | Expand items, controlled, default `dExpandAll ? initExpandAll : []` | - | |
-| dExpandAll | Whether to expand all | `false` | |
+| dExpands | Expand items, controlled, default `[]` | - | |
 | dShowLine | Whether to show connecting lines | `false` | |
 | dDisabled | Whether to disable | `false` | |
 | dMultiple | Whether it is multiple selection | `false` | |
