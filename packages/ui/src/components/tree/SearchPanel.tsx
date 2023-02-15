@@ -25,6 +25,7 @@ interface DSearchPanelProps<V extends DId, T extends DTreeItem<V>> extends Omit<
   dMultiple: boolean;
   dOnlyLeafSelectable?: boolean;
   dFocusVisible: boolean;
+  dVirtual: boolean;
   onFocusChange: (item: DSearchItem<V, T>) => void;
   onClickItem: (item: DSearchItem<V, T>) => void;
 }
@@ -41,6 +42,7 @@ function SearchPanel<V extends DId, T extends DTreeItem<V>>(
     dMultiple,
     dOnlyLeafSelectable,
     dFocusVisible,
+    dVirtual,
     onFocusChange,
     onClickItem,
 
@@ -147,7 +149,7 @@ function SearchPanel<V extends DId, T extends DTreeItem<V>>(
         );
       }}
       dFocusItem={dFocusItem}
-      dSize={264}
+      dSize={dVirtual ? 264 : Infinity}
       dPadding={4}
     >
       {({ render, vsList }) =>

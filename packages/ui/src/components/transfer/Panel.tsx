@@ -22,6 +22,7 @@ export interface DPanelProps<V extends DId, T extends DTransferItem<V>> {
   dTitle: React.ReactNode;
   dLoading: boolean;
   dSearchable: boolean;
+  dVirtual: boolean;
   dCustomItem: ((item: T) => React.ReactNode) | undefined;
   onSelectedChange: (value: V) => void;
   onAllSelected: (selected: boolean) => void;
@@ -37,6 +38,7 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
     dTitle,
     dLoading,
     dSearchable,
+    dVirtual,
     dCustomItem,
     onSelectedChange,
     onAllSelected,
@@ -125,7 +127,7 @@ export function DPanel<V extends DId, T extends DTransferItem<V>>(props: DPanelP
               </li>
             );
           }}
-          dSize={192}
+          dSize={dVirtual ? 192 : Infinity}
           onScrollEnd={onScrollBottom}
         >
           {({ render, vsList }) =>

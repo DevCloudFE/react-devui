@@ -51,6 +51,7 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends
   dDisabled?: boolean;
   dMultiple?: boolean;
   dOnlyLeafSelectable?: boolean;
+  dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSelected?: (select: T) => string;
   dCustomSearch?: {
@@ -90,6 +91,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     dDisabled = false,
     dMultiple = false,
     dOnlyLeafSelectable = true,
+    dVirtual = false,
     dCustomItem,
     dCustomSelected,
     dCustomSearch,
@@ -541,6 +543,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
                     dMultiple={dMultiple}
                     dOnlyLeafSelectable={dOnlyLeafSelectable}
                     dFocusVisible={focusVisible}
+                    dVirtual={dVirtual}
                     onFocusChange={setSearchFocusItem}
                     onClickItem={(item) => {
                       if (dMultiple) {
@@ -564,7 +567,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
                     dGetItemId={getItemId}
                     dList={renderNodes}
                     dExpandIds={expandIds}
-                    dHeight={264}
+                    dHeight={dVirtual ? 264 : Infinity}
                     dPadding={4}
                     dFocusItem={noSearchFocusItem}
                     dCustomItem={dCustomItem}

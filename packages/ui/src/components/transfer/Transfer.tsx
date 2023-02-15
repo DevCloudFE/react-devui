@@ -33,6 +33,7 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
   dSearchable?: boolean;
   dSearchValue?: [string, string];
   dDisabled?: boolean;
+  dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSearch?: {
     filter?: (value: string, item: T) => boolean;
@@ -57,6 +58,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     dSearchable = false,
     dSearchValue,
     dDisabled = false,
+    dVirtual = false,
     dCustomItem,
     dCustomSearch,
     onModelChange,
@@ -251,6 +253,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
               dTitle={dTitle?.[0]}
               dLoading={dLoading[0] ?? false}
               dSearchable={dSearchable}
+              dVirtual={dVirtual}
               dCustomItem={dCustomItem}
               onSelectedChange={handleSelectedChange}
               onAllSelected={(selected) => {
@@ -299,6 +302,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
               dTitle={dTitle?.[1]}
               dLoading={dLoading[1] ?? false}
               dSearchable={dSearchable}
+              dVirtual={dVirtual}
               dCustomItem={dCustomItem}
               onSelectedChange={handleSelectedChange}
               onAllSelected={(selected) => {

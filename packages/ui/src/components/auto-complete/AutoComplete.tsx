@@ -32,6 +32,7 @@ export interface DAutoCompleteProps<T extends DAutoCompleteItem> extends React.H
   dList: T[];
   dVisible?: boolean;
   dLoading?: boolean;
+  dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   onVisibleChange?: (visible: boolean) => void;
   onItemClick?: (value: string, item: T) => void;
@@ -49,6 +50,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
     dList,
     dVisible,
     dLoading = false,
+    dVirtual = false,
     dCustomItem,
     onVisibleChange,
     onItemClick,
@@ -385,7 +387,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
                       );
                     }}
                     dFocusItem={focusItem}
-                    dSize={264}
+                    dSize={dVirtual ? 264 : Infinity}
                     dPadding={4}
                     dEmptyRender={() => (
                       <li className={`${dPrefix}auto-complete__empty`} style={{ paddingLeft: 12 + 8 }}>

@@ -315,7 +315,7 @@ function TableFilter<V extends DId, T extends DTableFilterItem<V>>(
               );
             }}
             dFocusItem={focusItem}
-            dSize={200}
+            dSize={Infinity}
             dPadding={4}
             onScrollEnd={onScrollBottom}
           >

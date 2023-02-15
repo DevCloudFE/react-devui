@@ -51,6 +51,7 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dClearable?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
+  dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSelected?: (select: T) => string;
   dCustomSearch?: {
@@ -88,6 +89,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     dClearable = false,
     dDisabled = false,
     dMultiple = false,
+    dVirtual = false,
     dCustomItem,
     dCustomSelected,
     dCustomSearch,
@@ -643,7 +645,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
                     );
                   }}
                   dFocusItem={focusItem}
-                  dSize={264}
+                  dSize={dVirtual ? 264 : Infinity}
                   dPadding={4}
                   dEmptyRender={() => (
                     <li className={`${dPrefix}select__empty`} style={{ paddingLeft: 12 + 8 }}>

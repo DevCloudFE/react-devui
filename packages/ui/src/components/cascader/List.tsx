@@ -21,6 +21,7 @@ export interface DListProps<V extends DId, T extends DCascaderItem<V>> extends O
   dFocusItem: AbstractTreeNode<V, T> | undefined;
   dCustomItem: ((item: T) => React.ReactNode) | undefined;
   dMultiple: boolean;
+  dVirtual: boolean;
   dFocusVisible: boolean;
   dRoot: boolean;
   onFocusChange: (node: AbstractTreeNode<V, T>) => void;
@@ -37,6 +38,7 @@ function List<V extends DId, T extends DCascaderItem<V>>(
     dFocusItem,
     dCustomItem,
     dMultiple,
+    dVirtual,
     dFocusVisible,
     dRoot,
     onFocusChange,
@@ -210,7 +212,7 @@ function List<V extends DId, T extends DCascaderItem<V>>(
           </li>
         )}
         dFocusItem={inFocusNode}
-        dSize={264}
+        dSize={dVirtual ? 264 : Infinity}
         dPadding={4}
       >
         {({ render, vsList }) =>

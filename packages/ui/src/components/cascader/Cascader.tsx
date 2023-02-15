@@ -58,6 +58,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
   dDisabled?: boolean;
   dMultiple?: boolean;
   dOnlyLeafSelectable?: boolean;
+  dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSelected?: (select: T) => string;
   dCustomSearch?: {
@@ -94,6 +95,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     dDisabled = false,
     dMultiple = false,
     dOnlyLeafSelectable = true,
+    dVirtual = false,
     dCustomItem,
     dCustomSelected,
     dCustomSearch,
@@ -514,6 +516,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
                     dMultiple={dMultiple}
                     dOnlyLeafSelectable={dOnlyLeafSelectable}
                     dFocusVisible={focusVisible}
+                    dVirtual={dVirtual}
                     onFocusChange={(item) => {
                       if (!dataRef.current.focusList.has(item.value)) {
                         dataRef.current.focusList.add(item.value);
@@ -545,6 +548,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
                     dFocusItem={noSearchFocusItem}
                     dCustomItem={dCustomItem}
                     dMultiple={dMultiple}
+                    dVirtual={dVirtual}
                     dFocusVisible={focusVisible}
                     dRoot
                     onFocusChange={(node) => {
