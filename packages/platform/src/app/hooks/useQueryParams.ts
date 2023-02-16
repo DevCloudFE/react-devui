@@ -16,17 +16,19 @@ const KEY = 'query';
 export function useQueryParams<T extends {}>(
   initParams: Partial<T>
 ): [T, (newQuery: T | ((draft: T) => void), options?: NavigateOptions) => void] {
-  const initURLSearchParams = useMemo(
-    () => new URLSearchParams({ [KEY]: JSURL.stringify(initParams) }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-  const [searchParams, setSearchParams] = useSearchParams(initURLSearchParams);
-  const queryValues = useMemo<T>(() => JSURL.parse(searchParams.get(KEY)), [searchParams]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const queryValues = useMemo<T>(() => (searchParams.get(KEY) ? JSURL.parse(searchParams.get(KEY)) : initParams), [searchParams]);
 
   const setQueryValues = useEventCallback((newValue: T | ((draft: T) => void), options?: NavigateOptions) => {
     const newQueryValues = isFunction(newValue) ? produce(queryValues, newValue) : newValue;
-    setSearchParams(new URLSearchParams({ [KEY]: JSURL.stringify(newQueryValues) }), { replace: true, ...options });
+    setSearchParams(
+      (prev) => {
+        prev.set(KEY, JSURL.stringify(newQueryValues));
+        return prev;
+      },
+      { replace: true, ...options }
+    );
   });
   return [queryValues, setQueryValues];
 }
