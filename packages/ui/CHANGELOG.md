@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.3.0](https://github.com/DevCloudFE/react-devui/compare/v18.2.0...v18.3.0) (2023-02-17)
+
+### Bug Fixes
+
+- **ui:** fix miss `flexShrink` in virtual-scroll's fill element ([1c2cdf3](https://github.com/DevCloudFE/react-devui/commit/1c2cdf30886ac296c0499e0d089fafa9cf183b5f))
+
+### Code Refactoring
+
+- **ui:** remove `dExpandAll` api ([f51cd58](https://github.com/DevCloudFE/react-devui/commit/f51cd58cbf77b7408e2da6e08779ffebb930f9d7))
+
+### Features
+
+- **ui:** add `dVirtual` for all virtual-scroll ([2b7e268](https://github.com/DevCloudFE/react-devui/commit/2b7e268e5ef912f7e2d6f551d888f094a2654fd2))
+- **ui:** support custom dropdown for tabs ([862effe](https://github.com/DevCloudFE/react-devui/commit/862effe59bf0945b43d200e6b65811528890e7d8))
+
+### BREAKING CHANGES
+
+- **ui:** use `dExpandAll` usually not as expected.
+
 # [18.2.0](https://github.com/DevCloudFE/react-devui/compare/v18.1.4...v18.2.0) (2023-02-10)
 
 ### Code Refactoring
