@@ -157,6 +157,7 @@
   }
 
   @include m(link) {
+    min-width: unset;
     height: auto;
     padding: 0;
     color: var(--#{$rd-prefix}button-color);
