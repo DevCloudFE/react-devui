@@ -44,7 +44,10 @@ export function AppRouteHeaderBreadcrumb(props: AppRouteHeaderBreadcrumbProps): 
               </Link>
             ) : React.isValidElement(item.title) ? (
               React.cloneElement<React.HTMLAttributes<HTMLElement>>(item.title as any, {
-                className: getClassName(item.title.props.className, 'app-route-header__breadcrumb-item'),
+                className: getClassName(
+                  item.title.props.className,
+                  item.title.type === Link ? 'app-route-header__breadcrumb-link' : 'app-route-header__breadcrumb-item'
+                ),
               })
             ) : (
               <div className="app-route-header__breadcrumb-item">{item.title}</div>
