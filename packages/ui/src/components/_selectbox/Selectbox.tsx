@@ -176,26 +176,36 @@ export function DSelectbox(props: DSelectboxProps): JSX.Element | null {
                         return dInputRender(
                           renderFocusVisible(
                             renderBaseInput(
-                              <input
-                                ref={combineInputRef}
-                                className={`${prefix}__search`}
-                                style={{
-                                  opacity: inputable ? undefined : 0,
-                                  zIndex: inputable ? undefined : -1,
-                                }}
-                                type="text"
-                                autoComplete="off"
-                                disabled={dDisabled}
-                                role="combobox"
-                                aria-haspopup="listbox"
-                                aria-expanded={dVisible}
-                                onFocus={() => {
-                                  setIsFocus(true);
-                                }}
-                                onBlur={() => {
-                                  setIsFocus(false);
-                                }}
-                              />
+                              React.createElement<any>(
+                                dSearchable ? 'input' : 'div',
+                                Object.assign(
+                                  {
+                                    ref: combineInputRef,
+                                    className: `${prefix}__search`,
+                                    style: {
+                                      opacity: inputable ? undefined : 0,
+                                      zIndex: inputable ? undefined : -1,
+                                    },
+                                    tabIndex: dDisabled ? -1 : 0,
+                                    role: 'combobox',
+                                    'aria-haspopup': 'listbox',
+                                    'aria-expanded': dVisible,
+                                    onFocus: () => {
+                                      setIsFocus(true);
+                                    },
+                                    onBlur: () => {
+                                      setIsFocus(false);
+                                    },
+                                  },
+                                  dSearchable
+                                    ? {
+                                        type: 'text',
+                                        autoComplete: 'off',
+                                        disabled: dDisabled,
+                                      }
+                                    : {}
+                                )
+                              )
                             )
                           )
                         );
