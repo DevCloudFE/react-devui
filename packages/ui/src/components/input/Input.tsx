@@ -97,7 +97,7 @@ export function DInput(props: DInputProps): JSX.Element | null {
   const onDestroy$ = useMemo(() => new Subject<void>(), []);
   const formControlInject = useFormControl(dFormControl);
   const [_value, changeValue] = useDValue<string>('', dModel, onModelChange, undefined, formControlInject);
-  if (_value !== dataRef.current.prevValue) {
+  if (!(dType === 'number' && (!isUndefined(dMax) || !isUndefined(dMin))) || _value !== dataRef.current.prevValue) {
     dataRef.current.showValue = dataRef.current.prevValue = _value;
   }
 
