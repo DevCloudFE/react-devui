@@ -8,7 +8,7 @@ import { usePrefixConfig } from '../root';
 
 export interface DMaskProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dVisible: boolean;
-  onClose: () => void;
+  onClose: (() => void) | undefined;
   afterVisibleChange?: (visible: boolean) => void;
 }
 

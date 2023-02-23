@@ -19,8 +19,6 @@ export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement>
   dActive?: number;
   dVisible?: boolean;
   dZIndex?: number | string;
-  dMask?: boolean;
-  dMaskClosable?: boolean;
   dEscClosable?: boolean;
   onActiveChange?: (index: number) => void;
   onClose?: () => void;
@@ -34,8 +32,6 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
     dActive,
     dVisible,
     dZIndex,
-    dMask = true,
-    dMaskClosable = true,
     dEscClosable = true,
     onActiveChange,
     onClose,
@@ -461,16 +457,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
                     )
                 )}
               </ul>
-              {dMask && (
-                <DMask
-                  dVisible
-                  onClose={() => {
-                    if (dMaskClosable) {
-                      changeVisible(false);
-                    }
-                  }}
-                />
-              )}
+              <DMask dVisible onClose={undefined} />
             </div>
           );
         }}
