@@ -269,7 +269,7 @@ export const AppRoutes = React.memo(() => {
         title,
       }}
     >
-      <React.Fragment key={location.pathname}>{element}</React.Fragment>
+      {element}
     </RouteStateContext.Provider>
   );
 });

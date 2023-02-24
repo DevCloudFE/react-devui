@@ -11,10 +11,11 @@ import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppDetailView, AppRouteHeader } from '../../../../components';
 import { useAPI } from '../../../../hooks';
+import { AppRoute } from '../../../../utils';
 import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
-export default function Detail(): JSX.Element | null {
+export default AppRoute(() => {
   const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
 
   const { t } = useTranslation();
@@ -135,4 +136,4 @@ export default function Detail(): JSX.Element | null {
       </div>
     </>
   );
-}
+});

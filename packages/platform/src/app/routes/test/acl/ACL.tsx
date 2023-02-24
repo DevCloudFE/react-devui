@@ -6,9 +6,10 @@ import { DAlert, DButton, DCard, DTable, DTag } from '@react-devui/ui';
 
 import { AppRouteHeader } from '../../../components';
 import { useACL } from '../../../core';
+import { AppRoute } from '../../../utils';
 import styles from './ACL.module.scss';
 
-export default function ACL(): JSX.Element | null {
+export default AppRoute(() => {
   const acl = useACL();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -68,4 +69,4 @@ export default function ACL(): JSX.Element | null {
       </div>
     </>
   );
-}
+});

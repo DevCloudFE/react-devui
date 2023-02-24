@@ -4,12 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { DButton } from '@react-devui/ui';
 
+import { AppRoute } from '../../utils';
 import { ReactComponent as S403 } from './403.svg';
 import { ReactComponent as S404 } from './404.svg';
 import { ReactComponent as S500 } from './500.svg';
 import styles from './Exception.module.scss';
 
-export default function Exception(): JSX.Element | null {
+export default AppRoute(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -31,4 +32,4 @@ export default function Exception(): JSX.Element | null {
       </div>
     </div>
   );
-}
+});

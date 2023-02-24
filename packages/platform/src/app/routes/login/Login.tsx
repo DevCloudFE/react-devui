@@ -15,11 +15,11 @@ import { AppLanguage } from '../../components';
 import { LOGIN_PATH } from '../../config/other';
 import { APP_NAME } from '../../config/other';
 import { TOKEN, useHttp, useInit } from '../../core';
-import { NotificationService } from '../../utils';
+import { AppRoute, NotificationService } from '../../utils';
 import styles from './Login.module.scss';
 import { BASE64_DATA } from './base64.out';
 
-export default function Login(): JSX.Element | null {
+export default AppRoute(() => {
   const { t } = useTranslation();
   const http = useHttp();
   const [loginloading, setLoginLoading] = useState(false);
@@ -207,4 +207,4 @@ export default function Login(): JSX.Element | null {
       </footer>
     </div>
   );
-}
+});

@@ -12,6 +12,7 @@ import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSe
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useAPI, useQueryParams } from '../../../hooks';
+import { AppRoute } from '../../../utils';
 import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
 
@@ -26,7 +27,7 @@ interface DeviceQueryParams {
   pageSize: number;
 }
 
-export default function StandardTable(): JSX.Element | null {
+export default AppRoute(() => {
   const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
 
   const { t } = useTranslation();
@@ -390,4 +391,4 @@ export default function StandardTable(): JSX.Element | null {
       </div>
     </>
   );
-}
+});
