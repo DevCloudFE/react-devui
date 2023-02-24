@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.1](https://github.com/DevCloudFE/react-devui/compare/v18.3.0...v18.3.1) (2023-02-24)
+
+### Bug Fixes
+
+- **ui:** fix input pass `dModel` not work ([8cfa7ca](https://github.com/DevCloudFE/react-devui/commit/8cfa7ca77495e381c484487bc8df0b026f7911bc))
+- **ui:** fix menu-indicator flash ([ed794b0](https://github.com/DevCloudFE/react-devui/commit/ed794b0f15c5f1137c34bda09e78fe36001724a5))
+- **ui:** remove `min-width` when button is link type ([f4e3a06](https://github.com/DevCloudFE/react-devui/commit/f4e3a068363d9519dec5f66ee758c5398ccb3720))
+- **ui:** render `div` when `dSearchable` is `false` ([84f4189](https://github.com/DevCloudFE/react-devui/commit/84f41896f493b029d175d08ea3933747986aee4a))
+
+### Features
+
+- **platform:** add correct className for `Link` ([1dfda85](https://github.com/DevCloudFE/react-devui/commit/1dfda85565890c8fdf6868173ff0f6923c45b39c))
+- **ui:** optimize date-picker ([132cecc](https://github.com/DevCloudFE/react-devui/commit/132cecc6863dc56993c9d6c1e7458efafa837231))
+
 # [18.3.0](https://github.com/DevCloudFE/react-devui/compare/v18.2.0...v18.3.0) (2023-02-17)
 
 ### Bug Fixes
