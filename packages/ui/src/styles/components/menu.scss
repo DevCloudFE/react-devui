@@ -58,7 +58,6 @@ $menu-item-height: 40px;
       &:not(.#{$rd-prefix}menu__item--horizontal) {
         @include e(indicator) {
           & > div::before {
-            background-color: var(--#{$rd-prefix}color-primary);
             transform: scaleY(1);
           }
         }
@@ -169,6 +168,7 @@ $menu-item-height: 40px;
         width: 2px;
         height: calc(100% - 16px);
         content: '';
+        background-color: var(--#{$rd-prefix}color-primary);
         transition: transform var(--#{$rd-prefix}animation-duration-base) linear;
         transform: scaleY(0);
       }
