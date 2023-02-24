@@ -418,6 +418,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                   onClick={(e) => {
                     e.stopPropagation();
 
+                    dataRef.current.inputValue = ['', ''];
                     _changeValue(null);
                     onClear?.();
                   }}
