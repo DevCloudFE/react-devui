@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.2](https://github.com/DevCloudFE/react-devui/compare/v18.3.1...v18.3.2) (2023-02-24)
+
+### Bug Fixes
+
+- **ui:** clear input when click date-input's clear-button ([b9a2316](https://github.com/DevCloudFE/react-devui/commit/b9a231670ef855e487ff920e799c7333c799c8cb))
+
+### Reverts
+
+- revert "fix(ui): fix menu-indicator flash" ([154f664](https://github.com/DevCloudFE/react-devui/commit/154f66482f49a795d8297d9432720a2e0f043c07))
+
 ## [18.3.1](https://github.com/DevCloudFE/react-devui/compare/v18.3.0...v18.3.1) (2023-02-24)
 
 ### Bug Fixes
