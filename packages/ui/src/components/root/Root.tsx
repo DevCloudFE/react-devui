@@ -73,6 +73,12 @@ export function DRoot(props: DRootProps): JSX.Element | null {
 
     case 'zh-CN':
       dayjs.locale('zh-cn');
+      dayjs.updateLocale('zh-cn', {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        meridiem: (hour: number, minute: number, isLowercase: number) => {
+          return hour > 12 ? 'PM' : 'AM';
+        },
+      });
       break;
 
     default:

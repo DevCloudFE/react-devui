@@ -10,7 +10,7 @@ import React, { useRef } from 'react';
 import { CalendarOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useGeneralContext } from '../../hooks';
+import { useDValue, useGeneralContext } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DDateInput } from '../_date-input';
 import { getCols, orderDate } from '../_date-input/utils';
@@ -90,6 +90,8 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
 
   const [t] = useTranslation();
 
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+
   const size = dSize ?? gSize;
   const disabled = (dDisabled || gDisabled || dFormControl?.control.disabled) ?? false;
 
@@ -118,7 +120,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
       dFormControl={dFormControl}
       dModel={dModel}
       dFormat={format}
-      dVisible={dVisible}
+      dVisible={visible}
       dPlacement={dPlacement}
       dOrder={(date) => orderDate(date, dOrder, dShowTime ? undefined : 'date')}
       dPlaceholder={[placeholderLeft, placeholderRight]}
@@ -129,7 +131,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
       dDisabled={disabled}
       dInputRender={dInputRender}
       onModelChange={onModelChange}
-      onVisibleChange={onVisibleChange}
+      onVisibleChange={changeVisible}
       onUpdatePanel={(date) => {
         updatePanelRef.current?.(date);
         updateTimePickerPanelRef.current?.(date);
@@ -148,7 +150,13 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
               dDateCurrentSelected={date[index]}
               dDateAnotherSelected={date[isFocus[0] ? 1 : 0]}
               dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, position, date) : undefined}
-              onDateChange={changeDate}
+              onDateChange={(date) => {
+                changeDate(date);
+
+                if (!dShowTime) {
+                  changeVisible(false);
+                }
+              }}
             ></DPanel>
             {dShowTime &&
               React.cloneElement<DTimePickerPanelPrivateProps>(
@@ -176,6 +184,8 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
                     changeDate(d);
                     updatePanelRef.current?.(d[index]);
                     updateTimePickerPanelRef.current?.(d[index]);
+
+                    changeVisible(false);
                   };
 
                   return (
@@ -197,6 +207,8 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
                     changeDate(now);
                     updatePanelRef.current?.(now);
                     updateTimePickerPanelRef.current?.(now);
+
+                    changeVisible(false);
                   }}
                   dType="link"
                 >

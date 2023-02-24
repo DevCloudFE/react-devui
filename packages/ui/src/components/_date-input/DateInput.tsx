@@ -42,7 +42,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   dFormControl: DFormControl | undefined;
   dModel: Date | null | [Date, Date] | undefined;
   dFormat: string;
-  dVisible: boolean | undefined;
+  dVisible: boolean;
   dPlacement: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dOrder: (date: [Date, Date]) => boolean;
   dPlaceholder: [string, string];
@@ -55,7 +55,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
     | [DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?, DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>?]
     | undefined;
   onModelChange: ((date: any) => void) | undefined;
-  onVisibleChange: ((visible: boolean) => void) | undefined;
+  onVisibleChange: (visible: boolean) => void;
   onUpdatePanel: ((date: Date) => void) | undefined;
   afterVisibleChange: ((visible: boolean) => void) | undefined;
   onClear: (() => void) | undefined;
@@ -129,8 +129,6 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const [t] = useTranslation();
   const forceUpdate = useForceUpdate();
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
-
   const formControlInject = useFormControl(dFormControl);
   const [_value, _changeValue] = useDValue<Date | null | [Date, Date]>(
     null,
@@ -159,7 +157,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       });
     } else {
       dataRef.current.clearTid = async.setTimeout(() => {
-        changeVisible(false);
+        onVisibleChange(false);
         setIsFocus([false, false]);
       }, 20);
     }
@@ -202,9 +200,9 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     forceUpdate();
   };
 
-  const clearable = dClearable && !isNull(_value) && !visible && !dDisabled;
+  const clearable = dClearable && !isNull(_value) && !dVisible && !dDisabled;
 
-  const maxZIndex = useMaxIndex(visible);
+  const maxZIndex = useMaxIndex(dVisible);
 
   const [popupPositionStyle, setPopupPositionStyle] = useState<React.CSSProperties>({
     top: '-200vh',
@@ -212,7 +210,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   });
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
-    if (visible && boxRef.current && popupRef.current) {
+    if (dVisible && boxRef.current && popupRef.current) {
       const height = popupRef.current.offsetHeight;
       const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
       const width = Math.min(popupRef.current.scrollWidth, maxWidth);
@@ -233,12 +231,12 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     }
   });
 
-  const globalScroll = useGlobalScroll(updatePosition, !visible);
-  useEvent(dPageScrollRef, 'scroll', updatePosition, { passive: true }, !visible || globalScroll);
+  const globalScroll = useGlobalScroll(updatePosition, !dVisible);
+  useEvent(dPageScrollRef, 'scroll', updatePosition, { passive: true }, !dVisible || globalScroll);
 
-  useResize(boxRef, updatePosition, !visible);
-  useResize(popupRef, updatePosition, !visible);
-  useResize(dContentResizeRef, updatePosition, !visible);
+  useResize(boxRef, updatePosition, !dVisible);
+  useResize(popupRef, updatePosition, !dVisible);
+  useResize(dContentResizeRef, updatePosition, !dVisible);
 
   useEffect(() => {
     if (boxRef.current && indicatorRef.current) {
@@ -290,10 +288,10 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
 
   const getInputNode = (isLeft: boolean) => (
     <DComboboxKeyboard
-      dVisible={visible}
+      dVisible={dVisible}
       dEditable
       dHasSub={false}
-      onVisibleChange={changeVisible}
+      onVisibleChange={onVisibleChange}
       onFocusChange={() => {
         // Only for popup open/close
       }}
@@ -331,10 +329,10 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                           if (isNull(isLeft ? valueRight : valueLeft)) {
                             dataRef.current.focusAnother = true;
                           } else {
-                            changeVisible(false);
+                            onVisibleChange(false);
                           }
                         } else {
-                          changeVisible(false);
+                          onVisibleChange(false);
                         }
                       } else {
                         dataRef.current.inputValue[index] = isNull(value) ? '' : dayjs(value).format(dFormat);
@@ -378,7 +376,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
           renderBaseDesign(
             <div
               {...restProps}
-              {...{ [ESC_CLOSABLE_DATA]: visible }}
+              {...{ [ESC_CLOSABLE_DATA]: dVisible }}
               ref={boxRef}
               className={getClassName(restProps.className, prefix, {
                 [`${prefix}--${dSize}`]: dSize,
@@ -398,7 +396,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
               onClick={(e) => {
                 restProps.onClick?.(e);
 
-                changeVisible(true);
+                onVisibleChange(true);
                 if (!hasFocus) {
                   inputLeftRef.current?.focus({ preventScroll: true });
                 }
@@ -439,7 +437,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
       {containerRef.current &&
         ReactDOM.createPortal(
           <DTransition
-            dIn={visible}
+            dIn={dVisible}
             dDuring={TTANSITION_DURING_POPUP}
             onEnter={updatePosition}
             afterEnter={() => {

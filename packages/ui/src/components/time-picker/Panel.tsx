@@ -62,7 +62,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
     return unit.join(':');
   })();
 
-  const updateView = useEventCallback((t: Date, unit?: 'hour' | 'minute' | 'second') => {
+  const updateView = useEventCallback((t: Date, unit?: 'hour' | 'minute' | 'second', behavior: 'smooth' | 'instant' = 'smooth') => {
     if (unit === 'hour' || isUndefined(unit)) {
       let hour = t.getHours();
       if (d12Hour) {
@@ -78,7 +78,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
 
         dataRef.current.clearHTid = scrollTo(ulHRef.current, {
           top: Array.prototype.indexOf.call(ulHRef.current.children, ulHRef.current.querySelector(`[data-h="${hour}"]`)) * 28,
-          behavior: 'smooth',
+          behavior,
         });
       }
     }
@@ -89,7 +89,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
         dataRef.current.clearMTid?.();
         dataRef.current.clearMTid = scrollTo(ulMRef.current, {
           top: Array.prototype.indexOf.call(ulMRef.current.children, ulMRef.current.querySelector(`[data-m="${minute}"]`)) * 28,
-          behavior: 'smooth',
+          behavior,
         });
       }
     }
@@ -100,13 +100,19 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
         dataRef.current.clearSTid?.();
         dataRef.current.clearSTid = scrollTo(ulSRef.current, {
           top: Array.prototype.indexOf.call(ulSRef.current.children, ulSRef.current.querySelector(`[data-s="${second}"]`)) * 28,
-          behavior: 'smooth',
+          behavior,
         });
       }
     }
   });
 
-  useImperativeHandle(ref, () => updateView, [updateView]);
+  useImperativeHandle(
+    ref,
+    () => (t) => {
+      updateView(t, undefined, 'instant');
+    },
+    [updateView]
+  );
 
   return (
     <div className={`${dPrefix}time-picker__panel`}>

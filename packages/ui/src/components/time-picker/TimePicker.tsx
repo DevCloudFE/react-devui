@@ -7,7 +7,7 @@ import React, { useRef } from 'react';
 import { ClockCircleOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useGeneralContext } from '../../hooks';
+import { useDValue, useGeneralContext } from '../../hooks';
 import { registerComponentMate } from '../../utils';
 import { DDateInput } from '../_date-input';
 import { getCols, orderTime } from '../_date-input/utils';
@@ -91,6 +91,8 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
 
   const [t] = useTranslation();
 
+  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+
   const size = dSize ?? gSize;
   const disabled = (dDisabled || gDisabled || dFormControl?.control.disabled) ?? false;
 
@@ -109,7 +111,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       dFormControl={dFormControl}
       dModel={dModel}
       dFormat={format}
-      dVisible={dVisible}
+      dVisible={visible}
       dPlacement={dPlacement}
       dOrder={(date) => orderTime(date, dOrder)}
       dPlaceholder={[placeholderLeft, placeholderRight]}
@@ -120,7 +122,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       dDisabled={disabled}
       dInputRender={dInputRender}
       onModelChange={onModelChange}
-      onVisibleChange={onVisibleChange}
+      onVisibleChange={changeVisible}
       onUpdatePanel={(date) => {
         updatePanelRef.current?.(date);
       }}
@@ -144,6 +146,8 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
                   const now = new Date();
                   changeDate(now);
                   updatePanelRef.current?.(now);
+
+                  changeVisible(false);
                 }}
                 dType="link"
               >

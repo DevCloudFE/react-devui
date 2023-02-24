@@ -14,7 +14,7 @@ export interface DPanelProps {
   dDateCurrentSelected: Date | null;
   dDateAnotherSelected: Date | null;
   dConfigDate: ((date: Date) => { disabled?: boolean }) | undefined;
-  onDateChange: (time: Date) => void;
+  onDateChange: (date: Date) => void;
 }
 
 function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>): JSX.Element | null {
