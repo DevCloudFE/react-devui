@@ -129,7 +129,7 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
       afterVisibleChange={afterVisibleChange}
       onClear={onClear}
     >
-      {({ date, isFocus, changeDate, renderPopup }) =>
+      {({ date, isFocus, changeDate, enter, renderPopup }) =>
         renderPopup(
           <div className={getClassName(dPopupClassName, `${dPrefix}time-picker__popup`)}>
             <DPanel
@@ -145,9 +145,8 @@ function TimePicker(props: DTimePickerProps, ref: React.ForwardedRef<DTimePicker
                 onClick={() => {
                   const now = new Date();
                   changeDate(now);
+                  enter();
                   updatePanelRef.current?.(now);
-
-                  changeVisible(false);
                 }}
                 dType="link"
               >

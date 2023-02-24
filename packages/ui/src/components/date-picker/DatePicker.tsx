@@ -4,7 +4,7 @@ import type { DFormControl } from '../form';
 import type { DTimePickerProps } from '../time-picker';
 import type { DPanelPrivateProps as DTimePickerPanelPrivateProps } from '../time-picker/Panel';
 
-import { isBoolean, isUndefined } from 'lodash';
+import { isArray, isBoolean, isUndefined } from 'lodash';
 import React, { useRef } from 'react';
 
 import { CalendarOutlined } from '@react-devui/icons';
@@ -139,7 +139,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
       afterVisibleChange={afterVisibleChange}
       onClear={onClear}
     >
-      {({ date, isFocus, changeDate, renderPopup }) => {
+      {({ date, isFocus, changeDate, enter, renderPopup }) => {
         const index = isFocus[0] ? 0 : 1;
         const position = isFocus[0] ? 'start' : 'end';
 
@@ -152,9 +152,8 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
               dConfigDate={dConfigDate ? (...args) => dConfigDate(...args, position, date) : undefined}
               onDateChange={(date) => {
                 changeDate(date);
-
                 if (!dShowTime) {
-                  changeVisible(false);
+                  enter();
                 }
               }}
             ></DPanel>
@@ -182,10 +181,13 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
                   const handleClick = () => {
                     const d = dPresetDate[name]();
                     changeDate(d);
+                    if (dRange && isArray(d)) {
+                      changeVisible(false);
+                    } else {
+                      enter();
+                    }
                     updatePanelRef.current?.(d[index]);
                     updateTimePickerPanelRef.current?.(d[index]);
-
-                    changeVisible(false);
                   };
 
                   return (
@@ -205,10 +207,9 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
                   onClick={() => {
                     const now = new Date();
                     changeDate(now);
+                    enter();
                     updatePanelRef.current?.(now);
                     updateTimePickerPanelRef.current?.(now);
-
-                    changeVisible(false);
                   }}
                   dType="link"
                 >

@@ -30,6 +30,7 @@ export interface DDateInputProps extends Omit<React.HTMLAttributes<HTMLDivElemen
     date: [Date | null, Date | null];
     isFocus: [boolean, boolean];
     changeDate: (date: Date | [Date, Date]) => void;
+    enter: () => void;
     renderPopup: DCloneHTMLElement;
   }) => JSX.Element | null;
   dRef:
@@ -200,6 +201,25 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
     forceUpdate();
   };
 
+  const handleEnter = () => {
+    const index = isFocus[0] ? 0 : 1;
+    const value = isFocus[0] ? valueLeft : valueRight;
+    if (dayjs(dataRef.current.inputValue[index], dFormat, true).isValid()) {
+      if (dRange) {
+        if (isNull(isFocus[0] ? valueRight : valueLeft)) {
+          dataRef.current.focusAnother = true;
+        } else {
+          onVisibleChange(false);
+        }
+      } else {
+        onVisibleChange(false);
+      }
+    } else {
+      dataRef.current.inputValue[index] = isNull(value) ? '' : dayjs(value).format(dFormat);
+    }
+    forceUpdate();
+  };
+
   const clearable = dClearable && !isNull(_value) && !dVisible && !dDisabled;
 
   const maxZIndex = useMaxIndex(dVisible);
@@ -324,20 +344,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                   }}
                   onKeyDown={(e) => {
                     if (e.code === 'Enter') {
-                      if (dayjs(dataRef.current.inputValue[index], dFormat, true).isValid()) {
-                        if (dRange) {
-                          if (isNull(isLeft ? valueRight : valueLeft)) {
-                            dataRef.current.focusAnother = true;
-                          } else {
-                            onVisibleChange(false);
-                          }
-                        } else {
-                          onVisibleChange(false);
-                        }
-                      } else {
-                        dataRef.current.inputValue[index] = isNull(value) ? '' : dayjs(value).format(dFormat);
-                      }
-                      forceUpdate();
+                      handleEnter();
                     }
                   }}
                   onFocus={() => {
@@ -490,6 +497,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
                     changeValue(date);
                   }
                 },
+                enter: handleEnter,
                 renderPopup: (el) =>
                   cloneHTMLElement(el, {
                     ref: popupRef,
