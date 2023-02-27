@@ -1,8 +1,13 @@
 @use 'sass:map';
+@import 'mixins/form';
 @import 'mixins/date-input';
 @import 'mixins/overwrite';
 
 @include b(date-picker) {
+  @include component-in-form('#{&}') {
+    max-width: 100%;
+  }
+
   @include component-date-input;
 
   @include e(popup) {

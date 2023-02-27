@@ -1,0 +1,7 @@
+@mixin component-in-form($selector) {
+  @at-root {
+    .#{$rd-prefix}form__item-content > #{$selector} {
+      @content;
+    }
+  }
+}

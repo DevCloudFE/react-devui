@@ -1,6 +1,11 @@
+@import 'mixins/form';
 @import 'mixins/selectbox';
 
 @include b(tree-select) {
+  @include component-in-form('#{&}') {
+    width: 100%;
+  }
+
   @include component-selectbox;
 
   @include when(disabled) {

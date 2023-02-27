@@ -1,8 +1,13 @@
+@import 'mixins/form';
 @import 'mixins/selectbox';
 
 $cascader-option-height: 32px;
 
 @include b(cascader) {
+  @include component-in-form('#{&}') {
+    width: 100%;
+  }
+
   @include component-selectbox;
 
   @include when(disabled) {

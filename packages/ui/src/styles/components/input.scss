@@ -1,6 +1,14 @@
+@import 'mixins/form';
 @import 'mixins/size';
 
 @include b(input) {
+  @include component-in-form('#{&}:not(#{&}--number)') {
+    width: 100%;
+  }
+  @include component-in-form('#{&}--number') {
+    max-width: 100%;
+  }
+
   display: inline-flex;
   align-items: center;
   height: var(--#{$rd-prefix}size);

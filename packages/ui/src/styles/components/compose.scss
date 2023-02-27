@@ -1,6 +1,11 @@
+@import 'mixins/form';
 @import 'mixins/size';
 
 @include b(compose) {
+  @include component-in-form('#{&}') {
+    width: 100%;
+  }
+
   $compose-support: "[data-compose-support='true']";
   $compose-support--active: "[data-compose-support-active='true']";
   $compose-support--disabled: "[data-compose-support-disabled='true']";
