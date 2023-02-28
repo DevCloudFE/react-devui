@@ -95,7 +95,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
       </button>
       <AppNotification className={styles['app-header__button']} />
       <AppUser className={styles['app-header__button']} style={{ gap: '0 8px' }} />
-      <AppLanguage className={styles['app-header__button']} />
+      <AppLanguage className={styles['app-header__button']} aTrigger="click" />
     </header>
   );
 }

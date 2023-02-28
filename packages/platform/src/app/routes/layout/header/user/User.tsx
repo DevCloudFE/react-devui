@@ -21,6 +21,7 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
         { id: 'setting', label: t('routes.layout.Account Settings'), type: 'item', icon: <SettingOutlined />, separator: true },
         { id: 'logout', label: t('routes.layout.Logout'), type: 'item', icon: <LogoutOutlined /> },
       ]}
+      dTrigger="click"
       onItemClick={(id) => {
         switch (id) {
           case 'logout':

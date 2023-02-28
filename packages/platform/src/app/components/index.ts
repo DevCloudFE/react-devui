@@ -6,6 +6,7 @@ export { AppDetailView } from './detail-view';
 
 export { AppFCPLoader } from './fcp-loader';
 
+export type { AppLanguageProps } from './language';
 export { AppLanguage } from './language';
 
 export type { AppListProps } from './list';
