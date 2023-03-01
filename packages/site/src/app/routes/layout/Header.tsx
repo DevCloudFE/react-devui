@@ -10,6 +10,9 @@ import { DCustomIcon, GithubOutlined } from '@react-devui/icons';
 import { DDropdown, DMenu, DSeparator } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
+import { environment } from '../../../environments/environment';
+import { AppVersions } from './Versions';
+
 export interface AppHeaderProps {
   menuOpen: boolean;
   onMenuOpenChange: (open: boolean) => void;
@@ -46,6 +49,7 @@ export function AppHeader(props: AppHeaderProps): JSX.Element | null {
           <div></div>
         </div>
       </button>
+      {environment.production && <AppVersions />}
       <DMenu
         className="d-none d-md-inline-block app-layout-header__menu"
         dList={[
