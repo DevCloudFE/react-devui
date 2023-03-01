@@ -1,0 +1,37 @@
+name: 'Tag'
+on:
+  push:
+    tags:
+      - 'v18.*'
+      - '!*alpha*'
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - run: yarn nx build site --configuration=production --skip-nx-cache
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: version-match
+        with:
+          text: ${{ github.ref_name }}
+          regex: '^v[0-9]+'
+      - uses: garygrossgarten/github-action-scp@release
+        if: ${{ steps.version-match.outputs.match != '' }}
+        with:
+          local: './dist/packages/site'
+          remote: '/var/www/${{ steps.version-match.outputs.match }}.react-devui.com'
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          rmRemote: true
+          dotfiles: true
