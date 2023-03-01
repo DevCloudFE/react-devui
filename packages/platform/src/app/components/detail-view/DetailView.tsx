@@ -89,7 +89,7 @@ export function AppDetailView(props: AppDetailViewProps): JSX.Element | null {
           <div
             key={label}
             className={getClassName('app-detail-view__item', col, {
-              'app-detail-view__item--center': center,
+              'app-detail-view__item--center': !aVertical && center,
             })}
           >
             <div
