@@ -12,7 +12,7 @@
     "lint:affected": "nx affected --target=lint --parallel=7",
     "lint:style": "stylelint **/*.{css,scss,html,md}",
     "lint:style:fix": "yarn lint:style --fix",
-    "prepare": "husky install && chmod ug+x .husky/*",
+    "prepare": "husky install && ts-node -P ./tools/tsconfig.json ./tools/husky.ts",
     "prepublishOnly": "nx run-many --target=build --parallel=7 --exclude=site,vscode-extension",
     "publish:vscode-extension": "yarn build:vscode-extension && cd dist/packages/vscode-extension && vsce publish --yarn",
     "serve:site": "nx serve site",
