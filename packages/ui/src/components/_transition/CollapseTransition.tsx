@@ -124,6 +124,9 @@ export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Elemen
             break;
 
           case 'leave':
+            if (originalSize[isHorizontal ? 'width' : 'height'] === 0) {
+              originalSize[isHorizontal ? 'width' : 'height'] = ref.current?.[isHorizontal ? 'offsetWidth' : 'offsetHeight'];
+            }
             Object.assign(transitionStyle, originalSize, {
               overflow: 'hidden',
             });
