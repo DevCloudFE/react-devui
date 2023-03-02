@@ -46,9 +46,10 @@ export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElem
                 title: notify.title,
                 panel: (
                   <AppList
-                    aList={notify.list.map((item) => ({
+                    aList={notify.list.map((item, index) => ({
                       avatar: <DAvatar dImg={{ src: '/assets/imgs/avatar.png', alt: 'avatar' }}></DAvatar>,
                       title: 'name',
+                      subtitle: index === 0 && new Date().toLocaleString(),
                       description: item.message,
                       props: {
                         className: getClassName(styles['app-notification__item'], {
