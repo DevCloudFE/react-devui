@@ -607,6 +607,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
                       } else {
                         if (!dOnlyLeafSelectable || node.isLeaf) {
                           changeSelect(node.id);
+                          changeVisible(false);
                         }
                       }
                     }}
