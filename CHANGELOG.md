@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.3](https://github.com/DevCloudFE/react-devui/compare/v18.3.2...v18.3.3) (2023-03-03)
+
+### Bug Fixes
+
+- **platform:** dont center content when detail-view is vertical ([a692605](https://github.com/DevCloudFE/react-devui/commit/a6926055560ef5b6c7c35dd591dde2c4c176cd57))
+- **ui:** fix collapse-transition not work when el hide initially ([98c8dec](https://github.com/DevCloudFE/react-devui/commit/98c8dece4675c50c08568e2bc72899cbf754da82))
+- **ui:** fix logic of date-picker popup window ([b69cf2d](https://github.com/DevCloudFE/react-devui/commit/b69cf2d9ff4d60a006e0136ec30beebc8e891919))
+
 ## [18.3.2](https://github.com/DevCloudFE/react-devui/compare/v18.3.1...v18.3.2) (2023-02-24)
 
 ### Bug Fixes
