@@ -23,8 +23,8 @@ export function AppSidebar(props: AppSidebarProps): JSX.Element | null {
 
   const location = useLocation();
   const page = location.pathname.startsWith('/docs') ? 'Docs' : location.pathname.startsWith('/components') ? 'Components' : null;
-  const regex = new RegExp(String.raw`(?<=^\/${page === 'Docs' ? 'docs' : 'components'}\/).+$`);
-  const activeId = location.pathname.match(regex)?.[0] ?? null;
+  const regex = new RegExp(String.raw`^\/${page === 'Docs' ? 'docs' : 'components'}\/(.+$)`);
+  const activeId = location.pathname.match(regex)?.[1] ?? null;
 
   const menuNode = (
     <DMenu
