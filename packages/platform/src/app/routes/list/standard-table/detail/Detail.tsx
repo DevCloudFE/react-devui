@@ -10,6 +10,7 @@ import { EditOutlined } from '@react-devui/icons';
 import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppDetailView, AppRouteHeader } from '../../../../components';
+import { useHttp } from '../../../../core';
 import { useAPI } from '../../../../hooks';
 import { AppRoute } from '../../../../utils';
 import { AppDeviceModal } from '../DeviceModal';
@@ -20,7 +21,8 @@ export default AppRoute(() => {
 
   const { t } = useTranslation();
 
-  const deviceApi = useAPI('/device');
+  const http = useHttp();
+  const deviceApi = useAPI(http, '/device');
 
   const { id: _id } = useParams();
   const id = Number(_id!);

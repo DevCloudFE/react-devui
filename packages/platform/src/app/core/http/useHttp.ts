@@ -28,13 +28,7 @@ export function useHttp() {
   const location = useLocation();
   const { t } = useTranslation();
 
-  useUnmount(() => {
-    for (const abort of dataRef.current.abortFns) {
-      abort();
-    }
-  });
-
-  return useEventCallback(
+  const http = useEventCallback(
     <T = any, D = any>(
       config: AxiosRequestConfig<D>,
       options?: { unmount?: boolean; authorization?: boolean }
@@ -106,4 +100,16 @@ export function useHttp() {
       return req as any;
     }
   );
+
+  http['abortAll'] = () => {
+    for (const abort of dataRef.current.abortFns) {
+      abort();
+    }
+  };
+
+  useUnmount(() => {
+    http['abortAll']();
+  });
+
+  return http as typeof http & { abortAll: () => void };
 }

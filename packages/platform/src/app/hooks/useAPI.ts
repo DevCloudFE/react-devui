@@ -1,7 +1,7 @@
 // https://cloud.google.com/apis/design
-import { useEventCallback } from '@react-devui/hooks';
+import type { useHttp } from '../core';
 
-import { useHttp } from '../core';
+import { useEventCallback } from '@react-devui/hooks';
 
 interface StandardListRes<T> {
   resources: T[];
@@ -12,9 +12,7 @@ interface StandardListRes<T> {
   };
 }
 
-export function useAPI(url: string) {
-  const http = useHttp();
-
+export function useAPI(http: ReturnType<typeof useHttp>, url: string) {
   return {
     list: useEventCallback(<T = any, P = any>(params?: P) =>
       http<StandardListRes<T>>({

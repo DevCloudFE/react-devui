@@ -6,11 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { useAsync, useImmer, useMount } from '@react-devui/hooks';
+import { useImmer, useMount } from '@react-devui/hooks';
 import { DownOutlined, PlusOutlined } from '@react-devui/icons';
 import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
+import { useHttp } from '../../../core';
 import { useAPI, useQueryParams } from '../../../hooks';
 import { AppRoute } from '../../../utils';
 import { AppDeviceModal } from './DeviceModal';
@@ -31,9 +32,9 @@ export default AppRoute(() => {
   const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
 
   const { t } = useTranslation();
-  const async = useAsync();
-  const modelApi = useAPI('/device/model');
-  const deviceApi = useAPI('/device');
+  const http = useHttp();
+  const modelApi = useAPI(http, '/device/model');
+  const deviceApi = useAPI(http, '/device');
 
   const [deviceQuerySaved, setDeviceQuerySaved] = useQueryParams<DeviceQueryParams>({
     keyword: '',
@@ -126,9 +127,11 @@ export default AppRoute(() => {
             <DModal.Footer
               onOkClick={() =>
                 new Promise((r) => {
-                  async.setTimeout(() => {
-                    r(true);
-                  }, 500);
+                  modelApi.list().subscribe({
+                    next: () => {
+                      r(true);
+                    },
+                  });
                 })
               }
             />

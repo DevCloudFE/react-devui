@@ -5,11 +5,12 @@ import type { DSelectItem } from '@react-devui/ui/components/select';
 import { isUndefined } from 'lodash';
 import React, { useImperativeHandle, useState } from 'react';
 
-import { useAsync, useEventCallback } from '@react-devui/hooks';
+import { useEventCallback } from '@react-devui/hooks';
 import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
 import { AppResponsiveForm } from '../../../components';
+import { useHttp } from '../../../core';
 import { useAPI } from '../../../hooks';
 
 export interface AppDeviceModalProps {
@@ -19,8 +20,10 @@ export interface AppDeviceModalProps {
 function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSettingFn<DeviceData>>): JSX.Element | null {
   const { onSuccess } = props;
 
-  const modelApi = useAPI('/device/model');
-  const async = useAsync();
+  const http = useHttp();
+  const httpOfInit = useHttp();
+  const modelApi = useAPI(http, '/device/model');
+  const modelApiOfInit = useAPI(httpOfInit, '/device/model');
 
   const [visible, setVisible] = useState(false);
   const [device, setDevice] = useState<DeviceData>();
@@ -42,7 +45,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
     updateForm();
 
     setModelList(undefined);
-    modelApi.list().subscribe({
+    modelApiOfInit.list().subscribe({
       next: (res) => {
         setModelList(
           res.resources.map((model) => ({
@@ -70,16 +73,19 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
           dOkProps={{ disabled: !form.valid }}
           onOkClick={() =>
             new Promise((r) => {
-              async.setTimeout(() => {
-                onSuccess();
-                r(true);
-              }, 500);
+              modelApi.list().subscribe({
+                next: () => {
+                  onSuccess();
+                  r(true);
+                },
+              });
             })
           }
         ></DModal.Footer>
       }
       dMaskClosable={false}
       onClose={() => {
+        httpOfInit.abortAll();
         setVisible(false);
       }}
     >
