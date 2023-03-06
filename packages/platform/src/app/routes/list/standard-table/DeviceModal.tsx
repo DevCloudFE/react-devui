@@ -22,8 +22,6 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
   const modelApi = useAPI('/device/model');
   const async = useAsync();
 
-  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
-
   const [visible, setVisible] = useState(false);
   const [device, setDevice] = useState<DeviceData>();
   const [form, updateForm] = useForm(
@@ -34,26 +32,31 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
       })
   );
 
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
+
   const open = useEventCallback<OpenSettingFn<DeviceData>>((device) => {
     setVisible(true);
     setDevice(device);
 
-    form.reset(device ? { name: device.name, model: device.model } : undefined);
+    form.reset(device ? { name: device.name } : undefined);
     updateForm();
 
-    if (isUndefined(modelList)) {
-      modelApi.list().subscribe({
-        next: (res) => {
-          setModelList(
-            res.resources.map((model) => ({
-              label: model.name,
-              value: model.name,
-              disabled: model.disabled,
-            }))
-          );
-        },
-      });
-    }
+    setModelList(undefined);
+    modelApi.list().subscribe({
+      next: (res) => {
+        setModelList(
+          res.resources.map((model) => ({
+            label: model.name,
+            value: model.name,
+            disabled: model.disabled,
+          }))
+        );
+        if (device) {
+          form.patchValue({ model: device.model });
+          updateForm();
+        }
+      },
+    });
   });
 
   useImperativeHandle(ref, () => open, [open]);
@@ -88,13 +91,7 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
             </DForm.Item>
             <DForm.Item dFormControls={{ model: 'Please select model!' }} dLabel="Model">
               {({ model }) => (
-                <DSelect
-                  dFormControl={modelList ? model : undefined}
-                  dList={modelList ?? []}
-                  dLoading={isUndefined(modelList)}
-                  dPlaceholder="Model"
-                  dClearable
-                />
+                <DSelect dFormControl={model} dList={modelList ?? []} dLoading={isUndefined(modelList)} dPlaceholder="Model" dClearable />
               )}
             </DForm.Item>
           </DForm.Group>
