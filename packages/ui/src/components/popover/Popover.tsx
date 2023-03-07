@@ -4,7 +4,7 @@ import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
 import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isString, isUndefined } from 'lodash';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEvent, useEventCallback, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
@@ -246,20 +246,6 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
     !dEscClosable || !visible
   );
 
-  useEffect(() => {
-    if (dModal) {
-      if (visible) {
-        dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
-
-        if (popoverRef.current) {
-          popoverRef.current.focus({ preventScroll: true });
-        }
-      } else if (dataRef.current.prevActiveEl) {
-        dataRef.current.prevActiveEl.focus({ preventScroll: true });
-      }
-    }
-  }, [dModal, visible]);
-
   const headerNode = (() => {
     if (dHeader) {
       const node = isString(dHeader) ? <DPopoverHeader>{dHeader}</DPopoverHeader> : dHeader;
@@ -311,9 +297,20 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
                 onEnter={updatePosition}
                 afterEnter={() => {
                   afterVisibleChange?.(true);
+
+                  if (dModal) {
+                    dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
+                    if (popoverRef.current) {
+                      popoverRef.current.focus({ preventScroll: true });
+                    }
+                  }
                 }}
                 afterLeave={() => {
                   afterVisibleChange?.(false);
+
+                  if (dModal && dataRef.current.prevActiveEl) {
+                    dataRef.current.prevActiveEl.focus({ preventScroll: true });
+                  }
                 }}
               >
                 {(state) => {

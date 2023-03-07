@@ -169,18 +169,6 @@ export const DDrawer: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  useEffect(() => {
-    if (visible) {
-      dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
-
-      if (drawerRef.current) {
-        drawerRef.current.focus({ preventScroll: true });
-      }
-    } else if (dataRef.current.prevActiveEl) {
-      dataRef.current.prevActiveEl.focus({ preventScroll: true });
-    }
-  }, [visible]);
-
   const transitionStyles: Partial<Record<DTransitionState, React.CSSProperties>> = (() => {
     const transform =
       dPlacement === 'top'
@@ -237,9 +225,18 @@ export const DDrawer: {
         dDestroyWhenLeaved={dDestroyAfterClose}
         afterEnter={() => {
           afterVisibleChange?.(true);
+
+          dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
+          if (drawerRef.current) {
+            drawerRef.current.focus({ preventScroll: true });
+          }
         }}
         afterLeave={() => {
           afterVisibleChange?.(false);
+
+          if (dataRef.current.prevActiveEl) {
+            dataRef.current.prevActiveEl.focus({ preventScroll: true });
+          }
         }}
       >
         {(state) => (

@@ -2,7 +2,7 @@ import type { DModalFooterPrivateProps } from './ModalFooter';
 import type { DModalHeaderPrivateProps } from './ModalHeader';
 
 import { isNumber, isString, isUndefined } from 'lodash';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
@@ -108,18 +108,6 @@ export const DModal: {
 
   useLockScroll(visible);
 
-  useEffect(() => {
-    if (visible) {
-      dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
-
-      if (modalRef.current) {
-        modalRef.current.focus({ preventScroll: true });
-      }
-    } else if (dataRef.current.prevActiveEl) {
-      dataRef.current.prevActiveEl.focus({ preventScroll: true });
-    }
-  }, [visible]);
-
   const headerNode = (() => {
     if (dHeader) {
       const node = isString(dHeader) ? <DModalHeader>{dHeader}</DModalHeader> : dHeader;
@@ -151,9 +139,18 @@ export const DModal: {
         }}
         afterEnter={() => {
           afterVisibleChange?.(true);
+
+          dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
+          if (modalRef.current) {
+            modalRef.current.focus({ preventScroll: true });
+          }
         }}
         afterLeave={() => {
           afterVisibleChange?.(false);
+
+          if (dataRef.current.prevActiveEl) {
+            dataRef.current.prevActiveEl.focus({ preventScroll: true });
+          }
         }}
       >
         {(state) => {

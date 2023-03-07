@@ -1,5 +1,5 @@
 import { isUndefined } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEvent, useImmer, useIsomorphicLayoutEffect, useLockScroll, useRefExtra } from '@react-devui/hooks';
@@ -142,18 +142,6 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
 
   useLockScroll(visible);
 
-  useEffect(() => {
-    if (visible) {
-      dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
-
-      if (previewRef.current) {
-        previewRef.current.focus({ preventScroll: true });
-      }
-    } else if (dataRef.current.prevActiveEl) {
-      dataRef.current.prevActiveEl.focus({ preventScroll: true });
-    }
-  }, [visible]);
-
   const listenDragEvent = visible && isDragging;
 
   useEvent<TouchEvent>(
@@ -237,9 +225,18 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
         dDestroyWhenLeaved
         afterEnter={() => {
           afterVisibleChange?.(true);
+
+          dataRef.current.prevActiveEl = document.activeElement as HTMLElement | null;
+          if (previewRef.current) {
+            previewRef.current.focus({ preventScroll: true });
+          }
         }}
         afterLeave={() => {
           afterVisibleChange?.(false);
+
+          if (dataRef.current.prevActiveEl) {
+            dataRef.current.prevActiveEl.focus({ preventScroll: true });
+          }
         }}
       >
         {(state) => {
