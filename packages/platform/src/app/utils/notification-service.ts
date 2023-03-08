@@ -58,11 +58,11 @@ export class NotificationService {
     }
   }
 
-  static rerender(key: string | number, props: DNotificationProps) {
+  static rerender(key: string | number, props: Partial<DNotificationProps>) {
     const index = useNotifications.state.findIndex((n) => n.key === key);
     if (index !== -1) {
       useNotifications.setState((draft) => {
-        draft.splice(index, 1, { key, ...props });
+        draft[index] = Object.assign(draft[index], props);
       });
     }
   }

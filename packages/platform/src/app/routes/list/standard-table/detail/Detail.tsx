@@ -1,8 +1,7 @@
-import type { OpenSettingFn } from '../../../../utils/types';
 import type { DeviceData } from '../StandardTable';
 
 import { isUndefined } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -12,13 +11,11 @@ import { DButton, DCard, DSeparator, DSpinner, DTable } from '@react-devui/ui';
 import { AppDetailView, AppRouteHeader } from '../../../../components';
 import { useHttp } from '../../../../core';
 import { useAPI } from '../../../../hooks';
-import { AppRoute } from '../../../../utils';
+import { AppRoute, DialogService } from '../../../../utils';
 import { AppDeviceModal } from '../DeviceModal';
 import styles from './Detail.module.scss';
 
 export default AppRoute(() => {
-  const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
-
   const { t } = useTranslation();
 
   const http = useHttp();
@@ -44,12 +41,6 @@ export default AppRoute(() => {
 
   return (
     <>
-      <AppDeviceModal
-        ref={deviceModalRef}
-        onSuccess={() => {
-          setUpdateDevice((n) => n + 1);
-        }}
-      />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -68,7 +59,12 @@ export default AppRoute(() => {
             <DButton
               disabled={isUndefined(device)}
               onClick={() => {
-                deviceModalRef.current?.(device);
+                DialogService.open(AppDeviceModal, {
+                  aDevice: device,
+                  onSuccess: () => {
+                    setUpdateDevice((n) => n + 1);
+                  },
+                });
               }}
               dIcon={<EditOutlined />}
             >

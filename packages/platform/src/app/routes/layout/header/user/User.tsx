@@ -1,4 +1,3 @@
-import { isUndefined } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +12,7 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  return isUndefined(user) ? null : (
+  return (
     <DDropdown
       style={{ minWidth: 160 }}
       dList={[

@@ -3,7 +3,7 @@ import type { DRootProps } from '@react-devui/ui';
 import type { DLang } from '@react-devui/ui/utils/types';
 
 import { isNull } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useAsync, useMount, useStorage } from '@react-devui/hooks';
 import { DNotification, DToast } from '@react-devui/ui';
@@ -12,7 +12,7 @@ import { DRoot } from '@react-devui/ui';
 import { AppRoutes } from './Routes';
 import { STORAGE_KEY } from './config/storage';
 import { TOKEN, useHttp, useInit } from './core';
-import { useNotifications, useToasts } from './core/state';
+import { useDialogs, useNotifications, useToasts } from './core/state';
 
 export type AppTheme = 'light' | 'dark';
 
@@ -23,6 +23,7 @@ export function App() {
   const [loading, setLoading] = useState(!isNull(TOKEN.value));
   const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
   const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
+  const [dialogs] = useDialogs();
   const [notifications] = useNotifications();
   const [toasts] = useToasts();
 
@@ -91,6 +92,7 @@ export function App() {
   return (
     <DRoot context={rootContext}>
       {loading ? null : <AppRoutes />}
+      {dialogs.map(({ key, type, props }) => React.createElement(type, { key, ...props }))}
       {notifications.map(({ key, ...props }) => (
         <DNotification {...props} key={key}></DNotification>
       ))}

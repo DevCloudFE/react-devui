@@ -1,11 +1,11 @@
-import type { OpenSettingFn } from '../../../utils/types';
+import type { AppDialogServiceSupport } from '../../../utils/dialog-service';
 import type { DeviceData } from './StandardTable';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import React, { useImperativeHandle, useState } from 'react';
+import { useState } from 'react';
 
-import { useEventCallback } from '@react-devui/hooks';
+import { useMount } from '@react-devui/hooks';
 import { FormControl, FormGroup, useForm, Validators } from '@react-devui/ui';
 import { DForm, DInput, DModal, DSelect } from '@react-devui/ui';
 
@@ -14,38 +14,31 @@ import { useHttp } from '../../../core';
 import { useAPI } from '../../../hooks';
 
 export interface AppDeviceModalProps {
+  aDevice: DeviceData | undefined;
   onSuccess: () => void;
 }
 
-function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSettingFn<DeviceData>>): JSX.Element | null {
-  const { onSuccess } = props;
+export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
+  const { aDevice, onSuccess, aVisible, onClose, afterVisibleChange } = props as AppDeviceModalProps & AppDialogServiceSupport;
 
   const http = useHttp();
-  const httpOfInit = useHttp();
   const modelApi = useAPI(http, '/device/model');
-  const modelApiOfInit = useAPI(httpOfInit, '/device/model');
 
-  const [visible, setVisible] = useState(false);
-  const [device, setDevice] = useState<DeviceData>();
-  const [form, updateForm] = useForm(
-    () =>
-      new FormGroup({
-        name: new FormControl('', Validators.required),
-        model: new FormControl<string | null>(null, Validators.required),
-      })
-  );
+  const [form, updateForm] = useForm(() => {
+    const form = new FormGroup({
+      name: new FormControl('', Validators.required),
+      model: new FormControl<string | null>(null, Validators.required),
+    });
+    if (aDevice) {
+      form.reset({ name: aDevice.name });
+    }
+    return form;
+  });
 
   const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
-  const open = useEventCallback<OpenSettingFn<DeviceData>>((device) => {
-    setVisible(true);
-    setDevice(device);
-
-    form.reset(device ? { name: device.name } : undefined);
-    updateForm();
-
-    setModelList(undefined);
-    modelApiOfInit.list().subscribe({
+  useMount(() => {
+    modelApi.list().subscribe({
       next: (res) => {
         setModelList(
           res.resources.map((model) => ({
@@ -54,20 +47,18 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
             disabled: model.disabled,
           }))
         );
-        if (device) {
-          form.patchValue({ model: device.model });
+        if (aDevice) {
+          form.patchValue({ model: aDevice.model });
           updateForm();
         }
       },
     });
   });
 
-  useImperativeHandle(ref, () => open, [open]);
-
   return (
     <DModal
-      dVisible={visible}
-      dHeader={`${device ? 'Edit' : 'Add'} Device`}
+      dVisible={aVisible}
+      dHeader={`${aDevice ? 'Edit' : 'Add'} Device`}
       dFooter={
         <DModal.Footer
           dOkProps={{ disabled: !form.valid }}
@@ -83,11 +74,10 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
           }
         ></DModal.Footer>
       }
+      dSkipFirstTransition={false}
       dMaskClosable={false}
-      onClose={() => {
-        httpOfInit.abortAll();
-        setVisible(false);
-      }}
+      onClose={onClose}
+      afterVisibleChange={afterVisibleChange}
     >
       <AppResponsiveForm>
         <DForm dUpdate={updateForm} dLabelWidth="6em">
@@ -106,5 +96,3 @@ function DeviceModal(props: AppDeviceModalProps, ref: React.ForwardedRef<OpenSet
     </DModal>
   );
 }
-
-export const AppDeviceModal = React.forwardRef(DeviceModal);

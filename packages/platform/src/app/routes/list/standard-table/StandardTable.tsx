@@ -1,8 +1,8 @@
-import type { DeviceDoc, OpenSettingFn, StandardQueryParams } from '../../../utils/types';
+import type { DeviceDoc, StandardQueryParams } from '../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSe
 import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
 import { useHttp } from '../../../core';
 import { useAPI, useQueryParams } from '../../../hooks';
-import { AppRoute } from '../../../utils';
+import { AppRoute, DialogService } from '../../../utils';
 import { AppDeviceModal } from './DeviceModal';
 import styles from './StandardTable.module.scss';
 
@@ -29,8 +29,6 @@ interface DeviceQueryParams {
 }
 
 export default AppRoute(() => {
-  const deviceModalRef = useRef<OpenSettingFn<DeviceData>>(null);
-
   const { t } = useTranslation();
   const http = useHttp();
   const modelApi = useAPI(http, '/device/model');
@@ -118,6 +116,15 @@ export default AppRoute(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateDeviceTable]);
 
+  const openDeviceModal = (device?: DeviceData) => {
+    DialogService.open(AppDeviceModal, {
+      aDevice: device,
+      onSuccess: () => {
+        setUpdateDeviceTable((n) => n + 1);
+      },
+    });
+  };
+
   return (
     <>
       {paramsOfDeleteModal && (
@@ -156,12 +163,6 @@ export default AppRoute(() => {
           }}
         />
       )}
-      <AppDeviceModal
-        ref={deviceModalRef}
-        onSuccess={() => {
-          setUpdateDeviceTable((n) => n + 1);
-        }}
-      />
       <AppRouteHeader>
         <AppRouteHeader.Breadcrumb
           aList={[
@@ -173,7 +174,7 @@ export default AppRoute(() => {
           aActions={[
             <DButton
               onClick={() => {
-                deviceModalRef.current?.();
+                openDeviceModal();
               }}
               dIcon={<PlusOutlined />}
             >
@@ -337,7 +338,7 @@ export default AppRoute(() => {
                             onItemClick={(action) => {
                               switch (action) {
                                 case 'edit':
-                                  deviceModalRef.current?.(data);
+                                  openDeviceModal(data);
                                   break;
 
                                 case 'delete':

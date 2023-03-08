@@ -7,7 +7,7 @@ export interface UserState {
   avatar?: string;
   permission: (string | number)[];
 }
-export const useUserState = createGlobalState<UserState>();
+export const useUserState = createGlobalState<UserState>({} as any);
 
 export interface NotificationItem {
   id: string;
@@ -22,3 +22,5 @@ export const useNotificationState = createGlobalState<NotificationItem[]>();
 export const useNotifications = createGlobalState<(DNotificationProps & { key: string | number })[]>([]);
 
 export const useToasts = createGlobalState<(DToastProps & { key: string | number })[]>([]);
+
+export const useDialogs = createGlobalState<{ key: string | number; type: any; props: any }[]>([]);
