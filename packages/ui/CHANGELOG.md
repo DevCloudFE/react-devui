@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.4](https://github.com/DevCloudFE/react-devui/compare/v18.3.3...v18.3.4) (2023-03-09)
+
+### Bug Fixes
+
+- **ui:** change focus after visible change ([02d4072](https://github.com/DevCloudFE/react-devui/commit/02d407206c230eb5f1f1bd7489dd2fe68420e5d0))
+- **ui:** close popup when tree-select selected ([adb5f33](https://github.com/DevCloudFE/react-devui/commit/adb5f33a2419b6bcbc72201fa9d6df2251385aad))
+- **ui:** fix styles ([2bf87b0](https://github.com/DevCloudFE/react-devui/commit/2bf87b0e7a3071f1a2a3349ae4c7c710e1f65bd1))
+
 ## [18.3.3](https://github.com/DevCloudFE/react-devui/compare/v18.3.2...v18.3.3) (2023-03-03)
 
 ### Bug Fixes
