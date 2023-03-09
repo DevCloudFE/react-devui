@@ -8,11 +8,11 @@
     border-top: 1px solid var(--#{$rd-prefix}color-divider);
 
     @include m(left) {
-      justify-content: left;
+      justify-content: flex-start;
     }
 
     @include m(right) {
-      justify-content: right;
+      justify-content: flex-end;
     }
 
     @include m(center) {
