@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.5](https://github.com/DevCloudFE/react-devui/compare/v18.3.4...v18.3.5) (2023-03-09)
+
+### Bug Fixes
+
+- **ui:** fix `ResizeObserver` miss borderBoxSize with some browsers ([13df709](https://github.com/DevCloudFE/react-devui/commit/13df7098a483bfe874799f835a747716c5459210))
+
 ## [18.3.4](https://github.com/DevCloudFE/react-devui/compare/v18.3.3...v18.3.4) (2023-03-09)
 
 **Note:** Version bump only for package @react-devui/hooks
