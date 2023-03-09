@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.6](https://github.com/DevCloudFE/react-devui/compare/v18.3.5...v18.3.6) (2023-03-09)
+
+### Bug Fixes
+
+- fix inset not support in old browser ([539a954](https://github.com/DevCloudFE/react-devui/commit/539a954b9f596799d9203e557ede9eaa994f1db6))
+
 ## [18.3.5](https://github.com/DevCloudFE/react-devui/compare/v18.3.4...v18.3.5) (2023-03-09)
 
 **Note:** Version bump only for package @react-devui/ui
