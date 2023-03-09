@@ -410,7 +410,10 @@
 
     &::after {
       position: absolute;
-      inset: 3px;
+      top: 3px;
+      right: 3px;
+      bottom: 3px;
+      left: 3px;
       content: '';
       background-color: var(--#{$rd-prefix}background-color);
       border-radius: var(--#{$rd-prefix}border-radius);

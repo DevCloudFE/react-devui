@@ -50,7 +50,10 @@
       width: 2px;
 
       &::after {
-        inset: 10px 0;
+        top: 10px;
+        right: 0;
+        bottom: 10px;
+        left: 0;
       }
     }
   }
@@ -176,7 +179,10 @@
 
     &::after {
       position: absolute;
-      inset: 0 10px;
+      top: 0;
+      right: 10px;
+      bottom: 0;
+      left: 10px;
       content: '';
       background-color: var(--#{$rd-prefix}background-color-indicator);
     }

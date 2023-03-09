@@ -128,7 +128,10 @@ $tree-option-height: 32px;
 
     &::after {
       position: absolute;
-      inset: 0 -8px;
+      top: 0;
+      right: -8px;
+      bottom: 0;
+      left: -8px;
       content: '';
     }
   }

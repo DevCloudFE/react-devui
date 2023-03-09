@@ -1,6 +1,9 @@
 @include b(mask) {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: var(--#{$rd-prefix}mask-background-color);
 }
 
@@ -25,7 +28,10 @@
   }
 
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   pointer-events: none;
   border-radius: inherit;
   animation: wave-wave 0.4s cubic-bezier(0.08, 0.82, 0.17, 1), wave-fade-out 2s cubic-bezier(0.08, 0.82, 0.17, 1);
@@ -34,7 +40,10 @@
 
 @include b(focus-outline) {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   pointer-events: none;
   border: 1px dashed var(--#{$rd-prefix}color-primary-lighter);
 }

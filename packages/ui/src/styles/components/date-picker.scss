@@ -99,7 +99,10 @@
     @include m(today) {
       &::after {
         position: absolute;
-        inset: 2px;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
         content: '';
         border: 1px solid var(--#{$rd-prefix}color-primary);
       }
@@ -127,7 +130,10 @@
     @include when(between-hover) {
       &::before {
         position: absolute;
-        inset: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         content: '';
         background-color: var(--#{$rd-prefix}background-color-primary);
       }

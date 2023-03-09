@@ -230,7 +230,10 @@
 
   @include e(picture-actions) {
     position: absolute;
-    inset: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
     display: flex;
     align-items: center;
     justify-content: center;

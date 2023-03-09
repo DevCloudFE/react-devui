@@ -19,7 +19,10 @@
 
 @include b(spinner) {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: var(--#{$rd-prefix}zindex-absolute);
   display: flex;
   justify-content: center;
@@ -29,7 +32,10 @@
 
   @include m(alone) {
     position: relative;
-    inset: unset;
+    top: unset;
+    right: unset;
+    bottom: unset;
+    left: unset;
     display: inline-flex;
     background-color: transparent;
   }

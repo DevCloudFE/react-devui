@@ -11,7 +11,10 @@
     <style type="text/css">
       .fp-loader {
         position: absolute;
-        inset: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         z-index: 9999;
         overflow: hidden;
         background: #000;
@@ -39,13 +42,19 @@
       }
 
       .fp-loader-inner::before {
-        inset: 5px;
+        top: 5px;
+        right: 5px;
+        bottom: 5px;
+        left: 5px;
         box-shadow: 0 3px 3px 0 rgb(255 228 32);
         animation: fp-loader-spin 3s linear infinite;
       }
 
       .fp-loader-inner::after {
-        inset: 15px;
+        top: 15px;
+        right: 15px;
+        bottom: 15px;
+        left: 15px;
         box-shadow: 0 3px 3px 0 rgb(61 175 255);
         animation: fp-loader-spin 1.5s linear infinite;
       }

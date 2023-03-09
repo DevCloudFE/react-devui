@@ -18,7 +18,10 @@
 
   @include e(container) {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: hidden;
   }
 
@@ -63,11 +66,17 @@
 
   @include e(marker-cluster-ripple) {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
     div {
       position: absolute;
-      inset: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
       border: 1px solid currentcolor;
       border-radius: 50%;
       animation: map-marker-cluster-ripple 3s infinite linear;

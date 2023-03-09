@@ -14,7 +14,10 @@
 
   @include e(actions) {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,7 +58,10 @@
 
 @include b(image-preview) {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
   padding: 68px 68px 98px;
   overflow: hidden;
