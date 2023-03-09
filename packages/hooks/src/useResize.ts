@@ -4,25 +4,40 @@ import { flushSync } from 'react-dom';
 
 export function useResize(target: React.RefObject<Element | null>, cb?: ResizeObserverCallback, disabled = false, skipEmpty = true): void {
   const dataRef = useRef<{
-    prevBorderBoxSize?: ResizeObserverSize;
+    prevContentRect?: { width: number; height: number };
   }>({});
 
   if (disabled) {
-    dataRef.current.prevBorderBoxSize = undefined;
+    dataRef.current.prevContentRect = undefined;
   }
 
   useEffect(() => {
     if (target.current && !disabled) {
       const observer = new ResizeObserver((entries, observer) => {
-        if (
-          !isUndefined(dataRef.current.prevBorderBoxSize) &&
-          !(skipEmpty && entries[0].borderBoxSize[0].blockSize === 0 && entries[0].borderBoxSize[0].inlineSize === 0) &&
-          (dataRef.current.prevBorderBoxSize.blockSize !== entries[0].borderBoxSize[0].blockSize ||
-            dataRef.current.prevBorderBoxSize.inlineSize !== entries[0].borderBoxSize[0].inlineSize)
-        ) {
-          flushSync(() => cb?.(entries, observer));
+        let entry = entries[0];
+
+        if ('borderBoxSize' in entry) {
+          if (
+            !isUndefined(dataRef.current.prevContentRect) &&
+            !(skipEmpty && entry.borderBoxSize[0].blockSize === 0 && entry.borderBoxSize[0].inlineSize === 0) &&
+            (dataRef.current.prevContentRect.width !== entry.borderBoxSize[0].inlineSize ||
+              dataRef.current.prevContentRect.height !== entry.borderBoxSize[0].blockSize)
+          ) {
+            flushSync(() => cb?.(entries, observer));
+          }
+          dataRef.current.prevContentRect = { width: entry.borderBoxSize[0].inlineSize, height: entry.borderBoxSize[0].blockSize };
+        } else {
+          entry = entries[0];
+          if (
+            !isUndefined(dataRef.current.prevContentRect) &&
+            !(skipEmpty && entry.contentRect.width === 0 && entry.contentRect.height === 0) &&
+            (dataRef.current.prevContentRect.width !== entry.contentRect.width ||
+              dataRef.current.prevContentRect.height !== entry.contentRect.height)
+          ) {
+            flushSync(() => cb?.(entries, observer));
+          }
+          dataRef.current.prevContentRect = { width: entry.contentRect.width, height: entry.contentRect.height };
         }
-        dataRef.current.prevBorderBoxSize = entries[0].borderBoxSize[0];
       });
       observer.observe(target.current);
       return () => {
