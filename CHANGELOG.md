@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.3.7](https://github.com/DevCloudFE/react-devui/compare/v18.3.6...v18.3.7) (2023-03-10)
+
+### Bug Fixes
+
+- fix gap not support in old browser ([4a39ad9](https://github.com/DevCloudFE/react-devui/commit/4a39ad9d0d08cdc89764bd1134df03e426d31239))
+- **platform:** set page to 1 when filter list ([45f5752](https://github.com/DevCloudFE/react-devui/commit/45f5752aa9586bed1117c0f8839b05d46c6adbe3))
+- **ui:** fix input no size in old browser ([f553aaf](https://github.com/DevCloudFE/react-devui/commit/f553aaf08062c14df932558c835e94b88fdcd42b))
+
 ## [18.3.6](https://github.com/DevCloudFE/react-devui/compare/v18.3.5...v18.3.6) (2023-03-09)
 
 ### Bug Fixes
