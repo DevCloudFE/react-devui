@@ -14,7 +14,6 @@
   --app-status-dot-color: var(--#{$rd-prefix}tag-background-color-fill);
 
   display: inline-flex;
-  gap: 0 8px;
   align-items: center;
   vertical-align: top;
 
@@ -44,6 +43,7 @@
     position: relative;
     width: 6px;
     height: 6px;
+    margin-right: 8px;
     background-color: var(--app-status-dot-color);
     border-radius: 50%;
   }

@@ -5,6 +5,9 @@
     }
 
     @include e(item-label) {
+      margin-right: 0;
+      margin-bottom: 8px;
+
       &::after {
         content: none;
       }
@@ -13,7 +16,6 @@
 
   @include e(item) {
     display: inline-flex;
-    gap: 8px 12px;
 
     @include m(center) {
       align-items: center;
@@ -22,6 +24,7 @@
 
   @include e(item-label) {
     flex-shrink: 0;
+    margin-right: 12px;
     color: var(--#{$rd-prefix}text-color-sub);
 
     &::after {

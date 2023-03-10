@@ -1,9 +1,10 @@
 @import '~styles/module';
 
 @include b(exception) {
+  @include polyfill-row-gap(20px);
+
   display: flex;
   flex-direction: column;
-  gap: 20px 100px;
   align-items: center;
   width: 100%;
   padding: 10% 20px 20px;
@@ -28,6 +29,7 @@
 
     @include media-breakpoint-up(md) {
       align-items: flex-start;
+      margin-left: 100px;
     }
   }
 

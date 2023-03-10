@@ -6,7 +6,7 @@
   background-color: var(--#{$rd-prefix}background-color);
 
   @include e(breadcrumb) {
-    height: 40px;
+    min-height: 40px;
   }
 
   @include e(breadcrumb-link) {
@@ -21,9 +21,10 @@
   }
 
   @include e(header) {
+    @include polyfill-gap(12px, 20px);
+
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 20px;
     align-items: center;
     justify-content: space-between;
     padding-bottom: 16px;
@@ -60,9 +61,10 @@
   }
 
   @include e(header-actions) {
+    @include polyfill-gap(8px, 8px);
+
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 8px;
     align-items: center;
   }
 }

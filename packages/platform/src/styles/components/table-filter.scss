@@ -20,9 +20,10 @@
   }
 
   @include e(button-container) {
+    @include polyfill-gap(12px, 8px);
+
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 8px;
     align-items: center;
   }
 
