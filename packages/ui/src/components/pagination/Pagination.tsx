@@ -210,9 +210,11 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
         return dCustomRender.jump(jumpInput);
       } else {
         return (
-          <div className={`${dPrefix}pagination__jump-wrapper`}>
-            {t('Pagination', 'Go')} {jumpInput} {t('Pagination', 'Page')}
-          </div>
+          <>
+            <span>{t('Pagination', 'Go')}</span>
+            {jumpInput}
+            <span>{t('Pagination', 'Page')}</span>
+          </>
         );
       }
     }

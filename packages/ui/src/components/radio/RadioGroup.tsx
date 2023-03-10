@@ -75,12 +75,14 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
       {...restProps}
       className={getClassName(restProps.className, `${dPrefix}radio-group`, {
         [`${dPrefix}radio-group--default`]: isUndefined(dType),
+        [`${dPrefix}radio-group--vertical`]: dVertical,
         'is-change': isChange,
       })}
       dDisabled={disabled}
       role="radiogroup"
       dSize={size}
       dVertical={dVertical}
+      {...({ __noStyle: isUndefined(dType) } as any)}
     >
       {dList.map((item) =>
         React.cloneElement<DRadioPrivateProps>(

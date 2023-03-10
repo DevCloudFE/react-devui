@@ -7,10 +7,17 @@
 
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 0;
   align-items: center;
   padding: 0;
   margin: 0;
+
+  &:not(.#{$rd-prefix}pagination--mini) {
+    .#{$rd-prefix}pagination__jump {
+      @include polyfill-column-gap(4px);
+    }
+
+    @include polyfill-gap(8px, 8px);
+  }
 
   @include when(change) {
     @include e(button) {
@@ -25,7 +32,7 @@
     --#{$rd-prefix}pagination-space: 8px;
     --#{$rd-prefix}pagination-button-space: 2px;
 
-    gap: 4px 0;
+    @include polyfill-gap(4px, 2px);
 
     @include font-size(0.8rem);
 
@@ -44,8 +51,8 @@
       padding: 0 6px;
     }
 
-    @include e(jump-wrapper) {
-      gap: 0 2px;
+    @include e(jump) {
+      @include polyfill-column-gap(2px);
     }
 
     @include e(jump-input) {
@@ -156,12 +163,6 @@
     align-items: center;
     margin-right: var(--#{$rd-prefix}pagination-space);
     vertical-align: top;
-  }
-
-  @include e(jump-wrapper) {
-    display: flex;
-    gap: 0 4px;
-    align-items: center;
   }
 
   @include e(jump-input) {

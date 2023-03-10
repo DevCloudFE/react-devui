@@ -25,9 +25,10 @@ $transfer-option-height: 32px;
   }
 
   @include e(actions) {
+    @include polyfill-row-gap(4px);
+
     display: flex;
     flex-direction: column;
-    gap: 4px 0;
     margin: 0 8px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 12px;
@@ -94,9 +95,10 @@ $transfer-option-height: 32px;
   }
 
   @include e(option) {
+    @include polyfill-column-gap(8px);
+
     position: relative;
     display: flex;
-    gap: 0 8px;
     align-items: center;
     height: $transfer-option-height;
     padding: 0 12px;

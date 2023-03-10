@@ -85,10 +85,11 @@ $tree-option-height: 32px;
   }
 
   @include e(option) {
+    @include polyfill-column-gap(8px);
+
     position: relative;
     display: inline-flex;
     flex-shrink: 0;
-    gap: 0 8px;
     align-items: center;
     height: $tree-option-height;
     padding: 0 12px;
@@ -175,9 +176,10 @@ $tree-option-height: 32px;
   }
 
   @include e(search-option) {
+    @include polyfill-column-gap(8px);
+
     position: relative;
     display: flex;
-    gap: 0 8px;
     align-items: center;
     height: $tree-option-height;
     padding: 0 12px;

@@ -16,9 +16,10 @@
   }
 
   @include e(header-actions) {
+    @include polyfill-column-gap(8px);
+
     display: inline-flex;
     flex-shrink: 0;
-    gap: 0 8px;
     align-items: center;
   }
 }

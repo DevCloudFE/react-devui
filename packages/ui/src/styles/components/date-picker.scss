@@ -82,7 +82,7 @@
     height: 26px;
     cursor: pointer;
 
-    &:not(.is-current-selected, .is-another-selected, .is-hover, .is-between, .is-between-hover):hover {
+    &:not(.is-current-selected):not(.is-another-selected):not(.is-hover):not(.is-between):not(.is-between-hover):hover {
       background-color: var(--#{$rd-prefix}background-color-hover);
     }
 
@@ -141,8 +141,9 @@
   }
 
   @include e(footer) {
+    @include polyfill-column-gap(4px);
+
     display: flex;
-    gap: 0 4px;
     align-items: center;
     justify-content: center;
     min-height: 41px;

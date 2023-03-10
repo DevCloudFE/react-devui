@@ -45,9 +45,10 @@
     --#{$rd-prefix}upload-action-color-lighter: var(--#{$rd-prefix}text-color);
     --#{$rd-prefix}upload-action-background-color-hover: var(--#{$rd-prefix}background-color-hover);
 
+    @include polyfill-row-gap(8px);
+
     display: flex;
     flex-direction: column;
-    gap: 8px 0;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -153,9 +154,10 @@
     --#{$rd-prefix}upload-action-color-lighter: #{map.get($rd-colors, 'white')};
     --#{$rd-prefix}upload-action-background-color-hover: var(--#{$rd-prefix}background-color-light-hover);
 
+    @include polyfill-gap(8px, 8px);
+
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -171,7 +173,6 @@
     width: 104px;
     height: 104px;
     padding: 8px;
-    margin: 0;
     vertical-align: top;
     background-color: var(--#{$rd-prefix}background-color-light-gray);
     border: 1px solid var(--#{$rd-prefix}color-border);

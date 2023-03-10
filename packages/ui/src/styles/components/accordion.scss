@@ -12,8 +12,9 @@
   }
 
   @include e(item-button) {
+    @include polyfill-column-gap(10px);
+
     display: flex;
-    gap: 0 10px;
     align-items: center;
     padding: 12px 16px;
     cursor: pointer;

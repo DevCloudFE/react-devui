@@ -8,7 +8,8 @@
   "rules": {
     "import-notation": null,
     "selector-class-pattern": null,
-    "block-no-empty": null
+    "block-no-empty": null,
+    "selector-not-notation": "simple"
   },
   "overrides": [
     {

@@ -1,8 +1,9 @@
 @include b(breadcrumb) {
   @include e(list) {
+    @include polyfill-column-gap(2px);
+
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 2px;
     align-items: center;
     padding: 0;
     margin: 0 -6px;

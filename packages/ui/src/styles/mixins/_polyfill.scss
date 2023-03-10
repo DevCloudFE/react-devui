@@ -1,0 +1,19 @@
+@mixin polyfill-gap($row-gap, $column-gap) {
+  row-gap: #{$row-gap};
+
+  & > * + * {
+    margin-left: #{$column-gap};
+  }
+}
+
+@mixin polyfill-row-gap($row-gap) {
+  & > * + * {
+    margin-top: #{$row-gap};
+  }
+}
+
+@mixin polyfill-column-gap($column-gap) {
+  & > * + * {
+    margin-left: #{$column-gap};
+  }
+}

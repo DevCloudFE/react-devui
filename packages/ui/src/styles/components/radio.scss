@@ -4,7 +4,6 @@
 @include b(radio) {
   position: relative;
   display: inline-flex;
-  gap: 0 8px;
   align-items: center;
 
   &:hover {
@@ -51,7 +50,6 @@
   }
 
   @include m(button) {
-    gap: 0;
     height: var(--#{$rd-prefix}size);
     white-space: nowrap;
     cursor: pointer;
@@ -76,6 +74,7 @@
     @include e(input-wrapper) {
       width: 0;
       height: 0;
+      margin-right: 0;
       overflow: hidden;
     }
 
@@ -123,6 +122,7 @@
     position: relative;
     width: 16px;
     height: 16px;
+    margin-right: 8px;
     cursor: pointer;
     background-color: var(--#{$rd-prefix}background-color-input);
     border-radius: 50%;
@@ -179,6 +179,10 @@
 }
 
 @include b(radio-group) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
   @include when(change) {
     .#{$rd-prefix}radio,
     .#{$rd-prefix}radio__label {
@@ -186,8 +190,21 @@
     }
   }
 
+  @include m(vertical) {
+    align-items: flex-start;
+  }
+
   @include m(default) {
-    flex-wrap: wrap;
-    gap: 8px 12px;
+    &:not(.#{$rd-prefix}radio-group--vertical) {
+      @include polyfill-gap(8px, 12px);
+    }
+  }
+
+  @include m(vertical) {
+    &.#{$rd-prefix}radio-group--default {
+      @include polyfill-row-gap(8px);
+
+      flex-direction: column;
+    }
   }
 }

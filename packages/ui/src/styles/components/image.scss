@@ -120,8 +120,9 @@
   }
 
   @include e(toolbar-page) {
+    @include polyfill-column-gap(8px);
+
     display: inline-flex;
-    gap: 0 8px;
     align-items: center;
     margin-right: auto;
   }
@@ -159,12 +160,13 @@
   }
 
   @include e(thumbnail-list) {
+    @include polyfill-column-gap(8px);
+
     position: absolute;
     bottom: 10px;
     left: 50%;
     z-index: 5;
     display: flex;
-    gap: 0 8px;
     padding: 8px;
     margin: 0;
     list-style: none;

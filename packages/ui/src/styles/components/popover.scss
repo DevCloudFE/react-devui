@@ -149,7 +149,8 @@
   }
 
   @include e(footer) {
-    gap: 0 6px;
+    @include polyfill-column-gap(6px);
+
     padding: 0 12px 10px;
     border-top: none;
 

@@ -1,7 +1,8 @@
 @include b(rating) {
+  @include polyfill-column-gap(8px);
+
   position: relative;
   display: inline-flex;
-  gap: 0 0.35em;
   align-items: center;
   font-size: 1.2em;
   color: var(--#{$rd-prefix}color-warning);

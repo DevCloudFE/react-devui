@@ -201,7 +201,6 @@ h3 {
         'DatePicker': 'date-picker',
         'Image': 'image',
         'Input': 'input',
-        'Radio': 'radio',
         'Select': 'select',
         'Switch': 'switch',
         'Tag': 'tag',
@@ -248,20 +247,6 @@ h3 {
       text-align: center;
       background: var(--#{$rd-prefix}background-color-primary);
       border-radius: var(--#{$rd-prefix}border-radius);
-    }
-  }
-
-  section[id^='Checkbox'] {
-    .#{$rd-prefix}checkbox {
-      margin-right: 8px;
-      margin-bottom: 12px;
-    }
-
-    .#{$rd-prefix}checkbox-group {
-      .#{$rd-prefix}checkbox {
-        margin-right: 0;
-        margin-bottom: 0;
-      }
     }
   }
 

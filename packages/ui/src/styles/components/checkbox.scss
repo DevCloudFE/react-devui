@@ -15,9 +15,10 @@
 }
 
 @include b(checkbox) {
+  @include polyfill-column-gap(8px);
+
   position: relative;
   display: inline-flex;
-  gap: 0 8px;
   align-items: center;
 
   &:hover {
@@ -192,10 +193,15 @@
 @include b(checkbox-group) {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
   align-items: center;
 
+  &:not(.#{$rd-prefix}checkbox-group--vertical) {
+    @include polyfill-gap(8px, 12px);
+  }
+
   @include m(vertical) {
+    @include polyfill-row-gap(8px);
+
     flex-direction: column;
     align-items: flex-start;
   }

@@ -246,36 +246,48 @@
       top: -16px;
       left: 0;
       flex-direction: column-reverse;
-      gap: 10px 0;
       width: 100%;
       transform: translateY(-100%);
+
+      & > * + * {
+        margin-bottom: 10px;
+      }
     }
 
     @include m(right) {
       top: 0;
       right: -16px;
       flex-direction: row;
-      gap: 0 10px;
       height: 100%;
       transform: translateX(100%);
+
+      & > * + * {
+        margin-left: 10px;
+      }
     }
 
     @include m(bottom) {
       bottom: -16px;
       left: 0;
       flex-direction: column;
-      gap: 10px 0;
       width: 100%;
       transform: translateY(100%);
+
+      & > * + * {
+        margin-top: 10px;
+      }
     }
 
     @include m(left) {
       top: 0;
       left: -16px;
       flex-direction: row-reverse;
-      gap: 0 10px;
       height: 100%;
       transform: translateX(-100%);
+
+      & > * + * {
+        margin-right: 10px;
+      }
     }
   }
 

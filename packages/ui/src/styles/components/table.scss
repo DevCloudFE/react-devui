@@ -340,9 +340,10 @@ $table-filter-option-height: 32px;
   }
 
   @include e(filter-option) {
+    @include polyfill-column-gap(8px);
+
     position: relative;
     display: flex;
-    gap: 0 8px;
     align-items: center;
     width: 100%;
     height: $table-filter-option-height;

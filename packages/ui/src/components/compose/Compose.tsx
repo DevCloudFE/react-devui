@@ -21,6 +21,10 @@ export interface DComposeProps extends React.HTMLAttributes<HTMLDivElement> {
   dDisabled?: boolean;
 }
 
+export interface DComposePrivateProps {
+  __noStyle?: boolean;
+}
+
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCompose' as const });
 export const DCompose: {
   (props: DComposeProps): JSX.Element | null;
@@ -31,9 +35,10 @@ export const DCompose: {
     dSize,
     dVertical = false,
     dDisabled = false,
+    __noStyle,
 
     ...restProps
-  } = useComponentConfig(COMPONENT_NAME, props);
+  } = useComponentConfig(COMPONENT_NAME, props as DComposeProps & DComposePrivateProps);
 
   //#region Context
   const dPrefix = usePrefixConfig();
@@ -55,9 +60,13 @@ export const DCompose: {
     <DComposeContext.Provider value={contextValue}>
       <div
         {...restProps}
-        className={getClassName(restProps.className, `${dPrefix}compose`, {
-          [`${dPrefix}compose--vertical`]: dVertical,
-        })}
+        className={
+          __noStyle
+            ? restProps.className
+            : getClassName(restProps.className, `${dPrefix}compose`, {
+                [`${dPrefix}compose--vertical`]: dVertical,
+              })
+        }
         role="group"
       >
         {children}

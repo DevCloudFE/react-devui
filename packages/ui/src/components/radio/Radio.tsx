@@ -64,10 +64,14 @@ export const DRadio: {
 
   return (
     <DBaseDesign
-      dComposeDesign={{
-        active: checked || focusVisible,
-        disabled: disabled,
-      }}
+      dComposeDesign={
+        __type
+          ? {
+              active: checked || focusVisible,
+              disabled: disabled,
+            }
+          : false
+      }
       dFormDesign={false}
     >
       {({ render: renderBaseDesign }) =>

@@ -1,7 +1,8 @@
 @include b(empty) {
+  @include polyfill-row-gap(8px);
+
   display: flex;
   flex-direction: column;
-  gap: 8px 0;
   align-items: center;
   color: rgb(var(--#{$rd-prefix}text-color-rgb) / 28%);
 
