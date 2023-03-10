@@ -238,6 +238,9 @@ export default AppRoute(() => {
                 });
               }}
               onSearchClick={() => {
+                setDeviceQuery((draft) => {
+                  draft.page = 1;
+                });
                 setUpdateDeviceTable((n) => n + 1);
               }}
               onResetClick={() => {
