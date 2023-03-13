@@ -2,8 +2,6 @@
 
 @include b(pagination) {
   --#{$rd-prefix}pagination-size: 32px;
-  --#{$rd-prefix}pagination-space: 16px;
-  --#{$rd-prefix}pagination-button-space: 8px;
 
   display: flex;
   flex-wrap: wrap;
@@ -29,8 +27,6 @@
 
   @include m(mini) {
     --#{$rd-prefix}pagination-size: 24px;
-    --#{$rd-prefix}pagination-space: 8px;
-    --#{$rd-prefix}pagination-button-space: 2px;
 
     @include polyfill-gap(4px, 2px);
 
@@ -66,7 +62,6 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    margin-right: var(--#{$rd-prefix}pagination-space);
     vertical-align: top;
   }
 
@@ -77,7 +72,6 @@
     justify-content: center;
     min-width: var(--#{$rd-prefix}pagination-size);
     height: var(--#{$rd-prefix}pagination-size);
-    margin-right: var(--#{$rd-prefix}pagination-button-space);
     vertical-align: top;
     cursor: pointer;
     user-select: none;
@@ -152,7 +146,6 @@
   @include e(page-size) {
     @include overwrite-component(select) {
       width: auto;
-      margin-right: var(--#{$rd-prefix}pagination-space);
       font-size: inherit;
     }
   }
@@ -161,7 +154,6 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    margin-right: var(--#{$rd-prefix}pagination-space);
     vertical-align: top;
   }
 
