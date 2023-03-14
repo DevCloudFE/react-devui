@@ -132,8 +132,14 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                           />
                         </DTable.Td>
                       )}
-                      {columns.map((column, index) => (
-                        <DTable.Td key={index} dWidth={column.width} dFixed={column.fixed} dAlign={column.align} dNowrap={column.nowrap}>
+                      {columns.map((column, indexOfCol) => (
+                        <DTable.Td
+                          key={indexOfCol}
+                          dWidth={column.width}
+                          dFixed={column.fixed}
+                          dAlign={column.align}
+                          dNowrap={column.nowrap}
+                        >
                           {isString(column.td) ? get(data, column.td) : column.td(data, index)}
                         </DTable.Td>
                       ))}
@@ -159,8 +165,8 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                   {getAction(actions[0])}
                                   <DSeparator dVertical></DSeparator>
                                   <DDropdown
-                                    dList={actions.slice(1).map((action, index) => ({
-                                      id: index + 1,
+                                    dList={actions.slice(1).map((action, indexOfAction) => ({
+                                      id: indexOfAction + 1,
                                       label: action.text,
                                       type: 'item',
                                     }))}
@@ -178,10 +184,10 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                 </>
                               );
                             } else {
-                              return actions.map((action, index) => (
-                                <React.Fragment key={index}>
+                              return actions.map((action, indexOfAction) => (
+                                <React.Fragment key={indexOfAction}>
                                   {getAction(action)}
-                                  {index !== actions.length - 1 && <DSeparator dVertical></DSeparator>}
+                                  {indexOfAction !== actions.length - 1 && <DSeparator dVertical></DSeparator>}
                                 </React.Fragment>
                               ));
                             }
@@ -249,8 +255,8 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                               getAction(actions[0])
                             ) : (
                               <DDropdown
-                                dList={actions.map((action, index) => ({
-                                  id: index,
+                                dList={actions.map((action, indexOfAction) => ({
+                                  id: indexOfAction,
                                   label: action.text,
                                   type: 'item',
                                 }))}
@@ -290,7 +296,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                     aLabelAlign="right"
                     aLabelWidth={aLabelWidth}
                     aList={columns
-                      .filter((column, index) => !column.checkbox && index !== titleIndex)
+                      .filter((column, indexOfCol) => !column.checkbox && indexOfCol !== titleIndex)
                       .map((column) => ({
                         label: column.th as string,
                         content: isString(column.td) ? get(data, column.td) : column.td(data, index),
@@ -327,8 +333,8 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                             ? [
                                 getAction(actions[0]),
                                 <DDropdown
-                                  dList={actions.slice(1).map((action, index) => ({
-                                    id: index + 1,
+                                  dList={actions.slice(1).map((action, indexOfAction) => ({
+                                    id: indexOfAction + 1,
                                     label: action.text,
                                     type: 'item',
                                   }))}
