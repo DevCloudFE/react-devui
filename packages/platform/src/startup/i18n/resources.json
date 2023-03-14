@@ -10,6 +10,10 @@
         "language": {
           "Change language": "Change language"
         },
+        "table": {
+          "ACTIONS": "ACTIONS",
+          "More": "More"
+        },
         "table-filter": {
           "Search": "Search",
           "Reset": "Reset",
@@ -99,6 +103,10 @@
       "components": {
         "language": {
           "Change language": "改变语言"
+        },
+        "table": {
+          "ACTIONS": "操作",
+          "More": "更多"
         },
         "table-filter": {
           "Search": "查询",

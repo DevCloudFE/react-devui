@@ -4,13 +4,12 @@ import type { DSelectItem } from '@react-devui/ui/components/select';
 import { isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 
 import { useImmer, useMount } from '@react-devui/hooks';
 import { DownOutlined, PlusOutlined } from '@react-devui/icons';
-import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSeparator, DSpinner, DTable } from '@react-devui/ui';
+import { DButton, DCard, DCheckbox, DDropdown, DModal, DPagination, DSelect, DSpinner } from '@react-devui/ui';
 
-import { AppRouteHeader, AppStatusDot, AppTableFilter } from '../../../components';
+import { AppRouteHeader, AppStatusDot, AppTable, AppTableFilter } from '../../../components';
 import { useHttp } from '../../../core';
 import { useAPI, useQueryParams } from '../../../hooks';
 import { AppRoute, DialogService } from '../../../utils';
@@ -42,7 +41,7 @@ export default AppRoute(() => {
     page: 1,
     pageSize: 10,
   });
-  const [deviceQuery, setDeviceQuery] = useImmer(deviceQuerySaved);
+  const [deviceQuery, setDeviceQuery] = useImmer<DeviceQueryParams>({ ...deviceQuerySaved, model: [] });
   const queryEmptyStatus = (() => {
     const getEmptyStatus = (query: DeviceQueryParams) => ({
       keyword: query.keyword.length === 0,
@@ -64,12 +63,12 @@ export default AppRoute(() => {
   const allDeviceSelected =
     deviceTable.selected.size === 0 ? false : deviceTable.selected.size === deviceTable.list.length ? true : 'mixed';
 
-  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
-
   const [paramsOfDeleteModal, setParamsOfDeleteModal] = useImmer<{
     visible: boolean;
     device: DeviceData;
   }>();
+
+  const [modelList, setModelList] = useState<DSelectItem<string>[]>();
 
   useMount(() => {
     modelApi.list().subscribe({
@@ -81,13 +80,21 @@ export default AppRoute(() => {
             disabled: model.disabled,
           }))
         );
+        setDeviceQuery((draft) => {
+          draft.model = deviceQuerySaved.model;
+        });
       },
     });
   });
 
   const [updateDeviceTable, setUpdateDeviceTable] = useState(0);
   useEffect(() => {
-    setDeviceQuerySaved(deviceQuery);
+    if (updateDeviceTable !== 0) {
+      setDeviceQuerySaved(deviceQuery);
+      setDeviceTable((draft) => {
+        draft.loading = true;
+      });
+    }
 
     const apiQuery: StandardQueryParams = {
       page: deviceQuery.page,
@@ -96,10 +103,6 @@ export default AppRoute(() => {
     if (deviceQuery.sort) {
       apiQuery.sort = deviceQuery.sort;
     }
-
-    setDeviceTable((draft) => {
-      draft.loading = true;
-    });
     deviceApi.list<DeviceData>(apiQuery).subscribe({
       next: (res) => {
         setDeviceQuery((draft) => {
@@ -196,9 +199,9 @@ export default AppRoute(() => {
                     <DSelect
                       style={{ width: '16em' }}
                       dList={modelList ?? []}
+                      dModel={deviceQuery.model}
                       dLoading={isUndefined(modelList)}
                       dPlaceholder="Model"
-                      dModel={deviceQuery.model}
                       dMultiple
                       dClearable
                       onModelChange={(value) => {
@@ -255,113 +258,90 @@ export default AppRoute(() => {
                 }
               }}
             />
-            <DTable style={{ overflow: 'auto hidden' }}>
-              <table style={{ minWidth: 1200 }}>
-                <thead>
-                  <tr>
-                    <DTable.Th dWidth={60} dAlign="center">
-                      <DCheckbox
-                        dModel={allDeviceSelected !== 'mixed' ? allDeviceSelected : undefined}
-                        dIndeterminate={allDeviceSelected === 'mixed'}
-                        onModelChange={(checked) => {
-                          setDeviceTable((draft) => {
-                            draft.selected = new Set(checked ? draft.list.map((data) => data.id) : []);
-                          });
-                        }}
-                      ></DCheckbox>
-                    </DTable.Th>
-                    <DTable.Th
-                      dSort={{
-                        options: ['ascend', 'descend'],
-                        active: deviceQuery.sort === 'id' ? 'ascend' : deviceQuery.sort === '-id' ? 'descend' : null,
-                        onSort: (order) => {
-                          setDeviceQuery((draft) => {
-                            draft.sort = order === 'ascend' ? 'id' : order === 'descend' ? '-id' : null;
-                          });
-                          setUpdateDeviceTable((n) => n + 1);
-                        },
+            <AppTable
+              aData={deviceTable.list}
+              aColumns={[
+                {
+                  th: (
+                    <DCheckbox
+                      dModel={allDeviceSelected !== 'mixed' ? allDeviceSelected : undefined}
+                      dIndeterminate={allDeviceSelected === 'mixed'}
+                      onModelChange={(checked) => {
+                        setDeviceTable((draft) => {
+                          draft.selected = new Set(checked ? draft.list.map((data) => data.id) : []);
+                        });
                       }}
+                    ></DCheckbox>
+                  ),
+                  td: (data) => (
+                    <DCheckbox
+                      dModel={deviceTable.selected.has(data.id)}
+                      onModelChange={(checked) => {
+                        setDeviceTable((draft) => {
+                          if (checked) {
+                            draft.selected.add(data.id);
+                          } else {
+                            draft.selected.delete(data.id);
+                          }
+                        });
+                      }}
+                    ></DCheckbox>
+                  ),
+                  width: 60,
+                  align: 'center',
+                  checkbox: true,
+                },
+                {
+                  th: 'NAME',
+                  td: 'name',
+                  title: true,
+                },
+                {
+                  th: 'MODEL',
+                  td: 'model',
+                },
+                {
+                  th: 'PRICE',
+                  td: 'price',
+                },
+                {
+                  th: 'STATUS',
+                  td: (data) => (
+                    <AppStatusDot
+                      aTheme={data.status === 0 ? 'success' : data.status === 1 ? 'warning' : 'danger'}
+                      aWave={data.status === 2}
                     >
-                      ID
-                    </DTable.Th>
-                    <DTable.Th>NAME</DTable.Th>
-                    <DTable.Th>MODEL</DTable.Th>
-                    <DTable.Th>PRICE</DTable.Th>
-                    <DTable.Th>STATUS</DTable.Th>
-                    <DTable.Th>CREATE TIME</DTable.Th>
-                    <DTable.Th dWidth={140} dFixed={{ top: 0, right: 0 }}>
-                      ACTIONS
-                    </DTable.Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {deviceTable.list.length === 0 ? (
-                    <DTable.Empty />
-                  ) : (
-                    deviceTable.list.map((data) => (
-                      <tr key={data.id}>
-                        <DTable.Td dWidth={60} dAlign="center">
-                          <DCheckbox
-                            dModel={deviceTable.selected.has(data.id)}
-                            onModelChange={(checked) => {
-                              setDeviceTable((draft) => {
-                                if (checked) {
-                                  draft.selected.add(data.id);
-                                } else {
-                                  draft.selected.delete(data.id);
-                                }
-                              });
-                            }}
-                          ></DCheckbox>
-                        </DTable.Td>
-                        <DTable.Td>{data.id}</DTable.Td>
-                        <DTable.Td>{data.name}</DTable.Td>
-                        <DTable.Td>{data.model}</DTable.Td>
-                        <DTable.Td>{data.price}</DTable.Td>
-                        <DTable.Td dNowrap>
-                          <AppStatusDot
-                            aTheme={data.status === 0 ? 'success' : data.status === 1 ? 'warning' : 'danger'}
-                            aWave={data.status === 2}
-                          >
-                            {data.status === 0 ? 'Normal' : data.status === 1 ? 'Failure' : 'Alarm'}
-                          </AppStatusDot>
-                        </DTable.Td>
-                        <DTable.Td>{new Date(data.create_time).toLocaleString()}</DTable.Td>
-                        <DTable.Td dWidth={140} dFixed={{ right: 0 }} dNowrap>
-                          <Link className="app-link" to={`/list/standard-table/${data.id}`}>
-                            View
-                          </Link>
-                          <DSeparator dVertical></DSeparator>
-                          <DDropdown
-                            dList={[
-                              { id: 'edit', label: 'Edit', type: 'item' },
-                              { id: 'delete', label: 'Delete', type: 'item' },
-                            ]}
-                            dPlacement="bottom-right"
-                            onItemClick={(action) => {
-                              switch (action) {
-                                case 'edit':
-                                  openDeviceModal(data);
-                                  break;
-
-                                case 'delete':
-                                  setParamsOfDeleteModal({ visible: true, device: data });
-                                  break;
-
-                                default:
-                                  break;
-                              }
-                            }}
-                          >
-                            <DButton dType="link">More</DButton>
-                          </DDropdown>
-                        </DTable.Td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </DTable>
+                      {data.status === 0 ? 'Normal' : data.status === 1 ? 'Failure' : 'Alarm'}
+                    </AppStatusDot>
+                  ),
+                  nowrap: true,
+                },
+                {
+                  th: 'CREATE TIME',
+                  td: (data) => new Date(data.create_time).toLocaleString(),
+                },
+              ]}
+              aActions={{
+                actions: (data) => [
+                  { text: 'View', link: `/list/standard-table/${data.id}` },
+                  {
+                    text: 'Edit',
+                    onclick: () => {
+                      openDeviceModal(data);
+                    },
+                  },
+                  {
+                    text: 'Delete',
+                    onclick: () => {
+                      setParamsOfDeleteModal({ visible: true, device: data });
+                    },
+                  },
+                ],
+                width: 140,
+              }}
+              aScroll={{ x: 1200 }}
+              aLabelWidth={72}
+            />
             <div className="mt-3 d-flex align-items-center justify-content-between flex-wrap" style={{ gap: '10px 12px' }}>
               <div>
                 <DButton className="me-2" disabled={allDeviceSelected === false} dType="secondary">

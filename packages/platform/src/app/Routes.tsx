@@ -95,16 +95,16 @@ export const AppRoutes = React.memo(() => {
       },
       {
         path: '/',
+        element: <AppHomeRoute />,
+      },
+      {
+        path: '/',
         element: <AppLayout />,
         data: {
           canActivate: [tokenGuard],
           canActivateChild: [tokenGuard],
         },
         children: [
-          {
-            index: true,
-            element: <AppHomeRoute />,
-          },
           {
             path: 'dashboard',
             children: [

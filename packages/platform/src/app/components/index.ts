@@ -24,5 +24,8 @@ export { AppRouteHeader } from './route-header';
 export type { AppStatusDotProps } from './status-dot';
 export { AppStatusDot } from './status-dot';
 
+export type { AppTableProps } from './table';
+export { AppTable } from './table';
+
 export type { AppTableFilterProps } from './table-filter';
 export { AppTableFilter } from './table-filter';
