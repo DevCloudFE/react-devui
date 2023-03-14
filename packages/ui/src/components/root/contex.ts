@@ -9,7 +9,7 @@ import type { DAvatarProps } from '../avatar';
 import type { DBadgeProps } from '../badge';
 import type { DBreadcrumbProps } from '../breadcrumb';
 import type { DButtonProps } from '../button';
-import type { DCardProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from '../card';
+import type { DCardProps, DCardActionsProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from '../card';
 import type { DCascaderProps } from '../cascader';
 import type { DCheckboxProps, DCheckboxGroupProps } from '../checkbox';
 import type { DComposeProps, DComposeItemProps } from '../compose';
@@ -77,6 +77,7 @@ export type DComponentConfig = {
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
   DCard: DCardProps;
+  'DCard.Actions': DCardActionsProps;
   'DCard.Action': DCardActionProps;
   'DCard.Header': DCardHeaderProps;
   'DCard.Content': DCardContentProps;

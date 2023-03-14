@@ -25,7 +25,7 @@ export { DBreadcrumb } from './breadcrumb';
 export type { DButtonProps } from './button';
 export { DButton } from './button';
 
-export type { DCardProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from './card';
+export type { DCardProps, DCardActionsProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from './card';
 export { DCard } from './card';
 
 export type { DCascaderProps } from './cascader';

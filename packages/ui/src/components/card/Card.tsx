@@ -4,20 +4,20 @@ import { getClassName } from '@react-devui/utils';
 
 import { registerComponentMate } from '../../utils';
 import { useComponentConfig, usePrefixConfig } from '../root';
-import { DSeparator } from '../separator';
 import { DCardAction } from './CardAction';
+import { DCardActions } from './CardActions';
 import { DCardContent } from './CardContent';
 import { DCardHeader } from './CardHeader';
 
 export interface DCardProps extends React.HTMLAttributes<HTMLDivElement> {
   dBorder?: boolean;
   dShadow?: boolean | 'hover';
-  dActions?: React.ReactNode[];
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard' as const });
 export const DCard: {
   (props: DCardProps): JSX.Element | null;
+  Actions: typeof DCardActions;
   Action: typeof DCardAction;
   Header: typeof DCardHeader;
   Content: typeof DCardContent;
@@ -26,7 +26,6 @@ export const DCard: {
     children,
     dBorder = true,
     dShadow = false,
-    dActions,
 
     ...restProps
   } = useComponentConfig(COMPONENT_NAME, props);
@@ -45,20 +44,11 @@ export const DCard: {
       })}
     >
       {children}
-      {dActions && (
-        <div className={`${dPrefix}card__actions`}>
-          {React.Children.map(dActions, (action, index) => (
-            <>
-              {action}
-              {index !== dActions.length - 1 && <DSeparator style={{ margin: 8 }} dVertical></DSeparator>}
-            </>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
 
+DCard.Actions = DCardActions;
 DCard.Action = DCardAction;
 DCard.Header = DCardHeader;
 DCard.Content = DCardContent;

@@ -5,10 +5,10 @@ import { getClassName } from '@react-devui/utils';
 import { registerComponentMate } from '../../utils';
 import { useComponentConfig, usePrefixConfig } from '../root';
 
-export type DCardActionProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+export type DCardActionProps = React.ButtonHTMLAttributes<HTMLDivElement>;
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCard.Action' as const });
-function CardAction(props: DCardActionProps, ref: React.ForwardedRef<HTMLButtonElement>): JSX.Element | null {
+function CardAction(props: DCardActionProps, ref: React.ForwardedRef<HTMLDivElement>): JSX.Element | null {
   const {
     children,
 
@@ -20,14 +20,15 @@ function CardAction(props: DCardActionProps, ref: React.ForwardedRef<HTMLButtonE
   //#endregion
 
   return (
-    <button
+    <div
       {...restProps}
       ref={ref}
       className={getClassName(restProps.className, `${dPrefix}card__action`)}
-      type={restProps['type'] ?? 'button'}
+      role={restProps['role'] ?? 'button'}
+      tabIndex={restProps['tabIndex'] ?? 0}
     >
       {children}
-    </button>
+    </div>
   );
 }
 
