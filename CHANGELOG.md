@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.4.0](https://github.com/DevCloudFE/react-devui/compare/v18.3.7...v18.4.0) (2023-03-14)
+
+### Bug Fixes
+
+- **platform:** fix gap not support in old browser ([a922ff7](https://github.com/DevCloudFE/react-devui/commit/a922ff7727e2be1ddf68b902829b7026c94aff8f))
+- **ui:** fix style of pagination ([b83a36b](https://github.com/DevCloudFE/react-devui/commit/b83a36bf6d3327c97203aaecc298f2539587cf8e))
+
+### Code Refactoring
+
+- **ui:** add DCardActions ([01176c2](https://github.com/DevCloudFE/react-devui/commit/01176c2f4f327214d449b86084909c20fa4c811a))
+
+### BREAKING CHANGES
+
+- **ui:** adjust api of card's actions.
+
 ## [18.3.7](https://github.com/DevCloudFE/react-devui/compare/v18.3.6...v18.3.7) (2023-03-10)
 
 ### Bug Fixes

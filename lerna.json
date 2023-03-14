@@ -2,7 +2,7 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "useNx": true,
   "packages": ["packages/hooks", "packages/icons", "packages/ui", "packages/utils"],
-  "version": "18.3.7",
+  "version": "18.4.0",
   "command": {
     "version": {
       "conventionalCommits": true,
