@@ -1,0 +1,40 @@
+@include b(table) {
+  @include e(title) {
+    margin: 0 0 8px;
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  @include e(card-header) {
+    .#{$rd-prefix}card__header-title {
+      display: flex;
+      align-items: center;
+
+      & > .#{$rd-prefix}checkbox {
+        margin-right: 8px;
+      }
+
+      & > span {
+        @include utils-ellipsis;
+
+        flex: 1 0 0;
+      }
+    }
+  }
+
+  @include e(expand) {
+    border-top: 1px solid var(--#{$rd-prefix}color-border);
+  }
+
+  @include e(expand-button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+
+    @include when(expand) {
+      border-top: 1px solid var(--#{$rd-prefix}color-border);
+    }
+  }
+}

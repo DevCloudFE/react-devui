@@ -208,11 +208,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
         </table>
       </DTable>
       <div className={getClassName('d-md-none', className)}>
-        {aName && (
-          <h2 className="app-title text-center" style={{ margin: '0 0 8px', paddingBottom: 4 }}>
-            {aName}
-          </h2>
-        )}
+        {aName && <h2 className="app-table__title">{aName}</h2>}
         {aData.length === 0 ? (
           <DEmpty
             dIcon={
@@ -233,6 +229,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
               <DCard key={id} className="mb-3">
                 {(titleIndex !== -1 || aColumns[0].checkbox) && (
                   <DCard.Header
+                    className="app-table__card-header"
                     dAction={
                       aActions
                         ? (() => {
@@ -281,10 +278,10 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                       const content = titleIndex !== -1 && columns[titleIndex].td;
 
                       return (
-                        <div className="d-inline-flex align-items-center">
+                        <>
                           {checkbox && checkbox(data, index)}
-                          {content && <div className="ms-2">{isString(content) ? get(data, content) : content(data, index)}</div>}
-                        </div>
+                          {content && <span>{isString(content) ? get(data, content) : content(data, index)}</span>}
+                        </>
                       );
                     })()}
                   </DCard.Header>
@@ -359,13 +356,12 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                   }
                 })()}
                 {expandNode !== false && (
-                  <div className="app-border-top">
+                  <div className="app-table__expand">
                     {expands.has(id) && <div style={{ padding: 16 }}>{expandNode}</div>}
                     <div
-                      className={getClassName('d-flex justify-content-center align-items-center', {
-                        'app-border-top': expands.has(id),
+                      className={getClassName('app-table__expand-button', {
+                        'is-expand': expands.has(id),
                       })}
-                      style={{ height: 36 }}
                       onClick={() => {
                         setExpands((draft) => {
                           if (draft.has(id)) {
