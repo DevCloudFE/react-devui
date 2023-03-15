@@ -45,10 +45,18 @@
     box-shadow: 0 8px 40px 0 var(--#{$rd-prefix}shadow-color);
   }
 
+  @include e(header) {
+    flex-shrink: 0;
+  }
+
   @include e(body) {
     position: relative;
     padding: 20px;
     overflow: hidden auto;
+  }
+
+  @include e(footer) {
+    flex-shrink: 0;
   }
 
   @include e(icon) {

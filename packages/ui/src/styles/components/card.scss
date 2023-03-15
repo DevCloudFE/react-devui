@@ -33,7 +33,7 @@
   }
 
   @include e(header-action) {
-    flex-shrink: 0;
+    margin-left: 10px;
   }
 
   @include e(content) {

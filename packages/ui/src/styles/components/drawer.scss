@@ -54,7 +54,7 @@
 
   @include e(body) {
     position: relative;
-    flex-grow: 1;
+    flex: 1 0 0;
     padding: 20px;
     overflow: hidden auto;
   }
