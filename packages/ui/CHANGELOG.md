@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.4.1](https://github.com/DevCloudFE/react-devui/compare/v18.4.0...v18.4.1) (2023-03-15)
+
+### Bug Fixes
+
+- **ui:** fix style ([8a0a181](https://github.com/DevCloudFE/react-devui/commit/8a0a18121cfbb4ab4bb072ae7fadc58d7373f9dd))
+
 # [18.4.0](https://github.com/DevCloudFE/react-devui/compare/v18.3.7...v18.4.0) (2023-03-14)
 
 ### Bug Fixes
