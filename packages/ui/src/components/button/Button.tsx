@@ -3,7 +3,7 @@ import type { DSize } from '../../utils/types';
 import React from 'react';
 
 import { LoadingOutlined } from '@react-devui/icons';
-import { getClassName } from '@react-devui/utils';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import { useWave, useGeneralContext } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_SLOW } from '../../utils';
@@ -85,7 +85,7 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
               }
             }}
           >
-            {dIcon ? (
+            {checkNodeExist(dIcon) ? (
               buttonIcon(dLoading)
             ) : (
               <DCollapseTransition
