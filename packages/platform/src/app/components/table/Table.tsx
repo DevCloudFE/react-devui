@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useImmer } from '@react-devui/hooks';
-import { CaretDownOutlined, CaretUpOutlined, DCustomIcon, EllipsisOutlined } from '@react-devui/icons';
+import { CaretDownOutlined, CaretUpOutlined, DCustomIcon, EllipsisOutlined, LoadingOutlined } from '@react-devui/icons';
 import { DButton, DSeparator, DTable, DDropdown, DEmpty, DCard } from '@react-devui/ui';
 import { getClassName } from '@react-devui/utils';
 
@@ -46,9 +46,10 @@ export interface AppTableProps<T> {
       index: number
     ) => {
       text: string;
-      onclick?: () => void;
+      onclick?: () => void | Promise<void>;
       link?: string;
       render?: (node: React.ReactElement) => React.ReactNode;
+      loading?: boolean;
       hidden?: boolean;
     }[];
     width: number | string;
@@ -153,8 +154,8 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                   {action.text}
                                 </Link>
                               ) : (
-                                <DButton dType="link" onClick={action.onclick}>
-                                  {action.text}
+                                <DButton disabled={action.loading} dType="link" onClick={action.onclick}>
+                                  {action.loading ? <LoadingOutlined dSpin /> : action.text}
                                 </DButton>
                               );
                               return action.render ? action.render(node) : node;
@@ -175,7 +176,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                       if (actions[id].link) {
                                         navigate(actions[id].link!);
                                       } else {
-                                        actions[id].onclick?.();
+                                        return actions[id].onclick?.();
                                       }
                                     }}
                                   >
@@ -238,18 +239,18 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                               return undefined;
                             }
 
-                            const getAction = (action: typeof actions[0]) => {
-                              const node = action.link ? (
-                                <Link className="app-link" to={action.link}>
-                                  <EllipsisOutlined />
-                                </Link>
-                              ) : (
-                                <DButton dType="link" dIcon={<EllipsisOutlined />} onClick={action.onclick}></DButton>
-                              );
-                              return action.render ? action.render(node) : node;
-                            };
                             return actions.length === 1 && actions[0].link ? (
-                              getAction(actions[0])
+                              (() => {
+                                const action = actions[0];
+                                const node = action.link ? (
+                                  <Link className="app-link" to={action.link}>
+                                    <EllipsisOutlined />
+                                  </Link>
+                                ) : (
+                                  <DButton dType="link" dIcon={<EllipsisOutlined />} onClick={action.onclick}></DButton>
+                                );
+                                return action.render ? action.render(node) : node;
+                              })()
                             ) : (
                               <DDropdown
                                 dList={actions.map((action, indexOfAction) => ({
@@ -262,7 +263,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                   if (actions[id].link) {
                                     navigate(actions[id].link!);
                                   } else {
-                                    actions[id].onclick?.();
+                                    return actions[id].onclick?.();
                                   }
                                 }}
                               >
@@ -318,7 +319,9 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                           {action.text}
                         </DCard.Action>
                       ) : (
-                        <DCard.Action onClick={action.onclick}>{action.text}</DCard.Action>
+                        <DCard.Action disabled={action.loading} onClick={action.onclick}>
+                          {action.loading ? <LoadingOutlined dSpin /> : action.text}
+                        </DCard.Action>
                       );
                       return action.render ? action.render(node) : node;
                     };
@@ -340,7 +343,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                     if (actions[id].link) {
                                       navigate(actions[id].link!);
                                     } else {
-                                      actions[id].onclick?.();
+                                      return actions[id].onclick?.();
                                     }
                                   }}
                                 >

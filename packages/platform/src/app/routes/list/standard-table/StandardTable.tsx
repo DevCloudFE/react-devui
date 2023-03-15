@@ -342,7 +342,7 @@ export default AppRoute(() => {
               aScroll={{ x: 1200 }}
               aLabelWidth={72}
             />
-            <div className="mt-3 d-flex align-items-center justify-content-between flex-wrap" style={{ gap: '10px 12px' }}>
+            <div className="app-table-footer">
               <div>
                 <DButton className="me-2" disabled={allDeviceSelected === false} dType="secondary">
                   Download

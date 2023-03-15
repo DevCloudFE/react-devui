@@ -54,3 +54,16 @@ body {
   font-size: 1.1em;
   font-weight: 500;
 }
+
+.app-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  & > div:first-child {
+    margin-right: 20px;
+  }
+}
