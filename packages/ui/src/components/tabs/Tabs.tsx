@@ -362,9 +362,9 @@ function Tabs<ID extends DId, T extends DTabItem<ID>>(props: DTabsProps<ID, T>, 
                     };
                   })}
                   dPlacement={dPlacement === 'left' ? 'bottom-left' : 'bottom-right'}
-                  dCloseOnClick={false}
                   onItemClick={(id: ID) => {
                     changeActiveId(id);
+                    return false;
                   }}
                 >
                   <div

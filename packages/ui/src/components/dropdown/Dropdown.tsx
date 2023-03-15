@@ -4,7 +4,7 @@ import { isNull, isNumber, isUndefined, nth } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useEvent, useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
+import { useEvent, useEventCallback, useId, useImmer, useRefExtra } from '@react-devui/hooks';
 import { getClassName, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
@@ -42,10 +42,9 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID>>
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dTrigger?: 'hover' | 'click';
   dArrow?: boolean;
-  dCloseOnClick?: boolean;
   dZIndex?: number | string;
   onVisibleChange?: (visible: boolean) => void;
-  onItemClick?: (id: T['id'], item: T) => void;
+  onItemClick?: (id: T['id'], item: T) => void | boolean | Promise<void>;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -61,7 +60,6 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
     dPlacement = 'bottom-right',
     dTrigger = 'hover',
     dArrow = false,
-    dCloseOnClick = true,
     dZIndex,
     onVisibleChange,
     onItemClick,
@@ -102,6 +100,8 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
   const id = restProps.id ?? `${dPrefix}dropdown-${uniqueId}`;
   const triggerId = children.props.id ?? `${dPrefix}dropdown-trigger-${uniqueId}`;
   const getItemId = (id: ID) => `${dPrefix}dropdown-item-${id}-${uniqueId}`;
+
+  const [loadingIds, setLoadingIds] = useImmer(new Set<ID>());
 
   const { popupIds, setPopupIds, addPopupId, removePopupId } = useNestedPopup<ID>();
   const [focusIds, setFocusIds] = useState<ID[]>([]);
@@ -237,10 +237,19 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
         const popupState = popupIds.find((v) => v.id === itemId);
 
         const handleItemClick = () => {
-          onItemClick?.(itemId, item);
+          const shouldClose = onItemClick?.(itemId, item);
 
           setFocusIds(subParents.map((parentItem) => parentItem.id).concat([itemId]));
-          if (dCloseOnClick) {
+          if (shouldClose instanceof Promise) {
+            setLoadingIds((draft) => {
+              draft.add(itemId);
+            });
+            shouldClose.then(() => {
+              setLoadingIds((draft) => {
+                draft.delete(itemId);
+              });
+            });
+          } else if (shouldClose !== false) {
             changeVisible(false);
           }
         };
@@ -350,6 +359,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
                 dLevel={level}
                 dIcon={itemIcon}
                 dFocusVisible={focusVisible && isFocus}
+                dLoading={loadingIds.has(itemId)}
                 dDisabled={itemDisabled}
                 onItemClick={handleItemClick}
               >

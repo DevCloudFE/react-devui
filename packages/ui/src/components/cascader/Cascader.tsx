@@ -328,10 +328,10 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
               node,
             };
           })}
-          dCloseOnClick={false}
           onItemClick={(id, item) => {
             const checkeds = (item.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
             changeSelect(Array.from(checkeds.keys()));
+            return false;
           }}
         >
           <DTag className={`${dPrefix}cascader__multiple-count`} tabIndex={-1} dSize={size}>

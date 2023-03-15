@@ -353,9 +353,9 @@ function Select<V extends DId, T extends DSelectItem<V>>(
               disabled: itemDisabled,
             };
           })}
-          dCloseOnClick={false}
           onItemClick={(id: V) => {
             changeSelectByClick(id);
+            return false;
           }}
         >
           <DTag className={`${dPrefix}select__multiple-count`} tabIndex={-1} dSize={size}>

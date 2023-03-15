@@ -24,7 +24,6 @@ interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID>> extends Om
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dTrigger?: 'hover' | 'click';
   dArrow?: boolean;
-  dCloseOnClick?: boolean;
   dZIndex?: number | string;
   onVisibleChange?: (visible: boolean) => void;
   onItemClick?: (id: T['id'], item: T) => void;
@@ -40,7 +39,6 @@ interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID>> extends Om
 | dPlacement | 设置下拉菜单位置 | `'bottom-right'` |  |
 | dTrigger | 设置触发行为 | `'hover'` |  |
 | dArrow | 是否展示箭头 | `false` |  |
-| dCloseOnClick | 当点击菜单项时关闭下拉菜单 | `true` |  |
 | dZIndex | 设置下拉菜单的 `z-index` | - |  |
 | onVisibleChange | 显/隐的回调 | - |  |
 | onItemClick | 点击菜单项的回调 | - |  |

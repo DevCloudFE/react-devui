@@ -355,10 +355,10 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
               node,
             };
           })}
-          dCloseOnClick={false}
           onItemClick={(id, item) => {
             const checkeds = (item.node as MultipleTreeNode<V, T>).changeStatus('UNCHECKED', select as Set<V>);
             changeSelect(Array.from(checkeds.keys()));
+            return false;
           }}
         >
           <DTag className={`${dPrefix}tree-select__multiple-count`} tabIndex={-1} dSize={size}>
