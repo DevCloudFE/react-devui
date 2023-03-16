@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.5.0](https://github.com/DevCloudFE/react-devui/compare/v18.4.1...v18.5.0) (2023-03-16)
+
+### Bug Fixes
+
+- **ui:** fix style when card action is disabled ([a4e3077](https://github.com/DevCloudFE/react-devui/commit/a4e307739b7c6209bcdac2bac550b33cbb86e660))
+
+### Code Refactoring
+
+- **ui:** remove dCloseOnClick in dropdown ([adde61a](https://github.com/DevCloudFE/react-devui/commit/adde61ad28d34864cbfa860c90d8bbd5df7c7c62))
+
+### BREAKING CHANGES
+
+- **ui:** onItemClick support control close.
+
 ## [18.4.1](https://github.com/DevCloudFE/react-devui/compare/v18.4.0...v18.4.1) (2023-03-15)
 
 ### Bug Fixes
