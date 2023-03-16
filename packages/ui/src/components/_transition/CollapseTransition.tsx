@@ -7,12 +7,12 @@ import { DTransition } from './Transition';
 
 export interface DCollapseTransitionProps extends Omit<DTransitionProps, 'children'> {
   children: (ref: React.RefObject<any>, style: React.CSSProperties, state: DTransitionState) => JSX.Element | null;
-  dOriginalSize?: {
+  dOriginalSize: {
     width?: string | number;
     height?: string | number;
     padding?: [string | number, string | number, string | number, string | number];
   };
-  dCollapsedStyle?: {
+  dCollapsedStyle: {
     width?: string | number;
     height?: string | number;
     padding?: [string | number, string | number, string | number, string | number];
@@ -26,12 +26,12 @@ export interface DCollapseTransitionProps extends Omit<DTransitionProps, 'childr
 export function DCollapseTransition(props: DCollapseTransitionProps): JSX.Element | null {
   const {
     children,
+    dOriginalSize,
+    dCollapsedStyle,
     dStyles,
 
     ...restProps
   } = props;
-
-  const [dOriginalSize, dCollapsedStyle] = [restProps.dOriginalSize!, restProps.dCollapsedStyle!];
 
   const ref = useRef<HTMLElement>(null);
 

@@ -22,6 +22,7 @@ export default AppRoute(() => {
   const deviceApi = useAPI(http, '/device');
 
   const { id: _id } = useParams();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const id = Number(_id!);
 
   const [deviceLoading, setDeviceLoading] = useState(true);

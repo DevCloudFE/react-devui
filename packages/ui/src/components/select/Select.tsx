@@ -338,7 +338,15 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selectedItems: T[] = (_select as V[]).map((v) => itemsMap.get(v)!);
+      const selectedItems: T[] = [];
+      for (const v of _select as V[]) {
+        const item = itemsMap.get(v);
+        if (item) {
+          selectedItems.push(item);
+        } else {
+          console.warn(`Can't find item that value field is ${v}!`);
+        }
+      }
 
       suffixNode = (
         <DDropdown
@@ -384,9 +392,13 @@ function Select<V extends DId, T extends DSelectItem<V>>(
       ));
     } else {
       if (!isNull(select)) {
-        const item = itemsMap.get(select as V)!;
-        selectedLabel = item.label;
-        selectedNode = dCustomSelected ? dCustomSelected(item) : selectedLabel;
+        const item = itemsMap.get(select as V);
+        if (item) {
+          selectedLabel = item.label;
+          selectedNode = dCustomSelected ? dCustomSelected(item) : selectedLabel;
+        } else {
+          console.warn(`Can't find item that value field is ${select}!`);
+        }
       }
     }
     return [selectedNode, suffixNode, selectedLabel];

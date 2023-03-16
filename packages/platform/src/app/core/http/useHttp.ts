@@ -30,7 +30,7 @@ export function useHttp() {
 
   const http = useEventCallback(
     <T = any, D = any>(
-      config: AxiosRequestConfig<D>,
+      config: AxiosRequestConfig<D> & { url: string },
       options?: { unmount?: boolean; authorization?: boolean }
     ): Observable<T> & { abort: () => void } => {
       const { unmount = true, authorization = true } = options ?? {};
@@ -55,7 +55,7 @@ export function useHttp() {
       const req = of({
         ...config,
         baseURL: environment.http.baseURL,
-        url: environment.http.transformURL(config.url!),
+        url: environment.http.transformURL(config.url),
         headers,
         signal: controller.signal,
       }).pipe(

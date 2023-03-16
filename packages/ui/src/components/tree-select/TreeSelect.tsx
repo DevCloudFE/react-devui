@@ -65,7 +65,7 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends
   onSearchValueChange?: (value: string) => void;
   onClear?: () => void;
   onFirstExpand?: (value: T['value'], item: T) => void;
-  onExpandsChange?: (ids: T['value'][], items: T[]) => void;
+  onExpandsChange?: (ids: T['value'][], items: (T | undefined)[]) => void;
   afterVisibleChange?: (visible: boolean) => void;
 }
 
@@ -172,7 +172,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
         if (dMultiple) {
           onModelChange(
             value,
-            (value as V[]).map((v) => nodesMap.get(v)!.origin)
+            (value as V[]).map((v) => nodesMap.get(v)?.origin)
           );
         } else {
           onModelChange(value, isNull(value) ? null : nodesMap.get(value as V)?.origin);
@@ -191,7 +191,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     if (onExpandsChange) {
       onExpandsChange(
         value,
-        value.map((v) => nodesMap.get(v)!.origin)
+        value.map((v) => nodesMap.get(v)?.origin)
       );
     }
   });
@@ -339,7 +339,15 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     let suffixNode: React.ReactNode = null;
     let selectedLabel: string | undefined;
     if (dMultiple) {
-      const selectedNodes = (_select as V[]).map((v) => nodesMap.get(v) as MultipleTreeNode<V, T>);
+      const selectedNodes: MultipleTreeNode<V, T>[] = [];
+      for (const v of _select as V[]) {
+        const node = nodesMap.get(v);
+        if (node) {
+          selectedNodes.push(node as MultipleTreeNode<V, T>);
+        } else {
+          console.warn(`Can't find item that value field is ${v}!`);
+        }
+      }
 
       suffixNode = (
         <DDropdown
@@ -388,9 +396,13 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
       ));
     } else {
       if (!isNull(select)) {
-        const node = nodesMap.get(select as V)!;
-        selectedLabel = getText(node);
-        selectedNode = dCustomSelected ? dCustomSelected(node.origin) : selectedLabel;
+        const node = nodesMap.get(select as V);
+        if (node) {
+          selectedLabel = getText(node);
+          selectedNode = dCustomSelected ? dCustomSelected(node.origin) : selectedLabel;
+        } else {
+          console.warn(`Can't find item that value field is ${select}!`);
+        }
       }
     }
     return [selectedNode, suffixNode, selectedLabel];

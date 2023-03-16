@@ -39,8 +39,8 @@ export interface DTransferProps<V extends DId, T extends DTransferItem<V>> exten
     filter?: (value: string, item: T) => boolean;
     sort?: (a: T, b: T) => number;
   };
-  onModelChange?: (value: T['value'][], item: T[]) => void;
-  onSelectedChange?: (value: T['value'][], item: T[]) => void;
+  onModelChange?: (value: T['value'][], item: (T | undefined)[]) => void;
+  onSelectedChange?: (value: T['value'][], item: (T | undefined)[]) => void;
   onSearchValueChange?: (value: [string, string]) => void;
   onScrollBottom?: (direction: 'left' | 'right') => void;
 }
@@ -84,7 +84,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
       if (onModelChange) {
         onModelChange(
           value,
-          value.map((v) => itemsMap.get(v)!)
+          value.map((v) => itemsMap.get(v))
         );
       }
     },
@@ -97,7 +97,7 @@ export function DTransfer<V extends DId, T extends DTransferItem<V>>(props: DTra
     if (onSelectedChange) {
       onSelectedChange(
         value,
-        value.map((v) => itemsMap.get(v)!)
+        value.map((v) => itemsMap.get(v))
       );
     }
   });

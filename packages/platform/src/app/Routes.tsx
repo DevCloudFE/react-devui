@@ -238,11 +238,12 @@ export const AppRoutes = React.memo(() => {
 
   const title = (() => {
     if (matches) {
-      const match = nth(matches, -1)!;
-      const { title } = match.route.data ?? {};
-      return isFunction(title) ? title(match.params) : title;
+      const match = nth(matches, -1);
+      if (match) {
+        const { title } = match.route.data ?? {};
+        return isFunction(title) ? title(match.params) : title;
+      }
     }
-    return undefined;
   })();
   useEffect(() => {
     if (isUndefined(title)) {

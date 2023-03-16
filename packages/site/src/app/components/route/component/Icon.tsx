@@ -48,6 +48,7 @@ export function AppIcon() {
           dType="success"
           onClose={() => {
             setToasts((draft) => {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               draft.find((n) => n.key === key)!.visible = false;
             });
           }}

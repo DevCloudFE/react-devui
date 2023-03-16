@@ -63,6 +63,7 @@ export function DFormItem<T extends { [index: string]: DErrorInfo }>(props: DFor
   //#region Context
   const dPrefix = usePrefixConfig();
   const { gLabelWidth, gLabelColon, gRequiredType, gLayout, gInlineSpan, gFeedbackIcon } = useContextRequired(DFormContext);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const formGroup = useContext(DFormGroupContext)!;
   //#endregion
 

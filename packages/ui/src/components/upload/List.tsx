@@ -92,10 +92,10 @@ export function DList(props: DListProps): JSX.Element | null {
                   rel="noreferrer"
                   title={file.name}
                   onClick={(e) => {
-                    if (!isUndefined(dDefaultActions?.preview)) {
+                    if (dDefaultActions && dDefaultActions.preview) {
                       e.preventDefault();
 
-                      dDefaultActions!.preview(file);
+                      dDefaultActions.preview(file);
                     }
                   }}
                 >

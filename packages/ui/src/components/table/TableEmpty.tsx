@@ -39,6 +39,7 @@ export function DTableEmpty(props: DTableEmptyProps): JSX.Element | null {
         const cells = (tableEl as HTMLTableElement).rows.item(0)?.cells;
         if (cells) {
           for (let index = 0; index < cells.length; index++) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             colSpan += cells.item(index)!.colSpan ?? 1;
           }
           tdRef.current.colSpan = colSpan;

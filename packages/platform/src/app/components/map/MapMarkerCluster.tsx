@@ -103,6 +103,7 @@ export function AppMapMarkerCluster<T extends MarkerClusterDataOption>(props: Ap
               if (!isUndefined(color)) {
                 content.style.color = color;
               }
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               content.firstElementChild!.innerHTML = String(context.count);
 
               context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));

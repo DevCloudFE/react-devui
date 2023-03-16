@@ -77,6 +77,7 @@ function UploadAction(props: DUploadActionProps, ref: React.ForwardedRef<any>): 
         if (!isUndefined(defaultAction)) {
           defaultAction(__file);
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           saveFile(__file.url!, __file.name);
         }
       }}

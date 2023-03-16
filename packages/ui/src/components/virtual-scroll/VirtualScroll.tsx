@@ -194,6 +194,7 @@ function VirtualScroll<T>(props: DVirtualScrollProps<T>, ref: React.ForwardedRef
           size = getItemSize(item);
           nestedList = dItemNested?.(item)?.list;
           if (nestedList) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             childrenSize = itemsMap.get(key)!.nestedSize;
           }
         }

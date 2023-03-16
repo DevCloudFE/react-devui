@@ -153,6 +153,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
             if (hasChange) {
               onModelChange?.(newList, {
                 type: 'update',
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 files: [newList.find((f) => f.uid === uid)!],
               });
             }
@@ -191,6 +192,7 @@ function Upload(props: DUploadProps, ref: React.ForwardedRef<HTMLInputElement>):
                   return formData;
                 },
                 custom,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               } = dXHRRequest!;
 
               xhr.open(method, url);

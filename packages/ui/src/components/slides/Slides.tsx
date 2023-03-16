@@ -105,6 +105,7 @@ export function DSlides<ID extends DId, T extends DSlideItem<ID>>(props: DSlides
         if (index < activeIndex) {
           size += el[dVertical ? 'offsetHeight' : 'offsetWidth'];
         } else if (index === activeIndex) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           slidesRef.current!.style.height = (el as HTMLDivElement).offsetHeight + 'px';
         }
       });

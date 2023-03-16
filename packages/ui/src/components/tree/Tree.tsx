@@ -39,7 +39,7 @@ export interface DTreeProps<V extends DId, T extends DTreeItem<V>> extends Omit<
   dCustomItem?: (item: T) => React.ReactNode;
   onModelChange?: (value: any, item: any) => void;
   onFirstExpand?: (value: T['value'], item: T) => void;
-  onExpandsChange?: (ids: T['value'][], items: T[]) => void;
+  onExpandsChange?: (ids: T['value'][], items: (T | undefined)[]) => void;
 }
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DTree' as const });
@@ -117,7 +117,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
         if (dMultiple) {
           onModelChange(
             value,
-            (value as V[]).map((v) => nodesMap.get(v)!.origin)
+            (value as V[]).map((v) => nodesMap.get(v)?.origin)
           );
         } else {
           onModelChange(value, isNull(value) ? null : nodesMap.get(value as V)?.origin);
@@ -136,7 +136,7 @@ export function DTree<V extends DId, T extends DTreeItem<V>>(props: DTreeProps<V
     if (onExpandsChange) {
       onExpandsChange(
         value,
-        value.map((v) => nodesMap.get(v)!.origin)
+        value.map((v) => nodesMap.get(v)?.origin)
       );
     }
   });

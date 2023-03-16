@@ -79,8 +79,8 @@ export default AppRoute(() => {
       error: (error) => {
         setLoginLoading(false);
         NotificationService.open({
-          dTitle: error.response!.status,
-          dDescription: error.response!.statusText,
+          dTitle: error.response.status,
+          dDescription: error.response.statusText,
           dType: 'error',
         });
       },
@@ -134,8 +134,8 @@ export default AppRoute(() => {
                       <DForm.Item
                         dFormControls={{
                           username: {
-                            required: t('routes.login.Please enter your name')!,
-                            checkValue: t('routes.login.Username')!,
+                            required: t('routes.login.Please enter your name'),
+                            checkValue: t('routes.login.Username'),
                           },
                         }}
                       >
@@ -143,7 +143,7 @@ export default AppRoute(() => {
                           <DInput dFormControl={username} dPrefix={<UserOutlined />} dPlaceholder={t('routes.login.Username')} />
                         )}
                       </DForm.Item>
-                      <DForm.Item dFormControls={{ password: t('routes.login.Please enter your password')! }}>
+                      <DForm.Item dFormControls={{ password: t('routes.login.Please enter your password') }}>
                         {({ password }) => (
                           <DInput
                             dFormControl={password}
@@ -164,12 +164,12 @@ export default AppRoute(() => {
                 panel: (
                   <DForm onSubmit={handleSubmit} dUpdate={updatePhoneForm} dLabelWidth={0}>
                     <DForm.Group dFormGroup={phoneForm}>
-                      <DForm.Item dFormControls={{ phone: t('routes.login.Please enter your phone number')! }}>
+                      <DForm.Item dFormControls={{ phone: t('routes.login.Please enter your phone number') }}>
                         {({ phone }) => (
                           <DInput dFormControl={phone} dPrefix={<MobileOutlined />} dPlaceholder={t('routes.login.Phone number')} />
                         )}
                       </DForm.Item>
-                      <DForm.Item dFormControls={{ code: t('routes.login.Please enter verification code')! }} dSpan>
+                      <DForm.Item dFormControls={{ code: t('routes.login.Please enter verification code') }} dSpan>
                         {({ code }) => <DInput dFormControl={code} dPlaceholder={t('routes.login.Verification code')} />}
                       </DForm.Item>
                       <DForm.Item dLabelWidth={8} dSpan="auto">

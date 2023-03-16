@@ -15,7 +15,7 @@ import { DInput } from '../input';
 import { useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement> {
-  dList: React.ImgHTMLAttributes<HTMLImageElement>[];
+  dList: (React.ImgHTMLAttributes<HTMLImageElement> & { src: string })[];
   dActive?: number;
   dVisible?: boolean;
   dZIndex?: number | string;
@@ -72,7 +72,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
   });
 
   const [activeIndex, changeActiveIndex] = useDValue<number>(0, dActive, onActiveChange);
-  const activeSrc = dList[activeIndex].src!;
+  const activeSrc = dList[activeIndex].src;
 
   const [offset, setOffset] = useState(3);
 

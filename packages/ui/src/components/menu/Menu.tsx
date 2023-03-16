@@ -380,6 +380,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 dStep={step}
                 dSpace={space}
                 dIcon={itemIcon}
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 dPosinset={posinset.get(itemId)!}
                 dMode={dMode}
                 dInNav={inNav}
@@ -418,6 +419,7 @@ function Menu<ID extends DId, T extends DMenuItem<ID>>(props: DMenuProps<ID, T>,
                 dList={children && getNodes(children as T[], dMode === 'vertical' ? level + 1 : 0, _subParents)}
                 dPopupState={popupState?.visible}
                 dTrigger={dExpandTrigger ?? (dMode === 'vertical' ? 'click' : 'hover')}
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 dPosinset={posinset.get(itemId)!}
                 dMode={dMode}
                 dInNav={inNav}
