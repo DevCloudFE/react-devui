@@ -30,7 +30,10 @@ export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
       model: new FormControl<string | null>(null, Validators.required),
     });
     if (aDevice) {
-      form.reset({ name: aDevice.name });
+      form.reset({
+        name: aDevice.name,
+        model: aDevice.model,
+      });
     }
     return form;
   });
@@ -47,10 +50,6 @@ export function AppDeviceModal(props: AppDeviceModalProps): JSX.Element | null {
             disabled: model.disabled,
           }))
         );
-        if (aDevice) {
-          form.patchValue({ model: aDevice.model });
-          updateForm();
-        }
       },
     });
   });

@@ -41,7 +41,7 @@ export default AppRoute(() => {
     page: 1,
     pageSize: 10,
   });
-  const [deviceQuery, setDeviceQuery] = useImmer<DeviceQueryParams>({ ...deviceQuerySaved, model: [] });
+  const [deviceQuery, setDeviceQuery] = useImmer(deviceQuerySaved);
   const queryEmptyStatus = (() => {
     const getEmptyStatus = (query: DeviceQueryParams) => ({
       keyword: query.keyword.length === 0,
@@ -80,9 +80,6 @@ export default AppRoute(() => {
             disabled: model.disabled,
           }))
         );
-        setDeviceQuery((draft) => {
-          draft.model = deviceQuerySaved.model;
-        });
       },
     });
   });
@@ -198,8 +195,8 @@ export default AppRoute(() => {
                   node: (
                     <DSelect
                       style={{ width: '16em' }}
-                      dList={modelList ?? []}
                       dModel={deviceQuery.model}
+                      dList={modelList ?? []}
                       dLoading={isUndefined(modelList)}
                       dPlaceholder="Model"
                       dMultiple

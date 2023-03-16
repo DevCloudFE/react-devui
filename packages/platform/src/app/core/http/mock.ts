@@ -127,7 +127,6 @@ if (environment.http.mock) {
   mock.onGet(/\/api\/v1\/device\/[0-9]+/).reply((config) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         resolve([200, deviceList.find((device) => device.id === Number(config.url!.match(/[0-9]+$/)![0]))]);
       }, 500);
     });

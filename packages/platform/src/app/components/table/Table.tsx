@@ -174,7 +174,6 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                     dPlacement="bottom-right"
                                     onItemClick={(id) => {
                                       if (actions[id].link) {
-                                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                         navigate(actions[id].link!);
                                       } else {
                                         return actions[id].onclick?.();
@@ -262,7 +261,6 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                 dPlacement="bottom-right"
                                 onItemClick={(id) => {
                                   if (actions[id].link) {
-                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                     navigate(actions[id].link!);
                                   } else {
                                     return actions[id].onclick?.();
@@ -315,7 +313,6 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                         <DCard.Action
                           title="edit"
                           onClick={() => {
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                             navigate(action.link!);
                           }}
                         >
@@ -344,7 +341,6 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                                   dPlacement="bottom-right"
                                   onItemClick={(id) => {
                                     if (actions[id].link) {
-                                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                       navigate(actions[id].link!);
                                     } else {
                                       return actions[id].onclick?.();
