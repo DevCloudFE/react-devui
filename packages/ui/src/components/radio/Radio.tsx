@@ -14,6 +14,7 @@ import { DFocusVisible } from '../_focus-visible';
 import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DRadioGroup } from './RadioGroup';
+import { DRadioGroupRenderer } from './RadioGroupRenderer';
 
 export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   dRef?: {
@@ -34,6 +35,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio' as c
 export const DRadio: {
   (props: DRadioProps): JSX.Element | null;
   Group: typeof DRadioGroup;
+  GroupRenderer: typeof DRadioGroupRenderer;
 } = (props) => {
   const {
     children,
@@ -131,3 +133,4 @@ export const DRadio: {
 };
 
 DRadio.Group = DRadioGroup;
+DRadio.GroupRenderer = DRadioGroupRenderer;

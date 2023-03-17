@@ -1,25 +1,18 @@
 import type { DId, DSize } from '../../utils/types';
 import type { DFormControl } from '../form';
 import type { DRadioPrivateProps } from './Radio';
+import type { DRadioItem } from './RadioGroupRenderer';
 
-import { isUndefined, nth } from 'lodash';
+import { isUndefined } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
-import { useId } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { useGeneralContext, useDValue } from '../../hooks';
-import { cloneHTMLElement, registerComponentMate } from '../../utils';
+import { useGeneralContext } from '../../hooks';
+import { registerComponentMate } from '../../utils';
 import { DCompose } from '../compose';
-import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
-import { DRadio } from './Radio';
-
-export interface DRadioItem<V extends DId> {
-  label: React.ReactNode;
-  value: V;
-  disabled?: boolean;
-}
+import { DRadioGroupRenderer } from './RadioGroupRenderer';
 
 export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
@@ -51,13 +44,8 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gSize, gDisabled } = useGeneralContext();
+  const { gSize } = useGeneralContext();
   //#endregion
-
-  const uniqueId = useId();
-
-  const formControlInject = useFormControl(dFormControl);
-  const [value, changeValue] = useDValue<V | null, V>(nth(dList, 0)?.value ?? null, dModel, onModelChange, undefined, formControlInject);
 
   const [isChange, setIsChange] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,47 +56,35 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
   });
 
   const size = dSize ?? gSize;
-  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
 
   return (
-    <DCompose
-      {...restProps}
-      className={getClassName(restProps.className, `${dPrefix}radio-group`, {
-        [`${dPrefix}radio-group--default`]: isUndefined(dType),
-        [`${dPrefix}radio-group--vertical`]: dVertical,
-        'is-change': isChange,
-      })}
-      dDisabled={disabled}
-      role="radiogroup"
-      dSize={size}
-      dVertical={dVertical}
-      {...({ __noStyle: isUndefined(dType) } as any)}
-    >
-      {dList.map((item) =>
-        React.cloneElement<DRadioPrivateProps>(
-          <DRadio
-            key={item.value}
-            dModel={item.value === value}
-            dDisabled={item.disabled}
-            dInputRender={(el) =>
-              cloneHTMLElement(el, {
-                value: item.value,
-                name: dName ?? uniqueId,
-                ['data-form-item-label-for' as string]: item.value === value,
-              })
-            }
-            onModelChange={() => {
-              changeValue(item.value);
-              setIsChange(true);
-            }}
-          >
-            {item.label}
-          </DRadio>,
-          {
-            __type: dType,
-          }
-        )
+    <DRadioGroupRenderer
+      dFormControl={dFormControl}
+      dList={dList}
+      dModel={dModel}
+      dName={dName}
+      dDisabled={dDisabled}
+      dRender={(nodes) => (
+        <DCompose
+          {...restProps}
+          className={getClassName(restProps.className, `${dPrefix}radio-group`, {
+            [`${dPrefix}radio-group--default`]: isUndefined(dType),
+            [`${dPrefix}radio-group--vertical`]: dVertical,
+            'is-change': isChange,
+          })}
+          role="radiogroup"
+          dSize={size}
+          dVertical={dVertical}
+          {...({ __noStyle: isUndefined(dType) } as any)}
+        >
+          {React.Children.map(nodes, (node) =>
+            React.cloneElement<DRadioPrivateProps>(node, {
+              __type: dType,
+            })
+          )}
+        </DCompose>
       )}
-    </DCompose>
+      onModelChange={onModelChange}
+    />
   );
 }

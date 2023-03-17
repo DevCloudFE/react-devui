@@ -31,7 +31,7 @@ export { DCard } from './card';
 export type { DCascaderProps } from './cascader';
 export { DCascader } from './cascader';
 
-export type { DCheckboxProps, DCheckboxGroupProps } from './checkbox';
+export type { DCheckboxProps, DCheckboxGroupProps, DCheckboxGroupRendererProps } from './checkbox';
 export { DCheckbox } from './checkbox';
 
 export type { DComposeProps, DComposeItemProps } from './compose';
@@ -79,7 +79,7 @@ export { DPopover } from './popover';
 export type { DProgressProps } from './progress';
 export { DProgress } from './progress';
 
-export type { DRadioProps, DRadioGroupProps } from './radio';
+export type { DRadioProps, DRadioGroupProps, DRadioGroupRendererProps } from './radio';
 export { DRadio } from './radio';
 
 export type { DRatingProps } from './rating';

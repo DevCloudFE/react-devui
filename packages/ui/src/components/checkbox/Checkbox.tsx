@@ -11,6 +11,7 @@ import { DBaseInput } from '../_base-input';
 import { useFormControl } from '../form';
 import { useComponentConfig, usePrefixConfig } from '../root';
 import { DCheckboxGroup } from './CheckboxGroup';
+import { DCheckboxGroupRenderer } from './CheckboxGroupRenderer';
 
 export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   dRef?: {
@@ -28,6 +29,7 @@ const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox' a
 export const DCheckbox: {
   (props: DCheckboxProps): JSX.Element | null;
   Group: typeof DCheckboxGroup;
+  GroupRenderer: typeof DCheckboxGroupRenderer;
 } = (props) => {
   const {
     children,
@@ -98,3 +100,4 @@ export const DCheckbox: {
 };
 
 DCheckbox.Group = DCheckboxGroup;
+DCheckbox.GroupRenderer = DCheckboxGroupRenderer;

@@ -1,19 +1,13 @@
 import type { DId } from '../../utils/types';
 import type { DFormControl } from '../form';
+import type { DCheckboxItem } from './CheckboxGroupRenderer';
 
 import { getClassName } from '@react-devui/utils';
 
-import { useGeneralContext, useDValue } from '../../hooks';
-import { cloneHTMLElement, registerComponentMate } from '../../utils';
-import { useFormControl } from '../form';
+import { registerComponentMate } from '../../utils';
 import { useComponentConfig, usePrefixConfig } from '../root';
-import { DCheckbox } from './Checkbox';
+import { DCheckboxGroupRenderer } from './CheckboxGroupRenderer';
 
-export interface DCheckboxItem<V extends DId> {
-  label: React.ReactNode;
-  value: V;
-  disabled?: boolean;
-}
 export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   dFormControl?: DFormControl;
   dModel?: V[];
@@ -38,48 +32,26 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
 
   //#region Context
   const dPrefix = usePrefixConfig();
-  const { gDisabled } = useGeneralContext();
   //#endregion
 
-  const formControlInject = useFormControl(dFormControl);
-  const [value, changeValue] = useDValue<V[]>([], dModel, onModelChange, undefined, formControlInject);
-
-  const disabled = dDisabled || gDisabled || dFormControl?.control.disabled;
-
   return (
-    <div
-      {...restProps}
-      className={getClassName(restProps.className, `${dPrefix}checkbox-group`, {
-        [`${dPrefix}checkbox-group--vertical`]: dVertical,
-      })}
-      role="group"
-    >
-      {dList.map((item, index) => (
-        <DCheckbox
-          key={item.value}
-          dDisabled={item.disabled || disabled}
-          dInputRender={(el) =>
-            cloneHTMLElement(el, {
-              ['data-form-item-label-for' as string]: index === 0,
-            })
-          }
-          dModel={value.includes(item.value)}
-          onModelChange={(checked) => {
-            changeValue((draft) => {
-              if (checked) {
-                draft.push(item.value);
-              } else {
-                draft.splice(
-                  draft.findIndex((v) => v === item.value),
-                  1
-                );
-              }
-            });
-          }}
+    <DCheckboxGroupRenderer
+      dFormControl={dFormControl}
+      dList={dList}
+      dModel={dModel}
+      dDisabled={dDisabled}
+      dRender={(nodes) => (
+        <div
+          {...restProps}
+          className={getClassName(restProps.className, `${dPrefix}checkbox-group`, {
+            [`${dPrefix}checkbox-group--vertical`]: dVertical,
+          })}
+          role="group"
         >
-          {item.label}
-        </DCheckbox>
-      ))}
-    </div>
+          {nodes}
+        </div>
+      )}
+      onModelChange={onModelChange}
+    />
   );
 }
