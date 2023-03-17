@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.2](https://github.com/DevCloudFE/react-devui/compare/v18.5.1...v18.5.2) (2023-03-17)
+
+### Features
+
+- **ui:** add dVerticalCenter to checkbox and radio ([cfe1fe7](https://github.com/DevCloudFE/react-devui/commit/cfe1fe7ee0a441e6cc2fbadc4dafd1b95a2b8c4a))
+
 ## [18.5.1](https://github.com/DevCloudFE/react-devui/compare/v18.5.0...v18.5.1) (2023-03-17)
 
 ### Features
