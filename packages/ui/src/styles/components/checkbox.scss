@@ -96,12 +96,9 @@
     }
   }
 
-  @include e(label) {
-    white-space: nowrap;
-  }
-
   @include e(state-container) {
     position: relative;
+    flex-shrink: 0;
     width: 16px;
     height: 16px;
     cursor: pointer;

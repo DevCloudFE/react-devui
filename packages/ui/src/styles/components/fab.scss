@@ -245,12 +245,12 @@
     @include m(top) {
       top: -16px;
       left: 0;
-      flex-direction: column-reverse;
+      flex-direction: column;
       width: 100%;
       transform: translateY(-100%);
 
       & > * + * {
-        margin-bottom: 10px;
+        margin-top: 10px;
       }
     }
 
@@ -281,12 +281,12 @@
     @include m(left) {
       top: 0;
       left: -16px;
-      flex-direction: row-reverse;
+      flex-direction: row;
       height: 100%;
       transform: translateX(-100%);
 
       & > * + * {
-        margin-right: 10px;
+        margin-left: 10px;
       }
     }
   }

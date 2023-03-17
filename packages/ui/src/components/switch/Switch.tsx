@@ -74,69 +74,82 @@ export function DSwitch(props: DSwitchProps): JSX.Element | null {
     leaved: { left: 2 },
   };
 
+  const switchNode = (
+    <div className={`${dPrefix}switch__state-container`}>
+      {dStateContent && (
+        <div
+          className={getClassName(`${dPrefix}switch__state-content`, `${dPrefix}switch__state-content--left`)}
+          style={{ opacity: checked ? 1 : 0 }}
+        >
+          {dStateContent[0]}
+        </div>
+      )}
+      {dStateContent && (
+        <div className={`${dPrefix}switch__state-content`} style={{ opacity: checked ? 0 : 1 }}>
+          {dStateContent[1]}
+        </div>
+      )}
+      <DBaseInput dFormControl={dFormControl} dLabelFor>
+        {({ render: renderBaseInput }) => {
+          const input = renderBaseInput(
+            <input
+              ref={dRef?.input}
+              className={`${dPrefix}switch__input`}
+              type="checkbox"
+              disabled={disabled || dLoading}
+              role="switch"
+              aria-checked={checked}
+              onChange={() => {
+                changeChecked(!checked);
+              }}
+              onFocus={() => {
+                setIsFocus(true);
+              }}
+              onBlur={() => {
+                setIsFocus(false);
+              }}
+            />
+          );
+
+          return isUndefined(dInputRender) ? input : dInputRender(input);
+        }}
+      </DBaseInput>
+      <DTransition dIn={checked} dDuring={TTANSITION_DURING}>
+        {(state) => (
+          <div
+            className={getClassName(`${dPrefix}switch__state-dot`, {
+              'is-focus': isFocus,
+            })}
+            style={transitionStyles[state]}
+          >
+            {dLoading && <LoadingOutlined dSpin />}
+          </div>
+        )}
+      </DTransition>
+    </div>
+  );
+  const labelNode = checkNodeExist(children) && <div className={`${dPrefix}switch__label`}>{children}</div>;
+
   return (
     <label
       {...restProps}
       className={getClassName(restProps.className, `${dPrefix}switch`, {
-        [`${dPrefix}switch--label-left`]: dLabelPlacement === 'left',
         'is-checked': checked,
         'is-disabled': disabled,
         'is-loading': dLoading,
       })}
     >
-      <div className={`${dPrefix}switch__state-container`}>
-        {dStateContent && (
-          <div
-            className={getClassName(`${dPrefix}switch__state-content`, `${dPrefix}switch__state-content--left`)}
-            style={{ opacity: checked ? 1 : 0 }}
-          >
-            {dStateContent[0]}
-          </div>
-        )}
-        {dStateContent && (
-          <div className={`${dPrefix}switch__state-content`} style={{ opacity: checked ? 0 : 1 }}>
-            {dStateContent[1]}
-          </div>
-        )}
-        <DBaseInput dFormControl={dFormControl} dLabelFor>
-          {({ render: renderBaseInput }) => {
-            const input = renderBaseInput(
-              <input
-                ref={dRef?.input}
-                className={`${dPrefix}switch__input`}
-                type="checkbox"
-                disabled={disabled || dLoading}
-                role="switch"
-                aria-checked={checked}
-                onChange={() => {
-                  changeChecked(!checked);
-                }}
-                onFocus={() => {
-                  setIsFocus(true);
-                }}
-                onBlur={() => {
-                  setIsFocus(false);
-                }}
-              />
-            );
-
-            return isUndefined(dInputRender) ? input : dInputRender(input);
-          }}
-        </DBaseInput>
-        <DTransition dIn={checked} dDuring={TTANSITION_DURING}>
-          {(state) => (
-            <div
-              className={getClassName(`${dPrefix}switch__state-dot`, {
-                'is-focus': isFocus,
-              })}
-              style={transitionStyles[state]}
-            >
-              {dLoading && <LoadingOutlined dSpin />}
-            </div>
-          )}
-        </DTransition>
-      </div>
-      {checkNodeExist(children) && <div className={`${dPrefix}switch__label`}>{children}</div>}
+      {dLabelPlacement === 'left' ? (
+        <>
+          {labelNode}
+          {switchNode}
+        </>
+      ) : (
+        <>
+          {switchNode}
+          {labelNode}
+        </>
+      )}
     </label>
   );
 }

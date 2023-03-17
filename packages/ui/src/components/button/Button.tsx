@@ -50,10 +50,46 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
   const disabled = restProps.disabled || dLoading || gDisabled;
 
   const buttonIcon = (loading: boolean, iconRef?: React.RefObject<HTMLDivElement>, style?: React.CSSProperties) => (
-    <div ref={iconRef} className={`${dPrefix}button__icon`} style={style}>
+    <div
+      ref={iconRef}
+      className={getClassName(`${dPrefix}button__icon`, {
+        [`${dPrefix}button__icon--right`]: dIconRight,
+      })}
+      style={style}
+    >
       {loading ? <LoadingOutlined dSpin /> : dIcon}
     </div>
   );
+
+  const iconNode = checkNodeExist(dIcon) ? (
+    buttonIcon(dLoading)
+  ) : (
+    <DCollapseTransition
+      dOriginalSize={{
+        width: '',
+      }}
+      dCollapsedStyle={{
+        width: 0,
+      }}
+      dIn={dLoading}
+      dDuring={TTANSITION_DURING_SLOW}
+      dHorizontal
+      dStyles={{
+        entering: {
+          transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
+        },
+        leaving: {
+          transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
+        },
+        leaved: { display: 'none' },
+      }}
+      dDestroyWhenLeaved
+    >
+      {(collapseRef, collapseStyle) => buttonIcon(true, collapseRef, collapseStyle)}
+    </DCollapseTransition>
+  );
+
+  const contentNode = <div>{children}</div>;
 
   return (
     <DBaseDesign
@@ -72,7 +108,6 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
               [`${dPrefix}button--${size}`]: size,
               [`${dPrefix}button--block`]: dBlock,
               [`${dPrefix}button--icon`]: !children,
-              [`${dPrefix}button--icon-right`]: dIconRight,
               'is-loading': dLoading,
             })}
             type={restProps.type ?? 'button'}
@@ -85,34 +120,17 @@ function Button(props: DButtonProps, ref: React.ForwardedRef<HTMLButtonElement>)
               }
             }}
           >
-            {checkNodeExist(dIcon) ? (
-              buttonIcon(dLoading)
+            {dIconRight ? (
+              <>
+                {contentNode}
+                {iconNode}
+              </>
             ) : (
-              <DCollapseTransition
-                dOriginalSize={{
-                  width: '',
-                }}
-                dCollapsedStyle={{
-                  width: 0,
-                }}
-                dIn={dLoading}
-                dDuring={TTANSITION_DURING_SLOW}
-                dHorizontal
-                dStyles={{
-                  entering: {
-                    transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
-                  },
-                  leaving: {
-                    transition: ['width', 'padding', 'margin'].map((attr) => `${attr} ${TTANSITION_DURING_SLOW}ms linear`).join(', '),
-                  },
-                  leaved: { display: 'none' },
-                }}
-                dDestroyWhenLeaved
-              >
-                {(collapseRef, collapseStyle) => buttonIcon(true, collapseRef, collapseStyle)}
-              </DCollapseTransition>
+              <>
+                {iconNode}
+                {contentNode}
+              </>
             )}
-            <div>{children}</div>
             {waveNode}
           </button>
         )

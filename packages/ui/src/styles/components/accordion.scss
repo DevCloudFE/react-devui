@@ -24,10 +24,6 @@
       color: var(--#{$rd-prefix}color-disabled);
       pointer-events: none;
     }
-
-    @include m(arrow-left) {
-      flex-direction: row-reverse;
-    }
   }
 
   @include e(item-title) {

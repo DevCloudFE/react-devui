@@ -114,12 +114,9 @@
     }
   }
 
-  @include e(label) {
-    white-space: nowrap;
-  }
-
   @include e(input-wrapper) {
     position: relative;
+    flex-shrink: 0;
     width: 16px;
     height: 16px;
     margin-right: 8px;

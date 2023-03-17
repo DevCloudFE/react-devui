@@ -202,16 +202,12 @@
     }
   }
 
-  @include m(icon-right) {
-    flex-direction: row-reverse;
-
-    @include e(icon) {
-      justify-content: flex-end;
-    }
-  }
-
   @include e(icon) {
     display: inline-flex;
     width: calc(1em + 8px);
+
+    @include m(right) {
+      justify-content: flex-end;
+    }
   }
 }

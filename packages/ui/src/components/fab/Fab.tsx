@@ -55,12 +55,12 @@ export const DFab: {
         dList &&
         dList.map(({ placement, actions }, key) => (
           <div key={key} className={getClassName(`${dPrefix}fab__actions`, `${dPrefix}fab__actions--${placement}`)}>
-            {React.Children.map(actions, (action, index) =>
+            {React.Children.map(placement === 'right' || placement === 'bottom' ? actions : [...actions].reverse(), (action, index) =>
               cloneHTMLElement(action, {
                 className: getClassName(action.props.className, `${dPrefix}fab__action`),
                 style: {
                   ...action.props.style,
-                  animationDelay: `${index * 33}ms`,
+                  animationDelay: `${(placement === 'right' || placement === 'bottom' ? index : actions.length - 1 - index) * 33}ms`,
                 },
                 onClick: (e) => {
                   action.props.onClick?.(e);

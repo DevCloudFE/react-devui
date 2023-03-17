@@ -1,9 +1,5 @@
 @mixin tabs-horizontal($direction) {
-  @if $direction == top {
-    flex-direction: column;
-  } @else {
-    flex-direction: column-reverse;
-  }
+  flex-direction: column;
 
   &.#{$rd-prefix}tabs--center {
     @include e(tab) {
@@ -125,11 +121,7 @@
 }
 
 @mixin tabs-vertical($direction) {
-  @if $direction == left {
-    flex-direction: row;
-  } @else {
-    flex-direction: row-reverse;
-  }
+  flex-direction: row;
 
   &.#{$rd-prefix}tabs--center {
     @include e(tab) {

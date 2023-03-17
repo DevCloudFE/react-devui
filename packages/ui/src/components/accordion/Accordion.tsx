@@ -129,6 +129,9 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
           }
         };
 
+        const titleNode = <div className={`${dPrefix}accordion__item-title`}>{itemTitle}</div>;
+        const arrowNode = itemArrow && <DownOutlined className={`${dPrefix}accordion__item-arrow`} dRotate={iconRotate} />;
+
         return (
           <div
             key={itemId}
@@ -139,7 +142,6 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
             <div
               id={buttonId}
               className={getClassName(`${dPrefix}accordion__item-button`, {
-                [`${dPrefix}accordion__item-button--arrow-left`]: itemArrow === 'left',
                 'is-disabled': itemDisabled,
               })}
               tabIndex={itemDisabled ? -1 : 0}
@@ -191,8 +193,17 @@ export function DAccordion<ID extends DId, T extends DAccordionItem<ID>>(props: 
                 }
               }}
             >
-              <div className={`${dPrefix}accordion__item-title`}>{itemTitle}</div>
-              {itemArrow && <DownOutlined className={`${dPrefix}accordion__item-arrow`} dRotate={iconRotate} />}
+              {itemArrow === 'left' ? (
+                <>
+                  {arrowNode}
+                  {titleNode}
+                </>
+              ) : (
+                <>
+                  {titleNode}
+                  {arrowNode}
+                </>
+              )}
             </div>
             <DCollapseTransition
               dOriginalSize={{
