@@ -4,7 +4,7 @@
 @include b(radio) {
   position: relative;
   display: inline-flex;
-  align-items: center;
+  line-height: 1.25;
 
   &:hover {
     @include e(input) {
@@ -114,9 +114,15 @@
     }
   }
 
+  @include e(input-wrapper-wrapper) {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: 1.25em;
+  }
+
   @include e(input-wrapper) {
     position: relative;
-    flex-shrink: 0;
     width: 16px;
     height: 16px;
     margin-right: 8px;
