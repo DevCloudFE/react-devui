@@ -116,7 +116,7 @@
 
     flex: 1 0 0;
     font-size: 1.05em;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
   }
 
   @include e(info-window-close) {

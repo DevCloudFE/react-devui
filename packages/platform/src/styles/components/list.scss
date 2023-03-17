@@ -17,7 +17,7 @@
   }
 
   @include e(title) {
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
   }
 
   @include e(subtitle) {

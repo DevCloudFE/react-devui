@@ -32,7 +32,7 @@
 
   @include e(col-title) {
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
     color: map.get($rd-colors, 'white');
 
     @include font-size(1.1rem);

@@ -23,12 +23,12 @@ $table-filter-option-height: 32px;
   caption {
     margin-bottom: 10px;
     font-size: 1.1em;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
   }
 
   th {
     padding: var(--#{$rd-prefix}table-padding-size);
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
     background-color: var(--#{$rd-prefix}background-color-light-gray);
   }
 

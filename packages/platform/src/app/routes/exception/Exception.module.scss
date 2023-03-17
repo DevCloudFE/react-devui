@@ -37,7 +37,7 @@
     margin-bottom: 12px;
     /* stylelint-disable-next-line declaration-property-value-allowed-list */
     font-size: 56px;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
     font-variant-numeric: tabular-nums;
 
     @include media-breakpoint-up(md) {

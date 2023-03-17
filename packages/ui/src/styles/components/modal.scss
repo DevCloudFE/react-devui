@@ -68,7 +68,7 @@
   @include e(title) {
     margin-bottom: 12px;
     font-size: 1.1em;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
   }
 
   @include e(description) {

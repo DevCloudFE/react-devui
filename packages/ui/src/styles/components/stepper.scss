@@ -165,7 +165,7 @@
 
   @include e(step-title) {
     margin-left: 8px;
-    font-weight: 500;
+    font-weight: $rd-font-weight-bold;
   }
 
   @include e(step-description) {
