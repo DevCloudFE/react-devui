@@ -55,22 +55,23 @@ export default AppRoute(() => {
         />
         <AppRouteHeader.Header
           aBack
-          aActions={[
-            <DButton
-              disabled={isUndefined(device)}
-              onClick={() => {
-                DialogService.open(AppDeviceModal, {
-                  aDevice: device,
-                  onSuccess: () => {
-                    setUpdateDevice((n) => n + 1);
-                  },
-                });
-              }}
-              dIcon={<EditOutlined />}
-            >
-              Edit
-            </DButton>,
-          ]}
+          aActions={
+            device && [
+              <DButton
+                onClick={() => {
+                  DialogService.open(AppDeviceModal, {
+                    aDevice: device,
+                    onSuccess: () => {
+                      setUpdateDevice((n) => n + 1);
+                    },
+                  });
+                }}
+                dIcon={<EditOutlined />}
+              >
+                Edit
+              </DButton>,
+            ]
+          }
         />
       </AppRouteHeader>
       <div className={styles['app-detail']}>
