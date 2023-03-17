@@ -19,7 +19,7 @@
 
   position: relative;
   display: inline-flex;
-  align-items: center;
+  line-height: 1.25;
 
   &:hover {
     @include e(input) {
@@ -96,8 +96,17 @@
     }
   }
 
+  @include m(vertical-center) {
+    align-items: center;
+
+    @include e(state-container) {
+      top: unset;
+    }
+  }
+
   @include e(state-container) {
     position: relative;
+    top: calc((1.25em - 16px) / 2);
     flex-shrink: 0;
     width: 16px;
     height: 16px;

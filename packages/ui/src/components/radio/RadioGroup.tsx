@@ -19,6 +19,7 @@ export interface DRadioGroupProps<V extends DId> extends Omit<React.HTMLAttribut
   dList: DRadioItem<V>[];
   dModel?: V | null;
   dName?: string;
+  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dType?: 'outline' | 'fill';
   dSize?: DSize;
@@ -33,6 +34,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
     dList,
     dModel,
     dName,
+    dVerticalCenter = false,
     dDisabled = false,
     dType,
     dSize,
@@ -63,6 +65,7 @@ export function DRadioGroup<V extends DId>(props: DRadioGroupProps<V>): JSX.Elem
       dList={dList}
       dModel={dModel}
       dName={dName}
+      dVerticalCenter={dVerticalCenter}
       dDisabled={dDisabled}
       dRender={(nodes) => (
         <DCompose

@@ -22,6 +22,7 @@ export interface DRadioProps extends React.HTMLAttributes<HTMLElement> {
   };
   dFormControl?: DFormControl;
   dModel?: boolean;
+  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
   onModelChange?: (checked: boolean) => void;
@@ -42,6 +43,7 @@ export const DRadio: {
     dRef,
     dFormControl,
     dModel,
+    dVerticalCenter = false,
     dDisabled = false,
     dInputRender,
     onModelChange,
@@ -81,6 +83,7 @@ export const DRadio: {
           <label
             {...restProps}
             className={getClassName(restProps.className, `${dPrefix}radio`, {
+              [`${dPrefix}radio--vertical-center`]: dVerticalCenter,
               [`${dPrefix}radio--button`]: __type,
               [`${dPrefix}radio--button-${__type}`]: __type,
               [`${dPrefix}radio--${gSize}`]: gSize,
