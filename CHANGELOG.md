@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.1](https://github.com/DevCloudFE/react-devui/compare/v18.5.0...v18.5.1) (2023-03-17)
+
+### Features
+
+- **ui:** add group renderer ([2cda99f](https://github.com/DevCloudFE/react-devui/commit/2cda99fddd8c31b2fbb068aa8e1a1397123c62d3))
+
 # [18.5.0](https://github.com/DevCloudFE/react-devui/compare/v18.4.1...v18.5.0) (2023-03-16)
 
 ### Bug Fixes
