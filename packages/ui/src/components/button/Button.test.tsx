@@ -13,7 +13,7 @@ const getTypeClass = (dType: DButtonProps['dType'], prefix = dPrefix) => {
 const getThemeClass = (dTheme: DButtonProps['dTheme'], prefix = 't') => {
   return `${prefix}-${dTheme || 'primary'}`;
 };
-const getOtherClass = (ots?: 'icon' | DSize | 'block' | DButtonProps['dVariant'] | 'icon-right', separator = '--', prefix = dPrefix) => {
+const getOtherClass = (ots?: 'icon' | DSize | 'block' | DButtonProps['dVariant'], separator = '--', prefix = dPrefix) => {
   return !ots ? `${prefix}button` : `${prefix}button${separator}${ots || ''}`;
 };
 
@@ -191,7 +191,8 @@ describe('DButton', () => {
         </DButton>
       );
       const button = getByRole('button');
-      expect(button.className.includes(getOtherClass('icon-right'))).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(button.children.item(0)!.innerHTML.includes('Hello World')).toBe(true);
     });
   });
 
