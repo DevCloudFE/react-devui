@@ -19,7 +19,6 @@ export interface DCheckboxProps extends React.HTMLAttributes<HTMLElement> {
   };
   dFormControl?: DFormControl;
   dModel?: boolean;
-  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dIndeterminate?: boolean;
   dInputRender?: DCloneHTMLElement<React.InputHTMLAttributes<HTMLInputElement>>;
@@ -37,7 +36,6 @@ export const DCheckbox: {
     dRef,
     dFormControl,
     dModel,
-    dVerticalCenter = false,
     dDisabled = false,
     dIndeterminate = false,
     dInputRender,
@@ -66,7 +64,6 @@ export const DCheckbox: {
     <label
       {...restProps}
       className={getClassName(restProps.className, `${dPrefix}checkbox`, {
-        [`${dPrefix}checkbox--vertical-center`]: dVerticalCenter,
         'is-indeterminate': dIndeterminate,
         'is-checked': checked,
         'is-disabled': disabled,

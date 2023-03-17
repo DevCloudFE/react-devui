@@ -23,7 +23,6 @@ export interface DRadioGroupRendererProps<V extends DId> {
   dList: DRadioItem<V>[];
   dModel?: V | null;
   dName?: string;
-  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dRender: (nodes: React.ReactElement[]) => JSX.Element | null;
   onModelChange?: (value: V) => void;
@@ -31,16 +30,7 @@ export interface DRadioGroupRendererProps<V extends DId> {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DRadio.GroupRenderer' as const });
 export function DRadioGroupRenderer<V extends DId>(props: DRadioGroupRendererProps<V>): JSX.Element | null {
-  const {
-    dFormControl,
-    dList,
-    dModel,
-    dName,
-    dVerticalCenter = false,
-    dDisabled = false,
-    dRender,
-    onModelChange,
-  } = useComponentConfig(COMPONENT_NAME, props);
+  const { dFormControl, dList, dModel, dName, dDisabled = false, dRender, onModelChange } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const { gDisabled } = useGeneralContext();
@@ -67,7 +57,6 @@ export function DRadioGroupRenderer<V extends DId>(props: DRadioGroupRendererPro
         <DRadio
           key={item.value}
           dModel={item.value === value}
-          dVerticalCenter={dVerticalCenter}
           dDisabled={item.disabled || disabled}
           dInputRender={(el) =>
             cloneHTMLElement(el, {

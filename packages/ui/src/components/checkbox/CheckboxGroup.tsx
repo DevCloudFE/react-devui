@@ -12,7 +12,6 @@ export interface DCheckboxGroupProps<V extends DId> extends Omit<React.HTMLAttri
   dFormControl?: DFormControl;
   dModel?: V[];
   dList: DCheckboxItem<V>[];
-  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dVertical?: boolean;
   onModelChange?: (values: V[]) => void;
@@ -24,7 +23,6 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
     dFormControl,
     dList,
     dModel,
-    dVerticalCenter = false,
     dDisabled = false,
     dVertical = false,
     onModelChange,
@@ -41,7 +39,6 @@ export function DCheckboxGroup<V extends DId>(props: DCheckboxGroupProps<V>): JS
       dFormControl={dFormControl}
       dList={dList}
       dModel={dModel}
-      dVerticalCenter={dVerticalCenter}
       dDisabled={dDisabled}
       dRender={(nodes) => (
         <div

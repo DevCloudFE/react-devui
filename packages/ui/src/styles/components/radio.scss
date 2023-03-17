@@ -4,7 +4,7 @@
 @include b(radio) {
   position: relative;
   display: inline-flex;
-  line-height: 1.25;
+  align-items: center;
 
   &:hover {
     @include e(input) {
@@ -50,7 +50,6 @@
   }
 
   @include m(button) {
-    align-items: center;
     height: var(--#{$rd-prefix}size);
     white-space: nowrap;
     cursor: pointer;
@@ -115,17 +114,8 @@
     }
   }
 
-  @include m(vertical-center) {
-    align-items: center;
-
-    @include e(state-container) {
-      top: unset;
-    }
-  }
-
   @include e(input-wrapper) {
     position: relative;
-    top: calc((1.25em - 16px) / 2);
     flex-shrink: 0;
     width: 16px;
     height: 16px;

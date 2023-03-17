@@ -16,7 +16,6 @@ export interface DCheckboxGroupRendererProps<V extends DId> {
   dFormControl?: DFormControl;
   dModel?: V[];
   dList: DCheckboxItem<V>[];
-  dVerticalCenter?: boolean;
   dDisabled?: boolean;
   dRender: (nodes: React.ReactElement[]) => JSX.Element | null;
   onModelChange?: (values: V[]) => void;
@@ -24,15 +23,7 @@ export interface DCheckboxGroupRendererProps<V extends DId> {
 
 const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DCheckbox.GroupRenderer' as const });
 export function DCheckboxGroupRenderer<V extends DId>(props: DCheckboxGroupRendererProps<V>): JSX.Element | null {
-  const {
-    dFormControl,
-    dList,
-    dModel,
-    dVerticalCenter = false,
-    dDisabled = false,
-    dRender,
-    onModelChange,
-  } = useComponentConfig(COMPONENT_NAME, props);
+  const { dFormControl, dList, dModel, dDisabled = false, dRender, onModelChange } = useComponentConfig(COMPONENT_NAME, props);
 
   //#region Context
   const { gDisabled } = useGeneralContext();
@@ -47,7 +38,6 @@ export function DCheckboxGroupRenderer<V extends DId>(props: DCheckboxGroupRende
     dList.map((item, index) => (
       <DCheckbox
         key={item.value}
-        dVerticalCenter={dVerticalCenter}
         dDisabled={item.disabled || disabled}
         dInputRender={(el) =>
           cloneHTMLElement(el, {
