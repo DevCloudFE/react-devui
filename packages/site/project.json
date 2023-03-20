@@ -10,7 +10,7 @@
         "commands": [
           "tsc --project tools/executors/tsconfig.json",
           "tsc --project packages/site/executors/tsconfig.json",
-          "yarn util:base64-data"
+          "yarn util:base64-data --project=site"
         ]
       }
     },

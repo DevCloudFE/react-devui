@@ -3,7 +3,11 @@ import path from 'path';
 import { outputFileSync, readdirSync, readFileSync, statSync } from 'fs-extra';
 import { createStream } from 'table';
 
-const ROOT_PATH = path.join(__dirname, '..');
+let project = process.argv.find((arg) => arg.includes('--project'));
+if (project) {
+  project = project.slice('--project='.length);
+}
+const ROOT_PATH = path.join(__dirname, '..', project ? `packages/${project}` : '.');
 const OUT_FILE = 'base64.out.ts';
 
 const table = createStream({

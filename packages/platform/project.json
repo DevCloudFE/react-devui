@@ -7,7 +7,7 @@
     "build-dependencies": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn util:base64-data"]
+        "commands": ["yarn util:base64-data --project=platform"]
       }
     },
     "build": {
