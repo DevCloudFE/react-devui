@@ -96,9 +96,11 @@ export const AppRoutes = React.memo(() => {
       {
         path: '/',
         element: <AppHomeRoute />,
+        data: {
+          canActivate: [tokenGuard],
+        },
       },
       {
-        path: '/',
         element: <AppLayout />,
         data: {
           canActivate: [tokenGuard],
