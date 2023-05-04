@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.4](https://github.com/DevCloudFE/react-devui/compare/v18.5.3...v18.5.4) (2023-05-04)
+
+### Features
+
+- **ui:** badge support custom text ([5dbc1da](https://github.com/DevCloudFE/react-devui/commit/5dbc1da01dfb8ebf75f8ec47fb812f2665a78d76))
+
 ## [18.5.3](https://github.com/DevCloudFE/react-devui/compare/v18.5.2...v18.5.3) (2023-03-17)
 
 ### Reverts
