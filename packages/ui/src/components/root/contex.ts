@@ -6,7 +6,7 @@ import type { DAlertProps } from '../alert';
 import type { DAnchorProps } from '../anchor';
 import type { DAutoCompleteProps } from '../auto-complete';
 import type { DAvatarProps } from '../avatar';
-import type { DBadgeProps } from '../badge';
+import type { DBadgeProps, DBadgeTextProps } from '../badge';
 import type { DBreadcrumbProps } from '../breadcrumb';
 import type { DButtonProps } from '../button';
 import type { DCardProps, DCardActionsProps, DCardActionProps, DCardHeaderProps, DCardContentProps } from '../card';
@@ -74,6 +74,7 @@ export type DComponentConfig = {
   DAutoComplete: DAutoCompleteProps<any>;
   DAvatar: DAvatarProps;
   DBadge: DBadgeProps;
+  'DBadge.Text': DBadgeTextProps;
   DBreadcrumb: DBreadcrumbProps<any, any>;
   DButton: DButtonProps;
   DCard: DCardProps;

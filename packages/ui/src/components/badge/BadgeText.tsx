@@ -1,36 +1,23 @@
-import { useRef } from 'react';
-
 import { getClassName } from '@react-devui/utils';
 
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DTransition } from '../_transition';
 import { useComponentConfig, usePrefixConfig } from '../root';
-import { DBadgeText } from './BadgeText';
-import { DNumber } from './Number';
 
-export interface DBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  dValue: number;
+export interface DBadgeTextProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  dText: string;
   dTheme?: 'primary' | 'success' | 'warning' | 'danger';
   dColor?: string;
-  dShowZero?: boolean;
-  dMax?: number;
-  dDot?: boolean;
   dOffset?: [number | string, number | string];
   dAlone?: boolean;
 }
 
-const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge' as const });
-export const DBadge: {
-  (props: DBadgeProps): JSX.Element | null;
-  Text: typeof DBadgeText;
-} = (props) => {
+const { COMPONENT_NAME } = registerComponentMate({ COMPONENT_NAME: 'DBadge.Text' as const });
+export function DBadgeText(props: DBadgeTextProps): JSX.Element | null {
   const {
-    dValue,
+    dText,
     dTheme = 'danger',
     dColor,
-    dShowZero = false,
-    dMax = Infinity,
-    dDot = false,
     dOffset = [0, '100%'],
     dAlone = false,
 
@@ -41,31 +28,8 @@ export const DBadge: {
   const dPrefix = usePrefixConfig();
   //#endregion
 
-  const dataRef = useRef<{
-    saveValue?: number;
-    prevValue: number;
-    dDown: boolean;
-  }>({
-    prevValue: dValue,
-    dDown: false,
-  });
-
-  const show = dShowZero || dValue > 0;
-  const value = show ? dValue : dataRef.current.saveValue ?? 0;
-  dataRef.current.saveValue = value;
-
-  const nums = (value > dMax ? dMax : value)
-    .toString()
-    .split('')
-    .map((n) => Number(n));
-
-  if (value !== dataRef.current.prevValue) {
-    dataRef.current.dDown = value < dataRef.current.prevValue;
-    dataRef.current.prevValue = value;
-  }
-
   return (
-    <DTransition dIn={show} dDuring={TTANSITION_DURING_BASE}>
+    <DTransition dIn={dText.length > 0} dDuring={TTANSITION_DURING_BASE}>
       {(state) => {
         let transitionStyle: React.CSSProperties = {};
         switch (state) {
@@ -96,7 +60,6 @@ export const DBadge: {
             {...restProps}
             className={getClassName(restProps.className, `${dPrefix}badge`, {
               [`t-${dTheme}`]: dTheme,
-              [`${dPrefix}badge--dot`]: dDot,
               [`${dPrefix}badge--alone`]: dAlone,
             })}
             style={{
@@ -109,23 +72,14 @@ export const DBadge: {
                   }),
               [`--${dPrefix}badge-color`]: dColor,
             }}
-            title={restProps.title ?? (dDot ? undefined : dValue.toString())}
+            title={restProps.title ?? dText}
           >
             <div className={`${dPrefix}badge__wrapper`} style={transitionStyle}>
-              {dDot ? null : (
-                <>
-                  {nums.map((n, i) => (
-                    <DNumber key={nums.length - i} dValue={n} dDown={dataRef.current.dDown}></DNumber>
-                  ))}
-                  {value > dMax ? '+' : ''}
-                </>
-              )}
+              {dText}
             </div>
           </div>
         );
       }}
     </DTransition>
   );
-};
-
-DBadge.Text = DBadgeText;
+}

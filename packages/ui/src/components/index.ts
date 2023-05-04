@@ -16,7 +16,7 @@ export { DAutoComplete } from './auto-complete';
 export type { DAvatarProps } from './avatar';
 export { DAvatar } from './avatar';
 
-export type { DBadgeProps } from './badge';
+export type { DBadgeProps, DBadgeTextProps } from './badge';
 export { DBadge } from './badge';
 
 export type { DBreadcrumbProps } from './breadcrumb';
