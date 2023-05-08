@@ -3,6 +3,7 @@ import type { ImmerHook, Updater } from './useImmer';
 import { freeze, produce } from 'immer';
 import { useState } from 'react';
 
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { useUnmount } from './useUnmount';
 
 interface GlobalStateHook<S> {
@@ -34,9 +35,12 @@ export function createGlobalState<S>(initialValue?: S): GlobalStateHook<S | unde
     () => {
       const [state, setState] = useState(store.state);
 
-      if (!store.updates.has(setState)) {
-        store.updates.add(setState);
-      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      useIsomorphicLayoutEffect(() => {
+        if (!store.updates.has(setState)) {
+          store.updates.add(setState);
+        }
+      });
 
       useUnmount(() => {
         store.updates.delete(setState);

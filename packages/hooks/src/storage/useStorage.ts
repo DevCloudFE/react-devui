@@ -4,6 +4,7 @@ import type { AbstractStorage } from './storage';
 import { isNull, isUndefined } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
+import { useIsomorphicLayoutEffect } from '../useIsomorphicLayoutEffect';
 import { LocalStorageService } from './localStorage';
 import { STRING_PARSER } from './parser';
 
@@ -64,12 +65,15 @@ export function useStorage<V, K = string>(
   }, [SERVICE, defaultValue, deserializer, key, serializer]);
   const [, setOriginValue] = useState(SERVICE.getItem(key));
 
-  const updatesOfKey = updates.get(key);
-  if (isUndefined(updatesOfKey)) {
-    updates.set(key, new Set([setOriginValue]));
-  } else if (!updatesOfKey.has(setOriginValue)) {
-    updatesOfKey.add(setOriginValue);
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useIsomorphicLayoutEffect(() => {
+    const updatesOfKey = updates.get(key);
+    if (isUndefined(updatesOfKey)) {
+      updates.set(key, new Set([setOriginValue]));
+    } else if (!updatesOfKey.has(setOriginValue)) {
+      updatesOfKey.add(setOriginValue);
+    }
+  });
 
   useEffect(() => {
     updates.get(key)?.delete(setOriginValue);
