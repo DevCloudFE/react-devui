@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.5](https://github.com/DevCloudFE/react-devui/compare/v18.5.4...v18.5.5) (2023-05-08)
+
+### Bug Fixes
+
+- **hooks:** add golbal update to effect hook ([457dbe4](https://github.com/DevCloudFE/react-devui/commit/457dbe4abfd01a3be03095da57604e055bd76428))
+
 ## [18.5.4](https://github.com/DevCloudFE/react-devui/compare/v18.5.3...v18.5.4) (2023-05-04)
 
 ### Bug Fixes
