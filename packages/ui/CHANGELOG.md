@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.6](https://github.com/DevCloudFE/react-devui/compare/v18.5.5...v18.5.6) (2023-05-17)
+
+### Features
+
+- **ui:** select support `dMonospaced` prop ([3167d57](https://github.com/DevCloudFE/react-devui/commit/3167d57438ec6b2b468e454b11edf55b823dd549))
+
 ## [18.5.5](https://github.com/DevCloudFE/react-devui/compare/v18.5.4...v18.5.5) (2023-05-08)
 
 **Note:** Version bump only for package @react-devui/ui
