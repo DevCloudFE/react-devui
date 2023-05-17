@@ -3,9 +3,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { getClassName } from '@react-devui/utils';
 
-import styles from './Layout.module.scss';
 import { AppHeader } from './header/Header';
 import { AppSidebar } from './sidebar/Sidebar';
+
+import styles from './Layout.module.scss';
 
 export interface AppLayoutProps {
   sidebar?: {

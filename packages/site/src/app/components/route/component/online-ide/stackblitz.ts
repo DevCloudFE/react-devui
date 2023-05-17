@@ -6,6 +6,7 @@ import indexHtml from './files/index.html';
 import indexTsx from './files/index.tsx';
 import packageJsonFn from './files/stackblitz/package.json';
 import tsconfigJson from './files/stackblitz/tsconfig.json';
+
 import stylesScss from './files/styles.scss';
 
 export function openStackBlitz(name: string, tsxSource: string, scssSource?: string) {

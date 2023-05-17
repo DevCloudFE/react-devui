@@ -49,6 +49,12 @@
                 "pattern": "@react-devui/**",
                 "group": "internal",
                 "position": "after"
+              },
+              {
+                "pattern": "*.scss",
+                "group": "index",
+                "patternOptions": { "matchBase": true },
+                "position": "after"
               }
             ],
             "pathGroupsExcludedImportTypes": ["type", "builtin"],

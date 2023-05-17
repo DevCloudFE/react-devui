@@ -5,8 +5,9 @@ import { DRadio } from '@react-devui/ui';
 
 import { AppMap } from '../../../components';
 import { AppRoute } from '../../../utils';
-import styles from './AMap.module.scss';
 import points from './points';
+
+import styles from './AMap.module.scss';
 
 export default AppRoute(() => {
   const [mapTmp, setMapTmp] = useState('Marker');

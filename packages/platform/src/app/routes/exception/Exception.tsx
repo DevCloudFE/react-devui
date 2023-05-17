@@ -8,6 +8,7 @@ import { AppRoute } from '../../utils';
 import { ReactComponent as S403 } from './403.svg';
 import { ReactComponent as S404 } from './404.svg';
 import { ReactComponent as S500 } from './500.svg';
+
 import styles from './Exception.module.scss';
 
 export default AppRoute(() => {

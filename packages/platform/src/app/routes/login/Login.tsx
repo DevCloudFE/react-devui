@@ -16,8 +16,9 @@ import { LOGIN_PATH } from '../../config/other';
 import { APP_NAME } from '../../config/other';
 import { TOKEN, useHttp, useInit } from '../../core';
 import { AppRoute, NotificationService } from '../../utils';
-import styles from './Login.module.scss';
 import { BASE64_DATA } from './base64.out';
+
+import styles from './Login.module.scss';
 
 export default AppRoute(() => {
   const { t } = useTranslation();

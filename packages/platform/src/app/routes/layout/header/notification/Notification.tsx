@@ -11,6 +11,7 @@ import { getClassName } from '@react-devui/utils';
 
 import { AppList } from '../../../../components';
 import { useNotificationState } from '../../../../core';
+
 import styles from './Notification.module.scss';
 
 export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {

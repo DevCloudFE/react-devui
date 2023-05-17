@@ -13,6 +13,7 @@ import { useHttp } from '../../../../core';
 import { useAPI } from '../../../../hooks';
 import { AppRoute, DialogService } from '../../../../utils';
 import { AppDeviceModal } from '../DeviceModal';
+
 import styles from './Detail.module.scss';
 
 export default AppRoute(() => {

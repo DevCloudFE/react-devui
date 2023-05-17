@@ -5,6 +5,7 @@ import packageJsonFn from './files/codesandbox/package.json';
 import tsconfigJson from './files/codesandbox/tsconfig.json';
 import indexHtml from './files/index.html';
 import indexTsx from './files/index.tsx';
+
 import stylesScss from './files/styles.scss';
 
 export function openCodeSandbox(name: string, tsxSource: string, scssSource?: string) {

@@ -6,8 +6,9 @@ import { DCard } from '@react-devui/ui';
 
 import { AppChart, AppRouteHeader } from '../../../components';
 import { AppRoute } from '../../../utils';
-import styles from './ECharts.module.scss';
 import { barOptions, lineOptions, nightingaleOptions, pieOptions, scatterOptions, stackedBarOptions, stackedLineOptions } from './options';
+
+import styles from './ECharts.module.scss';
 
 export default AppRoute(() => {
   const [options, setOptions] = useState<echarts.EChartsOption[]>([]);

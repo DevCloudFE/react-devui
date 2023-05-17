@@ -14,6 +14,7 @@ import { useHttp } from '../../../core';
 import { useAPI, useQueryParams } from '../../../hooks';
 import { AppRoute, DialogService } from '../../../utils';
 import { AppDeviceModal } from './DeviceModal';
+
 import styles from './StandardTable.module.scss';
 
 export type DeviceData = DeviceDoc;

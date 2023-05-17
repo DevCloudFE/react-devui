@@ -10,6 +10,7 @@
     "build:icons": "ts-node -P ./tools/tsconfig.json ./tools/ui-icons.ts",
     "build:vscode-extension": "nx build vscode-extension && cd dist/packages/vscode-extension && yarn install && vsce package --yarn",
     "lint:affected": "nx affected --target=lint --parallel=7",
+    "lint:affected:fix": "nx affected --target=lint --parallel=7 --fix",
     "lint:style": "stylelint **/*.{css,scss,html,md}",
     "lint:style:fix": "yarn lint:style --fix",
     "prepare": "husky install && ts-node -P ./tools/tsconfig.json ./tools/husky.ts",
