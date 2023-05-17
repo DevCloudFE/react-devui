@@ -51,6 +51,7 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dClearable?: boolean;
   dDisabled?: boolean;
   dMultiple?: boolean;
+  dMonospaced?: boolean;
   dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
   dCustomSelected?: (select: T) => string;
@@ -89,6 +90,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     dClearable = false,
     dDisabled = false,
     dMultiple = false,
+    dMonospaced = true,
     dVirtual = false,
     dCustomItem,
     dCustomSelected,
@@ -306,22 +308,45 @@ function Select<V extends DId, T extends DSelectItem<V>>(
   const [transformOrigin, setTransformOrigin] = useState<string>();
   const updatePosition = useEventCallback(() => {
     if (visible && boxRef.current && popupRef.current) {
-      const width = Math.min(boxRef.current.offsetWidth, window.innerWidth - WINDOW_SPACE * 2);
-      const height = popupRef.current.offsetHeight;
-      const { top, left, transformOrigin } = getVerticalSidePosition(
-        boxRef.current,
-        { width, height },
-        {
-          placement: 'bottom',
-          inWindow: WINDOW_SPACE,
-        }
-      );
-      setPopupPositionStyle({
-        top,
-        left,
-        width,
-      });
-      setTransformOrigin(transformOrigin);
+      if (dMonospaced) {
+        const width = Math.min(boxRef.current.offsetWidth, window.innerWidth - WINDOW_SPACE * 2);
+        const height = popupRef.current.offsetHeight;
+        const { top, left, transformOrigin } = getVerticalSidePosition(
+          boxRef.current,
+          { width, height },
+          {
+            placement: 'bottom',
+            inWindow: WINDOW_SPACE,
+          }
+        );
+        setPopupPositionStyle({
+          top,
+          left,
+          width,
+        });
+        setTransformOrigin(transformOrigin);
+      } else {
+        const boxWidth = boxRef.current.offsetWidth;
+        const height = popupRef.current.offsetHeight;
+        const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+        const width = Math.min(Math.max(popupRef.current.scrollWidth, boxWidth), maxWidth);
+        const { top, left, transformOrigin } = getVerticalSidePosition(
+          boxRef.current,
+          { width, height },
+          {
+            placement: 'bottom-left',
+            inWindow: WINDOW_SPACE,
+          }
+        );
+
+        setPopupPositionStyle({
+          top,
+          left,
+          minWidth: Math.min(boxWidth, maxWidth),
+          maxWidth,
+        });
+        setTransformOrigin(transformOrigin);
+      }
     }
   });
 
