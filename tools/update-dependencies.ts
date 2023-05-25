@@ -65,10 +65,7 @@ Object.entries(workspace.projects).forEach(([projectName, projectPath]) => {
                               const version = dependence.startsWith('@react-devui')
                                 ? 'file:../' + dependence.split('/')[1]
                                 : packageJson.devDependencies[dependence];
-                              if (projectPackageJson['peerDependencies'] && dependence in projectPackageJson['peerDependencies']) {
-                                delete projectPackageJson['dependencies'][dependence];
-                                projectPackageJson['peerDependencies'][dependence] = version;
-                              } else {
+                              if (!(projectPackageJson['peerDependencies'] && dependence in projectPackageJson['peerDependencies'])) {
                                 projectPackageJson['dependencies'][dependence] = version;
                               }
                             }
