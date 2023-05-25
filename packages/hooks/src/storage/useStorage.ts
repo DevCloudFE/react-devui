@@ -2,13 +2,11 @@ import type { AbstractParserOptions } from './parser';
 import type { AbstractStorage } from './storage';
 
 import { isNull, isUndefined } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 
-import { useIsomorphicLayoutEffect } from '../useIsomorphicLayoutEffect';
 import { LocalStorageService } from './localStorage';
 import { STRING_PARSER } from './parser';
-
-const updates = new Map<any, Set<(...args: any[]) => any>>();
+import { useStore, stores } from './store';
 
 interface UseStorageMethod<V> {
   set: (value: V) => void;
@@ -34,61 +32,37 @@ export function useStorage<V, K = string>(
 
   const { serializer, deserializer } = isUndefined(parser) ? PARSER.plain : PARSER[parser];
 
-  const res = useMemo<{ readonly value: any } & UseStorageMethod<V>>(() => {
-    const updateKey = (ov: any) => {
-      const cbs = updates.get(key);
-      if (cbs) {
-        for (const cb of cbs) {
-          cb(ov);
-        }
-      }
-    };
-    return {
+  const store = useStore(key, SERVICE);
+  const value = useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+  return useMemo<{ readonly value: any } & UseStorageMethod<V>>(
+    () => ({
       get value() {
-        const originValue = SERVICE.getItem(key);
-        if (isNull(originValue)) {
+        if (isNull(value)) {
           return defaultValue ?? null;
         }
 
-        return deserializer(originValue);
+        return deserializer(value);
       },
       set: (value) => {
         const originValue = serializer(value);
         SERVICE.setItem(key, originValue);
-        updateKey(originValue);
+        store.emitChange();
       },
       remove: () => {
         SERVICE.removeItem(key);
-        updateKey(null);
+        store.emitChange();
       },
-    };
-  }, [SERVICE, defaultValue, deserializer, key, serializer]);
-  const [, setOriginValue] = useState(SERVICE.getItem(key));
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useIsomorphicLayoutEffect(() => {
-    const updatesOfKey = updates.get(key);
-    if (isUndefined(updatesOfKey)) {
-      updates.set(key, new Set([setOriginValue]));
-    } else if (!updatesOfKey.has(setOriginValue)) {
-      updatesOfKey.add(setOriginValue);
-    }
-  });
-
-  useEffect(() => {
-    updates.get(key)?.delete(setOriginValue);
-  }, [key]);
-
-  return res;
+    }),
+    [SERVICE, defaultValue, deserializer, key, serializer, store, value]
+  );
 }
 
 useStorage.SERVICE = new LocalStorageService() as AbstractStorage<any, any>;
 useStorage.PARSER = STRING_PARSER as AbstractParserOptions<any>;
 useStorage.clear = () => {
   useStorage.SERVICE.clear();
-  for (const [, cbs] of updates) {
-    for (const cb of cbs) {
-      cb(null);
-    }
+  for (const [, store] of stores) {
+    store.emitChange();
   }
 };
