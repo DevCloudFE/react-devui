@@ -1,6 +1,6 @@
 import type { DNotificationProps } from '@react-devui/ui';
 
-import { useNotifications } from '../core/state';
+import { GlobalStore } from '../core';
 import { getGlobalKey } from './vars';
 
 interface NotificationInstance {
@@ -13,7 +13,7 @@ export class NotificationService {
   static open(props: Omit<DNotificationProps, 'dVisible'>, _key?: string | number): NotificationInstance {
     const key = _key ?? getGlobalKey();
 
-    useNotifications.setState((draft) => {
+    GlobalStore.set('notifications', (draft) => {
       draft.push({
         ...props,
         key,
@@ -27,9 +27,9 @@ export class NotificationService {
           props.afterVisibleChange?.(visible);
 
           if (!visible) {
-            const index = useNotifications.state.findIndex((n) => n.key === key);
+            const index = GlobalStore.get('notifications').findIndex((n) => n.key === key);
             if (index !== -1) {
-              useNotifications.setState((draft) => {
+              GlobalStore.set('notifications', (draft) => {
                 draft.splice(index, 1);
               });
             }
@@ -50,18 +50,18 @@ export class NotificationService {
   }
 
   static close(key: string | number) {
-    const index = useNotifications.state.findIndex((n) => n.key === key);
+    const index = GlobalStore.get('notifications').findIndex((n) => n.key === key);
     if (index !== -1) {
-      useNotifications.setState((draft) => {
+      GlobalStore.set('notifications', (draft) => {
         draft[index].dVisible = false;
       });
     }
   }
 
   static rerender(key: string | number, props: Partial<DNotificationProps>) {
-    const index = useNotifications.state.findIndex((n) => n.key === key);
+    const index = GlobalStore.get('notifications').findIndex((n) => n.key === key);
     if (index !== -1) {
-      useNotifications.setState((draft) => {
+      GlobalStore.set('notifications', (draft) => {
         draft[index] = Object.assign(draft[index], props);
       });
     }
@@ -69,13 +69,13 @@ export class NotificationService {
 
   static closeAll(animation = true) {
     if (animation) {
-      useNotifications.setState((draft) => {
+      GlobalStore.set('notifications', (draft) => {
         draft.forEach((notification) => {
           notification.dVisible = false;
         });
       });
     } else {
-      useNotifications.setState([]);
+      GlobalStore.set('notifications', []);
     }
   }
 }

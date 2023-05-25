@@ -1,11 +1,10 @@
-import type { UserState, NotificationItem } from './state';
+import type { AppNotification, AppUser } from './store';
 
 import { ROLE_ACL } from '../config/acl';
 import { useHttp } from './http';
-import { useUserState, useNotificationState } from './state';
+import { GlobalStore } from './store';
 import { useRefreshToken } from './token';
 import { useACL } from './useACL';
-import { useMenu } from './useMenu';
 
 export function useInit() {
   const http = useHttp();
@@ -13,8 +12,8 @@ export function useInit() {
 
   const refreshToken = useRefreshToken();
 
-  const handleUser = (user: UserState) => {
-    useUserState.setState(user);
+  const handleUser = (user: AppUser) => {
+    GlobalStore.set('appUser', user);
 
     //#region ACL
     acl.setFull(user.permission.includes(ROLE_ACL.super_admin));
@@ -23,8 +22,9 @@ export function useInit() {
   };
 
   const getNotification = () => {
-    useNotificationState.setState(undefined);
-    http<NotificationItem[]>(
+    GlobalStore.set('appNotifications', undefined);
+
+    http<AppNotification[]>(
       {
         url: '/notification',
         method: 'get',
@@ -32,18 +32,18 @@ export function useInit() {
       { unmount: false }
     ).subscribe({
       next: (res) => {
-        useNotificationState.setState(res);
+        GlobalStore.set('appNotifications', res);
       },
     });
   };
 
   const resetMenu = () => {
-    useMenu.setState((draft) => {
+    GlobalStore.set('appMenu', (draft) => {
       draft.expands = undefined;
     });
   };
 
-  return (user: UserState) => {
+  return (user: AppUser) => {
     refreshToken();
     handleUser(user);
     getNotification();

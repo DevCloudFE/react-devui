@@ -1,6 +1,7 @@
 import type { DTabsRef } from '@react-devui/ui/components/tabs';
 
 import { isUndefined } from 'lodash';
+import { useStore } from 'rcl-store';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,20 +11,20 @@ import { WINDOW_SPACE } from '@react-devui/ui/utils';
 import { getClassName } from '@react-devui/utils';
 
 import { AppList } from '../../../../components';
-import { useNotificationState } from '../../../../core';
+import { GlobalStore } from '../../../../core';
 
 import styles from './Notification.module.scss';
 
 export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
   const tabsRef = useRef<DTabsRef>(null);
 
-  const [notification] = useNotificationState();
+  const [{ appNotifications }] = useStore(GlobalStore, ['appNotifications']);
   const { t } = useTranslation();
 
   const num = (() => {
     let n = 0;
-    if (!isUndefined(notification)) {
-      notification.forEach((notify) => {
+    if (!isUndefined(appNotifications)) {
+      appNotifications.forEach((notify) => {
         n += notify.list.filter((item) => !item.read).length;
       });
     }
@@ -33,16 +34,16 @@ export function AppNotification(props: React.ButtonHTMLAttributes<HTMLButtonElem
   return (
     <DPopover
       className={getClassName(styles['app-notification'], {
-        [styles['app-notification--spinner']]: isUndefined(notification),
+        [styles['app-notification--spinner']]: isUndefined(appNotifications),
       })}
       dContent={
-        isUndefined(notification) ? (
+        isUndefined(appNotifications) ? (
           <LoadingOutlined dTheme="primary" dSize={24} dSpin />
         ) : (
           <>
             <DTabs
               ref={tabsRef}
-              dList={notification.map((notify) => ({
+              dList={appNotifications.map((notify) => ({
                 id: notify.id,
                 title: notify.title,
                 panel: (

@@ -1,5 +1,5 @@
 import type { PREV_ROUTE_KEY } from '../../config/other';
-import type { UserState } from '../../core/state';
+import type { AppUser } from '../../core/store';
 
 import { isString } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -63,7 +63,7 @@ export default AppRoute(() => {
 
   const handleSubmit = () => {
     setLoginLoading(true);
-    http<{ user: UserState; token: string }>(
+    http<{ user: AppUser; token: string }>(
       {
         url: '/auth/login',
         method: 'post',

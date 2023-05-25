@@ -1,5 +1,5 @@
 import type { DeviceDoc } from '../../utils/types';
-import type { UserState, NotificationItem } from '../state';
+import type { AppNotification, AppUser } from '../store';
 import type { JWTToken, JWTTokenPayload } from '../token';
 
 import axios from 'axios';
@@ -22,16 +22,16 @@ if (environment.http.mock) {
       });
     };
 
-  const admin: UserState = {
+  const admin: AppUser = {
     name: 'admin',
     permission: [ROLE_ACL.super_admin],
   };
-  const user: UserState = {
+  const user: AppUser = {
     name: 'user',
     avatar: '/assets/imgs/avatar.png',
     permission: [0, ROUTES_ACL['/test/acl'], ROUTES_ACL['/test/http']],
   };
-  const notification: NotificationItem[] = [
+  const notification: AppNotification[] = [
     {
       id: '1',
       title: 'Title1',

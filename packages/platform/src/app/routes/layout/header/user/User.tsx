@@ -1,3 +1,4 @@
+import { useStore } from 'rcl-store';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -5,10 +6,10 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@react-devui/icon
 import { DAvatar, DDropdown } from '@react-devui/ui';
 
 import { LOGIN_PATH } from '../../../../config/other';
-import { useUserState, TOKEN } from '../../../../core';
+import { GlobalStore, TOKEN } from '../../../../core';
 
 export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element | null {
-  const [user] = useUserState();
+  const [{ appUser }] = useStore(GlobalStore, ['appUser']);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -35,11 +36,11 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
     >
       <button {...props} aria-label={t('routes.layout.My account')}>
         <DAvatar
-          dImg={user.avatar ? { src: user.avatar, alt: 'avatar' } : undefined}
-          dText={user.name[0].toUpperCase()}
+          dImg={appUser.avatar ? { src: appUser.avatar, alt: 'avatar' } : undefined}
+          dText={appUser.name[0].toUpperCase()}
           dSize={28}
         ></DAvatar>
-        <span className="d-none d-md-block">{user.name}</span>
+        <span className="d-none d-md-block">{appUser.name}</span>
       </button>
     </DDropdown>
   );

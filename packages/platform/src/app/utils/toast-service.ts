@@ -1,6 +1,6 @@
 import type { DToastProps } from '@react-devui/ui';
 
-import { useToasts } from '../core/state';
+import { GlobalStore } from '../core';
 import { getGlobalKey } from './vars';
 
 interface ToastInstance {
@@ -13,7 +13,7 @@ export class ToastService {
   static open(props: Omit<DToastProps, 'dVisible'>, _key?: string | number): ToastInstance {
     const key = _key ?? getGlobalKey();
 
-    useToasts.setState((draft) => {
+    GlobalStore.set('toasts', (draft) => {
       draft.push({
         ...props,
         key,
@@ -27,9 +27,9 @@ export class ToastService {
           props.afterVisibleChange?.(visible);
 
           if (!visible) {
-            const index = useToasts.state.findIndex((n) => n.key === key);
+            const index = GlobalStore.get('toasts').findIndex((n) => n.key === key);
             if (index !== -1) {
-              useToasts.setState((draft) => {
+              GlobalStore.set('toasts', (draft) => {
                 draft.splice(index, 1);
               });
             }
@@ -50,18 +50,18 @@ export class ToastService {
   }
 
   static close(key: string | number) {
-    const index = useToasts.state.findIndex((n) => n.key === key);
+    const index = GlobalStore.get('toasts').findIndex((n) => n.key === key);
     if (index !== -1) {
-      useToasts.setState((draft) => {
+      GlobalStore.set('toasts', (draft) => {
         draft[index].dVisible = false;
       });
     }
   }
 
   static rerender(key: string | number, props: Partial<DToastProps>) {
-    const index = useToasts.state.findIndex((n) => n.key === key);
+    const index = GlobalStore.get('toasts').findIndex((n) => n.key === key);
     if (index !== -1) {
-      useToasts.setState((draft) => {
+      GlobalStore.set('toasts', (draft) => {
         draft[index] = Object.assign(draft[index], props);
       });
     }
@@ -69,13 +69,13 @@ export class ToastService {
 
   static closeAll(animation = true) {
     if (animation) {
-      useToasts.setState((draft) => {
+      GlobalStore.set('toasts', (draft) => {
         draft.forEach((toast) => {
           toast.dVisible = false;
         });
       });
     } else {
-      useToasts.setState([]);
+      GlobalStore.set('toasts', []);
     }
   }
 }

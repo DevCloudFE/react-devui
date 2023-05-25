@@ -12,6 +12,9 @@ interface GlobalStateHook<S> {
   setState: Updater<S>;
 }
 
+/**
+ * @deprecated since version 19, try to use `rcl-store`
+ */
 export function createGlobalState<S>(): GlobalStateHook<S | undefined>;
 export function createGlobalState<S>(initialValue: S): GlobalStateHook<S>;
 export function createGlobalState<S>(initialValue?: S): GlobalStateHook<S | undefined> {

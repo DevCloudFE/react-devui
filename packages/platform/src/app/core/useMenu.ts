@@ -2,25 +2,22 @@ import type { MenuItem } from '../config/menu';
 import type { DMenuItem } from '@react-devui/ui/components/menu';
 
 import { isObject, isUndefined } from 'lodash';
+import { useStore } from 'rcl-store';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { createGlobalState, useMount } from '@react-devui/hooks';
+import { useMount } from '@react-devui/hooks';
 
 import { MENU } from '../config/menu';
+import { GlobalStore } from './store';
 import { useACL } from './useACL';
-
-export interface MenuState {
-  expands?: string[];
-}
-const useMenuState = createGlobalState<MenuState>({});
 
 export function useMenu() {
   const acl = useACL();
   const { t } = useTranslation();
   const location = useLocation();
-  const [menuState, setMenuState] = useMenuState();
+  const [{ appMenu }, { appMenu: setAppMenu }] = useStore(GlobalStore, ['appMenu']);
 
   const res: {
     active?: { path: string; parentSub: MenuItem[] };
@@ -78,8 +75,8 @@ export function useMenu() {
     (location.pathname === '/' ? res.firstCanActive?.parentSub : res.active?.parentSub)?.map((item) => item.path);
 
   useMount(() => {
-    if (isUndefined(menuState.expands)) {
-      setMenuState((draft) => {
+    if (isUndefined(appMenu.expands)) {
+      setAppMenu((draft) => {
         draft.expands = getDefaultExpands();
       });
     }
@@ -90,9 +87,8 @@ export function useMenu() {
       menu,
       active: location.pathname === '/' ? res.firstCanActive : res.active,
       firstCanActive: res.firstCanActive,
-      expands: menuState.expands ?? getDefaultExpands(),
+      expands: appMenu.expands ?? getDefaultExpands(),
     },
-    setMenuState,
+    setAppMenu,
   ] as const;
 }
-useMenu.setState = useMenuState.setState;
