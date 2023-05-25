@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.7](https://github.com/DevCloudFE/react-devui/compare/v18.5.6...v18.5.7) (2023-05-25)
+
+### Bug Fixes
+
+- **platform:** fix echat tooltip overflow hidden ([1630134](https://github.com/DevCloudFE/react-devui/commit/16301346221ca19cb9d9998f0911979284bce410))
+
 ## [18.5.6](https://github.com/DevCloudFE/react-devui/compare/v18.5.5...v18.5.6) (2023-05-17)
 
 ### Features
