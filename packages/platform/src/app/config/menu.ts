@@ -1,4 +1,4 @@
-import type { Control, ControlMode } from '../core/useACL';
+import type { Control, ControlMode } from '@react-devui/hooks/useACL';
 
 import { DashboardOutlined, ExceptionOutlined, ExperimentOutlined, ProfileOutlined } from '@react-devui/icons';
 

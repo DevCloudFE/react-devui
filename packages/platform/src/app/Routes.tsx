@@ -1,4 +1,4 @@
-import type { Control, ControlMode } from './core/useACL';
+import type { Control, ControlMode } from '@react-devui/hooks/useACL';
 import type { IndexRouteObject, NonIndexRouteObject, RouteMatch } from 'react-router-dom';
 
 import { isFunction, isUndefined, nth } from 'lodash';

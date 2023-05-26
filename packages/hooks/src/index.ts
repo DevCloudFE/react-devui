@@ -1,5 +1,6 @@
 export { useStorage } from './storage';
 export { createGlobalState } from './createGlobalState';
+export { useACL } from './useACL';
 export { useAsync } from './useAsync';
 export { useEvent } from './useEvent';
 export { useEventCallback } from './useEventCallback';

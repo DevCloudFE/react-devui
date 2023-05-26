@@ -7,11 +7,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
-import { useMount } from '@react-devui/hooks';
+import { useACL, useMount } from '@react-devui/hooks';
 
 import { MENU } from '../config/menu';
 import { GlobalStore } from './store';
-import { useACL } from './useACL';
 
 export function useMenu() {
   const acl = useACL();

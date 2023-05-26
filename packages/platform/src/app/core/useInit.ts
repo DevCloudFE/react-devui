@@ -1,10 +1,11 @@
 import type { AppNotification, AppUser } from './store';
 
+import { useACL } from '@react-devui/hooks';
+
 import { ROLE_ACL } from '../config/acl';
 import { useHttp } from './http';
 import { GlobalStore } from './store';
 import { useRefreshToken } from './token';
-import { useACL } from './useACL';
 
 export function useInit() {
   const http = useHttp();
