@@ -105,6 +105,7 @@ export function useHttp() {
     for (const abort of dataRef.current.abortFns) {
       abort();
     }
+    dataRef.current.abortFns = new Set();
   };
 
   useUnmount(() => {

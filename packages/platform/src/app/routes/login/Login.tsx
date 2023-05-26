@@ -72,8 +72,9 @@ export default AppRoute(() => {
       { authorization: false }
     ).subscribe({
       next: (res) => {
-        setLoginLoading(false);
         TOKEN.set(res.token);
+
+        setLoginLoading(false);
         init(res.user);
         navigate(isString(from) && from !== LOGIN_PATH ? from : '/', { replace: true });
       },

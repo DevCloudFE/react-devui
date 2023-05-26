@@ -55,10 +55,6 @@ export function App() {
   });
 
   useEffect(() => {
-    document.documentElement.lang = languageStorage.value;
-  }, [languageStorage.value]);
-
-  useEffect(() => {
     if (loading === false) {
       const loader = document.querySelector('.fp-loader') as HTMLElement;
       loader.style.cssText = 'opacity:0;transition:opacity 0.5s ease-out;';
@@ -67,6 +63,10 @@ export function App() {
       }, 500);
     }
   }, [async, loading]);
+
+  useEffect(() => {
+    document.documentElement.lang = languageStorage.value;
+  }, [languageStorage.value]);
 
   useEffect(() => {
     for (const t of ['light', 'dark']) {
