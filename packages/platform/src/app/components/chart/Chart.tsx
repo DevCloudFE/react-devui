@@ -1,4 +1,4 @@
-import type { AppTheme } from '../../App';
+import type { AppTheme } from '../../utils/types';
 
 import * as echarts from 'echarts';
 import { cloneDeep, merge } from 'lodash';

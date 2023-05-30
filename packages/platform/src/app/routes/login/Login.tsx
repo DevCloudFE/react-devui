@@ -1,5 +1,5 @@
 import type { PREV_ROUTE_KEY } from '../../config/other';
-import type { AppUser } from '../../core/store';
+import type { AppUser } from '../../utils/types';
 
 import { isString } from 'lodash';
 import { useEffect, useState } from 'react';

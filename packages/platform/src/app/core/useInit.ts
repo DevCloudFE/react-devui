@@ -1,4 +1,4 @@
-import type { AppNotification, AppUser } from './store';
+import type { AppNotification, AppUser } from '../utils/types';
 
 import { isNull } from 'lodash';
 

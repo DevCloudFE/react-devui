@@ -1,4 +1,4 @@
-import type { AppUser } from './core/store';
+import type { AppTheme, AppUser } from './utils/types';
 import type { DRootProps } from '@react-devui/ui';
 import type { DLang } from '@react-devui/ui/utils/types';
 
@@ -14,15 +14,13 @@ import { AppRoutes } from './Routes';
 import { STORAGE_KEY } from './config/storage';
 import { GlobalStore, TOKEN, useHttp, useInit } from './core';
 
-export type AppTheme = 'light' | 'dark';
-
 export function App() {
   const http = useHttp();
   const init = useInit();
   const async = useAsync();
-  const [loading, setLoading] = useState(!isNull(TOKEN.value));
   const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
   const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
+  const [loading, setLoading] = useState(!isNull(TOKEN.value));
   const [{ dialogs, notifications, toasts }] = useStore(GlobalStore, ['dialogs', 'notifications', 'toasts']);
 
   useMount(() => {

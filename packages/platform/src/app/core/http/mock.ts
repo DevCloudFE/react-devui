@@ -1,5 +1,4 @@
-import type { DeviceDoc } from '../../utils/types';
-import type { AppNotification, AppUser } from '../store';
+import type { AppNotification, AppUser, DeviceDoc } from '../../utils/types';
 import type { JWTToken, JWTTokenPayload } from '../token';
 
 import axios from 'axios';

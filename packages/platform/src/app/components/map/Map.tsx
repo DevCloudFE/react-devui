@@ -1,4 +1,4 @@
-import type { AppTheme } from '../../App';
+import type { AppTheme } from '../../utils/types';
 
 import { isUndefined } from 'lodash';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';

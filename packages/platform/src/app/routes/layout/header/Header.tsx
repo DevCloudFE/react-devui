@@ -1,4 +1,4 @@
-import type { AppTheme } from '../../../App';
+import type { AppTheme } from '../../../utils/types';
 
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
