@@ -9,7 +9,7 @@ import points from './points';
 
 import styles from './AMap.module.scss';
 
-export default AppRoute(() => {
+const AMap = AppRoute(() => {
   const [mapTmp, setMapTmp] = useState('Marker');
   const [infoWindow, setInfoWindow] = useImmer<{ visible: boolean; position?: [number, number] }>({ visible: false });
 
@@ -68,3 +68,5 @@ export default AppRoute(() => {
     </div>
   );
 });
+
+export default AMap;

@@ -10,7 +10,7 @@ import { barOptions, lineOptions, nightingaleOptions, pieOptions, scatterOptions
 
 import styles from './ECharts.module.scss';
 
-export default AppRoute(() => {
+const ECharts = AppRoute(() => {
   const [options, setOptions] = useState<echarts.EChartsOption[]>([]);
   const { t } = useTranslation();
 
@@ -45,3 +45,5 @@ export default AppRoute(() => {
     </>
   );
 });
+
+export default ECharts;

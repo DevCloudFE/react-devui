@@ -20,7 +20,7 @@ import { BASE64_DATA } from './base64.out';
 
 import styles from './Login.module.scss';
 
-export default AppRoute(() => {
+const Login = AppRoute(() => {
   const { t } = useTranslation();
   const http = useHttp();
   const [loginloading, setLoginLoading] = useState(false);
@@ -210,3 +210,5 @@ export default AppRoute(() => {
     </div>
   );
 });
+
+export default Login;

@@ -10,11 +10,11 @@ import { useAsync, useMount, useStorage } from '@react-devui/hooks';
 import { DNotification, DToast } from '@react-devui/ui';
 import { DRoot } from '@react-devui/ui';
 
-import { AppRoutes } from './Routes';
+import AppRoutes from './Routes';
 import { STORAGE_KEY } from './config/storage';
 import { GlobalStore, TOKEN, useHttp, useInit } from './core';
 
-export function App() {
+function App() {
   const http = useHttp();
   const init = useInit();
   const async = useAsync();

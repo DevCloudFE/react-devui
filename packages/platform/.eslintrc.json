@@ -1,6 +1,7 @@
 {
   "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+  "plugins": ["react-refresh"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -10,7 +11,8 @@
           {
             "additionalHooks": "(useIsomorphicLayoutEffect)"
           }
-        ]
+        ],
+        "react-refresh/only-export-components": "warn"
       }
     },
     {

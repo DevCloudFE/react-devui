@@ -10,7 +10,7 @@ import { AppRoute } from '../../../utils';
 
 import styles from './ACL.module.scss';
 
-export default AppRoute(() => {
+const ACL = AppRoute(() => {
   const acl = useACL();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -67,3 +67,5 @@ export default AppRoute(() => {
     </>
   );
 });
+
+export default ACL;

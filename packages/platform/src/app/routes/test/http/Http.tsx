@@ -8,7 +8,7 @@ import { AppRoute } from '../../../utils';
 
 import styles from './Http.module.scss';
 
-export default AppRoute(() => {
+const Http = AppRoute(() => {
   const http = useHttp();
   const { t } = useTranslation();
 
@@ -48,3 +48,5 @@ export default AppRoute(() => {
     </>
   );
 });
+
+export default Http;

@@ -11,7 +11,7 @@ import { ReactComponent as S500 } from './500.svg';
 
 import styles from './Exception.module.scss';
 
-export default AppRoute(() => {
+const Exception = AppRoute(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -34,3 +34,5 @@ export default AppRoute(() => {
     </div>
   );
 });
+
+export default Exception;

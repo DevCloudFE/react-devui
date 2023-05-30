@@ -28,7 +28,7 @@ interface DeviceQueryParams {
   pageSize: number;
 }
 
-export default AppRoute(() => {
+const StandardTable = AppRoute(() => {
   const { t } = useTranslation();
   const http = useHttp();
   const modelApi = useAPI(http, '/device/model');
@@ -377,3 +377,5 @@ export default AppRoute(() => {
     </>
   );
 });
+
+export default StandardTable;

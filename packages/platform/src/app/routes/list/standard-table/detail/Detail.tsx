@@ -16,7 +16,7 @@ import { AppDeviceModal } from '../DeviceModal';
 
 import styles from './Detail.module.scss';
 
-export default AppRoute(() => {
+const Detail = AppRoute(() => {
   const { t } = useTranslation();
 
   const http = useHttp();
@@ -137,3 +137,5 @@ export default AppRoute(() => {
     </>
   );
 });
+
+export default Detail;

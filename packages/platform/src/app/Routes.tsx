@@ -78,7 +78,7 @@ export interface NonIndexRouteItemInput extends Omit<NonIndexRouteObject, 'child
 export type RouteItemInput = IndexRouteItemInput | NonIndexRouteItemInput;
 
 // I have a great implementation of route caching, but considering the synchronization of data between pages (like modifying list or detail page data), I ended up not introducing route caching.
-export const AppRoutes = React.memo(() => {
+const AppRoutes = React.memo(() => {
   const ACLGuard = useACLGuard();
   const tokenGuard = useTokenGuard();
   const location = useLocation();
@@ -276,3 +276,5 @@ export const AppRoutes = React.memo(() => {
     </RouteStateContext.Provider>
   );
 });
+
+export default AppRoutes;
