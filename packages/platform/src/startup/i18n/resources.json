@@ -31,6 +31,7 @@
           "My account": "My account",
           "Account Center": "Account Center",
           "Account Settings": "Account Settings",
+          "Change Password": "Change Password",
           "Logout": "Logout"
         },
         "login": {
@@ -125,6 +126,7 @@
           "My account": "我的账户",
           "Account Center": "个人中心",
           "Account Settings": "个人设置",
+          "Change Password": "修改密码",
           "Logout": "退出登录"
         },
         "login": {

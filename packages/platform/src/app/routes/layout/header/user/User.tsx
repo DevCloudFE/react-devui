@@ -2,7 +2,7 @@ import { useStore } from 'rcl-store';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@react-devui/icons';
+import { LockOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@react-devui/icons';
 import { DAvatar, DDropdown } from '@react-devui/ui';
 
 import { LOGIN_PATH } from '../../../../config/other';
@@ -18,7 +18,8 @@ export function AppUser(props: React.ButtonHTMLAttributes<HTMLButtonElement>): J
       style={{ minWidth: 160 }}
       dList={[
         { id: 'center', label: t('routes.layout.Account Center'), type: 'item', icon: <UserOutlined /> },
-        { id: 'setting', label: t('routes.layout.Account Settings'), type: 'item', icon: <SettingOutlined />, separator: true },
+        { id: 'setting', label: t('routes.layout.Account Settings'), type: 'item', icon: <SettingOutlined /> },
+        { id: 'password', label: t('routes.layout.Change Password'), type: 'item', icon: <LockOutlined />, separator: true },
         { id: 'logout', label: t('routes.layout.Logout'), type: 'item', icon: <LogoutOutlined /> },
       ]}
       dTrigger="click"
