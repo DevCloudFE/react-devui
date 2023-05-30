@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.8](https://github.com/DevCloudFE/react-devui/compare/v18.5.7...v18.5.8) (2023-05-30)
+
+### Features
+
+- **hooks:** add `useACL` ([4f4f31b](https://github.com/DevCloudFE/react-devui/commit/4f4f31b6bb264e28e49c250a79a342c7432bd872))
+
 ## [18.5.7](https://github.com/DevCloudFE/react-devui/compare/v18.5.6...v18.5.7) (2023-05-25)
 
 **Note:** Version bump only for package @react-devui/hooks
