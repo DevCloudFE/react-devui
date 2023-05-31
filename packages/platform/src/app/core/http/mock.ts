@@ -1,4 +1,4 @@
-import type { AppNotification, AppUser, DeviceDoc } from '../../utils/types';
+import type { AppNotification, AppUser } from '../../utils/types';
 import type { JWTToken, JWTTokenPayload } from '../token';
 
 import axios from 'axios';
@@ -47,7 +47,7 @@ if (environment.http.mock) {
       list: Array.from({ length: 3 }).map((_, i) => ({ message: `This is message ${i}`, read: false })),
     },
   ];
-  const deviceList = Array.from({ length: 108 }).map<DeviceDoc>((_, i) => ({
+  const deviceList = Array.from({ length: 108 }).map<AppDocs.Device>((_, i) => ({
     id: i,
     create_time: Date.now() + 60 * 60 * 1000,
     update_time: Date.now() + 60 * 60 * 1000,

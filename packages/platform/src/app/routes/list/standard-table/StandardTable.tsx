@@ -1,4 +1,4 @@
-import type { DeviceDoc, StandardQueryParams } from '../../../utils/types';
+import type { StandardQueryParams } from '../../../utils/types';
 import type { DSelectItem } from '@react-devui/ui/components/select';
 
 import { isUndefined } from 'lodash';
@@ -17,7 +17,7 @@ import { AppDeviceModal } from './DeviceModal';
 
 import styles from './StandardTable.module.scss';
 
-export type DeviceData = DeviceDoc;
+export type DeviceData = AppDocs.Device;
 
 interface DeviceQueryParams {
   keyword: string;
