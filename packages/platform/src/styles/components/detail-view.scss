@@ -6,7 +6,8 @@
 
     @include e(item-label) {
       margin-right: 0;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
+      font-size: 0.775em;
 
       &::after {
         content: none;

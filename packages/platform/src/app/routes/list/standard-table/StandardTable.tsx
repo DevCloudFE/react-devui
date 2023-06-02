@@ -338,7 +338,6 @@ const StandardTable = AppRoute(() => {
                 width: 140,
               }}
               aScroll={{ x: 1200 }}
-              aLabelWidth={72}
             />
             <div className="app-table-footer">
               <div>

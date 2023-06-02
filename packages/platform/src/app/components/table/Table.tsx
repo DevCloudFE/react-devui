@@ -56,12 +56,11 @@ export interface AppTableProps<T> {
   };
   aExpand?: (data: T, index: number) => React.ReactNode;
   aScroll?: { x?: number | string; y?: number | string };
-  aLabelWidth?: string | number;
   aKey?: (data: T, index: number) => any;
 }
 
 export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
-  const { className, aName, aData, aColumns, aActions, aExpand, aScroll, aLabelWidth, aKey = (data) => data['id'] } = props;
+  const { className, aName, aData, aColumns, aActions, aExpand, aScroll, aKey = (data) => data['id'] } = props;
 
   const columns = aColumns.filter((column) => !column.hidden);
   const titleIndex = columns.findIndex((column) => column.title);
@@ -291,8 +290,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                   <AppDetailView
                     aCol={12}
                     aGutter={3}
-                    aLabelAlign="right"
-                    aLabelWidth={aLabelWidth}
+                    aVertical
                     aList={columns
                       .filter((column, indexOfCol) => !column.checkbox && indexOfCol !== titleIndex)
                       .map((column) => ({
