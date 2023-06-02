@@ -16,8 +16,9 @@ export function useInit() {
   const acl = useACL();
 
   return (user: AppUser) => {
+    acl.set([]);
     acl.setFull(user.permission.includes(ROLE_ACL.super_admin));
-    acl.set(user.permission);
+    acl.add(user.permission);
 
     GlobalStore.set('appUser', user);
 
