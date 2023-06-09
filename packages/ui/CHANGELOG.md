@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.9](https://github.com/DevCloudFE/react-devui/compare/v18.5.8...v18.5.9) (2023-06-09)
+
+### Bug Fixes
+
+- **ui:** fix date-picker preset error ([b4a252e](https://github.com/DevCloudFE/react-devui/commit/b4a252e122d65a6e93e9d1d4797e84a6e7abda1c))
+
 ## [18.5.8](https://github.com/DevCloudFE/react-devui/compare/v18.5.7...v18.5.8) (2023-05-30)
 
 **Note:** Version bump only for package @react-devui/ui
