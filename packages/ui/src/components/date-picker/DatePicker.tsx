@@ -186,8 +186,6 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
                     } else {
                       enter();
                     }
-                    updatePanelRef.current?.(d[index]);
-                    updateTimePickerPanelRef.current?.(d[index]);
                   };
 
                   return (
