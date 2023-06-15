@@ -9,9 +9,9 @@ import { DTableContext } from './Table';
 
 const ZINDEX_CONFIG = {
   top: 5,
-  right: 1,
+  right: 2,
   bottom: 5,
-  left: 1,
+  left: 2,
 };
 
 export interface DCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
@@ -61,7 +61,7 @@ export function DCell(props: DCellProps): JSX.Element | null {
     fixedStyle = {
       ...dFixed,
       position: 'sticky',
-      zIndex: Object.keys(dFixed).reduce((previous, current) => previous + ZINDEX_CONFIG[current], 0),
+      zIndex: (dTag === 'th' ? 1 : 0) + Object.keys(dFixed).reduce((previous, current) => previous + ZINDEX_CONFIG[current], 0),
     };
 
     if ('left' in dFixed) {

@@ -55,12 +55,18 @@ export interface AppTableProps<T> {
     width: number | string;
   };
   aExpand?: (data: T, index: number) => React.ReactNode;
+  aExpandFixed?: {
+    top?: number | string;
+    right?: number | string;
+    bottom?: number | string;
+    left?: number | string;
+  };
   aScroll?: { x?: number | string; y?: number | string };
   aKey?: (data: T, index: number) => any;
 }
 
 export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
-  const { className, aName, aData, aColumns, aActions, aExpand, aScroll, aKey = (data) => data['id'] } = props;
+  const { className, aName, aData, aColumns, aActions, aExpand, aExpandFixed, aScroll, aKey = (data) => data['id'] } = props;
 
   const columns = aColumns.filter((column) => !column.hidden);
   const titleIndex = columns.findIndex((column) => column.title);
@@ -76,7 +82,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
       <DTable
         className={getClassName('d-none d-md-block', className)}
         style={{
-          minHeight: aScroll?.y,
+          maxHeight: aScroll?.y,
           overflowX: isUndefined(aScroll?.x) ? 'hidden' : 'auto',
           overflowY: isUndefined(aScroll?.y) ? 'hidden' : 'auto',
         }}
@@ -85,14 +91,14 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
           {aName && <caption>{aName}</caption>}
           <thead>
             <tr>
-              {!isUndefined(aExpand) && <DTable.Th dWidth={60}></DTable.Th>}
+              {!isUndefined(aExpand) && <DTable.Th dWidth={60} dFixed={Object.assign({ top: 0 }, aExpandFixed)}></DTable.Th>}
               {columns.map((column, index) => (
                 <DTable.Th
                   key={index}
                   dWidth={column.width}
                   dSort={column.thProps?.sort}
                   dActions={column.thProps?.actions}
-                  dFixed={column.fixed}
+                  dFixed={Object.assign({ top: 0 }, column.fixed)}
                   dAlign={column.align}
                 >
                   {column.th}
