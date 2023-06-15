@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.10](https://github.com/DevCloudFE/react-devui/compare/v18.5.9...v18.5.10) (2023-06-15)
+
+**Note:** Version bump only for package @react-devui/hooks
+
 ## [18.5.9](https://github.com/DevCloudFE/react-devui/compare/v18.5.8...v18.5.9) (2023-06-09)
 
 **Note:** Version bump only for package @react-devui/hooks
