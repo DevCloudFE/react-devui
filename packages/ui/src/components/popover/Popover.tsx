@@ -26,6 +26,7 @@ export interface DPopoverRef {
 export interface DPopoverProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactElement;
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dTrigger?: 'hover' | 'click';
   dContainer?: DRefExtra | false;
   dPlacement?: DPopupPlacement;
@@ -51,6 +52,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   const {
     children,
     dVisible,
+    dInitialVisible = false,
     dTrigger = 'hover',
     dContainer,
     dPlacement = 'top',
@@ -112,7 +114,7 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
   const titleId = `${dPrefix}popover-title-${uniqueId}`;
   const bodyId = `${dPrefix}popover-content-${uniqueId}`;
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {

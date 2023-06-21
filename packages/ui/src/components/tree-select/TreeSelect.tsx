@@ -41,6 +41,7 @@ export interface DTreeSelectProps<V extends DId, T extends DTreeItem<V>> extends
   dModel?: V | null | V[];
   dExpands?: V[];
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
   dLoading?: boolean;
@@ -81,6 +82,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     dModel,
     dExpands,
     dVisible,
+    dInitialVisible = false,
     dPlaceholder,
     dSize,
     dLoading = false,
@@ -134,7 +136,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
 
   const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
 
   const renderNodes = useMemo<AbstractTreeNode<V, T>[]>(
     () =>

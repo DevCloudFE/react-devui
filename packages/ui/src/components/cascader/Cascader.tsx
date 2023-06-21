@@ -49,6 +49,7 @@ export interface DCascaderProps<V extends DId, T extends DCascaderItem<V>> exten
   dList: T[];
   dModel?: V | null | V[];
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
   dLoading?: boolean;
@@ -86,6 +87,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
     dList,
     dModel,
     dVisible,
+    dInitialVisible = false,
     dPlaceholder,
     dSize,
     dLoading = false,
@@ -163,7 +165,7 @@ function Cascader<V extends DId, T extends DCascaderItem<V>>(
 
   const [searchValue, changeSearchValue] = useDValue<string>('', dSearchValue, onSearchValueChange);
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
   const [_select, changeSelect] = useDValue<V | null | V[]>(
     dMultiple ? [] : null,

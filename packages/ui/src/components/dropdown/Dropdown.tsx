@@ -39,6 +39,7 @@ export interface DDropdownProps<ID extends DId, T extends DDropdownItem<ID>>
   children: React.ReactElement;
   dList: T[];
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dTrigger?: 'hover' | 'click';
   dArrow?: boolean;
@@ -57,6 +58,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
     children,
     dList,
     dVisible,
+    dInitialVisible = false,
     dPlacement = 'bottom-right',
     dTrigger = 'hover',
     dArrow = false,
@@ -157,7 +159,7 @@ function Dropdown<ID extends DId, T extends DDropdownItem<ID>>(
     setFocusIds(ids);
   };
 
-  const [visible, _changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, _changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
   const changeVisible = (visible: boolean) => {
     if (!visible) {
       setPopupIds([]);

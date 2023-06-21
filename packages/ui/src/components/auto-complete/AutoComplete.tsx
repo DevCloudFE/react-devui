@@ -31,6 +31,7 @@ export interface DAutoCompleteItem {
 export interface DAutoCompleteProps<T extends DAutoCompleteItem> extends React.HTMLAttributes<HTMLDivElement> {
   dList: T[];
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dLoading?: boolean;
   dVirtual?: boolean;
   dCustomItem?: (item: T) => React.ReactNode;
@@ -49,6 +50,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
     children,
     dList,
     dVisible,
+    dInitialVisible = false,
     dLoading = false,
     dVirtual = false,
     dCustomItem,
@@ -89,7 +91,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
 
   const canSelectItem = useCallback((item: T) => !item.disabled && !item.children, []);
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
 
   const [focusVisible, setFocusVisible] = useState(false);
 

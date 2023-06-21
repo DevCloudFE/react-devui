@@ -43,6 +43,7 @@ export interface DSelectProps<V extends DId, T extends DSelectItem<V>> extends O
   dList: T[];
   dModel?: V | null | V[];
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dPlaceholder?: string;
   dSize?: DSize;
   dLoading?: boolean;
@@ -82,6 +83,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
     dList,
     dModel,
     dVisible,
+    dInitialVisible = false,
     dPlaceholder,
     dSize,
     dLoading = false,
@@ -147,7 +149,7 @@ function Select<V extends DId, T extends DSelectItem<V>>(
 
   const [focusVisible, setFocusVisible] = useState(false);
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
   const formControlInject = useFormControl(dFormControl);
   const [_select, changeSelect] = useDValue<V | null | V[]>(
     dMultiple ? [] : null,

@@ -19,6 +19,7 @@ import { DModalHeader } from './ModalHeader';
 
 export interface DModalProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: boolean;
+  dInitialVisible?: boolean;
   dWidth?: number | string;
   dTop?: number | string;
   dZIndex?: number | string;
@@ -48,6 +49,7 @@ export const DModal: {
   const {
     children,
     dVisible,
+    dInitialVisible = false,
     dWidth = 520,
     dTop = 100,
     dZIndex,
@@ -96,7 +98,7 @@ export const DModal: {
 
   const topStyle = dTop + (isNumber(dTop) ? 'px' : '');
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onClose);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onClose);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {

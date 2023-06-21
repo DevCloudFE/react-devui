@@ -29,6 +29,7 @@ export interface DDatePickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   dModel?: Date | null | [Date, Date];
   dFormat?: string;
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dPlacement?: 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
   dOrder?: 'ascend' | 'descend' | false;
   dPlaceholder?: string | [string?, string?];
@@ -58,6 +59,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
     dModel,
     dFormat,
     dVisible,
+    dInitialVisible = false,
     dPlacement = 'bottom-left',
     dOrder = 'ascend',
     dPlaceholder,
@@ -90,7 +92,7 @@ function DatePicker(props: DDatePickerProps, ref: React.ForwardedRef<DDateInputR
 
   const [t] = useTranslation();
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
 
   const size = dSize ?? gSize;
   const disabled = (dDisabled || gDisabled || dFormControl?.control.disabled) ?? false;

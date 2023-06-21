@@ -20,6 +20,7 @@ import { DDrawerHeader } from './DrawerHeader';
 
 export interface DDrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   dVisible: boolean;
+  dInitialVisible?: boolean;
   dContainer?: DRefExtra | false;
   dPlacement?: 'top' | 'right' | 'bottom' | 'left';
   dWidth?: number | string;
@@ -51,6 +52,7 @@ export const DDrawer: {
   const {
     children,
     dVisible,
+    dInitialVisible = false,
     dContainer,
     dPlacement = 'right',
     dWidth = 400,
@@ -127,7 +129,7 @@ export const DDrawer: {
         : `translateX(${(distance[dPlacement] / 3) * 2}px)`,
   };
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onClose);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onClose);
 
   const isFixed = isUndefined(dContainer);
 

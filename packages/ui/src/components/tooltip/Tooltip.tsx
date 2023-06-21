@@ -22,6 +22,7 @@ export interface DTooltipRef {
 export interface DTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactElement;
   dVisible?: boolean;
+  dInitialVisible?: boolean;
   dTrigger?: 'hover' | 'click';
   dContainer?: DRefExtra | false;
   dPlacement?: DPopupPlacement;
@@ -43,6 +44,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   const {
     children,
     dVisible,
+    dInitialVisible = false,
     dTrigger = 'hover',
     dContainer,
     dPlacement = 'top',
@@ -91,7 +93,7 @@ function Tooltip(props: DTooltipProps, ref: React.ForwardedRef<DTooltipRef>): JS
   const uniqueId = useId();
   const id = restProps.id ?? `${dPrefix}tooltip-${uniqueId}`;
 
-  const [visible, changeVisible] = useDValue<boolean>(false, dVisible, onVisibleChange);
+  const [visible, changeVisible] = useDValue<boolean>(dInitialVisible, dVisible, onVisibleChange);
 
   const maxZIndex = useMaxIndex(visible);
   const zIndex = (() => {
