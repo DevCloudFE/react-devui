@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.11](https://github.com/DevCloudFE/react-devui/compare/v18.5.10...v18.5.11) (2023-06-21)
+
+### Features
+
+- **ui:** popup components support `dInitialVisible` ([82ef3d5](https://github.com/DevCloudFE/react-devui/commit/82ef3d5fecc4a453e45926a69c955109df434ff8))
+
 ## [18.5.10](https://github.com/DevCloudFE/react-devui/compare/v18.5.9...v18.5.10) (2023-06-15)
 
 ### Bug Fixes
