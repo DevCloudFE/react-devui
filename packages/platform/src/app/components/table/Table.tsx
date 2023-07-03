@@ -233,7 +233,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
 
             return (
               <DCard key={id} className="mb-3">
-                {(titleIndex !== -1 || aColumns[0].checkbox) && (
+                {(titleIndex !== -1 || columns[0].checkbox) && (
                   <DCard.Header
                     className="app-table__card-header"
                     dAction={
@@ -280,7 +280,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                     }
                   >
                     {(() => {
-                      const checkbox: any = aColumns[0].checkbox ? aColumns[0].td : false;
+                      const checkbox: any = columns[0].checkbox ? columns[0].td : false;
                       const content = titleIndex !== -1 && columns[titleIndex].td;
 
                       return (
@@ -306,7 +306,7 @@ export function AppTable<T = any>(props: AppTableProps<T>): JSX.Element | null {
                   />
                 </DCard.Content>
                 {(() => {
-                  if (aActions && titleIndex === -1 && !aColumns[0].checkbox) {
+                  if (aActions && titleIndex === -1 && !columns[0].checkbox) {
                     const actions = aActions.actions(data, index).filter((action) => !action.hidden);
                     if (actions.length === 0) {
                       return;
