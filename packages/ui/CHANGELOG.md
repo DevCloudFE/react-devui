@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.5.13](https://github.com/DevCloudFE/react-devui/compare/v18.5.12...v18.5.13) (2023-07-05)
+
+### Bug Fixes
+
+- **ui:** add miss prefix to `$rd-enable-gap` ([1f75c24](https://github.com/DevCloudFE/react-devui/commit/1f75c24dde76c13ab0eb9dc721ac92d288a127b7))
+
 ## [18.5.12](https://github.com/DevCloudFE/react-devui/compare/v18.5.11...v18.5.12) (2023-07-05)
 
 ### Features
