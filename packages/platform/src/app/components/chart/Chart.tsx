@@ -2,24 +2,22 @@ import type { AppTheme } from '../../utils/types';
 
 import * as echarts from 'echarts';
 import { cloneDeep, merge } from 'lodash';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useResize, useStorage } from '@react-devui/hooks';
+import { useAsync, useResize } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
-import { STORAGE_KEY } from '../../config/storage';
 import chartTheme from './theme.json';
 
-echarts.registerTheme('light', chartTheme.light);
-echarts.registerTheme('dark', merge(cloneDeep(chartTheme.light), chartTheme.dark));
-
-export interface AppChartProps<O extends echarts.EChartsOption> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  aOption: O | null;
+export interface AppChartProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  aRenderer?: 'canvas' | 'svg';
+  onInit: (instance: echarts.ECharts) => void;
 }
 
-function Chart<O extends echarts.EChartsOption>(props: AppChartProps<O>, ref: React.ForwardedRef<echarts.ECharts>): JSX.Element | null {
+export function AppChart(props: AppChartProps): JSX.Element | null {
   const {
-    aOption,
+    aRenderer = 'canvas',
+    onInit,
 
     ...restProps
   } = props;
@@ -35,35 +33,58 @@ function Chart<O extends echarts.EChartsOption>(props: AppChartProps<O>, ref: Re
 
   const async = useAsync();
 
-  const themeStorage = useStorage<AppTheme>(...STORAGE_KEY.theme);
-
-  const [instance, setInstance] = useState<echarts.ECharts | null>(null);
+  const [theme, setTheme] = useState<AppTheme | null>(null);
 
   useEffect(() => {
-    const instance = containerRef.current ? echarts.init(containerRef.current, themeStorage.value, { renderer: 'svg' }) : null;
-    setInstance(instance);
-    return () => {
-      instance?.dispose();
-    };
-  }, [themeStorage.value]);
-
-  useEffect(() => {
-    if (instance && aOption) {
-      instance.setOption(aOption);
+    for (const theme of ['light', 'dark'] as const) {
+      if (document.body.className.includes(theme)) {
+        setTheme(theme);
+        break;
+      }
     }
-  }, [aOption, instance]);
+
+    const observer = new MutationObserver(() => {
+      setTheme(document.body.className.includes('dark') ? 'dark' : 'light');
+    });
+    observer.observe(document.body, { attributeFilter: ['class'] });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (containerRef.current && theme) {
+      const instance = echarts.init(
+        containerRef.current,
+        JSON.parse(
+          JSON.stringify(theme === 'light' ? chartTheme.light : merge(cloneDeep(chartTheme.light), chartTheme.dark)).replace(
+            /var\((.+?)\)/g,
+            (match, p1) => {
+              return getComputedStyle(document.body).getPropertyValue(p1);
+            }
+          )
+        ),
+        { renderer: aRenderer }
+      );
+      onInit(instance);
+      return () => {
+        instance.dispose();
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aRenderer, theme]);
 
   useResize(elRef, () => {
-    if (instance) {
-      dataRef.current.clearTid?.();
-      dataRef.current.clearTid = async.setTimeout(() => {
-        dataRef.current.clearTid = undefined;
-        instance.resize({ animation: { duration: 200 } });
-      }, 100);
-    }
+    dataRef.current.clearTid?.();
+    dataRef.current.clearTid = async.setTimeout(() => {
+      dataRef.current.clearTid = undefined;
+      if (containerRef.current) {
+        const instance = echarts.getInstanceByDom(containerRef.current);
+        instance?.resize({ animation: { duration: 200 } });
+      }
+    }, 100);
   });
-
-  useImperativeHandle<echarts.ECharts | null, echarts.ECharts | null>(ref, () => instance, [instance]);
 
   return (
     <div {...restProps} ref={elRef} className={getClassName(restProps.className, 'app-chart')}>
@@ -71,5 +92,3 @@ function Chart<O extends echarts.EChartsOption>(props: AppChartProps<O>, ref: Re
     </div>
   );
 }
-
-export const AppChart = React.forwardRef(Chart);
