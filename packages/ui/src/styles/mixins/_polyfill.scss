@@ -1,5 +1,5 @@
 @mixin polyfill-gap($row-gap, $column-gap) {
-  @if $enable-gap == true {
+  @if $rd-enable-gap == true {
     gap: #{$row-gap} #{$column-gap};
   } @else {
     @include polyfill-row-gap($row-gap);
@@ -8,7 +8,7 @@
 }
 
 @mixin polyfill-row-gap($row-gap) {
-  @if $enable-gap == true {
+  @if $rd-enable-gap == true {
     row-gap: #{$row-gap};
   } @else {
     & {
@@ -22,7 +22,7 @@
 }
 
 @mixin polyfill-column-gap($column-gap) {
-  @if $enable-gap == true {
+  @if $rd-enable-gap == true {
     column-gap: #{$column-gap};
   } @else {
     & > *:not(:last-child) {
