@@ -87,7 +87,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
 
   const [jumpValue, setJumpValue] = useState('');
   const lastPage = Math.max(Math.ceil(dTotal / pageSize), 1);
-  const paginationSpace = dMini ? 8 : 16;
 
   return (
     <nav
@@ -100,7 +99,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
       role="navigation"
       aria-label={restProps['aria-label'] ?? 'Pagination Navigation'}
     >
-      {dCompose.map((item, index) => {
+      {dCompose.map((item) => {
         if (item === 'total') {
           const totalNode = (() => {
             const range: [number, number] = [Math.min((active - 1) * pageSize + 1, dTotal), Math.min(active * pageSize, dTotal)];
@@ -116,7 +115,7 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           })();
 
           return (
-            <div key="total" className={`${dPrefix}pagination__total`} style={{ marginLeft: index === 0 ? undefined : paginationSpace }}>
+            <div key="total" className={`${dPrefix}pagination__total`}>
               {totalNode}
             </div>
           );
@@ -132,7 +131,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
                 'is-disabled': active === 1,
                 [`${dPrefix}pagination__button--border`]: !(dCustomRender && dCustomRender.prev),
               })}
-              style={{ marginLeft: index === 0 ? undefined : paginationSpace }}
               title={t('Pagination', 'Previous page')}
             >
               {dCustomRender && dCustomRender.prev ? dCustomRender.prev : <LeftOutlined />}
@@ -291,7 +289,6 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
             <DSelect
               key="page-size"
               className={`${dPrefix}pagination__page-size`}
-              style={{ marginLeft: index === 0 ? undefined : paginationSpace }}
               dList={list}
               dModel={pageSize}
               dCustomItem={(item) => (dCustomRender && dCustomRender.pageSize ? dCustomRender.pageSize(item.value) : item.label)}
@@ -350,8 +347,10 @@ export function DPagination(props: DPaginationProps): JSX.Element | null {
           })();
 
           return (
-            <div key="jump" className={`${dPrefix}pagination__jump`} style={{ marginLeft: index === 0 ? undefined : paginationSpace }}>
-              {jumpNode}
+            <div key="jump">
+              <div key="jump" className={`${dPrefix}pagination__jump`}>
+                {jumpNode}
+              </div>
             </div>
           );
         }

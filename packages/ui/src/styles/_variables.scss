@@ -18,3 +18,5 @@ $rd-placeholder-color: rgb(var(--#{$rd-prefix}text-color-rgb) / 24%) !default;
 $rd-placeholder-disabled-color: rgb(var(--#{$rd-prefix}text-color-rgb) / 8%) !default;
 
 $rd-font-weight-bold: 600 !default;
+
+$enable-gap: false !default;

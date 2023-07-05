@@ -1,19 +1,32 @@
 @mixin polyfill-gap($row-gap, $column-gap) {
-  row-gap: #{$row-gap};
-
-  & > * + * {
-    margin-left: #{$column-gap};
+  @if $enable-gap == true {
+    gap: #{$row-gap} #{$column-gap};
+  } @else {
+    @include polyfill-row-gap($row-gap);
+    @include polyfill-column-gap($row-gap);
   }
 }
 
 @mixin polyfill-row-gap($row-gap) {
-  & > * + * {
-    margin-top: #{$row-gap};
+  @if $enable-gap == true {
+    row-gap: #{$row-gap};
+  } @else {
+    & {
+      margin-top: -#{$row-gap};
+    }
+
+    & > * {
+      margin-top: #{$row-gap};
+    }
   }
 }
 
 @mixin polyfill-column-gap($column-gap) {
-  & > * + * {
-    margin-left: #{$column-gap};
+  @if $enable-gap == true {
+    column-gap: #{$column-gap};
+  } @else {
+    & > *:not(:last-child) {
+      margin-right: #{$column-gap};
+    }
   }
 }
