@@ -36,7 +36,6 @@
 
   @include e(item-content) {
     flex-grow: 1;
-    overflow: hidden;
     word-break: break-all;
   }
 }
