@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.6.0](https://github.com/DevCloudFE/react-devui/compare/v18.5.13...v18.6.0) (2023-07-07)
+
+**Note:** Version bump only for package @react-devui/icons
+
 ## [18.5.13](https://github.com/DevCloudFE/react-devui/compare/v18.5.12...v18.5.13) (2023-07-05)
 
 **Note:** Version bump only for package @react-devui/icons

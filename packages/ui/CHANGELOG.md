@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.6.0](https://github.com/DevCloudFE/react-devui/compare/v18.5.13...v18.6.0) (2023-07-07)
+
+### Bug Fixes
+
+- calculate page size ([f2fa480](https://github.com/DevCloudFE/react-devui/commit/f2fa48096f122b13eaf2fa0b0ea97dd39e7658c6))
+
 ## [18.5.13](https://github.com/DevCloudFE/react-devui/compare/v18.5.12...v18.5.13) (2023-07-05)
 
 ### Bug Fixes
