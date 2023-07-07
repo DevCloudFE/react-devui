@@ -79,6 +79,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
         dataRef.current.clearHTid = scrollTo(ulHRef.current, {
           top: Array.prototype.indexOf.call(ulHRef.current.children, ulHRef.current.querySelector(`[data-h="${hour}"]`)) * 28,
           behavior,
+          during: 200,
         });
       }
     }
@@ -90,6 +91,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
         dataRef.current.clearMTid = scrollTo(ulMRef.current, {
           top: Array.prototype.indexOf.call(ulMRef.current.children, ulMRef.current.querySelector(`[data-m="${minute}"]`)) * 28,
           behavior,
+          during: 200,
         });
       }
     }
@@ -101,6 +103,7 @@ function Panel(props: DPanelProps, ref: React.ForwardedRef<(date: Date) => void>
         dataRef.current.clearSTid = scrollTo(ulSRef.current, {
           top: Array.prototype.indexOf.call(ulSRef.current.children, ulSRef.current.querySelector(`[data-s="${second}"]`)) * 28,
           behavior,
+          during: 200,
         });
       }
     }

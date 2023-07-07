@@ -1,3 +1,5 @@
+import { ROOT_DATA } from '../../components/root';
+
 export function getHorizontalSidePosition(
   targetEl: HTMLElement,
   popupSize: { width: number; height: number },
@@ -18,11 +20,11 @@ export function getHorizontalSidePosition(
 
   let top = targetRect.top;
   if (inWindow !== false) {
-    top = Math.min(Math.max(top, inWindow), window.innerHeight - height - inWindow);
+    top = Math.min(Math.max(top, inWindow), ROOT_DATA.pageSize.height - height - inWindow);
   }
   let left = placement === 'right' ? targetRect.left + targetRect.width + offset : targetRect.left - width - offset;
   if (inWindow !== false) {
-    left = Math.min(Math.max(left, inWindow), window.innerWidth - width - inWindow);
+    left = Math.min(Math.max(left, inWindow), ROOT_DATA.pageSize.width - width - inWindow);
   }
 
   const transformOrigin =

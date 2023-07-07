@@ -1,7 +1,8 @@
 import type { DPartialConfigContextData } from './contex';
 import type { DIconContextData } from '@react-devui/icons/Icon';
 
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
+import ReactDOM from 'react-dom';
 
 import { useRefExtra, useEvent } from '@react-devui/hooks';
 import { DIconContext } from '@react-devui/icons/Icon';
@@ -30,7 +31,10 @@ export const ROOT_DATA: {
     time: number;
     e: MouseEvent;
   };
-} = {};
+  pageSize: { width: number; height: number };
+} = {
+  pageSize: typeof window !== 'undefined' ? { width: window.innerWidth, height: window.innerHeight } : { width: 0, height: 0 },
+};
 
 export interface DRootProps {
   children: React.ReactNode;
@@ -43,6 +47,7 @@ export function DRoot(props: DRootProps): JSX.Element | null {
   const parent = useContext(DConfigContext);
 
   const windowRef = useRefExtra(() => window);
+  const pageSizeRef = useRef<HTMLDivElement>(null);
 
   const [context, iconContext] = useMemo<[DConfigContextManager, DIconContextData]>(() => {
     const context = new DConfigContextManager((parent ?? ROOT).mergeContext(_context ?? {}));
@@ -100,9 +105,39 @@ export function DRoot(props: DRootProps): JSX.Element | null {
     { capture: true }
   );
 
+  useEffect(() => {
+    if (pageSizeRef.current) {
+      const observer = new ResizeObserver(() => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ROOT_DATA.pageSize = { width: pageSizeRef.current!.clientWidth, height: pageSizeRef.current!.clientHeight };
+      });
+      observer.observe(pageSizeRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }
+  });
+
   return (
-    <DConfigContext.Provider value={context}>
-      {parent ? children : <DIconContext.Provider value={iconContext}>{children}</DIconContext.Provider>}
-    </DConfigContext.Provider>
+    <>
+      <DConfigContext.Provider value={context}>
+        {parent ? children : <DIconContext.Provider value={iconContext}>{children}</DIconContext.Provider>}
+      </DConfigContext.Provider>
+      {windowRef.current &&
+        ReactDOM.createPortal(
+          <div
+            ref={pageSizeRef}
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              pointerEvents: 'none',
+            }}
+          ></div>,
+          windowRef.current.document.body
+        )}
+    </>
   );
 }

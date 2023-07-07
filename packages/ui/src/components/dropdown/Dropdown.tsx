@@ -5,10 +5,10 @@ import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEvent, useEventCallback, useId, useImmer, useRefExtra } from '@react-devui/hooks';
-import { getClassName, getVerticalSidePosition, scrollToView } from '@react-devui/utils';
+import { getClassName, scrollToView } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { getVerticalSidePosition, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DFocusVisible } from '../_focus-visible';
 import { DPopup, useNestedPopup } from '../_popup';

@@ -11,16 +11,16 @@ import React, { useCallback, useState, useMemo, useRef, useImperativeHandle } fr
 
 import { useEventCallback, useId } from '@react-devui/hooks';
 import { CloseOutlined, LoadingOutlined } from '@react-devui/icons';
-import { findNested, getClassName, getVerticalSidePosition } from '@react-devui/utils';
+import { findNested, getClassName } from '@react-devui/utils';
 
 import { useGeneralContext, useDValue } from '../../hooks';
-import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { cloneHTMLElement, getVerticalSidePosition, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { DComboboxKeyboard } from '../_keyboard';
 import { DSelectbox } from '../_selectbox';
 import { DTransition } from '../_transition';
 import { DDropdown } from '../dropdown';
 import { useFormControl } from '../form';
-import { useComponentConfig, usePrefixConfig, useTranslation } from '../root';
+import { ROOT_DATA, useComponentConfig, usePrefixConfig, useTranslation } from '../root';
 import { DTag } from '../tag';
 import { DPanel as DTreePanel } from '../tree/Panel';
 import { DSearchPanel as DTreeSearchPanel } from '../tree/SearchPanel';
@@ -308,7 +308,7 @@ function TreeSelect<V extends DId, T extends DTreeItem<V>>(
     if (visible && boxRef.current && popupRef.current) {
       const boxWidth = boxRef.current.offsetWidth;
       const height = popupRef.current.offsetHeight;
-      const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+      const maxWidth = ROOT_DATA.pageSize.width - WINDOW_SPACE * 2;
       const width = Math.min(Math.max(popupRef.current.scrollWidth, boxWidth), maxWidth);
       const { top, left, transformOrigin } = getVerticalSidePosition(
         boxRef.current,

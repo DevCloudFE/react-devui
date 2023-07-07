@@ -2,17 +2,17 @@ import { isUndefined } from 'lodash';
 import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useEvent, useImmer, useIsomorphicLayoutEffect, useLockScroll, useRefExtra } from '@react-devui/hooks';
+import { useEvent, useImmer, useIsomorphicLayoutEffect, useRefExtra } from '@react-devui/hooks';
 import { CloseOutlined, LeftOutlined, RightOutlined, RotateRightOutlined, ZoomInOutlined, ZoomOutOutlined } from '@react-devui/icons';
 import { getClassName } from '@react-devui/utils';
 
-import { useDValue, useMaxIndex } from '../../hooks';
+import { useDValue, useLockScroll, useMaxIndex } from '../../hooks';
 import { registerComponentMate, TTANSITION_DURING_BASE } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
 import { DButton } from '../button';
 import { DInput } from '../input';
-import { useComponentConfig, usePrefixConfig } from '../root';
+import { ROOT_DATA, useComponentConfig, usePrefixConfig } from '../root';
 
 export interface DImagePreviewProps extends React.HTMLAttributes<HTMLDivElement> {
   dList: (React.ImgHTMLAttributes<HTMLImageElement> & { src: string })[];
@@ -102,7 +102,7 @@ export function DImagePreview(props: DImagePreviewProps): JSX.Element | null {
   })();
 
   const getOffset = () => {
-    setOffset(~~((window.innerWidth - 108) / 120));
+    setOffset(~~((ROOT_DATA.pageSize.width - 108) / 120));
   };
   useIsomorphicLayoutEffect(() => {
     getOffset();

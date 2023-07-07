@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom';
 
 import { useEventCallback, useRefExtra } from '@react-devui/hooks';
 import { RightOutlined } from '@react-devui/icons';
-import { checkNodeExist, getClassName, getHorizontalSidePosition } from '@react-devui/utils';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { getHorizontalSidePosition, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
 import { usePrefixConfig, useTranslation } from '../root';

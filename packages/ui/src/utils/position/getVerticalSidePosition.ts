@@ -1,3 +1,5 @@
+import { ROOT_DATA } from '../../components/root';
+
 type DVerticalSidePlacement = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right';
 
 interface DVerticalSidePosition {
@@ -82,7 +84,7 @@ export function getVerticalSidePosition(
         ? targetRect.top - height - offset
         : targetRect.top + targetRect.height + offset;
     if (inWindow !== false) {
-      top = Math.min(Math.max(top, inWindow), window.innerHeight - height - inWindow);
+      top = Math.min(Math.max(top, inWindow), ROOT_DATA.pageSize.height - height - inWindow);
     }
 
     let left =
@@ -92,7 +94,7 @@ export function getVerticalSidePosition(
         ? targetRect.left
         : targetRect.left + targetRect.width - width;
     if (inWindow !== false) {
-      left = Math.min(Math.max(left, inWindow), window.innerWidth - width - inWindow);
+      left = Math.min(Math.max(left, inWindow), window.screen.availWidth - width - inWindow);
     }
 
     const transformOrigin = placement === 'top' || placement === 'top-left' || placement === 'top-right' ? 'center bottom' : 'center top';
@@ -106,7 +108,8 @@ export function getVerticalSidePosition(
 
     if (
       inWindow !== false &&
-      ((placement.includes('top') && top === inWindow) || (placement.includes('bottom') && top === window.innerHeight - height - inWindow))
+      ((placement.includes('top') && top === inWindow) ||
+        (placement.includes('bottom') && top === ROOT_DATA.pageSize.height - height - inWindow))
     ) {
       if (prevPosition) {
         return prevPosition;

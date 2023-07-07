@@ -1,21 +1,21 @@
+import type { DPopupPlacement } from '../../utils/position';
 import type { DPopoverFooterPrivateProps } from './PopoverFooter';
 import type { DPopoverHeaderPrivateProps } from './PopoverHeader';
 import type { DRefExtra } from '@react-devui/hooks/useRefExtra';
-import type { DPopupPlacement } from '@react-devui/utils/position';
 
 import { isString, isUndefined } from 'lodash';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useEvent, useEventCallback, useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
-import { getClassName, getPopupPosition } from '@react-devui/utils';
+import { useEvent, useEventCallback, useId, useRefExtra } from '@react-devui/hooks';
+import { getClassName } from '@react-devui/utils';
 
-import { useMaxIndex, useDValue } from '../../hooks';
-import { registerComponentMate, handleModalKeyDown, cloneHTMLElement, checkNoExpandedEl } from '../../utils';
+import { useMaxIndex, useDValue, useLockScroll } from '../../hooks';
+import { registerComponentMate, handleModalKeyDown, cloneHTMLElement, checkNoExpandedEl, getPopupPosition } from '../../utils';
 import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DPopup } from '../_popup';
 import { DTransition } from '../_transition';
-import { useComponentConfig, usePrefixConfig } from '../root';
+import { ROOT_DATA, useComponentConfig, usePrefixConfig } from '../root';
 import { DPopoverFooter } from './PopoverFooter';
 import { DPopoverHeader } from './PopoverHeader';
 
@@ -144,8 +144,8 @@ function Popover(props: DPopoverProps, ref: React.ForwardedRef<DPopoverRef>): JS
         const containerRect = containerRef.current.getBoundingClientRect();
         space = [
           containerRect.top,
-          window.innerWidth - containerRect.left - containerRect.width,
-          window.innerHeight - containerRect.top - containerRect.height,
+          ROOT_DATA.pageSize.width - containerRect.left - containerRect.width,
+          ROOT_DATA.pageSize.height - containerRect.top - containerRect.height,
           containerRect.left,
         ];
       }

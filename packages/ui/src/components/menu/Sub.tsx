@@ -5,10 +5,16 @@ import React, { useState, useRef, useImperativeHandle, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { useEventCallback, useRefExtra } from '@react-devui/hooks';
-import { checkNodeExist, getClassName, getHorizontalSidePosition, getVerticalSidePosition } from '@react-devui/utils';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import { useMaxIndex } from '../../hooks';
-import { TTANSITION_DURING_BASE, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import {
+  getHorizontalSidePosition,
+  getVerticalSidePosition,
+  TTANSITION_DURING_BASE,
+  TTANSITION_DURING_POPUP,
+  WINDOW_SPACE,
+} from '../../utils';
 import { DPopup } from '../_popup';
 import { DCollapseTransition, DTransition } from '../_transition';
 import { usePrefixConfig, useTranslation } from '../root';

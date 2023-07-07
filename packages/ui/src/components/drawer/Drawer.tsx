@@ -7,10 +7,10 @@ import { isString, isUndefined } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
+import { useId, useRefExtra } from '@react-devui/hooks';
 import { getClassName, toPx } from '@react-devui/utils';
 
-import { useMaxIndex, useDValue } from '../../hooks';
+import { useMaxIndex, useDValue, useLockScroll } from '../../hooks';
 import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE, checkNoExpandedEl } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';

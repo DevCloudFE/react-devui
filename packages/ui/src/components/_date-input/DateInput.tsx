@@ -7,18 +7,18 @@ import ReactDOM from 'react-dom';
 
 import { useAsync, useEvent, useEventCallback, useForceUpdate, useForkRef, useImmer, useRefExtra, useResize } from '@react-devui/hooks';
 import { CloseCircleFilled, SwapRightOutlined } from '@react-devui/icons';
-import { checkNodeExist, getClassName, getVerticalSidePosition } from '@react-devui/utils';
+import { checkNodeExist, getClassName } from '@react-devui/utils';
 
 import dayjs from '../../dayjs';
 import { useDValue, useMaxIndex } from '../../hooks';
-import { cloneHTMLElement, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { cloneHTMLElement, getVerticalSidePosition, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { ESC_CLOSABLE_DATA } from '../../utils/checkNoExpandedEl';
 import { DBaseDesign } from '../_base-design';
 import { DBaseInput } from '../_base-input';
 import { DComboboxKeyboard } from '../_keyboard';
 import { DTransition } from '../_transition';
 import { useFormControl } from '../form';
-import { useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
+import { ROOT_DATA, useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
 import { deepCompareDate } from './utils';
 
 export interface DDateInputRef {
@@ -232,7 +232,7 @@ function DateInput(props: DDateInputProps, ref: React.ForwardedRef<DDateInputRef
   const updatePosition = useEventCallback(() => {
     if (dVisible && boxRef.current && popupRef.current) {
       const height = popupRef.current.offsetHeight;
-      const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+      const maxWidth = ROOT_DATA.pageSize.width - WINDOW_SPACE * 2;
       const width = Math.min(popupRef.current.scrollWidth, maxWidth);
       const { top, left, transformOrigin } = getVerticalSidePosition(
         boxRef.current,

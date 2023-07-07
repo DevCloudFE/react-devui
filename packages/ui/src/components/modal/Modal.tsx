@@ -5,11 +5,11 @@ import { isNumber, isString, isUndefined } from 'lodash';
 import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useId, useLockScroll, useRefExtra } from '@react-devui/hooks';
+import { useId, useRefExtra } from '@react-devui/hooks';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, WarningOutlined } from '@react-devui/icons';
 import { checkNodeExist, getClassName } from '@react-devui/utils';
 
-import { useMaxIndex, useDValue } from '../../hooks';
+import { useMaxIndex, useDValue, useLockScroll } from '../../hooks';
 import { registerComponentMate, handleModalKeyDown, TTANSITION_DURING_BASE, checkNoExpandedEl } from '../../utils';
 import { DMask } from '../_mask';
 import { DTransition } from '../_transition';
@@ -134,8 +134,8 @@ export const DModal: {
           if (isUndefined(ROOT_DATA.clickEvent) || performance.now() - ROOT_DATA.clickEvent.time > 100) {
             dataRef.current.transformOrigin = undefined;
           } else if (modalContentRef.current) {
-            const left = `${(window.innerWidth - modalContentRef.current.offsetWidth) / 2}px`;
-            const top = dTop === 'center' ? `${(window.innerHeight - modalContentRef.current.offsetHeight) / 2}px` : topStyle;
+            const left = `${(ROOT_DATA.pageSize.width - modalContentRef.current.offsetWidth) / 2}px`;
+            const top = dTop === 'center' ? `${(ROOT_DATA.pageSize.height - modalContentRef.current.offsetHeight) / 2}px` : topStyle;
             dataRef.current.transformOrigin = `calc(${ROOT_DATA.clickEvent.e.clientX}px - ${left}) calc(${ROOT_DATA.clickEvent.e.clientY}px - ${top})`;
           }
         }}

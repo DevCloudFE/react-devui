@@ -7,15 +7,15 @@ import ReactDOM from 'react-dom';
 
 import { useEvent, useEventCallback, useId, useRefExtra, useResize } from '@react-devui/hooks';
 import { LoadingOutlined } from '@react-devui/icons';
-import { findNested, getClassName, getVerticalSidePosition } from '@react-devui/utils';
+import { findNested, getClassName } from '@react-devui/utils';
 
 import { useMaxIndex, useDValue } from '../../hooks';
-import { cloneHTMLElement, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
+import { cloneHTMLElement, getVerticalSidePosition, registerComponentMate, TTANSITION_DURING_POPUP, WINDOW_SPACE } from '../../utils';
 import { DFocusVisible } from '../_focus-visible';
 import { DComboboxKeyboard } from '../_keyboard';
 import { DTransition } from '../_transition';
 import { DInput } from '../input';
-import { useComponentConfig, useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
+import { ROOT_DATA, useComponentConfig, useGlobalScroll, useLayout, usePrefixConfig, useTranslation } from '../root';
 import { DVirtualScroll } from '../virtual-scroll';
 
 export interface DAutoCompleteRef {
@@ -106,7 +106,7 @@ function AutoComplete<T extends DAutoCompleteItem>(
     if (visible && boxRef.current && popupRef.current) {
       const boxWidth = boxRef.current.offsetWidth;
       const height = popupRef.current.offsetHeight;
-      const maxWidth = window.innerWidth - WINDOW_SPACE * 2;
+      const maxWidth = ROOT_DATA.pageSize.width - WINDOW_SPACE * 2;
       const width = Math.min(Math.max(popupRef.current.scrollWidth, boxWidth), maxWidth);
       const { top, left, transformOrigin } = getVerticalSidePosition(
         boxRef.current,

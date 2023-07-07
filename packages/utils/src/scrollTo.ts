@@ -13,6 +13,7 @@ export function scrollTo(
     top?: number;
     left?: number;
     behavior?: 'instant' | 'smooth';
+    during?: number;
   },
   onEnd?: () => void
 ) {
@@ -33,7 +34,12 @@ export function scrollTo(
     const top = options.top;
     const left = options.left;
     const distance = Math.max(isNumber(top) ? Math.abs(top - startTop) : 0, isNumber(left) ? Math.abs(left - startLeft) : 0);
-    const during = Math.max(Math.sin((Math.PI / 2) * Math.min(distance / window.innerHeight, 1)) * MAX_DURING_TIME, MIN_DURING_TIME);
+    console.log(Math.min(distance / (isNumber(top) ? el.clientHeight : el.clientWidth), 1));
+    const during = Math.max(
+      Math.sin((Math.PI / 2) * Math.min(distance / (isNumber(top) ? el.clientHeight : el.clientWidth), 1)) *
+        (options.during ?? MAX_DURING_TIME),
+      MIN_DURING_TIME
+    );
 
     const step = () => {
       const time = window.performance.now();

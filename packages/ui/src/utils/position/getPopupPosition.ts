@@ -1,5 +1,7 @@
 import { isUndefined } from 'lodash';
 
+import { ROOT_DATA } from '../../components/root';
+
 export type DPopupPlacement =
   | 'top'
   | 'top-left'
@@ -48,8 +50,8 @@ export function getPopupPosition(
 
   const updatePosition = (position: any) => {
     if (inWindow !== false) {
-      position.top = Math.min(Math.max(position.top, inWindow), window.innerHeight - height - inWindow);
-      position.left = Math.min(Math.max(position.left, inWindow), window.innerWidth - width - inWindow);
+      position.top = Math.min(Math.max(position.top, inWindow), ROOT_DATA.pageSize.height - height - inWindow);
+      position.left = Math.min(Math.max(position.left, inWindow), ROOT_DATA.pageSize.width - width - inWindow);
     }
     return position;
   };
@@ -131,7 +133,7 @@ export function getPopupPosition(
     const getAutoFixedPosition = (placements: DPopupPlacement[]) => {
       for (const placement of placements) {
         const { top, left } = getFixedPosition(placement);
-        const noOver = [top, window.innerWidth - left - width, window.innerHeight - top - height, left].every(
+        const noOver = [top, ROOT_DATA.pageSize.width - left - width, ROOT_DATA.pageSize.height - top - height, left].every(
           (num, index) => num >= space[index]
         );
         if (noOver) {

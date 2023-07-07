@@ -8,7 +8,6 @@ export { useForceUpdate } from './useForceUpdate';
 export { useForkRef } from './useForkRef';
 export { useId } from './useId';
 export { useImmer } from './useImmer';
-export { useLockScroll } from './useLockScroll';
 export { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 export { useMount } from './useMount';
 export { useRefExtra } from './useRefExtra';

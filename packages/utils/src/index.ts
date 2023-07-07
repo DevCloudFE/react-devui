@@ -1,4 +1,3 @@
-export { getHorizontalSidePosition, getPopupPosition, getVerticalSidePosition } from './position';
 export { checkNodeExist } from './checkNodeExist';
 export { checkScrollEnd } from './checkScrollEnd';
 export { copy } from './copy';
