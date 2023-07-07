@@ -1,12 +1,14 @@
 import type { AppTheme } from '../../utils/types';
+import type { DLang } from '@react-devui/ui/utils/types';
 
 import * as echarts from 'echarts';
 import { cloneDeep, merge } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
-import { useAsync, useResize } from '@react-devui/hooks';
+import { useAsync, useResize, useStorage } from '@react-devui/hooks';
 import { getClassName } from '@react-devui/utils';
 
+import { STORAGE_KEY } from '../../config/storage';
 import chartTheme from './theme.json';
 
 export interface AppChartProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -34,6 +36,7 @@ export function AppChart(props: AppChartProps): JSX.Element | null {
   const async = useAsync();
 
   const [theme, setTheme] = useState<AppTheme | null>(null);
+  const languageStorage = useStorage<DLang>(...STORAGE_KEY.language);
 
   useEffect(() => {
     for (const theme of ['light', 'dark'] as const) {
@@ -65,7 +68,7 @@ export function AppChart(props: AppChartProps): JSX.Element | null {
             }
           )
         ),
-        { renderer: aRenderer }
+        { renderer: aRenderer, locale: languageStorage.value === 'zh-CN' ? 'ZH' : 'EN' }
       );
       onInit(instance);
       return () => {
@@ -73,7 +76,7 @@ export function AppChart(props: AppChartProps): JSX.Element | null {
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aRenderer, theme]);
+  }, [aRenderer, theme, languageStorage.value]);
 
   useResize(elRef, () => {
     dataRef.current.clearTid?.();
