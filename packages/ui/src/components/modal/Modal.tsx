@@ -136,7 +136,7 @@ export const DModal: {
           } else if (modalContentRef.current) {
             const left = `${(ROOT_DATA.pageSize.width - modalContentRef.current.offsetWidth) / 2}px`;
             const top = dTop === 'center' ? `${(ROOT_DATA.pageSize.height - modalContentRef.current.offsetHeight) / 2}px` : topStyle;
-            dataRef.current.transformOrigin = `calc(${ROOT_DATA.clickEvent.e.clientX}px - ${left}) calc(${ROOT_DATA.clickEvent.e.clientY}px - ${top})`;
+            dataRef.current.transformOrigin = `calc(${ROOT_DATA.clickEvent.x}px - ${left}) calc(${ROOT_DATA.clickEvent.y}px - ${top})`;
           }
         }}
         afterEnter={() => {

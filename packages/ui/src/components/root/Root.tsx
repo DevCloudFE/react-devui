@@ -29,7 +29,8 @@ const ROOT = new DConfigContextManager({
 export const ROOT_DATA: {
   clickEvent?: {
     time: number;
-    e: MouseEvent;
+    x: number;
+    y: number;
   };
   pageSize: { width: number; height: number };
 } = {
@@ -96,10 +97,14 @@ export function DRoot(props: DRootProps): JSX.Element | null {
     (e) => {
       // Check if click by keydown.
       if (!(e.clientX === 0 && e.clientY === 0)) {
-        ROOT_DATA.clickEvent = {
-          time: performance.now(),
-          e,
-        };
+        const rect = e.target instanceof Element ? e.target.getBoundingClientRect() : null;
+        if (rect) {
+          ROOT_DATA.clickEvent = {
+            time: performance.now(),
+            x: e.offsetX + rect.x,
+            y: e.offsetX + rect.y,
+          };
+        }
       }
     },
     { capture: true }
