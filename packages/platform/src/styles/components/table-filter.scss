@@ -28,16 +28,15 @@
   }
 
   @include e(filter) {
-    display: flex;
-
     & + & {
       margin-top: 8px;
     }
   }
 
   @include e(filter-label) {
-    display: inline-flex;
-    align-items: center;
-    height: var(--#{$rd-prefix}size);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.775em;
+    color: var(--#{$rd-prefix}text-color-sub);
   }
 }

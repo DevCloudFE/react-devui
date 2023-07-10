@@ -1,4 +1,3 @@
-import { isNumber, isUndefined } from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +10,6 @@ export interface AppTableFilterProps extends Omit<React.HTMLAttributes<HTMLDivEl
   aFilterList?: { label: string; node: React.ReactElement; isEmpty: boolean }[];
   aSearchValue?: string;
   aSearchPlaceholder?: string;
-  aLabelWidth?: string | number;
   onSearchValueChange?: (value: string) => void;
   onSearchClick?: () => void;
   onResetClick?: () => void;
@@ -22,7 +20,6 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
     aFilterList,
     aSearchValue,
     aSearchPlaceholder,
-    aLabelWidth,
     onSearchValueChange,
     onSearchClick,
     onResetClick,
@@ -34,20 +31,7 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
 
   const [searchValue, changeSearchValue] = useDValue<string>('', aSearchValue, onSearchValueChange);
 
-  const [labelWidth, badgeValue] = (() => {
-    let maxLength = 0;
-    let badgeValue = 0;
-    if (aFilterList) {
-      aFilterList.forEach((item) => {
-        maxLength = Math.max(item.label.length, maxLength);
-        if (!item.isEmpty) {
-          badgeValue += 1;
-        }
-      });
-    }
-
-    return [isUndefined(aLabelWidth) ? maxLength + 1 + 'em' : aLabelWidth, badgeValue] as const;
-  })();
+  const badgeValue = aFilterList ? aFilterList.filter((item) => !item.isEmpty).length : 0;
 
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
 
@@ -101,14 +85,8 @@ export function AppTableFilter(props: AppTableFilterProps): JSX.Element | null {
           <DSeparator></DSeparator>
           {aFilterList.map(({ label, node }) => (
             <div key={label} className="app-table-filter__filter">
-              <label className="app-table-filter__filter-label">
-                <div className="app-colon" style={{ width: labelWidth }}>
-                  {label}
-                </div>
-              </label>
-              {React.cloneElement(node, {
-                style: { ...node.props.style, maxWidth: `calc(100% - ${isNumber(labelWidth) ? labelWidth + 'px' : labelWidth})` },
-              })}
+              <label className="app-table-filter__filter-label">{label}</label>
+              {node}
             </div>
           ))}
         </>

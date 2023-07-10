@@ -192,26 +192,6 @@ const StandardTable = AppRoute(() => {
               className="mb-3"
               aFilterList={[
                 {
-                  label: 'Model',
-                  node: (
-                    <DSelect
-                      style={{ width: '16em' }}
-                      dModel={deviceQuery.model}
-                      dList={modelList ?? []}
-                      dLoading={isUndefined(modelList)}
-                      dPlaceholder="Model"
-                      dMultiple
-                      dClearable
-                      onModelChange={(value) => {
-                        setDeviceQuery((draft) => {
-                          draft.model = value;
-                        });
-                      }}
-                    />
-                  ),
-                  isEmpty: queryEmptyStatus.deviceQuery.model,
-                },
-                {
                   label: 'Status',
                   node: (
                     <DCheckbox.Group
@@ -229,8 +209,27 @@ const StandardTable = AppRoute(() => {
                   ),
                   isEmpty: queryEmptyStatus.deviceQuery.status,
                 },
+                {
+                  label: 'Model',
+                  node: (
+                    <DSelect
+                      style={{ width: '16em', maxWidth: '100%' }}
+                      dModel={deviceQuery.model}
+                      dList={modelList ?? []}
+                      dLoading={isUndefined(modelList)}
+                      dPlaceholder="Model"
+                      dMultiple
+                      dClearable
+                      onModelChange={(value) => {
+                        setDeviceQuery((draft) => {
+                          draft.model = value;
+                        });
+                      }}
+                    />
+                  ),
+                  isEmpty: queryEmptyStatus.deviceQuery.model,
+                },
               ]}
-              aLabelWidth={72}
               aSearchValue={deviceQuery.keyword}
               aSearchPlaceholder="ID, Name"
               onSearchValueChange={(value) => {
