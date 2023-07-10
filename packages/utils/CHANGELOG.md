@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.6.2](https://github.com/DevCloudFE/react-devui/compare/v18.6.1...v18.6.2) (2023-07-10)
+
+**Note:** Version bump only for package @react-devui/utils
+
 ## [18.6.1](https://github.com/DevCloudFE/react-devui/compare/v18.6.0...v18.6.1) (2023-07-07)
 
 **Note:** Version bump only for package @react-devui/utils

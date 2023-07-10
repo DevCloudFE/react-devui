@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [18.6.2](https://github.com/DevCloudFE/react-devui/compare/v18.6.1...v18.6.2) (2023-07-10)
+
+### Bug Fixes
+
+- **ui:** calculate click position ([612011a](https://github.com/DevCloudFE/react-devui/commit/612011ad28414577db99089d3e8c648307ff06dd))
+
 ## [18.6.1](https://github.com/DevCloudFE/react-devui/compare/v18.6.0...v18.6.1) (2023-07-07)
 
 **Note:** Version bump only for package @react-devui/ui
