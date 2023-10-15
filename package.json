@@ -18,6 +18,7 @@
     "publish:vscode-extension": "yarn build:vscode-extension && cd dist/packages/vscode-extension && vsce publish --yarn",
     "serve:site": "nx serve site",
     "test:affected": "nx affected --target=test --parallel=7",
+    "test:ui": "nx run ui:test",
     "util:base64-data": "ts-node -P ./tools/tsconfig.json ./tools/base64-data.ts",
     "util:check-update": "yarn upgrade-interactive --latest",
     "util:platform-project": "ts-node -P ./tools/tsconfig.json ./tools/platform-project.ts",
