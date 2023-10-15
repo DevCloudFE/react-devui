@@ -18,7 +18,7 @@ describe('DAlert', () => {
   });
 
   // Test all dType values
-  ['success', 'warning', 'error', 'info'].forEach((dType: DAlertProps['dType']) => {
+  (['success', 'warning', 'error', 'info'] as DAlertProps['dType'][]).forEach((dType) => {
     it(`renders correctly with dType=${dType}`, () => {
       const { getByText } = render(<DAlert dType={dType} dTitle={`${dType} Alert`} />);
       expect(getByText(`${dType} Alert`)).toBeInTheDocument();
