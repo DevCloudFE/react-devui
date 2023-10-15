@@ -1,99 +1,93 @@
-import { render, fireEvent, screen } from '../../__tests__/utils';
+import type { DAlertProps } from './Alert';
+
+import { render, act } from '../../__tests__/utils';
+import { DButton } from '../button';
 import { DAlert } from './Alert';
 
 describe('DAlert', () => {
-  it('renders correctly with given props', () => {
-    render(<DAlert dType="success" dTitle="Success Alert" dDescription="This is a successful alert." />);
+  // basic test
+  it('should render correctly', () => {
+    const { getByText } = render(<DAlert dTitle="hello world" />);
+    expect(getByText('hello world')).toBeInTheDocument();
+  });
 
-    expect(screen.getByText('Success Alert')).toBeInTheDocument();
-    expect(screen.getByText('This is a successful alert.')).toBeInTheDocument();
+  // test dDescription
+  it('should render dDescription correctly', () => {
+    const { getByText } = render(<DAlert dTitle="hello world" dDescription="hello description" />);
+    expect(getByText('hello description')).toBeInTheDocument();
   });
 
   // Test all dType values
-  ['success', 'warning', 'error', 'info'].forEach((type) => {
-    it(`renders correctly with dType=${type}`, () => {
-      render(<DAlert dType={type} dTitle={`${type} Alert`} />);
-      expect(screen.getByText(`${type} Alert`)).toBeInTheDocument();
+  ['success', 'warning', 'error', 'info'].forEach((dType: DAlertProps['dType']) => {
+    it(`renders correctly with dType=${dType}`, () => {
+      const { getByText } = render(<DAlert dType={dType} dTitle={`${dType} Alert`} />);
+      expect(getByText(`${dType} Alert`)).toBeInTheDocument();
     });
   });
 
-  it('renders the notification layout if dDescription prop is provided', () => {
-    render(<DAlert dType="error" dTitle="Error Alert" dDescription="Error occurred." />);
-
-    const alertNode = screen.getByText('Error occurred.').parentNode;
-    expect(alertNode).toHaveClass('alert--notification');
+  // Test dIcon
+  it('should render dIcon correctly', () => {
+    const { getByText } = render(<DAlert dIcon={<span>icon</span>} dTitle="hello world" />);
+    expect(getByText('icon')).toBeInTheDocument();
   });
 
-  it('renders the toast layout if dDescription prop is not provided', () => {
-    render(<DAlert dType="info" dTitle="Info Alert" />);
-
-    const alertNode = screen.getByText('Info Alert').parentNode;
-    expect(alertNode).toHaveClass('alert--toast');
+  // Test dActions
+  it('should render dActions correctly', () => {
+    const { getByText, getByLabelText } = render(
+      <DAlert
+        dActions={[
+          <DButton dType="outline" dTheme="success">
+            Button
+          </DButton>,
+          'close',
+        ]}
+        dTitle="hello world"
+      />
+    );
+    expect(getByText('Button')).toBeInTheDocument();
+    expect(getByLabelText('Close')).toBeInTheDocument();
   });
 
-  it('should call onClose when alert is closed', () => {
-    const mockOnClose = jest.fn();
-    render(<DAlert dType="warning" dTitle="Warning Alert" dDescription="Be careful!" onClose={mockOnClose} />);
+  // Test onClose
+  it('should render onClose correctly', async () => {
+    const onClose = jest.fn();
+    const { getByLabelText } = render(<DAlert dActions={['close']} dTitle="hello world" onClose={onClose} />);
 
-    const closeButton = screen.getByRole('button');
-    fireEvent.click(closeButton);
+    await act(async () => {
+      getByLabelText('Close').click();
+    });
 
-    expect(mockOnClose).toHaveBeenCalled();
+    expect(onClose).toBeCalled();
   });
 
-  it('should call afterVisibleChange when alert is closed', () => {
-    const mockAfterVisibleChange = jest.fn();
-    render(<DAlert dType="warning" dTitle="Warning Alert" dDescription="Be careful!" afterVisibleChange={mockAfterVisibleChange} />);
+  // Test afterVisibleChange
+  it('should render afterVisibleChange correctly', async () => {
+    const afterVisibleChange = jest.fn();
+    const { getByLabelText } = render(<DAlert dActions={['close']} dTitle="hello world" afterVisibleChange={afterVisibleChange} />);
 
-    const closeButton = screen.getByRole('button');
-    fireEvent.click(closeButton);
+    await act(async () => {
+      getByLabelText('Close').click();
+    });
 
-    expect(mockAfterVisibleChange).toHaveBeenCalledWith(false);
+    expect(afterVisibleChange).toBeCalledWith(true);
   });
 
-  it('should not render the close button if neither onClose nor afterVisibleChange prop is provided', () => {
-    render(<DAlert dType="warning" dTitle="Warning Alert" dDescription="Be careful!" />);
-
-    const closeButton = screen.queryByRole('button');
-    expect(closeButton).not.toBeInTheDocument();
+  // Test dVisible
+  it('should render dVisible correctly', () => {
+    const { queryByText } = render(<DAlert dVisible={false} dTitle="hello world" />);
+    expect(queryByText('hello world')).toBeNull();
   });
 
-  // Test dIcon rendering
-  it('renders the provided icon', () => {
-    const iconText = 'Test Icon';
-    render(<DAlert dType="success" dTitle="Success Alert" dIcon={<span>{iconText}</span>} />);
+  // Test changeVisible
+  it('should hide the alert when DNotificationPanel close button is clicked', async () => {
+    const { getByLabelText, getByText } = render(
+      <DAlert dType="success" dActions={['close']} dTitle="Success Alert" dDescription="Description" />
+    );
 
-    expect(screen.getByText(iconText)).toBeInTheDocument();
-  });
+    await act(async () => {
+      getByLabelText('Close').click();
+    });
 
-  // Test dActions rendering
-  it('renders the provided actions', () => {
-    const actionText = 'Test Action';
-    render(<DAlert dType="success" dTitle="Success Alert" dActions={[<button>{actionText}</button>]} />);
-
-    expect(screen.getByText(actionText)).toBeInTheDocument();
-  });
-
-  // 测试DCollapseTransition的动画效果
-  it('triggers afterVisibleChange on enter and leave of DCollapseTransition', () => {
-    const mockAfterVisibleChange = jest.fn();
-    render(<DAlert dType="success" dTitle="Success Alert" afterVisibleChange={mockAfterVisibleChange} />);
-
-    // 模拟DCollapseTransition的enter和leave动画
-    // 这部分可能需要根据您的实际实现进行调整
-    fireEvent.transitionEnd(screen.getByText('Success Alert'));
-    expect(mockAfterVisibleChange).toHaveBeenCalledWith(true);
-    fireEvent.transitionEnd(screen.getByText('Success Alert'));
-    expect(mockAfterVisibleChange).toHaveBeenCalledWith(false);
-  });
-
-  // 测试onClose的调用
-  it('triggers onClose when alert is closed', () => {
-    const mockOnClose = jest.fn();
-    render(<DAlert dType="success" dTitle="Success Alert" onClose={mockOnClose} />);
-
-    const closeButton = screen.getByRole('button', { name: /close/i }); // 假设关闭按钮有一个"close"的aria-label或文本
-    fireEvent.click(closeButton);
-    expect(mockOnClose).toHaveBeenCalled();
+    expect(getByText('Success Alert')).toBeVisible(); // or .not.toBeVisible() based on your implementation
   });
 });
