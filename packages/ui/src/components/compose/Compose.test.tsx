@@ -63,4 +63,34 @@ describe('DCompose', () => {
     const composeItemElements = container.querySelectorAll(`.rd-compose-item`);
     expect(composeItemElements.length).toBe(2);
   });
+
+  // __noStyle test
+  it('should not have default style class when __noStyle is true', () => {
+    const { container } = render(
+      <DCompose __noStyle={true}>
+        <div className="no-style">Child</div>
+      </DCompose>
+    );
+
+    const hasStyleClass = container.firstChild?.classList.contains('rd-compose');
+    expect(hasStyleClass).toBe(false);
+  });
+
+  it('should have default style class when __noStyle is false or not provided', () => {
+    const { container: container1 } = render(
+      <DCompose __noStyle={false}>
+        <div>Child</div>
+      </DCompose>
+    );
+    const hasStyleClass1 = container1?.firstChild?.classList.contains('rd-compose');
+    expect(hasStyleClass1).toBe(true);
+
+    const { container: container2 } = render(
+      <DCompose>
+        <div>Child</div>
+      </DCompose>
+    );
+    const hasStyleClass2 = container2?.firstChild?.classList.contains('rd-compose');
+    expect(hasStyleClass2).toBe(true);
+  });
 });
