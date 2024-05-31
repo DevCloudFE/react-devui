@@ -24,7 +24,7 @@ const reduceDir = (dirPath: string, paths: string[] = []) => {
     if (statSync(filePath).isDirectory()) {
       reduceDir(filePath, [...paths, file]);
     } else if (/^base64\.[\s\S]+\.[\s\S]+$/.test(file) && file !== OUT_FILE) {
-      table.write([filePath.match(/(?<=packages\/)[\s\S]+?(?=\/)/)![0], file]);
+      table.write([(filePath.match(/(?<=packages\/)[\s\S]+?(?=\/)/) as string[])?.[0], file]);
       const bitmap = readFileSync(filePath, { encoding: 'base64' });
       output += String.raw`  '${file.match(/(?<=\.)[\s\S]+(?=\.)/)![0]}': '${bitmap}',
 `;
