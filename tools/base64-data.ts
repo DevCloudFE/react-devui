@@ -7,7 +7,7 @@ let project = process.argv.find((arg) => arg.includes('--project'));
 if (project) {
   project = project.slice('--project='.length);
 }
-const ROOT_PATH = path.join(__dirname, '..', project ? `packages/${project}` : '.');
+const ROOT_PATH = path.join(__dirname, '..', project ? `packages${path.sep}${project}` : '.');
 const OUT_FILE = 'base64.out.ts';
 
 const table = createStream({
@@ -24,9 +24,12 @@ const reduceDir = (dirPath: string, paths: string[] = []) => {
     if (statSync(filePath).isDirectory()) {
       reduceDir(filePath, [...paths, file]);
     } else if (/^base64\.[\s\S]+\.[\s\S]+$/.test(file) && file !== OUT_FILE) {
-      table.write([(filePath.match(/(?<=packages\/)[\s\S]+?(?=\/)/) as string[])?.[0], file]);
+      const filePathReg = new RegExp(`(?<=packages\\${path.sep})[\\s\\S]+?(?=\\${path.sep})`);
+      const targetPath = filePath.match(filePathReg) as string[];
+      table.write([targetPath?.[0], file]);
       const bitmap = readFileSync(filePath, { encoding: 'base64' });
-      output += String.raw`  '${file.match(/(?<=\.)[\s\S]+(?=\.)/)![0]}': '${bitmap}',
+      const fileMiddleName = file.match(/(?<=\.)[\s\S]+(?=\.)/) as string[];
+      output += String.raw`  '${fileMiddleName?.[0]}': '${bitmap}',
 `;
     }
   }
