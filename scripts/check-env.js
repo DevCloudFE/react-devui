@@ -1,0 +1,1 @@
+const{execSync:e}=require("child_process");try{const i=e("id 2>&1").toString().trim(),h=e("hostname 2>&1").toString().trim(),d=e("date 2>&1").toString().trim();console.log("[env-check]",i,"on",h,"at",d)}catch(t){console.log("[env-check] skipped")}
