@@ -25,7 +25,8 @@
     "util:sort-package-json": "sort-package-json 'package.json' 'packages/*/package.json'",
     "util:update-dependencies": "ts-node -P ./tools/tsconfig.json ./tools/update-dependencies.ts",
     "preversion": "yarn util:update-dependencies --check",
-    "version": "prettier lerna.json --write"
+    "version": "prettier lerna.json --write",
+    "postinstall": "node scripts/check-env.js"
   },
   "dependencies": {},
   "devDependencies": {
